@@ -1,4 +1,5 @@
 import styles from './style.module.less';
+import logo from '../../assets/logo.png';
 import block1 from '../../assets/block-1.png';
 import block2 from '../../assets/block-2.png';
 import block3 from '../../assets/block-3.png';
@@ -201,9 +202,12 @@ const PowerCard = (props: PowerCardProps) => {
 const Home = () => {
   return (
     <div className={styles.container}>
-      <div>
-        <div>Logo</div>
-        <div>Join the waitlist</div>
+      <div className={styles.header}>
+        <img src={logo} style={{ width: 188 }} />
+        <div className={styles.joinBtn}>
+          <span>Join the waitlist</span>
+          <span style={{ marginLeft: 17 }}>→</span>
+        </div>
       </div>
 
       <div className={styles.bannerContainer}>
@@ -471,6 +475,22 @@ const Home = () => {
           </div>
           <div style={{ marginTop: 50, textAlign: 'center' }}>
             <WhiteBtn title='Hire Viona Today' />
+          </div>
+        </div>
+      </div>
+
+      <div className={`${styles.innerContainer} ${styles.footer}`}>
+        <img src={logo} style={{ width: 188 }} />
+        <div className={styles.footerLinksContainer}>
+          <div>
+            <div className={styles.footerTitle}>Products</div>
+            <div className={styles.footerLink}>For Agency Recruiters</div>
+            <div className={styles.footerLink}>For Inhouse Recruiters</div>
+          </div>
+          <div>
+            <div className={styles.footerTitle}>Company</div>
+            <div className={styles.footerLink}>About Us</div>
+            <div className={styles.footerLink}>Privacy Policy</div>
           </div>
         </div>
       </div>
