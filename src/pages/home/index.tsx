@@ -16,6 +16,7 @@ import bottomCard2 from '../../assets/bottom-card-2.png';
 import bottomCard3 from '../../assets/bottom-card-3.png';
 import targetArrow from '../../assets/target-arrow.png';
 import { CSSProperties } from 'react';
+import { useNavigate } from 'react-router';
 
 interface CardProps {
   title: string;
@@ -200,11 +201,12 @@ const PowerCard = (props: PowerCardProps) => {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <img src={logo} style={{ width: 188 }} />
-        <div className={styles.joinBtn}>
+        <div className={styles.joinBtn} onClick={() => navigate('/app')}>
           <span>Join the waitlist</span>
           <span style={{ marginLeft: 17 }}>→</span>
         </div>
