@@ -15,6 +15,11 @@ import bottomCard1 from '../../assets/bottom-card-1.png';
 import bottomCard2 from '../../assets/bottom-card-2.png';
 import bottomCard3 from '../../assets/bottom-card-3.png';
 import targetArrow from '../../assets/target-arrow.png';
+import skill from '../../assets/videos/skill.mp4';
+import sourcing from '../../assets/videos/sourcing.mp4';
+import screening from '../../assets/videos/screening.mp4';
+import interview from '../../assets/videos/interview.mp4';
+import driving from '../../assets/videos/driving.mp4';
 import { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -200,6 +205,43 @@ const PowerCard = (props: PowerCardProps) => {
   );
 };
 
+const VideoContainer = (props: { src: string; withBg?: boolean }) => {
+  const { src, withBg = false } = props;
+  return (
+    <div
+      style={{
+        flex: 1,
+        ...(withBg && {
+          padding: '73px 49px',
+          background:
+            'linear-gradient(125.62deg, #FBFAF1 15.1%, #EEEEFF 57.89%, #F4D7FE 94.28%),radial-gradient(38.81% 38.81% at 68.18% 0%, rgba(254, 255, 237, 0.8) 0%, rgba(255, 251, 234, 0) 100%)',
+          borderRadius: 24,
+        }),
+      }}
+    >
+      <div
+        style={{
+          borderRadius: 12,
+          backgroundColor: 'white',
+          padding: 12,
+        }}
+      >
+        <video
+          src={src}
+          style={{
+            width: '100%',
+            borderRadius: 12,
+            border: '1px solid rgba(234, 234, 234, 1)',
+          }}
+          autoPlay
+          muted
+          loop
+        />
+      </div>
+    </div>
+  );
+};
+
 const Home = () => {
   const navigate = useNavigate();
   return (
@@ -224,8 +266,7 @@ const Home = () => {
         </div>
         <div className={styles.bannerHint}>
           Viona is the world's first AI associate who manages your recruitment
-          cycle from open to offer. She helps your recruitment teams 10X
-          productivity at a fraction of the cost.
+          cycle from open to offer.
         </div>
         <div className={styles.bannerGreenBtn}>
           <GreenBtn title='Hire Viona Today' />
@@ -240,8 +281,8 @@ const Home = () => {
       <div className={`${styles.bgContainer} ${styles.block1}`}>
         <div className={styles.innerContainer}>
           <div className={styles.blockDesc}>
-            talk to Viona as you would to a human recruiter—then sit back and
-            watch as interviews with qualified candidates booked on your
+            Discuss with Viona as you would with a human recruiter—then sit back
+            and watch as interviews with qualified candidates booked on your
             calendar
           </div>
           <img className={styles.image} src={block1} alt='block1' />
@@ -287,15 +328,12 @@ const Home = () => {
           className={styles.flexContainerLeftImage}
           style={{ marginTop: 120 }}
         >
-          <div style={{ flex: 1 }}>
-            <img src={block2} style={{ width: '100%' }} />
-          </div>
+          <VideoContainer src={skill} withBg />
           <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
             <div className={styles.blockSubTitle}>Requirement Gathering</div>
             <div className={styles.blockSubDesc}>
               Viona collects and qualifies job requirements, creating
-              professional job descriptions, outreach messages, and more, like a
-              pro.
+              professional job descriptions, outreach messages, and more.
             </div>
             <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
           </div>
@@ -314,18 +352,14 @@ const Home = () => {
           </div>
           <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
         </div>
-        <div style={{ flex: 1 }}>
-          <img src={block3} style={{ width: '100%' }} />
-        </div>
+        <VideoContainer src={sourcing} />
       </div>
 
       <div
         className={`${styles.flexContainerLeftImage} ${styles.innerContainer}`}
         style={{ marginTop: 210 }}
       >
-        <div style={{ flex: 1 }}>
-          <img src={block4} style={{ width: '100%' }} />
-        </div>
+        <VideoContainer src={screening} withBg />
         <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
           <div className={styles.blockSubTitle}>Screening</div>
           <div className={styles.blockSubDesc}>
@@ -351,18 +385,14 @@ const Home = () => {
           </div>
           <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
         </div>
-        <div style={{ flex: 1 }}>
-          <img src={block5} style={{ width: '100%' }} />
-        </div>
+        <VideoContainer src={interview} />
       </div>
 
       <div
         className={`${styles.flexContainerLeftImage} ${styles.innerContainer}`}
         style={{ marginTop: 210 }}
       >
-        <div style={{ flex: 1 }}>
-          <img src={block6} style={{ width: '100%' }} />
-        </div>
+        <VideoContainer src={driving} withBg />
         <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
           <div className={styles.blockSubTitle}>Driving</div>
           <div className={styles.blockSubDesc}>
@@ -374,7 +404,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div
+      {/* <div
         style={{
           backgroundColor: 'rgba(248, 248, 249, 1)',
           marginTop: 210,
@@ -400,7 +430,7 @@ const Home = () => {
             })}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className={styles.innerContainer} style={{ marginTop: 120 }}>
         <div className={styles.blockTitle}>
