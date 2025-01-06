@@ -241,7 +241,7 @@ const Home = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <img src={logo} style={{ width: 188 }} />
+        <img src={logo} style={{ width: 220 }} />
         <div className={styles.joinBtn} onClick={() => navigate('/app')}>
           <span>Join the waitlist</span>
           <span style={{ marginLeft: 17 }}>→</span>
