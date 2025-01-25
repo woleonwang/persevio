@@ -1,12 +1,12 @@
-import { useSearchParams } from 'react-router';
 import logo from '../../assets/logo.png';
 import menuChat from '../../assets/menu-chat.png';
 import styles from './style.module.less';
+import ChatRoom from './components/ChatRoom';
 const Agent = () => {
-  const [params] = useSearchParams();
-  const agentId =
-    params.get('agent_id') ?? '34245a7f-2376-4d17-bb4e-0cb08ade5a35';
-  const src = `https://chat.lindy.ai/embedded/lindyEmbed/${agentId}`;
+  // const [params] = useSearchParams();
+  // const agentId =
+  //   params.get('agent_id') ?? '34245a7f-2376-4d17-bb4e-0cb08ade5a35';
+  // const src = `https://chat.lindy.ai/embedded/lindyEmbed/${agentId}`;
   return (
     <div className={styles.container}>
       <div className={styles.menu}>
@@ -19,7 +19,7 @@ const Agent = () => {
         </div>
       </div>
       <div className={styles.main}>
-        <iframe src={src} className={styles.iframe} />
+        <ChatRoom />
       </div>
     </div>
   );
