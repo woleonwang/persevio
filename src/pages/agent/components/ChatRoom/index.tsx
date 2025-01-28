@@ -156,7 +156,7 @@ const ChatRoom: React.FC = () => {
           onCompositionEnd={() => {
             isCompositingRef.current = false;
           }}
-          onPressEnter={(e) => {
+          onPressEnter={() => {
             if (!isCompositingRef.current) {
               submit();
             }
