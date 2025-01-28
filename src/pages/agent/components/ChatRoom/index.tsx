@@ -12,6 +12,7 @@ const ChatRoom: React.FC = () => {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [chatId, setChatId] = useState(localStorage.getItem('chatId') ?? '');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
 
@@ -58,8 +59,9 @@ const ChatRoom: React.FC = () => {
   };
 
   const submit = async () => {
-    if (!inputValue) return;
+    if (!inputValue || isLoading) return;
 
+    setIsLoading(true);
     setInputValue('');
 
     const isNewChat = !chatId;
@@ -96,6 +98,8 @@ const ChatRoom: React.FC = () => {
       });
       setMessages(formatMessages(result.data.result.messages));
     }
+
+    setIsLoading(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +163,11 @@ const ChatRoom: React.FC = () => {
           }}
         />
         <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
-          <Button type='primary' onClick={submit} disabled={!inputValue}>
+          <Button
+            type='primary'
+            onClick={submit}
+            disabled={!inputValue || isLoading}
+          >
             发送
           </Button>
           <Button type='default' onClick={clearChat} disabled={!chatId}>
