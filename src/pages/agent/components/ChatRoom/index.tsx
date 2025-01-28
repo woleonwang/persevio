@@ -13,6 +13,7 @@ const ChatRoom: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [chatId, setChatId] = useState(localStorage.getItem('chatId') ?? '');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const isCompositingRef = useRef(false);
 
   useEffect(() => {
     if (chatId) {
@@ -59,6 +60,8 @@ const ChatRoom: React.FC = () => {
   const submit = async () => {
     if (!inputValue) return;
 
+    setInputValue('');
+
     const isNewChat = !chatId;
     setMessages([
       ...messages,
@@ -93,8 +96,6 @@ const ChatRoom: React.FC = () => {
       });
       setMessages(formatMessages(result.data.result.messages));
     }
-
-    setInputValue('');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +146,17 @@ const ChatRoom: React.FC = () => {
           onChange={handleInputChange}
           placeholder='输入消息'
           style={{ width: 'calc(100% - 100px)', marginRight: '8px' }}
+          onCompositionStart={() => {
+            isCompositingRef.current = true;
+          }}
+          onCompositionEnd={() => {
+            isCompositingRef.current = false;
+          }}
+          onPressEnter={(e) => {
+            if (!isCompositingRef.current) {
+              submit();
+            }
+          }}
         />
         <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
           <Button type='primary' onClick={submit} disabled={!inputValue}>
