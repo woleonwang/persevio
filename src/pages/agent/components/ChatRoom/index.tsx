@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, List, Input, Button, message } from 'antd';
 import { UserOutlined, RobotOutlined } from '@ant-design/icons';
 import { Get, Post } from '../../../../utils/request';
+import Markdown from 'react-markdown';
 
 type TMessage = {
   id: string;
@@ -132,10 +133,10 @@ const ChatRoom: React.FC = () => {
                     }
                   />
                 }
-                title={<span>{item.role === 'user' ? '用户' : 'AI'}</span>}
+                title={<span>{item.role === 'user' ? 'You' : 'Viona'}</span>}
                 description={
-                  <div>
-                    <p>{item.content}</p>
+                  <div style={{ color: 'rgb(20, 20, 19)' }}>
+                    <Markdown>{item.content}</Markdown>
                   </div>
                 }
               />
