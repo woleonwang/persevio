@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import App from "./layouts/App";
 import { BrowserRouter, Route, Routes } from "react-router";
 import Home from "./pages/home/index.tsx";
 import Agent from "./pages/agent/index.tsx";
@@ -22,8 +22,9 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/app" element={<App />}></Route>
-          <Route path="/agent" element={<Agent />}></Route>
+          <Route path="/app" element={<App />}>
+            <Route path="/app/agent" element={<Agent />}></Route>
+          </Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />}></Route>
         </Routes>
