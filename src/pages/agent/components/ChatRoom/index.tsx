@@ -1,18 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Avatar, List, Input, Button, message } from 'antd';
-import { UserOutlined, RobotOutlined } from '@ant-design/icons';
-import { Get, Post } from '../../../../utils/request';
-import Markdown from 'react-markdown';
+import React, { useState, useRef, useEffect } from "react";
+import { Avatar, List, Input, Button, message } from "antd";
+import { UserOutlined, RobotOutlined } from "@ant-design/icons";
+import { Get, Post } from "../../../../utils/request";
+import Markdown from "react-markdown";
 
 type TMessage = {
   id: string;
-  role: 'ai' | 'user';
+  role: "ai" | "user";
   content: string;
 };
 const ChatRoom: React.FC = () => {
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [chatId, setChatId] = useState(localStorage.getItem('chatId') ?? '');
+  const [inputValue, setInputValue] = useState("");
+  const [chatId, setChatId] = useState(localStorage.getItem("chatId") ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -35,15 +35,15 @@ const ChatRoom: React.FC = () => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   const clearChat = () => {
-    setInputValue('');
-    setChatId('');
+    setInputValue("");
+    setChatId("");
     setMessages([]);
-    localStorage.removeItem('chatId');
+    localStorage.removeItem("chatId");
   };
 
   const formatMessages = (
@@ -54,7 +54,7 @@ const ChatRoom: React.FC = () => {
   ): TMessage[] => {
     return messages.map((m) => ({
       id: m.kwargs.id,
-      role: m.id[2] === 'HumanMessage' ? 'user' : 'ai',
+      role: m.id[2] === "HumanMessage" ? "user" : "ai",
       content: m.kwargs.content,
     }));
   };
@@ -63,37 +63,37 @@ const ChatRoom: React.FC = () => {
     if (!inputValue || isLoading) return;
 
     setIsLoading(true);
-    setInputValue('');
+    setInputValue("");
 
     const isNewChat = !chatId;
     setMessages([
       ...messages,
       {
-        id: 'fake_user_id',
-        role: 'user',
+        id: "fake_user_id",
+        role: "user",
         content: inputValue,
       },
       {
-        id: 'fake_ai_id',
-        role: 'ai',
-        content: '...',
+        id: "fake_ai_id",
+        role: "ai",
+        content: "...",
       },
     ]);
     if (isNewChat) {
-      const result = await Post('/api/start', {
+      const result = await Post("/api/start", {
         content: inputValue,
       });
       if (result.code === 0) {
         const chatId = result.data.thread_id;
         setChatId(chatId);
-        localStorage.setItem('chatId', chatId);
+        localStorage.setItem("chatId", chatId);
         setMessages(formatMessages(result.data.result.messages));
       } else {
-        message.error('请求失败');
+        message.error("请求失败");
         return;
       }
     } else {
-      const result = await Post('/api/talk', {
+      const result = await Post("/api/talk", {
         content: inputValue,
         thread_id: chatId,
       });
@@ -110,13 +110,13 @@ const ChatRoom: React.FC = () => {
   return (
     <div
       style={{
-        height: '100vh',
-        flex: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100vh",
+        flex: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
         <List
           dataSource={messages}
           renderItem={(item) => (
@@ -125,7 +125,7 @@ const ChatRoom: React.FC = () => {
                 avatar={
                   <Avatar
                     icon={
-                      item.role === 'user' ? (
+                      item.role === "user" ? (
                         <UserOutlined />
                       ) : (
                         <RobotOutlined />
@@ -133,9 +133,9 @@ const ChatRoom: React.FC = () => {
                     }
                   />
                 }
-                title={<span>{item.role === 'user' ? 'You' : 'Viona'}</span>}
+                title={<span>{item.role === "user" ? "You" : "Viona"}</span>}
                 description={
-                  <div style={{ color: 'rgb(20, 20, 19)' }}>
+                  <div style={{ color: "rgb(20, 20, 19)" }}>
                     <Markdown>{item.content}</Markdown>
                   </div>
                 }
@@ -145,12 +145,12 @@ const ChatRoom: React.FC = () => {
         />
         <div ref={messagesEndRef} />
       </div>
-      <div style={{ padding: '16px', borderTop: '1px solid #f0f0f0' }}>
+      <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>
         <Input
           value={inputValue}
           onChange={handleInputChange}
-          placeholder='输入消息'
-          style={{ width: 'calc(100% - 100px)', marginRight: '8px' }}
+          placeholder="输入消息"
+          style={{ width: "calc(100% - 100px)", marginRight: "8px" }}
           onCompositionStart={() => {
             isCompositingRef.current = true;
           }}
@@ -163,15 +163,15 @@ const ChatRoom: React.FC = () => {
             }
           }}
         />
-        <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
+        <div style={{ marginTop: 10, display: "flex", gap: 10 }}>
           <Button
-            type='primary'
+            type="primary"
             onClick={submit}
             disabled={!inputValue || isLoading}
           >
             发送
           </Button>
-          <Button type='default' onClick={clearChat} disabled={!chatId}>
+          <Button type="default" onClick={clearChat} disabled={!chatId}>
             开启新会话
           </Button>
         </div>
