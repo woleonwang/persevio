@@ -3,34 +3,38 @@ import { Avatar, List, Input, Button, message } from "antd";
 import { UserOutlined, RobotOutlined } from "@ant-design/icons";
 import { Get, Post } from "../../../../utils/request";
 import Markdown from "react-markdown";
+import styles from "./style.module.less";
 
 type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
 };
-const ChatRoom: React.FC = () => {
+
+interface IProps {
+  jobId: number;
+}
+const ChatRoom: React.FC<IProps> = (props) => {
+  const { jobId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [chatId, setChatId] = useState(localStorage.getItem("chatId") ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
 
   useEffect(() => {
-    if (chatId) {
-      initMessages();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    initMessages();
+  }, [jobId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const initMessages = async () => {
-    const result = await Get(`/api/chat/${chatId}`);
-    setMessages(formatMessages(result.data.messages));
+    const { code, data } = await Get(`/api/jobs/${jobId}/requirement_chat`);
+    if (code === 0) {
+      setMessages(formatMessages(data.messages));
+    }
   };
 
   const scrollToBottom = () => {
@@ -39,23 +43,16 @@ const ChatRoom: React.FC = () => {
     }
   };
 
-  const clearChat = () => {
-    setInputValue("");
-    setChatId("");
-    setMessages([]);
-    localStorage.removeItem("chatId");
-  };
-
   const formatMessages = (
     messages: {
-      id: string[];
-      kwargs: { content: string; id: string };
+      id: string;
+      content: { content: string; role: "user" | "assistant" };
     }[]
   ): TMessage[] => {
     return messages.map((m) => ({
-      id: m.kwargs.id,
-      role: m.id[2] === "HumanMessage" ? "user" : "ai",
-      content: m.kwargs.content,
+      id: m.id,
+      role: m.content.role === "assistant" ? "ai" : "user",
+      content: m.content.content,
     }));
   };
 
@@ -65,7 +62,6 @@ const ChatRoom: React.FC = () => {
     setIsLoading(true);
     setInputValue("");
 
-    const isNewChat = !chatId;
     setMessages([
       ...messages,
       {
@@ -79,25 +75,16 @@ const ChatRoom: React.FC = () => {
         content: "...",
       },
     ]);
-    if (isNewChat) {
-      const result = await Post("/api/start", {
+
+    const { code, data } = await Post(
+      `/api/jobs/${jobId}/send_message_for_job_requirement_chat`,
+      {
         content: inputValue,
-      });
-      if (result.code === 0) {
-        const chatId = result.data.thread_id;
-        setChatId(chatId);
-        localStorage.setItem("chatId", chatId);
-        setMessages(formatMessages(result.data.result.messages));
-      } else {
-        message.error("请求失败");
-        return;
       }
-    } else {
-      const result = await Post("/api/talk", {
-        content: inputValue,
-        thread_id: chatId,
-      });
-      setMessages(formatMessages(result.data.result.messages));
+    );
+
+    if (code === 0) {
+      setMessages(formatMessages(data.messages));
     }
 
     setIsLoading(false);
@@ -108,14 +95,7 @@ const ChatRoom: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        flex: "auto",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className={styles.container}>
       <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
         <List
           dataSource={messages}
@@ -149,7 +129,7 @@ const ChatRoom: React.FC = () => {
         <Input
           value={inputValue}
           onChange={handleInputChange}
-          placeholder="输入消息"
+          placeholder="Enter message"
           style={{ width: "calc(100% - 100px)", marginRight: "8px" }}
           onCompositionStart={() => {
             isCompositingRef.current = true;
@@ -169,10 +149,7 @@ const ChatRoom: React.FC = () => {
             onClick={submit}
             disabled={!inputValue || isLoading}
           >
-            发送
-          </Button>
-          <Button type="default" onClick={clearChat} disabled={!chatId}>
-            开启新会话
+            Send
           </Button>
         </div>
       </div>

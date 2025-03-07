@@ -1,4 +1,4 @@
-import ChatRoom from "./components/ChatRoom";
+import ChatRoom from "../jobs/components/ChatRoom";
 const Agent = () => {
   // const [params] = useSearchParams();
   // const agentId =
