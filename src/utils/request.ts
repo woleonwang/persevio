@@ -12,6 +12,10 @@ export const Get = async <T = any>(
   try {
     const response = await instance.get<{ code: number; data: T }>(url, {
       params,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
     });
     return response.data;
   } catch (error) {
@@ -26,7 +30,12 @@ export const Post = async <T = any>(
 ) => {
   let response;
   try {
-    response = await instance.post<{ code: number; data?: T }>(url, data);
+    response = await instance.post<{ code: number; data?: T }>(url, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

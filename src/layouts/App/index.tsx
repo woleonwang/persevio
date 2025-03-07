@@ -3,6 +3,7 @@ import logo from "../../assets/logo.png";
 import Job from "../../assets/icons/job";
 import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
+import Icon from "../../components/Icon";
 
 const MENU = [
   {
@@ -35,9 +36,13 @@ const AppLayout = () => {
                 key={item.path}
                 onClick={() => navigate(item.path)}
               >
-                <span style={{ color: isActive ? "#1FAC6A" : "#949DAC" }}>
-                  {item.img}
-                </span>
+                <Icon
+                  icon={item.img}
+                  style={{
+                    fontSize: 20,
+                    color: isActive ? "#1FAC6A" : "#949DAC",
+                  }}
+                />
                 <span style={{ marginLeft: 16 }}>{item.title}</span>
               </div>
             );
