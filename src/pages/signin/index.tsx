@@ -39,7 +39,7 @@ const SignIn: React.FC = () => {
       if (code === 0 && data) {
         message.success("Sign in succeed");
         localStorage.setItem("token", data.token);
-        navigate("/agent");
+        navigate("/app/entry");
       } else {
         message.error("Username or password is incorrect");
       }

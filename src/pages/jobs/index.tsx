@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Get, Post } from "../../utils/request";
-import ChatRoom from "./components/ChatRoom";
+import { Get } from "../../utils/request";
+import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 
 type TJob = {
@@ -51,7 +51,9 @@ const Jobs = () => {
           ))}
         </div>
         <div className={styles.jobMain}>
-          {selectedJobId && <ChatRoom jobId={selectedJobId} />}
+          {selectedJobId && (
+            <ChatRoom jobId={selectedJobId} type="job_requirement" />
+          )}
         </div>
       </div>
     </div>

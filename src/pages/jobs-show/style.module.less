@@ -1,0 +1,76 @@
+.container {
+  background-color: white;
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  width: 40%;
+  max-width: 780px;
+  flex: none;
+  border-right: 1px solid #eeeeee;
+  padding: 36px 44px;
+}
+
+.right {
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  background-color: #e5f7f7;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.tab {
+  flex: 1;
+  border-radius: 16px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1fac6a;
+  cursor: pointer;
+  &.active {
+    transition: 0.3s all;
+    background-color: #1fac6a;
+    color: white;
+    font-weight: bold;
+  }
+}
+
+.tabContent {
+  padding: 32px 0;
+}
+
+.logo {
+  width: 200px;
+}
+
+.jobName {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 24px;
+}
+
+.companyName {
+  font-size: 16px;
+  color: #999999;
+  margin-top: 16px;
+}
+
+.markdownContainer {
+  margin-top: 16px;
+  border-top: 1px solid #eeeeee;
+  padding: 16px 0;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-size: 18px;
+  }
+}

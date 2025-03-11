@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, message } from "antd";
-import Icon, {
+import { Avatar, List, Input, Button } from "antd";
+import {
   UserOutlined,
   RobotOutlined,
   AudioMutedOutlined,
   AudioOutlined,
 } from "@ant-design/icons";
-import { Get, Post } from "../../../../utils/request";
+import { Get, Post } from "../../utils/request";
 import Markdown from "react-markdown";
 import styles from "./style.module.less";
 
@@ -18,9 +18,12 @@ type TMessage = {
 
 interface IProps {
   jobId: number;
+  type: "job_requirement" | "candidate";
+  sessionId?: string;
 }
+
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId } = props;
+  const { jobId, type = "job_requirement", sessionId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,17 +33,35 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const recognitionRef = useRef<any>();
 
   useEffect(() => {
-    initMessages();
+    fetchMessages();
   }, [jobId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const initMessages = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/requirement_chat`);
+  const apiMapping: Record<IProps["type"], { get: string; send: string }> = {
+    job_requirement: {
+      get: `/api/jobs/${jobId}/chat`,
+      send: `/api/jobs/${jobId}/chat/send`,
+    },
+    candidate: {
+      get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
+      send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
+    },
+  };
+
+  const fetchMessages = async () => {
+    const { code, data } = await Get(apiMapping[type].get);
     if (code === 0) {
-      setMessages(formatMessages(data.messages));
+      setMessages(
+        type === "job_requirement"
+          ? [
+              ...formatMessages(data.context.messages),
+              ...formatMessages(data.requirement.messages),
+            ]
+          : formatMessages(data.messages)
+      );
     }
   };
 
@@ -63,8 +84,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }));
   };
 
+  const canSubmit = () => {
+    return inputValue && !isLoading && !isCompositingRef.current;
+  };
+
   const submit = async () => {
-    if (!inputValue || isLoading) return;
+    if (!canSubmit()) return;
 
     setIsLoading(true);
     setInputValue("");
@@ -83,21 +108,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
       },
     ]);
 
-    const { code, data } = await Post(
-      `/api/jobs/${jobId}/send_message_for_job_requirement_chat`,
-      {
-        content: inputValue,
-      }
-    );
+    stopRecord();
+
+    const { code } = await Post(apiMapping[type].send, {
+      content: inputValue,
+    });
 
     if (code === 0) {
-      setMessages(formatMessages(data.messages));
+      fetchMessages();
     }
 
     setIsLoading(false);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
   };
 
@@ -122,6 +146,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       };
       recognition.onend = () => {
         console.log("end");
+        setIsRecording(false);
       };
       recognition.onerror = () => {
         console.log("error");
@@ -159,7 +184,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 }
                 title={<span>{item.role === "user" ? "You" : "Viona"}</span>}
                 description={
-                  <div style={{ color: "rgb(20, 20, 19)" }}>
+                  <div className={styles.markdownContainer}>
                     <Markdown>{item.content}</Markdown>
                   </div>
                 }
@@ -185,10 +210,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
           onCompositionEnd={() => {
             isCompositingRef.current = false;
           }}
-          onPressEnter={() => {
-            if (!isCompositingRef.current) {
-              submit();
-            }
+          onPressEnter={(e) => {
+            e.preventDefault();
+            submit();
           }}
           rows={4}
         />
@@ -200,11 +224,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             justifyContent: "space-between",
           }}
         >
-          <Button
-            type="primary"
-            onClick={submit}
-            disabled={!inputValue || isLoading}
-          >
+          <Button type="primary" onClick={submit} disabled={!canSubmit()}>
             Send
           </Button>
           <Button
