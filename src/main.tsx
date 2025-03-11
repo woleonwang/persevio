@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./layouts/App";
 import { BrowserRouter, Route, Routes } from "react-router";
 import Home from "./pages/home/index.tsx";
-import Agent from "./pages/agent/index.tsx";
 import Signup from "./pages/signup/index.tsx";
 import Signin from "./pages/signin/index.tsx";
 import { ConfigProvider } from "antd";

@@ -7,6 +7,7 @@ import { Get } from "../../utils/request";
 import { Spin } from "antd";
 import Markdown from "react-markdown";
 import { v4 as uuidV4 } from "uuid";
+import dayjs from "dayjs";
 
 type TTabKey = "information" | "mindmap";
 
@@ -18,7 +19,7 @@ type TCompany = {
 type TJob = {
   name: string;
   company_id: number;
-  udpated_at: string;
+  updated_at: string;
   requirement: string;
 };
 
@@ -99,6 +100,13 @@ const JobsShow = () => {
               <div className={styles.companyName}> Jobs at {company.name}</div>
               <div className={styles.markdownContainer}>
                 <Markdown>{job.requirement}</Markdown>
+              </div>
+              <div>
+                <div className={styles.updatedAt}>
+                  {dayjs().diff(dayjs(job.updated_at), "days")
+                    ? `${dayjs().diff(dayjs(job.updated_at), "days")} days ago`
+                    : "Today"}
+                </div>
               </div>
             </div>
           </div>
