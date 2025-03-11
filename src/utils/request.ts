@@ -42,3 +42,18 @@ export const Post = async <T = any>(
     return response?.data ?? { code: -1 };
   }
 };
+
+export const PostFormData = async <T = any>(url: string, data: FormData) => {
+  let response;
+  try {
+    response = await instance.post<{ code: number; data?: T }>(url, data, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return response?.data ?? { code: -1 };
+  }
+};

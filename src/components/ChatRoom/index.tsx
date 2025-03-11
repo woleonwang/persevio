@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button } from "antd";
-import {
-  UserOutlined,
-  RobotOutlined,
-  AudioMutedOutlined,
-  AudioOutlined,
-} from "@ant-design/icons";
-import { Get, Post } from "../../utils/request";
+import { Avatar, List, Input, Button, Upload, message } from "antd";
+import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
+import { Get, Post, PostFormData } from "../../utils/request";
 import Markdown from "react-markdown";
+import VionaAvatar from "../../assets/viona-avatar.png";
+import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
+import dayjs from "dayjs";
+import { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
+  updated_at: string;
 };
 
 interface IProps {
@@ -74,13 +74,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const formatMessages = (
     messages: {
       id: string;
-      content: { content: string; role: "user" | "assistant" };
+      content: {
+        content: string;
+        role: "user" | "assistant";
+      };
+      updated_at: string;
     }[]
   ): TMessage[] => {
     return messages.map((m) => ({
       id: m.id,
       role: m.content.role === "assistant" ? "ai" : "user",
       content: m.content.content,
+      updated_at: m.updated_at,
     }));
   };
 
@@ -100,11 +105,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
         id: "fake_user_id",
         role: "user",
         content: inputValue,
+        updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
         id: "fake_ai_id",
         role: "ai",
         content: "...",
+        updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       },
     ]);
 
@@ -163,6 +170,58 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsRecording(false);
   };
 
+  const uploadPdf = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
+    const file = fileInfo.file;
+
+    if (file && !file.status) {
+      const isPDF = file.type === "application/pdf";
+      if (!isPDF) {
+        message.error("You can only upload PDF file!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file as any);
+      const { code } = await PostFormData(
+        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/pdf`,
+        formData
+      );
+
+      if (code === 0) {
+        message.success("Upload succeed");
+      } else {
+        message.error("Upload failed");
+      }
+    }
+  };
+
+  const uploadDocx = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
+    const file = fileInfo.file;
+
+    if (file && !file.status) {
+      const isDocx =
+        file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!isDocx) {
+        message.error("You can only upload Docx file!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file as any);
+      const { code } = await PostFormData(
+        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/docx`,
+        formData
+      );
+
+      if (code === 0) {
+        message.success("Upload succeed");
+      } else {
+        message.error("Upload failed");
+      }
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
@@ -175,14 +234,30 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <Avatar
                     icon={
                       item.role === "user" ? (
-                        <UserOutlined />
+                        <img src={UserAvatar} />
                       ) : (
-                        <RobotOutlined />
+                        <img src={VionaAvatar} />
                       )
                     }
                   />
                 }
-                title={<span>{item.role === "user" ? "You" : "Viona"}</span>}
+                title={
+                  <div>
+                    <span style={{ fontSize: 18 }}>
+                      {item.role === "user" ? "You" : "Viona"}
+                    </span>
+                    <span
+                      style={{
+                        color: "#999999",
+                        marginLeft: 8,
+                        fontSize: 14,
+                        fontWeight: "normal",
+                      }}
+                    >
+                      {dayjs(item.updated_at).format("HH:mm")}
+                    </span>
+                  </div>
+                }
                 description={
                   <div className={styles.markdownContainer}>
                     <Markdown>{item.content}</Markdown>
@@ -227,13 +302,35 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <Button type="primary" onClick={submit} disabled={!canSubmit()}>
             Send
           </Button>
-          <Button
-            type="primary"
-            danger={isRecording}
-            shape="circle"
-            icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
-            onClick={isRecording ? stopRecord : startRecord}
-          />
+          <div style={{ display: "flex", gap: 10 }}>
+            <Upload
+              beforeUpload={() => false}
+              onChange={(fileInfo) => uploadDocx(fileInfo)}
+              showUploadList={false}
+              accept=".docx"
+              multiple={false}
+            >
+              <Button type="primary">DOCX</Button>
+            </Upload>
+
+            <Upload
+              beforeUpload={() => false}
+              onChange={(fileInfo) => uploadPdf(fileInfo)}
+              showUploadList={false}
+              accept=".pdf"
+              multiple={false}
+            >
+              <Button type="primary">PDF</Button>
+            </Upload>
+
+            <Button
+              type="primary"
+              danger={isRecording}
+              shape="circle"
+              icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
+              onClick={isRecording ? stopRecord : startRecord}
+            />
+          </div>
         </div>
       </div>
     </div>
