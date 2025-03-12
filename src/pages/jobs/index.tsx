@@ -20,7 +20,7 @@ const Jobs = () => {
   const [jobs, setJobs] = useState<TJob[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<number>();
 
-  const selectedJob = jobs.find((item) => item.id === selectedJobId);
+  // const selectedJob = jobs.find((item) => item.id === selectedJobId);
 
   useEffect(() => {
     fetchJobs();
