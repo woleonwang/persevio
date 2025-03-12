@@ -93,7 +93,7 @@ const JobsShow = () => {
             </div>
             <div className={styles.tabContent}>
               <img
-                src={`/src/assets/company-logo/${company.logo}`}
+                src={`/company-logo/${company.logo}`}
                 className={styles.logo}
               />
               <div className={styles.jobName}>{job.name}</div>

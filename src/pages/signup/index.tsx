@@ -1,10 +1,9 @@
 import React from "react";
 import { Form, Input, Button, message } from "antd";
 import logo from "../../assets/logo.png";
-import banner from "../../assets/login/banner.png";
-import styles from "./style.module.less";
 import { Post } from "../../utils/request";
 import { useNavigate } from "react-router";
+import SignContainer from "../../components/SignContainer";
 
 interface SignupFormValues {
   username: string;
@@ -55,69 +54,55 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className={styles.loginContainer}>
-      <div style={{ flex: "none" }}>
-        <img src={banner} style={{ height: "100vh" }} />
-      </div>
-      <div
-        style={{
-          flex: "auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+    <SignContainer>
+      <img src={logo} style={{ width: 188 }} />
+      <h2 style={{ fontSize: 36 }}>Sign up for an account</h2>
+      <Form
+        form={form}
+        name="login"
+        onFinish={handleSignup}
+        autoComplete="off"
+        layout="vertical"
       >
-        <div style={{ width: 474 }}>
-          <img src={logo} style={{ width: 188 }} />
-          <h2 style={{ fontSize: 36 }}>Sign up for an account</h2>
-          <Form
-            form={form}
-            name="login"
-            onFinish={handleSignup}
-            autoComplete="off"
-            layout="vertical"
-          >
-            <Form.Item
-              label="Email"
-              name="username"
-              rules={[{ required: true, message: "Please enter email" }]}
-            >
-              <Input placeholder="Email" size="large" />
-            </Form.Item>
+        <Form.Item
+          label="Email"
+          name="username"
+          rules={[{ required: true, message: "Please enter email" }]}
+        >
+          <Input placeholder="Email" size="large" />
+        </Form.Item>
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[{ required: true, message: "Please enter password" }]}
-            >
-              <Input.Password placeholder="Password" size="large" />
-            </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: "Please enter password" }]}
+        >
+          <Input.Password placeholder="Password" size="large" />
+        </Form.Item>
 
-            <Form.Item
-              label="Company Name"
-              name="company_name"
-              rules={[{ required: true, message: "Please enter company name" }]}
-            >
-              <Input placeholder="Copmany Name" size="large" />
-            </Form.Item>
+        <Form.Item
+          label="Company Name"
+          name="company_name"
+          rules={[{ required: true, message: "Please enter company name" }]}
+        >
+          <Input placeholder="Copmany Name" size="large" />
+        </Form.Item>
 
-            <Form.Item
-              label="Your Name"
-              name="staff_name"
-              rules={[{ required: true, message: "Please enter your name" }]}
-            >
-              <Input placeholder="Your Name" size="large" />
-            </Form.Item>
+        <Form.Item
+          label="Your Name"
+          name="staff_name"
+          rules={[{ required: true, message: "Please enter your name" }]}
+        >
+          <Input placeholder="Your Name" size="large" />
+        </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block size="large">
-                Sign Up
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      </div>
-    </div>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block size="large">
+            Sign Up
+          </Button>
+        </Form.Item>
+      </Form>
+    </SignContainer>
   );
 };
 
