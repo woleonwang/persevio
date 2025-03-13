@@ -20,7 +20,7 @@ type TJob = {
   name: string;
   company_id: number;
   updated_at: string;
-  requirement: string;
+  job_description: string;
 };
 
 type TStatus = "loading" | "success" | "error";
@@ -99,7 +99,7 @@ const JobsShow = () => {
               <div className={styles.jobName}>{job.name}</div>
               <div className={styles.companyName}> Jobs at {company.name}</div>
               <div className={styles.markdownContainer}>
-                <Markdown>{job.requirement}</Markdown>
+                <Markdown>{job.job_description}</Markdown>
               </div>
               <div>
                 <div className={styles.updatedAt}>

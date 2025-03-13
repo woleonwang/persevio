@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Input, Button, message } from "antd";
 import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
 
 interface SignupFormValues {
@@ -101,6 +101,12 @@ const Signup: React.FC = () => {
             Sign Up
           </Button>
         </Form.Item>
+        <div>
+          Already have an account?
+          <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+            Sign In
+          </Link>
+        </div>
       </Form>
     </SignContainer>
   );

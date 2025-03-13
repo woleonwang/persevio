@@ -59,6 +59,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           ? [
               ...formatMessages(data.context.messages),
               ...formatMessages(data.requirement.messages),
+              ...formatMessages(data.jd.messages),
             ]
           : formatMessages(data.messages)
       );
@@ -302,26 +303,31 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <Button type="primary" onClick={submit} disabled={!canSubmit()}>
             Send
           </Button>
-          <div style={{ display: "flex", gap: 10 }}>
-            <Upload
-              beforeUpload={() => false}
-              onChange={(fileInfo) => uploadDocx(fileInfo)}
-              showUploadList={false}
-              accept=".docx"
-              multiple={false}
-            >
-              <Button type="primary">DOCX</Button>
-            </Upload>
 
-            <Upload
-              beforeUpload={() => false}
-              onChange={(fileInfo) => uploadPdf(fileInfo)}
-              showUploadList={false}
-              accept=".pdf"
-              multiple={false}
-            >
-              <Button type="primary">PDF</Button>
-            </Upload>
+          <div style={{ display: "flex", gap: 10 }}>
+            {type === "candidate" && (
+              <>
+                <Upload
+                  beforeUpload={() => false}
+                  onChange={(fileInfo) => uploadDocx(fileInfo)}
+                  showUploadList={false}
+                  accept=".docx"
+                  multiple={false}
+                >
+                  <Button type="primary">DOCX</Button>
+                </Upload>
+
+                <Upload
+                  beforeUpload={() => false}
+                  onChange={(fileInfo) => uploadPdf(fileInfo)}
+                  showUploadList={false}
+                  accept=".pdf"
+                  multiple={false}
+                >
+                  <Button type="primary">PDF</Button>
+                </Upload>
+              </>
+            )}
 
             <Button
               type="primary"
