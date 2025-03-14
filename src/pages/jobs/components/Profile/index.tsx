@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Get } from "../../../../utils/request";
-import { Button, List } from "antd";
+import { List } from "antd";
 
 type TProfile = {
   id: number;
