@@ -60,6 +60,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               ...formatMessages(data.context.messages),
               ...formatMessages(data.requirement.messages),
               ...formatMessages(data.jd.messages),
+              ...formatMessages(data.interview_plan.messages),
             ]
           : formatMessages(data.messages)
       );
