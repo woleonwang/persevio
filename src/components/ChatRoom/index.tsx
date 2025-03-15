@@ -67,21 +67,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     const { code, data } = await Get(apiMapping[type].get);
     if (code === 0) {
-      const messageHistory =
-        type === "job_chat"
-          ? [
-              ...formatMessages(data.context.messages),
-              ...formatMessages(data.requirement.messages),
-              ...formatMessages(data.jd.messages),
-              ...formatMessages(data.interview_plan.messages),
-            ]
-          : formatMessages(data.messages);
-
+      const messageHistory = formatMessages(data.messages);
       setMessages(messageHistory);
-
-      if (messageHistory.length === 0 && type === "job_chat") {
-        sendMessage(`I want to create a job named ${jobName}`);
-      }
     }
   };
 
