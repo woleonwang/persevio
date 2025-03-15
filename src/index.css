@@ -11,12 +11,23 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: persevio-defualt;
+  font-family: persevio-default;
 }
 
 @font-face {
-  font-family: 'persevio-defualt';
+  font-family: 'persevio-default';
   src: url('/default-font.ttf');
+}
+
+@font-face {
+  font-family: 'chat-default';
+  src: url('/timepos-regular-font.woff2');
+}
+
+@font-face {
+  font-family: 'chat-default';
+  src: url('/timepos-bold-font.woff2');
+  font-weight: bold;
 }
 
 div {

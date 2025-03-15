@@ -11,12 +11,12 @@ const JobCreate = () => {
   const createJob = () => {
     form.validateFields().then(async (values) => {
       const { name } = values;
-      const { code } = await Post("/api/jobs", {
+      const { code, data } = await Post("/api/jobs", {
         name: name,
       });
       if (code === 0) {
         message.success("Create job succeed");
-        navigate("/app/jobs");
+        navigate(`/app/jobs?active=${data.job_id}`);
       }
     });
   };

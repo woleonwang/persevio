@@ -5,6 +5,7 @@ import styles from "./style.module.less";
 import { ProfileOutlined } from "@ant-design/icons";
 import Profile from "./components/Profile";
 import { Button } from "antd";
+import { useSearchParams } from "react-router";
 
 type TJob = {
   id: number;
@@ -21,10 +22,15 @@ type TJob = {
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<TJob[]>([]);
-  const [selectedJobId, setSelectedJobId] = useState<number>();
+  const [searchParams] = useSearchParams();
+  const [selectedJobId, setSelectedJobId] = useState<number | undefined>(
+    searchParams.get("active")
+      ? parseInt(searchParams.get("active") ?? "0")
+      : undefined
+  );
   const [status, setStatus] = useState<"chat" | "profile">("chat");
 
-  // const selectedJob = jobs.find((item) => item.id === selectedJobId);
+  const selectedJob = jobs.find((item) => item.id === selectedJobId);
 
   useEffect(() => {
     fetchJobs();
@@ -58,15 +64,19 @@ const Jobs = () => {
           ))}
         </div>
         <div className={styles.jobMain}>
-          {selectedJobId &&
+          {selectedJob &&
             (status === "chat" ? (
-              <ChatRoom jobId={selectedJobId} type="job_requirement" />
+              <ChatRoom
+                jobId={selectedJob.id}
+                type="job_chat"
+                jobName={selectedJob?.name}
+              />
             ) : (
               <div style={{ padding: 20, flex: "auto" }}>
                 <Button type="primary" onClick={() => setStatus("chat")}>
                   {" < Back "}
                 </Button>
-                <Profile jobId={selectedJobId} />
+                <Profile jobId={selectedJob.id} />
               </div>
             ))}
         </div>

@@ -1,21 +1,21 @@
-import styles from './style.module.less';
-import logo from '../../assets/logo.png';
-import block1 from '../../assets/block-1.png';
-import calendarCheck from '../../assets/calendar-check.png';
-import check from '../../assets/check.png';
-import medal from '../../assets/medal.png';
-import tie from '../../assets/tie.png';
-import bottomCard1 from '../../assets/bottom-card-1.png';
-import bottomCard2 from '../../assets/bottom-card-2.png';
-import bottomCard3 from '../../assets/bottom-card-3.png';
-import targetArrow from '../../assets/target-arrow.png';
-import skill from '../../assets/videos/skill.mp4';
-import sourcing from '../../assets/videos/sourcing.mp4';
-import screening from '../../assets/videos/screening.mp4';
-import interview from '../../assets/videos/interview.mp4';
-import driving from '../../assets/videos/driving.mp4';
-import { CSSProperties } from 'react';
-import { useNavigate } from 'react-router';
+import styles from "./style.module.less";
+import logo from "../../assets/logo.png";
+import block1 from "../../assets/block-1.png";
+import calendarCheck from "../../assets/calendar-check.png";
+import check from "../../assets/check.png";
+import medal from "../../assets/medal.png";
+import tie from "../../assets/tie.png";
+import bottomCard1 from "../../assets/bottom-card-1.png";
+import bottomCard2 from "../../assets/bottom-card-2.png";
+import bottomCard3 from "../../assets/bottom-card-3.png";
+import targetArrow from "../../assets/target-arrow.png";
+import skill from "../../assets/videos/skill.mp4";
+import sourcing from "../../assets/videos/sourcing.mp4";
+import screening from "../../assets/videos/screening.mp4";
+import interview from "../../assets/videos/interview.mp4";
+import driving from "../../assets/videos/driving.mp4";
+import { CSSProperties } from "react";
+import { useNavigate } from "react-router";
 
 interface CardProps {
   title: string;
@@ -62,16 +62,16 @@ const WhiteBtn = (props: GreenBtnProps) => {
       className={styles.greenBtn}
       onClick={onClick}
       style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        border: '1px solid rgba(255, 255, 255, 0.8)',
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        border: "1px solid rgba(255, 255, 255, 0.8)",
       }}
     >
       {title}
       <div
         className={styles.icon}
         style={{
-          color: 'rgba(31, 172, 106, 1)',
-          backgroundColor: 'rgba(255, 255, 255, 1)',
+          color: "rgba(31, 172, 106, 1)",
+          backgroundColor: "rgba(255, 255, 255, 1)",
         }}
       >
         →
@@ -88,36 +88,36 @@ const Card = (props: CardProps) => {
         backgroundColor,
         borderRadius: 24,
         padding: 24,
-        position: 'relative',
+        position: "relative",
         height: 250,
       }}
     >
       <div
-        style={{ color, fontSize: 32, fontWeight: 'bold', lineHeight: '42px' }}
+        style={{ color, fontSize: 32, fontWeight: "bold", lineHeight: "42px" }}
       >
         {title}
       </div>
-      <div style={{ marginTop: 14, fontSize: 16, lineHeight: '21px' }}>
+      <div style={{ marginTop: 14, fontSize: 16, lineHeight: "21px" }}>
         {description}
       </div>
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           left: 24,
           bottom: 24,
           backgroundColor: color,
-          borderRadius: '50%',
+          borderRadius: "50%",
           width: 40,
           height: 40,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <img src={check} style={{ width: 20 }} />
       </div>
       <img
-        style={{ position: 'absolute', right: 24, bottom: 24, width: 96 }}
+        style={{ position: "absolute", right: 24, bottom: 24, width: 96 }}
         src={image}
       />
     </div>
@@ -129,25 +129,25 @@ const BottomCard = (props: BottomCardProps) => {
   return (
     <div
       style={{
-        backgroundColor: 'rgba(248, 248, 249, 1)',
+        backgroundColor: "rgba(248, 248, 249, 1)",
         borderRadius: 24,
-        padding: '50px 30px',
+        padding: "50px 30px",
         height: 332,
       }}
     >
       <img style={{ width: 75 }} src={image} />
       <div
         style={{
-          color: 'rgba(31, 172, 106, 1)',
+          color: "rgba(31, 172, 106, 1)",
           fontSize: 24,
-          fontWeight: 'bold',
-          lineHeight: '36px',
+          fontWeight: "bold",
+          lineHeight: "36px",
           marginTop: 32,
         }}
       >
         {title}
       </div>
-      <div style={{ marginTop: 14, fontSize: 16, lineHeight: '21px' }}>
+      <div style={{ marginTop: 14, fontSize: 16, lineHeight: "21px" }}>
         {description}
       </div>
     </div>
@@ -160,14 +160,14 @@ const PowerCard = (props: PowerCardProps) => {
     <div
       style={{
         flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
+        display: "flex",
+        justifyContent: "center",
         borderRight: `${noBorder ? 0 : 1}px solid rgba(234, 234, 234, 1)`,
-        padding: '0 30px',
+        padding: "0 30px",
       }}
     >
-      <div style={{ width: 'fit-content' }}>
-        <div style={{ fontSize: 24, lineHeight: '36px', fontWeight: 'bold' }}>
+      <div style={{ width: "fit-content" }}>
+        <div style={{ fontSize: 24, lineHeight: "36px", fontWeight: "bold" }}>
           {title}
         </div>
         <div>
@@ -176,17 +176,17 @@ const PowerCard = (props: PowerCardProps) => {
               <div
                 style={{
                   marginTop: 16,
-                  display: 'flex',
-                  alignItems: 'flex-start',
+                  display: "flex",
+                  alignItems: "flex-start",
                 }}
               >
                 <img
                   src={targetArrow}
-                  style={{ flex: 'none', width: 24, marginRight: 12 }}
+                  style={{ flex: "none", width: 24, marginRight: 12 }}
                 />
                 <div
                   key={item}
-                  style={{ flex: 1, fontSize: 16, lineHeight: '24px' }}
+                  style={{ flex: 1, fontSize: 16, lineHeight: "24px" }}
                 >
                   {item}
                 </div>
@@ -206,9 +206,9 @@ const VideoContainer = (props: { src: string; withBg?: boolean }) => {
       style={{
         flex: 1,
         ...(withBg && {
-          padding: '73px 49px',
+          padding: "73px 49px",
           background:
-            'linear-gradient(125.62deg, #FBFAF1 15.1%, #EEEEFF 57.89%, #F4D7FE 94.28%),radial-gradient(38.81% 38.81% at 68.18% 0%, rgba(254, 255, 237, 0.8) 0%, rgba(255, 251, 234, 0) 100%)',
+            "linear-gradient(125.62deg, #FBFAF1 15.1%, #EEEEFF 57.89%, #F4D7FE 94.28%),radial-gradient(38.81% 38.81% at 68.18% 0%, rgba(254, 255, 237, 0.8) 0%, rgba(255, 251, 234, 0) 100%)",
           borderRadius: 24,
         }),
       }}
@@ -216,16 +216,16 @@ const VideoContainer = (props: { src: string; withBg?: boolean }) => {
       <div
         style={{
           borderRadius: 12,
-          backgroundColor: 'white',
+          backgroundColor: "white",
           padding: 12,
         }}
       >
         <video
           src={src}
           style={{
-            width: '100%',
+            width: "100%",
             borderRadius: 12,
-            border: '1px solid rgba(234, 234, 234, 1)',
+            border: "1px solid rgba(234, 234, 234, 1)",
           }}
           autoPlay
           muted
@@ -242,7 +242,7 @@ const Home = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <img src={logo} style={{ width: 220 }} />
-        <div className={styles.joinBtn} onClick={() => navigate('/signup')}>
+        <div className={styles.joinBtn} onClick={() => navigate("/signin")}>
           <span>Join the waitlist</span>
           <span style={{ marginLeft: 17 }}>→</span>
         </div>
@@ -263,7 +263,7 @@ const Home = () => {
           cycle from open to offer.
         </div>
         <div className={styles.bannerGreenBtn}>
-          <GreenBtn title='Hire Viona Today' />
+          <GreenBtn title="Hire Viona Today" />
         </div>
         <div className={`${styles.talk_1} ${styles.talk}`}>
           Manage roles from open to offer
@@ -279,33 +279,33 @@ const Home = () => {
             and watch as interviews with qualified candidates booked on your
             calendar
           </div>
-          <img className={styles.image} src={block1} alt='block1' />
+          <img className={styles.image} src={block1} alt="block1" />
 
           <div className={styles.cardContainer}>
             <Card
-              title='Expertise'
-              description='Viona was trained by the world’s top recruiters and hiring managers.'
-              color='rgba(31, 172, 106, 1)'
-              backgroundColor='rgba(236, 246, 236, 1)'
+              title="Expertise"
+              description="Viona was trained by the world’s top recruiters and hiring managers."
+              color="rgba(31, 172, 106, 1)"
+              backgroundColor="rgba(236, 246, 236, 1)"
               image={tie}
             />
             <Card
-              title='Independent'
-              description='Viona partners with with recruitment teams or works directly with hiring managers.'
-              color='rgba(49, 101, 203, 1)'
-              backgroundColor='rgba(236, 239, 244, 1)'
+              title="Independent"
+              description="Viona partners with with recruitment teams or works directly with hiring managers."
+              color="rgba(49, 101, 203, 1)"
+              backgroundColor="rgba(236, 239, 244, 1)"
               image={medal}
             />
             <Card
-              title='Always-on'
-              description='Viona works 24/7 to drive recruitment forward by sourcing candidates, scheduling meetings, and following up with stakeholders.'
-              color='rgba(176, 70, 200, 1)'
-              backgroundColor='rgba(250, 239, 248, 1)'
+              title="Always-on"
+              description="Viona works 24/7 to drive recruitment forward by sourcing candidates, scheduling meetings, and following up with stakeholders."
+              color="rgba(176, 70, 200, 1)"
+              backgroundColor="rgba(250, 239, 248, 1)"
               image={calendarCheck}
             />
           </div>
           <div className={styles.block1GreenBtn}>
-            <GreenBtn title='Hire Viona Today' />
+            <GreenBtn title="Hire Viona Today" />
           </div>
         </div>
       </div>
@@ -329,7 +329,7 @@ const Home = () => {
               Viona collects and qualifies job requirements, creating
               professional job descriptions, outreach messages, and more.
             </div>
-            <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
+            <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
           </div>
         </div>
       </div>
@@ -344,7 +344,7 @@ const Home = () => {
             Viona autonomously sources and engages candidates, ensuring they’re
             ready to meet you and book them in on your calendar.
           </div>
-          <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
+          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
         </div>
         <VideoContainer src={sourcing} />
       </div>
@@ -360,7 +360,7 @@ const Home = () => {
             Viona screens hundreds of applications in seconds, ensuring your
             time is only spent on the most promising candidates.
           </div>
-          <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
+          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
         </div>
       </div>
 
@@ -377,7 +377,7 @@ const Home = () => {
             notes and creates comprehensive summaries and reports for all
             stakeholders
           </div>
-          <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
+          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
         </div>
         <VideoContainer src={interview} />
       </div>
@@ -394,7 +394,7 @@ const Home = () => {
             scheduling meetings, providing context and following up with
             relevant parties.
           </div>
-          <GreenBtn title='Hire Viona Today' style={{ marginTop: 64 }} />
+          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
         </div>
       </div>
 
@@ -433,18 +433,18 @@ const Home = () => {
         <div className={styles.cardContainer} style={{ marginTop: 32 }}>
           <BottomCard
             image={bottomCard1}
-            title='Conversational'
-            description='No complex systems—interact with Viona as naturally as you would with a human colleague.'
+            title="Conversational"
+            description="No complex systems—interact with Viona as naturally as you would with a human colleague."
           />
           <BottomCard
             image={bottomCard2}
-            title='Reliable'
-            description='Viona never misses a beat, ensuring every task is completed on time and the process stays on track.'
+            title="Reliable"
+            description="Viona never misses a beat, ensuring every task is completed on time and the process stays on track."
           />
           <BottomCard
             image={bottomCard3}
-            title='Alway-on'
-            description='Viona works 24/7 on autopilot to deliver exceptional recruitment results and candidate experience.'
+            title="Alway-on"
+            description="Viona works 24/7 on autopilot to deliver exceptional recruitment results and candidate experience."
           />
         </div>
       </div>
@@ -456,24 +456,24 @@ const Home = () => {
         </div>
         <div className={styles.cardContainer} style={{ marginTop: 32 }}>
           <PowerCard
-            title='Faster time-to-hire'
+            title="Faster time-to-hire"
             list={[
-              'Instantly available to start work',
-              'Works 24/7 on autopilot',
+              "Instantly available to start work",
+              "Works 24/7 on autopilot",
             ]}
           />
           <PowerCard
-            title='Better candidate experience'
+            title="Better candidate experience"
             list={[
-              'Always available to assist candidates at any time',
-              'Infinitely patient and knowledgeable',
+              "Always available to assist candidates at any time",
+              "Infinitely patient and knowledgeable",
             ]}
           />
           <PowerCard
-            title='A fraction of the cost'
+            title="A fraction of the cost"
             list={[
-              '10X your productivity',
-              'A fraction of the cost of traditional recruitment solutions',
+              "10X your productivity",
+              "A fraction of the cost of traditional recruitment solutions",
             ]}
             noBorder
           />
@@ -482,9 +482,9 @@ const Home = () => {
 
       <div
         style={{
-          backgroundColor: 'rgba(58, 147, 118, 0.79)',
+          backgroundColor: "rgba(58, 147, 118, 0.79)",
           marginTop: 120,
-          padding: '100px 0',
+          padding: "100px 0",
           // backgroundImage: 'url("/hands.png")',
           // backgroundSize: 'contain',
           // backgroundRepeat: 'no-repeat',
@@ -494,13 +494,13 @@ const Home = () => {
         <div className={styles.innerContainer}>
           <div
             className={styles.blockTitle}
-            style={{ color: 'white', fontSize: 32 }}
+            style={{ color: "white", fontSize: 32 }}
           >
             Hey, I am Viona. Ready to experience the future of recruiting with
             me?
           </div>
-          <div style={{ marginTop: 50, textAlign: 'center' }}>
-            <WhiteBtn title='Hire Viona Today' />
+          <div style={{ marginTop: 50, textAlign: "center" }}>
+            <WhiteBtn title="Hire Viona Today" />
           </div>
         </div>
       </div>

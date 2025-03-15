@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./layouts/App";
 import { BrowserRouter, Route, Routes } from "react-router";
 import Home from "./pages/home/index.tsx";
-import Signup from "./pages/signup/index.tsx";
+// import Signup from "./pages/signup/index.tsx";
 import Signin from "./pages/signin/index.tsx";
 import { ConfigProvider } from "antd";
 import Entry from "./pages/entry/index.tsx";
@@ -31,7 +31,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/app/jobs" element={<Jobs />}></Route>
             <Route path="/app/jobs/create" element={<JobsCreate />}></Route>
           </Route>
-          <Route path="/signup" element={<Signup />}></Route>
+          {/* <Route path="/signup" element={<Signup />}></Route> */}
           <Route path="/signin" element={<Signin />}></Route>
         </Routes>
       </BrowserRouter>

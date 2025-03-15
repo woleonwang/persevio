@@ -8,8 +8,10 @@ import { Button } from "antd";
 
 const MENU = [
   {
-    title: "Chat with Viona",
-    path: "/app/entry",
+    // title: "Chat with Viona",
+    // path: "/app/entry",
+    title: "Create Job",
+    path: "/app/jobs/create",
     img: <Entry />,
   },
   {

@@ -18,19 +18,32 @@ type TMessage = {
 
 interface IProps {
   jobId: number;
-  type: "job_requirement" | "candidate";
+  type: "job_chat" | "candidate";
+  jobName?: string;
   sessionId?: string;
 }
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, type = "job_requirement", sessionId } = props;
+  const { jobId, jobName, type = "job_chat", sessionId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [loadingText, setLoadingText] = useState(".");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
+  const originalInputRef = useRef<string>("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isLoading) {
+        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   useEffect(() => {
     fetchMessages();
@@ -41,7 +54,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   }, [messages]);
 
   const apiMapping: Record<IProps["type"], { get: string; send: string }> = {
-    job_requirement: {
+    job_chat: {
       get: `/api/jobs/${jobId}/chat`,
       send: `/api/jobs/${jobId}/chat/send`,
     },
@@ -54,22 +67,27 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     const { code, data } = await Get(apiMapping[type].get);
     if (code === 0) {
-      setMessages(
-        type === "job_requirement"
+      const messageHistory =
+        type === "job_chat"
           ? [
               ...formatMessages(data.context.messages),
               ...formatMessages(data.requirement.messages),
               ...formatMessages(data.jd.messages),
               ...formatMessages(data.interview_plan.messages),
             ]
-          : formatMessages(data.messages)
-      );
+          : formatMessages(data.messages);
+
+      setMessages(messageHistory);
+
+      if (messageHistory.length === 0 && type === "job_chat") {
+        sendMessage(`I want to create a job named ${jobName}`);
+      }
     }
   };
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView();
     }
   };
 
@@ -98,29 +116,34 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const submit = async () => {
     if (!canSubmit()) return;
 
-    setIsLoading(true);
+    stopRecord();
+
     setInputValue("");
+
+    await sendMessage(inputValue);
+  };
+
+  const sendMessage = async (message: string) => {
+    setIsLoading(true);
 
     setMessages([
       ...messages,
       {
         id: "fake_user_id",
         role: "user",
-        content: inputValue,
+        content: message,
         updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
         id: "fake_ai_id",
         role: "ai",
-        content: "...",
+        content: "",
         updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       },
     ]);
 
-    stopRecord();
-
     const { code } = await Post(apiMapping[type].send, {
-      content: inputValue,
+      content: message,
     });
 
     if (code === 0) {
@@ -142,16 +165,24 @@ const ChatRoom: React.FC<IProps> = (props) => {
       //@ts-ignore
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.lang = "en-US";
 
       recognition.onresult = (event: any) => {
         console.log(event);
         let result = "";
+        let isFinal = false;
         for (let i = event.resultIndex; i < event.results.length; i++) {
           result += event.results[i][0].transcript ?? "";
+          if (event.results[i].isFinal) {
+            isFinal = true;
+          }
         }
-        setInputValue((input) => input + result);
+        setInputValue(originalInputRef.current + result);
+        if (isFinal) {
+          console.log("is final: ", originalInputRef.current + result);
+          originalInputRef.current += result;
+        }
       };
       recognition.onend = () => {
         console.log("end");
@@ -164,6 +195,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
 
     setIsRecording(true);
+    originalInputRef.current = inputValue;
     recognitionRef.current?.start();
   };
 
@@ -229,6 +261,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
         <List
           dataSource={messages}
+          split={false}
           renderItem={(item) => (
             <List.Item>
               <List.Item.Meta
@@ -262,7 +295,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 }
                 description={
                   <div className={styles.markdownContainer}>
-                    <Markdown>{item.content}</Markdown>
+                    {item.id === "fake_ai_id" ? (
+                      <p>{loadingText}</p>
+                    ) : (
+                      <Markdown>{item.content}</Markdown>
+                    )}
                   </div>
                 }
               />
@@ -275,7 +312,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <Input.TextArea
           value={inputValue}
           onChange={handleInputChange}
-          placeholder="Enter message"
+          placeholder="Reply to Viona"
           style={{
             width: "100%",
             marginRight: "8px",
