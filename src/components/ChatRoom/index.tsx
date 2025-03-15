@@ -19,12 +19,11 @@ type TMessage = {
 interface IProps {
   jobId: number;
   type: "job_chat" | "candidate";
-  jobName?: string;
   sessionId?: string;
 }
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, jobName, type = "job_chat", sessionId } = props;
+  const { jobId, type = "job_chat", sessionId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
