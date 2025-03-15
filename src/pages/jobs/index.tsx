@@ -66,11 +66,7 @@ const Jobs = () => {
         <div className={styles.jobMain}>
           {selectedJob &&
             (status === "chat" ? (
-              <ChatRoom
-                jobId={selectedJob.id}
-                type="job_chat"
-                jobName={selectedJob?.name}
-              />
+              <ChatRoom jobId={selectedJob.id} type="job_chat" />
             ) : (
               <div style={{ padding: 20, flex: "auto" }}>
                 <Button type="primary" onClick={() => setStatus("chat")}>
