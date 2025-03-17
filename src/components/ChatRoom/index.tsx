@@ -389,6 +389,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
               )}
             </>
           )}
+          {!!job?.jd_doc_id && (
+            <Button
+              shape="round"
+              onClick={async () => {
+                const url = `${window.location.origin}/jobs/${job.id}/show`;
+                await navigator.clipboard.writeText(url);
+                message.success("Copied");
+              }}
+            >
+              Copy Link
+            </Button>
+          )}
         </div>
         <Input.TextArea
           value={inputValue}
