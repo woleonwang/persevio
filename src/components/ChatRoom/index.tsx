@@ -9,6 +9,10 @@ import styles from "./style.module.less";
 import dayjs from "dayjs";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import rehypeRaw from "rehype-raw";
+import Icon from "../Icon";
+import WriteJdIcon from "../../assets/icons/write-jd";
+import WriteInterviewPlanIcon from "../../assets/icons/write-interview-plan";
+import BagIcon from "../../assets/icons/bag";
 
 type TMessage = {
   id: string;
@@ -346,7 +350,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <div style={{ marginBottom: 12, display: "flex", gap: 10 }}>
           {(type === "jobDescription" || type === "jobInterviewPlan") && (
             <Button
-              type="primary"
+              type="default"
+              shape="round"
+              icon={<Icon icon={<BagIcon />} style={{ fontSize: 20 }} />}
               onClick={() => onChangeType?.("jobRequirementDoc")}
             >
               Write Requirement Document
@@ -356,7 +362,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <>
               {type !== "jobDescription" && (
                 <Button
-                  type="primary"
+                  type="default"
+                  shape="round"
+                  icon={
+                    <Icon icon={<WriteJdIcon />} style={{ fontSize: 20 }} />
+                  }
                   onClick={() => onChangeType?.("jobDescription")}
                 >
                   Write Job Description
@@ -364,7 +374,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
               )}
               {type !== "jobInterviewPlan" && (
                 <Button
-                  type="primary"
+                  type="default"
+                  shape="round"
+                  icon={
+                    <Icon
+                      icon={<WriteInterviewPlanIcon />}
+                      style={{ fontSize: 20 }}
+                    />
+                  }
                   onClick={() => onChangeType?.("jobInterviewPlan")}
                 >
                   Write Interview Plan
