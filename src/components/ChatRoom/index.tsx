@@ -178,13 +178,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
       },
     ]);
 
-    const { code } = await Post(apiMapping[type].send, {
+    setIsLoading(true);
+
+    Post(apiMapping[type].send, {
       content: message,
     });
-
-    if (code === 0) {
-      setIsLoading(true);
-    }
   };
 
   const handleInputChange = (e: any) => {
