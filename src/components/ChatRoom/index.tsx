@@ -8,31 +8,37 @@ import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
 import dayjs from "dayjs";
 import { UploadChangeParam, UploadFile } from "antd/es/upload";
+import rehypeRaw from "rehype-raw";
 
 type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
+  messageType?: "normal" | "error";
   updated_at: string;
 };
 
+export type TChatType =
+  | "jobRequirementDoc"
+  | "candidate"
+  | "jobDescription"
+  | "jobInterviewPlan";
+
 interface IProps {
   jobId: number;
-  type:
-    | "jobRequirementDoc"
-    | "candidate"
-    | "jobDescription"
-    | "jobInterviewPlan";
+  type: TChatType;
   sessionId?: string;
+  onChangeType?: (type: TChatType) => void;
 }
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, type = "jobRequirementDoc", sessionId } = props;
+  const { jobId, type = "jobRequirementDoc", sessionId, onChangeType } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  const [job, setJob] = useState<IJob>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
@@ -64,7 +70,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [jobId]);
+  }, [jobId, type]);
 
   useEffect(() => {
     scrollToBottom();
@@ -104,6 +110,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         });
       }
       setMessages(messageHistory);
+      setJob(data.job);
     }
   };
 
@@ -119,6 +126,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       content: {
         content: string;
         role: "user" | "assistant";
+        metadata: {
+          message_type: string;
+          message_sub_type: "error";
+        };
       };
       updated_at: string;
     }[]
@@ -126,8 +137,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return messages.map((m) => ({
       id: m.id,
       role: m.content.role === "assistant" ? "ai" : "user",
-      content: m.content.content,
+      content: m.content.content || `&nbsp;`,
       updated_at: m.updated_at,
+      messageType: m.content.metadata.message_sub_type || "normal",
     }));
   };
 
@@ -316,7 +328,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     {item.id === "fake_ai_id" ? (
                       <p>{loadingText}</p>
                     ) : (
-                      <Markdown>{item.content}</Markdown>
+                      <Markdown rehypePlugins={[rehypeRaw]}>
+                        {item.messageType === "error"
+                          ? "Something wrong with Viona, please retry."
+                          : item.content}
+                      </Markdown>
                     )}
                   </div>
                 }
@@ -327,6 +343,36 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <div ref={messagesEndRef} />
       </div>
       <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>
+        <div style={{ marginBottom: 12, display: "flex", gap: 10 }}>
+          {(type === "jobDescription" || type === "jobInterviewPlan") && (
+            <Button
+              type="primary"
+              onClick={() => onChangeType?.("jobRequirementDoc")}
+            >
+              Write Requirement Document
+            </Button>
+          )}
+          {!!job?.requirement_doc_id && (
+            <>
+              {type !== "jobDescription" && (
+                <Button
+                  type="primary"
+                  onClick={() => onChangeType?.("jobDescription")}
+                >
+                  Write Job Description
+                </Button>
+              )}
+              {type !== "jobInterviewPlan" && (
+                <Button
+                  type="primary"
+                  onClick={() => onChangeType?.("jobInterviewPlan")}
+                >
+                  Write Interview Plan
+                </Button>
+              )}
+            </>
+          )}
+        </div>
         <Input.TextArea
           value={inputValue}
           onChange={handleInputChange}

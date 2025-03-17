@@ -10,9 +10,9 @@ export default () => {
       <path
         d="M5 12H19M19 12L15 16M19 12L15 8"
         stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
