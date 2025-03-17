@@ -18,12 +18,16 @@ type TMessage = {
 
 interface IProps {
   jobId: number;
-  type: "job_chat" | "candidate";
+  type:
+    | "jobRequirementDoc"
+    | "candidate"
+    | "jobDescription"
+    | "jobInterviewPlan";
   sessionId?: string;
 }
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, type = "job_chat", sessionId } = props;
+  const { jobId, type = "jobRequirementDoc", sessionId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,15 +37,29 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
+  const intervalFetchMessageRef = useRef<number>();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (isLoading) {
-        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
-      }
+    const intervalText = setInterval(() => {
+      setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
     }, 500);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(intervalText);
+      clearInterval(intervalFetchMessageRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      intervalFetchMessageRef.current = setInterval(() => {
+        fetchMessages();
+      }, 3000);
+
+      return () => {
+        clearInterval(intervalFetchMessageRef.current);
+      };
+    }
   }, [isLoading]);
 
   useEffect(() => {
@@ -53,9 +71,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
   }, [messages]);
 
   const apiMapping: Record<IProps["type"], { get: string; send: string }> = {
-    job_chat: {
-      get: `/api/jobs/${jobId}/chat`,
-      send: `/api/jobs/${jobId}/chat/send`,
+    jobRequirementDoc: {
+      get: `/api/jobs/${jobId}/requirement_doc_chat`,
+      send: `/api/jobs/${jobId}/requirement_doc_chat/send`,
+    },
+    jobDescription: {
+      get: `/api/jobs/${jobId}/job_description_chat`,
+      send: `/api/jobs/${jobId}/job_description_chat/send`,
+    },
+    jobInterviewPlan: {
+      get: `/api/jobs/${jobId}/interview_plan_chat`,
+      send: `/api/jobs/${jobId}/interview_plan_chat/send`,
     },
     candidate: {
       get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
@@ -67,6 +93,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
     const { code, data } = await Get(apiMapping[type].get);
     if (code === 0) {
       const messageHistory = formatMessages(data.messages);
+      const isLoading = data.is_invoking === 1;
+      setIsLoading(isLoading);
+      if (isLoading) {
+        messageHistory.push({
+          id: "fake_ai_id",
+          role: "ai",
+          content: "",
+          updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        });
+      }
       setMessages(messageHistory);
     }
   };
@@ -110,8 +146,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const sendMessage = async (message: string) => {
-    setIsLoading(true);
-
     setMessages([
       ...messages,
       {
@@ -133,10 +167,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     });
 
     if (code === 0) {
-      fetchMessages();
+      setIsLoading(true);
     }
-
-    setIsLoading(false);
   };
 
   const handleInputChange = (e: any) => {

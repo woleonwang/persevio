@@ -45,7 +45,6 @@ const Jobs = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>Jobs</div>
       <div className={styles.body}>
         <div className={styles.jobList}>
           {jobs.map((job) => (
@@ -66,7 +65,7 @@ const Jobs = () => {
         <div className={styles.jobMain}>
           {selectedJob &&
             (status === "chat" ? (
-              <ChatRoom jobId={selectedJob.id} type="job_chat" />
+              <ChatRoom jobId={selectedJob.id} type="jobRequirementDoc" />
             ) : (
               <div style={{ padding: 20, flex: "auto" }}>
                 <Button type="primary" onClick={() => setStatus("chat")}>
