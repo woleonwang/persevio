@@ -18,7 +18,7 @@ const Entry = () => {
           onClick={() => navigate("/app/jobs/create")}
         >
           <Icon icon={<Bag />} className={styles.prefixIcon} />
-          Create a new job
+          Open a new role
           <Icon icon={<ArrowRight />} className={styles.suffixIcon} />
         </div>
       </div>

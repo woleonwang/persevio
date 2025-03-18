@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, Upload, message } from "antd";
+import { Avatar, List, Input, Button, Upload, message, Modal } from "antd";
 import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import { Get, Post, PostFormData } from "../../utils/request";
@@ -15,13 +15,19 @@ import WriteJdIcon from "../../assets/icons/write-jd";
 import WriteInterviewPlanIcon from "../../assets/icons/write-interview-plan";
 import BagIcon from "../../assets/icons/bag";
 import { TextAreaRef } from "antd/es/input/TextArea";
+import RoleOverviewModal from "./components/RoleOverviewModal";
 
 type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
-  messageType?: "normal" | "error";
   updated_at: string;
+
+  messageType?: "normal" | "error";
+  extraTags?: {
+    name: string;
+    content: string;
+  }[];
 };
 
 export type TChatType =
@@ -45,6 +51,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
   const [job, setJob] = useState<IJob>();
+  const [showRoleOverviewModal, setShowRoleOverviewModal] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
@@ -136,6 +144,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
         metadata: {
           message_type: string;
           message_sub_type: "error";
+          extra_tags: {
+            name: string;
+            content: string;
+          }[];
         };
       };
       updated_at: string;
@@ -147,6 +159,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       content: m.content.content || `&nbsp;`,
       updated_at: m.updated_at,
       messageType: m.content.metadata.message_sub_type || "normal",
+      extraTags: m.content.metadata.extra_tags || [],
     }));
   };
 
@@ -345,6 +358,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           : item.content}
                       </Markdown>
                     )}
+                    {(() => {
+                      const roleOverview = (item.extraTags ?? []).find(
+                        (tag) => tag.name === "request-role-overview"
+                      );
+                      return roleOverview ? (
+                        <div style={{ marginBottom: 16 }}>
+                          <Button
+                            type="primary"
+                            onClick={() => setShowRoleOverviewModal(true)}
+                          >
+                            Share Role Overview
+                          </Button>
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 }
               />
@@ -483,6 +511,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         </div>
       </div>
+
+      <RoleOverviewModal
+        open={showRoleOverviewModal}
+        onClose={() => setShowRoleOverviewModal(false)}
+        onOk={(result) => {
+          const resultStr = result
+            .map((item) => `${item.question}\n${item.answer}`)
+            .join("\n");
+          setInputValue(resultStr);
+          setShowRoleOverviewModal(false);
+        }}
+      />
     </div>
   );
 };

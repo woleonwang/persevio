@@ -23,7 +23,7 @@ const JobCreate = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Create A New Job</div>
+      <div className={styles.title}>Open a new role</div>
       <div className={styles.form}>
         <Form form={form} layout="vertical">
           <Form.Item label="Job Title" name="name" rules={[{ required: true }]}>
