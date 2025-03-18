@@ -10,8 +10,8 @@ const MENU = [
   {
     // title: "Chat with Viona",
     // path: "/app/entry",
-    title: "Create Job",
-    path: "/app/jobs/create",
+    title: "Open a new role",
+    path: "/app/entry/create-job",
     img: <Entry />,
   },
   {
@@ -65,7 +65,7 @@ const AppLayout = () => {
             onClick={() => logout()}
             style={{ width: "100%" }}
           >
-            Logout
+            Log out
           </Button>
         </div>
       </div>

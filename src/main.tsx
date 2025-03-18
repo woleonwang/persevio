@@ -7,7 +7,7 @@ import Home from "./pages/home/index.tsx";
 // import Signup from "./pages/signup/index.tsx";
 import Signin from "./pages/signin/index.tsx";
 import { ConfigProvider } from "antd";
-import Entry from "./pages/entry/index.tsx";
+// import Entry from "./pages/entry/index.tsx";
 import Jobs from "./pages/jobs/index.tsx";
 import JobsCreate from "./pages/jobs-create/index.tsx";
 import JobsShow from "./pages/jobs-show/index.tsx";
@@ -27,9 +27,12 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/jobs/:id/show" element={<JobsShow />}></Route>
           <Route path="/" element={<Home />}></Route>
           <Route path="/app" element={<App />}>
-            <Route path="/app/entry" element={<Entry />}></Route>
+            {/* <Route path="/entry" element={<Entry />}></Route> */}
+            <Route
+              path="/app/entry/create-job"
+              element={<JobsCreate />}
+            ></Route>
             <Route path="/app/jobs" element={<Jobs />}></Route>
-            <Route path="/app/jobs/create" element={<JobsCreate />}></Route>
           </Route>
           {/* <Route path="/signup" element={<Signup />}></Route> */}
           <Route path="/signin" element={<Signin />}></Route>

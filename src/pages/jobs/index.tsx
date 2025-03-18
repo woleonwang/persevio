@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Get } from "../../utils/request";
 import ChatRoom, { TChatType } from "../../components/ChatRoom";
 import styles from "./style.module.less";
-import { ProfileOutlined } from "@ant-design/icons";
+// import { ProfileOutlined } from "@ant-design/icons";
 import Profile from "./components/Profile";
 import { Button } from "antd";
 import { useSearchParams } from "react-router";
@@ -60,9 +60,9 @@ const Jobs = () => {
               }`}
             >
               <div>{job.name}</div>
-              <div onClick={() => setStatus("profile")}>
+              {/* <div onClick={() => setStatus("profile")}>
                 <ProfileOutlined />
-              </div>
+              </div> */}
             </div>
           ))}
         </div>

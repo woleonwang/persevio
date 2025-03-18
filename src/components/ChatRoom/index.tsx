@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Avatar, List, Input, Button, Upload, message } from "antd";
 import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
+import classnames from "classnames";
 import { Get, Post, PostFormData } from "../../utils/request";
 import Markdown from "react-markdown";
 import VionaAvatar from "../../assets/viona-avatar.png";
@@ -13,6 +14,7 @@ import Icon from "../Icon";
 import WriteJdIcon from "../../assets/icons/write-jd";
 import WriteInterviewPlanIcon from "../../assets/icons/write-interview-plan";
 import BagIcon from "../../assets/icons/bag";
+import { TextAreaRef } from "antd/es/input/TextArea";
 
 type TMessage = {
   id: string;
@@ -48,6 +50,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
   const intervalFetchMessageRef = useRef<number>();
+  const textInstanceRef = useRef<TextAreaRef | null>();
 
   useEffect(() => {
     const intervalText = setInterval(() => {
@@ -148,7 +151,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const canSubmit = () => {
-    return inputValue && !isLoading && !isCompositingRef.current;
+    return inputValue?.trim() && !isLoading && !isCompositingRef.current;
   };
 
   const submit = async () => {
@@ -158,7 +161,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     setInputValue("");
 
-    await sendMessage(inputValue);
+    await sendMessage(inputValue.trim());
   };
 
   const sendMessage = async (message: string) => {
@@ -229,6 +232,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsRecording(true);
     originalInputRef.current = inputValue;
     recognitionRef.current?.start();
+    textInstanceRef.current?.focus();
   };
 
   const stopRecord = () => {
@@ -326,7 +330,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   </div>
                 }
                 description={
-                  <div className={styles.markdownContainer}>
+                  <div
+                    className={classnames(
+                      styles.markdownContainer,
+                      item.role === "user" ? styles.user : ""
+                    )}
+                  >
                     {item.id === "fake_ai_id" ? (
                       <p>{loadingText}</p>
                     ) : (
@@ -401,6 +410,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           )}
         </div>
         <Input.TextArea
+          ref={(element) => (textInstanceRef.current = element)}
           value={inputValue}
           onChange={handleInputChange}
           placeholder="Reply to Viona"
@@ -416,10 +426,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
             isCompositingRef.current = false;
           }}
           onPressEnter={(e) => {
-            e.preventDefault();
-            submit();
+            if (!e.shiftKey) {
+              e.preventDefault();
+              submit();
+            }
           }}
-          rows={4}
+          autoSize={{
+            minRows: 1,
+            maxRows: 16,
+          }}
         />
         <div
           style={{
