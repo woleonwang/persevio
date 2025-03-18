@@ -38,7 +38,7 @@ const SignIn: React.FC = () => {
       if (code === 0 && data) {
         message.success("Sign in succeed");
         localStorage.setItem("token", data.token);
-        navigate("/app/entry");
+        navigate("/app/entry/create-job");
       } else {
         message.error("Username or password is incorrect");
       }

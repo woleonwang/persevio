@@ -45,7 +45,7 @@ const Signup: React.FC = () => {
         if (code === 0 && data) {
           message.success("Sign up succeed");
           localStorage.setItem("token", data.token);
-          navigate("/app/entry");
+          navigate("/app/entry/create-job");
         }
       } else {
         message.error("Sign up failed");
