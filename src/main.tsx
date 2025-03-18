@@ -3,14 +3,15 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./layouts/App";
 import { BrowserRouter, Route, Routes } from "react-router";
-import Home from "./pages/home/index.tsx";
+import Home from "./pages/home";
 // import Signup from "./pages/signup/index.tsx";
-import Signin from "./pages/signin/index.tsx";
+import Signin from "./pages/signin";
 import { ConfigProvider } from "antd";
 // import Entry from "./pages/entry/index.tsx";
-import Jobs from "./pages/jobs/index.tsx";
-import JobsCreate from "./pages/jobs-create/index.tsx";
-import JobsShow from "./pages/jobs-show/index.tsx";
+import Jobs from "./pages/jobs";
+import JobsCreate from "./pages/jobs-create";
+import JobsShow from "./pages/jobs-show";
+import CompanyKnowledge from "./pages/company";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -33,6 +34,7 @@ createRoot(document.getElementById("root")!).render(
               element={<JobsCreate />}
             ></Route>
             <Route path="/app/jobs" element={<Jobs />}></Route>
+            <Route path="/app/company" element={<CompanyKnowledge />}></Route>
           </Route>
           {/* <Route path="/signup" element={<Signup />}></Route> */}
           <Route path="/signin" element={<Signin />}></Route>

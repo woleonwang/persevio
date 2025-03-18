@@ -1,5 +1,9 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
-import { LeftCircleFilled, RightCircleFilled } from "@ant-design/icons";
+import {
+  LeftCircleFilled,
+  RightCircleFilled,
+  FileDoneOutlined,
+} from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import Job from "../../assets/icons/job";
@@ -21,6 +25,11 @@ const MENU = [
     title: "Jobs",
     path: "/app/jobs",
     img: <Job />,
+  },
+  {
+    title: "Company Info",
+    path: "/app/company",
+    img: <FileDoneOutlined />,
   },
 ];
 
