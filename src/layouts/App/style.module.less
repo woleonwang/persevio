@@ -13,6 +13,32 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: width 0.3s;
+
+  &.collapse {
+    width: 60px;
+    padding: 28px 0;
+
+    .menuItemWrapper {
+      margin-top: 60px;
+    }
+
+    .menuItem {
+      justify-content: center;
+    }
+
+    .collapseIcon {
+      right: 10px;
+    }
+  }
+}
+
+.collapseIcon {
+  position: absolute;
+  right: -35px;
+  font-size: 36px;
+  color: #1fac6a;
+  cursor: pointer;
 }
 
 .menuItemWrapper {

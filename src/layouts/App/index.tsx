@@ -1,10 +1,13 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
+import { LeftCircleFilled, RightCircleFilled } from "@ant-design/icons";
+import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import Job from "../../assets/icons/job";
 import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { Button } from "antd";
+import { useState } from "react";
 
 const MENU = [
   {
@@ -25,6 +28,8 @@ const AppLayout = () => {
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
 
+  const [collapse, setCollapse] = useState(false);
+
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/signin");
@@ -32,43 +37,80 @@ const AppLayout = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.menu}>
-        <div>
-          <img src={logo} style={{ width: "100%" }} />
-          <div className={styles.menuItemWrapper}>
-            {MENU.map((item) => {
-              const isActive = currentPath.startsWith(item.path);
-              return (
-                <div
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon
-                    icon={item.img}
-                    style={{
-                      fontSize: 20,
-                      color: isActive ? "#1FAC6A" : "#949DAC",
-                    }}
-                  />
-                  <span style={{ marginLeft: 16 }}>{item.title}</span>
-                </div>
-              );
-            })}
+      {collapse ? (
+        <div className={classnames(styles.menu, styles.collapse)}>
+          <div style={{ position: "relative" }}>
+            <RightCircleFilled
+              className={styles.collapseIcon}
+              onClick={() => setCollapse(false)}
+            />
+            <div className={styles.menuItemWrapper}>
+              {MENU.map((item) => {
+                const isActive = currentPath.startsWith(item.path);
+                return (
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon
+                      icon={item.img}
+                      style={{
+                        fontSize: 20,
+                        color: isActive ? "#1FAC6A" : "#949DAC",
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-        <div>
-          <Button
-            type="primary"
-            onClick={() => logout()}
-            style={{ width: "100%" }}
-          >
-            Log out
-          </Button>
+      ) : (
+        <div className={styles.menu}>
+          <div style={{ position: "relative" }}>
+            <LeftCircleFilled
+              className={styles.collapseIcon}
+              onClick={() => setCollapse(true)}
+            />
+            <img src={logo} style={{ width: "80%" }} />
+            <div className={styles.menuItemWrapper}>
+              {MENU.map((item) => {
+                const isActive = currentPath.startsWith(item.path);
+                return (
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon
+                      icon={item.img}
+                      style={{
+                        fontSize: 20,
+                        color: isActive ? "#1FAC6A" : "#949DAC",
+                      }}
+                    />
+                    <span style={{ marginLeft: 16 }}>{item.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <Button
+              type="primary"
+              onClick={() => logout()}
+              style={{ width: "100%" }}
+            >
+              Log out
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
       <div className={styles.main}>
         <Outlet />
       </div>
