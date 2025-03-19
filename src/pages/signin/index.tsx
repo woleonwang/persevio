@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Input, Button, message } from "antd";
 import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
 
 interface SigninFormValues {
@@ -78,12 +78,12 @@ const SignIn: React.FC = () => {
           </Button>
         </Form.Item>
 
-        {/* <div>
+        <div>
           Don't have an account yet?
-          <Link to="/signup" style={{ marginLeft: 8, color: "#1FAC6A" }}>
-            Sign Up
+          <Link to="/apply" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+            Join the waitlist
           </Link>
-        </div> */}
+        </div>
       </Form>
     </SignContainer>
   );

@@ -72,7 +72,7 @@ const JobsShow = () => {
                 <div className={styles.jobName}>{job.name}</div>
                 <div className={styles.companyName}>
                   {" "}
-                  Jobs at {company.name}
+                  Job at {company.name}
                 </div>
               </div>
               <div className={styles.markdownContainer}>

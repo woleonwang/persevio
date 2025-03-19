@@ -242,7 +242,7 @@ const Home = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <img src={logo} style={{ width: 220 }} />
-        <div className={styles.joinBtn} onClick={() => navigate("/signin")}>
+        <div className={styles.joinBtn} onClick={() => navigate("/apply")}>
           <span>Join the waitlist</span>
           <span style={{ marginLeft: 17 }}>→</span>
         </div>
@@ -263,7 +263,10 @@ const Home = () => {
           cycle from open to offer.
         </div>
         <div className={styles.bannerGreenBtn}>
-          <GreenBtn title="Hire Viona Today" />
+          <GreenBtn
+            title="Hire Viona Today"
+            onClick={() => navigate("/apply")}
+          />
         </div>
         <div className={`${styles.talk_1} ${styles.talk}`}>
           Manage roles from open to offer
@@ -305,7 +308,10 @@ const Home = () => {
             />
           </div>
           <div className={styles.block1GreenBtn}>
-            <GreenBtn title="Hire Viona Today" />
+            <GreenBtn
+              title="Hire Viona Today"
+              onClick={() => navigate("/apply")}
+            />
           </div>
         </div>
       </div>
@@ -329,7 +335,11 @@ const Home = () => {
               Viona collects and qualifies job requirements, creating
               professional job descriptions, outreach messages, and more.
             </div>
-            <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
+            <GreenBtn
+              title="Hire Viona Today"
+              style={{ marginTop: 64 }}
+              onClick={() => navigate("/apply")}
+            />
           </div>
         </div>
       </div>
@@ -344,7 +354,11 @@ const Home = () => {
             Viona autonomously sources and engages candidates, ensuring they’re
             ready to meet you and book them in on your calendar.
           </div>
-          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
+          <GreenBtn
+            title="Hire Viona Today"
+            style={{ marginTop: 64 }}
+            onClick={() => navigate("/apply")}
+          />
         </div>
         <VideoContainer src={sourcing} />
       </div>
@@ -360,7 +374,11 @@ const Home = () => {
             Viona screens hundreds of applications in seconds, ensuring your
             time is only spent on the most promising candidates.
           </div>
-          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
+          <GreenBtn
+            title="Hire Viona Today"
+            style={{ marginTop: 64 }}
+            onClick={() => navigate("/apply")}
+          />
         </div>
       </div>
 
@@ -377,7 +395,11 @@ const Home = () => {
             notes and creates comprehensive summaries and reports for all
             stakeholders
           </div>
-          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
+          <GreenBtn
+            title="Hire Viona Today"
+            style={{ marginTop: 64 }}
+            onClick={() => navigate("/apply")}
+          />
         </div>
         <VideoContainer src={interview} />
       </div>
@@ -394,7 +416,11 @@ const Home = () => {
             scheduling meetings, providing context and following up with
             relevant parties.
           </div>
-          <GreenBtn title="Hire Viona Today" style={{ marginTop: 64 }} />
+          <GreenBtn
+            title="Hire Viona Today"
+            style={{ marginTop: 64 }}
+            onClick={() => navigate("/apply")}
+          />
         </div>
       </div>
 
@@ -500,7 +526,10 @@ const Home = () => {
             me?
           </div>
           <div style={{ marginTop: 50, textAlign: "center" }}>
-            <WhiteBtn title="Hire Viona Today" />
+            <WhiteBtn
+              title="Hire Viona Today"
+              onClick={() => navigate("/apply")}
+            />
           </div>
         </div>
       </div>

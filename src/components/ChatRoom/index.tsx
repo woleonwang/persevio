@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Avatar, List, Input, Button, Upload, message } from "antd";
-import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
+import {
+  AudioMutedOutlined,
+  AudioOutlined,
+  CopyOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import classnames from "classnames";
 import { Get, Post, PostFormData } from "../../utils/request";
 import Markdown from "react-markdown";
@@ -40,11 +45,18 @@ interface IProps {
   jobId: number;
   type: TChatType;
   sessionId?: string;
+  allowEditMessage?: boolean;
   onChangeType?: (type: TChatType) => void;
 }
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, type = "jobRequirementDoc", sessionId, onChangeType } = props;
+  const {
+    jobId,
+    type = "jobRequirementDoc",
+    sessionId,
+    allowEditMessage = true,
+    onChangeType,
+  } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +64,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [loadingText, setLoadingText] = useState(".");
   const [job, setJob] = useState<IJob>();
   const [showRoleOverviewModal, setShowRoleOverviewModal] = useState(false);
+  const [editMessageMap, setEditMessageMap] = useState<
+    Record<string, { enabled: boolean; content: string }>
+  >({});
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -137,7 +152,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const formatMessages = (
     messages: {
-      id: string;
+      id: number;
       content: {
         content: string;
         role: "user" | "assistant";
@@ -154,7 +169,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }[]
   ): TMessage[] => {
     return messages.map((m) => ({
-      id: m.id,
+      id: m.id.toString(),
       role: m.content.role === "assistant" ? "ai" : "user",
       content: m.content.content || `&nbsp;`,
       updated_at: m.updated_at,
@@ -305,6 +320,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const copy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+  };
+
+  const cancelMessageEdit = (id: string) => {
+    setEditMessageMap((current) => {
+      const newValue = { ...current };
+      delete newValue[id];
+      return newValue;
+    });
+  };
+
   return (
     <div className={styles.container}>
       <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
@@ -346,11 +373,45 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <div
                     className={classnames(
                       styles.markdownContainer,
-                      item.role === "user" ? styles.user : ""
+                      item.role === "user" ? styles.user : "",
+                      {
+                        [styles.editing]: editMessageMap[item.id]?.enabled,
+                      }
                     )}
                   >
                     {item.id === "fake_ai_id" ? (
                       <p>{loadingText}</p>
+                    ) : editMessageMap[item.id]?.enabled ? (
+                      <div className={styles.editingContainer}>
+                        <Input.TextArea
+                          autoSize={{ minRows: 4, maxRows: 16 }}
+                          value={editMessageMap[item.id]?.content}
+                          onChange={(e) =>
+                            setEditMessageMap((current) => ({
+                              ...current,
+                              [item.id]: {
+                                ...current[item.id],
+                                content: e.currentTarget.value,
+                              },
+                            }))
+                          }
+                        />
+                        <div className={styles.editingButton}>
+                          <Button onClick={() => cancelMessageEdit(item.id)}>
+                            Cancel
+                          </Button>
+                          <Button
+                            type="primary"
+                            style={{ marginLeft: 8 }}
+                            onClick={() => {
+                              sendMessage(editMessageMap[item.id].content);
+                              cancelMessageEdit(item.id);
+                            }}
+                          >
+                            Send
+                          </Button>
+                        </div>
+                      </div>
                     ) : (
                       <Markdown rehypePlugins={[rehypeRaw]}>
                         {item.messageType === "error"
@@ -358,7 +419,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           : item.content}
                       </Markdown>
                     )}
+
                     {(() => {
+                      // 附加按钮
                       const roleOverview = (item.extraTags ?? []).find(
                         (tag) => tag.name === "request-role-overview"
                       );
@@ -370,6 +433,37 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           >
                             Share Role Overview
                           </Button>
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {(() => {
+                      // 操作区
+                      return allowEditMessage && item.role === "ai" ? (
+                        <div className={styles.operationArea}>
+                          <Button.Group>
+                            <Button
+                              shape="round"
+                              onClick={() =>
+                                setEditMessageMap((current) => ({
+                                  ...current,
+                                  [item.id]: {
+                                    enabled: true,
+                                    content: item.content,
+                                  },
+                                }))
+                              }
+                              icon={<EditOutlined />}
+                            />
+                            <Button
+                              shape="round"
+                              onClick={async () => {
+                                await copy(item.content);
+                                message.success("Copied");
+                              }}
+                              icon={<CopyOutlined />}
+                            />
+                          </Button.Group>
                         </div>
                       ) : null;
                     })()}
@@ -429,7 +523,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               shape="round"
               onClick={async () => {
                 const url = `${window.location.origin}/jobs/${job.id}/show`;
-                await navigator.clipboard.writeText(url);
+                await copy(url);
                 message.success("Copied");
               }}
             >
