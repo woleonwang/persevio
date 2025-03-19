@@ -73,6 +73,7 @@ const Jobs = () => {
                 jobId={selectedJob.id}
                 type={chatType}
                 onChangeType={(type: TChatType) => setChatType(type)}
+                allowEditMessage
               />
             ) : (
               <div style={{ padding: 20, flex: "auto" }}>

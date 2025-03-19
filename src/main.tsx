@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/jobs/:id/show" element={<JobsShow />}></Route>
+          <Route path="/jobs/:id/chat" element={<JobsShow />}></Route>
           <Route path="/" element={<Home />}></Route>
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}

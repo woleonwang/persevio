@@ -5,22 +5,27 @@ import {
   AudioOutlined,
   CopyOutlined,
   EditOutlined,
+  RightCircleOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
-import { Get, Post, PostFormData } from "../../utils/request";
 import Markdown from "react-markdown";
-import VionaAvatar from "../../assets/viona-avatar.png";
-import UserAvatar from "../../assets/user-avatar.png";
-import styles from "./style.module.less";
 import dayjs from "dayjs";
-import { UploadChangeParam, UploadFile } from "antd/es/upload";
 import rehypeRaw from "rehype-raw";
+
+import type { TextAreaRef } from "antd/es/input/TextArea";
+import type { UploadChangeParam, UploadFile } from "antd/es/upload";
+
+import { Get, Post, PostFormData } from "../../utils/request";
 import Icon from "../Icon";
 import WriteJdIcon from "../../assets/icons/write-jd";
 import WriteInterviewPlanIcon from "../../assets/icons/write-interview-plan";
 import BagIcon from "../../assets/icons/bag";
-import { TextAreaRef } from "antd/es/input/TextArea";
 import RoleOverviewModal from "./components/RoleOverviewModal";
+
+import LogoVertical from "../../assets/logo-vertical.png";
+import VionaAvatar from "../../assets/viona-avatar.png";
+import UserAvatar from "../../assets/user-avatar.png";
+import styles from "./style.module.less";
 
 type TMessage = {
   id: string;
@@ -49,12 +54,19 @@ interface IProps {
   onChangeType?: (type: TChatType) => void;
 }
 
+const PreDefinedMessages = [
+  "Give me a brief intro about the company",
+  "Which team will this role join?",
+  "Who will this role report to?",
+  "How many annual leave will this role have?",
+];
+
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
     jobId,
     type = "jobRequirementDoc",
     sessionId,
-    allowEditMessage = true,
+    allowEditMessage = false,
     onChangeType,
   } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -334,148 +346,176 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
-        <List
-          dataSource={messages}
-          split={false}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    icon={
-                      item.role === "user" ? (
-                        <img src={UserAvatar} />
-                      ) : (
-                        <img src={VionaAvatar} />
-                      )
-                    }
-                  />
-                }
-                title={
-                  <div>
-                    <span style={{ fontSize: 18 }}>
-                      {item.role === "user" ? "You" : "Viona"}
-                    </span>
-                    <span
+      <div className={styles.listArea}>
+        {type === "candidate" && messages.length === 0 ? (
+          <div className={styles.emptyContainer}>
+            <div className={styles.logo}>
+              <img src={LogoVertical} style={{ width: 200 }} />
+            </div>
+            <div className={styles.messageCardContainer}>
+              {PreDefinedMessages.map((message) => {
+                return (
+                  <div className={styles.messageCard}>
+                    <div>{message}</div>
+                    <RightCircleOutlined
                       style={{
-                        color: "#999999",
-                        marginLeft: 8,
-                        fontSize: 14,
-                        fontWeight: "normal",
+                        marginTop: 16,
+                        fontSize: 30,
+                        color: "#1FAC6A",
+                        cursor: "pointer",
                       }}
-                    >
-                      {dayjs(item.updated_at).format("HH:mm")}
-                    </span>
+                      onClick={() => {
+                        sendMessage(message);
+                      }}
+                    />
                   </div>
-                }
-                description={
-                  <div
-                    className={classnames(
-                      styles.markdownContainer,
-                      item.role === "user" ? styles.user : "",
-                      {
-                        [styles.editing]: editMessageMap[item.id]?.enabled,
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <List
+            dataSource={messages}
+            split={false}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      icon={
+                        item.role === "user" ? (
+                          <img src={UserAvatar} />
+                        ) : (
+                          <img src={VionaAvatar} />
+                        )
                       }
-                    )}
-                  >
-                    {item.id === "fake_ai_id" ? (
-                      <p>{loadingText}</p>
-                    ) : editMessageMap[item.id]?.enabled ? (
-                      <div className={styles.editingContainer}>
-                        <Input.TextArea
-                          autoSize={{ minRows: 4, maxRows: 16 }}
-                          value={editMessageMap[item.id]?.content}
-                          onChange={(e) =>
-                            setEditMessageMap((current) => ({
-                              ...current,
-                              [item.id]: {
-                                ...current[item.id],
-                                content: e.currentTarget.value,
-                              },
-                            }))
-                          }
-                        />
-                        <div className={styles.editingButton}>
-                          <Button onClick={() => cancelMessageEdit(item.id)}>
-                            Cancel
-                          </Button>
-                          <Button
-                            type="primary"
-                            style={{ marginLeft: 8 }}
-                            onClick={() => {
-                              sendMessage(editMessageMap[item.id].content);
-                              cancelMessageEdit(item.id);
-                            }}
-                          >
-                            Send
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <Markdown rehypePlugins={[rehypeRaw]}>
-                        {item.messageType === "error"
-                          ? "Something wrong with Viona, please retry."
-                          : item.content}
-                      </Markdown>
-                    )}
-
-                    {(() => {
-                      // 附加按钮
-                      const roleOverview = (item.extraTags ?? []).find(
-                        (tag) => tag.name === "request-role-overview"
-                      );
-                      return roleOverview ? (
-                        <div style={{ marginBottom: 16 }}>
-                          <Button
-                            type="primary"
-                            onClick={() => setShowRoleOverviewModal(true)}
-                          >
-                            Share Role Overview
-                          </Button>
-                        </div>
-                      ) : null;
-                    })()}
-
-                    {(() => {
-                      // 操作区
-                      return allowEditMessage && item.role === "ai" ? (
-                        <div className={styles.operationArea}>
-                          <Button.Group>
+                    />
+                  }
+                  title={
+                    <div>
+                      <span style={{ fontSize: 18 }}>
+                        {item.role === "user" ? "You" : "Viona"}
+                      </span>
+                      <span
+                        style={{
+                          color: "#999999",
+                          marginLeft: 8,
+                          fontSize: 14,
+                          fontWeight: "normal",
+                        }}
+                      >
+                        {dayjs(item.updated_at).format("HH:mm")}
+                      </span>
+                    </div>
+                  }
+                  description={
+                    <div
+                      className={classnames(
+                        styles.markdownContainer,
+                        item.role === "user" ? styles.user : "",
+                        {
+                          [styles.editing]: editMessageMap[item.id]?.enabled,
+                        }
+                      )}
+                    >
+                      {item.id === "fake_ai_id" ? (
+                        <p>{loadingText}</p>
+                      ) : editMessageMap[item.id]?.enabled ? (
+                        <div className={styles.editingContainer}>
+                          <Input.TextArea
+                            autoSize={{ minRows: 4, maxRows: 16 }}
+                            value={editMessageMap[item.id]?.content}
+                            onChange={(e) =>
+                              setEditMessageMap((current) => ({
+                                ...current,
+                                [item.id]: {
+                                  ...current[item.id],
+                                  content: e.currentTarget.value,
+                                },
+                              }))
+                            }
+                          />
+                          <div className={styles.editingButton}>
+                            <Button onClick={() => cancelMessageEdit(item.id)}>
+                              Cancel
+                            </Button>
                             <Button
-                              shape="round"
-                              onClick={() =>
-                                setEditMessageMap((current) => ({
-                                  ...current,
-                                  [item.id]: {
-                                    enabled: true,
-                                    content: item.content,
-                                  },
-                                }))
-                              }
-                              icon={<EditOutlined />}
-                            />
-                            <Button
-                              shape="round"
-                              onClick={async () => {
-                                await copy(item.content);
-                                message.success("Copied");
+                              type="primary"
+                              style={{ marginLeft: 8 }}
+                              onClick={() => {
+                                sendMessage(editMessageMap[item.id].content);
+                                cancelMessageEdit(item.id);
                               }}
-                              icon={<CopyOutlined />}
-                            />
-                          </Button.Group>
+                            >
+                              Send
+                            </Button>
+                          </div>
                         </div>
-                      ) : null;
-                    })()}
-                  </div>
-                }
-              />
-            </List.Item>
-          )}
-        />
+                      ) : (
+                        <Markdown rehypePlugins={[rehypeRaw]}>
+                          {item.messageType === "error"
+                            ? "Something wrong with Viona, please retry."
+                            : item.content}
+                        </Markdown>
+                      )}
+
+                      {(() => {
+                        // 附加按钮
+                        const roleOverview = (item.extraTags ?? []).find(
+                          (tag) => tag.name === "request-role-overview"
+                        );
+                        return roleOverview ? (
+                          <div style={{ marginBottom: 16 }}>
+                            <Button
+                              type="primary"
+                              onClick={() => setShowRoleOverviewModal(true)}
+                            >
+                              Share Role Overview
+                            </Button>
+                          </div>
+                        ) : null;
+                      })()}
+
+                      {(() => {
+                        // 操作区
+                        return allowEditMessage && item.role === "ai" ? (
+                          <div className={styles.operationArea}>
+                            <Button.Group>
+                              <Button
+                                shape="round"
+                                onClick={() =>
+                                  setEditMessageMap((current) => ({
+                                    ...current,
+                                    [item.id]: {
+                                      enabled: true,
+                                      content: item.content,
+                                    },
+                                  }))
+                                }
+                                icon={<EditOutlined />}
+                              />
+                              <Button
+                                shape="round"
+                                onClick={async () => {
+                                  await copy(item.content);
+                                  message.success("Copied");
+                                }}
+                                icon={<CopyOutlined />}
+                              />
+                            </Button.Group>
+                          </div>
+                        ) : null;
+                      })()}
+                    </div>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        )}
         <div ref={messagesEndRef} />
       </div>
-      <div style={{ padding: "16px", borderTop: "1px solid #f0f0f0" }}>
+      <div className={styles.inputArea}>
         <div style={{ marginBottom: 12, display: "flex", gap: 10 }}>
           {(type === "jobDescription" || type === "jobInterviewPlan") && (
             <Button
@@ -522,7 +562,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <Button
               shape="round"
               onClick={async () => {
-                const url = `${window.location.origin}/jobs/${job.id}/show`;
+                const url = `${window.location.origin}/jobs/${job.id}/chat`;
                 await copy(url);
                 message.success("Copied");
               }}
@@ -535,7 +575,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
           ref={(element) => (textInstanceRef.current = element)}
           value={inputValue}
           onChange={handleInputChange}
-          placeholder="Reply to Viona"
+          placeholder={
+            allowEditMessage
+              ? "Reply to Viona or edit Viona's message directly"
+              : "Reply to Viona"
+          }
           style={{
             width: "100%",
             marginRight: "8px",
