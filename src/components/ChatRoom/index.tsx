@@ -181,14 +181,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }[]
   ): TMessage[] => {
     return messages
-      .map((m) => ({
-        id: m.id.toString(),
-        role: m.content.role === "assistant" ? "ai" : "user",
-        content: m.content.content,
-        updated_at: m.updated_at,
-        messageType: m.content.metadata.message_sub_type || "normal",
-        extraTags: m.content.metadata.extra_tags || [],
-      }))
+      .map(
+        (m): TMessage => ({
+          id: m.id.toString(),
+          role: m.content.role === "assistant" ? "ai" : "user",
+          content: m.content.content,
+          updated_at: m.updated_at,
+          messageType: m.content.metadata.message_sub_type || "normal",
+          extraTags: m.content.metadata.extra_tags || [],
+        })
+      )
       .filter((item) => item.content);
   };
 
