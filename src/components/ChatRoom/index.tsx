@@ -180,14 +180,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
       updated_at: string;
     }[]
   ): TMessage[] => {
-    return messages.map((m) => ({
-      id: m.id.toString(),
-      role: m.content.role === "assistant" ? "ai" : "user",
-      content: m.content.content || `&nbsp;`,
-      updated_at: m.updated_at,
-      messageType: m.content.metadata.message_sub_type || "normal",
-      extraTags: m.content.metadata.extra_tags || [],
-    }));
+    return messages
+      .map((m) => ({
+        id: m.id.toString(),
+        role: m.content.role === "assistant" ? "ai" : "user",
+        content: m.content.content,
+        updated_at: m.updated_at,
+        messageType: m.content.metadata.message_sub_type || "normal",
+        extraTags: m.content.metadata.extra_tags || [],
+      }))
+      .filter((item) => item.content);
   };
 
   const canSubmit = () => {
@@ -484,7 +486,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
                       {(() => {
                         // 操作区
-                        return allowEditMessage && item.role === "ai" ? (
+                        return allowEditMessage &&
+                          item.role === "ai" &&
+                          item.id !== "fake_ai_id" &&
+                          !editMessageMap[item.id]?.enabled ? (
                           <div className={styles.operationArea}>
                             <Button.Group>
                               <Button
