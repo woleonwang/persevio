@@ -394,7 +394,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   title={
                     <div>
                       <span style={{ fontSize: 18 }}>
-                        {item.role === "user" ? "You" : "Viona"}
+                        {item.role === "user"
+                          ? "You"
+                          : `Viona${
+                              type === "candidate"
+                                ? ", your application agent"
+                                : ""
+                            }`}
                       </span>
                       <span
                         style={{

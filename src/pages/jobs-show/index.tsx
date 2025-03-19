@@ -70,10 +70,7 @@ const JobsShow = () => {
             <div className={styles.left}>
               <div className={styles.basicInfo}>
                 <div className={styles.jobName}>{job.name}</div>
-                <div className={styles.companyName}>
-                  {" "}
-                  Job at {company.name}
-                </div>
+                <div className={styles.companyName}> Job at {company.name}</div>
               </div>
               <div className={styles.markdownContainer}>
                 <Markdown>{job.job_description}</Markdown>
@@ -94,6 +91,7 @@ const JobsShow = () => {
               />
             </div>
           </div>
+          <div className={styles.footer}>Powered by Persevio.</div>
         </div>
       )}
     </Spin>
