@@ -47,15 +47,7 @@ const RoleOverviewFormQuestionsGroups: {
       {
         key: "seniority",
         question: "What is the <b>seniority</b> of this role?",
-        hint: `- **Internship/Trainee/Entry Level** - No prior experience required; primary focus is on learning and skill development. Training and close guidance are provided to build foundational knowledge and competencies.
-    
-    - **Junior** - Some relevant experience required; contributes to tasks under supervision but isn’t responsible for leading major projects or objectives. Works closely with senior team members who oversee key business goals.
-    
-    - **Senior** - Capable of independently managing certain tasks or projects; provides guidance and mentorship to junior team members and may lead small teams. Plays a role in achieving departmental objectives.
-    
-    - **Director/Head of Department** - Oversees critical business functions and manages larger teams. Responsible for aligning team performance with broader company goals, driving strategic initiatives within their area of responsibility.
-    
-    - **Senior Executive** - Sets the overall strategic direction for the company, accountable for company-wide objectives and profit and loss (P&L). Leads major business decisions and ensures alignment across all departments.`,
+        hint: `- **Internship/Trainee/Entry Level** - No prior experience required; primary focus is on learning and skill development. Training and close guidance are provided to build foundational knowledge and competencies.\n\n- **Junior** - Some relevant experience required; contributes to tasks under supervision but isn’t responsible for leading major projects or objectives. Works closely with senior team members who oversee key business goals.\n\n- **Senior** - Capable of independently managing certain tasks or projects; provides guidance and mentorship to junior team members and may lead small teams. Plays a role in achieving departmental objectives.\n\n- **Director/Head of Department** - Oversees critical business functions and manages larger teams. Responsible for aligning team performance with broader company goals, driving strategic initiatives within their area of responsibility.\n\n- **Senior Executive** - Sets the overall strategic direction for the company, accountable for company-wide objectives and profit and loss (P&L). Leads major business decisions and ensures alignment across all departments.`,
       },
     ],
   },
