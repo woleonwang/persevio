@@ -13,6 +13,7 @@ import JobsCreate from "./pages/jobs-create";
 import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
+import Settings from "./pages/settings";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -36,6 +37,7 @@ createRoot(document.getElementById("root")!).render(
             ></Route>
             <Route path="/app/jobs" element={<Jobs />}></Route>
             <Route path="/app/company" element={<CompanyKnowledge />}></Route>
+            <Route path="/app/settings" element={<Settings />}></Route>
           </Route>
           {/* <Route path="/signup" element={<Signup />}></Route> */}
           <Route path="/signin" element={<Signin />}></Route>

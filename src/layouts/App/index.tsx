@@ -3,6 +3,7 @@ import {
   LeftCircleFilled,
   RightCircleFilled,
   FileDoneOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
@@ -30,6 +31,11 @@ const MENU = [
     title: "Company Info",
     path: "/app/company",
     img: <FileDoneOutlined />,
+  },
+  {
+    title: "Settings",
+    path: "/app/settings",
+    img: <SettingOutlined />,
   },
 ];
 

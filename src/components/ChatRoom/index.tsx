@@ -208,6 +208,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
     await sendMessage(inputValue.trim());
   };
 
+  const sendRoleOverviwe = async (roleOverview: string) => {
+    const { code } = await Post(`/api/jobs/${jobId}/role_overview`, {
+      content: roleOverview,
+    });
+    if (code === 0) {
+      sendMessage(roleOverview);
+    } else {
+      message.error("Send role overview failed");
+    }
+  };
+
   const sendMessage = async (message: string) => {
     setMessages([
       ...messages,
@@ -670,7 +681,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           const resultStr = result
             .map((item) => `${item.question}\n${item.answer}`)
             .join("\n");
-          setInputValue(resultStr);
+          sendRoleOverviwe(resultStr);
           setShowRoleOverviewModal(false);
         }}
       />

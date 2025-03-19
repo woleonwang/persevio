@@ -14,20 +14,22 @@ const CompanyKnowledge = () => {
     if (code === 0) {
       form.setFieldsValue({
         content: data.content,
+        name: data.name,
       });
     }
   };
 
   const updateCompany = () => {
     form.validateFields().then(async (values) => {
-      const { content } = values;
+      const { content, name } = values;
       const { code } = await Post("/api/companies", {
         content,
+        name,
       });
       if (code === 0) {
-        message.success("Update knowledge succeed");
+        message.success("Update company succeed");
       } else {
-        message.error("Update knowledge failed");
+        message.error("Update company failed");
       }
     });
   };
@@ -36,6 +38,14 @@ const CompanyKnowledge = () => {
     <div className={styles.container}>
       <div className={styles.form}>
         <Form form={form} layout="vertical">
+          <Form.Item
+            label="Company Name"
+            name="name"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
           <Form.Item
             label="Knowledge Base"
             name="content"
