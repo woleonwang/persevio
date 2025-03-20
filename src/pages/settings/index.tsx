@@ -2,9 +2,19 @@ import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
+
+type TPrompt = {
+  prompt_type: string;
+  content: string;
+};
 const Settings = () => {
   const [form] = Form.useForm();
-  const [profile, setProfile] = useState<{ name: string; email: string }>();
+  const [profile, setProfile] = useState<{
+    name: string;
+    email: string;
+    prompts: TPrompt[];
+    is_admin: number;
+  }>();
 
   useEffect(() => {
     fetchSettings();
@@ -17,7 +27,14 @@ const Settings = () => {
       setProfile({
         name: staff_name,
         email,
+        prompts: data.prompts,
+        is_admin: data.is_admin,
       });
+      const prompts: Record<string, string> = {};
+      data.prompts.forEach((item: TPrompt) => {
+        prompts[item.prompt_type] = item.content;
+      });
+      form.setFieldsValue(prompts);
     }
   };
 
@@ -33,6 +50,19 @@ const Settings = () => {
         message.error("Update password failed");
       }
     });
+  };
+
+  const updatePrompt = async (promptType: string) => {
+    const content = form.getFieldsValue()[promptType];
+    const { code } = await Post("/api/update_prompt", {
+      prompt_type: promptType,
+      content,
+    });
+    if (code === 0) {
+      message.success("Update prompt succeed");
+    } else {
+      message.error("Update prompt failed");
+    }
   };
 
   return (
@@ -64,6 +94,35 @@ const Settings = () => {
           </Button>
         </Form>
       </div>
+
+      {profile?.is_admin && (
+        <div className={styles.block}>
+          <div className={styles.title}>Customize Prompts</div>
+          <Form form={form}>
+            {profile.prompts.map((item) => {
+              return (
+                <div key={item.prompt_type} style={{ marginBottom: 40 }}>
+                  <Form.Item
+                    labelCol={{ span: 5 }}
+                    label={item.prompt_type}
+                    name={item.prompt_type}
+                  >
+                    <Input.TextArea rows={10} />
+                  </Form.Item>
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                      type="primary"
+                      onClick={() => updatePrompt(item.prompt_type)}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </Form>
+        </div>
+      )}
     </div>
   );
 };

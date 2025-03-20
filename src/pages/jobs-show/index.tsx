@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 import { useEffect, useMemo, useState } from "react";
@@ -91,7 +91,9 @@ const JobsShow = () => {
               />
             </div>
           </div>
-          <div className={styles.footer}>Powered by Persevio.</div>
+          <Link className={styles.footer} to="/">
+            Powered by Persevio.
+          </Link>
         </div>
       )}
     </Spin>
