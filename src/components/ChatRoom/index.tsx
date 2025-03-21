@@ -138,6 +138,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   }, [jobId, type]);
 
   useEffect(() => {
+    if (messages.length === 0) return;
+
     if (needScrollToBottom.current) {
       scrollToBottom();
       needScrollToBottom.current = false;
@@ -255,14 +257,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (
+    message: string,
+    metadata?: {
+      before_text?: string;
+      after_text?: string;
+    }
+  ) => {
+    const formattedMessage = message.trim().replaceAll("\n", "\n\n");
     needScrollToBottom.current = true;
     setMessages([
       ...messages,
       {
         id: "fake_user_id",
         role: "user",
-        content: message,
+        content: formattedMessage,
         updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       },
       {
@@ -276,7 +285,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsLoading(true);
 
     Post(apiMapping[type].send, {
-      content: message,
+      content: formattedMessage,
+      metadata: metadata,
     });
   };
 
@@ -505,10 +515,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               type="primary"
                               style={{ marginLeft: 8 }}
                               onClick={() => {
-                                const editMessage = `Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n ${
-                                  editMessageMap[item.id].content
-                                }`;
-                                sendMessage(editMessage);
+                                const editMessage =
+                                  editMessageMap[item.id].content;
+                                sendMessage(editMessage, {
+                                  before_text:
+                                    "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
+                                });
                                 cancelMessageEdit(item.id);
                               }}
                             >
