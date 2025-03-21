@@ -495,16 +495,37 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         const roleOverview = (item.extraTags ?? []).find(
                           (tag) => tag.name === "request-role-overview"
                         );
-                        return roleOverview ? (
-                          <div style={{ marginBottom: 16 }}>
-                            <Button
-                              type="primary"
-                              onClick={() => setShowRoleOverviewModal(true)}
-                            >
-                              Share Role Overview
-                            </Button>
-                          </div>
-                        ) : null;
+                        const copyLink = (item.extraTags ?? []).find(
+                          (tag) => tag.name === "copy-link"
+                        );
+
+                        return (
+                          <>
+                            {roleOverview && (
+                              <div style={{ marginBottom: 16 }}>
+                                <Button
+                                  type="primary"
+                                  onClick={() => setShowRoleOverviewModal(true)}
+                                >
+                                  Share Role Overview
+                                </Button>
+                              </div>
+                            )}
+                            {copyLink && (
+                              <div style={{ marginBottom: 16 }}>
+                                <Button
+                                  type="primary"
+                                  onClick={async () => {
+                                    await copy(copyLink.content);
+                                    message.success("Copied");
+                                  }}
+                                >
+                                  Copy Link
+                                </Button>
+                              </div>
+                            )}
+                          </>
+                        );
                       })()}
 
                       {(() => {
