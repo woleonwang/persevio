@@ -11,7 +11,6 @@ import Job from "../../assets/icons/job";
 import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
-import { Button } from "antd";
 import { useState } from "react";
 
 const MENU = [
@@ -32,6 +31,9 @@ const MENU = [
     path: "/app/company",
     img: <FileDoneOutlined />,
   },
+];
+
+const FOOTER = [
   {
     title: "Settings",
     path: "/app/settings",
@@ -44,11 +46,6 @@ const AppLayout = () => {
   const navigate = useNavigate();
 
   const [collapse, setCollapse] = useState(false);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    navigate("/signin");
-  };
 
   return (
     <div className={styles.container}>
@@ -81,6 +78,28 @@ const AppLayout = () => {
                 );
               })}
             </div>
+          </div>
+          <div>
+            {FOOTER.map((item) => {
+              const isActive = currentPath.startsWith(item.path);
+              return (
+                <div
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.active : ""
+                  }`}
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Icon
+                    icon={item.img}
+                    style={{
+                      fontSize: 20,
+                      color: isActive ? "#1FAC6A" : "#949DAC",
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
@@ -116,13 +135,27 @@ const AppLayout = () => {
             </div>
           </div>
           <div>
-            <Button
-              type="primary"
-              onClick={() => logout()}
-              style={{ width: "100%" }}
-            >
-              Log out
-            </Button>
+            {FOOTER.map((item) => {
+              const isActive = currentPath.startsWith(item.path);
+              return (
+                <div
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.active : ""
+                  }`}
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Icon
+                    icon={item.img}
+                    style={{
+                      fontSize: 20,
+                      color: isActive ? "#1FAC6A" : "#949DAC",
+                    }}
+                  />
+                  <span style={{ marginLeft: 16 }}>{item.title}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

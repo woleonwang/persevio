@@ -2,6 +2,7 @@ import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 type TPrompt = {
   prompt_type: string;
@@ -15,6 +16,7 @@ const Settings = () => {
     prompts: TPrompt[];
     is_admin: number;
   }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSettings();
@@ -65,6 +67,11 @@ const Settings = () => {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/signin");
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.block}>
@@ -76,6 +83,11 @@ const Settings = () => {
         <div className={styles.item}>
           <div className={styles.label}>Email:</div>
           <div>{profile?.email}</div>
+        </div>
+        <div className={styles.item}>
+          <Button type="primary" onClick={() => logout()}>
+            Log out
+          </Button>
         </div>
       </div>
 

@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, Upload, message } from "antd";
+import {
+  Avatar,
+  List,
+  Input,
+  Button,
+  Upload,
+  message,
+  Tour,
+  TourStepProps,
+} from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -62,6 +71,7 @@ const PreDefinedMessages = [
   "How many annual leave will this role have?",
 ];
 
+const EditMessageGuideKey = "edit_message_guide_timestamp";
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
     jobId,
@@ -81,45 +91,63 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [editMessageMap, setEditMessageMap] = useState<
     Record<string, { enabled: boolean; content: string }>
   >({});
+  const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
-  const intervalFetchMessageRef = useRef<number>();
   const textInstanceRef = useRef<TextAreaRef | null>();
+  const editMessageTourElementRef = useRef<
+    HTMLButtonElement | HTMLAnchorElement | null
+  >();
+  const needScrollToBottom = useRef(false);
 
-  useEffect(() => {
-    const intervalText = setInterval(() => {
-      setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
-    }, 500);
-
-    return () => {
-      clearInterval(intervalText);
-      clearInterval(intervalFetchMessageRef.current);
-    };
-  }, []);
+  const EditMessageTourSteps: TourStepProps[] = [
+    {
+      title: "Edit Message",
+      description: "You can edit Viona's reply directly",
+      nextButtonProps: {
+        children: "OK",
+      },
+      target: () => editMessageTourElementRef.current ?? document.body,
+    },
+  ];
 
   useEffect(() => {
     if (isLoading) {
-      intervalFetchMessageRef.current = setInterval(() => {
+      const intervalFetchMessage = setInterval(() => {
         fetchMessages();
       }, 3000);
 
+      const intervalText = setInterval(() => {
+        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
+      }, 500);
+
       return () => {
-        clearInterval(intervalFetchMessageRef.current);
+        clearInterval(intervalFetchMessage);
+        clearInterval(intervalText);
       };
     }
   }, [isLoading]);
 
   useEffect(() => {
+    needScrollToBottom.current = true;
     fetchMessages();
   }, [jobId, type]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (needScrollToBottom.current) {
+      scrollToBottom();
+      needScrollToBottom.current = false;
+    }
 
+    if (!localStorage.getItem(EditMessageGuideKey)) {
+      setTimeout(() => {
+        setEditMessageTourOpen(true);
+      }, 500);
+    }
+  }, [messages]);
   const formatUrl = (url: string) => {
     if (role === "staff") return url;
     return url.replace("/api", "/api/coworker");
@@ -227,6 +255,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const sendMessage = async (message: string) => {
+    needScrollToBottom.current = true;
     setMessages([
       ...messages,
       {
@@ -365,6 +394,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       return newValue;
     });
   };
+
+  const maxIdOfAIMessage = [...messages]
+    .reverse()
+    .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
 
   return (
     <div className={styles.container}>
@@ -548,6 +581,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                   }))
                                 }
                                 icon={<EditOutlined />}
+                                ref={(e) => {
+                                  if (maxIdOfAIMessage === item.id)
+                                    editMessageTourElementRef.current = e;
+                                }}
                               />
                               <Button
                                 shape="round"
@@ -712,6 +749,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
           sendRoleOverviwe(result);
           setShowRoleOverviewModal(false);
         }}
+      />
+
+      <Tour
+        open={editMessageTourOpen}
+        onClose={() => {
+          localStorage.setItem(EditMessageGuideKey, Date.now().toString());
+          setEditMessageTourOpen(false);
+        }}
+        steps={EditMessageTourSteps}
+        closable={false}
       />
     </div>
   );

@@ -163,6 +163,11 @@ const roleOverviewModal = (props: IProps) => {
       onOk={() => onSubmit()}
     >
       <div style={{ height: "60vh", overflow: "auto" }}>
+        <div style={{ color: "#999" }}>
+          You don't have to answer every question below, but more information
+          from you will help me form a more accurate initial understanding of
+          the role, which leads to a more productive conversation.
+        </div>
         <Form form={form} layout="vertical">
           {RoleOverviewFormQuestionsGroups.map((group) => {
             return (
@@ -195,7 +200,10 @@ const roleOverviewModal = (props: IProps) => {
                       name={item.key}
                       key={item.key}
                     >
-                      <Input.TextArea rows={4} />
+                      <Input.TextArea
+                        rows={2}
+                        autoSize={{ minRows: 2, maxRows: 8 }}
+                      />
                     </Form.Item>
                   );
                 })}
