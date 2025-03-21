@@ -2,6 +2,7 @@ import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect } from "react";
+import TextAreaWithHint from "./components/TextAreaWithHint";
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
 
@@ -51,7 +52,7 @@ const CompanyKnowledge = () => {
             name="content"
             rules={[{ required: true }]}
           >
-            <Input.TextArea autoSize={{ minRows: 20, maxRows: 30 }} />
+            <TextAreaWithHint autoSize={{ minRows: 20, maxRows: 30 }} />
           </Form.Item>
           <Button type="primary" onClick={updateCompany}>
             Submit

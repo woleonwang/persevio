@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Form, Input, Button, message } from "antd";
 import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
@@ -22,10 +22,16 @@ interface SigninResponse {
 
 const SignIn: React.FC = () => {
   const [form] = Form.useForm();
+  const loadingRef = useRef<boolean>(false);
 
   const navigate = useNavigate();
 
   const handleSignIn = async () => {
+    if (loadingRef.current) {
+      return;
+    }
+
+    loadingRef.current = true;
     // 这里添加登录逻辑
     form.validateFields().then(async (values: SigninFormValues) => {
       const { username, password } = values;
@@ -43,6 +49,8 @@ const SignIn: React.FC = () => {
         message.error("Username or password is incorrect");
       }
     });
+
+    loadingRef.current = false;
   };
 
   return (

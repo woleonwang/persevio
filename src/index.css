@@ -9,7 +9,7 @@
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  font-weight: 500;
+  font-weight: normal;
   /* -webkit-font-smoothing: antialiased; */
   /* -moz-osx-font-smoothing: grayscale; */
   font-family: persevio-default;
@@ -36,7 +36,7 @@ div {
 }
 
 a {
-  font-weight: 500;
+  font-weight: normal;
   color: lightgreen;
   text-decoration: inherit;
 }

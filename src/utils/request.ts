@@ -14,7 +14,9 @@ export const Get = async <T = any>(
       params,
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: localStorage.getItem(
+          url.startsWith("/api/coworker") ? "coworker_token" : "token"
+        ),
       },
     });
     return response.data;
@@ -33,7 +35,9 @@ export const Post = async <T = any>(
     response = await instance.post<{ code: number; data?: T }>(url, data, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
+        Authorization: localStorage.getItem(
+          url.startsWith("/api/coworker") ? "coworker_token" : "token"
+        ),
       },
     });
     return response.data;

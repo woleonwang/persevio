@@ -51,6 +51,7 @@ interface IProps {
   type: TChatType;
   sessionId?: string;
   allowEditMessage?: boolean;
+  role?: "staff" | "coworker";
   onChangeType?: (type: TChatType) => void;
 }
 
@@ -67,6 +68,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     type = "jobRequirementDoc",
     sessionId,
     allowEditMessage = false,
+    role = "staff",
     onChangeType,
   } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -118,18 +120,23 @@ const ChatRoom: React.FC<IProps> = (props) => {
     scrollToBottom();
   }, [messages]);
 
+  const formatUrl = (url: string) => {
+    if (role === "staff") return url;
+    return url.replace("/api", "/api/coworker");
+  };
+
   const apiMapping: Record<IProps["type"], { get: string; send: string }> = {
     jobRequirementDoc: {
-      get: `/api/jobs/${jobId}/requirement_doc_chat`,
-      send: `/api/jobs/${jobId}/requirement_doc_chat/send`,
+      get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
     },
     jobDescription: {
-      get: `/api/jobs/${jobId}/job_description_chat`,
-      send: `/api/jobs/${jobId}/job_description_chat/send`,
+      get: formatUrl(`/api/jobs/${jobId}/job_description_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/job_description_chat/send`),
     },
     jobInterviewPlan: {
-      get: `/api/jobs/${jobId}/interview_plan_chat`,
-      send: `/api/jobs/${jobId}/interview_plan_chat/send`,
+      get: formatUrl(`/api/jobs/${jobId}/interview_plan_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/interview_plan_chat/send`),
     },
     candidate: {
       get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
@@ -209,7 +216,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const sendRoleOverviwe = async (roleOverview: string) => {
-    const { code } = await Post(`/api/jobs/${jobId}/role_overview`, {
+    const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
       content: roleOverview,
     });
     if (code === 0) {
@@ -414,7 +421,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           : `Viona${
                               type === "candidate"
                                 ? ", your application agent"
-                                : ""
+                                : ", AI recruiter"
                             }`}
                       </span>
                       <span
@@ -464,7 +471,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               type="primary"
                               style={{ marginLeft: 8 }}
                               onClick={() => {
-                                sendMessage(editMessageMap[item.id].content);
+                                const editMessage = `Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n ${
+                                  editMessageMap[item.id].content
+                                }`;
+                                sendMessage(editMessage);
                                 cancelMessageEdit(item.id);
                               }}
                             >
@@ -677,11 +687,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
       <RoleOverviewModal
         open={showRoleOverviewModal}
         onClose={() => setShowRoleOverviewModal(false)}
-        onOk={(result) => {
-          const resultStr = result
-            .map((item) => `${item.question}\n${item.answer}`)
-            .join("\n");
-          sendRoleOverviwe(resultStr);
+        onOk={(result: string) => {
+          sendRoleOverviwe(result);
           setShowRoleOverviewModal(false);
         }}
       />

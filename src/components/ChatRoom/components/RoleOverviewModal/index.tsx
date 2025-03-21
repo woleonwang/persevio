@@ -47,7 +47,7 @@ const RoleOverviewFormQuestionsGroups: {
       {
         key: "seniority",
         question: "What is the <b>seniority</b> of this role?",
-        hint: `- **Internship/Trainee/Entry Level** - No prior experience required; primary focus is on learning and skill development. Training and close guidance are provided to build foundational knowledge and competencies.\n\n- **Junior** - Some relevant experience required; contributes to tasks under supervision but isn’t responsible for leading major projects or objectives. Works closely with senior team members who oversee key business goals.\n\n- **Senior** - Capable of independently managing certain tasks or projects; provides guidance and mentorship to junior team members and may lead small teams. Plays a role in achieving departmental objectives.\n\n- **Director/Head of Department** - Oversees critical business functions and manages larger teams. Responsible for aligning team performance with broader company goals, driving strategic initiatives within their area of responsibility.\n\n- **Senior Executive** - Sets the overall strategic direction for the company, accountable for company-wide objectives and profit and loss (P&L). Leads major business decisions and ensures alignment across all departments.`,
+        hint: `- **Internship/Trainee/Entry Level** - No prior experience required; primary focus is on learning and skill development. Training and close guidance are provided to build foundational knowledge and competencies.\n\n- **Junior**  - Some relevant experience required; contributes to tasks under supervision but isn’t responsible for leading major projects or objectives. Works closely with senior team members who oversee key business goals.\n\n- **Senior**- A highly skilled individual contributor who tackles complex problems and delivers impactful results. Works independently on challenging assignments and provides technical expertise to the team. May mentor Junior members, sharing knowledge and best practices, but is primarily focused on individual contributions rather than team leadership or project management.\n\n- **Manager/Team Lead** - This role serves as a bridge between the Senior level and the Director/Head of Department level. Managers/Team Leads have direct responsibility for leading and managing a team, including performance management, coaching, and ensuring the team meets its objectives. They are experienced professionals who can independently manage projects and provide guidance to Junior and Senior team members. Unlike Senior roles, they have direct reports; unlike Directors, their focus is on team-level execution rather than broad departmental strategy.\n\n- **Director/Head of Department** - Oversees critical business functions and manages larger teams. Responsible for aligning team performance with broader company goals, driving strategic initiatives within their area of responsibility.\n\n- **Senior Executive/Leadership Team** - Sets the overall strategic direction for the company, accountable for company-wide objectives and profit and loss (P&L). Leads major business decisions and ensures alignment across all departments.`,
       },
     ],
   },
@@ -86,7 +86,7 @@ const RoleOverviewFormQuestionsGroups: {
           "Any relevant materials that you believe can help us better understand the role. For example, a draft JD, a JD of a similar role, etc.",
       },
       {
-        key: "others",
+        key: "usage",
         question:
           "How should I use the reference materials? Tell us what this reference material is and how should we use it. For example, is this a JD you drafted for this particular role, or a JD of a similar role from another company, etc.)",
       },
@@ -106,7 +106,7 @@ type TSubmitResult = {
 interface IProps {
   open: boolean;
   onClose: () => void;
-  onOk: (result: TSubmitResult[]) => void;
+  onOk: (result: string) => void;
 }
 const roleOverviewModal = (props: IProps) => {
   const { open, onClose, onOk } = props;
@@ -130,7 +130,26 @@ const roleOverviewModal = (props: IProps) => {
         });
       }
     });
-    onOk(result);
+
+    let resultStr = "";
+    RoleOverviewFormQuestionsGroups.forEach((group) => {
+      const questions: string[] = [];
+      group.questions.forEach((question) => {
+        const value = values[question.key];
+        if (value) {
+          questions.push(
+            `${question.question
+              .replaceAll("</b>", "**")
+              .replaceAll("<b>", "**")}\n\n${value}`
+          );
+        }
+      });
+      if (questions.length > 0) {
+        resultStr += `## ${group.title}\n\n${questions.join("\n\n")}\n\n`;
+      }
+    });
+
+    onOk(resultStr);
   };
 
   return (
@@ -164,6 +183,7 @@ const roleOverviewModal = (props: IProps) => {
                                   {item.hint}
                                 </Markdown>
                               }
+                              placement="right"
                             >
                               <QuestionCircleOutlined
                                 style={{ marginLeft: 5, cursor: "pointer" }}

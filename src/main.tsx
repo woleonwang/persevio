@@ -14,6 +14,7 @@ import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
+import JobCoworker from "./pages/job-coworker";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,8 +28,12 @@ createRoot(document.getElementById("root")!).render(
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/jobs/:id/chat" element={<JobsShow />}></Route>
           <Route path="/" element={<Home />}></Route>
+          <Route path="/jobs/:id/chat" element={<JobsShow />}></Route>
+          <Route
+            path="/jobs/:invitation_token/coworker"
+            element={<JobCoworker />}
+          ></Route>
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}
             <Route
