@@ -106,7 +106,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const EditMessageTourSteps: TourStepProps[] = [
     {
       title: "Edit Message",
-      description: "You can edit Viona's reply directly",
+      description:
+        "Click here to edit Viona's draft summaries, or answer her questions directly below.",
       nextButtonProps: {
         children: "OK",
       },
@@ -142,7 +143,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       needScrollToBottom.current = false;
     }
 
-    if (!localStorage.getItem(EditMessageGuideKey)) {
+    if (!localStorage.getItem(EditMessageGuideKey) && allowEditMessage) {
       setTimeout(() => {
         setEditMessageTourOpen(true);
       }, 500);
