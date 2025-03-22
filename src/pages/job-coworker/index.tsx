@@ -46,7 +46,9 @@ const JobCoworker = () => {
   };
 
   const fetchJob = async () => {
-    const { code, data } = await Get(`/api/coworker/jobs/by_token/${invitationToken}`);
+    const { code, data } = await Get(
+      `/api/coworker/jobs/by_token/${invitationToken}`
+    );
     if (code === 0) {
       setJob(data);
     }
@@ -72,8 +74,9 @@ const JobCoworker = () => {
       {coworker ? (
         job && (
           <>
-            <h2 style={{ color: "#1FAC6A" }}>
-              Talk with Voina about the job {job.name}
+            <h2 style={{ color: "#1FAC6A", padding: "0 40px" }}>
+              Define job requirements for the {job.name} role by completing this
+              conversation with Viona, your AI recruiter.
             </h2>
             <div className={styles.body}>
               <ChatRoom

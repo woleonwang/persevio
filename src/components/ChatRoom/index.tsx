@@ -8,6 +8,7 @@ import {
   message,
   Tour,
   TourStepProps,
+  Steps,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -213,12 +214,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
             name: string;
             content: string;
           }[];
+          hide_for_roles?: ("staff" | "coworker")[];
         };
       };
       updated_at: string;
     }[]
   ): TMessage[] => {
     return messages
+      .filter(
+        (item) =>
+          !(item.content.metadata.hide_for_roles ?? []).includes(role) &&
+          item.content.content
+      )
       .map(
         (m): TMessage => ({
           id: m.id.toString(),
@@ -228,12 +235,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
           messageType: m.content.metadata.message_sub_type || "normal",
           extraTags: m.content.metadata.extra_tags || [],
         })
-      )
-      .filter((item) => item.content);
+      );
   };
 
   const canSubmit = () => {
-    return inputValue?.trim() && !isLoading && !isCompositingRef.current;
+    return inputValue?.trim() && !isLoading;
   };
 
   const submit = async () => {
@@ -306,7 +312,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       recognition.lang = "en-US";
 
       recognition.onresult = (event: any) => {
-        console.log(event);
         let result = "";
         let isFinal = false;
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -317,7 +322,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
         }
         setInputValue(originalInputRef.current + result);
         if (isFinal) {
-          console.log("is final: ", originalInputRef.current + result);
           originalInputRef.current += result;
         }
       };
@@ -406,373 +410,423 @@ const ChatRoom: React.FC<IProps> = (props) => {
     });
   };
 
+  const getCurrentStep = (): number => {
+    let step = 1;
+    if (job?.jd_doc_id) {
+      step = 5;
+    } else if (job?.interview_plan_doc_id) {
+      step = 3;
+    } else if (job?.requirement_doc_id) {
+      step = 2;
+    }
+    return step;
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
 
   return (
     <div className={styles.container}>
-      <div className={styles.listArea}>
-        {type === "candidate" && messages.length === 0 ? (
-          <div className={styles.emptyContainer}>
-            <div className={styles.logo}>
-              <img src={LogoVertical} style={{ width: 200 }} />
-            </div>
-            <div className={styles.messageCardContainer}>
-              {PreDefinedMessages.map((message) => {
-                return (
-                  <div className={styles.messageCard}>
-                    <div>{message}</div>
-                    <RightCircleOutlined
-                      style={{
-                        marginTop: 16,
-                        fontSize: 30,
-                        color: "#1FAC6A",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        sendMessage(message);
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <List
-            dataSource={messages}
-            split={false}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      icon={
-                        item.role === "user" ? (
-                          <img src={UserAvatar} />
-                        ) : (
-                          <img src={VionaAvatar} />
-                        )
-                      }
-                    />
-                  }
-                  title={
-                    <div>
-                      <span style={{ fontSize: 18 }}>
-                        {item.role === "user"
-                          ? "You"
-                          : `Viona${
-                              type === "candidate"
-                                ? ", your application agent"
-                                : ", AI recruiter"
-                            }`}
-                      </span>
-                      <span
+      {type !== "candidate" && (
+        <div className={styles.left}>
+          <Steps
+            direction="vertical"
+            size="small"
+            current={getCurrentStep()}
+            onChange={(current) => {
+              if (current === 1) {
+                onChangeType?.("jobRequirementDoc");
+              } else if (current === 2) {
+                onChangeType?.("jobInterviewPlan");
+              } else if (current === 4) {
+                onChangeType?.("jobDescription");
+              }
+            }}
+            items={[
+              { title: "Open a new role", disabled: true },
+              {
+                title: "Define job requirements",
+              },
+              {
+                title: "Define interview plan",
+                disabled: getCurrentStep() < 2,
+              },
+              {
+                title: "Create chatbot for candidate",
+                disabled: true,
+              },
+              {
+                title: "Draft JD",
+                disabled: getCurrentStep() < 4,
+              },
+            ]}
+          />
+        </div>
+      )}
+      <div className={styles.right}>
+        <div className={styles.listArea}>
+          {type === "candidate" && messages.length === 0 ? (
+            <div className={styles.emptyContainer}>
+              <div className={styles.logo}>
+                <img src={LogoVertical} style={{ width: 200 }} />
+              </div>
+              <div className={styles.messageCardContainer}>
+                {PreDefinedMessages.map((message) => {
+                  return (
+                    <div className={styles.messageCard}>
+                      <div>{message}</div>
+                      <RightCircleOutlined
                         style={{
-                          color: "#999999",
-                          marginLeft: 8,
-                          fontSize: 14,
-                          fontWeight: "normal",
+                          marginTop: 16,
+                          fontSize: 30,
+                          color: "#1FAC6A",
+                          cursor: "pointer",
                         }}
-                      >
-                        {dayjs(item.updated_at).format("HH:mm")}
-                      </span>
+                        onClick={() => {
+                          sendMessage(message);
+                        }}
+                      />
                     </div>
-                  }
-                  description={
-                    <div
-                      className={classnames(
-                        styles.markdownContainer,
-                        item.role === "user" ? styles.user : "",
-                        {
-                          [styles.editing]: editMessageMap[item.id]?.enabled,
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <List
+              dataSource={messages}
+              split={false}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        icon={
+                          item.role === "user" ? (
+                            <img src={UserAvatar} />
+                          ) : (
+                            <img src={VionaAvatar} />
+                          )
                         }
-                      )}
-                    >
-                      {item.id === "fake_ai_id" ? (
-                        <p>{loadingText}</p>
-                      ) : editMessageMap[item.id]?.enabled ? (
-                        <div className={styles.editingContainer}>
-                          <Input.TextArea
-                            autoSize={{ minRows: 4, maxRows: 16 }}
-                            value={editMessageMap[item.id]?.content}
-                            onChange={(e) =>
-                              setEditMessageMap((current) => ({
-                                ...current,
-                                [item.id]: {
-                                  ...current[item.id],
-                                  content: e.currentTarget.value,
-                                },
-                              }))
-                            }
-                          />
-                          <div className={styles.editingButton}>
-                            <Button onClick={() => cancelMessageEdit(item.id)}>
-                              Cancel
-                            </Button>
-                            <Button
-                              type="primary"
-                              style={{ marginLeft: 8 }}
-                              onClick={() => {
-                                const editMessage =
-                                  editMessageMap[item.id].content;
-                                sendMessage(editMessage, {
-                                  before_text:
-                                    "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
-                                });
-                                cancelMessageEdit(item.id);
-                              }}
-                            >
-                              Send
-                            </Button>
+                      />
+                    }
+                    title={
+                      <div>
+                        <span style={{ fontSize: 18 }}>
+                          {item.role === "user"
+                            ? "You"
+                            : `Viona${
+                                type === "candidate"
+                                  ? ", your application agent"
+                                  : ", AI recruiter"
+                              }`}
+                        </span>
+                        <span
+                          style={{
+                            color: "#999999",
+                            marginLeft: 8,
+                            fontSize: 14,
+                            fontWeight: "normal",
+                          }}
+                        >
+                          {dayjs(item.updated_at).format("HH:mm")}
+                        </span>
+                      </div>
+                    }
+                    description={
+                      <div
+                        className={classnames(
+                          styles.markdownContainer,
+                          item.role === "user" ? styles.user : "",
+                          {
+                            [styles.editing]: editMessageMap[item.id]?.enabled,
+                          }
+                        )}
+                      >
+                        {item.id === "fake_ai_id" ? (
+                          <p>{loadingText}</p>
+                        ) : editMessageMap[item.id]?.enabled ? (
+                          <div className={styles.editingContainer}>
+                            <Input.TextArea
+                              autoSize={{ minRows: 4, maxRows: 16 }}
+                              value={editMessageMap[item.id]?.content}
+                              onChange={(e) =>
+                                setEditMessageMap((current) => ({
+                                  ...current,
+                                  [item.id]: {
+                                    ...current[item.id],
+                                    content: e.currentTarget.value,
+                                  },
+                                }))
+                              }
+                            />
+                            <div className={styles.editingButton}>
+                              <Button
+                                onClick={() => cancelMessageEdit(item.id)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="primary"
+                                style={{ marginLeft: 8 }}
+                                onClick={() => {
+                                  const editMessage =
+                                    editMessageMap[item.id].content;
+                                  sendMessage(editMessage, {
+                                    before_text:
+                                      "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
+                                  });
+                                  cancelMessageEdit(item.id);
+                                }}
+                              >
+                                Send
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <Markdown rehypePlugins={[rehypeRaw]}>
-                          {item.messageType === "error"
-                            ? "Something wrong with Viona, please retry."
-                            : item.content}
-                        </Markdown>
-                      )}
+                        ) : (
+                          <Markdown rehypePlugins={[rehypeRaw]}>
+                            {item.messageType === "error"
+                              ? "Something wrong with Viona, please retry."
+                              : item.content}
+                          </Markdown>
+                        )}
 
-                      {(() => {
-                        // 附加按钮
-                        const roleOverview = (item.extraTags ?? []).find(
-                          (tag) => tag.name === "request-role-overview"
-                        );
-                        const copyLink = (item.extraTags ?? []).find(
-                          (tag) => tag.name === "copy-link"
-                        );
+                        {(() => {
+                          // 附加按钮
+                          const roleOverview = (item.extraTags ?? []).find(
+                            (tag) => tag.name === "request-role-overview"
+                          );
+                          const copyLink = (item.extraTags ?? []).find(
+                            (tag) => tag.name === "copy-link"
+                          );
 
-                        return (
-                          <>
-                            {roleOverview && (
-                              <div style={{ marginBottom: 16 }}>
+                          return (
+                            <>
+                              {roleOverview && (
+                                <div style={{ marginBottom: 16 }}>
+                                  <Button
+                                    type="primary"
+                                    onClick={() =>
+                                      setShowRoleOverviewModal(true)
+                                    }
+                                  >
+                                    Share Role Overview
+                                  </Button>
+                                </div>
+                              )}
+                              {copyLink && (
+                                <div style={{ marginBottom: 16 }}>
+                                  <Button
+                                    type="primary"
+                                    onClick={async () => {
+                                      await copy(copyLink.content);
+                                      message.success("Copied");
+                                    }}
+                                  >
+                                    Copy Link
+                                  </Button>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+
+                        {(() => {
+                          // 操作区
+                          return allowEditMessage &&
+                            item.role === "ai" &&
+                            item.id !== "fake_ai_id" &&
+                            !editMessageMap[item.id]?.enabled ? (
+                            <div className={styles.operationArea}>
+                              <Button.Group>
                                 <Button
-                                  type="primary"
-                                  onClick={() => setShowRoleOverviewModal(true)}
-                                >
-                                  Share Role Overview
-                                </Button>
-                              </div>
-                            )}
-                            {copyLink && (
-                              <div style={{ marginBottom: 16 }}>
+                                  shape="round"
+                                  onClick={() =>
+                                    setEditMessageMap((current) => ({
+                                      ...current,
+                                      [item.id]: {
+                                        enabled: true,
+                                        content: item.content,
+                                      },
+                                    }))
+                                  }
+                                  icon={<EditOutlined />}
+                                  ref={(e) => {
+                                    if (maxIdOfAIMessage === item.id)
+                                      editMessageTourElementRef.current = e;
+                                  }}
+                                />
                                 <Button
-                                  type="primary"
+                                  shape="round"
                                   onClick={async () => {
-                                    await copy(copyLink.content);
+                                    await copy(item.content);
                                     message.success("Copied");
                                   }}
-                                >
-                                  Copy Link
-                                </Button>
-                              </div>
-                            )}
-                          </>
-                        );
-                      })()}
-
-                      {(() => {
-                        // 操作区
-                        return allowEditMessage &&
-                          item.role === "ai" &&
-                          item.id !== "fake_ai_id" &&
-                          !editMessageMap[item.id]?.enabled ? (
-                          <div className={styles.operationArea}>
-                            <Button.Group>
-                              <Button
-                                shape="round"
-                                onClick={() =>
-                                  setEditMessageMap((current) => ({
-                                    ...current,
-                                    [item.id]: {
-                                      enabled: true,
-                                      content: item.content,
-                                    },
-                                  }))
-                                }
-                                icon={<EditOutlined />}
-                                ref={(e) => {
-                                  if (maxIdOfAIMessage === item.id)
-                                    editMessageTourElementRef.current = e;
-                                }}
-                              />
-                              <Button
-                                shape="round"
-                                onClick={async () => {
-                                  await copy(item.content);
-                                  message.success("Copied");
-                                }}
-                                icon={<CopyOutlined />}
-                              />
-                            </Button.Group>
-                          </div>
-                        ) : null;
-                      })()}
-                    </div>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className={styles.inputArea}>
-        <div style={{ marginBottom: 12, display: "flex", gap: 10 }}>
-          {(type === "jobDescription" || type === "jobInterviewPlan") && (
-            <Button
-              type="default"
-              shape="round"
-              icon={<Icon icon={<BagIcon />} style={{ fontSize: 20 }} />}
-              onClick={() => onChangeType?.("jobRequirementDoc")}
-            >
-              Write Requirement Document
-            </Button>
-          )}
-          {!!job?.requirement_doc_id && (
-            <>
-              {type !== "jobDescription" && (
-                <Button
-                  type="default"
-                  shape="round"
-                  icon={
-                    <Icon icon={<WriteJdIcon />} style={{ fontSize: 20 }} />
-                  }
-                  onClick={() => onChangeType?.("jobDescription")}
-                >
-                  Write Job Description
-                </Button>
+                                  icon={<CopyOutlined />}
+                                />
+                              </Button.Group>
+                            </div>
+                          ) : null;
+                        })()}
+                      </div>
+                    }
+                  />
+                </List.Item>
               )}
-              {type !== "jobInterviewPlan" && (
-                <Button
-                  type="default"
-                  shape="round"
-                  icon={
-                    <Icon
-                      icon={<WriteInterviewPlanIcon />}
-                      style={{ fontSize: 20 }}
-                    />
-                  }
-                  onClick={() => onChangeType?.("jobInterviewPlan")}
-                >
-                  Write Interview Plan
-                </Button>
-              )}
-            </>
+            />
           )}
-          {!!job?.jd_doc_id && (
-            <Button
-              shape="round"
-              onClick={async () => {
-                const url = `${window.location.origin}/jobs/${job.id}/chat`;
-                await copy(url);
-                message.success("Copied");
-              }}
-            >
-              Copy Link
-            </Button>
-          )}
+          <div ref={messagesEndRef} />
         </div>
-        <Input.TextArea
-          ref={(element) => (textInstanceRef.current = element)}
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder={
-            allowEditMessage
-              ? "Reply to Viona or edit Viona's message directly"
-              : "Reply to Viona"
-          }
-          style={{
-            width: "100%",
-            marginRight: "8px",
-            resize: "none",
-          }}
-          onCompositionStart={() => {
-            isCompositingRef.current = true;
-          }}
-          onCompositionEnd={() => {
-            isCompositingRef.current = false;
-          }}
-          onPressEnter={(e) => {
-            if (!e.shiftKey) {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          autoSize={{
-            minRows: 1,
-            maxRows: 16,
-          }}
-        />
-        <div
-          style={{
-            marginTop: 10,
-            display: "flex",
-            gap: 10,
-            justifyContent: "space-between",
-          }}
-        >
-          <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-            Send
-          </Button>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            {false && type === "candidate" && (
+        <div className={styles.inputArea}>
+          <div style={{ marginBottom: 12, display: "flex", gap: 10 }}>
+            {(type === "jobDescription" || type === "jobInterviewPlan") && (
+              <Button
+                type="default"
+                shape="round"
+                icon={<Icon icon={<BagIcon />} style={{ fontSize: 20 }} />}
+                onClick={() => onChangeType?.("jobRequirementDoc")}
+              >
+                Write Requirement Document
+              </Button>
+            )}
+            {!!job?.requirement_doc_id && (
               <>
-                <Upload
-                  beforeUpload={() => false}
-                  onChange={(fileInfo) => uploadDocx(fileInfo)}
-                  showUploadList={false}
-                  accept=".docx"
-                  multiple={false}
-                >
-                  <Button type="primary">DOCX</Button>
-                </Upload>
-
-                <Upload
-                  beforeUpload={() => false}
-                  onChange={(fileInfo) => uploadPdf(fileInfo)}
-                  showUploadList={false}
-                  accept=".pdf"
-                  multiple={false}
-                >
-                  <Button type="primary">PDF</Button>
-                </Upload>
+                {type !== "jobDescription" && (
+                  <Button
+                    type="default"
+                    shape="round"
+                    icon={
+                      <Icon icon={<WriteJdIcon />} style={{ fontSize: 20 }} />
+                    }
+                    onClick={() => onChangeType?.("jobDescription")}
+                  >
+                    Write Job Description
+                  </Button>
+                )}
+                {type !== "jobInterviewPlan" && (
+                  <Button
+                    type="default"
+                    shape="round"
+                    icon={
+                      <Icon
+                        icon={<WriteInterviewPlanIcon />}
+                        style={{ fontSize: 20 }}
+                      />
+                    }
+                    onClick={() => onChangeType?.("jobInterviewPlan")}
+                  >
+                    Write Interview Plan
+                  </Button>
+                )}
               </>
             )}
+            {!!job?.jd_doc_id && (
+              <Button
+                shape="round"
+                onClick={async () => {
+                  const url = `${window.location.origin}/jobs/${job.id}/chat`;
+                  await copy(url);
+                  message.success("Copied");
+                }}
+              >
+                Copy Link
+              </Button>
+            )}
+          </div>
+          <Input.TextArea
+            ref={(element) => (textInstanceRef.current = element)}
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder={
+              allowEditMessage
+                ? "Reply to Viona or edit Viona's message directly"
+                : "Reply to Viona"
+            }
+            style={{
+              width: "100%",
+              marginRight: "8px",
+              resize: "none",
+            }}
+            onCompositionStartCapture={() => (isCompositingRef.current = true)}
+            onCompositionEndCapture={() => (isCompositingRef.current = false)}
+            onPressEnter={(e) => {
+              if (!e.shiftKey && !isCompositingRef.current) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            autoSize={{
+              minRows: 1,
+              maxRows: 16,
+            }}
+          />
+          <div
+            style={{
+              marginTop: 10,
+              display: "flex",
+              gap: 10,
+              justifyContent: "space-between",
+            }}
+          >
+            <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+              Send
+            </Button>
 
-            <Button
-              type="primary"
-              danger={isRecording}
-              shape="circle"
-              icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
-              onClick={isRecording ? stopRecord : startRecord}
-            />
+            <div style={{ display: "flex", gap: 10 }}>
+              {false && type === "candidate" && (
+                <>
+                  <Upload
+                    beforeUpload={() => false}
+                    onChange={(fileInfo) => uploadDocx(fileInfo)}
+                    showUploadList={false}
+                    accept=".docx"
+                    multiple={false}
+                  >
+                    <Button type="primary">DOCX</Button>
+                  </Upload>
+
+                  <Upload
+                    beforeUpload={() => false}
+                    onChange={(fileInfo) => uploadPdf(fileInfo)}
+                    showUploadList={false}
+                    accept=".pdf"
+                    multiple={false}
+                  >
+                    <Button type="primary">PDF</Button>
+                  </Upload>
+                </>
+              )}
+
+              <Button
+                type="primary"
+                danger={isRecording}
+                shape="circle"
+                icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
+                onClick={isRecording ? stopRecord : startRecord}
+              />
+            </div>
           </div>
         </div>
+
+        <RoleOverviewModal
+          open={showRoleOverviewModal}
+          onClose={() => setShowRoleOverviewModal(false)}
+          onOk={(result: string) => {
+            sendRoleOverviwe(result);
+            setShowRoleOverviewModal(false);
+          }}
+        />
+
+        <Tour
+          open={editMessageTourOpen}
+          onClose={() => {
+            localStorage.setItem(EditMessageGuideKey, Date.now().toString());
+            setEditMessageTourOpen(false);
+          }}
+          steps={EditMessageTourSteps}
+          closable={false}
+        />
       </div>
-
-      <RoleOverviewModal
-        open={showRoleOverviewModal}
-        onClose={() => setShowRoleOverviewModal(false)}
-        onOk={(result: string) => {
-          sendRoleOverviwe(result);
-          setShowRoleOverviewModal(false);
-        }}
-      />
-
-      <Tour
-        open={editMessageTourOpen}
-        onClose={() => {
-          localStorage.setItem(EditMessageGuideKey, Date.now().toString());
-          setEditMessageTourOpen(false);
-        }}
-        steps={EditMessageTourSteps}
-        closable={false}
-      />
     </div>
   );
 };
