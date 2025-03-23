@@ -48,9 +48,9 @@ const SignIn: React.FC = () => {
       } else {
         message.error("Username or password is incorrect");
       }
-    });
 
-    loadingRef.current = false;
+      loadingRef.current = false;
+    });
   };
 
   return (

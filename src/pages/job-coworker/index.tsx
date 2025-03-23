@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import styles from "./style.module.less";
 import { useParams } from "react-router";
-import ChatRoom, { TChatType } from "../../components/ChatRoom";
+import ChatRoom from "../../components/ChatRoom";
 import { Get, Post } from "../../utils/request";
 import { Button, Form, Input } from "antd";
 
@@ -21,7 +21,6 @@ type TJob = {
 const JobCoworker = () => {
   const [form] = Form.useForm();
   const { invitation_token: invitationToken } = useParams();
-  const [chatType, setChatType] = useState<TChatType>("jobRequirementDoc");
   const [job, setJob] = useState<TJob>();
   const [coworker, setCoworker] = useState<TCoworker>();
 
@@ -79,13 +78,7 @@ const JobCoworker = () => {
               conversation with Viona, your AI recruiter.
             </h2>
             <div className={styles.body}>
-              <ChatRoom
-                jobId={job.id}
-                type={chatType}
-                onChangeType={(type: TChatType) => setChatType(type)}
-                allowEditMessage
-                role="coworker"
-              />
+              <ChatRoom jobId={job.id} allowEditMessage role="coworker" />
             </div>
           </>
         )

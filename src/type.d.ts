@@ -13,6 +13,7 @@ interface IJob {
   requirement_doc_id: number;
   jd_doc_id: number;
   interview_plan_doc_id: number;
+  chatbot_created_at: string;
   status: number;
   created_at: string;
   updated_at: string;

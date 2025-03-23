@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Get } from "../../utils/request";
-import ChatRoom, { TChatType } from "../../components/ChatRoom";
+import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 // import { ProfileOutlined } from "@ant-design/icons";
 import Profile from "./components/Profile";
@@ -29,7 +29,6 @@ const Jobs = () => {
       : undefined
   );
   const [status, setStatus] = useState<"chat" | "profile">("chat");
-  const [chatType, setChatType] = useState<TChatType>("jobRequirementDoc");
 
   const selectedJob = jobs.find((item) => item.id === selectedJobId);
 
@@ -51,10 +50,7 @@ const Jobs = () => {
           {jobs.map((job) => (
             <div
               key={job.id}
-              onClick={() => {
-                setChatType("jobRequirementDoc");
-                setSelectedJobId(job.id);
-              }}
+              onClick={() => setSelectedJobId(job.id)}
               className={`${styles.jobItem} ${
                 selectedJobId === job.id ? styles.active : ""
               }`}
@@ -69,12 +65,7 @@ const Jobs = () => {
         <div className={styles.jobMain}>
           {selectedJob &&
             (status === "chat" ? (
-              <ChatRoom
-                jobId={selectedJob.id}
-                type={chatType}
-                onChangeType={(type: TChatType) => setChatType(type)}
-                allowEditMessage
-              />
+              <ChatRoom jobId={selectedJob.id} allowEditMessage role="staff" />
             ) : (
               <div style={{ padding: 20, flex: "auto" }}>
                 <Button type="primary" onClick={() => setStatus("chat")}>
