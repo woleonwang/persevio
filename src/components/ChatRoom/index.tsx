@@ -111,7 +111,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   useEffect(() => {
     setChatType(undefined);
     setMessages([]);
-    initJob();
+    if (role === "candidate") {
+      setChatType("candidate");
+    } else {
+      initJob();
+    }
   }, [jobId]);
 
   useEffect(() => {
@@ -177,7 +181,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const initJob = async () => {
-    const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
+    const { code, data } = await Get(
+      role === "candidate"
+        ? `/api/public/jobs/${jobId}`
+        : formatUrl(`/api/jobs/${jobId}`)
+    );
     if (code === 0) {
       setJob(data);
       const job: IJob = data;
