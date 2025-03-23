@@ -107,7 +107,7 @@ const Settings = () => {
         </Form>
       </div>
 
-      {profile?.is_admin && (
+      {!!profile?.is_admin && (
         <div className={styles.block}>
           <div className={styles.title}>Customize Prompts</div>
           <Form form={form}>
