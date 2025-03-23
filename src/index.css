@@ -16,18 +16,18 @@
 }
 
 @font-face {
-  font-family: 'persevio-default';
-  src: url('/default-font.ttf');
+  font-family: "persevio-default";
+  src: url("/default-font.ttf");
 }
 
 @font-face {
-  font-family: 'chat-default';
-  src: url('/timepos-regular-font.woff2');
+  font-family: "chat-default";
+  src: url("/timepos-regular-font.woff2");
 }
 
 @font-face {
-  font-family: 'chat-default';
-  src: url('/timepos-bold-font.woff2');
+  font-family: "chat-default";
+  src: url("/timepos-bold-font.woff2");
   font-weight: bold;
 }
 
@@ -47,8 +47,13 @@ a:hover {
 
 body {
   margin: 0;
-  min-width: 1300px;
-  height: 100vh;
+}
+
+@media (min-width: 768px) {
+  body {
+    min-width: 1300px;
+    height: 100vh;
+  }
 }
 
 h1 {

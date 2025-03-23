@@ -68,7 +68,7 @@ const PreDefinedMessages = [
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 
-const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
+const datetimeFormat = "MM/DD HH:mm:ss";
 const ChatRoom: React.FC<IProps> = (props) => {
   const { jobId, sessionId, allowEditMessage = false, role = "staff" } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -560,14 +560,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                 : ", AI recruiter"
                             }`}
                       </span>
-                      <span
-                        style={{
-                          color: "#999999",
-                          marginLeft: 8,
-                          fontSize: 14,
-                          fontWeight: "normal",
-                        }}
-                      >
+                      <span className={styles.timestamp}>
                         {dayjs(item.updated_at).format(datetimeFormat)}
                       </span>
                     </div>

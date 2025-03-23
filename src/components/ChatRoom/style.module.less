@@ -3,6 +3,7 @@
   padding: 40px;
   background-color: #f3f3f3;
   display: flex;
+  overflow: hidden;
 }
 
 .left {
@@ -14,12 +15,20 @@
   flex: auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .listArea {
   flex: 1;
   overflow: auto;
   padding: 16px;
+}
+
+.timestamp {
+  color: #999999;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: normal;
 }
 
 .inputArea {
@@ -110,5 +119,23 @@
     align-items: center;
     gap: 48px;
     cursor: pointer;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .timestamp {
+    display: none;
+  }
+
+  .preDefinedQuestionContainer {
+    .messageCard {
+      padding: 16px;
+      max-width: 80vw;
+      gap: 16px;
+    }
   }
 }

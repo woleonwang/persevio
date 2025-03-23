@@ -1,12 +1,16 @@
-import { Link, useParams } from "react-router";
-import ChatRoom from "../../components/ChatRoom";
-import styles from "./style.module.less";
 import { useEffect, useMemo, useState } from "react";
-import { Get } from "../../utils/request";
-import { Spin } from "antd";
+import { Link, useParams } from "react-router";
+import { DownOutlined } from "@ant-design/icons";
+import classnames from "classnames";
+import { Drawer, Spin } from "antd";
 import Markdown from "react-markdown";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
+
+import ChatRoom from "../../components/ChatRoom";
+import { Get } from "../../utils/request";
+
+import styles from "./style.module.less";
 
 type TCompany = {
   logo: string;
@@ -27,6 +31,7 @@ const JobsShow = () => {
   const [company, setCompany] = useState<TCompany>();
   const [job, setJob] = useState<TJob>();
   const [status, setStatus] = useState<TStatus>("loading");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchJob();
@@ -71,12 +76,21 @@ const JobsShow = () => {
               <div className={styles.basicInfo}>
                 <div className={styles.jobName}>{job.name}</div>
                 <div className={styles.companyName}> Job at {company.name}</div>
+                <div
+                  className={styles.more}
+                  onClick={() => setDrawerOpen(true)}
+                >
+                  <span>More</span>
+                  <DownOutlined style={{ fontSize: 14 }} />
+                </div>
               </div>
-              <div className={styles.markdownContainer}>
+              <div
+                className={classnames(styles.markdownContainer, styles.hidden)}
+              >
                 <Markdown>{job.job_description}</Markdown>
               </div>
               <div>
-                <div className={styles.updatedAt}>
+                <div className={classnames(styles.updatedAt, styles.hidden)}>
                   {dayjs().diff(dayjs(job.updated_at), "days")
                     ? `${dayjs().diff(dayjs(job.updated_at), "days")} days ago`
                     : "Today"}
@@ -94,6 +108,27 @@ const JobsShow = () => {
           <Link className={styles.footer} to="/">
             Powered by Persevio.
           </Link>
+
+          <Drawer
+            title="Job Description"
+            placement="bottom"
+            closable={false}
+            onClose={() => setDrawerOpen(false)}
+            open={drawerOpen}
+            height={"80vh"}
+            style={{ borderRadius: "16px 16px 0 0" }}
+          >
+            <div className={styles.markdownContainer}>
+              <Markdown>{job.job_description}</Markdown>
+            </div>
+            <div>
+              <div className={classnames(styles.updatedAt)}>
+                {dayjs().diff(dayjs(job.updated_at), "days")
+                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} days ago`
+                  : "Today"}
+              </div>
+            </div>
+          </Drawer>
         </div>
       )}
     </Spin>

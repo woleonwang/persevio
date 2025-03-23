@@ -81,6 +81,11 @@
   margin-top: 16px;
 }
 
+.more {
+  display: none;
+  color: #1fac6a;
+}
+
 .markdownContainer {
   padding: 16px 0;
   word-wrap: break-word;
@@ -99,4 +104,37 @@
   color: #1fac6a;
   padding: 7px 16px;
   border-radius: 44px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    height: auto;
+  }
+
+  .body {
+    display: block;
+  }
+
+  .left {
+    width: 100%;
+    padding: 0;
+  }
+
+  .right {
+    display: block;
+  }
+
+  .markdownContainer.hidden,
+  .updatedAt.hidden {
+    display: none;
+  }
+
+  .more {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    gap: 8px;
+  }
 }
