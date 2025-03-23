@@ -29,7 +29,6 @@ import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 import { Get, Post, PostFormData } from "../../utils/request";
 import RoleOverviewModal from "./components/RoleOverviewModal";
 
-import LogoVertical from "../../assets/logo-vertical.png";
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
@@ -68,6 +67,8 @@ const PreDefinedMessages = [
 ];
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
+
+const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 const ChatRoom: React.FC<IProps> = (props) => {
   const { jobId, sessionId, allowEditMessage = false, role = "staff" } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -217,9 +218,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
           id: "fake_ai_id",
           role: "ai",
           content: "",
-          updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+          updated_at: dayjs().format(datetimeFormat),
         });
       }
+
       setMessages(messageHistory);
       setJob(data.job);
     }
@@ -310,13 +312,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
         id: "fake_user_id",
         role: "user",
         content: formattedMessage,
-        updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: dayjs().format(datetimeFormat),
       },
       {
         id: "fake_ai_id",
         role: "ai",
         content: "",
-        updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        updated_at: dayjs().format(datetimeFormat),
       },
     ]);
 
@@ -530,248 +532,238 @@ const ChatRoom: React.FC<IProps> = (props) => {
       )}
       <div className={styles.right}>
         <div className={styles.listArea}>
-          {chatType === "candidate" && messages.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              <div className={styles.logo}>
-                <img src={LogoVertical} style={{ width: 200 }} />
-              </div>
-              <div className={styles.messageCardContainer}>
-                {PreDefinedMessages.map((message) => {
-                  return (
-                    <div className={styles.messageCard}>
-                      <div>{message}</div>
-                      <RightCircleOutlined
+          <List
+            dataSource={messages}
+            split={false}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      icon={
+                        item.role === "user" ? (
+                          <img src={UserAvatar} />
+                        ) : (
+                          <img src={VionaAvatar} />
+                        )
+                      }
+                    />
+                  }
+                  title={
+                    <div>
+                      <span style={{ fontSize: 18 }}>
+                        {item.role === "user"
+                          ? "You"
+                          : `Viona${
+                              chatType === "candidate"
+                                ? ", your application agent"
+                                : ", AI recruiter"
+                            }`}
+                      </span>
+                      <span
                         style={{
-                          marginTop: 16,
-                          fontSize: 30,
-                          color: "#1FAC6A",
-                          cursor: "pointer",
+                          color: "#999999",
+                          marginLeft: 8,
+                          fontSize: 14,
+                          fontWeight: "normal",
                         }}
-                        onClick={() => {
-                          sendMessage(message);
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            <List
-              dataSource={messages}
-              split={false}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        icon={
-                          item.role === "user" ? (
-                            <img src={UserAvatar} />
-                          ) : (
-                            <img src={VionaAvatar} />
-                          )
-                        }
-                      />
-                    }
-                    title={
-                      <div>
-                        <span style={{ fontSize: 18 }}>
-                          {item.role === "user"
-                            ? "You"
-                            : `Viona${
-                                chatType === "candidate"
-                                  ? ", your application agent"
-                                  : ", AI recruiter"
-                              }`}
-                        </span>
-                        <span
-                          style={{
-                            color: "#999999",
-                            marginLeft: 8,
-                            fontSize: 14,
-                            fontWeight: "normal",
-                          }}
-                        >
-                          {dayjs(item.updated_at).format("HH:mm")}
-                        </span>
-                      </div>
-                    }
-                    description={
-                      <div
-                        className={classnames(
-                          styles.markdownContainer,
-                          item.role === "user" ? styles.user : "",
-                          {
-                            [styles.editing]: editMessageMap[item.id]?.enabled,
-                          }
-                        )}
                       >
-                        {item.id === "fake_ai_id" ? (
-                          <p>{loadingText}</p>
-                        ) : editMessageMap[item.id]?.enabled ? (
-                          <div className={styles.editingContainer}>
-                            <Input.TextArea
-                              autoSize={{ minRows: 4, maxRows: 16 }}
-                              value={editMessageMap[item.id]?.content}
-                              onChange={(e) =>
-                                setEditMessageMap((current) => ({
-                                  ...current,
-                                  [item.id]: {
-                                    ...current[item.id],
-                                    content: e.currentTarget.value,
-                                  },
-                                }))
+                        {dayjs(item.updated_at).format(datetimeFormat)}
+                      </span>
+                    </div>
+                  }
+                  description={
+                    <div
+                      className={classnames(
+                        styles.markdownContainer,
+                        item.role === "user" ? styles.user : "",
+                        {
+                          [styles.editing]: editMessageMap[item.id]?.enabled,
+                        }
+                      )}
+                    >
+                      {item.id === "fake_ai_id" ? (
+                        <p>{loadingText}</p>
+                      ) : editMessageMap[item.id]?.enabled ? (
+                        <div className={styles.editingContainer}>
+                          <Input.TextArea
+                            autoSize={{ minRows: 4, maxRows: 16 }}
+                            value={editMessageMap[item.id]?.content}
+                            onChange={(e) =>
+                              setEditMessageMap((current) => ({
+                                ...current,
+                                [item.id]: {
+                                  ...current[item.id],
+                                  content: e.currentTarget.value,
+                                },
+                              }))
+                            }
+                          />
+                          <div className={styles.editingButton}>
+                            <Button onClick={() => cancelMessageEdit(item.id)}>
+                              Cancel
+                            </Button>
+                            <Button
+                              type="primary"
+                              style={{ marginLeft: 8 }}
+                              onClick={() => {
+                                const editMessage =
+                                  editMessageMap[item.id].content;
+                                sendMessage(editMessage, {
+                                  before_text:
+                                    "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
+                                });
+                                cancelMessageEdit(item.id);
+                              }}
+                            >
+                              Send
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <Markdown rehypePlugins={[rehypeRaw]}>
+                          {item.messageType === "error"
+                            ? "Something wrong with Viona, please retry."
+                            : item.content}
+                        </Markdown>
+                      )}
+
+                      {(() => {
+                        const supportTags = [
+                          {
+                            key: "request-role-overview",
+                            title:
+                              "Click here to share information about this role",
+                            handler: () => {
+                              setShowRoleOverviewModal(true);
+                            },
+                          },
+                          {
+                            key: "copy-link",
+                            title: "Copy Link",
+                            handler: async (tag?: {
+                              name: string;
+                              content: string;
+                            }) => {
+                              if (tag) {
+                                await copy(tag.content);
+                                message.success("Copied");
                               }
-                            />
-                            <div className={styles.editingButton}>
-                              <Button
-                                onClick={() => cancelMessageEdit(item.id)}
-                              >
-                                Cancel
-                              </Button>
+                            },
+                          },
+                          {
+                            key: "jrd-done",
+                            title: "Define interview plan",
+                            handler: () => {
+                              setChatType("jobInterviewPlan");
+                            },
+                          },
+                          {
+                            key: "interview-plan-done",
+                            title: "Create chatbot for candidate",
+                            handler: () => createChatbot(),
+                          },
+                          {
+                            key: "create-chatbot-done",
+                            title: "Draft JD",
+                            handler: () => {
+                              setChatType("jobDescription");
+                            },
+                          },
+                        ];
+
+                        const visibleTags = supportTags.filter((tag) =>
+                          (item.extraTags ?? [])
+                            .map((extraTag) => extraTag.name)
+                            .includes(tag.key)
+                        );
+
+                        return visibleTags.map((tag) => {
+                          return (
+                            <div style={{ marginBottom: 16 }} key={tag.key}>
                               <Button
                                 type="primary"
-                                style={{ marginLeft: 8 }}
                                 onClick={() => {
-                                  const editMessage =
-                                    editMessageMap[item.id].content;
-                                  sendMessage(editMessage, {
-                                    before_text:
-                                      "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
-                                  });
-                                  cancelMessageEdit(item.id);
+                                  const extraTag = (item.extraTags ?? []).find(
+                                    (extraTag) => extraTag.name === tag.key
+                                  );
+                                  tag.handler(extraTag);
                                 }}
                               >
-                                Send
+                                {tag.title}
                               </Button>
                             </div>
-                          </div>
-                        ) : (
-                          <Markdown rehypePlugins={[rehypeRaw]}>
-                            {item.messageType === "error"
-                              ? "Something wrong with Viona, please retry."
-                              : item.content}
-                          </Markdown>
-                        )}
-
-                        {(() => {
-                          const supportTags = [
-                            {
-                              key: "request-role-overview",
-                              title:
-                                "Click here to share information about this role",
-                              handler: () => {
-                                setShowRoleOverviewModal(true);
-                              },
-                            },
-                            {
-                              key: "copy-link",
-                              title: "Copy Link",
-                              handler: async (tag?: {
-                                name: string;
-                                content: string;
-                              }) => {
-                                if (tag) {
-                                  await copy(tag.content);
-                                  message.success("Copied");
-                                }
-                              },
-                            },
-                            {
-                              key: "jrd-done",
-                              title: "Define interview plan",
-                              handler: () => {
-                                setChatType("jobInterviewPlan");
-                              },
-                            },
-                            {
-                              key: "interview-plan-done",
-                              title: "Create chatbot for candidate",
-                              handler: () => createChatbot(),
-                            },
-                            {
-                              key: "create-chatbot-done",
-                              title: "Draft JD",
-                              handler: () => {
-                                setChatType("jobDescription");
-                              },
-                            },
-                          ];
-
-                          const visibleTags = supportTags.filter((tag) =>
-                            (item.extraTags ?? [])
-                              .map((extraTag) => extraTag.name)
-                              .includes(tag.key)
                           );
+                        });
+                      })()}
 
-                          return visibleTags.map((tag) => {
-                            return (
-                              <div style={{ marginBottom: 16 }} key={tag.key}>
-                                <Button
-                                  type="primary"
-                                  onClick={() => {
-                                    const extraTag = (
-                                      item.extraTags ?? []
-                                    ).find(
-                                      (extraTag) => extraTag.name === tag.key
-                                    );
-                                    tag.handler(extraTag);
-                                  }}
-                                >
-                                  {tag.title}
-                                </Button>
-                              </div>
-                            );
-                          });
-                        })()}
-
-                        {(() => {
-                          // 操作区
-                          return allowEditMessage &&
-                            item.role === "ai" &&
-                            item.id !== "fake_ai_id" &&
-                            !editMessageMap[item.id]?.enabled ? (
-                            <div className={styles.operationArea}>
-                              <Button.Group>
-                                <Button
-                                  shape="round"
-                                  onClick={() =>
-                                    setEditMessageMap((current) => ({
-                                      ...current,
-                                      [item.id]: {
-                                        enabled: true,
-                                        content: item.content,
-                                      },
-                                    }))
-                                  }
-                                  icon={<EditOutlined />}
-                                  ref={(e) => {
-                                    if (maxIdOfAIMessage === item.id)
-                                      editMessageTourElementRef.current = e;
-                                  }}
-                                />
-                                <Button
-                                  shape="round"
-                                  onClick={async () => {
-                                    await copy(item.content);
-                                    message.success("Copied");
-                                  }}
-                                  icon={<CopyOutlined />}
-                                />
-                              </Button.Group>
-                            </div>
-                          ) : null;
-                        })()}
-                      </div>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          )}
+                      {(() => {
+                        // 操作区
+                        return allowEditMessage &&
+                          item.role === "ai" &&
+                          item.id !== "fake_ai_id" &&
+                          !editMessageMap[item.id]?.enabled ? (
+                          <div className={styles.operationArea}>
+                            <Button.Group>
+                              <Button
+                                shape="round"
+                                onClick={() =>
+                                  setEditMessageMap((current) => ({
+                                    ...current,
+                                    [item.id]: {
+                                      enabled: true,
+                                      content: item.content,
+                                    },
+                                  }))
+                                }
+                                icon={<EditOutlined />}
+                                ref={(e) => {
+                                  if (maxIdOfAIMessage === item.id)
+                                    editMessageTourElementRef.current = e;
+                                }}
+                              />
+                              <Button
+                                shape="round"
+                                onClick={async () => {
+                                  await copy(item.content);
+                                  message.success("Copied");
+                                }}
+                                icon={<CopyOutlined />}
+                              />
+                            </Button.Group>
+                          </div>
+                        ) : null;
+                      })()}
+                    </div>
+                  }
+                />
+              </List.Item>
+            )}
+          />
           <div ref={messagesEndRef} />
         </div>
+        {role === "candidate" && (
+          <div className={styles.preDefinedQuestionContainer}>
+            {PreDefinedMessages.map((message) => {
+              return (
+                <div
+                  className={styles.messageCard}
+                  onClick={() => {
+                    sendMessage(message);
+                  }}
+                >
+                  <div>{message}</div>
+                  <RightCircleOutlined
+                    style={{
+                      fontSize: 16,
+                      color: "#1FAC6A",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
         <div className={styles.inputArea}>
           <Input.TextArea
             ref={(element) => (textInstanceRef.current = element)}
