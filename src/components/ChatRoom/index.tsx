@@ -299,7 +299,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       // 过滤对该角色隐藏的消息
       if ((item.content.metadata.hide_for_roles ?? []).includes(role)) return;
 
-      if (item.content.content) {
+      if (
+        item.content.content ||
+        item.content.metadata.message_sub_type === "error"
+      ) {
         resultMessages.push({
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
