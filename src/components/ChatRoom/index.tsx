@@ -33,15 +33,27 @@ import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
 
+type TExtraTagName =
+  | "request-role-overview" // 职位表单
+  | "copy-link" // 复制链接
+  | "open-link" // 打开新页面
+  | "jrd-done"
+  | "jrd-done-btn"
+  | "interview-plan-done"
+  | "interview-plan-done-btn"
+  | "jd-done"
+  | "jd-done-btn"
+  | "chatbot-done-btn";
+
 type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
   updated_at: string;
-
-  messageType?: "normal" | "error";
+  messageType?: "normal" | "system";
+  messageSubType?: "normal" | "error";
   extraTags?: {
-    name: string;
+    name: TExtraTagName;
     content: string;
   }[];
 };
@@ -50,7 +62,10 @@ export type TChatType =
   | "jobRequirementDoc"
   | "candidate"
   | "jobDescription"
-  | "jobInterviewPlan";
+  | "jobInterviewPlan"
+  | "chatbot";
+
+type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
 
 interface IProps {
   jobId: number;
@@ -83,9 +98,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >({});
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
   const [chatType, setChatType] = useState<TChatType>();
-  const [interviewPlanActiveType, setInterviewPlanActiveType] = useState<
-    "interview_plan" | "chatbot"
-  >();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -162,7 +174,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return url.replace("/api", "/api/coworker");
   };
 
-  const apiMapping: Record<TChatType, { get: string; send: string }> = {
+  const apiMapping: Record<TChatTypeWithApi, { get: string; send: string }> = {
     jobRequirementDoc: {
       get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
       send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
@@ -192,7 +204,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       const job: IJob = data;
       let initChatType: TChatType = "candidate";
       if (role !== "candidate") {
-        if (job.jd_doc_id || job.chatbot_created_at) {
+        if (job.interview_plan_doc_id) {
           initChatType = "jobDescription";
         } else if (job.requirement_doc_id) {
           initChatType = "jobInterviewPlan";
@@ -208,22 +220,48 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     if (!chatType) return;
 
-    const { code, data } = await Get(apiMapping[chatType].get);
-    if (code === 0) {
-      const messageHistory = formatMessages(data.messages);
-      const isLoading = data.is_invoking === 1;
-      setIsLoading(isLoading);
-      if (isLoading) {
-        messageHistory.push({
-          id: "fake_ai_id",
+    if (chatType === "chatbot") {
+      const url = `${window.location.origin}/jobs/${jobId}/chat`;
+      setMessages([
+        {
+          id: "chatbot-message",
           role: "ai",
-          content: "",
+          content:
+            "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
           updated_at: dayjs().format(datetimeFormat),
-        });
-      }
+          messageType: "system",
+          extraTags: [
+            {
+              name: "open-link",
+              content: url,
+            },
+            {
+              name: "copy-link",
+              content: url,
+            },
+          ],
+        },
+      ]);
+    } else {
+      const { code, data } = await Get(
+        apiMapping[chatType as TChatTypeWithApi].get
+      );
+      if (code === 0) {
+        const messageHistory = formatMessages(data.messages);
+        const isLoading = data.is_invoking === 1;
+        setIsLoading(isLoading);
+        if (isLoading) {
+          messageHistory.push({
+            id: "fake_ai_id",
+            role: "ai",
+            content: "",
+            updated_at: dayjs().format(datetimeFormat),
+          });
+        }
 
-      setMessages(messageHistory);
-      setJob(data.job);
+        setMessages(messageHistory);
+        setJob(data.job);
+      }
     }
   };
 
@@ -240,10 +278,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
         content: string;
         role: "user" | "assistant";
         metadata: {
-          message_type: string;
-          message_sub_type: "error";
+          message_type: "" | "system" | "normal";
+          message_sub_type: "" | "error" | "normal";
           extra_tags: {
-            name: string;
+            name: TExtraTagName;
             content: string;
           }[];
           hide_for_roles?: ("staff" | "coworker" | "candidate")[];
@@ -252,22 +290,56 @@ const ChatRoom: React.FC<IProps> = (props) => {
       updated_at: string;
     }[]
   ): TMessage[] => {
-    return messages
-      .filter(
-        (item) =>
-          !(item.content.metadata.hide_for_roles ?? []).includes(role) &&
-          item.content.content
-      )
-      .map(
-        (m): TMessage => ({
-          id: m.id.toString(),
-          role: m.content.role === "assistant" ? "ai" : "user",
-          content: m.content.content,
-          updated_at: m.updated_at,
-          messageType: m.content.metadata.message_sub_type || "normal",
-          extraTags: m.content.metadata.extra_tags || [],
-        })
-      );
+    // 根据 extraTag 添加系统消息
+    const resultMessages: TMessage[] = [];
+
+    messages.forEach((item) => {
+      // 过滤对该角色隐藏的消息
+      if ((item.content.metadata.hide_for_roles ?? []).includes(role)) return;
+
+      if (item.content.content) {
+        resultMessages.push({
+          id: item.id.toString(),
+          role: item.content.role === "assistant" ? "ai" : "user",
+          content: item.content.content,
+          updated_at: item.updated_at,
+          messageType: item.content.metadata.message_type || "normal",
+          messageSubType: item.content.metadata.message_sub_type || "normal",
+          extraTags: item.content.metadata.extra_tags || [],
+        });
+      }
+
+      (item.content.metadata.extra_tags ?? []).forEach((tag) => {
+        (
+          ["jrd-done", "interview-plan-done", "jd-done"] as (
+            | "jrd-done"
+            | "interview-plan-done"
+            | "jd-done"
+          )[]
+        ).forEach((step) => {
+          if (step === tag.name) {
+            resultMessages.push({
+              id: `${item.id.toString()}-${step}-btn`,
+              role: "ai",
+              content:
+                step === "jd-done"
+                  ? "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants"
+                  : "Your next task is: ",
+              updated_at: item.updated_at,
+              messageType: "system",
+              extraTags: [
+                {
+                  name: `${step}-btn`,
+                  content: "",
+                },
+              ],
+            });
+          }
+        });
+      });
+    });
+
+    return resultMessages;
   };
 
   const canSubmit = () => {
@@ -324,7 +396,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     setIsLoading(true);
 
-    Post(apiMapping[chatType].send, {
+    Post(apiMapping[chatType as TChatTypeWithApi].send, {
       content: formattedMessage,
       metadata: metadata,
     });
@@ -444,21 +516,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     });
   };
 
-  const createChatbot = async () => {
-    if (job?.chatbot_created_at) {
-      message.success("You have created chatbot!");
-      return;
-    }
-
-    const { code } = await Post(formatUrl(`/api/jobs/${jobId}/create_chatbot`));
-    if (code === 0) {
-      fetchMessages();
-      message.success("Create chatbot succeed");
-    } else {
-      message.error("Create chatbot failed");
-    }
-  };
-
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -477,13 +534,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
             onChange={(current) => {
               if (current === 1) {
                 setChatType("jobRequirementDoc");
-              } else if (current === 2 || current === 3) {
+              } else if (current === 2) {
                 setChatType("jobInterviewPlan");
-                setInterviewPlanActiveType(
-                  current === 2 ? "interview_plan" : "chatbot"
-                );
-              } else if (current === 4) {
+              } else if (current === 3) {
                 setChatType("jobDescription");
+              } else if (current === 4) {
+                setChatType("chatbot");
               }
             }}
             items={[
@@ -496,31 +552,27 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 title: "Define interview plan",
                 disabled: !job?.requirement_doc_id,
                 status:
-                  chatType === "jobInterviewPlan" &&
-                  (!job?.interview_plan_doc_id ||
-                    interviewPlanActiveType === "interview_plan")
+                  chatType === "jobInterviewPlan"
                     ? "process"
                     : job?.interview_plan_doc_id
                     ? "finish"
                     : "wait",
               },
               {
-                title: "Create chatbot for candidate",
+                title: "Draft job description",
                 disabled: !job?.interview_plan_doc_id,
                 status:
-                  chatType === "jobInterviewPlan" &&
-                  job?.interview_plan_doc_id &&
-                  interviewPlanActiveType !== "interview_plan"
+                  chatType === "jobDescription"
                     ? "process"
-                    : job?.chatbot_created_at
+                    : job?.jd_doc_id
                     ? "finish"
                     : "wait",
               },
               {
-                title: "Define job description",
-                disabled: !job?.jd_doc_id && !job?.chatbot_created_at,
+                title: "Create chatbot for candidate",
+                disabled: !job?.jd_doc_id,
                 status:
-                  chatType === "jobDescription"
+                  chatType === "chatbot"
                     ? "process"
                     : job?.jd_doc_id
                     ? "finish"
@@ -556,7 +608,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           ? "You"
                           : `Viona${
                               chatType === "candidate"
-                                ? ", your application agent"
+                                ? ", your application copilot"
                                 : ", AI recruiter"
                             }`}
                       </span>
@@ -615,14 +667,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         </div>
                       ) : (
                         <Markdown rehypePlugins={[rehypeRaw]}>
-                          {item.messageType === "error"
+                          {item.messageSubType === "error"
                             ? "Something wrong with Viona, please retry."
                             : item.content}
                         </Markdown>
                       )}
 
                       {(() => {
-                        const supportTags = [
+                        const supportTags: {
+                          key: TExtraTagName;
+                          title: string;
+                          handler: (tag?: {
+                            name: string;
+                            content: string;
+                          }) => void;
+                        }[] = [
                           {
                             key: "request-role-overview",
                             title:
@@ -634,10 +693,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           {
                             key: "copy-link",
                             title: "Copy Link",
-                            handler: async (tag?: {
-                              name: string;
-                              content: string;
-                            }) => {
+                            handler: async (tag) => {
                               if (tag) {
                                 await copy(tag.content);
                                 message.success("Copied");
@@ -645,19 +701,32 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             },
                           },
                           {
-                            key: "jrd-done",
-                            title: "Define interview plan",
-                            handler: () => {
-                              setChatType("jobInterviewPlan");
+                            key: "open-link",
+                            title: "Open",
+                            handler: async (tag) => {
+                              if (tag) {
+                                window.open(tag.content);
+                              }
                             },
                           },
+
                           {
-                            key: "interview-plan-done",
-                            title: "Create chatbot for candidate",
-                            handler: () => createChatbot(),
+                            key: "jrd-done-btn",
+                            title: "Define Interview Plan",
+                            handler: () => setChatType("jobInterviewPlan"),
                           },
                           {
-                            key: "create-chatbot-done",
+                            key: "interview-plan-done-btn",
+                            title: "Draft Job Description",
+                            handler: () => setChatType("jobDescription"),
+                          },
+                          {
+                            key: "jd-done-btn",
+                            title: "Viona for candidates",
+                            handler: () => setChatType("chatbot"),
+                          },
+                          {
+                            key: "chatbot-done-btn",
                             title: "Draft JD",
                             handler: () => {
                               setChatType("jobDescription");
@@ -671,28 +740,43 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             .includes(tag.key)
                         );
 
-                        return visibleTags.map((tag) => {
-                          return (
-                            <div style={{ marginBottom: 16 }} key={tag.key}>
-                              <Button
-                                type="primary"
-                                onClick={() => {
-                                  const extraTag = (item.extraTags ?? []).find(
-                                    (extraTag) => extraTag.name === tag.key
-                                  );
-                                  tag.handler(extraTag);
-                                }}
-                              >
-                                {tag.title}
-                              </Button>
-                            </div>
-                          );
-                        });
+                        return (
+                          <div
+                            style={{
+                              marginTop: 16,
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: 8,
+                            }}
+                          >
+                            {visibleTags.map((tag) => {
+                              return (
+                                <div style={{ marginBottom: 16 }} key={tag.key}>
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      const extraTag = (
+                                        item.extraTags ?? []
+                                      ).find(
+                                        (extraTag) => extraTag.name === tag.key
+                                      );
+                                      tag.handler(extraTag);
+                                    }}
+                                  >
+                                    {tag.title}
+                                  </Button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
                       })()}
 
                       {(() => {
                         // 操作区
                         return allowEditMessage &&
+                          chatType !== "chatbot" &&
+                          item.messageType === "normal" &&
                           item.role === "ai" &&
                           item.id !== "fake_ai_id" &&
                           !editMessageMap[item.id]?.enabled ? (
@@ -757,81 +841,88 @@ const ChatRoom: React.FC<IProps> = (props) => {
             })}
           </div>
         )}
-        <div className={styles.inputArea}>
-          <Input.TextArea
-            ref={(element) => (textInstanceRef.current = element)}
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder={
-              allowEditMessage
-                ? "Reply to Viona or edit Viona's message directly"
-                : "Reply to Viona"
-            }
-            style={{
-              width: "100%",
-              marginRight: "8px",
-              resize: "none",
-            }}
-            onCompositionStartCapture={() => (isCompositingRef.current = true)}
-            onCompositionEndCapture={() => (isCompositingRef.current = false)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey && !isCompositingRef.current) {
-                e.preventDefault();
-                submit();
+
+        {chatType !== "chatbot" && (
+          <div className={styles.inputArea}>
+            <Input.TextArea
+              ref={(element) => (textInstanceRef.current = element)}
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder={
+                allowEditMessage
+                  ? "Reply to Viona or edit Viona's message directly"
+                  : "Reply to Viona"
               }
-            }}
-            autoSize={{
-              minRows: 1,
-              maxRows: 16,
-            }}
-          />
-          <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              gap: 10,
-              justifyContent: "space-between",
-            }}
-          >
-            <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-              Send
-            </Button>
+              style={{
+                width: "100%",
+                marginRight: "8px",
+                resize: "none",
+              }}
+              onCompositionStartCapture={() =>
+                (isCompositingRef.current = true)
+              }
+              onCompositionEndCapture={() => (isCompositingRef.current = false)}
+              onPressEnter={(e) => {
+                if (!e.shiftKey && !isCompositingRef.current) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              autoSize={{
+                minRows: 1,
+                maxRows: 16,
+              }}
+            />
+            <div
+              style={{
+                marginTop: 10,
+                display: "flex",
+                gap: 10,
+                justifyContent: "space-between",
+              }}
+            >
+              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+                Send
+              </Button>
 
-            <div style={{ display: "flex", gap: 10 }}>
-              {false && chatType === "candidate" && (
-                <>
-                  <Upload
-                    beforeUpload={() => false}
-                    onChange={(fileInfo) => uploadDocx(fileInfo)}
-                    showUploadList={false}
-                    accept=".docx"
-                    multiple={false}
-                  >
-                    <Button type="primary">DOCX</Button>
-                  </Upload>
+              <div style={{ display: "flex", gap: 10 }}>
+                {false && chatType === "candidate" && (
+                  <>
+                    <Upload
+                      beforeUpload={() => false}
+                      onChange={(fileInfo) => uploadDocx(fileInfo)}
+                      showUploadList={false}
+                      accept=".docx"
+                      multiple={false}
+                    >
+                      <Button type="primary">DOCX</Button>
+                    </Upload>
 
-                  <Upload
-                    beforeUpload={() => false}
-                    onChange={(fileInfo) => uploadPdf(fileInfo)}
-                    showUploadList={false}
-                    accept=".pdf"
-                    multiple={false}
-                  >
-                    <Button type="primary">PDF</Button>
-                  </Upload>
-                </>
-              )}
+                    <Upload
+                      beforeUpload={() => false}
+                      onChange={(fileInfo) => uploadPdf(fileInfo)}
+                      showUploadList={false}
+                      accept=".pdf"
+                      multiple={false}
+                    >
+                      <Button type="primary">PDF</Button>
+                    </Upload>
+                  </>
+                )}
 
-              <Button
-                type="primary"
-                danger={isRecording}
-                shape="circle"
-                icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
-                onClick={isRecording ? stopRecord : startRecord}
-              />
+                <Button
+                  type="primary"
+                  danger={isRecording}
+                  shape="circle"
+                  icon={
+                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
+                  }
+                  onClick={isRecording ? stopRecord : startRecord}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <RoleOverviewModal
           open={showRoleOverviewModal}

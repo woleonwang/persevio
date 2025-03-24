@@ -80,7 +80,7 @@ const JobsShow = () => {
                   className={styles.more}
                   onClick={() => setDrawerOpen(true)}
                 >
-                  <span>More</span>
+                  <span>Click for complete JD.</span>
                   <DownOutlined style={{ fontSize: 14 }} />
                 </div>
               </div>
