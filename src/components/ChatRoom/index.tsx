@@ -42,8 +42,7 @@ type TExtraTagName =
   | "interview-plan-done"
   | "interview-plan-done-btn"
   | "jd-done"
-  | "jd-done-btn"
-  | "chatbot-done-btn";
+  | "jd-done-btn";
 
 type TMessage = {
   id: string;
@@ -724,13 +723,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             key: "jd-done-btn",
                             title: "Viona for candidates",
                             handler: () => setChatType("chatbot"),
-                          },
-                          {
-                            key: "chatbot-done-btn",
-                            title: "Draft JD",
-                            handler: () => {
-                              setChatType("jobDescription");
-                            },
                           },
                         ];
 
