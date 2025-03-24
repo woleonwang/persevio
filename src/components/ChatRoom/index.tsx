@@ -77,7 +77,10 @@ const PreDefinedMessages = [
   "Give me a brief intro about the company",
   "Which team will this role join?",
   "Who will this role report to?",
-  "How many annual leave will this role have?",
+  "What is the interview process like?",
+  "What is are the key objectives of this role?",
+  "How is success measured?",
+  "Does this role allow work from home?",
 ];
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
