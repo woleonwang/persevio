@@ -66,10 +66,16 @@ const JobsShow = () => {
       {status === "success" && company && job && (
         <div className={styles.container}>
           <div className={styles.header}>
-            <img
-              src={`/company-logo/${company.logo}`}
-              className={styles.logo}
-            />
+            {!!company.logo && (
+              <img
+                src={
+                  company.logo.startsWith("http")
+                    ? company.logo
+                    : `/company-logo/${company.logo}`
+                }
+                className={styles.logo}
+              />
+            )}
           </div>
           <div className={styles.body}>
             <div className={styles.left}>
