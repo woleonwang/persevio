@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, CloseOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import { Drawer, Spin } from "antd";
 import Markdown from "react-markdown";
@@ -110,7 +110,12 @@ const JobsShow = () => {
           </Link>
 
           <Drawer
-            title="Job Description"
+            title={
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Job Description</span>
+                <CloseOutlined onClick={() => setDrawerOpen(false)} />
+              </div>
+            }
             placement="bottom"
             closable={false}
             onClose={() => setDrawerOpen(false)}
