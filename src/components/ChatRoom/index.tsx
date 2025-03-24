@@ -402,14 +402,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
       metadata: metadata,
     });
 
-    if (code !== 0) {
+    // 如果超时，不用报错。轮询会保证最终结果一致
+    if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
-      if (code === 10011) {
-        message.error("Your quota has been exhausted.");
-      } else {
-        message.error("Send message failed");
-      }
+      message.error("Your quota has been exhausted.");
     }
   };
 
