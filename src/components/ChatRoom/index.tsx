@@ -367,7 +367,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const sendMessage = async (
-    message: string,
+    rawMessage: string,
     metadata?: {
       before_text?: string;
       after_text?: string;
@@ -375,7 +375,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   ) => {
     if (!chatType) return;
 
-    const formattedMessage = message.trim().replaceAll("\n", "\n\n");
+    const formattedMessage = rawMessage.trim().replaceAll("\n", "\n\n");
     needScrollToBottom.current = true;
     setMessages([
       ...messages,
@@ -392,13 +392,22 @@ const ChatRoom: React.FC<IProps> = (props) => {
         updated_at: dayjs().format(datetimeFormat),
       },
     ]);
-
     setIsLoading(true);
 
-    Post(apiMapping[chatType as TChatTypeWithApi].send, {
+    const { code } = await Post(apiMapping[chatType as TChatTypeWithApi].send, {
       content: formattedMessage,
       metadata: metadata,
     });
+
+    if (code !== 0) {
+      setIsLoading(false);
+      setMessages(messages);
+      if (code === 10011) {
+        message.error("Your quota has been exhausted.");
+      } else {
+        message.error("Send message failed");
+      }
+    }
   };
 
   const handleInputChange = (e: any) => {
