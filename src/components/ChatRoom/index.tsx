@@ -32,46 +32,15 @@ import RoleOverviewModal from "./components/RoleOverviewModal";
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
-
-type TExtraTagName =
-  | "request-role-overview" // 职位表单
-  | "copy-link" // 复制链接
-  | "open-link" // 打开新页面
-  | "jrd-done"
-  | "jrd-done-btn"
-  | "interview-plan-done"
-  | "interview-plan-done-btn"
-  | "jd-done"
-  | "jd-done-btn";
-
-type TMessage = {
-  id: string;
-  role: "ai" | "user";
-  content: string;
-  updated_at: string;
-  messageType?: "normal" | "system";
-  messageSubType?: "normal" | "error";
-  extraTags?: {
-    name: TExtraTagName;
-    content: string;
-  }[];
-};
-
-export type TChatType =
-  | "jobRequirementDoc"
-  | "candidate"
-  | "jobDescription"
-  | "jobInterviewPlan"
-  | "chatbot";
-
-type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
-
-interface IProps {
-  jobId: number;
-  sessionId?: string;
-  allowEditMessage?: boolean;
-  role?: "staff" | "coworker" | "candidate";
-}
+import {
+  IProps,
+  TChatType,
+  TChatTypeWithApi,
+  TExtraTagName,
+  TMessage,
+  TMessageFromApi,
+} from "./type";
+import { copy } from "../../utils";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -84,8 +53,8 @@ const PreDefinedMessages = [
 ];
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
+const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
-const datetimeFormat = "MM/DD HH:mm:ss";
 const ChatRoom: React.FC<IProps> = (props) => {
   const { jobId, sessionId, allowEditMessage = false, role = "staff" } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -93,6 +62,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  // job 仅用来判断进度。role 为 candidate 时不需要
   const [job, setJob] = useState<IJob>();
   const [showRoleOverviewModal, setShowRoleOverviewModal] = useState(false);
   const [editMessageMap, setEditMessageMap] = useState<
@@ -122,6 +92,30 @@ const ChatRoom: React.FC<IProps> = (props) => {
       target: () => editMessageTourElementRef.current ?? document.body,
     },
   ];
+
+  const formatUrl = (url: string) => {
+    if (role === "staff") return url;
+    return url.replace("/api", "/api/coworker");
+  };
+
+  const apiMapping: Record<TChatTypeWithApi, { get: string; send: string }> = {
+    jobRequirementDoc: {
+      get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
+    },
+    jobDescription: {
+      get: formatUrl(`/api/jobs/${jobId}/job_description_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/job_description_chat/send`),
+    },
+    jobInterviewPlan: {
+      get: formatUrl(`/api/jobs/${jobId}/interview_plan_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/interview_plan_chat/send`),
+    },
+    candidate: {
+      get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
+      send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
+    },
+  };
 
   useEffect(() => {
     setChatType(undefined);
@@ -171,54 +165,25 @@ const ChatRoom: React.FC<IProps> = (props) => {
       }, 500);
     }
   }, [messages]);
-  const formatUrl = (url: string) => {
-    if (role === "staff") return url;
-    return url.replace("/api", "/api/coworker");
-  };
-
-  const apiMapping: Record<TChatTypeWithApi, { get: string; send: string }> = {
-    jobRequirementDoc: {
-      get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
-    },
-    jobDescription: {
-      get: formatUrl(`/api/jobs/${jobId}/job_description_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/job_description_chat/send`),
-    },
-    jobInterviewPlan: {
-      get: formatUrl(`/api/jobs/${jobId}/interview_plan_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/interview_plan_chat/send`),
-    },
-    candidate: {
-      get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
-      send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
-    },
-  };
 
   const initJob = async () => {
-    const { code, data } = await Get(
-      role === "candidate"
-        ? `/api/public/jobs/${jobId}`
-        : formatUrl(`/api/jobs/${jobId}`)
-    );
+    const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
+
     if (code === 0) {
       setJob(data);
       const job: IJob = data;
-      let initChatType: TChatType = "candidate";
-      if (role !== "candidate") {
-        if (job.interview_plan_doc_id) {
-          initChatType = "jobDescription";
-        } else if (job.requirement_doc_id) {
-          initChatType = "jobInterviewPlan";
-        } else {
-          initChatType = "jobRequirementDoc";
-        }
+      let initChatType: TChatType = "jobRequirementDoc";
+      if (job.interview_plan_doc_id) {
+        initChatType = "jobDescription";
+      } else if (job.requirement_doc_id) {
+        initChatType = "jobInterviewPlan";
       }
       setChatType(initChatType);
     } else {
       message.error("Get job failed");
     }
   };
+
   const fetchMessages = async () => {
     if (!chatType) return;
 
@@ -262,7 +227,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
         }
 
         setMessages(messageHistory);
-        setJob(data.job);
+        if (role !== "candidate") {
+          setJob(data.job);
+        }
       }
     }
   };
@@ -273,25 +240,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const formatMessages = (
-    messages: {
-      id: number;
-      content: {
-        content: string;
-        role: "user" | "assistant";
-        metadata: {
-          message_type: "" | "system" | "normal";
-          message_sub_type: "" | "error" | "normal";
-          extra_tags: {
-            name: TExtraTagName;
-            content: string;
-          }[];
-          hide_for_roles?: ("staff" | "coworker" | "candidate")[];
-        };
-      };
-      updated_at: string;
-    }[]
-  ): TMessage[] => {
+  const formatMessages = (messages: TMessageFromApi[]): TMessage[] => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
 
@@ -405,16 +354,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
       metadata: metadata,
     });
 
-    // 如果超时，不用报错。轮询会保证最终结果一致
+    // 仅限额时报错。其它情况，不用报错。轮询会保证最终结果一致
     if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
       message.error("Your quota has been exhausted.");
     }
-  };
-
-  const handleInputChange = (e: any) => {
-    setInputValue(e.target.value);
   };
 
   const startRecord = async () => {
@@ -463,20 +408,29 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsRecording(false);
   };
 
-  const uploadPdf = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
+  const uploadFile = async (
+    fileInfo: UploadChangeParam<UploadFile<any>>,
+    fileType: "docx" | "pdf"
+  ) => {
     const file = fileInfo.file;
 
     if (file && !file.status) {
-      const isPDF = file.type === "application/pdf";
-      if (!isPDF) {
-        message.error("You can only upload PDF file!");
+      const formatValid =
+        (fileType === "pdf" && file.type === "application/pdf") ||
+        (fileType === "docx" &&
+          file.type ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+      if (!formatValid) {
+        message.error(
+          `You can only upload ${fileType === "pdf" ? "PDF" : "Docx"} file!`
+        );
         return;
       }
 
       const formData = new FormData();
       formData.append("file", file as any);
       const { code } = await PostFormData(
-        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/pdf`,
+        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/${fileType}`,
         formData
       );
 
@@ -486,37 +440,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
         message.error("Upload failed");
       }
     }
-  };
-
-  const uploadDocx = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
-    const file = fileInfo.file;
-
-    if (file && !file.status) {
-      const isDocx =
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!isDocx) {
-        message.error("You can only upload Docx file!");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file as any);
-      const { code } = await PostFormData(
-        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/docx`,
-        formData
-      );
-
-      if (code === 0) {
-        message.success("Upload succeed");
-      } else {
-        message.error("Upload failed");
-      }
-    }
-  };
-
-  const copy = async (text: string) => {
-    await navigator.clipboard.writeText(text);
   };
 
   const cancelMessageEdit = (id: string) => {
@@ -777,9 +700,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       })()}
 
                       {(() => {
-                        // 操作区
+                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
                         return allowEditMessage &&
-                          chatType !== "chatbot" &&
                           item.messageType === "normal" &&
                           item.role === "ai" &&
                           item.id !== "fake_ai_id" &&
@@ -851,7 +773,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
-              onChange={handleInputChange}
+              onChange={(e) => setInputValue(e.target.value)}
               placeholder={
                 allowEditMessage
                   ? "Reply to Viona or edit Viona's message directly"
@@ -894,7 +816,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <>
                     <Upload
                       beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadDocx(fileInfo)}
+                      onChange={(fileInfo) => uploadFile(fileInfo, "docx")}
                       showUploadList={false}
                       accept=".docx"
                       multiple={false}
@@ -904,7 +826,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
                     <Upload
                       beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadPdf(fileInfo)}
+                      onChange={(fileInfo) => uploadFile(fileInfo, "pdf")}
                       showUploadList={false}
                       accept=".pdf"
                       multiple={false}
