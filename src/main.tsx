@@ -31,6 +31,10 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/" element={<Home />}></Route>
           <Route path="/jobs/:id/chat" element={<JobsShow />}></Route>
           <Route
+            path="/jobs/:id/:companyName/:jobName"
+            element={<JobsShow />}
+          ></Route>
+          <Route
             path="/jobs/:invitation_token/coworker"
             element={<JobCoworker />}
           ></Route>

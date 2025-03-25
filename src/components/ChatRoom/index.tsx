@@ -64,6 +64,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [loadingText, setLoadingText] = useState(".");
   // job 仅用来判断进度。role 为 candidate 时不需要
   const [job, setJob] = useState<IJob>();
+  const [jobUrl, setJobUrl] = useState("");
   const [showRoleOverviewModal, setShowRoleOverviewModal] = useState(false);
   const [editMessageMap, setEditMessageMap] = useState<
     Record<string, { enabled: boolean; content: string }>
@@ -170,8 +171,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
 
     if (code === 0) {
-      setJob(data);
-      const job: IJob = data;
+      const job: IJob = data.job ?? data;
+      setJob(job);
+      setJobUrl(data.url);
       let initChatType: TChatType = "jobRequirementDoc";
       if (job.interview_plan_doc_id) {
         initChatType = "jobDescription";
@@ -188,7 +190,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     if (!chatType) return;
 
     if (chatType === "chatbot") {
-      const url = `${window.location.origin}/jobs/${jobId}/chat`;
+      const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
       setMessages([
         {
           id: "chatbot-message",
