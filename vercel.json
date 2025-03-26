@@ -2,7 +2,23 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "${API_HOST}/:path*"
+      "destination": "http://47.236.233.206:10808/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "persevio.ai"
+        }
+      ]
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "http://47.236.233.206:10809/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "dev.persevio.ai"
+        }
+      ]
     },
     {
       "source": "/:path*",
