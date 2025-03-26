@@ -814,7 +814,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               </Button>
 
               <div style={{ display: "flex", gap: 10 }}>
-                {false && chatType === "candidate" && (
+                {chatType === "candidate" && (
                   <>
                     <Upload
                       beforeUpload={() => false}

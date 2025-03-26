@@ -43,7 +43,29 @@
 }
 
 .jobMain {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatWrapper {
   overflow: auto;
   flex: auto;
   display: flex;
+}
+
+.pipelineWrapper {
+  padding: 20px;
+  flex: auto;
+}
+
+.tabs {
+  flex: none;
+
+  :global {
+    .ant-tabs-nav {
+      margin-bottom: 0;
+    }
+  }
 }

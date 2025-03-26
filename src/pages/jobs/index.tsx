@@ -4,7 +4,7 @@ import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 // import { ProfileOutlined } from "@ant-design/icons";
 import Profile from "./components/Profile";
-import { Button } from "antd";
+import { Button, Tabs } from "antd";
 import { useSearchParams } from "react-router";
 
 type TJob = {
@@ -20,6 +20,7 @@ type TJob = {
   updated_at: string;
 };
 
+type TTabKey = "chat" | "pipeline";
 const Jobs = () => {
   const [jobs, setJobs] = useState<TJob[]>([]);
   const [searchParams] = useSearchParams();
@@ -28,7 +29,7 @@ const Jobs = () => {
       ? parseInt(searchParams.get("active") ?? "0")
       : undefined
   );
-  const [status, setStatus] = useState<"chat" | "profile">("chat");
+  const [status, setStatus] = useState<TTabKey>("chat");
 
   const selectedJob = jobs.find((item) => item.id === selectedJobId);
 
@@ -50,7 +51,10 @@ const Jobs = () => {
           {jobs.map((job) => (
             <div
               key={job.id}
-              onClick={() => setSelectedJobId(job.id)}
+              onClick={() => {
+                setSelectedJobId(job.id);
+                setStatus("chat");
+              }}
               className={`${styles.jobItem} ${
                 selectedJobId === job.id ? styles.active : ""
               }`}
@@ -63,17 +67,40 @@ const Jobs = () => {
           ))}
         </div>
         <div className={styles.jobMain}>
-          {selectedJob &&
-            (status === "chat" ? (
-              <ChatRoom jobId={selectedJob.id} allowEditMessage role="staff" />
-            ) : (
-              <div style={{ padding: 20, flex: "auto" }}>
-                <Button type="primary" onClick={() => setStatus("chat")}>
-                  {" < Back "}
-                </Button>
-                <Profile jobId={selectedJob.id} />
-              </div>
-            ))}
+          {selectedJob && (
+            <>
+              <Tabs
+                centered
+                activeKey={status}
+                items={[
+                  {
+                    key: "chat",
+                    label: "Viona",
+                  },
+                  {
+                    key: "pipeline",
+                    label: "Pipeline",
+                  },
+                ]}
+                onChange={(type) => setStatus(type as TTabKey)}
+                className={styles.tabs}
+              />
+              {status === "chat" && (
+                <div className={styles.chatWrapper}>
+                  <ChatRoom
+                    jobId={selectedJob.id}
+                    allowEditMessage
+                    role="staff"
+                  />
+                </div>
+              )}
+              {status === "pipeline" && (
+                <div className={styles.chatWrapper}>
+                  <Profile jobId={selectedJob.id} />
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
