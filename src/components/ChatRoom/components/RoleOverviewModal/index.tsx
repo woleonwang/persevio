@@ -2,12 +2,14 @@ import { Form, Input, InputNumber, Modal, Popover, Select } from "antd";
 import Markdown from "react-markdown";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
+import { TRoleOverviewType } from "../../type";
+import { Get } from "../../../../utils/request";
 
 type TQuestion = {
   key: string;
   question: string;
-  type: "select" | "textarea" | "number";
+  type: "text" | "select" | "textarea" | "number" | "team";
   hint?: string;
   dependencies?: {
     questionKey: string;
@@ -19,13 +21,53 @@ type TQuestion = {
   }[];
 };
 
+const TeamQuestions: TQuestion[] = [
+  {
+    key: "name",
+    question: "Team name",
+    type: "text",
+  },
+  {
+    key: "objectives",
+    question:
+      "Brief intro about this team's core objectives and responsibilities.",
+    type: "textarea",
+  },
+  {
+    key: "members_count",
+    question: "How many team members?",
+    type: "number",
+  },
+  {
+    key: "members_detail",
+    question:
+      "Brief intro about the team members. Their responsibilities, experience levels, where they are from, etc.",
+    type: "textarea",
+  },
+  {
+    key: "lead",
+    question: "Who is the team lead?",
+    type: "text",
+  },
+  {
+    key: "lead_detail",
+    question: "Brief introduction to the team lead, their working style. etc",
+    type: "textarea",
+  },
+  {
+    key: "language",
+    question: "What is the working language of the team",
+    type: "text",
+  },
+];
+
 const RoleOverviewFormQuestionsGroups: {
-  key: string;
+  key: TRoleOverviewType;
   title: string;
   questions: TQuestion[];
 }[] = [
   {
-    key: "basic",
+    key: "basic_info",
     title: "Basic information",
     questions: [
       {
@@ -143,35 +185,7 @@ const RoleOverviewFormQuestionsGroups: {
   },
 
   {
-    key: "requirement",
-    title: "Job Requirements",
-    questions: [
-      {
-        key: "nonNegotiableRequirement",
-        question: "Non-negotiable requirements",
-        type: "textarea",
-      },
-      {
-        key: "preferredRequirement",
-        question: "Preferred requirements",
-        type: "textarea",
-      },
-    ],
-  },
-  {
-    key: "overview",
-    title: "Role Overview",
-    questions: [
-      {
-        key: "others",
-        question:
-          "Tell us anything that you believe will help us better understand the role",
-        type: "textarea",
-      },
-    ],
-  },
-  {
-    key: "materials",
+    key: "reference",
     title: "Reference materials",
     questions: [
       {
@@ -188,24 +202,38 @@ const RoleOverviewFormQuestionsGroups: {
       },
     ],
   },
+
   {
-    key: "team",
+    key: "team_context",
     title: "Team Context",
     questions: [
       {
         key: "team",
-        type: "textarea",
+        type: "team",
         question: "Which <b>team</b> will this role join?",
       },
       {
-        key: "report",
+        key: "report_to",
         type: "textarea",
         question: "Who will this role report to?",
       },
       {
-        key: "headcounts",
+        key: "manager_detail",
         type: "textarea",
-        question: "How many <b>headcounts</b> are you planning for this role?",
+        question:
+          "Brief intro about this role's direct manager, their working style, etc.",
+      },
+      {
+        key: "collaborators",
+        type: "textarea",
+        question:
+          "Who will be the key collaborators (internal teams/roles, external partners/clients)?",
+      },
+      {
+        key: "others",
+        type: "textarea",
+        question:
+          "Is there anything about the team that a potential candidate should know?",
       },
     ],
   },
@@ -222,19 +250,43 @@ type TSubmitResult = {
 
 interface IProps {
   open: boolean;
-  group?: string;
+  group?: TRoleOverviewType;
   onClose: () => void;
   onOk: (result: string) => void;
 }
 
+type TTeam = {
+  id: number;
+  name: string;
+  detail: string;
+};
+
 const RoleOverviewModal = (props: IProps) => {
-  const { open, group = "basic", onClose, onOk } = props;
+  const { open, group = "basic_info", onClose, onOk } = props;
   const [form] = Form.useForm();
+  const [createTeamForm] = Form.useForm();
   const [_, forceUpdate] = useReducer(() => ({}), {});
+  const [createTeamModelOpen, setCreateTeamModelOpen] = useState(false);
+  const [teams, setTeams] = useState<TTeam[]>([]);
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(
     (item) => item.key === group
   );
+
+  useEffect(() => {
+    fetchTeams();
+  }, []);
+
+  const fetchTeams = async () => {
+    const res = await Get<{ teams: TTeam[] }>(`/api/teams`);
+    if (res.code === 0) {
+      setTeams(res.data.teams);
+    }
+  };
+
+  const onCloseCreateTeamModal = () => setCreateTeamModelOpen(false);
+
+  const createTeam = () => {};
 
   const onSubmit = () => {
     const values = form.getFieldsValue();
@@ -308,6 +360,32 @@ const RoleOverviewModal = (props: IProps) => {
                   });
                 })
                 .map((item) => {
+                  if (item.type === "team") {
+                    return (
+                      <Form.Item label={item.question} name={item.key}>
+                        <Select
+                          options={teams.map((team) => ({
+                            value: team.id,
+                            label: team.name,
+                          }))}
+                          dropdownRender={(node) => {
+                            return (
+                              <div>
+                                {node}
+                                <div
+                                  onClick={() => {
+                                    setCreateTeamModelOpen(true);
+                                  }}
+                                >
+                                  Create Team
+                                </div>
+                              </div>
+                            );
+                          }}
+                        />
+                      </Form.Item>
+                    );
+                  }
                   return (
                     <Form.Item
                       label={
@@ -350,6 +428,47 @@ const RoleOverviewModal = (props: IProps) => {
             </Form>
           </>
         )}
+        <Modal
+          open={createTeamModelOpen}
+          onClose={() => onCloseCreateTeamModal()}
+          onCancel={() => onCloseCreateTeamModal()}
+          closable={true}
+          title="Create Team"
+          width={800}
+          onOk={() => createTeam()}
+        >
+          <div style={{ height: "60vh", overflow: "auto" }}>
+            <Form form={createTeamForm} layout="vertical">
+              {TeamQuestions.map((item) => {
+                return (
+                  <Form.Item
+                    label={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: item.question,
+                        }}
+                      />
+                    }
+                    name={item.key}
+                    key={item.key}
+                  >
+                    {item.type === "text" && <Input />}
+                    {item.type === "textarea" && (
+                      <Input.TextArea
+                        rows={2}
+                        autoSize={{ minRows: 2, maxRows: 8 }}
+                      />
+                    )}
+                    {item.type === "number" && <InputNumber />}
+                    {item.type === "select" && (
+                      <Select options={item.options} />
+                    )}
+                  </Form.Item>
+                );
+              })}
+            </Form>
+          </div>
+        </Modal>
       </div>
     </Modal>
   );

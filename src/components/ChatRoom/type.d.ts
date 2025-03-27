@@ -59,3 +59,5 @@ export interface IProps {
   allowEditMessage?: boolean;
   role?: "staff" | "coworker" | "candidate";
 }
+
+export type TRoleOverviewType = "basic_info" | "reference" | "team_context";

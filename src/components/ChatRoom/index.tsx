@@ -39,6 +39,7 @@ import {
   TExtraTagName,
   TMessage,
   TMessageFromApi,
+  TRoleOverviewType,
 } from "./type";
 import { copy } from "../../utils";
 
@@ -71,6 +72,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >({});
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
   const [chatType, setChatType] = useState<TChatType>();
+  const [roleOverviewType, setRoleOverviewType] = useState<TRoleOverviewType>();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -312,8 +314,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     await sendMessage(inputValue.trim());
   };
 
-  const sendRoleOverviwe = async (roleOverview: string) => {
+  const sendRoleOverview = async (roleOverview: string) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
+      type: roleOverviewType,
       content: roleOverview,
     });
     if (code === 0) {
@@ -623,6 +626,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             title:
                               "Click here to share basic information about this role",
                             handler: () => {
+                              setRoleOverviewType("basic_info");
                               setShowRoleOverviewModal(true);
                             },
                           },
@@ -631,6 +635,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             title:
                               "Click here to share references about this role",
                             handler: () => {
+                              setRoleOverviewType("reference");
                               setShowRoleOverviewModal(true);
                             },
                           },
@@ -639,6 +644,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             title:
                               "Click here to share team context about this role",
                             handler: () => {
+                              setRoleOverviewType("team_context");
                               setShowRoleOverviewModal(true);
                             },
                           },
@@ -871,8 +877,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <RoleOverviewModal
           open={showRoleOverviewModal}
           onClose={() => setShowRoleOverviewModal(false)}
+          group={roleOverviewType}
           onOk={(result: string) => {
-            sendRoleOverviwe(result);
+            sendRoleOverview(result);
             setShowRoleOverviewModal(false);
           }}
         />
