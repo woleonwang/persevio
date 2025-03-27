@@ -619,9 +619,25 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           }) => void;
                         }[] = [
                           {
-                            key: "request-role-overview",
+                            key: "basic-info-request",
                             title:
-                              "Click here to share information about this role",
+                              "Click here to share basic information about this role",
+                            handler: () => {
+                              setShowRoleOverviewModal(true);
+                            },
+                          },
+                          {
+                            key: "reference-request",
+                            title:
+                              "Click here to share references about this role",
+                            handler: () => {
+                              setShowRoleOverviewModal(true);
+                            },
+                          },
+                          {
+                            key: "team-context-request",
+                            title:
+                              "Click here to share team context about this role",
                             handler: () => {
                               setShowRoleOverviewModal(true);
                             },

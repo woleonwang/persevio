@@ -1,6 +1,8 @@
 export type TExtraTagName =
   // 后端生成
-  | "request-role-overview" // 职位表单
+  | "basic-info-request"
+  | "reference-request"
+  | "team-context-request"
   | "copy-link" // 复制链接
   | "jrd-done"
   | "jd-done"
