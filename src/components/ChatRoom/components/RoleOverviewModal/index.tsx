@@ -29,6 +29,7 @@ type TQuestion = {
     value: string;
     label: string;
   }[];
+  required?: boolean;
 };
 
 const TeamQuestions: TQuestion[] = [
@@ -95,6 +96,7 @@ const RoleOverviewFormQuestionsGroups: {
             label: "Part-time",
           },
         ],
+        required: true,
       },
       {
         key: "role",
@@ -110,6 +112,7 @@ const RoleOverviewFormQuestionsGroups: {
             label: "Contract role",
           },
         ],
+        required: true,
       },
       {
         key: "contract_duration",
@@ -121,6 +124,7 @@ const RoleOverviewFormQuestionsGroups: {
             valueKey: "contract",
           },
         ],
+        required: true,
       },
       {
         key: "remote",
@@ -141,6 +145,7 @@ const RoleOverviewFormQuestionsGroups: {
             label: "Hybrid",
           },
         ],
+        required: true,
       },
       {
         key: "city",
@@ -153,6 +158,7 @@ const RoleOverviewFormQuestionsGroups: {
             valueKey: ["onsite", "hybrid"],
           },
         ],
+        required: true,
       },
       {
         key: "seniority",
@@ -185,11 +191,47 @@ const RoleOverviewFormQuestionsGroups: {
             label: "Senior Executive/Leadership Team",
           },
         ],
+        required: true,
       },
       {
         key: "internal_employee",
         type: "textarea",
         question: "Is there an internal employee level for this role?",
+        required: true,
+      },
+      {
+        key: "headcount",
+        type: "number",
+        question: "How many headcount? ",
+        required: true,
+      },
+      {
+        key: "when_start",
+        type: "select",
+        question: "When do you need this role to start?",
+        options: [
+          {
+            value: "soon",
+            label: "As soon as possible",
+          },
+          {
+            value: "one_month",
+            label: "Within 1 month",
+          },
+          {
+            value: "two_month",
+            label: "Within 2 months",
+          },
+          {
+            value: "three_month",
+            label: "Within 3 months",
+          },
+          {
+            value: "not_hurry",
+            label: "We are not in a hurry",
+          },
+        ],
+        required: true,
       },
     ],
   },
@@ -307,33 +349,34 @@ const RoleOverviewModal = (props: IProps) => {
   };
 
   const onSubmit = () => {
-    const values = form.getFieldsValue();
-    let resultStr = "";
-    RoleOverviewFormQuestionsGroups.forEach((group) => {
-      const questions: string[] = [];
-      group.questions.forEach((question) => {
-        if (question.key === "team") return;
+    form.validateFields().then((values) => {
+      let resultStr = "";
+      RoleOverviewFormQuestionsGroups.forEach((group) => {
+        const questions: string[] = [];
+        group.questions.forEach((question) => {
+          if (question.key === "team") return;
 
-        const value = values[question.key];
-        const formattedValue =
-          question.type === "select"
-            ? (question.options ?? []).find((item) => item.value === value)
-                ?.label
-            : value;
-        if (value) {
-          questions.push(
-            `${question.question
-              .replaceAll("</b>", "**")
-              .replaceAll("<b>", "**")}\n\n${formattedValue}`
-          );
+          const value = values[question.key];
+          const formattedValue =
+            question.type === "select"
+              ? (question.options ?? []).find((item) => item.value === value)
+                  ?.label
+              : value;
+          if (value) {
+            questions.push(
+              `${question.question
+                .replaceAll("</b>", "**")
+                .replaceAll("<b>", "**")}\n\n${formattedValue}`
+            );
+          }
+        });
+        if (questions.length > 0) {
+          resultStr += `## ${group.title}\n\n${questions.join("\n\n")}\n\n`;
         }
       });
-      if (questions.length > 0) {
-        resultStr += `## ${group.title}\n\n${questions.join("\n\n")}\n\n`;
-      }
-    });
 
-    onOk(resultStr);
+      onOk(resultStr);
+    });
   };
 
   const genFormItem = (question: TQuestion) => {
@@ -360,6 +403,12 @@ const RoleOverviewModal = (props: IProps) => {
         }
         name={question.key}
         key={question.key}
+        rules={[
+          {
+            required: question.required,
+            message: `Please enter or select`,
+          },
+        ]}
       >
         {question.type === "text" && <Input />}
         {question.type === "textarea" && (
