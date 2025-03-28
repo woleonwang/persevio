@@ -1,10 +1,19 @@
-import { Form, Input, InputNumber, Modal, Popover, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Popover,
+  Select,
+} from "antd";
 import Markdown from "react-markdown";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
-import { Get } from "../../../../utils/request";
+import { Get, Post } from "../../../../utils/request";
 
 type TQuestion = {
   key: string;
@@ -13,7 +22,8 @@ type TQuestion = {
   hint?: string;
   dependencies?: {
     questionKey: string;
-    valueKey: string | string[];
+    valueKey?: string | string[];
+    exists?: boolean;
   }[];
   options?: {
     value: string;
@@ -212,6 +222,10 @@ const RoleOverviewFormQuestionsGroups: {
         type: "team",
         question: "Which <b>team</b> will this role join?",
       },
+      ...TeamQuestions.map((item) => ({
+        ...item,
+        dependencies: [{ questionKey: "team", exists: true }],
+      })),
       {
         key: "report_to",
         type: "textarea",
@@ -238,15 +252,6 @@ const RoleOverviewFormQuestionsGroups: {
     ],
   },
 ];
-
-const RoleOverviewFormQuestions: TQuestion[] =
-  RoleOverviewFormQuestionsGroups.map((item) => item.questions).flat();
-
-type TSubmitResult = {
-  key: string;
-  question: string;
-  answer: string;
-};
 
 interface IProps {
   open: boolean;
@@ -286,37 +291,40 @@ const RoleOverviewModal = (props: IProps) => {
 
   const onCloseCreateTeamModal = () => setCreateTeamModelOpen(false);
 
-  const createTeam = () => {};
+  const createTeam = async () => {
+    const questions = createTeamForm.getFieldsValue();
+
+    const { code } = await Post<TTeam>(`/api/teams`, {
+      name: questions.name,
+      detail: JSON.stringify(questions),
+    });
+
+    if (code === 0) {
+      message.success("Create team succeed");
+      fetchTeams();
+      onCloseCreateTeamModal();
+    }
+  };
 
   const onSubmit = () => {
     const values = form.getFieldsValue();
-    const result: TSubmitResult[] = [];
-    Object.keys(values).forEach((key) => {
-      const value = values[key];
-      const question = RoleOverviewFormQuestions.find(
-        (item) => item.key === key
-      );
-      if (question && value) {
-        result.push({
-          key,
-          question: question.question
-            .replaceAll("</b>", "")
-            .replaceAll("<b>", ""),
-          answer: value,
-        });
-      }
-    });
-
     let resultStr = "";
     RoleOverviewFormQuestionsGroups.forEach((group) => {
       const questions: string[] = [];
       group.questions.forEach((question) => {
+        if (question.key === "team") return;
+
         const value = values[question.key];
+        const formattedValue =
+          question.type === "select"
+            ? (question.options ?? []).find((item) => item.value === value)
+                ?.label
+            : value;
         if (value) {
           questions.push(
             `${question.question
               .replaceAll("</b>", "**")
-              .replaceAll("<b>", "**")}\n\n${value}`
+              .replaceAll("<b>", "**")}\n\n${formattedValue}`
           );
         }
       });
@@ -326,6 +334,79 @@ const RoleOverviewModal = (props: IProps) => {
     });
 
     onOk(resultStr);
+  };
+
+  const genFormItem = (question: TQuestion) => {
+    return (
+      <Form.Item
+        label={
+          <>
+            <span dangerouslySetInnerHTML={{ __html: question.question }} />
+            {question.hint && (
+              <Popover
+                content={
+                  <Markdown className={styles.container}>
+                    {question.hint}
+                  </Markdown>
+                }
+                placement="right"
+              >
+                <QuestionCircleOutlined
+                  style={{ marginLeft: 5, cursor: "pointer" }}
+                />
+              </Popover>
+            )}
+          </>
+        }
+        name={question.key}
+        key={question.key}
+      >
+        {question.type === "text" && <Input />}
+        {question.type === "textarea" && (
+          <Input.TextArea rows={2} autoSize={{ minRows: 2, maxRows: 8 }} />
+        )}
+        {question.type === "number" && <InputNumber />}
+        {question.type === "select" && <Select options={question.options} />}
+        {question.type === "team" && (
+          <Select
+            options={teams.map((team) => ({
+              value: team.id,
+              label: team.name,
+            }))}
+            dropdownRender={(node) => {
+              return (
+                <div>
+                  {node}
+                  <div
+                    style={{
+                      padding: "12px 10px",
+                      marginTop: 12,
+                      borderTop: "1px solid #e8e8e8",
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={() => {
+                        setCreateTeamModelOpen(true);
+                      }}
+                    >
+                      Create Team
+                    </Button>
+                  </div>
+                </div>
+              );
+            }}
+            onChange={(value) => {
+              const selectedTeam = teams.find((team) => team.id === value);
+
+              if (selectedTeam)
+                form.setFieldsValue(JSON.parse(selectedTeam.detail));
+            }}
+          />
+        )}
+      </Form.Item>
+    );
   };
 
   return (
@@ -354,77 +435,14 @@ const RoleOverviewModal = (props: IProps) => {
 
                   return item.dependencies.every((dep) => {
                     const currentValue = form.getFieldValue(dep.questionKey);
-                    return Array.isArray(dep.valueKey)
+                    return dep.exists
+                      ? !!currentValue
+                      : Array.isArray(dep.valueKey)
                       ? dep.valueKey.includes(currentValue)
                       : dep.valueKey === currentValue;
                   });
                 })
-                .map((item) => {
-                  if (item.type === "team") {
-                    return (
-                      <Form.Item label={item.question} name={item.key}>
-                        <Select
-                          options={teams.map((team) => ({
-                            value: team.id,
-                            label: team.name,
-                          }))}
-                          dropdownRender={(node) => {
-                            return (
-                              <div>
-                                {node}
-                                <div
-                                  onClick={() => {
-                                    setCreateTeamModelOpen(true);
-                                  }}
-                                >
-                                  Create Team
-                                </div>
-                              </div>
-                            );
-                          }}
-                        />
-                      </Form.Item>
-                    );
-                  }
-                  return (
-                    <Form.Item
-                      label={
-                        <>
-                          <span
-                            dangerouslySetInnerHTML={{ __html: item.question }}
-                          />
-                          {item.hint && (
-                            <Popover
-                              content={
-                                <Markdown className={styles.container}>
-                                  {item.hint}
-                                </Markdown>
-                              }
-                              placement="right"
-                            >
-                              <QuestionCircleOutlined
-                                style={{ marginLeft: 5, cursor: "pointer" }}
-                              />
-                            </Popover>
-                          )}
-                        </>
-                      }
-                      name={item.key}
-                      key={item.key}
-                    >
-                      {item.type === "textarea" && (
-                        <Input.TextArea
-                          rows={2}
-                          autoSize={{ minRows: 2, maxRows: 8 }}
-                        />
-                      )}
-                      {item.type === "number" && <InputNumber />}
-                      {item.type === "select" && (
-                        <Select options={item.options} />
-                      )}
-                    </Form.Item>
-                  );
-                })}
+                .map((item) => genFormItem(item))}
             </Form>
           </>
         )}
@@ -439,33 +457,7 @@ const RoleOverviewModal = (props: IProps) => {
         >
           <div style={{ height: "60vh", overflow: "auto" }}>
             <Form form={createTeamForm} layout="vertical">
-              {TeamQuestions.map((item) => {
-                return (
-                  <Form.Item
-                    label={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: item.question,
-                        }}
-                      />
-                    }
-                    name={item.key}
-                    key={item.key}
-                  >
-                    {item.type === "text" && <Input />}
-                    {item.type === "textarea" && (
-                      <Input.TextArea
-                        rows={2}
-                        autoSize={{ minRows: 2, maxRows: 8 }}
-                      />
-                    )}
-                    {item.type === "number" && <InputNumber />}
-                    {item.type === "select" && (
-                      <Select options={item.options} />
-                    )}
-                  </Form.Item>
-                );
-              })}
+              {TeamQuestions.map((item) => genFormItem(item))}
             </Form>
           </div>
         </Modal>
