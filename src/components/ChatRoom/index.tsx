@@ -623,8 +623,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         }[] = [
                           {
                             key: "basic-info-request",
-                            title:
-                              "Click here to share basic information about this role",
+                            title: "Click here to share basic information",
                             handler: () => {
                               setRoleOverviewType("basic_info");
                               setShowRoleOverviewModal(true);
@@ -632,8 +631,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           },
                           {
                             key: "reference-request",
-                            title:
-                              "Click here to share references about this role",
+                            title: "Click here to share references",
                             handler: () => {
                               setRoleOverviewType("reference");
                               setShowRoleOverviewModal(true);
@@ -641,8 +639,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           },
                           {
                             key: "team-context-request",
-                            title:
-                              "Click here to share team context about this role",
+                            title: "Click here to share team context",
                             handler: () => {
                               setRoleOverviewType("team_context");
                               setShowRoleOverviewModal(true);
