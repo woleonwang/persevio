@@ -232,6 +232,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         setMessages(messageHistory);
         if (role !== "candidate") {
+          if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
+            const { code } = await Post(`/api/jobs/${data.job.id}/open_survey`);
+            if (code === 0) {
+              window.open(
+                "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z",
+                "popup",
+                "width=1000,height=800"
+              );
+            }
+          }
           setJob(data.job);
         }
       }
