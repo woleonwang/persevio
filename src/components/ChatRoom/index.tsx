@@ -10,17 +10,19 @@ import {
   TourStepProps,
   Steps,
   Spin,
+  Tag,
 } from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
   CopyOutlined,
+  DeleteOutlined,
   EditOutlined,
   RightCircleOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import Markdown from "react-markdown";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import rehypeRaw from "rehype-raw";
 
 import type { TextAreaRef } from "antd/es/input/TextArea";
@@ -39,6 +41,7 @@ import {
   TExtraTagName,
   TMessage,
   TMessageFromApi,
+  TRoleOverviewType,
 } from "./type";
 import { copy } from "../../utils";
 
@@ -71,6 +74,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >({});
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
   const [chatType, setChatType] = useState<TChatType>();
+  const [roleOverviewType, setRoleOverviewType] = useState<TRoleOverviewType>();
+  const [profile, setProfile] = useState<{
+    name: string;
+    is_admin: number;
+  }>();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -81,6 +89,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     HTMLButtonElement | HTMLAnchorElement | null
   >();
   const needScrollToBottom = useRef(false);
+  const loadingStartedAtRef = useRef<Dayjs>();
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
@@ -125,11 +134,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setChatType("candidate");
     } else {
       initJob();
+      if (role === "staff") {
+        initProfile();
+      }
     }
   }, [jobId]);
 
   useEffect(() => {
     if (isLoading) {
+      loadingStartedAtRef.current = dayjs();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
       }, 3000);
@@ -142,6 +155,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
         clearInterval(intervalFetchMessage);
         clearInterval(intervalText);
       };
+    } else {
+      loadingStartedAtRef.current = undefined;
     }
   }, [isLoading]);
 
@@ -183,6 +198,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setChatType(initChatType);
     } else {
       message.error("Get job failed");
+    }
+  };
+
+  const initProfile = async () => {
+    const { code, data } = await Get("/api/settings");
+    if (code === 0) {
+      const { staff_name, is_admin } = data;
+      setProfile({
+        name: staff_name,
+        is_admin: is_admin,
+      });
     }
   };
 
@@ -230,6 +256,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         setMessages(messageHistory);
         if (role !== "candidate") {
+          if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
+            const { code } = await Post(
+              formatUrl(`/api/jobs/${data.job.id}/open_survey`)
+            );
+            if (code === 0) {
+              window.open(
+                "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z",
+                "popup",
+                "width=1000,height=800"
+              );
+            }
+          }
           setJob(data.job);
         }
       }
@@ -312,8 +350,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     await sendMessage(inputValue.trim());
   };
 
-  const sendRoleOverviwe = async (roleOverview: string) => {
+  const sendRoleOverview = async (roleOverview: string) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
+      type: roleOverviewType,
       content: roleOverview,
     });
     if (code === 0) {
@@ -330,7 +369,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       after_text?: string;
     }
   ) => {
-    if (!chatType) return;
+    if (!chatType || isLoading) return;
 
     const formattedMessage = rawMessage.trim().replaceAll("\n", "\n\n");
     needScrollToBottom.current = true;
@@ -452,6 +491,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
     });
   };
 
+  const deleteMessage = async (messageId: number) => {
+    const { code } = await Post(`/api/jobs/${jobId}/messages`, {
+      message_id: messageId,
+    });
+
+    if (code === 0) {
+      message.success("Delete message successfully");
+      fetchMessages();
+    } else {
+      message.error("Delete message failed");
+    }
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -564,7 +616,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       )}
                     >
                       {item.id === "fake_ai_id" ? (
-                        <p>{loadingText}</p>
+                        <p>
+                          {loadingText}
+                          {dayjs().diff(
+                            loadingStartedAtRef.current ?? dayjs(),
+                            "second"
+                          ) > 30
+                            ? "(Viona is writing document, please be patient)"
+                            : ""}
+                        </p>
                       ) : editMessageMap[item.id]?.enabled ? (
                         <div className={styles.editingContainer}>
                           <Input.TextArea
@@ -587,7 +647,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             <Button
                               type="primary"
                               style={{ marginLeft: 8 }}
+                              disabled={
+                                isLoading || !editMessageMap[item.id]?.content
+                              }
                               onClick={() => {
+                                if (isLoading) return;
                                 const editMessage =
                                   editMessageMap[item.id].content;
                                 sendMessage(editMessage, {
@@ -619,10 +683,26 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           }) => void;
                         }[] = [
                           {
-                            key: "request-role-overview",
-                            title:
-                              "Click here to share information about this role",
+                            key: "basic-info-request",
+                            title: "Click here to share basic information",
                             handler: () => {
+                              setRoleOverviewType("basic_info");
+                              setShowRoleOverviewModal(true);
+                            },
+                          },
+                          {
+                            key: "reference-request",
+                            title: "Click here to share references",
+                            handler: () => {
+                              setRoleOverviewType("reference");
+                              setShowRoleOverviewModal(true);
+                            },
+                          },
+                          {
+                            key: "team-context-request",
+                            title: "Click here to share team context",
+                            handler: () => {
+                              setRoleOverviewType("team_context");
                               setShowRoleOverviewModal(true);
                             },
                           },
@@ -702,39 +782,66 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       })()}
 
                       {(() => {
-                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
-                        return allowEditMessage &&
+                        const canEditing =
+                          allowEditMessage &&
                           item.messageType === "normal" &&
                           item.role === "ai" &&
                           item.id !== "fake_ai_id" &&
-                          !editMessageMap[item.id]?.enabled ? (
+                          !editMessageMap[item.id]?.enabled;
+
+                        const canDelete =
+                          !!profile?.is_admin &&
+                          item.messageType === "normal" &&
+                          !["fake_ai_id", "fake_user_id"].includes(item.id);
+                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+
+                        return canEditing || canDelete ? (
                           <div className={styles.operationArea}>
                             <Button.Group>
-                              <Button
-                                shape="round"
-                                onClick={() =>
-                                  setEditMessageMap((current) => ({
-                                    ...current,
-                                    [item.id]: {
-                                      enabled: true,
-                                      content: item.content,
-                                    },
-                                  }))
-                                }
-                                icon={<EditOutlined />}
-                                ref={(e) => {
-                                  if (maxIdOfAIMessage === item.id)
-                                    editMessageTourElementRef.current = e;
-                                }}
-                              />
-                              <Button
-                                shape="round"
-                                onClick={async () => {
-                                  await copy(item.content);
-                                  message.success("Copied");
-                                }}
-                                icon={<CopyOutlined />}
-                              />
+                              {canEditing && (
+                                <>
+                                  <Button
+                                    shape="round"
+                                    onClick={() =>
+                                      setEditMessageMap((current) => ({
+                                        ...current,
+                                        [item.id]: {
+                                          enabled: true,
+                                          content: item.content,
+                                        },
+                                      }))
+                                    }
+                                    icon={<EditOutlined />}
+                                    ref={(e) => {
+                                      if (maxIdOfAIMessage === item.id)
+                                        editMessageTourElementRef.current = e;
+                                    }}
+                                  />
+                                  <Button
+                                    shape="round"
+                                    onClick={async () => {
+                                      await copy(item.content);
+                                      message.success("Copied");
+                                    }}
+                                    icon={<CopyOutlined />}
+                                  />
+                                </>
+                              )}
+                              {canDelete && (
+                                <Button
+                                  shape="round"
+                                  onClick={() => {
+                                    if (
+                                      confirm(
+                                        "Confirm to delete messages after this message?"
+                                      )
+                                    ) {
+                                      deleteMessage(parseInt(item.id));
+                                    }
+                                  }}
+                                  icon={<DeleteOutlined />}
+                                />
+                              )}
                             </Button.Group>
                           </div>
                         ) : null;
@@ -809,10 +916,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 justifyContent: "space-between",
               }}
             >
-              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                Send
-              </Button>
-
+              <div>
+                {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
+                  (text) => {
+                    return (
+                      <Tag
+                        style={{ cursor: "pointer" }}
+                        onClick={() => sendMessage(text)}
+                        color="green"
+                      >
+                        {text}
+                      </Tag>
+                    );
+                  }
+                )}
+              </div>
               <div style={{ display: "flex", gap: 10 }}>
                 {chatType === "candidate" && (
                   <>
@@ -838,6 +956,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   </>
                 )}
 
+                <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+                  Send
+                </Button>
+
                 <Button
                   type="primary"
                   danger={isRecording}
@@ -855,9 +977,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <RoleOverviewModal
           open={showRoleOverviewModal}
           onClose={() => setShowRoleOverviewModal(false)}
+          group={roleOverviewType}
           onOk={(result: string) => {
-            sendRoleOverviwe(result);
-            setShowRoleOverviewModal(false);
+            if (!isLoading) {
+              sendRoleOverview(result);
+              setShowRoleOverviewModal(false);
+            }
           }}
         />
 

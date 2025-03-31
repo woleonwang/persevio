@@ -1,6 +1,8 @@
 export type TExtraTagName =
   // 后端生成
-  | "request-role-overview" // 职位表单
+  | "basic-info-request"
+  | "reference-request"
+  | "team-context-request"
   | "copy-link" // 复制链接
   | "jrd-done"
   | "jd-done"
@@ -57,3 +59,5 @@ export interface IProps {
   allowEditMessage?: boolean;
   role?: "staff" | "coworker" | "candidate";
 }
+
+export type TRoleOverviewType = "basic_info" | "reference" | "team_context";
