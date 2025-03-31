@@ -46,7 +46,7 @@ const TeamQuestions: TQuestion[] = [
   },
   {
     key: "members_count",
-    question: "How many team members?",
+    question: "How many team members, excluding this new role?",
     type: "number",
   },
   {
