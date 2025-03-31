@@ -15,6 +15,7 @@ import {
   AudioMutedOutlined,
   AudioOutlined,
   CopyOutlined,
+  DeleteOutlined,
   EditOutlined,
   RightCircleOutlined,
 } from "@ant-design/icons";
@@ -73,6 +74,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
   const [chatType, setChatType] = useState<TChatType>();
   const [roleOverviewType, setRoleOverviewType] = useState<TRoleOverviewType>();
+  const [profile, setProfile] = useState<{
+    name: string;
+    is_admin: number;
+  }>();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -127,6 +132,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setChatType("candidate");
     } else {
       initJob();
+      if (role === "staff") {
+        initProfile();
+      }
     }
   }, [jobId]);
 
@@ -185,6 +193,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setChatType(initChatType);
     } else {
       message.error("Get job failed");
+    }
+  };
+
+  const initProfile = async () => {
+    const { code, data } = await Get("/api/settings");
+    if (code === 0) {
+      const { staff_name, is_admin } = data;
+      setProfile({
+        name: staff_name,
+        is_admin: is_admin,
+      });
     }
   };
 
@@ -467,6 +486,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
     });
   };
 
+  const deleteMessage = async (messageId: number) => {
+    const { code } = await Post(`/api/jobs/${jobId}/messages`, {
+      message_id: messageId,
+    });
+
+    if (code === 0) {
+      message.success("Delete message successfully");
+      fetchMessages();
+    } else {
+      message.error("Delete message failed");
+    }
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -733,39 +765,66 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       })()}
 
                       {(() => {
-                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
-                        return allowEditMessage &&
+                        const canEditing =
+                          allowEditMessage &&
                           item.messageType === "normal" &&
                           item.role === "ai" &&
                           item.id !== "fake_ai_id" &&
-                          !editMessageMap[item.id]?.enabled ? (
+                          !editMessageMap[item.id]?.enabled;
+
+                        const canDelete =
+                          !!profile?.is_admin &&
+                          item.messageType === "normal" &&
+                          !["fake_ai_id", "fake_user_id"].includes(item.id);
+                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+
+                        return canEditing || canDelete ? (
                           <div className={styles.operationArea}>
                             <Button.Group>
-                              <Button
-                                shape="round"
-                                onClick={() =>
-                                  setEditMessageMap((current) => ({
-                                    ...current,
-                                    [item.id]: {
-                                      enabled: true,
-                                      content: item.content,
-                                    },
-                                  }))
-                                }
-                                icon={<EditOutlined />}
-                                ref={(e) => {
-                                  if (maxIdOfAIMessage === item.id)
-                                    editMessageTourElementRef.current = e;
-                                }}
-                              />
-                              <Button
-                                shape="round"
-                                onClick={async () => {
-                                  await copy(item.content);
-                                  message.success("Copied");
-                                }}
-                                icon={<CopyOutlined />}
-                              />
+                              {canEditing && (
+                                <>
+                                  <Button
+                                    shape="round"
+                                    onClick={() =>
+                                      setEditMessageMap((current) => ({
+                                        ...current,
+                                        [item.id]: {
+                                          enabled: true,
+                                          content: item.content,
+                                        },
+                                      }))
+                                    }
+                                    icon={<EditOutlined />}
+                                    ref={(e) => {
+                                      if (maxIdOfAIMessage === item.id)
+                                        editMessageTourElementRef.current = e;
+                                    }}
+                                  />
+                                  <Button
+                                    shape="round"
+                                    onClick={async () => {
+                                      await copy(item.content);
+                                      message.success("Copied");
+                                    }}
+                                    icon={<CopyOutlined />}
+                                  />
+                                </>
+                              )}
+                              {canDelete && (
+                                <Button
+                                  shape="round"
+                                  onClick={() => {
+                                    if (
+                                      confirm(
+                                        "Confirm to delete messages after this message?"
+                                      )
+                                    ) {
+                                      deleteMessage(parseInt(item.id));
+                                    }
+                                  }}
+                                  icon={<DeleteOutlined />}
+                                />
+                              )}
                             </Button.Group>
                           </div>
                         ) : null;
