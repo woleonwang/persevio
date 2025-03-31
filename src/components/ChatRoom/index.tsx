@@ -10,6 +10,7 @@ import {
   TourStepProps,
   Steps,
   Spin,
+  Tag,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -21,7 +22,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import Markdown from "react-markdown";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import rehypeRaw from "rehype-raw";
 
 import type { TextAreaRef } from "antd/es/input/TextArea";
@@ -88,6 +89,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     HTMLButtonElement | HTMLAnchorElement | null
   >();
   const needScrollToBottom = useRef(false);
+  const loadingStartedAtRef = useRef<Dayjs>();
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
@@ -140,6 +142,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     if (isLoading) {
+      loadingStartedAtRef.current = dayjs();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
       }, 3000);
@@ -152,6 +155,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
         clearInterval(intervalFetchMessage);
         clearInterval(intervalText);
       };
+    } else {
+      loadingStartedAtRef.current = undefined;
     }
   }, [isLoading]);
 
@@ -364,7 +369,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       after_text?: string;
     }
   ) => {
-    if (!chatType) return;
+    if (!chatType || isLoading) return;
 
     const formattedMessage = rawMessage.trim().replaceAll("\n", "\n\n");
     needScrollToBottom.current = true;
@@ -611,7 +616,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       )}
                     >
                       {item.id === "fake_ai_id" ? (
-                        <p>{loadingText}</p>
+                        <p>
+                          {loadingText}
+                          {dayjs().diff(
+                            loadingStartedAtRef.current ?? dayjs(),
+                            "second"
+                          ) > 30
+                            ? "(Viona is writing document, please be patient)"
+                            : ""}
+                        </p>
                       ) : editMessageMap[item.id]?.enabled ? (
                         <div className={styles.editingContainer}>
                           <Input.TextArea
@@ -634,7 +647,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             <Button
                               type="primary"
                               style={{ marginLeft: 8 }}
+                              disabled={
+                                isLoading || !editMessageMap[item.id]?.content
+                              }
                               onClick={() => {
+                                if (isLoading) return;
                                 const editMessage =
                                   editMessageMap[item.id].content;
                                 sendMessage(editMessage, {
@@ -899,10 +916,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 justifyContent: "space-between",
               }}
             >
-              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                Send
-              </Button>
-
+              <div>
+                {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
+                  (text) => {
+                    return (
+                      <Tag
+                        style={{ cursor: "pointer" }}
+                        onClick={() => sendMessage(text)}
+                        color="green"
+                      >
+                        {text}
+                      </Tag>
+                    );
+                  }
+                )}
+              </div>
               <div style={{ display: "flex", gap: 10 }}>
                 {false && chatType === "candidate" && (
                   <>
@@ -928,6 +956,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   </>
                 )}
 
+                <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+                  Send
+                </Button>
+
                 <Button
                   type="primary"
                   danger={isRecording}
@@ -947,8 +979,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
           onClose={() => setShowRoleOverviewModal(false)}
           group={roleOverviewType}
           onOk={(result: string) => {
-            sendRoleOverview(result);
-            setShowRoleOverviewModal(false);
+            if (!isLoading) {
+              sendRoleOverview(result);
+              setShowRoleOverviewModal(false);
+            }
           }}
         />
 

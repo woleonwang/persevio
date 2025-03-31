@@ -149,9 +149,20 @@ const RoleOverviewFormQuestionsGroups: {
       },
       {
         key: "city",
+        type: "text",
+        question: "Which <b>city</b> will this role be based in?",
+        dependencies: [
+          {
+            questionKey: "remote",
+            valueKey: ["onsite", "hybrid"],
+          },
+        ],
+        required: true,
+      },
+      {
+        key: "address",
         type: "textarea",
-        question:
-          "Which <b>city</b> and <b>address</b> will this role be based in?",
+        question: "What is the <b>office address</b> for this role?",
         dependencies: [
           {
             questionKey: "remote",
