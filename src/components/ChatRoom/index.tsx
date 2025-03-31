@@ -840,6 +840,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                       }))
                                     }
                                     icon={<EditOutlined />}
+                                    style={{ display: "none" }}
                                     ref={(e) => {
                                       if (maxIdOfAIMessage === item.id)
                                         editMessageTourElementRef.current = e;
