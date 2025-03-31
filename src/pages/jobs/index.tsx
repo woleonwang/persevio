@@ -4,8 +4,9 @@ import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 // import { ProfileOutlined } from "@ant-design/icons";
 import Profile from "./components/Profile";
-import { Button, Tabs } from "antd";
+import { Tabs } from "antd";
 import { useSearchParams } from "react-router";
+import JobInformation from "./components/JobInformation";
 
 type TJob = {
   id: number;
@@ -20,7 +21,7 @@ type TJob = {
   updated_at: string;
 };
 
-type TTabKey = "chat" | "pipeline";
+type TTabKey = "chat" | "info" | "pipeline";
 const Jobs = () => {
   const [jobs, setJobs] = useState<TJob[]>([]);
   const [searchParams] = useSearchParams();
@@ -78,9 +79,13 @@ const Jobs = () => {
                     label: "Viona",
                   },
                   {
-                    key: "pipeline",
-                    label: "Pipeline",
+                    key: "info",
+                    label: "Info",
                   },
+                  // {
+                  //   key: "pipeline",
+                  //   label: "Pipeline",
+                  // },
                 ]}
                 onChange={(type) => setStatus(type as TTabKey)}
                 className={styles.tabs}
@@ -92,6 +97,11 @@ const Jobs = () => {
                     allowEditMessage
                     role="staff"
                   />
+                </div>
+              )}
+              {status === "info" && (
+                <div className={styles.chatWrapper}>
+                  <JobInformation jobId={selectedJob.id} />
                 </div>
               )}
               {status === "pipeline" && (

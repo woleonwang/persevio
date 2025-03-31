@@ -11,6 +11,7 @@ import {
   Steps,
   Spin,
   Tag,
+  Modal,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -24,6 +25,20 @@ import classnames from "classnames";
 import Markdown from "react-markdown";
 import dayjs, { Dayjs } from "dayjs";
 import rehypeRaw from "rehype-raw";
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  headingsPlugin,
+  listsPlugin,
+  ListsToggle,
+  MDXEditor,
+  quotePlugin,
+  Separator,
+  thematicBreakPlugin,
+  toolbarPlugin,
+  UndoRedo,
+} from "@mdxeditor/editor";
+import "@mdxeditor/editor/style.css";
 
 import type { TextAreaRef } from "antd/es/input/TextArea";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
@@ -79,6 +94,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     name: string;
     is_admin: number;
   }>();
+  const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
+  const [markdownEditMessageContent, setMarkdownEditMessageContent] =
+    useState<string>("");
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -802,6 +820,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                 <>
                                   <Button
                                     shape="round"
+                                    onClick={() => {
+                                      setMarkdownEditMessageId(item.id);
+                                      setMarkdownEditMessageContent(
+                                        item.content
+                                      );
+                                    }}
+                                    icon={<EditOutlined />}
+                                  />
+                                  <Button
+                                    shape="round"
                                     onClick={() =>
                                       setEditMessageMap((current) => ({
                                         ...current,
@@ -985,6 +1013,43 @@ const ChatRoom: React.FC<IProps> = (props) => {
             }
           }}
         />
+
+        <Modal
+          open={!!markdownEditMessageId}
+          onCancel={() => {
+            setMarkdownEditMessageId(undefined);
+          }}
+          onOk={async () => {
+            setMarkdownEditMessageId(undefined);
+            await sendMessage(markdownEditMessageContent);
+          }}
+          width={"80vw"}
+          getContainer={document.body}
+          okText="Send"
+        >
+          <MDXEditor
+            contentEditableClassName={styles.mdEditor}
+            markdown={markdownEditMessageContent}
+            onChange={(md) => setMarkdownEditMessageContent(md)}
+            plugins={[
+              headingsPlugin(),
+              quotePlugin(),
+              listsPlugin(),
+              thematicBreakPlugin(),
+              toolbarPlugin({
+                toolbarContents: () => (
+                  <>
+                    <UndoRedo />
+                    <BoldItalicUnderlineToggles />
+                    <ListsToggle options={["bullet", "number"]} />
+                    <Separator />
+                    <BlockTypeSelect />
+                  </>
+                ),
+              }),
+            ]}
+          />
+        </Modal>
 
         <Tour
           open={editMessageTourOpen}
