@@ -1102,7 +1102,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     message += `\n\n**${name}:**`;
                     skills.forEach((skill) => {
                       message += `\n\n*   **${skill.content} - ${
-                        skill.type === "required" ? "Minumum" : "Nice-to-have"
+                        skill.type === "minimum"
+                          ? "Minumum"
+                          : skill.type === "big_plus"
+                          ? "Big Plus"
+                          : "Plus"
                       }**`;
                     });
                   }

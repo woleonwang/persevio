@@ -1,15 +1,16 @@
-import { Switch, Form, Input, Button } from "antd";
+import { Form, Input, Button, Radio } from "antd";
 import { useEffect, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
 
 type TSkill = {
   uuid?: string;
   content: string;
-  type: "required" | "optional";
+  type: "minimum" | "big_plus" | "plus";
   reason: string;
+  deleted?: boolean;
 };
 
 type TIdealProfileGroup = {
@@ -38,7 +39,7 @@ const IdealProfileForm = (props: IProps) => {
         const uuid = uuidV4();
         form.setFieldsValue({
           [`${uuid}_content`]: skill.content,
-          [`${uuid}_required`]: skill.type === "required",
+          [`${uuid}_type`]: skill.type,
         });
         skill.uuid = uuid;
       });
@@ -61,25 +62,31 @@ const IdealProfileForm = (props: IProps) => {
                     style={{ flex: "auto" }}
                     required
                   >
-                    <Input />
+                    <Input disabled={skill.deleted} />
                   </Form.Item>
 
                   <Form.Item
-                    name={`${skill.uuid}_required`}
+                    name={`${skill.uuid}_type`}
                     style={{ flex: "none" }}
                   >
-                    <Switch
-                      checkedChildren="Required"
-                      unCheckedChildren="Optional"
-                    />
+                    <Radio.Group disabled={skill.deleted}>
+                      <Radio.Button value="minimum">Minimum</Radio.Button>
+                      <Radio.Button value="big_plus">Big Plus</Radio.Button>
+                      <Radio.Button value="plus">Plus</Radio.Button>
+                    </Radio.Group>
                   </Form.Item>
 
                   <Button
-                    icon={<DeleteOutlined />}
+                    icon={skill.deleted ? <UndoOutlined /> : <DeleteOutlined />}
                     onClick={() => {
-                      group.skills = (group.skills ?? []).filter(
-                        (s) => s.uuid !== skill.uuid
-                      );
+                      group.skills.forEach((s) => {
+                        if (s.uuid === skill.uuid) {
+                          s.deleted = !s.deleted;
+                        }
+                      });
+                      // group.skills = (group.skills ?? []).filter(
+                      //   (s) => s.uuid !== skill.uuid
+                      // );
                       setProfileGroups([...profileGroups]);
                     }}
                   />
@@ -89,12 +96,13 @@ const IdealProfileForm = (props: IProps) => {
             <div>
               <Button
                 type="primary"
+                icon={<PlusOutlined />}
                 onClick={() => {
                   const uuid = uuidV4();
                   const newSkill: TSkill = {
                     uuid,
                     content: "",
-                    type: "optional",
+                    type: "plus",
                     reason: "",
                   };
 
@@ -103,12 +111,12 @@ const IdealProfileForm = (props: IProps) => {
 
                   form.setFieldsValue({
                     [`${uuid}_content`]: "",
-                    [`${uuid}_required`]: false,
+                    [`${uuid}_type`]: false,
                   });
                   setProfileGroups([...profileGroups]);
                 }}
               >
-                Add Skill
+                Add New
               </Button>
             </div>
           </div>
@@ -124,15 +132,15 @@ const IdealProfileForm = (props: IProps) => {
                 (group) => {
                   return {
                     ...group,
-                    skills: group.skills.map((skill) => {
-                      return {
-                        content: values[`${skill.uuid}_content`],
-                        type: values[`${skill.uuid}_required`]
-                          ? "required"
-                          : "optional",
-                        reason: skill.reason,
-                      };
-                    }),
+                    skills: group.skills
+                      .filter((skill) => !skill.deleted)
+                      .map((skill) => {
+                        return {
+                          content: values[`${skill.uuid}_content`],
+                          type: values[`${skill.uuid}_type`],
+                          reason: skill.reason,
+                        };
+                      }),
                   };
                 }
               );
