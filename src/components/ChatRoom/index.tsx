@@ -10,10 +10,8 @@ import {
   TourStepProps,
   Steps,
   Spin,
-  Tag,
   Modal,
   Drawer,
-  Radio,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -47,6 +45,7 @@ import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 import { Get, Post, PostFormData } from "../../utils/request";
 import RoleOverviewModal from "./components/RoleOverviewModal";
+import globalStore from "../../store/global";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
@@ -62,6 +61,8 @@ import {
 } from "./type";
 import { copy } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
+import { set } from "mobx";
+import { observer } from "mobx-react-lite";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -112,6 +113,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
+
+  const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
@@ -526,6 +529,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const setDrawerOpen = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setIdealProfileDrawerOpen(open);
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -537,7 +545,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
   return (
     <div className={styles.container}>
       {chatType !== "candidate" && (
-        <div className={styles.left}>
+        <div
+          className={styles.left}
+          style={{ display: collapseForDrawer ? "none" : "block" }}
+        >
           <Steps
             direction="vertical"
             size="small"
@@ -592,7 +603,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
         </div>
       )}
-      <div className={styles.right}>
+      <div
+        className={styles.right}
+        style={collapseForDrawer ? { width: "40vw", flex: "none" } : {}}
+      >
         <div className={styles.listArea}>
           <List
             dataSource={messages}
@@ -751,7 +765,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             key: "ideal-profile-request",
                             title: "Edit ideal profile",
                             handler: () => {
-                              setIdealProfileDrawerOpen(true);
+                              setDrawerOpen(true);
                             },
                           },
 
@@ -920,18 +934,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
-            <div style={{ marginBottom: 10 }}>
+            <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
               {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
                 (text) => {
                   return (
-                    <Tag
-                      style={{ cursor: "pointer" }}
-                      onClick={() => sendMessage(text)}
-                      color="green"
+                    <Button
+                      type="primary"
                       key={text}
+                      shape="round"
+                      onClick={() => sendMessage(text)}
+                      size="small"
                     >
                       {text}
-                    </Tag>
+                    </Button>
                   );
                 }
               )}
@@ -1068,14 +1083,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <Drawer
           open={idealProfileDrawerOpen}
           title="Edit Ideal Profile"
-          width={1000}
-          onClose={() => setIdealProfileDrawerOpen(false)}
+          width={"50vw"}
+          onClose={() => setDrawerOpen(false)}
           destroyOnClose
+          mask={false}
         >
           {job?.candidate_requirements_json && (
             <IdealProfileForm
               candidateRequirementsJson={job.candidate_requirements_json}
-              onClose={() => setIdealProfileDrawerOpen(false)}
+              onClose={() => setDrawerOpen(false)}
               onOk={(groups) => {
                 // 发送
                 let message = `I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content`;
@@ -1093,7 +1109,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 });
 
                 sendMessage(message);
-                setIdealProfileDrawerOpen(false);
+                setDrawerOpen(false);
               }}
             />
           )}
@@ -1113,4 +1129,4 @@ const ChatRoom: React.FC<IProps> = (props) => {
   );
 };
 
-export default ChatRoom;
+export default observer(ChatRoom);

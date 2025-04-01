@@ -1,13 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { ConfigProvider } from "antd";
+
 import "./index.css";
 import App from "./layouts/App";
-import { BrowserRouter, Route, Routes } from "react-router";
 import Home from "./pages/home";
-// import Signup from "./pages/signup/index.tsx";
 import Signin from "./pages/signin";
-import { ConfigProvider } from "antd";
-// import Entry from "./pages/entry/index.tsx";
 import Jobs from "./pages/jobs";
 import JobsCreate from "./pages/jobs-create";
 import JobsShow from "./pages/jobs-show";
