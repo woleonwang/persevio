@@ -61,7 +61,6 @@ import {
 } from "./type";
 import { copy } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
-import { set } from "mobx";
 import { observer } from "mobx-react-lite";
 
 const PreDefinedMessages = [
