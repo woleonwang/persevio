@@ -903,6 +903,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   onClick={() => {
                     sendMessage(message);
                   }}
+                  key={message}
                 >
                   <div>{message}</div>
                   <RightCircleOutlined
@@ -919,6 +920,22 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
+            <div style={{ marginBottom: 10 }}>
+              {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
+                (text) => {
+                  return (
+                    <Tag
+                      style={{ cursor: "pointer" }}
+                      onClick={() => sendMessage(text)}
+                      color="green"
+                      key={text}
+                    >
+                      {text}
+                    </Tag>
+                  );
+                }
+              )}
+            </div>
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
@@ -953,24 +970,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 marginTop: 10,
                 display: "flex",
                 gap: 10,
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
               }}
             >
-              <div>
-                {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
-                  (text) => {
-                    return (
-                      <Tag
-                        style={{ cursor: "pointer" }}
-                        onClick={() => sendMessage(text)}
-                        color="green"
-                      >
-                        {text}
-                      </Tag>
-                    );
-                  }
-                )}
-              </div>
               <div style={{ display: "flex", gap: 10 }}>
                 {chatType === "candidate" && (
                   <>
@@ -1063,10 +1065,36 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
         </Modal>
 
-        <Drawer open={idealProfileDrawerOpen} title="Edit Ideal Profile">
+        <Drawer
+          open={idealProfileDrawerOpen}
+          title="Edit Ideal Profile"
+          width={1000}
+          onClose={() => setIdealProfileDrawerOpen(false)}
+          destroyOnClose
+        >
           {job?.candidate_requirements_json && (
             <IdealProfileForm
               candidateRequirementsJson={job.candidate_requirements_json}
+              onClose={() => setIdealProfileDrawerOpen(false)}
+              onOk={(groups) => {
+                // 发送
+                let message = `I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content`;
+
+                groups.forEach((group) => {
+                  const { name, skills } = group;
+                  if (skills.length > 0) {
+                    message += `\n\n**${name}:**`;
+                    skills.forEach((skill) => {
+                      message += `\n\n*   **${skill.content} - ${
+                        skill.type === "required" ? "Minumum" : "Nice-to-have"
+                      }**`;
+                    });
+                  }
+                });
+
+                sendMessage(message);
+                setIdealProfileDrawerOpen(false);
+              }}
             />
           )}
         </Drawer>
