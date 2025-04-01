@@ -12,6 +12,8 @@ import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { useState } from "react";
+import globalStore from "../../store/global";
+import { observer } from "mobx-react-lite";
 
 const MENU = [
   {
@@ -47,9 +49,11 @@ const AppLayout = () => {
 
   const [collapse, setCollapse] = useState(false);
 
+  const { collapseForDrawer } = globalStore;
+
   return (
     <div className={styles.container}>
-      {collapse ? (
+      {collapse || collapseForDrawer ? (
         <div className={classnames(styles.menu, styles.collapse)}>
           <div style={{ position: "relative" }}>
             <RightCircleFilled
@@ -166,4 +170,4 @@ const AppLayout = () => {
   );
 };
 
-export default AppLayout;
+export default observer(AppLayout);

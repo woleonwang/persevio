@@ -5,6 +5,8 @@ import { useParams } from "react-router";
 import ChatRoom from "../../components/ChatRoom";
 import { Get, Post } from "../../utils/request";
 import { Button, Form, Input } from "antd";
+import { observer } from "mobx-react-lite";
+import globalStore from "../../store/global";
 
 type TCoworker = {
   id: number;
@@ -23,6 +25,7 @@ const JobCoworker = () => {
   const { invitation_token: invitationToken } = useParams();
   const [job, setJob] = useState<TJob>();
   const [coworker, setCoworker] = useState<TCoworker>();
+  const { collapseForDrawer } = globalStore;
 
   useEffect(() => {
     checkLogin();
@@ -69,7 +72,10 @@ const JobCoworker = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={collapseForDrawer ? { width: "50vw", marginRight: "auto" } : {}}
+    >
       {coworker ? (
         job && (
           <>
@@ -77,7 +83,10 @@ const JobCoworker = () => {
               Define job requirements for the {job.name} role by completing this
               conversation with Viona, your AI recruiter.
             </h2>
-            <div className={styles.body}>
+            <div
+              className={styles.body}
+              style={collapseForDrawer ? { width: "100%" } : {}}
+            >
               <ChatRoom jobId={job.id} allowEditMessage role="coworker" />
             </div>
           </>
@@ -102,4 +111,4 @@ const JobCoworker = () => {
   );
 };
 
-export default JobCoworker;
+export default observer(JobCoworker);

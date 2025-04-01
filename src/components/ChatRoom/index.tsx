@@ -10,8 +10,8 @@ import {
   TourStepProps,
   Steps,
   Spin,
-  Tag,
   Modal,
+  Drawer,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -45,6 +45,7 @@ import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 import { Get, Post, PostFormData } from "../../utils/request";
 import RoleOverviewModal from "./components/RoleOverviewModal";
+import globalStore from "../../store/global";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
@@ -59,6 +60,9 @@ import {
   TRoleOverviewType,
 } from "./type";
 import { copy } from "../../utils";
+import IdealProfileForm from "./components/IdealProflieForm";
+import { set } from "mobx";
+import { observer } from "mobx-react-lite";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -97,6 +101,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
+  const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -108,6 +113,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
+
+  const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
@@ -522,6 +529,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const setDrawerOpen = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setIdealProfileDrawerOpen(open);
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -533,7 +545,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
   return (
     <div className={styles.container}>
       {chatType !== "candidate" && (
-        <div className={styles.left}>
+        <div
+          className={styles.left}
+          style={{ display: collapseForDrawer ? "none" : "block" }}
+        >
           <Steps
             direction="vertical"
             size="small"
@@ -588,7 +603,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
         </div>
       )}
-      <div className={styles.right}>
+      <div
+        className={styles.right}
+        style={collapseForDrawer ? { width: "40vw", flex: "none" } : {}}
+      >
         <div className={styles.listArea}>
           <List
             dataSource={messages}
@@ -743,6 +761,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               }
                             },
                           },
+                          {
+                            key: "ideal-profile-request",
+                            title: "Edit ideal profile",
+                            handler: () => {
+                              setDrawerOpen(true);
+                            },
+                          },
 
                           {
                             key: "jrd-done-btn",
@@ -892,6 +917,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   onClick={() => {
                     sendMessage(message);
                   }}
+                  key={message}
                 >
                   <div>{message}</div>
                   <RightCircleOutlined
@@ -908,6 +934,23 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
+            <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
+              {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
+                (text) => {
+                  return (
+                    <Button
+                      type="primary"
+                      key={text}
+                      shape="round"
+                      onClick={() => sendMessage(text)}
+                      size="small"
+                    >
+                      {text}
+                    </Button>
+                  );
+                }
+              )}
+            </div>
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
@@ -942,24 +985,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 marginTop: 10,
                 display: "flex",
                 gap: 10,
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
               }}
             >
-              <div>
-                {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
-                  (text) => {
-                    return (
-                      <Tag
-                        style={{ cursor: "pointer" }}
-                        onClick={() => sendMessage(text)}
-                        color="green"
-                      >
-                        {text}
-                      </Tag>
-                    );
-                  }
-                )}
-              </div>
               <div style={{ display: "flex", gap: 10 }}>
                 {chatType === "candidate" && (
                   <>
@@ -1053,6 +1081,45 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
         </Modal>
 
+        <Drawer
+          open={idealProfileDrawerOpen}
+          title="Edit Ideal Profile"
+          width={"50vw"}
+          onClose={() => setDrawerOpen(false)}
+          destroyOnClose
+          mask={false}
+        >
+          {job?.candidate_requirements_json && (
+            <IdealProfileForm
+              candidateRequirementsJson={job.candidate_requirements_json}
+              onClose={() => setDrawerOpen(false)}
+              onOk={(groups) => {
+                // 发送
+                let message = `I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content`;
+
+                groups.forEach((group) => {
+                  const { name, skills } = group;
+                  if (skills.length > 0) {
+                    message += `\n\n**${name}:**`;
+                    skills.forEach((skill) => {
+                      message += `\n\n*   **${skill.content} - ${
+                        skill.type === "minimum"
+                          ? "Minumum"
+                          : skill.type === "big_plus"
+                          ? "Big Plus"
+                          : "Plus"
+                      }**`;
+                    });
+                  }
+                });
+
+                sendMessage(message);
+                setDrawerOpen(false);
+              }}
+            />
+          )}
+        </Drawer>
+
         <Tour
           open={editMessageTourOpen}
           onClose={() => {
@@ -1067,4 +1134,4 @@ const ChatRoom: React.FC<IProps> = (props) => {
   );
 };
 
-export default ChatRoom;
+export default observer(ChatRoom);

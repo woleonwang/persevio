@@ -7,6 +7,8 @@ import Profile from "./components/Profile";
 import { Tabs } from "antd";
 import { useSearchParams } from "react-router";
 import JobInformation from "./components/JobInformation";
+import { observer } from "mobx-react-lite";
+import globalStore from "../../store/global";
 
 type TJob = {
   id: number;
@@ -31,6 +33,7 @@ const Jobs = () => {
       : undefined
   );
   const [status, setStatus] = useState<TTabKey>("chat");
+  const { collapseForDrawer } = globalStore;
 
   const selectedJob = jobs.find((item) => item.id === selectedJobId);
 
@@ -48,7 +51,10 @@ const Jobs = () => {
   return (
     <div className={styles.container}>
       <div className={styles.body}>
-        <div className={styles.jobList}>
+        <div
+          className={styles.jobList}
+          style={{ display: collapseForDrawer ? "none" : "block" }}
+        >
           {jobs.map((job) => (
             <div
               key={job.id}
@@ -117,4 +123,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs;
+export default observer(Jobs);
