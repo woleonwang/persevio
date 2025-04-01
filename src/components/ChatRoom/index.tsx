@@ -1027,6 +1027,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           width={"80vw"}
           getContainer={document.body}
           okText="Send"
+          destroyOnClose
         >
           <MDXEditor
             contentEditableClassName={styles.mdEditor}
