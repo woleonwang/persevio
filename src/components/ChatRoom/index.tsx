@@ -761,7 +761,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             },
                           },
                           {
-                            key: "ideal-profile-request",
+                            key: "profile-feedback-and-priorities-request",
                             title: "Edit ideal profile",
                             handler: () => {
                               setDrawerOpen(true);
