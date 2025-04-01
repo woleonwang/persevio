@@ -12,6 +12,8 @@ import {
   Spin,
   Tag,
   Modal,
+  Drawer,
+  Radio,
 } from "antd";
 import {
   AudioMutedOutlined,
@@ -59,6 +61,7 @@ import {
   TRoleOverviewType,
 } from "./type";
 import { copy } from "../../utils";
+import IdealProfileForm from "./components/IdealProflieForm";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -97,6 +100,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
+  const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -743,6 +747,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               }
                             },
                           },
+                          {
+                            key: "ideal-profile-request",
+                            title: "Edit ideal profile",
+                            handler: () => {
+                              setIdealProfileDrawerOpen(true);
+                            },
+                          },
 
                           {
                             key: "jrd-done-btn",
@@ -1051,6 +1062,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
             ]}
           />
         </Modal>
+
+        <Drawer open={idealProfileDrawerOpen} title="Edit Ideal Profile">
+          {job?.candidate_requirements_json && (
+            <IdealProfileForm
+              candidateRequirementsJson={job.candidate_requirements_json}
+            />
+          )}
+        </Drawer>
 
         <Tour
           open={editMessageTourOpen}

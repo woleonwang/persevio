@@ -7,6 +7,7 @@ export type TExtraTagName =
   | "jrd-done"
   | "jd-done"
   | "interview-plan-done"
+  | "ideal-profile-request"
   // 前端生成
   | "open-link" // 打开新页面
   | "jrd-done-btn"
