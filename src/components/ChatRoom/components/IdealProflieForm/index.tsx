@@ -29,23 +29,29 @@ const IdealProfileForm = (props: IProps) => {
   const [profileGroups, setProfileGroups] = useState<TIdealProfileGroup[]>([]);
 
   useEffect(() => {
-    const groups: TIdealProfileGroup[] = JSON.parse(
-      candidateRequirementsJson
-    ).groups;
+    try {
+      const startIndex = candidateRequirementsJson.indexOf("{");
+      const lastIndex = candidateRequirementsJson.lastIndexOf("}");
+      const groups: TIdealProfileGroup[] = JSON.parse(
+        candidateRequirementsJson.slice(startIndex, lastIndex + 1)
+      ).groups;
 
-    groups.forEach((group) => {
-      group.skills.forEach((skill) => {
-        // ${uuid}_content, ${uuid}_type
-        const uuid = uuidV4();
-        form.setFieldsValue({
-          [`${uuid}_content`]: skill.content,
-          [`${uuid}_type`]: skill.type,
+      groups.forEach((group) => {
+        group.skills.forEach((skill) => {
+          // ${uuid}_content, ${uuid}_type
+          const uuid = uuidV4();
+          form.setFieldsValue({
+            [`${uuid}_content`]: skill.content,
+            [`${uuid}_type`]: skill.type,
+          });
+          skill.uuid = uuid;
         });
-        skill.uuid = uuid;
       });
-    });
 
-    setProfileGroups(groups);
+      setProfileGroups(groups);
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   return (
