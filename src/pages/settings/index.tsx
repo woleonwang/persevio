@@ -10,12 +10,7 @@ type TPrompt = {
 };
 const Settings = () => {
   const [form] = Form.useForm();
-  const [profile, setProfile] = useState<{
-    name: string;
-    email: string;
-    prompts: TPrompt[];
-    is_admin: number;
-  }>();
+  const [profile, setProfile] = useState<ISettings>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,13 +20,7 @@ const Settings = () => {
   const fetchSettings = async () => {
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
-      const { staff_name, email } = data;
-      setProfile({
-        name: staff_name,
-        email,
-        prompts: data.prompts,
-        is_admin: data.is_admin,
-      });
+      setProfile(data);
       const prompts: Record<string, string> = {};
       data.prompts.forEach((item: TPrompt) => {
         prompts[item.prompt_type] = item.content;
@@ -78,7 +67,7 @@ const Settings = () => {
         <div className={styles.title}>Proflie</div>
         <div className={styles.item}>
           <div className={styles.label}>Name:</div>
-          <div>{profile?.name}</div>
+          <div>{profile?.staff_name}</div>
         </div>
         <div className={styles.item}>
           <div className={styles.label}>Email:</div>

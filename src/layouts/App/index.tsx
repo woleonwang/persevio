@@ -11,37 +11,12 @@ import Job from "../../assets/icons/job";
 import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import globalStore from "../../store/global";
 import { observer } from "mobx-react-lite";
-
-const MENU = [
-  {
-    // title: "Chat with Viona",
-    // path: "/app/entry",
-    title: "Open a new role",
-    path: "/app/entry/create-job",
-    img: <Entry />,
-  },
-  {
-    title: "Jobs",
-    path: "/app/jobs",
-    img: <Job />,
-  },
-  {
-    title: "Company Info",
-    path: "/app/company",
-    img: <FileDoneOutlined />,
-  },
-];
-
-const FOOTER = [
-  {
-    title: "Settings",
-    path: "/app/settings",
-    img: <SettingOutlined />,
-  },
-];
+import { Spin } from "antd";
+import { Get } from "../../utils/request";
+import { useTranslation } from "react-i18next";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -49,8 +24,71 @@ const AppLayout = () => {
 
   const [collapse, setCollapse] = useState(false);
 
+  const [inited, setInited] = useState(false);
+
+  const { t, i18n } = useTranslation();
+
   const { collapseForDrawer } = globalStore;
 
+  useEffect(() => {
+    getBasicInfo();
+  }, []);
+
+  const MENU = [
+    {
+      // title: "Chat with Viona",
+      // path: "/app/entry",
+      title: t("menu.newRole"),
+      path: "/app/entry/create-job",
+      img: <Entry />,
+    },
+    {
+      title: t("menu.jobs"),
+      path: "/app/jobs",
+      img: <Job />,
+    },
+    {
+      title: t("menu.company"),
+      path: "/app/company",
+      img: <FileDoneOutlined />,
+    },
+  ];
+
+  const FOOTER = [
+    {
+      title: t("menu.settings"),
+      path: "/app/settings",
+      img: <SettingOutlined />,
+    },
+  ];
+  const getBasicInfo = async () => {
+    try {
+      const { code, data } = await Get("/api/settings");
+      if (code === 0) {
+        i18n.changeLanguage(data.lang ?? "en-US");
+        setInited(true);
+      }
+    } catch (e) {
+      navigate("/signin");
+    }
+  };
+
+  if (!inited) {
+    return (
+      <div
+        style={{
+          width: "100vw",
+          height: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {t("hello")}
+        <Spin size="large" />
+      </div>
+    );
+  }
   return (
     <div className={styles.container}>
       {collapse || collapseForDrawer ? (

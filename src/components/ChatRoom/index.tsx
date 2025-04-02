@@ -62,6 +62,7 @@ import {
 import { copy } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
 import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -93,14 +94,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
   const [chatType, setChatType] = useState<TChatType>();
   const [roleOverviewType, setRoleOverviewType] = useState<TRoleOverviewType>();
-  const [profile, setProfile] = useState<{
-    name: string;
-    is_admin: number;
-  }>();
+  const [profile, setProfile] = useState<ISettings>();
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
+
+  const { i18n } = useTranslation();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -228,11 +228,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const initProfile = async () => {
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
-      const { staff_name, is_admin } = data;
-      setProfile({
-        name: staff_name,
-        is_admin: is_admin,
-      });
+      setProfile(data);
     }
   };
 
@@ -436,7 +432,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = "en-US";
+      recognition.lang = i18n.language;
 
       recognition.onresult = (event: any) => {
         let result = "";
@@ -446,6 +442,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
           if (event.results[i].isFinal) {
             isFinal = true;
           }
+        }
+        console.log("result: ", result, " length:", result.length);
+        if (!result) {
+          console.log("events:", event.results);
         }
         setInputValue(originalInputRef.current + result);
         if (isFinal) {

@@ -2,6 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { ConfigProvider } from "antd";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 
 import "./index.css";
 import App from "./layouts/App";
@@ -14,6 +16,21 @@ import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
 import JobCoworker from "./pages/job-coworker";
+
+import enUS from "./locales/en-US.ts";
+import zhCN from "./locales/zh-CN.ts";
+
+i18n.use(initReactI18next).init({
+  resources: {
+    "en-US": {
+      translation: enUS,
+    },
+    "zh-CN": {
+      translation: zhCN,
+    },
+  },
+  fallbackLng: "en-US",
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
