@@ -9,7 +9,7 @@ import "./index.css";
 import App from "./layouts/App";
 import Home from "./pages/home";
 import Signin from "./pages/signin";
-import Jobs from "./pages/jobs";
+import Job from "./pages/job";
 import JobsCreate from "./pages/jobs-create";
 import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
@@ -60,7 +60,7 @@ createRoot(document.getElementById("root")!).render(
               path="/app/entry/create-job"
               element={<JobsCreate />}
             ></Route>
-            <Route path="/app/jobs" element={<Jobs />}></Route>
+            <Route path="/app/jobs/:jobId" element={<Job />}></Route>
             <Route path="/app/company" element={<CompanyKnowledge />}></Route>
             <Route path="/app/settings" element={<Settings />}></Route>
           </Route>

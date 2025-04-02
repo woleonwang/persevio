@@ -11,12 +11,23 @@ import Job from "../../assets/icons/job";
 import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
-import { useEffect, useState } from "react";
-import globalStore from "../../store/global";
+import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Spin } from "antd";
 import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
+import globalStore from "../../store/global";
+
+type TMenu = {
+  title: string;
+  path?: string;
+  img: ReactNode;
+  children?: {
+    title: string;
+    path: string;
+    active: boolean;
+  }[];
+};
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -28,24 +39,32 @@ const AppLayout = () => {
 
   const { t, i18n } = useTranslation();
 
+  const { jobs, fetchJobs } = globalStore;
+
   const { collapseForDrawer } = globalStore;
 
   useEffect(() => {
-    getBasicInfo();
+    init();
   }, []);
 
-  const MENU = [
+  const MENU: TMenu[] = [
     {
-      // title: "Chat with Viona",
-      // path: "/app/entry",
       title: t("menu.newRole"),
       path: "/app/entry/create-job",
       img: <Entry />,
     },
     {
       title: t("menu.jobs"),
-      path: "/app/jobs",
+      // path: "/app/jobs",
       img: <Job />,
+      children: jobs.map((job) => {
+        const path = `/app/jobs/${job.id}`;
+        return {
+          title: job.name,
+          path,
+          active: currentPath.startsWith(path),
+        };
+      }),
     },
     {
       title: t("menu.company"),
@@ -61,12 +80,15 @@ const AppLayout = () => {
       img: <SettingOutlined />,
     },
   ];
-  const getBasicInfo = async () => {
+  const init = async () => {
     try {
+      // 校验 token
       const { code, data } = await Get("/api/settings");
       if (code === 0) {
         i18n.changeLanguage(data.lang ?? "en-US");
         setInited(true);
+        // 获取职位
+        fetchJobs();
       }
     } catch (e) {
       navigate("/signin");
@@ -99,14 +121,18 @@ const AppLayout = () => {
             />
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
-                const isActive = currentPath.startsWith(item.path);
+                const isActive = item.path && currentPath.startsWith(item.path);
                 return (
                   <div
                     className={`${styles.menuItem} ${
                       isActive ? styles.active : ""
                     }`}
                     key={item.path}
-                    onClick={() => navigate(item.path)}
+                    onClick={
+                      item.path
+                        ? () => navigate(item.path as string)
+                        : undefined
+                    }
                   >
                     <Icon
                       icon={item.img}
@@ -153,24 +179,47 @@ const AppLayout = () => {
             <img src={logo} style={{ width: "80%" }} />
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
-                const isActive = currentPath.startsWith(item.path);
+                const isActive = item.path && currentPath.startsWith(item.path);
                 return (
-                  <div
-                    className={`${styles.menuItem} ${
-                      isActive ? styles.active : ""
-                    }`}
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <Icon
-                      icon={item.img}
-                      style={{
-                        fontSize: 20,
-                        color: isActive ? "#1FAC6A" : "#949DAC",
-                      }}
-                    />
-                    <span style={{ marginLeft: 16 }}>{item.title}</span>
-                  </div>
+                  <>
+                    <div
+                      className={`${styles.menuItem} ${
+                        isActive ? styles.active : ""
+                      }`}
+                      key={item.path}
+                      onClick={
+                        item.path
+                          ? () => navigate(item.path as string)
+                          : undefined
+                      }
+                    >
+                      <Icon
+                        icon={item.img}
+                        style={{
+                          fontSize: 20,
+                          color: isActive ? "#1FAC6A" : "#949DAC",
+                        }}
+                      />
+                      <span style={{ marginLeft: 16 }}>{item.title}</span>
+                    </div>
+                    {item.children && (
+                      <div className={styles.subMenuContainer}>
+                        {item.children.map((child) => {
+                          return (
+                            <div
+                              className={`${styles.subMenuItem} ${
+                                child.active ? styles.active : ""
+                              }`}
+                              key={item.path}
+                              onClick={() => navigate(child.path)}
+                            >
+                              {child.title}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
                 );
               })}
             </div>

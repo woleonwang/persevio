@@ -2,9 +2,11 @@ import { Button, Form, Input, message } from "antd";
 import { Post } from "../../utils/request";
 import { useNavigate } from "react-router";
 import styles from "./style.module.less";
+import globalStore from "../../store/global";
 
 const JobCreate = () => {
   const [form] = Form.useForm();
+  const { fetchJobs } = globalStore;
 
   const navigate = useNavigate();
 
@@ -16,7 +18,8 @@ const JobCreate = () => {
       });
       if (code === 0) {
         message.success("Create job succeed");
-        navigate(`/app/jobs?active=${data.job_id}`);
+        fetchJobs();
+        navigate(`/app/jobs/${data.job_id}`);
       }
     });
   };
