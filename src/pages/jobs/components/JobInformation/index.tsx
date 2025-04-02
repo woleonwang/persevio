@@ -102,9 +102,8 @@ const JobInformation = (props: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.selectContainer}>
-        <div>Document Type: </div>
         <Select
-          placeholder="Select a document type"
+          placeholder="Select a document"
           options={docsOptions}
           value={jobDocType}
           onChange={(value) => setJobDocType(value as TJobDocType)}

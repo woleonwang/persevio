@@ -84,7 +84,6 @@ const AppLayout = () => {
           justifyContent: "center",
         }}
       >
-        {t("hello")}
         <Spin size="large" />
       </div>
     );
