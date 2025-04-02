@@ -85,14 +85,17 @@ const IdealProfileForm = (props: IProps) => {
                   <Button
                     icon={skill.deleted ? <UndoOutlined /> : <DeleteOutlined />}
                     onClick={() => {
-                      group.skills.forEach((s) => {
-                        if (s.uuid === skill.uuid) {
-                          s.deleted = !s.deleted;
-                        }
-                      });
-                      // group.skills = (group.skills ?? []).filter(
-                      //   (s) => s.uuid !== skill.uuid
-                      // );
+                      if (skill.content) {
+                        group.skills.forEach((s) => {
+                          if (s.uuid === skill.uuid) {
+                            s.deleted = !s.deleted;
+                          }
+                        });
+                      } else {
+                        group.skills = (group.skills ?? []).filter(
+                          (s) => s.uuid !== skill.uuid
+                        );
+                      }
                       setProfileGroups([...profileGroups]);
                     }}
                   />

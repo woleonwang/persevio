@@ -260,7 +260,7 @@ const RoleOverviewFormQuestionsGroups: {
         key: "usage",
         type: "textarea",
         question:
-          "How should I use the reference materials? Tell us what this reference material is and how should we use it. For example, is this a JD you drafted for this particular role, or a JD of a similar role from another company, etc.)",
+          "How should I use the reference materials? Tell me what this reference material is and how should we use it. For example, is this a JD you drafted for this particular role, or a JD of a similar role from another company, etc.)",
       },
     ],
   },

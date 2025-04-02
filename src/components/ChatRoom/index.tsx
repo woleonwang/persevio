@@ -935,7 +935,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
             <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-              {["Yes", "Accurate.", "Your proposal is good."].map((text) => {
+              {[
+                "Yes.",
+                "Accurate.",
+                "Your proposal is good.",
+                "No further requirements needed.",
+              ].map((text) => {
                 return (
                   <Button
                     type="primary"
