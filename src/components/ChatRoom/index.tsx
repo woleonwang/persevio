@@ -22,9 +22,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
-import Markdown from "react-markdown";
 import dayjs, { Dayjs } from "dayjs";
-import rehypeRaw from "rehype-raw";
 import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
