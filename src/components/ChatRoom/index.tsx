@@ -657,7 +657,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             loadingStartedAtRef.current ?? dayjs(),
                             "second"
                           ) > 30
-                            ? "(Viona is writing document, please be patient)"
+                            ? "(Viona is thinking hard! Hang tight, your answer is coming... )"
                             : ""}
                         </p>
                       ) : editMessageMap[item.id]?.enabled ? (
@@ -934,21 +934,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
             <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-              {["Yes", "No", "Accurate", "Move on", "Nothing else"].map(
-                (text) => {
-                  return (
-                    <Button
-                      type="primary"
-                      key={text}
-                      shape="round"
-                      onClick={() => sendMessage(text)}
-                      size="small"
-                    >
-                      {text}
-                    </Button>
-                  );
-                }
-              )}
+              {["Yes", "Accurate.", "Your proposal is good."].map((text) => {
+                return (
+                  <Button
+                    type="primary"
+                    key={text}
+                    shape="round"
+                    onClick={() => sendMessage(text)}
+                    size="small"
+                  >
+                    {text}
+                  </Button>
+                );
+              })}
             </div>
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
