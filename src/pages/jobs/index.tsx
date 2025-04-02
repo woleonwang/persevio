@@ -86,7 +86,7 @@ const Jobs = () => {
                   },
                   {
                     key: "info",
-                    label: "Info",
+                    label: "Documents",
                   },
                   // {
                   //   key: "pipeline",

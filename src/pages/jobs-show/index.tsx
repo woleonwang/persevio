@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router";
 import { DownOutlined, CloseOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import { Drawer, Spin } from "antd";
-import Markdown from "react-markdown";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
 
@@ -11,6 +10,7 @@ import ChatRoom from "../../components/ChatRoom";
 import { Get } from "../../utils/request";
 
 import styles from "./style.module.less";
+import MarkdownContainer from "../../components/MarkdownContainer";
 
 type TCompany = {
   logo: string;
@@ -91,9 +91,12 @@ const JobsShow = () => {
                 </div>
               </div>
               <div
-                className={classnames(styles.markdownContainer, styles.hidden)}
+                className={classnames(
+                  styles.jobDescriptionContainer,
+                  styles.hidden
+                )}
               >
-                <Markdown>{job.job_description}</Markdown>
+                <MarkdownContainer content={job.job_description} />
               </div>
               <div>
                 <div className={classnames(styles.updatedAt, styles.hidden)}>
@@ -129,8 +132,8 @@ const JobsShow = () => {
             height={"80vh"}
             style={{ borderRadius: "16px 16px 0 0" }}
           >
-            <div className={styles.markdownContainer}>
-              <Markdown>{job.job_description}</Markdown>
+            <div className={styles.jobDescriptionContainer}>
+              <MarkdownContainer content={job.job_description} />
             </div>
             <div>
               <div className={classnames(styles.updatedAt)}>

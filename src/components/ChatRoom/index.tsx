@@ -63,6 +63,7 @@ import { copy } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
+import MarkdownContainer from "../MarkdownContainer";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -643,7 +644,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   description={
                     <div
                       className={classnames(
-                        styles.markdownContainer,
+                        styles.messageContainer,
                         item.role === "user" ? styles.user : "",
                         {
                           [styles.editing]: editMessageMap[item.id]?.enabled,
@@ -701,11 +702,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           </div>
                         </div>
                       ) : (
-                        <Markdown rehypePlugins={[rehypeRaw]}>
-                          {item.messageSubType === "error"
-                            ? "Something wrong with Viona, please retry."
-                            : item.content}
-                        </Markdown>
+                        <MarkdownContainer
+                          content={
+                            item.messageSubType === "error"
+                              ? "Something wrong with Viona, please retry."
+                              : item.content
+                          }
+                        />
                       )}
 
                       {(() => {

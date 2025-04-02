@@ -8,11 +8,21 @@ interface IJob {
   company_id: number;
   staff_id: number;
   name: string;
-  context_doc_id: number;
-  competency_doc_id: number;
+
+  basic_info_doc_id: number;
+  reference_doc_id: number;
+  team_context_doc_id: number;
+
+  role_context_doc_id: number;
+  objectives_doc_id: number;
+  activities_doc_id: number;
+  candidate_requirements_doc_id: number;
+  target_companies_doc_id: number;
+
   requirement_doc_id: number;
   jd_doc_id: number;
   interview_plan_doc_id: number;
+
   jrd_survey_opened_at: string;
   status: number;
   created_at: string;

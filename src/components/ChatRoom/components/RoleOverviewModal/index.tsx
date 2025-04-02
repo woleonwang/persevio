@@ -8,12 +8,11 @@ import {
   Popover,
   Select,
 } from "antd";
-import Markdown from "react-markdown";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import styles from "./style.module.less";
 import { useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
+import MarkdownContainer from "../../../MarkdownContainer";
 
 type TQuestion = {
   key: string;
@@ -398,12 +397,9 @@ const RoleOverviewModal = (props: IProps) => {
             <span dangerouslySetInnerHTML={{ __html: question.question }} />
             {question.hint && (
               <Popover
-                content={
-                  <Markdown className={styles.container}>
-                    {question.hint}
-                  </Markdown>
-                }
+                content={<MarkdownContainer content={question.hint} />}
                 placement="right"
+                style={{ width: 600 }}
               >
                 <QuestionCircleOutlined
                   style={{ marginLeft: 5, cursor: "pointer" }}
