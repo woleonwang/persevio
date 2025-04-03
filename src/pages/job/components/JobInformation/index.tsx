@@ -8,6 +8,7 @@ interface IProps {
 }
 
 type TJobDocType =
+  | "basic_info"
   | "role_context"
   | "objectives"
   | "activities"
@@ -75,6 +76,11 @@ const JobInformation = (props: IProps) => {
     label: string;
     disabled: boolean;
   }[] = [
+    {
+      value: "basic_info",
+      label: "Basic Information",
+      disabled: docUnfinised("basic_info"),
+    },
     {
       value: "role_context",
       label: "Role Context",
