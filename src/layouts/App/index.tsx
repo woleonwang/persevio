@@ -33,15 +33,13 @@ const AppLayout = () => {
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
 
-  const [collapse, setCollapse] = useState(false);
-
   const [inited, setInited] = useState(false);
 
   const { t, i18n } = useTranslation();
 
   const { jobs, fetchJobs } = globalStore;
 
-  const { collapseForDrawer } = globalStore;
+  const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
 
   useEffect(() => {
     init();
@@ -112,12 +110,12 @@ const AppLayout = () => {
   }
   return (
     <div className={styles.container}>
-      {collapse || collapseForDrawer ? (
+      {menuCollapse || collapseForDrawer ? (
         <div className={classnames(styles.menu, styles.collapse)}>
           <div style={{ position: "relative" }}>
             <RightCircleFilled
               className={styles.collapseIcon}
-              onClick={() => setCollapse(false)}
+              onClick={() => setMenuCollapse(false)}
             />
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
@@ -205,7 +203,7 @@ const AppLayout = () => {
           <div style={{ position: "relative" }}>
             <LeftCircleFilled
               className={styles.collapseIcon}
-              onClick={() => setCollapse(true)}
+              onClick={() => setMenuCollapse(true)}
             />
             <img src={logo} style={{ width: "80%" }} />
             <div className={styles.menuItemWrapper}>

@@ -4,10 +4,16 @@ import { Get } from "../utils/request";
 class GlobalStore {
   collapseForDrawer = false;
 
+  menuCollapse = false;
+
   jobs: IJob[] = [];
   constructor() {
     makeAutoObservable(this);
   }
+
+  setMenuCollapse = (collapse: boolean) => {
+    this.menuCollapse = collapse;
+  };
 
   setCollapseForDrawer = (collapse: boolean) => {
     this.collapseForDrawer = collapse;

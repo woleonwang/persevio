@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 // import { ProfileOutlined } from "@ant-design/icons";
@@ -7,12 +7,18 @@ import { Tabs } from "antd";
 import { useParams } from "react-router";
 import JobInformation from "./components/JobInformation";
 import { observer } from "mobx-react-lite";
+import globalStore from "../../store/global";
 
 type TTabKey = "chat" | "info" | "pipeline";
 const Job = () => {
   const { jobId: jobIdStr } = useParams<{ jobId: string }>();
   const jobId = parseInt(jobIdStr ?? "0");
   const [status, setStatus] = useState<TTabKey>("chat");
+  const { setMenuCollapse } = globalStore;
+
+  useEffect(() => {
+    setMenuCollapse(true);
+  }, []);
 
   return (
     <div className={styles.container}>

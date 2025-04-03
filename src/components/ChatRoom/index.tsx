@@ -103,6 +103,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
+  const lastMessageIdRef = useRef<string>();
 
   const { i18n } = useTranslation();
 
@@ -154,6 +155,94 @@ const ChatRoom: React.FC<IProps> = (props) => {
       send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
     },
   };
+
+  const supportTags: {
+    key: TExtraTagName;
+    title: string;
+    handler: (tag?: { name: string; content: string }) => void;
+    autoTrigger?: boolean;
+  }[] = [
+    {
+      key: "basic-info-request",
+      title: "Click here to share basic information",
+      handler: () => {
+        setJobRequirementFormType("basic_info");
+        setShowJobRequirementFormModal(true);
+      },
+      autoTrigger: true,
+    },
+    {
+      key: "reference-request",
+      title: "Click here to share references",
+      handler: () => {
+        setJobRequirementFormType("reference");
+        setShowJobRequirementFormModal(true);
+      },
+      autoTrigger: true,
+    },
+    {
+      key: "team-context-request",
+      title: "Click here to share team context",
+      handler: () => {
+        setJobRequirementFormType("team_context");
+        setShowJobRequirementFormModal(true);
+      },
+      autoTrigger: true,
+    },
+    {
+      key: "other-requirements-request",
+      title: "Click here to provide other requirements",
+      handler: () => {
+        setJobRequirementFormType("other_requirement");
+        setShowJobRequirementFormModal(true);
+      },
+      autoTrigger: true,
+    },
+
+    {
+      key: "copy-link",
+      title: "Copy Link",
+      handler: async (tag) => {
+        if (tag) {
+          await copy(tag.content);
+          message.success("Copied");
+        }
+      },
+    },
+    {
+      key: "open-link",
+      title: "Open",
+      handler: async (tag) => {
+        if (tag) {
+          window.open(tag.content);
+        }
+      },
+    },
+    {
+      key: "profile-feedback-and-priorities-request",
+      title: "Edit ideal profile",
+      handler: () => {
+        setDrawerOpen(true);
+      },
+      autoTrigger: true,
+    },
+
+    {
+      key: "jrd-done-btn",
+      title: "Define Interview Plan",
+      handler: () => setChatType("jobInterviewPlan"),
+    },
+    {
+      key: "interview-plan-done-btn",
+      title: "Draft Job Description",
+      handler: () => setChatType("jobDescription"),
+    },
+    {
+      key: "jd-done-btn",
+      title: "Viona for candidates",
+      handler: () => setChatType("chatbot"),
+    },
+  ];
 
   useEffect(() => {
     setChatType(undefined);
@@ -269,6 +358,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
         const messageHistory = formatMessages(data.messages);
         const isLoading = data.is_invoking === 1;
         setIsLoading(isLoading);
+        const lastMessage = messageHistory[messageHistory.length - 1];
+        if (lastMessage.id !== lastMessageIdRef.current) {
+          // 如果最后一条消息需要弹表单或者抽屉，则直接打开
+          const autoTriggerTag = supportTags.find((supportTag) => {
+            return !!(lastMessage.extraTags ?? []).find(
+              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
+            );
+          });
+          autoTriggerTag?.handler();
+        }
+
+        lastMessageIdRef.current = messageHistory[messageHistory.length - 1].id;
         if (isLoading) {
           messageHistory.push({
             id: "fake_ai_id",
@@ -715,91 +816,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       )}
 
                       {(() => {
-                        const supportTags: {
-                          key: TExtraTagName;
-                          title: string;
-                          handler: (tag?: {
-                            name: string;
-                            content: string;
-                          }) => void;
-                        }[] = [
-                          {
-                            key: "basic-info-request",
-                            title: "Click here to share basic information",
-                            handler: () => {
-                              setJobRequirementFormType("basic_info");
-                              setShowJobRequirementFormModal(true);
-                            },
-                          },
-                          {
-                            key: "reference-request",
-                            title: "Click here to share references",
-                            handler: () => {
-                              setJobRequirementFormType("reference");
-                              setShowJobRequirementFormModal(true);
-                            },
-                          },
-                          {
-                            key: "team-context-request",
-                            title: "Click here to share team context",
-                            handler: () => {
-                              setJobRequirementFormType("team_context");
-                              setShowJobRequirementFormModal(true);
-                            },
-                          },
-                          {
-                            key: "other-requirements-request",
-                            title: "Click here to provide other requirements",
-                            handler: () => {
-                              setJobRequirementFormType("other_requirement");
-                              setShowJobRequirementFormModal(true);
-                            },
-                          },
-
-                          {
-                            key: "copy-link",
-                            title: "Copy Link",
-                            handler: async (tag) => {
-                              if (tag) {
-                                await copy(tag.content);
-                                message.success("Copied");
-                              }
-                            },
-                          },
-                          {
-                            key: "open-link",
-                            title: "Open",
-                            handler: async (tag) => {
-                              if (tag) {
-                                window.open(tag.content);
-                              }
-                            },
-                          },
-                          {
-                            key: "profile-feedback-and-priorities-request",
-                            title: "Edit ideal profile",
-                            handler: () => {
-                              setDrawerOpen(true);
-                            },
-                          },
-
-                          {
-                            key: "jrd-done-btn",
-                            title: "Define Interview Plan",
-                            handler: () => setChatType("jobInterviewPlan"),
-                          },
-                          {
-                            key: "interview-plan-done-btn",
-                            title: "Draft Job Description",
-                            handler: () => setChatType("jobDescription"),
-                          },
-                          {
-                            key: "jd-done-btn",
-                            title: "Viona for candidates",
-                            handler: () => setChatType("chatbot"),
-                          },
-                        ];
-
                         const visibleTags = supportTags.filter((tag) =>
                           (item.extraTags ?? [])
                             .map((extraTag) => extraTag.name)
