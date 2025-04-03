@@ -1,5 +1,6 @@
 import {
   Button,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -9,19 +10,36 @@ import {
   Select,
 } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useEffect, useReducer, useState } from "react";
+import { ReactNode, useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
 import MarkdownContainer from "../../../MarkdownContainer";
+import dayjs from "dayjs";
+
+import styles from "./style.module.less";
+
+type TQuestionGroup = {
+  key: TRoleOverviewType;
+  title: string;
+  questions: (TQuestion | TGroup)[];
+};
 
 type TQuestion = {
   key: string;
   question: string;
-  type: "text" | "select" | "textarea" | "number" | "team";
+  type:
+    | "text"
+    | "select"
+    | "textarea"
+    | "number"
+    | "team"
+    | "multiple_select"
+    | "date";
   hint?: string;
   dependencies?: {
     questionKey: string;
     valueKey?: string | string[];
+    exceptValueKey?: string | string[];
     exists?: boolean;
   }[];
   options?: {
@@ -30,6 +48,8 @@ type TQuestion = {
   }[];
   required?: boolean;
 };
+
+type TGroup = { group: string; key: string; questions: TQuestion[] };
 
 const TeamQuestions: TQuestion[] = [
   {
@@ -65,17 +85,22 @@ const TeamQuestions: TQuestion[] = [
     type: "textarea",
   },
   {
-    key: "language",
+    key: "team_language",
     question: "What is the working language of the team",
     type: "text",
   },
 ];
 
-const RoleOverviewFormQuestionsGroups: {
-  key: TRoleOverviewType;
-  title: string;
-  questions: TQuestion[];
-}[] = [
+const formatOptions = (options: string[]) => {
+  return options.map((item) => {
+    return {
+      value: item.toLowerCase().replaceAll(" ", "_"),
+      label: item,
+    };
+  });
+};
+
+const RoleOverviewFormQuestionsGroups: TQuestionGroup[] = [
   {
     key: "basic_info",
     title: "Basic information",
@@ -296,10 +321,193 @@ const RoleOverviewFormQuestionsGroups: {
           "Who will be the key collaborators (internal teams/roles, external partners/clients)?",
       },
       {
-        key: "others",
+        key: "team_others",
         type: "textarea",
         question:
           "Is there anything about the team that a potential candidate should know?",
+      },
+    ],
+  },
+
+  {
+    key: "other_requirement",
+    title: "Other requirements",
+    questions: [
+      {
+        group: "Visa Requirements",
+        key: "visa_requirments",
+        questions: [
+          {
+            key: "visa_country",
+            type: "select",
+            question: "Country",
+            options: [
+              {
+                value: "china",
+                label: "China",
+              },
+              {
+                value: "singapore",
+                label: "Singapore",
+              },
+            ],
+          },
+          {
+            key: "visa_type_singapore",
+            type: "multiple_select",
+            question: "Visa Types",
+            options: formatOptions([
+              "Singapore Citizen",
+              "Singapore PR",
+              "EP",
+              "SP",
+              "WP",
+              "DP",
+              "Other",
+            ]),
+            dependencies: [
+              { questionKey: "visa_country", valueKey: "singapore" },
+            ],
+          },
+          {
+            key: "visa_type_singapore_other",
+            type: "text",
+            question: "Other",
+            dependencies: [
+              {
+                questionKey: "visa_type_singapore",
+                valueKey: "other",
+              },
+            ],
+          },
+          {
+            key: "visa_type_others",
+            type: "multiple_select",
+            question: "Visa Types",
+            options: formatOptions([
+              "We cannot sponsor Visa",
+              "We can sponsor Visa",
+              "Other",
+            ]),
+            dependencies: [
+              { questionKey: "visa_country", exceptValueKey: "singapore" },
+            ],
+          },
+          {
+            key: "visa_type_others_other",
+            type: "text",
+            question: "Other",
+            dependencies: [
+              {
+                questionKey: "visa_type_others",
+                valueKey: "other",
+              },
+            ],
+          },
+        ],
+      },
+
+      {
+        group: "Language proficiency",
+        key: "language_group",
+        questions: [
+          {
+            key: "language",
+            type: "select",
+            question: "Language",
+            options: formatOptions(["Chinese", "English"]),
+          },
+          {
+            key: "proficiency",
+            type: "select",
+            question: "Proficiency level",
+            options: formatOptions([
+              "Native Speaker",
+              "Professional Proficiency",
+              "Daily Conversational",
+              "Other",
+            ]),
+          },
+          {
+            key: "proficiency_other",
+            type: "text",
+            question: "Other",
+            dependencies: [
+              {
+                questionKey: "proficiency",
+                valueKey: "other",
+              },
+            ],
+          },
+        ],
+      },
+
+      {
+        group: "Travel",
+        key: "travel_group",
+        questions: [
+          {
+            key: "travel_type",
+            type: "select",
+            question: "Travel",
+            options: formatOptions([
+              "No travel",
+              "Ad hoc travel",
+              "Some travel",
+              "Regular travel",
+            ]),
+          },
+          {
+            key: "destinations",
+            type: "text",
+            question: "Destinations",
+            dependencies: [
+              {
+                questionKey: "travel_type",
+                exceptValueKey: "no_travel",
+              },
+            ],
+          },
+          {
+            key: "nature_of_travel",
+            type: "text",
+            question: "Nature of travel",
+            dependencies: [
+              {
+                questionKey: "travel_type",
+                exceptValueKey: "no_travel",
+              },
+            ],
+          },
+          {
+            key: "regularity",
+            type: "text",
+            question: "Regularity",
+            dependencies: [
+              {
+                questionKey: "travel_type",
+                exceptValueKey: "no_travel",
+              },
+            ],
+          },
+        ],
+      },
+
+      {
+        key: "onboarding_date",
+        type: "date",
+        question: "Onboarding date before",
+      },
+      {
+        key: "certifications",
+        type: "text",
+        question:
+          "Certifications, security clearances, legal requirements, etc",
+      },
+      {
+        key: "others",
+        type: "text",
+        question: "Others",
       },
     ],
   },
@@ -318,7 +526,7 @@ type TTeam = {
   detail: string;
 };
 
-const RoleOverviewModal = (props: IProps) => {
+const JobRequirementFormModal = (props: IProps) => {
   const { open, group = "basic_info", onClose, onOk } = props;
   const [form] = Form.useForm();
   const [createTeamForm] = Form.useForm();
@@ -328,7 +536,7 @@ const RoleOverviewModal = (props: IProps) => {
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(
     (item) => item.key === group
-  );
+  ) as unknown as TQuestionGroup;
 
   useEffect(() => {
     fetchTeams();
@@ -361,35 +569,102 @@ const RoleOverviewModal = (props: IProps) => {
   const onSubmit = () => {
     form.validateFields().then((values) => {
       let resultStr = "";
-      RoleOverviewFormQuestionsGroups.forEach((group) => {
-        const questions: string[] = [];
-        group.questions.forEach((question) => {
-          if (question.key === "team") return;
+      const getAnswer = (question: TQuestion): string => {
+        const value = values[question.key];
+        if (!value) return "";
 
-          const value = values[question.key];
-          const formattedValue =
-            question.type === "select"
-              ? (question.options ?? []).find((item) => item.value === value)
-                  ?.label
-              : value;
-          if (value) {
-            questions.push(
-              `${question.question
-                .replaceAll("</b>", "**")
-                .replaceAll("<b>", "**")}\n\n${formattedValue}`
-            );
+        let formattedValue = value;
+        if (question.type === "select") {
+          formattedValue =
+            (question.options ?? []).find((item) => item.value === value)
+              ?.label ?? "";
+        }
+
+        if (question.type === "multiple_select") {
+          formattedValue = value
+            .map(
+              (optionValue: string) =>
+                question.options?.find((item) => item.value === optionValue)
+                  ?.label ?? ""
+            )
+            .join(",");
+        }
+
+        if (question.type === "date") {
+          formattedValue = dayjs(value).format("YYYY-MM-DD");
+        }
+
+        return `${(question as TQuestion).question
+          .replaceAll("</b>", "**")
+          .replaceAll("<b>", "**")}\n\n${formattedValue}`;
+      };
+
+      const questions: string[] = [];
+      (questionGroup?.questions ?? []).forEach((question) => {
+        if (question.key === "team") return;
+
+        if (!!(question as TGroup).group) {
+          const answers = (question as TGroup).questions
+            .map((question) => getAnswer(question))
+            .filter(Boolean);
+
+          if (answers.length) {
+            questions.push(`#### ${(question as TGroup).group}`);
+            answers.forEach((answer) => {
+              questions.push(answer);
+            });
           }
-        });
-        if (questions.length > 0) {
-          resultStr += `## ${group.title}\n\n${questions.join("\n\n")}\n\n`;
+        } else {
+          const answer = getAnswer(question as TQuestion);
+          if (answer) {
+            questions.push(answer);
+          }
         }
       });
+
+      if (questions.length > 0) {
+        resultStr += `## ${questionGroup.title}\n\n${questions.join(
+          "\n\n"
+        )}\n\n`;
+      }
 
       onOk(resultStr);
     });
   };
 
-  const genFormItem = (question: TQuestion) => {
+  const genFormItem = (question: TQuestion): ReactNode => {
+    const visible = (question.dependencies ?? []).every((dep) => {
+      const currentValue = form.getFieldsValue()[dep.questionKey];
+
+      if (!currentValue) return false;
+
+      if (dep.exists) return !!currentValue;
+
+      if (Array.isArray(dep.valueKey))
+        return Array.isArray(currentValue)
+          ? dep.valueKey.some((value) => currentValue.includes(value))
+          : dep.valueKey.includes(currentValue);
+
+      if (Array.isArray(dep.exceptValueKey))
+        return Array.isArray(currentValue)
+          ? dep.exceptValueKey.every((value) => !currentValue.includes(value))
+          : !dep.exceptValueKey.includes(currentValue);
+
+      if (!!dep.valueKey)
+        return Array.isArray(currentValue)
+          ? currentValue.includes(dep.valueKey)
+          : dep.valueKey === currentValue;
+
+      if (!!dep.exceptValueKey)
+        return Array.isArray(currentValue)
+          ? !currentValue.includes(dep.exceptValueKey)
+          : dep.exceptValueKey !== currentValue;
+
+      return true;
+    });
+
+    if (!visible) return null;
+
     return (
       <Form.Item
         label={
@@ -423,6 +698,10 @@ const RoleOverviewModal = (props: IProps) => {
         )}
         {question.type === "number" && <InputNumber />}
         {question.type === "select" && <Select options={question.options} />}
+        {question.type === "multiple_select" && (
+          <Select options={question.options} mode="multiple" />
+        )}
+        {question.type === "date" && <DatePicker />}
         {question.type === "team" && (
           <Select
             options={teams.map((team) => ({
@@ -474,6 +753,8 @@ const RoleOverviewModal = (props: IProps) => {
       title="Role Overview"
       width={800}
       onOk={() => onSubmit()}
+      okText="Submit"
+      centered
     >
       <div style={{ height: "60vh", overflow: "auto" }}>
         <div style={{ color: "#999" }}>
@@ -485,20 +766,22 @@ const RoleOverviewModal = (props: IProps) => {
           <>
             <h2>{questionGroup.title}</h2>
             <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
-              {questionGroup.questions
-                .filter((item) => {
-                  if (!item.dependencies) return true;
-
-                  return item.dependencies.every((dep) => {
-                    const currentValue = form.getFieldValue(dep.questionKey);
-                    return dep.exists
-                      ? !!currentValue
-                      : Array.isArray(dep.valueKey)
-                      ? dep.valueKey.includes(currentValue)
-                      : dep.valueKey === currentValue;
-                  });
-                })
-                .map((item) => genFormItem(item))}
+              {questionGroup.questions.map((item) => {
+                if (!!(item as TGroup).group) {
+                  return (
+                    <div className={styles.group}>
+                      <div className={styles.groupTitle}>
+                        {(item as TGroup).group}
+                      </div>
+                      {(item as TGroup).questions.map((question) =>
+                        genFormItem(question)
+                      )}
+                    </div>
+                  );
+                } else {
+                  return genFormItem(item as TQuestion);
+                }
+              })}
             </Form>
           </>
         )}
@@ -510,6 +793,7 @@ const RoleOverviewModal = (props: IProps) => {
           title="Create Team"
           width={800}
           onOk={() => createTeam()}
+          centered
         >
           <div style={{ height: "60vh", overflow: "auto" }}>
             <Form form={createTeamForm} layout="vertical">
@@ -522,4 +806,4 @@ const RoleOverviewModal = (props: IProps) => {
   );
 };
 
-export default RoleOverviewModal;
+export default JobRequirementFormModal;

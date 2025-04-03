@@ -42,7 +42,7 @@ const IdealProfileForm = (props: IProps) => {
           const uuid = uuidV4();
           form.setFieldsValue({
             [`${uuid}_content`]: skill.content,
-            [`${uuid}_type`]: skill.type,
+            [`${uuid}_type`]: "plus",
           });
           skill.uuid = uuid;
         });
@@ -75,7 +75,7 @@ const IdealProfileForm = (props: IProps) => {
                     name={`${skill.uuid}_type`}
                     style={{ flex: "none" }}
                   >
-                    <Radio.Group disabled={skill.deleted}>
+                    <Radio.Group disabled={skill.deleted} buttonStyle="solid">
                       <Radio.Button value="minimum">Minimum</Radio.Button>
                       <Radio.Button value="big_plus">Big Plus</Radio.Button>
                       <Radio.Button value="plus">Plus</Radio.Button>

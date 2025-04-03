@@ -8,6 +8,7 @@ export type TExtraTagName =
   | "jd-done"
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
+  | "other-requirements-request"
   // 前端生成
   | "open-link" // 打开新页面
   | "jrd-done-btn"
@@ -61,4 +62,8 @@ export interface IProps {
   role?: "staff" | "coworker" | "candidate";
 }
 
-export type TRoleOverviewType = "basic_info" | "reference" | "team_context";
+export type TRoleOverviewType =
+  | "basic_info"
+  | "reference"
+  | "team_context"
+  | "other_requirement";

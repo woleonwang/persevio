@@ -42,7 +42,7 @@ import type { TextAreaRef } from "antd/es/input/TextArea";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 import { Get, Post, PostFormData } from "../../utils/request";
-import RoleOverviewModal from "./components/RoleOverviewModal";
+import JobRequirementFormModal from "./components/JobRequirementFormModal";
 import globalStore from "../../store/global";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
@@ -78,6 +78,8 @@ const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
 const ChatRoom: React.FC<IProps> = (props) => {
   const { jobId, sessionId, allowEditMessage = false, role = "staff" } = props;
+
+  const [chatType, setChatType] = useState<TChatType>();
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -86,13 +88,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
   // job 仅用来判断进度。role 为 candidate 时不需要
   const [job, setJob] = useState<IJob>();
   const [jobUrl, setJobUrl] = useState("");
-  const [showRoleOverviewModal, setShowRoleOverviewModal] = useState(false);
+  const [showJobRequirementFormModal, setShowJobRequirementFormModal] =
+    useState(false);
+  const [jobRequirementFormType, setJobRequirementFormType] =
+    useState<TRoleOverviewType>();
+
   const [editMessageMap, setEditMessageMap] = useState<
     Record<string, { enabled: boolean; content: string }>
   >({});
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
-  const [chatType, setChatType] = useState<TChatType>();
-  const [roleOverviewType, setRoleOverviewType] = useState<TRoleOverviewType>();
+
   const [profile, setProfile] = useState<ISettings>();
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
@@ -371,7 +376,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const sendRoleOverview = async (roleOverview: string) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
-      type: roleOverviewType,
+      type: jobRequirementFormType,
       content: roleOverview,
     });
     if (code === 0) {
@@ -722,26 +727,35 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             key: "basic-info-request",
                             title: "Click here to share basic information",
                             handler: () => {
-                              setRoleOverviewType("basic_info");
-                              setShowRoleOverviewModal(true);
+                              setJobRequirementFormType("basic_info");
+                              setShowJobRequirementFormModal(true);
                             },
                           },
                           {
                             key: "reference-request",
                             title: "Click here to share references",
                             handler: () => {
-                              setRoleOverviewType("reference");
-                              setShowRoleOverviewModal(true);
+                              setJobRequirementFormType("reference");
+                              setShowJobRequirementFormModal(true);
                             },
                           },
                           {
                             key: "team-context-request",
                             title: "Click here to share team context",
                             handler: () => {
-                              setRoleOverviewType("team_context");
-                              setShowRoleOverviewModal(true);
+                              setJobRequirementFormType("team_context");
+                              setShowJobRequirementFormModal(true);
                             },
                           },
+                          {
+                            key: "other-requirements-request",
+                            title: "Click here to provide other requirements",
+                            handler: () => {
+                              setJobRequirementFormType("other_requirement");
+                              setShowJobRequirementFormModal(true);
+                            },
+                          },
+
                           {
                             key: "copy-link",
                             title: "Copy Link",
@@ -1035,14 +1049,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        <RoleOverviewModal
-          open={showRoleOverviewModal}
-          onClose={() => setShowRoleOverviewModal(false)}
-          group={roleOverviewType}
+        <JobRequirementFormModal
+          open={showJobRequirementFormModal}
+          onClose={() => setShowJobRequirementFormModal(false)}
+          group={jobRequirementFormType}
           onOk={(result: string) => {
             if (!isLoading) {
               sendRoleOverview(result);
-              setShowRoleOverviewModal(false);
+              setShowJobRequirementFormModal(false);
             }
           }}
         />
@@ -1060,29 +1074,36 @@ const ChatRoom: React.FC<IProps> = (props) => {
           getContainer={document.body}
           okText="Send"
           destroyOnClose
+          centered
         >
-          <MDXEditor
-            contentEditableClassName={styles.mdEditor}
-            markdown={markdownEditMessageContent}
-            onChange={(md) => setMarkdownEditMessageContent(md)}
-            plugins={[
-              headingsPlugin(),
-              quotePlugin(),
-              listsPlugin(),
-              thematicBreakPlugin(),
-              toolbarPlugin({
-                toolbarContents: () => (
-                  <>
-                    <UndoRedo />
-                    <BoldItalicUnderlineToggles />
-                    <ListsToggle options={["bullet", "number"]} />
-                    <Separator />
-                    <BlockTypeSelect />
-                  </>
-                ),
-              }),
-            ]}
-          />
+          <>
+            <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
+              Tips: You can directly edit my responses! Modify summaries, add
+              information, or answer my questions right after or below them.
+            </div>
+            <MDXEditor
+              contentEditableClassName={styles.mdEditor}
+              markdown={markdownEditMessageContent}
+              onChange={(md) => setMarkdownEditMessageContent(md)}
+              plugins={[
+                headingsPlugin(),
+                quotePlugin(),
+                listsPlugin(),
+                thematicBreakPlugin(),
+                toolbarPlugin({
+                  toolbarContents: () => (
+                    <>
+                      <UndoRedo />
+                      <BoldItalicUnderlineToggles />
+                      <ListsToggle options={["bullet", "number"]} />
+                      <Separator />
+                      <BlockTypeSelect />
+                    </>
+                  ),
+                }),
+              ]}
+            />
+          </>
         </Modal>
 
         <Drawer
