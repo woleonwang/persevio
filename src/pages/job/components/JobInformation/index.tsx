@@ -1,4 +1,4 @@
-import { Collapse, CollapseProps, Select, Spin } from "antd";
+import { Collapse, CollapseProps, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Get } from "../../../../utils/request";
 import MarkdownContainer from "../../../../components/MarkdownContainer";
