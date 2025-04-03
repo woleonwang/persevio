@@ -1,4 +1,4 @@
-import { Select } from "antd";
+import { Collapse, CollapseProps, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Get } from "../../../../utils/request";
 import MarkdownContainer from "../../../../components/MarkdownContainer";
@@ -12,40 +12,58 @@ type TJobDocType =
   | "objectives"
   | "activities"
   | "candidate_requirements"
-  | "target_companies"
-  | "requirement"
-  | "interview_plan"
-  | "jd";
+  | "target_companies";
+// | "requirement";
+// | "interview_plan"
+// | "jd";
+
+const JobDocPanel = (props: { jobId: number; docType: TJobDocType }) => {
+  const { jobId, docType } = props;
+
+  const [jobDocContent, setJobDocContent] = useState("");
+
+  useEffect(() => {
+    fetchDoc();
+  }, []);
+
+  const fetchDoc = async () => {
+    const { code, data } = await Get(`/api/jobs/${jobId}/docs/${docType}`);
+    if (code === 0) {
+      setJobDocContent(data.content);
+    }
+  };
+
+  if (jobDocContent === "") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Spin />
+      </div>
+    );
+  }
+
+  return <MarkdownContainer content={jobDocContent} />;
+};
 const JobInformation = (props: IProps) => {
   const { jobId } = props;
 
   const [job, setJob] = useState<IJob>();
-  const [jobDocType, setJobDocType] = useState<TJobDocType>();
-  const [jobDocContent, setJobDocContent] = useState("");
 
   useEffect(() => {
     if (jobId) {
       fetchJob();
     }
-  }, [jobId, jobDocType]);
-
-  useEffect(() => {
-    if (jobId && jobDocType) {
-      fetchDoc();
-    }
-  }, [jobId, jobDocType]);
+  }, [jobId]);
 
   const fetchJob = async () => {
     const { code, data } = await Get(`/api/jobs/${jobId}`);
     if (code === 0) {
       setJob(data.job);
-    }
-  };
-
-  const fetchDoc = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/docs/${jobDocType}`);
-    if (code === 0) {
-      setJobDocContent(data.content);
     }
   };
 
@@ -64,57 +82,55 @@ const JobInformation = (props: IProps) => {
     },
     {
       value: "objectives",
-      label: "Objectives",
+      label: "Objectives & Success Metrics",
       disabled: docUnfinised("objectives"),
     },
     {
       value: "activities",
-      label: "Activities",
+      label: "Day-to-day activities",
       disabled: docUnfinised("activities"),
     },
     {
       value: "candidate_requirements",
-      label: "Candidate requirements",
+      label: "Ideal Candidate Profile & Screening Criteria",
       disabled: docUnfinised("candidate_requirements"),
     },
     {
       value: "target_companies",
-      label: "Target companies",
+      label: "Target Companies",
       disabled: docUnfinised("target_companies"),
     },
-    {
-      value: "requirement",
-      label: "JRD",
-      disabled: docUnfinised("requirement"),
-    },
-    {
-      value: "interview_plan",
-      label: "Interview Plan",
-      disabled: docUnfinised("interview_plan"),
-    },
-    {
-      value: "jd",
-      label: "Job Description",
-      disabled: docUnfinised("jd"),
-    },
+    // {
+    //   value: "requirement",
+    //   label: "JRD",
+    //   disabled: docUnfinised("requirement"),
+    // },
+    // {
+    //   value: "interview_plan",
+    //   label: "Interview Plan",
+    //   disabled: docUnfinised("interview_plan"),
+    // },
+    // {
+    //   value: "jd",
+    //   label: "Job Description",
+    //   disabled: docUnfinised("jd"),
+    // },
   ];
+
+  const items: CollapseProps["items"] = docsOptions.map((option) => {
+    return {
+      key: option.value,
+      label: option.label,
+      children: job && (
+        <JobDocPanel jobId={job.id} docType={option.value as TJobDocType} />
+      ),
+      collapsible: option.disabled ? "disabled" : "header",
+    };
+  });
 
   return (
     <div className={styles.container}>
-      <div className={styles.selectContainer}>
-        <Select
-          placeholder="Select a document"
-          options={docsOptions}
-          value={jobDocType}
-          onChange={(value) => setJobDocType(value as TJobDocType)}
-          style={{ width: 200 }}
-        />
-      </div>
-      {jobDocContent && (
-        <div className={styles.docContainer}>
-          <MarkdownContainer content={jobDocContent} />
-        </div>
-      )}
+      <Collapse items={items} defaultActiveKey={[]} />
     </div>
   );
 };

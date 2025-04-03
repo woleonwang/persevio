@@ -937,9 +937,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
               {[
                 "Yes.",
+                "No.",
                 "Accurate.",
                 "Your proposal is good.",
-                "No further requirements needed.",
+                "No further modifications needed.",
               ].map((text) => {
                 return (
                   <Button
