@@ -564,10 +564,21 @@ const JobRequirementFormModal = (props: IProps) => {
     fetchTeams();
   }, []);
 
-  const fetchTeams = async () => {
+  const fetchTeams = async (options?: { selectedTeamId?: number }) => {
     const res = await Get<{ teams: TTeam[] }>(`/api/teams`);
     if (res.code === 0) {
       setTeams(res.data.teams);
+      if (options?.selectedTeamId) {
+        const team = res.data.teams.find(
+          (item) => item.id === options.selectedTeamId
+        );
+        if (team) {
+          form.setFieldsValue({
+            team: team.id,
+            ...JSON.parse(team.detail),
+          });
+        }
+      }
     }
   };
 
@@ -576,14 +587,15 @@ const JobRequirementFormModal = (props: IProps) => {
   const createTeam = async () => {
     const questions = createTeamForm.getFieldsValue();
 
-    const { code } = await Post<TTeam>(`/api/teams`, {
+    const { code, data } = await Post<{ team: TTeam }>(`/api/teams`, {
       name: questions.name,
       detail: JSON.stringify(questions),
     });
 
     if (code === 0) {
       message.success("Create team succeed");
-      fetchTeams();
+      fetchTeams({ selectedTeamId: data?.team?.id });
+
       onCloseCreateTeamModal();
     }
   };
