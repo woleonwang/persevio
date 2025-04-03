@@ -13,7 +13,7 @@ import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Menu, Popover, Spin } from "antd";
+import { Popover, Spin } from "antd";
 import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
