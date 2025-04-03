@@ -54,7 +54,8 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  &.active {
+  &.active,
+  &:hover {
     background-color: white;
     font-weight: bold;
     color: #333333;
@@ -73,10 +74,28 @@
   font-size: 14px;
   color: rgba(102, 102, 102, 1);
 
-  &.active {
+  &.active,
+  &:hover {
     background-color: white;
     font-weight: bold;
     color: #333333;
+  }
+}
+
+.collapseSubMenuContainer {
+  max-height: 300px;
+  overflow: auto;
+  width: 200px;
+  border-radius: 6px;
+
+  :global {
+    .ant-popover-inner {
+      background-color: #f9fafc;
+    }
+  }
+
+  .subMenuItem {
+    padding: 10px 12px;
   }
 }
 

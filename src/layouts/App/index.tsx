@@ -13,7 +13,7 @@ import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Spin } from "antd";
+import { Menu, Popover, Spin } from "antd";
 import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
@@ -122,7 +122,8 @@ const AppLayout = () => {
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
                 const isActive = item.path && currentPath.startsWith(item.path);
-                return (
+
+                const menuNode: ReactNode = (
                   <div
                     className={`${styles.menuItem} ${
                       isActive ? styles.active : ""
@@ -142,6 +143,36 @@ const AppLayout = () => {
                       }}
                     />
                   </div>
+                );
+
+                if (!item.children) return menuNode;
+
+                return (
+                  <Popover
+                    placement="rightTop"
+                    rootClassName={styles.collapseSubMenuContainer}
+                    // openClassName={styles.collapseSubMenuContainer}
+                    // className={styles.collapseSubMenuContainer}
+                    content={
+                      <div>
+                        {item.children.map((child) => {
+                          return (
+                            <div
+                              className={`${styles.subMenuItem} ${
+                                child.active ? styles.active : ""
+                              }`}
+                              key={item.path}
+                              onClick={() => navigate(child.path)}
+                            >
+                              {child.title}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    }
+                  >
+                    {menuNode}
+                  </Popover>
                 );
               })}
             </div>
