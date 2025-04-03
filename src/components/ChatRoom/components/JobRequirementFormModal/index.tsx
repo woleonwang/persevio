@@ -295,6 +295,13 @@ const RoleOverviewFormQuestionsGroups: TQuestionGroup[] = [
         type: "textarea",
         question:
           "How should I use the reference materials? Tell me what this reference material is and how should we use it. For example, is this a JD you drafted for this particular role, or a JD of a similar role from another company, etc.)",
+        dependencies: [
+          {
+            questionKey: "materials",
+            exists: true,
+          },
+        ],
+        required: true,
       },
     ],
   },
@@ -581,6 +588,13 @@ const JobRequirementFormModal = (props: IProps) => {
     }
   };
 
+  const canSubmit = () => {
+    const values = form.getFieldsValue();
+    return Object.values(values).some((value) =>
+      Array.isArray(value) ? value.length > 0 : !!value
+    );
+  };
+
   const onSubmit = () => {
     form.validateFields().then((values) => {
       let resultStr = "";
@@ -703,6 +717,7 @@ const JobRequirementFormModal = (props: IProps) => {
         }
         name={question.key}
         key={question.key}
+        className={styles.formItem}
         rules={[
           {
             required: question.required,
@@ -761,7 +776,6 @@ const JobRequirementFormModal = (props: IProps) => {
       </Form.Item>
     );
   };
-
   return (
     <Modal
       open={open}
@@ -771,6 +785,9 @@ const JobRequirementFormModal = (props: IProps) => {
       title="Role Overview"
       width={800}
       onOk={() => onSubmit()}
+      okButtonProps={{
+        disabled: !canSubmit(),
+      }}
       okText="Submit"
       centered
     >
