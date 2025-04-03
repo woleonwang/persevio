@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   DatePicker,
   Form,
   Input,
@@ -24,6 +25,13 @@ type TQuestionGroup = {
   questions: (TQuestion | TGroup)[];
 };
 
+type TDependence = {
+  questionKey: string;
+  valueKey?: string | string[];
+  exceptValueKey?: string | string[];
+  exists?: boolean;
+};
+
 type TQuestion = {
   key: string;
   question: string;
@@ -36,12 +44,7 @@ type TQuestion = {
     | "multiple_select"
     | "date";
   hint?: string;
-  dependencies?: {
-    questionKey: string;
-    valueKey?: string | string[];
-    exceptValueKey?: string | string[];
-    exists?: boolean;
-  }[];
+  dependencies?: TDependence[];
   options?: {
     value: string;
     label: string;
@@ -49,7 +52,13 @@ type TQuestion = {
   required?: boolean;
 };
 
-type TGroup = { group: string; key: string; questions: TQuestion[] };
+type TGroup = {
+  group: string;
+  key: string;
+  questions: TQuestion[];
+  collapse?: boolean;
+  dependencies?: TDependence[];
+};
 
 const TeamQuestions: TQuestion[] = [
   {
@@ -299,10 +308,16 @@ const RoleOverviewFormQuestionsGroups: TQuestionGroup[] = [
         type: "team",
         question: "Which <b>team</b> will this role join?",
       },
-      ...TeamQuestions.map((item) => ({
-        ...item,
+      {
+        group: "Team Details",
+        key: "team_details",
         dependencies: [{ questionKey: "team", exists: true }],
-      })),
+        collapse: true,
+        questions: TeamQuestions.map((item) => ({
+          ...item,
+          dependencies: [{ questionKey: "team", exists: true }],
+        })),
+      },
       {
         key: "report_to",
         type: "textarea",
@@ -632,8 +647,8 @@ const JobRequirementFormModal = (props: IProps) => {
     });
   };
 
-  const genFormItem = (question: TQuestion): ReactNode => {
-    const visible = (question.dependencies ?? []).every((dep) => {
+  const checkVisible = (dependencies?: TDependence[]) => {
+    return (dependencies ?? []).every((dep) => {
       const currentValue = form.getFieldsValue()[dep.questionKey];
 
       if (!currentValue) return false;
@@ -662,6 +677,9 @@ const JobRequirementFormModal = (props: IProps) => {
 
       return true;
     });
+  };
+  const genFormItem = (question: TQuestion): ReactNode => {
+    const visible = checkVisible(question.dependencies);
 
     if (!visible) return null;
 
@@ -768,12 +786,31 @@ const JobRequirementFormModal = (props: IProps) => {
             <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
               {questionGroup.questions.map((item) => {
                 if (!!(item as TGroup).group) {
-                  return (
+                  const itemGroup = item as TGroup;
+                  const isVisible = checkVisible(item.dependencies);
+                  if (!isVisible) return null;
+
+                  return itemGroup.collapse ? (
+                    <Collapse
+                      items={[
+                        {
+                          key: "team-context",
+                          label: (
+                            <div style={{ fontWeight: "bold" }}>
+                              {itemGroup.group}
+                            </div>
+                          ),
+                          children: itemGroup.questions.map((question) =>
+                            genFormItem(question)
+                          ),
+                        },
+                      ]}
+                      style={{ marginBottom: 20 }}
+                    />
+                  ) : (
                     <div className={styles.group}>
-                      <div className={styles.groupTitle}>
-                        {(item as TGroup).group}
-                      </div>
-                      {(item as TGroup).questions.map((question) =>
+                      <div className={styles.groupTitle}>{itemGroup.group}</div>
+                      {itemGroup.questions.map((question) =>
                         genFormItem(question)
                       )}
                     </div>
