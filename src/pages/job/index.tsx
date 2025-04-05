@@ -8,6 +8,7 @@ import { useParams } from "react-router";
 import JobInformation from "./components/JobInformation";
 import { observer } from "mobx-react-lite";
 import globalStore from "../../store/global";
+import { useTranslation } from "react-i18next";
 
 type TTabKey = "chat" | "info" | "pipeline";
 const Job = () => {
@@ -15,6 +16,8 @@ const Job = () => {
   const jobId = parseInt(jobIdStr ?? "0");
   const [status, setStatus] = useState<TTabKey>("chat");
   const { setMenuCollapse } = globalStore;
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setMenuCollapse(true);
@@ -31,11 +34,11 @@ const Job = () => {
               items={[
                 {
                   key: "chat",
-                  label: "Viona",
+                  label: t("job.chat"),
                 },
                 {
                   key: "info",
-                  label: "Documents",
+                  label: t("job.document"),
                 },
                 // {
                 //   key: "pipeline",

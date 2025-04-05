@@ -3,6 +3,7 @@ import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 type TPrompt = {
   prompt_type: string;
@@ -12,6 +13,7 @@ const Settings = () => {
   const [form] = Form.useForm();
   const [profile, setProfile] = useState<ISettings>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchSettings();
@@ -64,24 +66,24 @@ const Settings = () => {
   return (
     <div className={styles.container}>
       <div className={styles.block}>
-        <div className={styles.title}>Proflie</div>
+        <div className={styles.title}>{t("settings.profile")}</div>
         <div className={styles.item}>
-          <div className={styles.label}>Name:</div>
+          <div className={styles.label}>{t("settings.name")}:</div>
           <div>{profile?.staff_name}</div>
         </div>
         <div className={styles.item}>
-          <div className={styles.label}>Email:</div>
+          <div className={styles.label}>{t("settings.email")}:</div>
           <div>{profile?.email}</div>
         </div>
         <div className={styles.item}>
           <Button type="primary" onClick={() => logout()}>
-            Log out
+            {t("settings.logout")}
           </Button>
         </div>
       </div>
 
       <div className={styles.block}>
-        <div className={styles.title}>Change Password</div>
+        <div className={styles.title}>{t("settings.change_password")}</div>
         <Form form={form}>
           <Form.Item
             label="Password"
@@ -91,7 +93,7 @@ const Settings = () => {
             <Input.Password style={{ width: 300 }} />
           </Form.Item>
           <Button type="primary" onClick={() => updatePassword()}>
-            Save
+            {t("save")}
           </Button>
         </Form>
       </div>
@@ -115,7 +117,7 @@ const Settings = () => {
                       type="primary"
                       onClick={() => updatePrompt(item.prompt_type)}
                     >
-                      Save
+                      {t("save")}
                     </Button>
                   </div>
                 </div>

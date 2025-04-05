@@ -3,12 +3,14 @@ import { Post } from "../../utils/request";
 import { useNavigate } from "react-router";
 import styles from "./style.module.less";
 import globalStore from "../../store/global";
+import { useTranslation } from "react-i18next";
 
 const JobCreate = () => {
   const [form] = Form.useForm();
   const { fetchJobs } = globalStore;
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const createJob = () => {
     form.validateFields().then(async (values) => {
@@ -26,14 +28,18 @@ const JobCreate = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Open a new role</div>
+      <div className={styles.title}>{t("create_job.new_role")}</div>
       <div className={styles.form}>
         <Form form={form} layout="vertical">
-          <Form.Item label="Job Title" name="name" rules={[{ required: true }]}>
+          <Form.Item
+            label={t("create_job.job_name")}
+            name="name"
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
           <Button type="primary" onClick={createJob} style={{ marginTop: 24 }}>
-            Submit
+            {t("submit")}
           </Button>
         </Form>
       </div>

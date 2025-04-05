@@ -1,27 +1,20 @@
 import { Input } from "antd";
 import { TextAreaProps } from "antd/es/input";
+import { useTranslation } from "react-i18next";
 
 const TextAreaWithHint = (props: TextAreaProps) => {
+  const { t } = useTranslation();
   return (
     <div>
       <div style={{ marginTop: -5, marginBottom: 20, color: "#999" }}>
-        <div>
-          Viona, your AI Recruiter, relies on the information in this database
-          to perform key tasks:
-        </div>
+        <div>{t("company.hint.title")}</div>
         <ul style={{ paddingLeft: 15, margin: 0 }}>
-          <li>Understanding job requirements during conversations.</li>
-          <li>Creating accurate and compelling job descriptions.</li>
-          <li>
-            Providing informed answers to candidate inquiries about the company.
-          </li>
-          <li>Many other tasks.</li>
+          <li>{t("company.hint.li1")}</li>
+          <li>{t("company.hint.li2")}</li>
+          <li>{t("company.hint.li3")}</li>
+          <li>{t("company.hint.li4")}</li>
         </ul>
-        <div>
-          Please ensure all company details are comprehensive, accurate, and
-          kept current. Incomplete or outdated information will impact Viona's
-          effectiveness
-        </div>
+        <div>{t("company.hint.footer")}</div>
       </div>
       <Input.TextArea {...props} />
     </div>

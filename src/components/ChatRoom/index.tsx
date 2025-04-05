@@ -105,7 +105,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
   const lastMessageIdRef = useRef<string>();
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -668,13 +668,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }
             }}
             items={[
-              { title: "Open a new role", disabled: true, status: "finish" },
+              { title: t("chat.create_job"), disabled: true, status: "finish" },
               {
-                title: "Define job requirements",
+                title: t("chat.define_job_requirement"),
                 status: chatType === "jobRequirementDoc" ? "process" : "finish",
               },
               {
-                title: "Define interview plan",
+                title: t("chat.define_interview_plan"),
                 disabled: !job?.requirement_doc_id,
                 status:
                   chatType === "jobInterviewPlan"
@@ -684,7 +684,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     : "wait",
               },
               {
-                title: "Draft job description",
+                title: t("chat.draft_job_description"),
                 disabled: !job?.interview_plan_doc_id,
                 status:
                   chatType === "jobDescription"
@@ -694,7 +694,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     : "wait",
               },
               {
-                title: "Create chatbot for candidate",
+                title: t("chat.create_chatbot"),
                 disabled: !job?.jd_doc_id,
                 status:
                   chatType === "chatbot"
@@ -966,11 +966,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <div className={styles.inputArea}>
             <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
               {[
-                "Yes.",
-                "No.",
-                "Accurate.",
-                "Your proposal is good.",
-                "No further modifications needed.",
+                t("chat.yes"),
+                t("chat.no"),
+                t("chat.accurate"),
+                t("chat.proposal"),
+                t("chat.no_others"),
               ].map((text) => {
                 return (
                   <Button
@@ -1094,8 +1094,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         >
           <>
             <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
-              Tips: You can directly edit my responses! Modify summaries, add
-              information, or answer my questions right after or below them.
+              {t("chat.tips")}
             </div>
             <MDXEditor
               contentEditableClassName={styles.mdEditor}
