@@ -4,6 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 import { DeleteOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
+import { useTranslation } from "react-i18next";
 
 type TSkill = {
   uuid?: string;
@@ -27,6 +28,11 @@ const IdealProfileForm = (props: IProps) => {
   const { candidateRequirementsJson, onClose, onOk } = props;
   const [form] = Form.useForm();
   const [profileGroups, setProfileGroups] = useState<TIdealProfileGroup[]>([]);
+  const { t: originalT } = useTranslation();
+
+  const t = (key: string) => {
+    return originalT(`ideal_profile.${key}`);
+  };
 
   useEffect(() => {
     try {
@@ -76,9 +82,13 @@ const IdealProfileForm = (props: IProps) => {
                     style={{ flex: "none" }}
                   >
                     <Radio.Group disabled={skill.deleted} buttonStyle="solid">
-                      <Radio.Button value="minimum">Minimum</Radio.Button>
-                      <Radio.Button value="big_plus">Big Plus</Radio.Button>
-                      <Radio.Button value="plus">Plus</Radio.Button>
+                      <Radio.Button value="minimum">
+                        {t("minimum")}
+                      </Radio.Button>
+                      <Radio.Button value="big_plus">
+                        {t("big_plus")}
+                      </Radio.Button>
+                      <Radio.Button value="plus">{t("plus")}</Radio.Button>
                     </Radio.Group>
                   </Form.Item>
 

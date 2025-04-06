@@ -105,7 +105,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
   const lastMessageIdRef = useRef<string>();
 
-  const { t, i18n } = useTranslation();
+  const { t: originalT, i18n } = useTranslation();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -119,6 +119,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const loadingStartedAtRef = useRef<Dayjs>();
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
+
+  const t = (key: string) => {
+    return originalT(`chat.${key}`);
+  };
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
@@ -164,7 +168,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   }[] = [
     {
       key: "basic-info-request",
-      title: "Click here to share basic information",
+      title: t("share_basic"),
       handler: () => {
         setJobRequirementFormType("basic_info");
         setShowJobRequirementFormModal(true);
@@ -173,7 +177,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "reference-request",
-      title: "Click here to share references",
+      title: t("share_reference"),
       handler: () => {
         setJobRequirementFormType("reference");
         setShowJobRequirementFormModal(true);
@@ -182,7 +186,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "team-context-request",
-      title: "Click here to share team context",
+      title: t("share_team"),
       handler: () => {
         setJobRequirementFormType("team_context");
         setShowJobRequirementFormModal(true);
@@ -190,8 +194,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
+      key: "profile-feedback-and-priorities-request",
+      title: t("ideal_profile"),
+      handler: () => {
+        setDrawerOpen(true);
+      },
+      autoTrigger: true,
+    },
+    {
       key: "other-requirements-request",
-      title: "Click here to provide other requirements",
+      title: t("other_requirements"),
       handler: () => {
         setJobRequirementFormType("other_requirement");
         setShowJobRequirementFormModal(true);
@@ -217,14 +229,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
           window.open(tag.content);
         }
       },
-    },
-    {
-      key: "profile-feedback-and-priorities-request",
-      title: "Edit ideal profile",
-      handler: () => {
-        setDrawerOpen(true);
-      },
-      autoTrigger: true,
     },
 
     {
@@ -668,13 +672,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }
             }}
             items={[
-              { title: t("chat.create_job"), disabled: true, status: "finish" },
+              { title: t("create_job"), disabled: true, status: "finish" },
               {
-                title: t("chat.define_job_requirement"),
+                title: t("define_job_requirement"),
                 status: chatType === "jobRequirementDoc" ? "process" : "finish",
               },
               {
-                title: t("chat.define_interview_plan"),
+                title: t("define_interview_plan"),
                 disabled: !job?.requirement_doc_id,
                 status:
                   chatType === "jobInterviewPlan"
@@ -684,7 +688,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     : "wait",
               },
               {
-                title: t("chat.draft_job_description"),
+                title: t("draft_job_description"),
                 disabled: !job?.interview_plan_doc_id,
                 status:
                   chatType === "jobDescription"
@@ -694,7 +698,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     : "wait",
               },
               {
-                title: t("chat.create_chatbot"),
+                title: t("create_chatbot"),
                 disabled: !job?.jd_doc_id,
                 status:
                   chatType === "chatbot"
@@ -734,10 +738,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       <span style={{ fontSize: 18 }}>
                         {item.role === "user"
                           ? "You"
-                          : `Viona${
+                          : `Viona, ${
                               chatType === "candidate"
-                                ? ", your application copilot"
-                                : ", AI recruiter"
+                                ? t("viona_intro_candidate")
+                                : t("viona_intro_staff")
                             }`}
                       </span>
                       <span className={styles.timestamp}>
@@ -964,27 +968,29 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {chatType !== "chatbot" && (
           <div className={styles.inputArea}>
-            <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-              {[
-                t("chat.yes"),
-                t("chat.no"),
-                t("chat.accurate"),
-                t("chat.proposal"),
-                t("chat.no_others"),
-              ].map((text) => {
-                return (
-                  <Button
-                    type="primary"
-                    key={text}
-                    shape="round"
-                    onClick={() => sendMessage(text)}
-                    size="small"
-                  >
-                    {text}
-                  </Button>
-                );
-              })}
-            </div>
+            {role !== "candidate" && (
+              <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
+                {[
+                  t("yes"),
+                  t("no"),
+                  t("accurate"),
+                  t("proposal"),
+                  t("no_others"),
+                ].map((text) => {
+                  return (
+                    <Button
+                      type="primary"
+                      key={text}
+                      shape="round"
+                      onClick={() => sendMessage(text)}
+                      size="small"
+                    >
+                      {text}
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
@@ -1023,7 +1029,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }}
             >
               <div style={{ display: "flex", gap: 10 }}>
-                {chatType === "candidate" && (
+                {false && chatType === "candidate" && (
                   <>
                     <Upload
                       beforeUpload={() => false}
@@ -1094,7 +1100,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         >
           <>
             <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
-              {t("chat.tips")}
+              {t("tips")}
             </div>
             <MDXEditor
               contentEditableClassName={styles.mdEditor}
