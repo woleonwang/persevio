@@ -64,6 +64,7 @@ type TGroup = {
 interface IProps {
   open: boolean;
   group?: TRoleOverviewType;
+  isCoworker: boolean;
   onClose: () => void;
   onOk: (result: string) => void;
 }
@@ -75,7 +76,7 @@ type TTeam = {
 };
 
 const JobRequirementFormModal = (props: IProps) => {
-  const { open, group = "basic_info", onClose, onOk } = props;
+  const { open, group = "basic_info", isCoworker, onClose, onOk } = props;
   const [form] = Form.useForm();
   const [createTeamForm] = Form.useForm();
   const [_, forceUpdate] = useReducer(() => ({}), {});
@@ -86,6 +87,10 @@ const JobRequirementFormModal = (props: IProps) => {
 
   const t = (key: string) => {
     return originalT(`job_requirement_form.${key}`);
+  };
+
+  const formatUrl = (url: string) => {
+    return isCoworker ? url.replace("/api", "/api/coworker") : url;
   };
 
   const formatOptions = (options: string[]) => {
@@ -558,7 +563,7 @@ const JobRequirementFormModal = (props: IProps) => {
   }, []);
 
   const fetchTeams = async (options?: { selectedTeamId?: number }) => {
-    const res = await Get<{ teams: TTeam[] }>(`/api/teams`);
+    const res = await Get<{ teams: TTeam[] }>(formatUrl(`/api/teams`));
     if (res.code === 0) {
       setTeams(res.data.teams);
       if (options?.selectedTeamId) {
@@ -580,10 +585,13 @@ const JobRequirementFormModal = (props: IProps) => {
   const createTeam = async () => {
     const questions = createTeamForm.getFieldsValue();
 
-    const { code, data } = await Post<{ team: TTeam }>(`/api/teams`, {
-      name: questions.name,
-      detail: JSON.stringify(questions),
-    });
+    const { code, data } = await Post<{ team: TTeam }>(
+      formatUrl(`/api/teams`),
+      {
+        name: questions.name,
+        detail: JSON.stringify(questions),
+      }
+    );
 
     if (code === 0) {
       message.success(t("create_team_succeed"));
@@ -803,6 +811,7 @@ const JobRequirementFormModal = (props: IProps) => {
           <Button
             key="nothing"
             type="primary"
+            disabled={canSubmit()}
             onClick={() => {
               onOk(t("no_materials"));
             }}
@@ -848,9 +857,10 @@ const JobRequirementFormModal = (props: IProps) => {
                         },
                       ]}
                       style={{ marginBottom: 20 }}
+                      key={itemGroup.key}
                     />
                   ) : (
-                    <div className={styles.group}>
+                    <div className={styles.group} key={itemGroup.key}>
                       <div className={styles.groupTitle}>{itemGroup.group}</div>
                       {itemGroup.questions.map((question) =>
                         genFormItem(question)

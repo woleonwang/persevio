@@ -44,6 +44,9 @@ export default {
       "Viona is thinking hard! Hang tight, your answer is coming...",
     edit_profiles_hint:
       "I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content",
+    reply_viona_directly_or_edit:
+      "Reply to Viona or edit Viona's message directly",
+    reply_viona: "Reply to Viona",
   },
 
   job_requirement_form: {

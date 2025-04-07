@@ -7,6 +7,7 @@ import { Get, Post } from "../../utils/request";
 import { Button, Form, Input } from "antd";
 import { observer } from "mobx-react-lite";
 import globalStore from "../../store/global";
+import { useTranslation } from "react-i18next";
 
 type TCoworker = {
   id: number;
@@ -27,6 +28,8 @@ const JobCoworker = () => {
   const [coworker, setCoworker] = useState<TCoworker>();
   const { collapseForDrawer } = globalStore;
 
+  const { i18n } = useTranslation();
+
   useEffect(() => {
     checkLogin();
   }, []);
@@ -42,7 +45,8 @@ const JobCoworker = () => {
     if (token) {
       const { code, data } = await Get("/api/coworker/info");
       if (code === 0) {
-        setCoworker(data);
+        setCoworker(data.coworker);
+        i18n.changeLanguage(data.company.lang);
       }
     }
   };

@@ -11,10 +11,12 @@ import { Get } from "../../utils/request";
 
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
+import { useTranslation } from "react-i18next";
 
 type TCompany = {
   logo: string;
   name: string;
+  lang: string;
 };
 
 type TJob = {
@@ -33,6 +35,7 @@ const JobsShow = () => {
   const [status, setStatus] = useState<TStatus>("loading");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { i18n } = useTranslation();
   useEffect(() => {
     fetchJob();
   }, []);
@@ -52,6 +55,7 @@ const JobsShow = () => {
     if (code === 0) {
       setCompany(data.company);
       setJob(data.job);
+      i18n.changeLanguage(data.lang ?? "en-US");
       setStatus("success");
     } else {
       setStatus("error");

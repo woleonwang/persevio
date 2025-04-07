@@ -972,6 +972,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
           <div ref={messagesEndRef} />
         </div>
+
         {role === "candidate" && (
           <div className={styles.preDefinedQuestionContainer}>
             {PreDefinedMessages.map((message) => {
@@ -1035,8 +1036,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }}
               placeholder={
                 allowEditMessage
-                  ? "Reply to Viona or edit Viona's message directly"
-                  : "Reply to Viona"
+                  ? t("reply_viona_directly_or_edit")
+                  : t("reply_viona")
               }
               style={{
                 width: "100%",
@@ -1092,7 +1093,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 )}
 
                 <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                  Send
+                  {originalT("submit")}
                 </Button>
 
                 <Button
@@ -1109,17 +1110,57 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        <JobRequirementFormModal
-          open={showJobRequirementFormModal}
-          onClose={() => setShowJobRequirementFormModal(false)}
-          group={jobRequirementFormType}
-          onOk={(result: string) => {
-            if (!isLoading) {
-              sendRoleOverview(result);
-              setShowJobRequirementFormModal(false);
-            }
-          }}
-        />
+        {role !== "candidate" && (
+          <>
+            <JobRequirementFormModal
+              open={showJobRequirementFormModal}
+              onClose={() => setShowJobRequirementFormModal(false)}
+              group={jobRequirementFormType}
+              onOk={(result: string) => {
+                if (!isLoading) {
+                  sendRoleOverview(result);
+                  setShowJobRequirementFormModal(false);
+                }
+              }}
+              isCoworker={role === "coworker"}
+            />
+
+            <Drawer
+              open={idealProfileDrawerOpen}
+              title="Edit Ideal Profile"
+              width={"50vw"}
+              onClose={() => setDrawerOpen(false)}
+              destroyOnClose
+              mask={false}
+            >
+              {job?.candidate_requirements_json && (
+                <IdealProfileForm
+                  candidateRequirementsJson={job.candidate_requirements_json}
+                  onClose={() => setDrawerOpen(false)}
+                  onOk={(groups) => {
+                    // 发送
+                    let message = t("edit_profiles_hint");
+
+                    groups.forEach((group) => {
+                      const { name, skills } = group;
+                      if (skills.length > 0) {
+                        message += `\n\n**${name}:**`;
+                        skills.forEach((skill) => {
+                          message += `\n\n*   **${skill.content} - ${originalT(
+                            `ideal_profile.${skill.type}`
+                          )}**`;
+                        });
+                      }
+                    });
+
+                    sendMessage(message);
+                    setDrawerOpen(false);
+                  }}
+                />
+              )}
+            </Drawer>
+          </>
+        )}
 
         <Modal
           open={!!markdownEditMessageId}
@@ -1184,41 +1225,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
             />
           </>
         </Modal>
-
-        <Drawer
-          open={idealProfileDrawerOpen}
-          title="Edit Ideal Profile"
-          width={"50vw"}
-          onClose={() => setDrawerOpen(false)}
-          destroyOnClose
-          mask={false}
-        >
-          {job?.candidate_requirements_json && (
-            <IdealProfileForm
-              candidateRequirementsJson={job.candidate_requirements_json}
-              onClose={() => setDrawerOpen(false)}
-              onOk={(groups) => {
-                // 发送
-                let message = t("edit_profiles_hint");
-
-                groups.forEach((group) => {
-                  const { name, skills } = group;
-                  if (skills.length > 0) {
-                    message += `\n\n**${name}:**`;
-                    skills.forEach((skill) => {
-                      message += `\n\n*   **${skill.content} - ${originalT(
-                        `ideal_profile.${skill.type}`
-                      )}**`;
-                    });
-                  }
-                });
-
-                sendMessage(message);
-                setDrawerOpen(false);
-              }}
-            />
-          )}
-        </Drawer>
 
         <Tour
           open={editMessageTourOpen}
