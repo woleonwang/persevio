@@ -39,6 +39,9 @@ export default {
     other_requirements: "Click here to provide other requirements",
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
+
+    viona_is_thinking:
+      "Viona is thinking hard! Hang tight, your answer is coming...",
   },
 
   job_requirement_form: {

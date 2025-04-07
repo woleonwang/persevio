@@ -39,6 +39,8 @@ export default {
     other_requirements: "点击确定其它要求",
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
+
+    viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复..."
   },
 
   job_requirement_form: {

@@ -117,6 +117,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
+  const isRecordingRef = useRef(false);
+  isRecordingRef.current = isRecording;
+
   const textInstanceRef = useRef<TextAreaRef | null>();
   const editMessageTourElementRef = useRef<
     HTMLButtonElement | HTMLAnchorElement | null
@@ -558,6 +561,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
       recognition.lang = i18n.language;
 
       recognition.onresult = (event: any) => {
+        if (!isRecordingRef.current) return;
+
         let result = "";
         let isFinal = false;
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -790,7 +795,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             loadingStartedAtRef.current ?? dayjs(),
                             "second"
                           ) > 30
-                            ? "(Viona is thinking hard! Hang tight, your answer is coming... )"
+                            ? `(${t("viona_is_thinking")})`
                             : ""}
                         </p>
                       ) : editMessageMap[item.id]?.enabled ? (
@@ -1022,7 +1027,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <Input.TextArea
               ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                if (isRecording) {
+                  originalInputRef.current = e.target.value;
+                }
+              }}
               placeholder={
                 allowEditMessage
                   ? "Reply to Viona or edit Viona's message directly"
