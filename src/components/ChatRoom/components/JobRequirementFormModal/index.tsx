@@ -785,6 +785,7 @@ const JobRequirementFormModal = (props: IProps) => {
       </Form.Item>
     );
   };
+
   return (
     <Modal
       open={open}
@@ -798,15 +799,17 @@ const JobRequirementFormModal = (props: IProps) => {
         <Button key="back" onClick={onClose}>
           {originalT("cancel")}
         </Button>,
-        <Button
-          key="nothing"
-          type="primary"
-          onClick={() => {
-            onOk(t("no_materials"));
-          }}
-        >
-          {t("no_materials")}
-        </Button>,
+        group === "reference" && (
+          <Button
+            key="nothing"
+            type="primary"
+            onClick={() => {
+              onOk(t("no_materials"));
+            }}
+          >
+            {t("no_materials")}
+          </Button>
+        ),
         <Button
           key="submit"
           type="primary"
@@ -841,6 +844,7 @@ const JobRequirementFormModal = (props: IProps) => {
                           children: itemGroup.questions.map((question) =>
                             genFormItem(question)
                           ),
+                          forceRender: true,
                         },
                       ]}
                       style={{ marginBottom: 20 }}

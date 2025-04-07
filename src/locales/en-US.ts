@@ -42,6 +42,8 @@ export default {
 
     viona_is_thinking:
       "Viona is thinking hard! Hang tight, your answer is coming...",
+    edit_profiles_hint:
+      "I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content",
   },
 
   job_requirement_form: {

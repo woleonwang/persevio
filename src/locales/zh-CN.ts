@@ -40,7 +40,9 @@ export default {
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
 
-    viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复..."
+    viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
+    edit_profiles_hint:
+      "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
   },
 
   job_requirement_form: {

@@ -1199,20 +1199,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
               onClose={() => setDrawerOpen(false)}
               onOk={(groups) => {
                 // 发送
-                let message = `I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content`;
+                let message = t("edit_profiles_hint");
 
                 groups.forEach((group) => {
                   const { name, skills } = group;
                   if (skills.length > 0) {
                     message += `\n\n**${name}:**`;
                     skills.forEach((skill) => {
-                      message += `\n\n*   **${skill.content} - ${
-                        skill.type === "minimum"
-                          ? "Minumum"
-                          : skill.type === "big_plus"
-                          ? "Big Plus"
-                          : "Plus"
-                      }**`;
+                      message += `\n\n*   **${skill.content} - ${originalT(
+                        `ideal_profile.${skill.type}`
+                      )}**`;
                     });
                   }
                 });
