@@ -23,6 +23,7 @@ export default {
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
 
+    next_task: "下一个任务: ",
     create_job: "创建职位",
     define_job_requirement: "详细定义职位需求",
     define_interview_plan: "确定面试计划",
@@ -37,18 +38,25 @@ export default {
     share_team: "点击分享团队信息",
     ideal_profile: "点击编辑理想候选人画像",
     other_requirements: "点击确定其它要求",
-    view_jrd: "View Complete Job Requirement Document",
-    no_edits: "Draft is good, no edits",
+    view_jrd: "查看详细职位需求文档",
+    no_edits: "没有要修改的",
+    copy_link: "复制链接",
+    open: "打开",
+    jd_done: "创建给候选人介绍职位的聊天机器人",
 
     viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
     edit_profiles_hint:
       "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
     reply_viona_directly_or_edit: "回复 Viona 或者编辑 Viona 的消息",
     reply_viona: "回复 Viona",
+
+    edit_message: "编辑消息",
+    edit_message_desc: "点击这里修改 Viona 的消息，或者直接在问题下面添加答案",
+    edit_ideal_profile: "编辑理想候选人画像",
   },
 
   job_requirement_form: {
-    tips: "You don't have to answer every question below, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
+    tips: "下面的这些问题不是必填。但是您提供给我的信息越多，我就能更好地了解这个职位。",
     basic_information: "基本信息",
     time: "这个职位是<b>全职</b>还是<b>兼职</b>？",
     full_time: "全职",

@@ -23,6 +23,7 @@ export default {
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
 
+    next_task: "Your next task is: ",
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
     define_interview_plan: "Define interview plan",
@@ -39,6 +40,9 @@ export default {
     other_requirements: "Click here to provide other requirements",
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
+    copy_link: "Copy Link",
+    open: "Open",
+    jd_done: "Viona for candidates",
 
     viona_is_thinking:
       "Viona is thinking hard! Hang tight, your answer is coming...",
@@ -47,6 +51,11 @@ export default {
     reply_viona_directly_or_edit:
       "Reply to Viona or edit Viona's message directly",
     reply_viona: "Reply to Viona",
+
+    edit_message: "Edit Message",
+    edit_message_desc:
+      "Click here to edit Viona's draft summaries, or answer her questions directly below.",
+    edit_ideal_profile: "Edit Ideal Profile",
   },
 
   job_requirement_form: {

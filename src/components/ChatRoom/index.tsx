@@ -42,7 +42,7 @@ import type { TextAreaRef } from "antd/es/input/TextArea";
 import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
 import { Get, Post, PostFormData } from "../../utils/request";
-import JobRequirementFormModal from "./components/JobRequirementFormModal";
+import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "../../store/global";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
@@ -94,7 +94,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   // job 仅用来判断进度。role 为 candidate 时不需要
   const [job, setJob] = useState<IJob>();
   const [jobUrl, setJobUrl] = useState("");
-  const [showJobRequirementFormModal, setShowJobRequirementFormModal] =
+  const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
     useState(false);
   const [jobRequirementFormType, setJobRequirementFormType] =
     useState<TRoleOverviewType>();
@@ -135,9 +135,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const EditMessageTourSteps: TourStepProps[] = [
     {
-      title: "Edit Message",
-      description:
-        "Click here to edit Viona's draft summaries, or answer her questions directly below.",
+      title: t("edit_message"),
+      description: t("edit_message_desc"),
       nextButtonProps: {
         children: "OK",
       },
@@ -180,7 +179,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("share_basic"),
       handler: () => {
         setJobRequirementFormType("basic_info");
-        setShowJobRequirementFormModal(true);
+        handleJobRequirementFormDrawerOpen(true);
       },
       autoTrigger: true,
     },
@@ -189,7 +188,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("share_reference"),
       handler: () => {
         setJobRequirementFormType("reference");
-        setShowJobRequirementFormModal(true);
+        handleJobRequirementFormDrawerOpen(true);
       },
       autoTrigger: true,
     },
@@ -198,7 +197,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("share_team"),
       handler: () => {
         setJobRequirementFormType("team_context");
-        setShowJobRequirementFormModal(true);
+        handleJobRequirementFormDrawerOpen(true);
       },
       autoTrigger: true,
     },
@@ -215,7 +214,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("other_requirements"),
       handler: () => {
         setJobRequirementFormType("other_requirement");
-        setShowJobRequirementFormModal(true);
+        handleJobRequirementFormDrawerOpen(true);
       },
       autoTrigger: true,
     },
@@ -230,7 +229,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     {
       key: "copy-link",
-      title: "Copy Link",
+      title: t("copy_link"),
       handler: async (tag) => {
         if (tag) {
           await copy(tag.content);
@@ -240,7 +239,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "open-link",
-      title: "Open",
+      title: t("open"),
       handler: async (tag) => {
         if (tag) {
           window.open(tag.content);
@@ -250,17 +249,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     {
       key: "jrd-done-btn",
-      title: "Define Interview Plan",
+      title: t("define_interview_plan"),
       handler: () => setChatType("jobInterviewPlan"),
     },
     {
       key: "interview-plan-done-btn",
-      title: "Draft Job Description",
+      title: t("draft_job_description"),
       handler: () => setChatType("jobDescription"),
     },
     {
       key: "jd-done-btn",
-      title: "Viona for candidates",
+      title: t("jd_done"),
       handler: () => setChatType("chatbot"),
     },
   ];
@@ -268,6 +267,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
   useEffect(() => {
     setChatType(undefined);
     setMessages([]);
+    setIdealProfileDrawerOpen(false);
+    setShowJobRequirementFormDrawer(false);
+    // 如果不加 setTimeout, 会跳过 chatType = undefined 的中间状态，不会 fetchMessage
+    setTimeout(() => {
+      setCollapseForDrawer(false);
+    }, 0);
+
     if (role === "candidate") {
       setChatType("candidate");
     } else {
@@ -464,7 +470,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               content:
                 step === "jd-done"
                   ? "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants"
-                  : "Your next task is: ",
+                  : t("next_task"),
               updated_at: item.updated_at,
               messageType: "system",
               extraTags: [
@@ -669,6 +675,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const setDrawerOpen = (open: boolean) => {
     setCollapseForDrawer(open);
     setIdealProfileDrawerOpen(open);
+  };
+
+  const handleJobRequirementFormDrawerOpen = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setShowJobRequirementFormDrawer(open);
   };
 
   const maxIdOfAIMessage = [...messages]
@@ -1112,14 +1123,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {role !== "candidate" && (
           <>
-            <JobRequirementFormModal
-              open={showJobRequirementFormModal}
-              onClose={() => setShowJobRequirementFormModal(false)}
+            <JobRequirementFormDrawer
+              open={showJobRequirementFormDrawer}
+              onClose={() => handleJobRequirementFormDrawerOpen(false)}
               group={jobRequirementFormType}
               onOk={(result: string) => {
                 if (!isLoading) {
                   sendRoleOverview(result);
-                  setShowJobRequirementFormModal(false);
+                  handleJobRequirementFormDrawerOpen(false);
                 }
               }}
               isCoworker={role === "coworker"}
@@ -1127,7 +1138,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
             <Drawer
               open={idealProfileDrawerOpen}
-              title="Edit Ideal Profile"
+              title={t("edit_ideal_profile")}
               width={"50vw"}
               onClose={() => setDrawerOpen(false)}
               destroyOnClose

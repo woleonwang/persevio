@@ -2,11 +2,11 @@ import {
   Button,
   Collapse,
   DatePicker,
+  Drawer,
   Form,
   Input,
   InputNumber,
   message,
-  Modal,
   Popover,
   Select,
 } from "antd";
@@ -75,7 +75,7 @@ type TTeam = {
   detail: string;
 };
 
-const JobRequirementFormModal = (props: IProps) => {
+const JobRequirementFormDrawer = (props: IProps) => {
   const { open, group = "basic_info", isCoworker, onClose, onOk } = props;
   const [form] = Form.useForm();
   const [createTeamForm] = Form.useForm();
@@ -795,42 +795,46 @@ const JobRequirementFormModal = (props: IProps) => {
   };
 
   return (
-    <Modal
+    <Drawer
       open={open}
       onClose={onClose}
-      onCancel={onClose}
-      closable={true}
       title={questionGroup.title}
-      width={800}
-      centered
-      footer={[
-        <Button key="back" onClick={onClose}>
-          {originalT("cancel")}
-        </Button>,
-        group === "reference" && (
-          <Button
-            key="nothing"
-            type="primary"
-            disabled={canSubmit()}
-            onClick={() => {
-              onOk(t("no_materials"));
-            }}
-          >
-            {t("no_materials")}
+      width={"50vw"}
+      destroyOnClose
+      mask={false}
+      footer={
+        <div className={styles.drawerFooter}>
+          <Button key="back" onClick={onClose}>
+            {originalT("cancel")}
           </Button>
-        ),
-        <Button
-          key="submit"
-          type="primary"
-          disabled={!canSubmit()}
-          onClick={() => onSubmit()}
-        >
-          {originalT("submit")}
-        </Button>,
-      ]}
+          {group === "reference" && (
+            <Button
+              key="nothing"
+              type="primary"
+              disabled={canSubmit()}
+              onClick={() => {
+                onOk(t("no_materials"));
+              }}
+            >
+              {t("no_materials")}
+            </Button>
+          )}
+          <Button
+            key="submit"
+            type="primary"
+            disabled={!canSubmit()}
+            onClick={() => onSubmit()}
+          >
+            {originalT("submit")}
+          </Button>
+        </div>
+      }
     >
-      <div style={{ height: "60vh", overflow: "auto" }}>
-        <div style={{ color: "#999", marginBottom: 20 }}>{t("tips")}</div>
+      <div style={{ flex: "auto", overflow: "auto" }}>
+        {["reference", "team_context"].includes(group) && (
+          <div style={{ color: "#999" }}>{t("tips")}</div>
+        )}
+        <div style={{ marginBottom: 20 }}></div>
         {questionGroup && (
           <>
             <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
@@ -874,27 +878,33 @@ const JobRequirementFormModal = (props: IProps) => {
             </Form>
           </>
         )}
-        <Modal
+        <Drawer
           open={createTeamModelOpen}
           onClose={() => onCloseCreateTeamModal()}
-          onCancel={() => onCloseCreateTeamModal()}
           closable={true}
           title={t("create_team")}
           width={800}
-          onOk={() => createTeam()}
-          centered
-          okText={originalT("submit")}
-          cancelText={originalT("cancel")}
+          footer={
+            <div className={styles.drawerFooter}>
+              <Button key="back" onClick={() => onCloseCreateTeamModal()}>
+                {originalT("cancel")}
+              </Button>
+
+              <Button key="submit" type="primary" onClick={() => createTeam()}>
+                {originalT("submit")}
+              </Button>
+            </div>
+          }
         >
           <div style={{ height: "60vh", overflow: "auto" }}>
             <Form form={createTeamForm} layout="vertical">
               {TeamQuestions.map((item) => genFormItem(item))}
             </Form>
           </div>
-        </Modal>
+        </Drawer>
       </div>
-    </Modal>
+    </Drawer>
   );
 };
 
-export default JobRequirementFormModal;
+export default JobRequirementFormDrawer;
