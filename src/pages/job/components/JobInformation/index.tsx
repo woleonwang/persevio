@@ -6,6 +6,7 @@ import styles from "./style.module.less";
 interface IProps {
   jobId: number;
   activeDocType?: TJobDocType;
+  role?: "staff" | "coworker";
 }
 
 export type TJobDocType =
@@ -19,8 +20,17 @@ export type TJobDocType =
 // | "interview_plan"
 // | "jd";
 
-const JobDocPanel = (props: { jobId: number; docType: TJobDocType }) => {
-  const { jobId, docType } = props;
+const formatUrl = (url: string, role: "staff" | "coworker") => {
+  if (role === "staff") return url;
+  return url.replace("/api", "/api/coworker");
+};
+
+const JobDocPanel = (props: {
+  jobId: number;
+  docType: TJobDocType;
+  role: "staff" | "coworker";
+}) => {
+  const { jobId, docType, role } = props;
 
   const [jobDocContent, setJobDocContent] = useState("");
 
@@ -29,7 +39,9 @@ const JobDocPanel = (props: { jobId: number; docType: TJobDocType }) => {
   }, []);
 
   const fetchDoc = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/docs/${docType}`);
+    const { code, data } = await Get(
+      formatUrl(`/api/jobs/${jobId}/docs/${docType}`, role)
+    );
     if (code === 0) {
       setJobDocContent(data.content);
     }
@@ -52,7 +64,7 @@ const JobDocPanel = (props: { jobId: number; docType: TJobDocType }) => {
   return <MarkdownContainer content={jobDocContent} />;
 };
 const JobInformation = (props: IProps) => {
-  const { jobId, activeDocType } = props;
+  const { jobId, activeDocType, role = "staff" } = props;
 
   const [job, setJob] = useState<IJob>();
 
@@ -63,7 +75,7 @@ const JobInformation = (props: IProps) => {
   }, [jobId]);
 
   const fetchJob = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}`);
+    const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`, role));
     if (code === 0) {
       setJob(data.job);
     }
@@ -129,7 +141,11 @@ const JobInformation = (props: IProps) => {
       key: option.value,
       label: option.label,
       children: job && (
-        <JobDocPanel jobId={job.id} docType={option.value as TJobDocType} />
+        <JobDocPanel
+          jobId={job.id}
+          docType={option.value as TJobDocType}
+          role={role}
+        />
       ),
       collapsible: option.disabled ? "disabled" : "header",
     };

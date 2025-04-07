@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./style.module.less";
 import { useParams } from "react-router";
 import ChatRoom from "../../components/ChatRoom";
 import { Get, Post } from "../../utils/request";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Tabs } from "antd";
 import { observer } from "mobx-react-lite";
 import globalStore from "../../store/global";
 import { useTranslation } from "react-i18next";
+import { TTabKey } from "../job";
+import JobInformation, { TJobDocType } from "../job/components/JobInformation";
 
 type TCoworker = {
   id: number;
@@ -26,6 +28,10 @@ const JobCoworker = () => {
   const { invitation_token: invitationToken } = useParams();
   const [job, setJob] = useState<TJob>();
   const [coworker, setCoworker] = useState<TCoworker>();
+  const [status, setStatus] = useState<TTabKey>("chat");
+
+  const initDocTypeRef = useRef<TJobDocType>();
+
   const { collapseForDrawer } = globalStore;
 
   const { t, i18n } = useTranslation();
@@ -86,11 +92,38 @@ const JobCoworker = () => {
             <h2 style={{ color: "#1FAC6A", padding: "0 40px" }}>
               {t("coworker.description", { jobName: job.name })}
             </h2>
+            <Tabs
+              centered
+              activeKey={status}
+              items={[
+                {
+                  key: "chat",
+                  label: t("job.chat"),
+                },
+                {
+                  key: "info",
+                  label: t("job.document"),
+                },
+              ]}
+              onChange={(type) => {
+                setStatus(type as TTabKey);
+              }}
+              className={styles.tabs}
+            />
             <div
               className={styles.body}
               style={collapseForDrawer ? { width: "100%" } : {}}
             >
-              <ChatRoom jobId={job.id} allowEditMessage role="coworker" />
+              {status === "chat" && (
+                <ChatRoom jobId={job.id} allowEditMessage role="coworker" />
+              )}
+              {status === "info" && (
+                <JobInformation
+                  jobId={job.id}
+                  activeDocType={initDocTypeRef.current}
+                  role="coworker"
+                />
+              )}
             </div>
           </>
         )

@@ -265,6 +265,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
   ];
 
   useEffect(() => {
+    return () => {
+      setCollapseForDrawer(false);
+    };
+  }, []);
+
+  useEffect(() => {
     setChatType(undefined);
     setMessages([]);
     setIdealProfileDrawerOpen(false);
