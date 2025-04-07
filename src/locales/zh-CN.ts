@@ -20,6 +20,8 @@ export default {
     accurate: "准确。",
     proposal: "你的提议不错。",
     no_others: "没什么其它的了。",
+    make_details: "Make it more detailed",
+    make_concise: "Make it more concise",
 
     create_job: "创建职位",
     define_job_requirement: "详细定义职位需求",
@@ -35,6 +37,8 @@ export default {
     share_team: "点击分享团队信息",
     ideal_profile: "点击编辑理想候选人画像",
     other_requirements: "点击确定其它要求",
+    view_jrd: "View Complete Job Requirement Document",
+    no_edits: "Draft is good, no edits",
   },
 
   job_requirement_form: {
@@ -76,6 +80,7 @@ export default {
       "任何你认为可以帮我建立起一个对这个职位初步印象的信息都可以在这分享给我。",
     usage:
       "我该怎么用这个参考资料？比如，告诉我这是个你写的简单的职位需求表？别的类似的职位？里面哪些信息我可以用，哪些不能用？",
+    no_materials: "暂无参考资料",
 
     team_context: "团队信息",
     team: "这个职位会加入哪个<b>团队</b>？",
@@ -168,7 +173,13 @@ export default {
     name: "姓名",
     email: "邮件",
     logout: "登出",
+    password: "密码",
     change_password: "更改密码",
+    update_password_success: "密码更新成功",
+    update_password_error: "密码更新失败",
+    update_lang_success: "语言更新成功",
+    update_lang_error: "语言更新失败",
+    language: "语言",
   },
 
   create_job: {

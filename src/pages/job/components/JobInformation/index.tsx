@@ -5,16 +5,17 @@ import MarkdownContainer from "../../../../components/MarkdownContainer";
 import styles from "./style.module.less";
 interface IProps {
   jobId: number;
+  activeDocType?: TJobDocType;
 }
 
-type TJobDocType =
+export type TJobDocType =
   | "basic_info"
   | "role_context"
   | "objectives"
   | "activities"
   | "candidate_requirements"
-  | "target_companies";
-// | "requirement";
+  | "target_companies"
+  | "requirement";
 // | "interview_plan"
 // | "jd";
 
@@ -51,7 +52,7 @@ const JobDocPanel = (props: { jobId: number; docType: TJobDocType }) => {
   return <MarkdownContainer content={jobDocContent} />;
 };
 const JobInformation = (props: IProps) => {
-  const { jobId } = props;
+  const { jobId, activeDocType } = props;
 
   const [job, setJob] = useState<IJob>();
 
@@ -106,11 +107,11 @@ const JobInformation = (props: IProps) => {
       label: "Target Companies",
       disabled: docUnfinised("target_companies"),
     },
-    // {
-    //   value: "requirement",
-    //   label: "JRD",
-    //   disabled: docUnfinised("requirement"),
-    // },
+    {
+      value: "requirement",
+      label: "JRD",
+      disabled: docUnfinised("requirement"),
+    },
     // {
     //   value: "interview_plan",
     //   label: "Interview Plan",
@@ -136,7 +137,11 @@ const JobInformation = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <Collapse items={items} defaultActiveKey={[]} />
+      <Collapse
+        key={job?.id}
+        items={items}
+        defaultActiveKey={activeDocType ? [activeDocType] : []}
+      />
     </div>
   );
 };

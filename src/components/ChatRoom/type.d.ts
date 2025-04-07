@@ -1,3 +1,5 @@
+import { onChangeTabFunction } from "../../pages/job/index";
+
 export type TExtraTagName =
   // 后端生成
   | "basic-info-request"
@@ -60,6 +62,7 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   role?: "staff" | "coworker" | "candidate";
+  onChangeTab?: onChangeTabFunction;
 }
 
 export type TRoleOverviewType =

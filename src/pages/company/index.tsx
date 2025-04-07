@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Select } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect } from "react";
@@ -6,7 +6,8 @@ import TextAreaWithHint from "./components/TextAreaWithHint";
 import { useTranslation } from "react-i18next";
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
+
   useEffect(() => {
     fetchCompany();
   });
@@ -17,22 +18,19 @@ const CompanyKnowledge = () => {
       form.setFieldsValue({
         content: data.content,
         name: data.name,
-        lang: data.lang,
       });
     }
   };
 
   const updateCompany = () => {
     form.validateFields().then(async (values) => {
-      const { content, name, lang } = values;
+      const { content, name } = values;
       const { code } = await Post("/api/companies", {
         content,
         name,
-        lang,
       });
       if (code === 0) {
         message.success("Update company succeed");
-        i18n.changeLanguage(lang);
       } else {
         message.error("Update company failed");
       }
@@ -44,30 +42,15 @@ const CompanyKnowledge = () => {
       <div className={styles.form}>
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Company Name"
+            label={t("company.name")}
             name="name"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
 
-          <Form.Item label="Language" name="lang" rules={[{ required: true }]}>
-            <Select
-              options={[
-                {
-                  value: "en-US",
-                  label: "English",
-                },
-                {
-                  value: "zh-CN",
-                  label: "中文",
-                },
-              ]}
-            />
-          </Form.Item>
-
           <Form.Item
-            label="Knowledge Base"
+            label={t("company.knowledge_base")}
             name="content"
             rules={[{ required: true }]}
           >

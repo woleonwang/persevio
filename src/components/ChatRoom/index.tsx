@@ -77,7 +77,13 @@ const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, sessionId, allowEditMessage = false, role = "staff" } = props;
+  const {
+    jobId,
+    sessionId,
+    allowEditMessage = false,
+    role = "staff",
+    onChangeTab,
+  } = props;
 
   const [chatType, setChatType] = useState<TChatType>();
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -207,6 +213,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => {
         setJobRequirementFormType("other_requirement");
         setShowJobRequirementFormModal(true);
+      },
+      autoTrigger: true,
+    },
+    {
+      key: "jrd-done",
+      title: t("view_jrd"),
+      handler: () => {
+        onChangeTab?.("info", { docType: "requirement" });
       },
       autoTrigger: true,
     },
@@ -616,6 +630,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const canMessageEdit = (item: TMessage) => {
+    return (
+      allowEditMessage &&
+      item.messageType === "normal" &&
+      item.role === "ai" &&
+      item.id !== "fake_ai_id" &&
+      !editMessageMap[item.id]?.enabled
+    );
+  };
+
   const cancelMessageEdit = (id: string) => {
     setEditMessageMap((current) => {
       const newValue = { ...current };
@@ -811,6 +835,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         </div>
                       ) : (
                         <MarkdownContainer
+                          onClick={() => {
+                            if (canMessageEdit(item)) {
+                              setMarkdownEditMessageId(item.id);
+                              setMarkdownEditMessageContent(item.content);
+                            }
+                          }}
                           content={
                             item.messageSubType === "error"
                               ? "Something wrong with Viona, please retry."
@@ -859,12 +889,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       })()}
 
                       {(() => {
-                        const canEditing =
-                          allowEditMessage &&
-                          item.messageType === "normal" &&
-                          item.role === "ai" &&
-                          item.id !== "fake_ai_id" &&
-                          !editMessageMap[item.id]?.enabled;
+                        const canEditing = canMessageEdit(item);
 
                         const canDelete =
                           !!profile?.is_admin &&
@@ -970,13 +995,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <div className={styles.inputArea}>
             {role !== "candidate" && (
               <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-                {[
-                  t("yes"),
-                  t("no"),
-                  t("accurate"),
-                  t("proposal"),
-                  t("no_others"),
-                ].map((text) => {
+                {(chatType === "jobDescription"
+                  ? [t("make_details"), t("make_concise")]
+                  : [
+                      t("yes"),
+                      t("no"),
+                      t("accurate"),
+                      t("proposal"),
+                      t("no_others"),
+                    ]
+                ).map((text) => {
                   return (
                     <Button
                       type="primary"
@@ -1088,15 +1116,35 @@ const ChatRoom: React.FC<IProps> = (props) => {
           onCancel={() => {
             setMarkdownEditMessageId(undefined);
           }}
-          onOk={async () => {
-            setMarkdownEditMessageId(undefined);
-            await sendMessage(markdownEditMessageContent);
-          }}
           width={"80vw"}
           getContainer={document.body}
-          okText="Send"
           destroyOnClose
           centered
+          footer={[
+            <Button
+              key="cancel"
+              onClick={() => setMarkdownEditMessageId(undefined)}
+            >
+              {originalT("cancel")}
+            </Button>,
+            <Button
+              key="no_edit"
+              type="primary"
+              onClick={() => sendMessage(t("no_edits"))}
+            >
+              {t("no_edits")}
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={() => {
+                setMarkdownEditMessageId(undefined);
+                sendMessage(markdownEditMessageContent);
+              }}
+            >
+              {originalT("submit")}
+            </Button>,
+          ]}
         >
           <>
             <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>

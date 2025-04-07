@@ -793,13 +793,29 @@ const JobRequirementFormModal = (props: IProps) => {
       closable={true}
       title={questionGroup.title}
       width={800}
-      onOk={() => onSubmit()}
-      okButtonProps={{
-        disabled: !canSubmit(),
-      }}
-      okText={originalT("submit")}
-      cancelText={originalT("cancel")}
       centered
+      footer={[
+        <Button key="back" onClick={onClose}>
+          {originalT("cancel")}
+        </Button>,
+        <Button
+          key="nothing"
+          type="primary"
+          onClick={() => {
+            onOk(t("no_materials"));
+          }}
+        >
+          {t("no_materials")}
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          disabled={!canSubmit()}
+          onClick={() => onSubmit()}
+        >
+          {originalT("submit")}
+        </Button>,
+      ]}
     >
       <div style={{ height: "60vh", overflow: "auto" }}>
         <div style={{ color: "#999", marginBottom: 20 }}>{t("tips")}</div>

@@ -20,6 +20,8 @@ export default {
     accurate: "Accurate.",
     proposal: "Your proposal is good.",
     no_others: "No further modifications needed.",
+    make_details: "Make it more detailed",
+    make_concise: "Make it more concise",
 
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
@@ -35,6 +37,8 @@ export default {
     share_team: "Click here to share team context",
     ideal_profile: "Edit ideal profile",
     other_requirements: "Click here to provide other requirements",
+    view_jrd: "View Complete Job Requirement Document",
+    no_edits: "Draft is good, no edits",
   },
 
   job_requirement_form: {
@@ -76,6 +80,7 @@ export default {
       "Any relevant materials that you believe can help us better understand the role. For example, a draft JD, a JD of a similar role, etc.",
     usage:
       "How should I use the reference materials? Tell me what this reference material is and how should we use it. For example, is this a JD you drafted for this particular role, or a JD of a similar role from another company, etc.)",
+    no_materials: "No materials to provide",
 
     team_context: "Team Context",
     team: "Which <b>team</b> will this role join?",
@@ -173,7 +178,13 @@ export default {
     name: "Name",
     email: "Email",
     logout: "Log out",
+    password: "Password",
     change_password: "Change Password",
+    update_password_success: "Password updated successfully",
+    update_password_error: "Failed to update password",
+    update_lang_success: "Language updated successfully",
+    update_lang_error: "Failed to update language",
+    language: "Language",
   },
 
   create_job: {

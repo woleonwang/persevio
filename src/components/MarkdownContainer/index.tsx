@@ -4,12 +4,13 @@ import Markdown, { Options } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
 interface IProps extends Options {
+  onClick?: () => void;
   content: string;
 }
 const MarkdownContainer = (props: IProps) => {
-  const { content, ...restProps } = props;
+  const { content, onClick, ...restProps } = props;
   return (
-    <div className={classnames(styles.markdownContainer)}>
+    <div className={classnames(styles.markdownContainer)} onClick={onClick}>
       <Markdown rehypePlugins={[rehypeRaw]} {...restProps}>
         {content}
       </Markdown>
