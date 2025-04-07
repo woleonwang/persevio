@@ -24,6 +24,8 @@ export default {
     make_concise: "Make it more concise",
 
     next_task: "Your next task is: ",
+    jd_next_task:
+      "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants",
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
     define_interview_plan: "Define interview plan",
@@ -43,6 +45,7 @@ export default {
     copy_link: "Copy Link",
     open: "Open",
     jd_done: "Viona for candidates",
+    draft_job_description_btn: "Draft job description",
 
     viona_is_thinking:
       "Viona is thinking hard! Hang tight, your answer is coming...",
@@ -56,6 +59,9 @@ export default {
     edit_message_desc:
       "Click here to edit Viona's draft summaries, or answer her questions directly below.",
     edit_ideal_profile: "Edit Ideal Profile",
+
+    chatbot_greeting:
+      "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
   },
 
   job_requirement_form: {
@@ -207,6 +213,10 @@ export default {
   create_job: {
     new_role: "Open a new role",
     job_name: "Job Title",
+  },
+
+  coworker: {
+    description: `Define job requirements for the {{jobName}} role by completing this conversation with Viona, your AI recruiter.`,
   },
 
   save: "Save",

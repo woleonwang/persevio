@@ -361,8 +361,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         {
           id: "chatbot-message",
           role: "ai",
-          content:
-            "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
+          content: t("chatbot_greeting"),
           updated_at: dayjs().format(datetimeFormat),
           messageType: "system",
           extraTags: [
@@ -467,10 +466,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             resultMessages.push({
               id: `${item.id.toString()}-${step}-btn`,
               role: "ai",
-              content:
-                step === "jd-done"
-                  ? "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants"
-                  : t("next_task"),
+              content: step === "jd-done" ? t("jd_next_task") : t("next_task"),
               updated_at: item.updated_at,
               messageType: "system",
               extraTags: [
@@ -728,7 +724,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     : "wait",
               },
               {
-                title: t("draft_job_description"),
+                title: t("draft_job_description_btn"),
                 disabled: !job?.interview_plan_doc_id,
                 status:
                   chatType === "jobDescription"

@@ -28,7 +28,7 @@ const JobCoworker = () => {
   const [coworker, setCoworker] = useState<TCoworker>();
   const { collapseForDrawer } = globalStore;
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     checkLogin();
@@ -84,8 +84,7 @@ const JobCoworker = () => {
         job && (
           <>
             <h2 style={{ color: "#1FAC6A", padding: "0 40px" }}>
-              Define job requirements for the {job.name} role by completing this
-              conversation with Viona, your AI recruiter.
+              {t("coworker.description", { jobName: job.name })}
             </h2>
             <div
               className={styles.body}
