@@ -173,6 +173,8 @@ export default {
 
     create_team_succeed: "Create team succeed",
     required_error_message: "Please enter or select",
+
+    add: "Add {{name}}",
   },
 
   ideal_profile: {
