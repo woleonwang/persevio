@@ -8,12 +8,19 @@
   background-color: #fafafa;
   margin-bottom: 12px;
   border-radius: 12px;
+  position: relative;
 }
 
 .groupTitle {
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 8px;
+}
+
+.deleteBtn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 
 .formItem {
@@ -26,4 +33,14 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.inlineFormItem {
+  margin-left: 20px;
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
 }

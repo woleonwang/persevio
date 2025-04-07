@@ -222,4 +222,5 @@ export default {
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",
+  add: "Add",
 };

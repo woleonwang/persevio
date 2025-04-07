@@ -4,13 +4,15 @@ import {
   DatePicker,
   Drawer,
   Form,
+  FormListFieldData,
   Input,
   InputNumber,
   message,
   Popover,
+  Radio,
   Select,
 } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
@@ -51,6 +53,8 @@ type TQuestion = {
     label: string;
   }[];
   required?: boolean;
+  needPriority?: boolean;
+  answerFormat?: "singleLine" | "multipleLine";
 };
 
 type TGroup = {
@@ -59,6 +63,8 @@ type TGroup = {
   questions: TQuestion[];
   collapse?: boolean;
   dependencies?: TDependence[];
+  isArray?: boolean;
+  needPriority?: boolean;
 };
 
 interface IProps {
@@ -85,8 +91,20 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
   const { t: originalT } = useTranslation();
 
-  const t = (key: string) => {
-    return originalT(`job_requirement_form.${key}`);
+  useEffect(() => {
+    form.resetFields();
+    if (open) {
+      if (group === "other_requirement") {
+        form.setFieldsValue({
+          visa_requirements: [{}],
+          language_group: [{}],
+        });
+      }
+    }
+  }, [group, open]);
+
+  const t = (key: string, params?: Record<string, string>): string => {
+    return originalT(`job_requirement_form.${key}`, params);
   };
 
   const formatUrl = (url: string) => {
@@ -381,7 +399,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
       questions: [
         {
           group: t("visa"),
-          key: "visa_requirments",
+          key: "visa_requirements",
           questions: [
             {
               key: "visa_country",
@@ -397,6 +415,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   label: t("singapore"),
                 },
               ],
+              required: true,
+              answerFormat: "singleLine",
             },
             {
               key: "visa_type_singapore",
@@ -412,8 +432,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "other_singapore_visa",
               ]),
               dependencies: [
-                { questionKey: "visa_country", valueKey: "singapore" },
+                {
+                  questionKey: "visa_requirements.visa_country",
+                  valueKey: "singapore",
+                },
               ],
+              answerFormat: "singleLine",
             },
             {
               key: "visa_type_singapore_other",
@@ -421,10 +445,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
               question: t("visa_type_singapore_other"),
               dependencies: [
                 {
-                  questionKey: "visa_type_singapore",
-                  valueKey: "other",
+                  questionKey: "visa_requirements.visa_type_singapore",
+                  valueKey: "other_singapore_visa",
                 },
               ],
+              answerFormat: "singleLine",
             },
             {
               key: "visa_type_others",
@@ -432,8 +457,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
               question: t("visa_type"),
               options: formatOptions(["no_visa", "has_visa", "other_visa"]),
               dependencies: [
-                { questionKey: "visa_country", exceptValueKey: "singapore" },
+                {
+                  questionKey: "visa_requirements.visa_country",
+                  exceptValueKey: "singapore",
+                },
               ],
+              answerFormat: "singleLine",
             },
             {
               key: "visa_type_others_other",
@@ -441,12 +470,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
               question: t("other_visa"),
               dependencies: [
                 {
-                  questionKey: "visa_type_others",
-                  valueKey: "other",
+                  questionKey: "visa_requirements.visa_type_others",
+                  valueKey: "other_visa",
                 },
               ],
+              answerFormat: "singleLine",
             },
           ],
+          isArray: true,
+          needPriority: true,
         },
 
         {
@@ -458,6 +490,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
               type: "select",
               question: t("language"),
               options: formatOptions(["chinese", "english"]),
+              required: true,
+              answerFormat: "singleLine",
             },
             {
               key: "proficiency",
@@ -469,6 +503,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "daily_conversation",
                 "proficiency_other",
               ]),
+              answerFormat: "singleLine",
             },
             {
               key: "proficiency_other",
@@ -476,12 +511,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
               question: t("proficiency_other_name"),
               dependencies: [
                 {
-                  questionKey: "proficiency",
-                  valueKey: "other",
+                  questionKey: "language_group.proficiency",
+                  valueKey: "proficiency_other",
                 },
               ],
+              answerFormat: "singleLine",
             },
           ],
+          isArray: true,
+          needPriority: true,
         },
 
         {
@@ -498,6 +536,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "some_travel",
                 "regular_travel",
               ]),
+              answerFormat: "singleLine",
+              required: true,
             },
             {
               key: "destinations",
@@ -509,6 +549,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
+              answerFormat: "singleLine",
             },
             {
               key: "nature_of_travel",
@@ -520,6 +561,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
+              answerFormat: "singleLine",
             },
             {
               key: "regularity",
@@ -531,24 +573,29 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
+              answerFormat: "singleLine",
             },
           ],
+          needPriority: true,
         },
 
         {
           key: "onboarding_date",
           type: "date",
           question: t("onboarding"),
+          needPriority: true,
         },
         {
           key: "certifications",
           type: "text",
           question: t("certification"),
+          needPriority: true,
         },
         {
           key: "others",
           type: "text",
           question: t("other"),
+          needPriority: true,
         },
       ],
     },
@@ -612,8 +659,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
     try {
       form.validateFields().then((values) => {
         let resultStr = "";
-        const getAnswer = (question: TQuestion): string => {
-          const value = values[question.key];
+        const getAnswer = (question: TQuestion, value: any): string => {
           if (!value) return "";
 
           let formattedValue = value;
@@ -637,9 +683,19 @@ const JobRequirementFormDrawer = (props: IProps) => {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
           }
 
-          return `${(question as TQuestion).question
-            .replaceAll("</b>", "**")
-            .replaceAll("<b>", "**")}\n\n${formattedValue}`;
+          return question.answerFormat === "singleLine"
+            ? `${question.question
+                .replaceAll("</b>", "**")
+                .replaceAll("<b>", "**")}: ${formattedValue}`
+            : `${question.question
+                .replaceAll("</b>", "**")
+                .replaceAll("<b>", "**")}${
+                question.needPriority
+                  ? ` - ${originalT(
+                      "ideal_profile." + values[`${question.key}_priority`]
+                    )}`
+                  : ""
+              }\n\n${formattedValue}`;
         };
 
         const questions: string[] = [];
@@ -647,20 +703,68 @@ const JobRequirementFormDrawer = (props: IProps) => {
           if (question.key === "team") return;
 
           if (!!(question as TGroup).group) {
-            const answers = (question as TGroup).questions
-              .map((question) => getAnswer(question))
-              .filter(Boolean);
+            const group = question as TGroup;
 
-            if (answers.length) {
-              questions.push(`#### ${(question as TGroup).group}`);
-              answers.forEach((answer) => {
-                questions.push(answer);
+            if (group.isArray) {
+              const arrayValues = values[group.key] ?? [];
+
+              if (arrayValues.length) {
+                questions.push(`#### ${group.group}`);
+              }
+
+              arrayValues.forEach((groupValue: Record<string, any>) => {
+                const groupAnswers = group.questions
+                  .map((question) =>
+                    getAnswer(question, groupValue[question.key])
+                  )
+                  .filter(Boolean);
+
+                groupAnswers.forEach((answer, index) => {
+                  if (index === 0) {
+                    questions.push(`${answer}`);
+                  } else {
+                    questions.push(`- ${answer}`);
+                  }
+                });
+
+                if (group.needPriority) {
+                  questions.push(
+                    `- ${originalT("ideal_profile." + groupValue["priority"])}`
+                  );
+                }
               });
+            } else {
+              const answers = group.questions
+                .map((question) => getAnswer(question, values[question.key]))
+                .filter(Boolean);
+
+              if (answers.length) {
+                questions.push(`#### ${group.group}`);
+              }
+
+              answers.forEach((answer, index) => {
+                if (index === 0) {
+                  questions.push(`${answer}`);
+                } else {
+                  questions.push(`- ${answer}`);
+                }
+              });
+
+              if (group.needPriority) {
+                questions.push(
+                  `- ${originalT(
+                    "ideal_profile." + values[`${group.key}_priority`]
+                  )}`
+                );
+              }
             }
           } else {
-            const answer = getAnswer(question as TQuestion);
+            const answer = getAnswer(
+              question as TQuestion,
+              values[question.key]
+            );
             if (answer) {
-              questions.push(answer);
+              questions.push(`${answer}`);
             }
           }
         });
@@ -678,9 +782,19 @@ const JobRequirementFormDrawer = (props: IProps) => {
     }
   };
 
-  const checkVisible = (dependencies?: TDependence[]) => {
+  const checkVisible = (
+    dependencies?: TDependence[],
+    field?: FormListFieldData
+  ) => {
     return (dependencies ?? []).every((dep) => {
-      const currentValue = form.getFieldsValue()[dep.questionKey];
+      let currentValue = "";
+      if (field && dep.questionKey.includes(".")) {
+        const [parent, currentField] = dep.questionKey.split(".");
+        currentValue =
+          form.getFieldsValue()[parent][field.name]?.[currentField];
+      } else {
+        currentValue = form.getFieldsValue()[dep.questionKey];
+      }
 
       if (!currentValue) return false;
 
@@ -709,87 +823,128 @@ const JobRequirementFormDrawer = (props: IProps) => {
       return true;
     });
   };
-  const genFormItem = (question: TQuestion): ReactNode => {
-    const visible = checkVisible(question.dependencies);
+
+  const genFormItem = (
+    question: TQuestion,
+    field?: FormListFieldData
+  ): ReactNode => {
+    const visible = checkVisible(question.dependencies, field);
 
     if (!visible) return null;
 
     return (
-      <Form.Item
-        label={
-          <>
-            <span dangerouslySetInnerHTML={{ __html: question.question }} />
-            {question.hint && (
-              <Popover
-                content={<MarkdownContainer content={question.hint} />}
-                placement="right"
-                style={{ width: 600 }}
-              >
-                <QuestionCircleOutlined
-                  style={{ marginLeft: 5, cursor: "pointer" }}
-                />
-              </Popover>
-            )}
-          </>
-        }
-        name={question.key}
-        key={question.key}
-        className={styles.formItem}
-        rules={[
-          {
-            required: question.required,
-            message: t("required_error_message"),
-          },
-        ]}
-      >
-        {question.type === "text" && <Input />}
-        {question.type === "textarea" && (
-          <Input.TextArea rows={2} autoSize={{ minRows: 2, maxRows: 8 }} />
-        )}
-        {question.type === "number" && <InputNumber />}
-        {question.type === "select" && <Select options={question.options} />}
-        {question.type === "multiple_select" && (
-          <Select options={question.options} mode="multiple" />
-        )}
-        {question.type === "date" && <DatePicker />}
-        {question.type === "team" && (
-          <Select
-            options={teams.map((team) => ({
-              value: team.id,
-              label: team.name,
-            }))}
-            dropdownRender={(node) => {
-              return (
-                <div>
-                  {node}
-                  <div
-                    style={{
-                      padding: "12px 10px",
-                      marginTop: 12,
-                      borderTop: "1px solid #e8e8e8",
-                    }}
-                  >
-                    <Button
-                      type="primary"
-                      size="small"
-                      onClick={() => {
-                        setCreateTeamModelOpen(true);
+      <>
+        <Form.Item
+          label={
+            <>
+              <span dangerouslySetInnerHTML={{ __html: question.question }} />
+              {question.hint && (
+                <Popover
+                  content={<MarkdownContainer content={question.hint} />}
+                  placement="right"
+                  style={{ width: 600 }}
+                >
+                  <QuestionCircleOutlined
+                    style={{ marginLeft: 5, cursor: "pointer" }}
+                  />
+                </Popover>
+              )}
+              <span className={styles.inlineFormItem}>
+                {question.needPriority &&
+                  genPriority(question.key, question.key)}
+              </span>
+            </>
+          }
+          key={
+            field?.key !== undefined
+              ? `${field.key}-${question.key}`
+              : question.key
+          }
+          name={
+            field?.name !== undefined
+              ? [field.name, question.key]
+              : question.key
+          }
+          className={styles.formItem}
+          rules={[
+            {
+              required: question.required,
+              message: t("required_error_message"),
+            },
+          ]}
+        >
+          {question.type === "text" && <Input />}
+          {question.type === "textarea" && (
+            <Input.TextArea rows={2} autoSize={{ minRows: 2, maxRows: 8 }} />
+          )}
+          {question.type === "number" && <InputNumber />}
+          {question.type === "select" && <Select options={question.options} />}
+          {question.type === "multiple_select" && (
+            <Select options={question.options} mode="multiple" />
+          )}
+          {question.type === "date" && <DatePicker />}
+          {question.type === "team" && (
+            <Select
+              options={teams.map((team) => ({
+                value: team.id,
+                label: team.name,
+              }))}
+              dropdownRender={(node) => {
+                return (
+                  <div>
+                    {node}
+                    <div
+                      style={{
+                        padding: "12px 10px",
+                        marginTop: 12,
+                        borderTop: "1px solid #e8e8e8",
                       }}
                     >
-                      {t("create_team")}
-                    </Button>
+                      <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => {
+                          setCreateTeamModelOpen(true);
+                        }}
+                      >
+                        {t("create_team")}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              );
-            }}
-            onChange={(value) => {
-              const selectedTeam = teams.find((team) => team.id === value);
+                );
+              }}
+              onChange={(value) => {
+                const selectedTeam = teams.find((team) => team.id === value);
 
-              if (selectedTeam)
-                form.setFieldsValue(JSON.parse(selectedTeam.detail));
-            }}
-          />
-        )}
+                if (selectedTeam)
+                  form.setFieldsValue(JSON.parse(selectedTeam.detail));
+              }}
+            />
+          )}
+        </Form.Item>
+      </>
+    );
+  };
+
+  const genPriority = (name: string | number, key: string | number) => {
+    return (
+      <Form.Item
+        key={`${key}-priority`}
+        name={Number.isInteger(name) ? [name, "priority"] : `${name}_priority`}
+        style={{ flex: "none" }}
+        initialValue={"plus"}
+      >
+        <Radio.Group buttonStyle="solid">
+          <Radio.Button value="minimum">
+            {originalT("ideal_profile.minimum")}
+          </Radio.Button>
+          <Radio.Button value="big_plus">
+            {originalT("ideal_profile.big_plus")}
+          </Radio.Button>
+          <Radio.Button value="plus">
+            {originalT("ideal_profile.plus")}
+          </Radio.Button>
+        </Radio.Group>
       </Form.Item>
     );
   };
@@ -830,79 +985,134 @@ const JobRequirementFormDrawer = (props: IProps) => {
         </div>
       }
     >
-      <div style={{ flex: "auto", overflow: "auto" }}>
-        {["reference", "team_context"].includes(group) && (
-          <div style={{ color: "#999" }}>{t("tips")}</div>
-        )}
-        <div style={{ marginBottom: 20 }}></div>
-        {questionGroup && (
-          <>
-            <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
-              {questionGroup.questions.map((item) => {
-                if (!!(item as TGroup).group) {
-                  const itemGroup = item as TGroup;
-                  const isVisible = checkVisible(item.dependencies);
-                  if (!isVisible) return null;
+      {open && (
+        <div style={{ flex: "auto", overflow: "auto" }}>
+          {["reference", "team_context"].includes(group) && (
+            <div style={{ color: "#999" }}>{t("tips")}</div>
+          )}
+          <div style={{ marginBottom: 20 }}></div>
+          {questionGroup && (
+            <>
+              <Form
+                form={form}
+                layout="vertical"
+                onFieldsChange={() => forceUpdate()}
+              >
+                {questionGroup.questions.map((item) => {
+                  if (!!(item as TGroup).group) {
+                    const itemGroup = item as TGroup;
+                    const isVisible = checkVisible(item.dependencies);
+                    if (!isVisible) return null;
 
-                  return itemGroup.collapse ? (
-                    <Collapse
-                      items={[
-                        {
-                          key: "team-context",
-                          label: (
-                            <div style={{ fontWeight: "bold" }}>
+                    return itemGroup.collapse ? (
+                      <Collapse
+                        items={[
+                          {
+                            key: itemGroup.key,
+                            label: (
+                              <div style={{ fontWeight: "bold" }}>
+                                {itemGroup.group}
+                              </div>
+                            ),
+                            children: itemGroup.questions.map((question) =>
+                              genFormItem(question)
+                            ),
+                            forceRender: true,
+                          },
+                        ]}
+                        style={{ marginBottom: 20 }}
+                        key={itemGroup.key}
+                      />
+                    ) : (
+                      <div key={itemGroup.key}>
+                        {itemGroup.isArray ? (
+                          <Form.List name={itemGroup.key}>
+                            {(fields, { add, remove }) => {
+                              return (
+                                <div style={{ marginBottom: 24 }}>
+                                  <div className={styles.groupTitle}>
+                                    {itemGroup.group}
+                                  </div>
+                                  {fields.map((field) => (
+                                    <div
+                                      key={field.key}
+                                      className={styles.group}
+                                    >
+                                      {itemGroup.needPriority &&
+                                        genPriority(field.name, field.key)}
+                                      {itemGroup.questions.map((question) =>
+                                        genFormItem(question, field)
+                                      )}
+                                      <Button
+                                        onClick={() => remove(field.name)}
+                                        danger
+                                        className={styles.deleteBtn}
+                                        icon={<DeleteOutlined />}
+                                        size="small"
+                                        type="text"
+                                      />
+                                    </div>
+                                  ))}
+                                  <Button type="primary" onClick={() => add()}>
+                                    {t("add", { name: itemGroup.group })}
+                                  </Button>
+                                </div>
+                              );
+                            }}
+                          </Form.List>
+                        ) : (
+                          <div style={{ marginBottom: 24 }}>
+                            <div className={styles.groupTitle}>
                               {itemGroup.group}
                             </div>
-                          ),
-                          children: itemGroup.questions.map((question) =>
-                            genFormItem(question)
-                          ),
-                          forceRender: true,
-                        },
-                      ]}
-                      style={{ marginBottom: 20 }}
-                      key={itemGroup.key}
-                    />
-                  ) : (
-                    <div className={styles.group} key={itemGroup.key}>
-                      <div className={styles.groupTitle}>{itemGroup.group}</div>
-                      {itemGroup.questions.map((question) =>
-                        genFormItem(question)
-                      )}
-                    </div>
-                  );
-                } else {
-                  return genFormItem(item as TQuestion);
-                }
-              })}
-            </Form>
-          </>
-        )}
-        <Drawer
-          open={createTeamModelOpen}
-          onClose={() => onCloseCreateTeamModal()}
-          closable={true}
-          title={t("create_team")}
-          width={800}
-          footer={
-            <div className={styles.drawerFooter}>
-              <Button key="back" onClick={() => onCloseCreateTeamModal()}>
-                {originalT("cancel")}
-              </Button>
+                            <div className={styles.group}>
+                              {itemGroup.needPriority &&
+                                genPriority(itemGroup.key, itemGroup.key)}
+                              {itemGroup.questions.map((question) =>
+                                genFormItem(question)
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  } else {
+                    return genFormItem(item as TQuestion);
+                  }
+                })}
+              </Form>
+            </>
+          )}
+          <Drawer
+            open={createTeamModelOpen}
+            onClose={() => onCloseCreateTeamModal()}
+            closable={true}
+            title={t("create_team")}
+            width={800}
+            footer={
+              <div className={styles.drawerFooter}>
+                <Button key="back" onClick={() => onCloseCreateTeamModal()}>
+                  {originalT("cancel")}
+                </Button>
 
-              <Button key="submit" type="primary" onClick={() => createTeam()}>
-                {originalT("submit")}
-              </Button>
+                <Button
+                  key="submit"
+                  type="primary"
+                  onClick={() => createTeam()}
+                >
+                  {originalT("submit")}
+                </Button>
+              </div>
+            }
+          >
+            <div style={{ flex: "auto", overflow: "auto" }}>
+              <Form form={createTeamForm} layout="vertical">
+                {TeamQuestions.map((item) => genFormItem(item))}
+              </Form>
             </div>
-          }
-        >
-          <div style={{ height: "60vh", overflow: "auto" }}>
-            <Form form={createTeamForm} layout="vertical">
-              {TeamQuestions.map((item) => genFormItem(item))}
-            </Form>
-          </div>
-        </Drawer>
-      </div>
+          </Drawer>
+        </div>
+      )}
     </Drawer>
   );
 };

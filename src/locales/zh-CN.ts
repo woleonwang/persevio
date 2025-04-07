@@ -165,6 +165,8 @@ export default {
 
     create_team_succeed: "团队创建成功",
     required_error_message: "请输入或者选择",
+
+    add: "添加{{name}}",
   },
 
   ideal_profile: {
