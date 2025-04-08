@@ -6,14 +6,14 @@ export type TExtraTagName =
   | "reference-request"
   | "team-context-request"
   | "copy-link" // 复制链接
-  | "jrd-done"
+  | "targets-done"
   | "jd-done"
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
   | "other-requirements-request"
   // 前端生成
   | "open-link" // 打开新页面
-  | "jrd-done-btn"
+  | "targets-done-btn"
   | "interview-plan-done-btn"
   | "jd-done-btn";
 

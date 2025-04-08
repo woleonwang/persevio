@@ -291,7 +291,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "jrd-done",
+      key: "targets-done",
       title: t("view_jrd"),
       handler: () => {
         onChangeTab?.("info", { docType: "requirement" });
@@ -320,7 +320,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "jrd-done-btn",
+      key: "targets-done-btn",
       title: t("define_interview_plan"),
       handler: () => setChatType("jobInterviewPlan"),
     },
@@ -475,8 +475,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
       // 下一步 按钮
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
-          ["jrd-done", "interview-plan-done", "jd-done"] as (
-            | "jrd-done"
+          ["targets-done", "interview-plan-done", "jd-done"] as (
+            | "targets-done"
             | "interview-plan-done"
             | "jd-done"
           )[]
