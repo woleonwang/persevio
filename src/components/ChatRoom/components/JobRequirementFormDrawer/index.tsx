@@ -65,6 +65,7 @@ type TGroup = {
   dependencies?: TDependence[];
   isArray?: boolean;
   needPriority?: boolean;
+  needIndent?: boolean;
 };
 
 interface IProps {
@@ -479,6 +480,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           ],
           isArray: true,
           needPriority: true,
+          needIndent: true,
         },
 
         {
@@ -520,6 +522,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           ],
           isArray: true,
           needPriority: true,
+          needIndent: true,
         },
 
         {
@@ -577,6 +580,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
           ],
           needPriority: true,
+          needIndent: true,
         },
 
         {
@@ -744,9 +748,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
               answers.forEach((answer, index) => {
                 if (index === 0) {
-                  questions.push(`${answer}`);
+                  questions.push(answer);
                 } else {
-                  questions.push(`- ${answer}`);
+                  questions.push(group.needIndent ? `- ${answer}` : answer);
                 }
               });
 

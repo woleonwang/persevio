@@ -54,6 +54,10 @@ const JobsShow = () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`);
     if (code === 0) {
       setCompany(data.company);
+      data.job.job_description = data.job.job_description.replaceAll(
+        /<chatbot-delete>.*<\/chatbot-delete>/g,
+        ""
+      );
       setJob(data.job);
       i18n.changeLanguage(data.lang ?? "en-US");
       setStatus("success");
