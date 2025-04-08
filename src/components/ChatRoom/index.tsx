@@ -419,7 +419,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
             );
             if (code === 0) {
               window.open(
-                "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z",
+                i18n.language === "zh-CN"
+                  ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
+                  : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z",
                 "popup",
                 "width=1000,height=800"
               );
