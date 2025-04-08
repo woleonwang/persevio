@@ -14,6 +14,12 @@ const Settings = () => {
   const [profile, setProfile] = useState<ISettings>();
   const navigate = useNavigate();
   const { t: originalT, i18n } = useTranslation();
+  const [allCompanies, setAllCompanies] = useState<
+    {
+      value: string;
+      label: string;
+    }[]
+  >([]);
 
   const t = (key: string) => {
     return originalT(`settings.${key}`);
@@ -22,6 +28,12 @@ const Settings = () => {
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  useEffect(() => {
+    if (profile?.is_admin) {
+      fetchCompanies();
+    }
+  }, [profile]);
 
   const fetchSettings = async () => {
     const { code, data } = await Get("/api/settings");
@@ -33,6 +45,20 @@ const Settings = () => {
         formValues[item.prompt_type] = item.content;
       });
       form.setFieldsValue(formValues);
+    }
+  };
+
+  const fetchCompanies = async () => {
+    const { code, data } = await Get("/api/all_companies");
+    if (code === 0) {
+      setAllCompanies(
+        (data.companies ?? []).map((item: any) => {
+          return {
+            value: `${item.id}`,
+            label: item.name,
+          };
+        })
+      );
     }
   };
 
@@ -78,6 +104,18 @@ const Settings = () => {
       i18n.changeLanguage(lang);
     } else {
       message.error(t("update_lang_success"));
+    }
+  };
+
+  const loginToCompany = async (companyId: string) => {
+    const { code, data } = await Post("/api/login_to_company", {
+      company_id: parseInt(companyId),
+    });
+    if (code === 0) {
+      localStorage.setItem("token", data.token);
+      window.location.reload();
+    } else {
+      message.error("login failed");
     }
   };
 
@@ -139,6 +177,18 @@ const Settings = () => {
           onChange={(lang) => updateLang(lang)}
         />
       </div>
+
+      {!!profile?.is_admin && (
+        <div className={styles.block}>
+          <div className={styles.title}>Login as staff of company</div>
+
+          <Select
+            style={{ width: 300 }}
+            options={allCompanies}
+            onChange={(companyId) => loginToCompany(companyId)}
+          />
+        </div>
+      )}
 
       {!!profile?.is_admin && (
         <div className={styles.block}>
