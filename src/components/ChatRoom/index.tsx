@@ -8,14 +8,15 @@ import {
   message,
   Tour,
   TourStepProps,
-  Steps,
   Spin,
   Modal,
   Drawer,
 } from "antd";
 import {
+  ArrowRightOutlined,
   AudioMutedOutlined,
   AudioOutlined,
+  CheckOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
@@ -392,16 +393,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         // 自动执行标签逻辑
         const lastMessage = messageHistory[messageHistory.length - 1];
-        if (lastMessage.id !== lastMessageIdRef.current) {
-          // 如果最后一条消息需要弹表单或者抽屉，则直接打开
-          const autoTriggerTag = supportTags.find((supportTag) => {
-            return !!(lastMessage.extraTags ?? []).find(
-              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
-            );
-          });
-          autoTriggerTag?.handler();
+        if (lastMessage) {
+          if (lastMessage.id !== lastMessageIdRef.current) {
+            // 如果最后一条消息需要弹表单或者抽屉，则直接打开
+            const autoTriggerTag = supportTags.find((supportTag) => {
+              return !!(lastMessage.extraTags ?? []).find(
+                (tag) => supportTag.key === tag.name && supportTag.autoTrigger
+              );
+            });
+            autoTriggerTag?.handler();
+          }
+          lastMessageIdRef.current = lastMessage.id;
         }
-        lastMessageIdRef.current = messageHistory[messageHistory.length - 1].id;
 
         // 如果正在 loading，添加 fake 消息
         if (isLoading) {
@@ -687,58 +690,67 @@ const ChatRoom: React.FC<IProps> = (props) => {
           className={styles.left}
           style={{ display: collapseForDrawer ? "none" : "block" }}
         >
-          <Steps
-            direction="vertical"
-            size="small"
-            onChange={(current) => {
-              if (current === 1) {
-                setChatType("jobRequirementDoc");
-              } else if (current === 2) {
-                setChatType("jobInterviewPlan");
-              } else if (current === 3) {
-                setChatType("jobDescription");
-              } else if (current === 4) {
-                setChatType("chatbot");
-              }
-            }}
-            items={[
-              { title: t("create_job"), disabled: true, status: "finish" },
-              {
-                title: t("define_job_requirement"),
-                status: chatType === "jobRequirementDoc" ? "process" : "finish",
-              },
-              {
-                title: t("define_interview_plan"),
-                disabled: !job?.requirement_doc_id,
-                status:
-                  chatType === "jobInterviewPlan"
-                    ? "process"
-                    : job?.interview_plan_doc_id
-                    ? "finish"
-                    : "wait",
-              },
-              {
-                title: t("draft_job_description_btn"),
-                disabled: !job?.interview_plan_doc_id,
-                status:
-                  chatType === "jobDescription"
-                    ? "process"
-                    : job?.jd_doc_id
-                    ? "finish"
-                    : "wait",
-              },
-              {
-                title: t("create_chatbot"),
-                disabled: !job?.jd_doc_id,
-                status:
-                  chatType === "chatbot"
-                    ? "process"
-                    : job?.jd_doc_id
-                    ? "finish"
-                    : "wait",
-              },
-            ]}
-          />
+          <div className={styles.leftTitle}>{t("task")}</div>
+          {[
+            {
+              title: t("create_job"),
+              disabled: true,
+              isFinished: true,
+              isActive: false,
+            },
+            {
+              title: t("define_job_requirement"),
+              disabled: false,
+              isFinished: !!job?.requirement_doc_id,
+              isActive: chatType === "jobRequirementDoc",
+            },
+            {
+              title: t("define_interview_plan"),
+              disabled: !job?.requirement_doc_id,
+              isFinished: !!job?.interview_plan_doc_id,
+              isActive: chatType === "jobInterviewPlan",
+            },
+            {
+              title: t("draft_job_description_btn"),
+              disabled: !job?.interview_plan_doc_id,
+              isFinished: !!job?.jd_doc_id,
+              isActive: chatType === "jobDescription",
+            },
+            {
+              title: t("create_chatbot"),
+              disabled: !job?.jd_doc_id,
+              isFinished: !!job?.jd_doc_id,
+              isActive: chatType === "chatbot",
+            },
+          ].map((task, current) => {
+            return (
+              <div
+                className={classnames(styles.taskBlock, {
+                  [styles.finished]: task.isFinished,
+                  [styles.active]: task.isActive,
+                  [styles.disabled]: task.disabled,
+                })}
+                onClick={() => {
+                  if (task.disabled) return;
+
+                  if (current === 1) {
+                    setChatType("jobRequirementDoc");
+                  } else if (current === 2) {
+                    setChatType("jobInterviewPlan");
+                  } else if (current === 3) {
+                    setChatType("jobDescription");
+                  } else if (current === 4) {
+                    setChatType("chatbot");
+                  }
+                }}
+              >
+                <div>{task.title}</div>
+                <div>
+                  {task.isFinished ? <CheckOutlined /> : <ArrowRightOutlined />}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
       <div

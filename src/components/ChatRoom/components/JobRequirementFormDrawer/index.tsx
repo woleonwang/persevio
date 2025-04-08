@@ -540,7 +540,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "regular_travel",
               ]),
               answerFormat: "singleLine",
-              required: true,
             },
             {
               key: "destinations",
@@ -754,7 +753,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 }
               });
 
-              if (group.needPriority) {
+              if (answers.length && group.needPriority) {
                 questions.push(
                   `- ${originalT(
                     "ideal_profile." + values[`${group.key}_priority`]

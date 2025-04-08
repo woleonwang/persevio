@@ -7,8 +7,43 @@
 }
 
 .left {
+  width: 200px;
   flex: none;
-  padding: 20px 0;
+}
+
+.leftTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.taskBlock {
+  border-radius: 12px;
+  border: 1px solid rgba(238, 238, 238, 1);
+  background-color: rgba(249, 250, 251, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+
+  &.disabled {
+    cursor: not-allowed;
+    &:not(.finished) {
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  &:not(.disabled) {
+    &:hover,
+    &.active {
+      background-color: rgba(243, 252, 248, 1);
+      border-color: rgba(114, 229, 73, 1);
+      color: rgba(31, 172, 106, 1);
+    }
+  }
 }
 
 .right {
