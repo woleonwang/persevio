@@ -1194,7 +1194,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <Button
               key="no_edit"
               type="primary"
-              onClick={() => sendMessage(t("no_edits"))}
+              onClick={() => {
+                setMarkdownEditMessageId(undefined);
+                sendMessage(t("no_edits"));
+              }}
             >
               {t("no_edits")}
             </Button>,
