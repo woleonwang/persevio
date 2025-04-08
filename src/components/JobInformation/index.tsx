@@ -1,8 +1,9 @@
 import { Collapse, CollapseProps, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { Get } from "../../../../utils/request";
-import MarkdownContainer from "../../../../components/MarkdownContainer";
+import { Get } from "../../utils/request";
+import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
+
 interface IProps {
   jobId: number;
   activeDocType?: TJobDocType;

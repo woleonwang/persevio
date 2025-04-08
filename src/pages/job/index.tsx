@@ -5,7 +5,7 @@ import styles from "./style.module.less";
 import Profile from "./components/Profile";
 import { Tabs } from "antd";
 import { useParams } from "react-router";
-import JobInformation, { TJobDocType } from "./components/JobInformation";
+import JobInformation, { TJobDocType } from "../../components/JobInformation";
 import { observer } from "mobx-react-lite";
 import globalStore from "../../store/global";
 import { useTranslation } from "react-i18next";

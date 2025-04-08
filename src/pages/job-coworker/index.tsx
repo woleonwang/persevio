@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import { Button, Form, Input, Tabs } from "antd";
+import { useParams } from "react-router";
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+
+import ChatRoom from "../../components/ChatRoom";
+import JobInformation, { TJobDocType } from "../../components/JobInformation";
+import { Get, Post } from "../../utils/request";
+import globalStore from "../../store/global";
+import { TTabKey } from "../job";
 
 import styles from "./style.module.less";
-import { useParams } from "react-router";
-import ChatRoom from "../../components/ChatRoom";
-import { Get, Post } from "../../utils/request";
-import { Button, Form, Input, Tabs } from "antd";
-import { observer } from "mobx-react-lite";
-import globalStore from "../../store/global";
-import { useTranslation } from "react-i18next";
-import { TTabKey } from "../job";
-import JobInformation, { TJobDocType } from "../job/components/JobInformation";
 
 type TCoworker = {
   id: number;

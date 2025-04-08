@@ -91,35 +91,30 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
-  // job 仅用来判断进度。role 为 candidate 时不需要
+  // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [jobUrl, setJobUrl] = useState("");
+  const [profile, setProfile] = useState<ISettings>();
+  // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
     useState(false);
   const [jobRequirementFormType, setJobRequirementFormType] =
     useState<TRoleOverviewType>();
-
-  const [editMessageMap, setEditMessageMap] = useState<
-    Record<string, { enabled: boolean; content: string }>
-  >({});
   const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
-
-  const [profile, setProfile] = useState<ISettings>();
+  // 编辑消息
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
+
+  // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
-
-  const { t: originalT, i18n } = useTranslation();
-
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
-
   const textInstanceRef = useRef<TextAreaRef | null>();
   const editMessageTourElementRef = useRef<
     HTMLButtonElement | HTMLAnchorElement | null
@@ -127,7 +122,78 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
 
+  const { t: originalT, i18n } = useTranslation();
+
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
+
+  useEffect(() => {
+    if (role === "staff") {
+      initProfile();
+    }
+
+    return () => {
+      setCollapseForDrawer(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    setChatType(undefined);
+    setMessages([]);
+    setIdealProfileDrawerOpen(false);
+    setShowJobRequirementFormDrawer(false);
+    // 如果不加 setTimeout, 会跳过 chatType = undefined 的中间状态，不会 fetchMessage
+    setTimeout(() => {
+      setCollapseForDrawer(false);
+    }, 0);
+
+    if (role === "candidate") {
+      setChatType("candidate");
+    } else {
+      initJob();
+    }
+  }, [jobId]);
+
+  useEffect(() => {
+    if (isLoading) {
+      loadingStartedAtRef.current = dayjs();
+      const intervalFetchMessage = setInterval(() => {
+        fetchMessages();
+      }, 3000);
+
+      const intervalText = setInterval(() => {
+        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
+      }, 500);
+
+      return () => {
+        clearInterval(intervalFetchMessage);
+        clearInterval(intervalText);
+      };
+    } else {
+      loadingStartedAtRef.current = undefined;
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (chatType) {
+      needScrollToBottom.current = true;
+      fetchMessages();
+    }
+  }, [chatType]);
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+
+    if (needScrollToBottom.current) {
+      scrollToBottom();
+      needScrollToBottom.current = false;
+    }
+
+    if (!localStorage.getItem(EditMessageGuideKey) && allowEditMessage) {
+      setTimeout(() => {
+        setEditMessageTourOpen(true);
+      }, 500);
+    }
+  }, [messages]);
 
   const t = (key: string) => {
     return originalT(`chat.${key}`);
@@ -168,6 +234,21 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
   };
 
+  const handleJobRequirementFormDrawerOpen = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setShowJobRequirementFormDrawer(open);
+  };
+
+  const openJobRequirementFormDrawer = (type: TRoleOverviewType) => {
+    setJobRequirementFormType(type);
+    handleJobRequirementFormDrawerOpen(true);
+  };
+
+  const triggerIdealProfileDrawer = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setIdealProfileDrawerOpen(open);
+  };
+
   const supportTags: {
     key: TExtraTagName;
     title: string;
@@ -177,45 +258,31 @@ const ChatRoom: React.FC<IProps> = (props) => {
     {
       key: "basic-info-request",
       title: t("share_basic"),
-      handler: () => {
-        setJobRequirementFormType("basic_info");
-        handleJobRequirementFormDrawerOpen(true);
-      },
+      handler: () => openJobRequirementFormDrawer("basic_info"),
       autoTrigger: true,
     },
     {
       key: "reference-request",
       title: t("share_reference"),
-      handler: () => {
-        setJobRequirementFormType("reference");
-        handleJobRequirementFormDrawerOpen(true);
-      },
+      handler: () => openJobRequirementFormDrawer("reference"),
       autoTrigger: true,
     },
     {
       key: "team-context-request",
       title: t("share_team"),
-      handler: () => {
-        setJobRequirementFormType("team_context");
-        handleJobRequirementFormDrawerOpen(true);
-      },
-      autoTrigger: true,
-    },
-    {
-      key: "profile-feedback-and-priorities-request",
-      title: t("ideal_profile"),
-      handler: () => {
-        setDrawerOpen(true);
-      },
+      handler: () => openJobRequirementFormDrawer("team_context"),
       autoTrigger: true,
     },
     {
       key: "other-requirements-request",
       title: t("other_requirements"),
-      handler: () => {
-        setJobRequirementFormType("other_requirement");
-        handleJobRequirementFormDrawerOpen(true);
-      },
+      handler: () => openJobRequirementFormDrawer("other_requirement"),
+      autoTrigger: true,
+    },
+    {
+      key: "profile-feedback-and-priorities-request",
+      title: t("ideal_profile"),
+      handler: () => triggerIdealProfileDrawer(true),
       autoTrigger: true,
     },
     {
@@ -263,74 +330,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => setChatType("chatbot"),
     },
   ];
-
-  useEffect(() => {
-    return () => {
-      setCollapseForDrawer(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    setChatType(undefined);
-    setMessages([]);
-    setIdealProfileDrawerOpen(false);
-    setShowJobRequirementFormDrawer(false);
-    // 如果不加 setTimeout, 会跳过 chatType = undefined 的中间状态，不会 fetchMessage
-    setTimeout(() => {
-      setCollapseForDrawer(false);
-    }, 0);
-
-    if (role === "candidate") {
-      setChatType("candidate");
-    } else {
-      initJob();
-      if (role === "staff") {
-        initProfile();
-      }
-    }
-  }, [jobId]);
-
-  useEffect(() => {
-    if (isLoading) {
-      loadingStartedAtRef.current = dayjs();
-      const intervalFetchMessage = setInterval(() => {
-        fetchMessages();
-      }, 3000);
-
-      const intervalText = setInterval(() => {
-        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
-      }, 500);
-
-      return () => {
-        clearInterval(intervalFetchMessage);
-        clearInterval(intervalText);
-      };
-    } else {
-      loadingStartedAtRef.current = undefined;
-    }
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (chatType) {
-      needScrollToBottom.current = true;
-      fetchMessages();
-    }
-  }, [chatType]);
-
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    if (needScrollToBottom.current) {
-      scrollToBottom();
-      needScrollToBottom.current = false;
-    }
-
-    if (!localStorage.getItem(EditMessageGuideKey) && allowEditMessage) {
-      setTimeout(() => {
-        setEditMessageTourOpen(true);
-      }, 500);
-    }
-  }, [messages]);
 
   const initJob = async () => {
     const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
@@ -390,6 +389,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
         const messageHistory = formatMessages(data.messages);
         const isLoading = data.is_invoking === 1;
         setIsLoading(isLoading);
+
+        // 自动执行标签逻辑
         const lastMessage = messageHistory[messageHistory.length - 1];
         if (lastMessage.id !== lastMessageIdRef.current) {
           // 如果最后一条消息需要弹表单或者抽屉，则直接打开
@@ -400,8 +401,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
           });
           autoTriggerTag?.handler();
         }
-
         lastMessageIdRef.current = messageHistory[messageHistory.length - 1].id;
+
+        // 如果正在 loading，添加 fake 消息
         if (isLoading) {
           messageHistory.push({
             id: "fake_ai_id",
@@ -410,8 +412,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
             updated_at: dayjs().format(datetimeFormat),
           });
         }
-
         setMessages(messageHistory);
+
+        // 如果已完成 jrd，则跳转到调查问卷
         if (role !== "candidate") {
           if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
             const { code } = await Post(
@@ -462,6 +465,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         });
       }
 
+      // 下一步 按钮
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
           ["jrd-done", "interview-plan-done", "jd-done"] as (
@@ -492,6 +496,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return resultMessages;
   };
 
+  // 聊天框是否能发送
   const canSubmit = () => {
     return inputValue?.trim() && !isLoading;
   };
@@ -503,16 +508,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     setInputValue("");
 
-    await sendMessage(inputValue.trim());
+    await sendMessage(inputValue.trim().replaceAll("\n", "\n\n"));
   };
 
-  const sendRoleOverview = async (roleOverview: string) => {
+  const sendJobRequirementForm = async (JobRequirementFormMessage: string) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
       type: jobRequirementFormType,
-      content: roleOverview,
+      content: JobRequirementFormMessage,
     });
     if (code === 0) {
-      sendMessage(roleOverview);
+      sendMessage(JobRequirementFormMessage);
     } else {
       message.error("Send role overview failed");
     }
@@ -527,7 +532,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   ) => {
     if (!chatType || isLoading) return;
 
-    const formattedMessage = rawMessage.trim().replaceAll("\n", "\n\n");
+    const formattedMessage = rawMessage.trim();
     needScrollToBottom.current = true;
     setMessages([
       ...messages,
@@ -650,17 +655,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
       allowEditMessage &&
       item.messageType === "normal" &&
       item.role === "ai" &&
-      item.id !== "fake_ai_id" &&
-      !editMessageMap[item.id]?.enabled
+      item.id !== "fake_ai_id"
     );
-  };
-
-  const cancelMessageEdit = (id: string) => {
-    setEditMessageMap((current) => {
-      const newValue = { ...current };
-      delete newValue[id];
-      return newValue;
-    });
   };
 
   const deleteMessage = async (messageId: number) => {
@@ -674,16 +670,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     } else {
       message.error("Delete message failed");
     }
-  };
-
-  const setDrawerOpen = (open: boolean) => {
-    setCollapseForDrawer(open);
-    setIdealProfileDrawerOpen(open);
-  };
-
-  const handleJobRequirementFormDrawerOpen = (open: boolean) => {
-    setCollapseForDrawer(open);
-    setShowJobRequirementFormDrawer(open);
   };
 
   const maxIdOfAIMessage = [...messages]
@@ -797,10 +783,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     <div
                       className={classnames(
                         styles.messageContainer,
-                        item.role === "user" ? styles.user : "",
-                        {
-                          [styles.editing]: editMessageMap[item.id]?.enabled,
-                        }
+                        item.role === "user" ? styles.user : ""
                       )}
                     >
                       {item.id === "fake_ai_id" ? (
@@ -813,46 +796,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             ? `(${t("viona_is_thinking")})`
                             : ""}
                         </p>
-                      ) : editMessageMap[item.id]?.enabled ? (
-                        <div className={styles.editingContainer}>
-                          <Input.TextArea
-                            autoSize={{ minRows: 4, maxRows: 16 }}
-                            value={editMessageMap[item.id]?.content}
-                            onChange={(e) =>
-                              setEditMessageMap((current) => ({
-                                ...current,
-                                [item.id]: {
-                                  ...current[item.id],
-                                  content: e.currentTarget.value,
-                                },
-                              }))
-                            }
-                          />
-                          <div className={styles.editingButton}>
-                            <Button onClick={() => cancelMessageEdit(item.id)}>
-                              Cancel
-                            </Button>
-                            <Button
-                              type="primary"
-                              style={{ marginLeft: 8 }}
-                              disabled={
-                                isLoading || !editMessageMap[item.id]?.content
-                              }
-                              onClick={() => {
-                                if (isLoading) return;
-                                const editMessage =
-                                  editMessageMap[item.id].content;
-                                sendMessage(editMessage, {
-                                  before_text:
-                                    "Below is my response. I have answered your questions directly beneath them AND/OR  revised your proposal by adding, deleting, or modifying content. \n\n",
-                                });
-                                cancelMessageEdit(item.id);
-                              }}
-                            >
-                              Send
-                            </Button>
-                          </div>
-                        </div>
                       ) : (
                         <MarkdownContainer
                           onClick={() => {
@@ -931,20 +874,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                       );
                                     }}
                                     icon={<EditOutlined />}
-                                  />
-                                  <Button
-                                    shape="round"
-                                    onClick={() =>
-                                      setEditMessageMap((current) => ({
-                                        ...current,
-                                        [item.id]: {
-                                          enabled: true,
-                                          content: item.content,
-                                        },
-                                      }))
-                                    }
-                                    icon={<EditOutlined />}
-                                    style={{ display: "none" }}
                                     ref={(e) => {
                                       if (maxIdOfAIMessage === item.id)
                                         editMessageTourElementRef.current = e;
@@ -1133,7 +1062,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               group={jobRequirementFormType}
               onOk={(result: string) => {
                 if (!isLoading) {
-                  sendRoleOverview(result);
+                  sendJobRequirementForm(result);
                   handleJobRequirementFormDrawerOpen(false);
                 }
               }}
@@ -1144,14 +1073,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
               open={idealProfileDrawerOpen}
               title={t("edit_ideal_profile")}
               width={"50vw"}
-              onClose={() => setDrawerOpen(false)}
+              onClose={() => triggerIdealProfileDrawer(false)}
               destroyOnClose
               mask={false}
             >
               {job?.candidate_requirements_json && (
                 <IdealProfileForm
                   candidateRequirementsJson={job.candidate_requirements_json}
-                  onClose={() => setDrawerOpen(false)}
+                  onClose={() => triggerIdealProfileDrawer(false)}
                   onOk={(groups) => {
                     // 发送
                     let message = t("edit_profiles_hint");
@@ -1169,7 +1098,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     });
 
                     sendMessage(message);
-                    setDrawerOpen(false);
+                    triggerIdealProfileDrawer(false);
                   }}
                 />
               )}
