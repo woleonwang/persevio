@@ -23,6 +23,7 @@ export default {
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
 
+    task: "任务",
     next_task: "下一个任务: ",
     jd_next_task:
       "  2. 有了，详细的职位需求文档，您批准的面试计划和职位描述（JD），我现在可以准确地向潜在的候选人介绍我们公司和这个「职位名称」职位，并且回答他们关于这个职位的任何问题了。你可以直接把下面的链接附在JD上发到招聘网站上，也可以直接发给潜在的候选人。剩下的就交给我吧！",

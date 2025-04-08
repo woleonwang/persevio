@@ -23,6 +23,7 @@ export default {
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
 
+    task: "Tasks",
     next_task: "Your next task is: ",
     jd_next_task:
       "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants",

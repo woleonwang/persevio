@@ -19,6 +19,8 @@ import {
   CheckOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
   EditOutlined,
   RightCircleOutlined,
 } from "@ant-design/icons";
@@ -92,6 +94,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  const [taskCollapsed, setTaskCollapsed] = useState(false);
+
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [jobUrl, setJobUrl] = useState("");
@@ -688,69 +692,86 @@ const ChatRoom: React.FC<IProps> = (props) => {
       {chatType !== "candidate" && (
         <div
           className={styles.left}
-          style={{ display: collapseForDrawer ? "none" : "block" }}
+          style={{
+            display: collapseForDrawer ? "none" : "block",
+            width: taskCollapsed ? 30 : 200,
+          }}
         >
-          <div className={styles.leftTitle}>{t("task")}</div>
-          {[
-            {
-              title: t("create_job"),
-              disabled: true,
-              isFinished: true,
-              isActive: false,
-            },
-            {
-              title: t("define_job_requirement"),
-              disabled: false,
-              isFinished: !!job?.requirement_doc_id,
-              isActive: chatType === "jobRequirementDoc",
-            },
-            {
-              title: t("define_interview_plan"),
-              disabled: !job?.requirement_doc_id,
-              isFinished: !!job?.interview_plan_doc_id,
-              isActive: chatType === "jobInterviewPlan",
-            },
-            {
-              title: t("draft_job_description_btn"),
-              disabled: !job?.interview_plan_doc_id,
-              isFinished: !!job?.jd_doc_id,
-              isActive: chatType === "jobDescription",
-            },
-            {
-              title: t("create_chatbot"),
-              disabled: !job?.jd_doc_id,
-              isFinished: !!job?.jd_doc_id,
-              isActive: chatType === "chatbot",
-            },
-          ].map((task, current) => {
-            return (
-              <div
-                className={classnames(styles.taskBlock, {
-                  [styles.finished]: task.isFinished,
-                  [styles.active]: task.isActive,
-                  [styles.disabled]: task.disabled,
-                })}
-                onClick={() => {
-                  if (task.disabled) return;
+          <div className={styles.leftTitle}>
+            {taskCollapsed ? (
+              <DoubleRightOutlined onClick={() => setTaskCollapsed(false)} />
+            ) : (
+              <>
+                <span>{t("task")}</span>
+                <DoubleLeftOutlined onClick={() => setTaskCollapsed(true)} />
+              </>
+            )}
+          </div>
+          {!taskCollapsed &&
+            [
+              {
+                title: t("create_job"),
+                disabled: true,
+                isFinished: true,
+                isActive: false,
+              },
+              {
+                title: t("define_job_requirement"),
+                disabled: false,
+                isFinished: !!job?.requirement_doc_id,
+                isActive: chatType === "jobRequirementDoc",
+              },
+              {
+                title: t("define_interview_plan"),
+                disabled: !job?.requirement_doc_id,
+                isFinished: !!job?.interview_plan_doc_id,
+                isActive: chatType === "jobInterviewPlan",
+              },
+              {
+                title: t("draft_job_description_btn"),
+                disabled: !job?.interview_plan_doc_id,
+                isFinished: !!job?.jd_doc_id,
+                isActive: chatType === "jobDescription",
+              },
+              {
+                title: t("create_chatbot"),
+                disabled: !job?.jd_doc_id,
+                isFinished: !!job?.jd_doc_id,
+                isActive: chatType === "chatbot",
+              },
+            ].map((task, current) => {
+              return (
+                <div
+                  className={classnames(styles.taskBlock, {
+                    [styles.finished]: task.isFinished,
+                    [styles.active]: task.isActive,
+                    [styles.disabled]: task.disabled,
+                  })}
+                  onClick={() => {
+                    if (task.disabled) return;
 
-                  if (current === 1) {
-                    setChatType("jobRequirementDoc");
-                  } else if (current === 2) {
-                    setChatType("jobInterviewPlan");
-                  } else if (current === 3) {
-                    setChatType("jobDescription");
-                  } else if (current === 4) {
-                    setChatType("chatbot");
-                  }
-                }}
-              >
-                <div>{task.title}</div>
-                <div>
-                  {task.isFinished ? <CheckOutlined /> : <ArrowRightOutlined />}
+                    if (current === 1) {
+                      setChatType("jobRequirementDoc");
+                    } else if (current === 2) {
+                      setChatType("jobInterviewPlan");
+                    } else if (current === 3) {
+                      setChatType("jobDescription");
+                    } else if (current === 4) {
+                      setChatType("chatbot");
+                    }
+                  }}
+                >
+                  <div>{task.title}</div>
+                  <div>
+                    {task.isFinished ? (
+                      <CheckOutlined />
+                    ) : (
+                      <ArrowRightOutlined />
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
       <div
