@@ -159,7 +159,7 @@ const AppLayout = () => {
                               className={`${styles.subMenuItem} ${
                                 child.active ? styles.active : ""
                               }`}
-                              key={item.path}
+                              key={child.path}
                               onClick={() => navigate(child.path)}
                             >
                               {child.title}
@@ -168,6 +168,7 @@ const AppLayout = () => {
                         })}
                       </div>
                     }
+                    key={item.title}
                   >
                     {menuNode}
                   </Popover>
@@ -210,12 +211,11 @@ const AppLayout = () => {
               {MENU.map((item) => {
                 const isActive = item.path && currentPath.startsWith(item.path);
                 return (
-                  <>
+                  <div key={item.title}>
                     <div
                       className={`${styles.menuItem} ${
                         isActive ? styles.active : ""
                       }`}
-                      key={item.path}
                       onClick={
                         item.path
                           ? () => navigate(item.path as string)
@@ -239,7 +239,7 @@ const AppLayout = () => {
                               className={`${styles.subMenuItem} ${
                                 child.active ? styles.active : ""
                               }`}
-                              key={item.path}
+                              key={child.path}
                               onClick={() => navigate(child.path)}
                             >
                               {child.title}
@@ -248,7 +248,7 @@ const AppLayout = () => {
                         })}
                       </div>
                     )}
-                  </>
+                  </div>
                 );
               })}
             </div>

@@ -52,10 +52,10 @@ const Job = () => {
                   key: "info",
                   label: t("job.document"),
                 },
-                // {
-                //   key: "pipeline",
-                //   label: "Pipeline",
-                // },
+                {
+                  key: "pipeline",
+                  label: "Pipeline",
+                },
               ]}
               onChange={(type) => {
                 // initDocTypeRef.current = undefined;

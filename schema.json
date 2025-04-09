@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "object",
+      "properties": {
+        "overall": {
+          "type": "string",
+          "enum": [
+            "not_a_match",
+            "recommend_with_reservations",
+            "match_pending_verification",
+            "match",
+            "strong_match"
+          ]
+        },
+        "competency": {
+          "type": "string",
+          "enum": [
+            "not_a_match",
+            "recommend_with_reservations",
+            "match_pending_verification",
+            "match",
+            "strong_match"
+          ]
+        },
+        "logistics": {
+          "type": "string",
+          "enum": [
+            "not_a_match",
+            "recommend_with_reservations",
+            "match_pending_verification",
+            "match",
+            "strong_match"
+          ]
+        },
+        "reasoning": {
+          "type": "string"
+        },
+        "suitability_score": {
+          "type": "object",
+          "properties": {
+            "minimum": {
+              "type": "number"
+            },
+            "big_plus": {
+              "type": "number"
+            },
+            "plus": {
+              "type": "number"
+            },
+            "bonus": {
+              "type": "number"
+            },
+            "total": {
+              "type": "number"
+            }
+          },
+          "required": ["minimum", "big_plus", "plus", "bonus", "total"]
+        },
+        "calculated_rank": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "overall",
+        "competency",
+        "logistics",
+        "reasoning",
+        "suitability_score",
+        "calculated_rank"
+      ]
+    },
+    "evaluation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion": {
+            "type": "string"
+          },
+          "judgement": {
+            "type": "string",
+            "enum": ["met", "not_met", "not_sure"]
+          },
+          "confidence_level": {
+            "type": "string",
+            "enum": ["VH", "H", "N", "L", "VL"]
+          },
+          "points_awarded": {
+            "type": "number"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "evidences": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["reason", "evidences"]
+            }
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["minimum", "big_plus", "plus"]
+          }
+        },
+        "required": [
+          "criterion",
+          "judgement",
+          "confidence_level",
+          "points_awarded",
+          "reasons",
+          "priority"
+        ]
+      }
+    },
+    "bonus": {
+      "type": "object",
+      "properties": {
+        "alignment": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "suitability": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bonus_awarded": {
+          "type": "object",
+          "properties": {
+            "target_company": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prestigious_company": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "bonus_points": {
+              "type": "number"
+            }
+          },
+          "required": ["target_company", "prestigious_company", "bonus_points"]
+        },
+        "others": {
+          "type": "string"
+        }
+      },
+      "required": ["alignment", "suitability", "bonus_awarded", "others"]
+    }
+  },
+  "required": ["summary", "evaluation", "bonus"]
+}

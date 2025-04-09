@@ -184,6 +184,24 @@ export default {
     plus: "Plus",
   },
 
+  profile: {
+    not_a_match: "Not a Match",
+    recommend_with_reservations: "Recommend with Reservations",
+    match_pending_verification: "Match Pending Verification",
+    match: "Match",
+    strong_match: "Strong Match",
+
+    met: "Met",
+    not_met: "Not Met",
+    not_sure: "Not sure",
+
+    VH: "Very High",
+    H: "High",
+    N: "Normal",
+    L: "Low",
+    VL: "Very Low",
+  },
+
   company: {
     name: "Company Name",
     knowledge_base: "Knowledge Base",

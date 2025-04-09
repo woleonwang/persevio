@@ -176,6 +176,24 @@ export default {
     plus: "加分项",
   },
 
+  profile: {
+    not_a_match: "不匹配",
+    recommend_with_reservations: "推荐",
+    match_pending_verification: "匹配（待审核）",
+    match: "匹配",
+    strong_match: "非常匹配",
+
+    met: "满足",
+    not_met: "不满足",
+    not_sure: "不确定",
+
+    VH: "非常高",
+    H: "高",
+    N: "普通",
+    L: "低",
+    VL: "非常低",
+  },
+
   company: {
     name: "公司名称",
     knowledge_base: "信息库",

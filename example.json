@@ -1,0 +1,51 @@
+{
+    "summary": {
+      "overall": "not_a_match | recommend_with_reservations | match_pending_verification | match | strong_match",
+      "competency": "",
+      "logistics": "",
+      "reasoning": "",
+      "suitability_score": {
+        "minimum": 0,
+        "big_plus": 0,
+        "plus": 0,
+        "bonus": 0,
+        "total": 0
+      },
+      "calculated_rank": ""
+    },
+    "evaluation": [
+      {
+        "criterion": "",
+        "judgement": "met | not_met | not_sure",
+        "confidence_level": "",
+        "points_awarded": 0,
+        "reasons": [
+          {
+            "reason": "",
+            "evidences": [
+              ""
+            ]
+          }
+        ],
+        "priority": "minimum | big_plus | plus"
+      }
+    ],
+    "bonus": {
+      "alignment": [
+        ""
+      ],
+      "suitability": [
+        ""
+      ],
+      "bonus_awarded": {
+        "target_company": [
+          ""
+        ],
+        "prestigious_company": [
+          ""
+        ],
+        "bonus_points": 100
+      },
+      "others": ""
+    }
+  }

@@ -760,6 +760,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       setChatType("chatbot");
                     }
                   }}
+                  key={task.title}
                 >
                   <div>{task.title}</div>
                   <div>
@@ -1045,7 +1046,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }}
             >
               <div style={{ display: "flex", gap: 10 }}>
-                {false && chatType === "candidate" && (
+                {chatType === "candidate" && (
                   <>
                     <Upload
                       beforeUpload={() => false}
