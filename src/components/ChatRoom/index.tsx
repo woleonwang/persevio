@@ -783,7 +783,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <List
             dataSource={messages}
             split={false}
-            renderItem={(item) => (
+            renderItem={(item, index) => (
               <List.Item>
                 <List.Item.Meta
                   avatar={
@@ -817,7 +817,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     <div
                       className={classnames(
                         styles.messageContainer,
-                        item.role === "user" ? styles.user : ""
+                        item.role === "user" ? styles.user : "",
+                        {
+                          [styles.lastMessage]: index === messages.length - 1,
+                        }
                       )}
                     >
                       {item.id === "fake_ai_id" ? (

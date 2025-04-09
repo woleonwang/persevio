@@ -159,7 +159,7 @@ const Profile = (props: { jobId: number }) => {
                       <div>{group.title}</div>
                       {group.items.map((item) => {
                         return (
-                          <div>
+                          <div key={item.criterion}>
                             <div>Criterion: {item.criterion}</div>
                             <div>Judgement: {t(item.judgement)}</div>
                             <div>
