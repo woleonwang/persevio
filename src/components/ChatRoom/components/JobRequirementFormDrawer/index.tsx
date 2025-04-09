@@ -602,6 +602,106 @@ const JobRequirementFormDrawer = (props: IProps) => {
         },
       ],
     },
+
+    {
+      key: "salary_structure",
+      title: t("salary_structure"),
+      questions: [
+        {
+          key: "base_salary",
+          type: "text",
+          question: t("base_salary"),
+        },
+        {
+          key: "bonus",
+          group: t("bonus"),
+          questions: [
+            {
+              key: "bonus_frequency",
+              type: "select",
+              question: t("bonus_frequency"),
+              options: [
+                {
+                  value: "yearly",
+                  label: t("yearly"),
+                },
+                {
+                  value: "semi_annually",
+                  label: t("semi_annually"),
+                },
+                {
+                  value: "quarterly",
+                  label: t("quarterly"),
+                },
+                {
+                  value: "monthly",
+                  label: t("monthly"),
+                },
+                {
+                  value: "bonus_other",
+                  label: t("bonus_other"),
+                },
+              ],
+            },
+            {
+              key: "bonus_other",
+              type: "text",
+              question: t("bonus_other"),
+              dependencies: [
+                {
+                  questionKey: "bonus_frequency",
+                  valueKey: "bonus_other",
+                },
+              ],
+            },
+            {
+              key: "bonus_number",
+              type: "text",
+              question: t("bonus_number"),
+            },
+            {
+              key: "bonus_type",
+              type: "select",
+              question: t("bonus_type"),
+              options: [
+                {
+                  value: "guaranteed",
+                  label: t("guaranteed"),
+                },
+                {
+                  value: "personal",
+                  label: t("personal"),
+                },
+                {
+                  value: "personal_and_company",
+                  label: t("personal_and_company"),
+                },
+              ],
+            },
+            {
+              key: "bonus_note",
+              type: "text",
+              question: t("bonus_note"),
+            },
+          ],
+        },
+        {
+          key: "commission",
+          type: "text",
+          question: t("commission"),
+        },
+        {
+          key: "equity",
+          type: "text",
+          question: t("equity"),
+        },
+        {
+          key: "salary_other",
+          type: "text",
+          question: t("salary_other"),
+        },
+      ],
+    },
   ];
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(

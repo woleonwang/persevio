@@ -41,6 +41,7 @@ export default {
     share_team: "Click here to share team context",
     ideal_profile: "Edit ideal profile",
     other_requirements: "Click here to provide other requirements",
+    salary_structure: "Click here to provide salary structure",
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
     copy_link: "Copy Link",
@@ -176,6 +177,27 @@ export default {
     required_error_message: "Please enter or select",
 
     add: "Add {{name}}",
+
+    salary_structure: "Salary Structure",
+    base_salary: "Base Salary",
+    bonus: "Bonus",
+    bonus_frequency: "Frequency",
+    yearly: "Yearly",
+    semi_annually: "Semi-annually",
+    quarterly: "Quarterly",
+    monthly: "Monthly",
+    bonus_other: "Other",
+    bonus_number: "Number",
+    bonus_type: "Select",
+    guaranteed: "Guaranteed",
+    personal:
+      "Based on personal performance, regardless of company performance",
+    personal_and_company:
+      "Based on personal performance and company/team performance",
+    bonus_note: "Notes",
+    commission: "Commission",
+    equity: "Equity",
+    salary_other: "Other",
   },
 
   ideal_profile: {

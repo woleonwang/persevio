@@ -285,6 +285,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
+      key: "salary-structure-request",
+      title: t("salary_structure"),
+      handler: () => openJobRequirementFormDrawer("salary_structure"),
+      autoTrigger: true,
+    },
+    {
       key: "profile-feedback-and-priorities-request",
       title: t("ideal_profile"),
       handler: () => triggerIdealProfileDrawer(true),

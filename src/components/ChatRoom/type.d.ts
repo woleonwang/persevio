@@ -11,6 +11,7 @@ export type TExtraTagName =
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
   | "other-requirements-request"
+  | "salary-structure-request"
   // 前端生成
   | "open-link" // 打开新页面
   | "targets-done-btn"
@@ -69,4 +70,5 @@ export type TRoleOverviewType =
   | "basic_info"
   | "reference"
   | "team_context"
-  | "other_requirement";
+  | "other_requirement"
+  | "salary_structure";

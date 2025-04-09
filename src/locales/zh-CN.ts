@@ -60,6 +60,8 @@ export default {
 
     chatbot_greeting:
       "  1. 我现在可以准确地向潜在的候选人介绍我们公司和这个「职位名称」职位，并且回答他们关于这个职位的任何问题了。你可以直接把下面的链接附在JD上发到招聘网站上，也可以直接发给潜在的候选人。剩下的就交给我吧！",
+
+    salary_structure: "薪资结构",
   },
 
   job_requirement_form: {
@@ -168,6 +170,25 @@ export default {
     required_error_message: "请输入或者选择",
 
     add: "添加{{name}}",
+
+    salary_structure: "薪资结构",
+    base_salary: "基础工资",
+    bonus: "奖金",
+    bonus_frequency: "频率",
+    yearly: "每年",
+    semi_annually: "每半年",
+    quarterly: "每季度",
+    monthly: "每月",
+    bonus_other: "其他",
+    bonus_number: "奖金数目",
+    bonus_type: "选择",
+    guaranteed: "保证",
+    personal: "完全基于个人表现，不受公司表现影响",
+    personal_and_company: "基于个人和公司表现",
+    bonus_note: "注释",
+    commission: "佣金",
+    equity: "股份",
+    salary_other: "其它",
   },
 
   ideal_profile: {
