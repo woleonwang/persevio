@@ -205,6 +205,8 @@ export default {
     paid_time_off: "Paid time-off",
     benefits_perks_other: "Other Benefits Perks",
     salary_other: "Other",
+    salary: "Monthly base salary",
+    months: "Number of months ",
   },
 
   ideal_profile: {

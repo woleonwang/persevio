@@ -195,6 +195,8 @@ export default {
     paid_time_off: "年假",
     benefits_perks_other: "其它福利",
     salary_other: "其它",
+    salary: "月薪",
+    months: "月数",
   },
 
   ideal_profile: {

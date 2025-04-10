@@ -21,6 +21,7 @@ import dayjs from "dayjs";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import BaseSalaryInput from "./components/BaseSalaryInput";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -43,9 +44,10 @@ type TQuestion = {
     | "select"
     | "textarea"
     | "number"
-    | "team"
     | "multiple_select"
-    | "date";
+    | "date"
+    | "team"
+    | "base_salary";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -609,7 +611,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
       questions: [
         {
           key: "base_salary",
-          type: "text",
+          type: "base_salary",
           question: t("base_salary"),
         },
         {
@@ -645,7 +647,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
             {
               key: "bonus_other",
-              type: "text",
+              type: "textarea",
               question: t("bonus_other"),
               dependencies: [
                 {
@@ -680,29 +682,29 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
             {
               key: "bonus_note",
-              type: "text",
+              type: "textarea",
               question: t("bonus_note"),
             },
           ],
         },
         {
           key: "commission",
-          type: "text",
+          type: "textarea",
           question: t("commission"),
         },
         {
           key: "equity",
-          type: "text",
+          type: "textarea",
           question: t("equity"),
         },
         {
           key: "allowances",
-          type: "text",
+          type: "textarea",
           question: t("allowances"),
         },
         {
           key: "social_security_contributions",
-          type: "text",
+          type: "textarea",
           question: t("social_security_contributions"),
         },
         {
@@ -711,24 +713,24 @@ const JobRequirementFormDrawer = (props: IProps) => {
           questions: [
             {
               key: "insurance",
-              type: "text",
+              type: "textarea",
               question: t("insurance"),
             },
             {
               key: "paid_time_off",
-              type: "text",
+              type: "textarea",
               question: t("paid_time_off"),
             },
             {
               key: "benefits_perks_other",
-              type: "text",
+              type: "textarea",
               question: t("benefits_perks_other"),
             },
           ],
         },
         {
           key: "salary_other",
-          type: "text",
+          type: "textarea",
           question: t("salary_other"),
         },
       ],
@@ -797,6 +799,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
           if (!value) return "";
 
           let formattedValue = value;
+          if (question.type === "base_salary") {
+            if (!(value.salary && value.months)) {
+              return "";
+            }
+            formattedValue = `${value.salary} * ${value.months} = ${
+              value.salary * value.months
+            }`;
+          }
+
           if (question.type === "select") {
             formattedValue =
               (question.options ?? []).find((item) => item.value === value)
@@ -1017,6 +1028,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             <Select options={question.options} mode="multiple" />
           )}
           {question.type === "date" && <DatePicker />}
+          {question.type === "base_salary" && <BaseSalaryInput />}
           {question.type === "team" && (
             <Select
               options={teams.map((team) => ({
