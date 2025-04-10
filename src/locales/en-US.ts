@@ -222,13 +222,24 @@ export default {
 
     met: "Met",
     not_met: "Not Met",
-    not_sure: "Not sure",
+    not_sure: "Not Sure",
 
     VH: "Very High",
     H: "High",
     N: "Normal",
     L: "Low",
     VL: "Very Low",
+
+    reason: "Reason",
+    evidence: "Evidence",
+    overall: "Overall",
+    competency: "Competency",
+    logistics: "Logistics",
+    reasoning: "Reasoning",
+    rank: "Calculated Rank",
+    bonus: "Bonus",
+    total: "Total",
+    confidence_level: "Confidence Level",
   },
 
   company: {
@@ -273,4 +284,5 @@ export default {
   cancel: "Cancel",
   submit: "Submit",
   add: "Add",
+  close: "Close",
 };

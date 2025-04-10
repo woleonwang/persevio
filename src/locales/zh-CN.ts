@@ -219,6 +219,17 @@ export default {
     N: "普通",
     L: "低",
     VL: "非常低",
+
+    reason: "判断原因",
+    evidence: "相关简历原文",
+    overall: "综合",
+    competency: "能力",
+    logistics: "逻辑",
+    reasoning: "理由",
+    rank: "评价",
+    bonus: "额外加分",
+    total: "总计",
+    confidence_level: "信心",
   },
 
   company: {
@@ -262,4 +273,6 @@ export default {
   cancel: "取消",
   save: "保存",
   submit: "提交",
+  close: "关闭",
+  add: "添加",
 };

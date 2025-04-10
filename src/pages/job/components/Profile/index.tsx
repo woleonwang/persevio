@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import classnames from "classnames";
+
 import { Get } from "../../../../utils/request";
-import { Drawer, List } from "antd";
+import { Button, Drawer, List } from "antd";
 import styles from "./style.module.less";
 import { TEvaluation } from "./type";
-import { useTranslation } from "react-i18next";
 
 type TCandidate = {
   name: string;
@@ -25,6 +32,8 @@ type TTalent = {
 const Profile = (props: { jobId: number }) => {
   const { jobId } = props;
   const [talents, setTalents] = useState<TTalent[]>([]);
+  const [job, setJob] = useState<IJob>();
+
   // const [modalShow, setModalShow] = useState(false);
   const [selectedTalent, setSelectedTalent] = useState<TTalent>();
 
@@ -35,8 +44,16 @@ const Profile = (props: { jobId: number }) => {
   };
 
   useEffect(() => {
+    fetchJob();
     fetchTalents();
-  }, []);
+  }, [jobId]);
+
+  const fetchJob = async () => {
+    const { code, data } = await Get(`/api/jobs/${jobId}`);
+    if (code === 0) {
+      setJob(data.job);
+    }
+  };
 
   const fetchTalents = async () => {
     const { code, data } = await Get(`/api/jobs/${jobId}/talents`);
@@ -93,7 +110,13 @@ const Profile = (props: { jobId: number }) => {
       <Drawer
         open={!!selectedTalent}
         onClose={() => setSelectedTalent(undefined)}
-        width={"1200px"}
+        width={"800px"}
+        title={job?.name}
+        footer={
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button type="primary">{originalT("close")}</Button>
+          </div>
+        }
       >
         {(() => {
           if (!selectedTalent) return null;
@@ -102,19 +125,19 @@ const Profile = (props: { jobId: number }) => {
 
           const groupedEvaluations = [
             {
-              title: "Minimum",
+              title: originalT(`ideal_profile.minimum`),
               items: result.evaluation.filter(
                 (item) => item.priority === "minimum"
               ),
             },
             {
-              title: "Big Plus",
+              title: originalT(`ideal_profile.big_plus`),
               items: result.evaluation.filter(
                 (item) => item.priority === "big_plus"
               ),
             },
             {
-              title: "Plus",
+              title: originalT(`ideal_profile.plus`),
               items: result.evaluation.filter(
                 (item) => item.priority === "plus"
               ),
@@ -124,53 +147,86 @@ const Profile = (props: { jobId: number }) => {
           return (
             <div>
               <div>
-                Status:{" "}
-                {selectedTalent?.status === "evaluate_succeed"
-                  ? "Passed"
-                  : "Failed"}
-              </div>
-              <div>Detail</div>
-              <div>
-                <div>Overall: {t(result.summary.overall)}</div>
-                <div>Competency: {t(result.summary.competency)}</div>
-                <div>Logistics: {t(result.summary.logistics)}</div>
-                <div>Reasoning: {result.summary.reasoning}</div>
-
-                <div>
-                  Score
-                  <div>Minimum: {result.summary.suitability_score.minimum}</div>
-                  <div>
-                    Big Plus: {result.summary.suitability_score.big_plus}
-                  </div>
-                  <div>Plus: {result.summary.suitability_score.plus}</div>
-                  <div>Bonus: {result.summary.suitability_score.bonus}</div>
-                  <div>Total: {result.summary.suitability_score.total}</div>
-                </div>
-
-                <div>Calculated Rank: {result.summary.calculated_rank}</div>
-              </div>
-
-              <div>
                 {groupedEvaluations.map((group) => {
                   if (group.items.length === 0) return null;
 
                   return (
-                    <div key={group.title}>
-                      <div>{group.title}</div>
+                    <div key={group.title} style={{ marginBottom: 20 }}>
+                      <div className={styles.groupTitle}>
+                        <h3>{group.title}</h3>
+                        <div className={styles.metSummary}>
+                          {["met", "not_sure", "not_met"].map((key) => (
+                            <div key={key} className={styles.metSummaryBlock}>
+                              {
+                                group.items.filter(
+                                  (item) => item.judgement === key
+                                ).length
+                              }
+                              /{group.items.length}
+                              &nbsp;{t(key)}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                       {group.items.map((item) => {
                         return (
                           <div key={item.criterion}>
-                            <div>Criterion: {item.criterion}</div>
-                            <div>Judgement: {t(item.judgement)}</div>
-                            <div>
-                              Confidence Level: {t(item.confidence_level)}
+                            <div className={styles.criterionTitle}>
+                              <div
+                                className={classnames(
+                                  styles.status,
+                                  styles[`status-${item.judgement}`]
+                                )}
+                              >
+                                {item.criterion}
+                              </div>
+                              <div>
+                                {
+                                  {
+                                    met: (
+                                      <CheckCircleOutlined
+                                        style={{ color: "#1fac6a" }}
+                                      />
+                                    ),
+                                    not_sure: (
+                                      <QuestionCircleOutlined
+                                        style={{ color: "yellow" }}
+                                      />
+                                    ),
+                                    not_met: (
+                                      <CloseCircleOutlined
+                                        style={{ color: "red" }}
+                                      />
+                                    ),
+                                  }[item.judgement]
+                                }
+                              </div>
+                              <div>
+                                {t("confidence_level")}:
+                                {t(item.confidence_level)}
+                              </div>
                             </div>
-                            <div>Points awarded: {item.points_awarded}</div>
+                            {/* <div>Points awarded: {item.points_awarded}</div> */}
+                            <div className={styles.reasonRow}>
+                              <div className={styles.reason}>{t("reason")}</div>
+                              <div className={styles.evidence}>
+                                {t("evidence")}
+                              </div>
+                            </div>
                             {item.reasons.map((reason) => {
                               return (
-                                <div key={reason.reason}>
-                                  <div>Reason: {reason.reason}</div>
-                                  <div>Evidences: {reason.evidences}</div>
+                                <div
+                                  key={reason.reason}
+                                  className={styles.reasonRow}
+                                >
+                                  <div className={styles.reason}>
+                                    {reason.reason}
+                                  </div>
+                                  <div className={styles.evidence}>
+                                    {reason.evidences.map((evidence) => (
+                                      <div key={evidence}>{evidence}</div>
+                                    ))}
+                                  </div>
                                 </div>
                               );
                             })}
@@ -180,6 +236,77 @@ const Profile = (props: { jobId: number }) => {
                     </div>
                   );
                 })}
+              </div>
+
+              <div>
+                <h2>Score</h2>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>
+                    {originalT("ideal_profile.minimum")}:
+                  </div>
+                  <div>{result.summary.suitability_score.minimum}</div>
+                </div>
+
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>
+                    {originalT("ideal_profile.big_plus")}:
+                  </div>
+                  <div>{result.summary.suitability_score.big_plus}</div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>
+                    {originalT("ideal_profile.plus")}:
+                  </div>
+                  <div>{result.summary.suitability_score.plus}</div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("bonus")}:</div>
+                  <div>{result.summary.suitability_score.bonus}</div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("total")}:</div>
+                  <div>{result.summary.suitability_score.total}</div>
+                </div>
+              </div>
+
+              <div>
+                {/* <div>
+                  Status:{" "}
+                  {selectedTalent?.status === "evaluate_succeed"
+                    ? "Passed"
+                    : "Failed"}
+                </div> */}
+                <h2>Summary</h2>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("overall")}:</div>
+                  <div className={styles.summaryValue}>
+                    {t(result.summary.overall)}
+                  </div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("competency")}:</div>
+                  <div className={styles.summaryValue}>
+                    {t(result.summary.competency)}
+                  </div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("logistics")}:</div>
+                  <div className={styles.summaryValue}>
+                    {t(result.summary.logistics)}
+                  </div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("reasoning")}:</div>
+                  <div className={styles.summaryValue}>
+                    {result.summary.reasoning}
+                  </div>
+                </div>
+                <div className={styles.summaryRow}>
+                  <div className={styles.summaryLabel}>{t("total")}:</div>
+                  <div className={styles.summaryValue}>
+                    {result.summary.calculated_rank}
+                  </div>
+                </div>
               </div>
             </div>
           );
