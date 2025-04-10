@@ -230,6 +230,8 @@ export default {
     L: "Low",
     VL: "Very Low",
 
+    show_result: "Evaluate Result",
+    download_resume: "Download Resume",
     reason: "Reason",
     evidence: "Evidence",
     overall: "Overall",

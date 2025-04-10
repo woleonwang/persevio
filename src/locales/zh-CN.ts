@@ -220,6 +220,8 @@ export default {
     L: "低",
     VL: "非常低",
 
+    show_result: "查看评估结果",
+    download_resume: "下载简历",
     reason: "判断原因",
     evidence: "相关简历原文",
     overall: "综合",

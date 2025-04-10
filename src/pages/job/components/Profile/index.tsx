@@ -76,32 +76,29 @@ const Profile = (props: { jobId: number }) => {
       <List
         style={{ width: "100%" }}
         dataSource={talents}
+        bordered
+        itemLayout="horizontal"
         renderItem={(item) => (
-          <List.Item>
+          <List.Item
+            actions={[
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => setSelectedTalent(item)}
+              >
+                {t("show_result")}
+              </Button>,
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => downloadFile(item.id)}
+              >
+                {t("download_resume")}
+              </Button>,
+            ]}
+          >
             <List.Item.Meta
-              title={
-                <div
-                  onClick={() => {
-                    setSelectedTalent(item);
-                  }}
-                >
-                  {item.candidate.name}
-                </div>
-              }
-              description={
-                <div>
-                  <div
-                    onClick={() => downloadFile(item.id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {
-                      item.file_path.split("/")[
-                        item.file_path.split("/").length - 1
-                      ]
-                    }
-                  </div>
-                </div>
-              }
+              title={<div style={{ fontSize: 18 }}>{item.candidate.name}</div>}
             />
           </List.Item>
         )}
