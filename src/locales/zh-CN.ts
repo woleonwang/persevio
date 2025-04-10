@@ -29,6 +29,7 @@ export default {
       "  2. 有了，详细的职位需求文档，您批准的面试计划和职位描述（JD），我现在可以准确地向潜在的候选人介绍我们公司和这个「职位名称」职位，并且回答他们关于这个职位的任何问题了。你可以直接把下面的链接附在JD上发到招聘网站上，也可以直接发给潜在的候选人。剩下的就交给我吧！",
     create_job: "创建职位",
     define_job_requirement: "详细定义职位需求",
+    define_compensation_details: "确定薪资",
     define_interview_plan: "确定面试计划",
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
@@ -41,6 +42,7 @@ export default {
     share_team: "点击分享团队信息",
     ideal_profile: "点击编辑理想候选人画像",
     other_requirements: "点击确定其它要求",
+    salary_structure: "点击确定薪资结构",
     view_jrd: "查看详细职位需求文档",
     no_edits: "没有要修改的",
     copy_link: "复制链接",
@@ -60,8 +62,6 @@ export default {
 
     chatbot_greeting:
       "  1. 我现在可以准确地向潜在的候选人介绍我们公司和这个「职位名称」职位，并且回答他们关于这个职位的任何问题了。你可以直接把下面的链接附在JD上发到招聘网站上，也可以直接发给潜在的候选人。剩下的就交给我吧！",
-
-    salary_structure: "薪资结构",
   },
 
   job_requirement_form: {
@@ -188,6 +188,12 @@ export default {
     bonus_note: "注释",
     commission: "佣金",
     equity: "股份",
+    allowances: "补贴",
+    social_security_contributions: "社保",
+    benefits_perks: "福利",
+    insurance: "保险",
+    paid_time_off: "年假",
+    benefits_perks_other: "其它福利",
     salary_other: "其它",
   },
 

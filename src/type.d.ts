@@ -20,8 +20,9 @@ interface IJob {
   target_companies_doc_id: number;
 
   requirement_doc_id: number;
-  jd_doc_id: number;
+  compensation_details_doc_id: number;
   interview_plan_doc_id: number;
+  jd_doc_id: number;
 
   jrd_survey_opened_at: string;
   status: number;

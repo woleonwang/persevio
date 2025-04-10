@@ -7,6 +7,7 @@ export type TExtraTagName =
   | "team-context-request"
   | "copy-link" // 复制链接
   | "targets-done"
+  | "compensation-details-done"
   | "jd-done"
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
@@ -15,6 +16,7 @@ export type TExtraTagName =
   // 前端生成
   | "open-link" // 打开新页面
   | "targets-done-btn"
+  | "compensation-details-done-btn"
   | "interview-plan-done-btn"
   | "jd-done-btn";
 
@@ -52,8 +54,9 @@ export type TMessage = {
 export type TChatType =
   | "jobRequirementDoc"
   | "candidate"
-  | "jobDescription"
+  | "jobCompensationDetails"
   | "jobInterviewPlan"
+  | "jobDescription"
   | "chatbot";
 
 export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;

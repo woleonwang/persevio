@@ -696,6 +696,37 @@ const JobRequirementFormDrawer = (props: IProps) => {
           question: t("equity"),
         },
         {
+          key: "allowances",
+          type: "text",
+          question: t("allowances"),
+        },
+        {
+          key: "social_security_contributions",
+          type: "text",
+          question: t("social_security_contributions"),
+        },
+        {
+          key: "benefits_perks",
+          group: t("benefits_perks"),
+          questions: [
+            {
+              key: "insurance",
+              type: "text",
+              question: t("insurance"),
+            },
+            {
+              key: "paid_time_off",
+              type: "text",
+              question: t("paid_time_off"),
+            },
+            {
+              key: "benefits_perks_other",
+              type: "text",
+              question: t("benefits_perks_other"),
+            },
+          ],
+        },
+        {
           key: "salary_other",
           type: "text",
           question: t("salary_other"),

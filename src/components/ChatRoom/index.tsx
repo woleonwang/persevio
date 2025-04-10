@@ -225,6 +225,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
       send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
     },
+    jobCompensationDetails: {
+      get: formatUrl(`/api/jobs/${jobId}/compensation_details_chat`),
+      send: formatUrl(`/api/jobs/${jobId}/compensation_details_chat/send`),
+    },
     jobDescription: {
       get: formatUrl(`/api/jobs/${jobId}/job_description_chat`),
       send: formatUrl(`/api/jobs/${jobId}/job_description_chat/send`),
@@ -327,6 +331,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     {
       key: "targets-done-btn",
+      title: t("define_compensation_details"),
+      handler: () => setChatType("jobCompensationDetails"),
+    },
+    {
+      key: "compensation-details-done-btn",
       title: t("define_interview_plan"),
       handler: () => setChatType("jobInterviewPlan"),
     },
@@ -352,8 +361,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       let initChatType: TChatType = "jobRequirementDoc";
       if (job.interview_plan_doc_id) {
         initChatType = "jobDescription";
-      } else if (job.requirement_doc_id) {
+      } else if (job.compensation_details_doc_id) {
         initChatType = "jobInterviewPlan";
+      } else if (job.requirement_doc_id) {
+        initChatType = "jobCompensationDetails";
       }
       setChatType(initChatType);
     } else {
@@ -481,8 +492,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
       // 下一步 按钮
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
-          ["targets-done", "interview-plan-done", "jd-done"] as (
+          [
+            "targets-done",
+            "compensation-details-done",
+            "interview-plan-done",
+            "jd-done",
+          ] as (
             | "targets-done"
+            | "compensation-details-done"
             | "interview-plan-done"
             | "jd-done"
           )[]
@@ -719,52 +736,48 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 title: t("create_job"),
                 disabled: true,
                 isFinished: true,
-                isActive: false,
               },
               {
                 title: t("define_job_requirement"),
                 disabled: false,
                 isFinished: !!job?.requirement_doc_id,
-                isActive: chatType === "jobRequirementDoc",
+                chatType: "jobRequirementDoc",
+              },
+              {
+                title: t("define_compensation_details"),
+                disabled: !job?.requirement_doc_id,
+                isFinished: !!job?.compensation_details_doc_id,
+                chatType: "jobCompensationDetails",
               },
               {
                 title: t("define_interview_plan"),
-                disabled: !job?.requirement_doc_id,
+                disabled: !job?.compensation_details_doc_id,
                 isFinished: !!job?.interview_plan_doc_id,
-                isActive: chatType === "jobInterviewPlan",
+                chatType: "jobInterviewPlan",
               },
               {
                 title: t("draft_job_description_btn"),
                 disabled: !job?.interview_plan_doc_id,
                 isFinished: !!job?.jd_doc_id,
-                isActive: chatType === "jobDescription",
+                chatType: "jobDescription",
               },
               {
                 title: t("create_chatbot"),
                 disabled: !job?.jd_doc_id,
                 isFinished: !!job?.jd_doc_id,
-                isActive: chatType === "chatbot",
+                chatType: "chatbot",
               },
-            ].map((task, current) => {
+            ].map((task) => {
               return (
                 <div
                   className={classnames(styles.taskBlock, {
                     [styles.finished]: task.isFinished,
-                    [styles.active]: task.isActive,
+                    [styles.active]: chatType === task.chatType,
                     [styles.disabled]: task.disabled,
                   })}
                   onClick={() => {
-                    if (task.disabled) return;
-
-                    if (current === 1) {
-                      setChatType("jobRequirementDoc");
-                    } else if (current === 2) {
-                      setChatType("jobInterviewPlan");
-                    } else if (current === 3) {
-                      setChatType("jobDescription");
-                    } else if (current === 4) {
-                      setChatType("chatbot");
-                    }
+                    if (task.disabled || !task.chatType) return;
+                    setChatType(task.chatType as TChatType);
                   }}
                   key={task.title}
                 >
