@@ -69,6 +69,9 @@ export default {
       "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
     edit_screening_question_hint:
       "I have edit the screening questions, revised your proposal by adding, deleting, or modifying content",
+
+    required: "Required",
+    optional: "Optional",
   },
 
   job_requirement_form: {

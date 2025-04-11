@@ -367,7 +367,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => setChatType("jobScreeningQuestion"),
     },
     {
-      key: "screening-questions-defined-btn",
+      key: "screening-q-done-btn",
       title: t("define_interview_plan"),
       handler: () => setChatType("jobInterviewPlan"),
     },
@@ -531,13 +531,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
           [
             "targets-done",
             "compensation-details-done",
-            "screening-questions-defined",
+            "screening-q-done",
             "interview-plan-done",
             "jd-done",
           ] as (
             | "targets-done"
             | "compensation-details-done"
-            | "screening-questions-defined"
+            | "screening-q-done"
             | "interview-plan-done"
             | "jd-done"
           )[]
@@ -1210,32 +1210,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
               onClose={() => triggerScreeningQuestionDrawer(false)}
               onOk={async (questions: TScreeningQuestionType[]) => {
                 // 发送
-                let llmMessage = t("edit_screening_question_hint"),
-                  questionJSON: { questions: TScreeningQuestionType[] } = {
-                    questions: [],
-                  };
+                let llmMessage = t("edit_screening_question_hint");
 
                 questions.forEach((question, index) => {
-                  llmMessage += `\n\n${index + 1}. ${question.question}`;
-                  questionJSON.questions.push({
-                    question: question.question,
-                    required: question.required,
-                  });
+                  llmMessage += `\n\n${index + 1}. ${question.question} - ${t(
+                    question.required ? "required" : "optional"
+                  )}`;
                 });
 
-                const { code } = await Post(
-                  formatUrl(`/api/jobs/${jobId}/document`),
-                  {
-                    type: "screening_question",
-                    content: JSON.stringify(questionJSON),
-                  }
-                );
-                if (code === 0) {
-                  sendMessage(llmMessage);
-                  triggerScreeningQuestionDrawer(false);
-                } else {
-                  message.error("Send role overview failed");
-                }
+                sendMessage(llmMessage);
+                triggerScreeningQuestionDrawer(false);
               }}
             />
           </>

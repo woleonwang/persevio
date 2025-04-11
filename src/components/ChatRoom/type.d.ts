@@ -8,7 +8,7 @@ export type TExtraTagName =
   | "copy-link" // 复制链接
   | "targets-done"
   | "compensation-details-done"
-  | "screening-questions-defined"
+  | "screening-q-done"
   | "jd-done"
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
@@ -19,7 +19,7 @@ export type TExtraTagName =
   | "open-link" // 打开新页面
   | "targets-done-btn"
   | "compensation-details-done-btn"
-  | "screening-questions-defined-btn"
+  | "screening-q-done-btn"
   | "interview-plan-done-btn"
   | "jd-done-btn";
 
