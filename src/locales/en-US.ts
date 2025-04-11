@@ -30,6 +30,7 @@ export default {
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
     define_compensation_details: "Define compensation details",
+    define_screening_questions: "Define screening questions",
     define_interview_plan: "Define interview plan",
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
@@ -40,9 +41,10 @@ export default {
     share_basic: "Click here to share basic information",
     share_reference: "Click here to share references",
     share_team: "Click here to share team context",
-    ideal_profile: "Edit ideal profile",
+    ideal_profile: "Click here to edit ideal profile",
     other_requirements: "Click here to provide other requirements",
     salary_structure: "Click here to provide salary structure",
+    screening_questions: "Click here to edit screening questions",
     view_jrd: "View Complete Job Requirement Document",
     no_edits: "Draft is good, no edits",
     copy_link: "Copy Link",
@@ -65,6 +67,8 @@ export default {
 
     chatbot_greeting:
       "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
+    edit_screening_question_hint:
+      "I have edit the screening questions, revised your proposal by adding, deleting, or modifying content",
   },
 
   job_requirement_form: {
@@ -214,6 +218,13 @@ export default {
     minimum: "Minimum",
     big_plus: "Big Plus",
     plus: "Plus",
+  },
+
+  screening_question: {
+    edit_screening_questions: "Edit Screening Questions",
+    question: "Question",
+    required: "Required",
+    add: "Add Question",
   },
 
   profile: {

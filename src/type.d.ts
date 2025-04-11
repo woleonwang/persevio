@@ -21,6 +21,7 @@ interface IJob {
 
   requirement_doc_id: number;
   compensation_details_doc_id: number;
+  screening_question_doc_id: number;
   interview_plan_doc_id: number;
   jd_doc_id: number;
 

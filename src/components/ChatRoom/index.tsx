@@ -59,12 +59,14 @@ import {
   TMessage,
   TMessageFromApi,
   TRoleOverviewType,
+  TScreeningQuestionType,
 } from "./type";
 import { copy } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import MarkdownContainer from "../MarkdownContainer";
+import ScreeningQuestionDrawer from "./components/ScreeningQuestionDrawer";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -111,6 +113,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
   const [idealProfileDrawerOpen, setIdealProfileDrawerOpen] = useState(false);
+  const [screeningQuestionDrawerOpen, setScreeningQuestionDrawerOpen] =
+    useState(false);
+  const [screeningQuestion, setScreeningQuestion] = useState<{
+    questions: TScreeningQuestionType[];
+  }>();
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -226,16 +233,22 @@ const ChatRoom: React.FC<IProps> = (props) => {
       send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
     },
     jobCompensationDetails: {
-      get: formatUrl(`/api/jobs/${jobId}/compensation_details_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/compensation_details_chat/send`),
+      get: formatUrl(
+        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`
+      ),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
+    },
+    jobScreeningQuestion: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_SCREENING_QUESTION/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_SCREENING_QUESTION/send`),
     },
     jobDescription: {
-      get: formatUrl(`/api/jobs/${jobId}/job_description_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/job_description_chat/send`),
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
     },
     jobInterviewPlan: {
-      get: formatUrl(`/api/jobs/${jobId}/interview_plan_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/interview_plan_chat/send`),
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
     },
     candidate: {
       get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
@@ -256,6 +269,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const triggerIdealProfileDrawer = (open: boolean) => {
     setCollapseForDrawer(open);
     setIdealProfileDrawerOpen(open);
+  };
+
+  const triggerScreeningQuestionDrawer = (open: boolean) => {
+    setCollapseForDrawer(open);
+    setScreeningQuestionDrawerOpen(open);
   };
 
   const supportTags: {
@@ -301,6 +319,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
+      key: "screening-q-request",
+      title: t("screening_questions"),
+      handler: (tag) => {
+        triggerScreeningQuestionDrawer(true);
+        setScreeningQuestion(JSON.parse(tag?.content ?? "{}"));
+      },
+      autoTrigger: true,
+    },
+    {
       key: "targets-done",
       title: t("view_jrd"),
       handler: () => {
@@ -336,6 +363,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "compensation-details-done-btn",
+      title: t("define_screening_questions"),
+      handler: () => setChatType("jobScreeningQuestion"),
+    },
+    {
+      key: "screening-questions-defined-btn",
       title: t("define_interview_plan"),
       handler: () => setChatType("jobInterviewPlan"),
     },
@@ -361,8 +393,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       let initChatType: TChatType = "jobRequirementDoc";
       if (job.interview_plan_doc_id) {
         initChatType = "jobDescription";
-      } else if (job.compensation_details_doc_id) {
+      } else if (job.screening_question_doc_id) {
         initChatType = "jobInterviewPlan";
+      } else if (job.compensation_details_doc_id) {
+        initChatType = "jobScreeningQuestion";
       } else if (job.requirement_doc_id) {
         initChatType = "jobCompensationDetails";
       }
@@ -417,12 +451,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
         if (lastMessage) {
           if (lastMessage.id !== lastMessageIdRef.current) {
             // 如果最后一条消息需要弹表单或者抽屉，则直接打开
+            let extraTag;
             const autoTriggerTag = supportTags.find((supportTag) => {
-              return !!(lastMessage.extraTags ?? []).find(
+              extraTag = (lastMessage.extraTags ?? []).find(
                 (tag) => supportTag.key === tag.name && supportTag.autoTrigger
               );
+              return !!extraTag;
             });
-            autoTriggerTag?.handler();
+            autoTriggerTag?.handler(extraTag);
           }
           lastMessageIdRef.current = lastMessage.id;
         }
@@ -495,11 +531,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
           [
             "targets-done",
             "compensation-details-done",
+            "screening-questions-defined",
             "interview-plan-done",
             "jd-done",
           ] as (
             | "targets-done"
             | "compensation-details-done"
+            | "screening-questions-defined"
             | "interview-plan-done"
             | "jd-done"
           )[]
@@ -542,7 +580,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const sendJobRequirementForm = async (JobRequirementFormMessage: string) => {
-    const { code } = await Post(formatUrl(`/api/jobs/${jobId}/role_overview`), {
+    const { code } = await Post(formatUrl(`/api/jobs/${jobId}/document`), {
       type: jobRequirementFormType,
       content: JobRequirementFormMessage,
     });
@@ -750,8 +788,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 chatType: "jobCompensationDetails",
               },
               {
-                title: t("define_interview_plan"),
+                title: t("define_screening_questions"),
                 disabled: !job?.compensation_details_doc_id,
+                isFinished: !!job?.screening_question_doc_id,
+                chatType: "jobScreeningQuestion",
+              },
+              {
+                title: t("define_interview_plan"),
+                disabled: !job?.screening_question_doc_id,
                 isFinished: !!job?.interview_plan_doc_id,
                 chatType: "jobInterviewPlan",
               },
@@ -1159,6 +1203,41 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 />
               )}
             </Drawer>
+
+            <ScreeningQuestionDrawer
+              screeningQuestionDrawerOpen={screeningQuestionDrawerOpen}
+              questions={screeningQuestion?.questions ?? []}
+              onClose={() => triggerScreeningQuestionDrawer(false)}
+              onOk={async (questions: TScreeningQuestionType[]) => {
+                // 发送
+                let llmMessage = t("edit_screening_question_hint"),
+                  questionJSON: { questions: TScreeningQuestionType[] } = {
+                    questions: [],
+                  };
+
+                questions.forEach((question, index) => {
+                  llmMessage += `\n\n${index + 1}. ${question.question}`;
+                  questionJSON.questions.push({
+                    question: question.question,
+                    required: question.required,
+                  });
+                });
+
+                const { code } = await Post(
+                  formatUrl(`/api/jobs/${jobId}/document`),
+                  {
+                    type: "screening_question",
+                    content: JSON.stringify(questionJSON),
+                  }
+                );
+                if (code === 0) {
+                  sendMessage(llmMessage);
+                  triggerScreeningQuestionDrawer(false);
+                } else {
+                  message.error("Send role overview failed");
+                }
+              }}
+            />
           </>
         )}
 

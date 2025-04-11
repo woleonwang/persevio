@@ -8,15 +8,18 @@ export type TExtraTagName =
   | "copy-link" // 复制链接
   | "targets-done"
   | "compensation-details-done"
+  | "screening-questions-defined"
   | "jd-done"
   | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
   | "other-requirements-request"
   | "salary-structure-request"
+  | "screening-q-request"
   // 前端生成
   | "open-link" // 打开新页面
   | "targets-done-btn"
   | "compensation-details-done-btn"
+  | "screening-questions-defined-btn"
   | "interview-plan-done-btn"
   | "jd-done-btn";
 
@@ -55,6 +58,7 @@ export type TChatType =
   | "jobRequirementDoc"
   | "candidate"
   | "jobCompensationDetails"
+  | "jobScreeningQuestion"
   | "jobInterviewPlan"
   | "jobDescription"
   | "chatbot";
@@ -75,3 +79,8 @@ export type TRoleOverviewType =
   | "team_context"
   | "other_requirement"
   | "salary_structure";
+
+export type TScreeningQuestionType = {
+  question: string;
+  required: boolean;
+};
