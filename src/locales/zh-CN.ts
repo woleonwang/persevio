@@ -211,6 +211,7 @@ export default {
     minimum: "不可或缺",
     big_plus: "大加分项",
     plus: "加分项",
+    add: "添加",
   },
 
   screening_question: {

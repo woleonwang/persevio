@@ -1,20 +1,23 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
+export type TDoneTag =
+  | "targets-done"
+  | "compensation-details-done"
+  | "screening-q-done"
+  | "interview-plan-done"
+  | "jd-done";
+
 export type TExtraTagName =
   // 后端生成
   | "basic-info-request"
   | "reference-request"
   | "team-context-request"
   | "copy-link" // 复制链接
-  | "targets-done"
-  | "compensation-details-done"
-  | "screening-q-done"
-  | "jd-done"
-  | "interview-plan-done"
   | "profile-feedback-and-priorities-request"
   | "other-requirements-request"
   | "salary-structure-request"
   | "screening-q-request"
+  | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
   | "targets-done-btn"
@@ -70,6 +73,7 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   role?: "staff" | "coworker" | "candidate";
+  screeningQuestions?: TScreeningQuestionType[];
   onChangeTab?: onChangeTabFunction;
 }
 

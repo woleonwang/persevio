@@ -221,6 +221,7 @@ export default {
     minimum: "Minimum",
     big_plus: "Big Plus",
     plus: "Plus",
+    add: "Add New",
   },
 
   screening_question: {

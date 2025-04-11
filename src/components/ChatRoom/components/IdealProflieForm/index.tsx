@@ -135,7 +135,7 @@ const IdealProfileForm = (props: IProps) => {
                   setProfileGroups([...profileGroups]);
                 }}
               >
-                Add New
+                {t("add")}
               </Button>
             </div>
           </div>

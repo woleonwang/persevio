@@ -55,6 +55,7 @@ import {
   IProps,
   TChatType,
   TChatTypeWithApi,
+  TDoneTag,
   TExtraTagName,
   TMessage,
   TMessageFromApi,
@@ -67,6 +68,9 @@ import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import MarkdownContainer from "../MarkdownContainer";
 import ScreeningQuestionDrawer from "./components/ScreeningQuestionDrawer";
+import CandidateScreeningQuestionDrawer, {
+  TResult,
+} from "./components/CandidateScreeningQuestionDrawer";
 
 const PreDefinedMessages = [
   "Give me a brief intro about the company",
@@ -87,6 +91,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     sessionId,
     allowEditMessage = false,
     role = "staff",
+    screeningQuestions = [],
     onChangeTab,
   } = props;
 
@@ -118,6 +123,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [screeningQuestion, setScreeningQuestion] = useState<{
     questions: TScreeningQuestionType[];
   }>();
+  const [
+    candidateScreeningQuestionDrawerOpen,
+    setCandidateScreeningQuestionDrawerOpen,
+  ] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -534,13 +543,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             "screening-q-done",
             "interview-plan-done",
             "jd-done",
-          ] as (
-            | "targets-done"
-            | "compensation-details-done"
-            | "screening-q-done"
-            | "interview-plan-done"
-            | "jd-done"
-          )[]
+          ] as TDoneTag[]
         ).forEach((step) => {
           if (step === tag.name) {
             resultMessages.push({
@@ -737,6 +740,27 @@ const ChatRoom: React.FC<IProps> = (props) => {
       fetchMessages();
     } else {
       message.error("Delete message failed");
+    }
+  };
+
+  const submitScreeningQuestion = async (result: TResult[]) => {
+    let resultMessage = "";
+    result.forEach((r) => {
+      resultMessage += `## ${r.question}\n\n ${r.answer}\n\n`;
+    });
+
+    const { code } = await Post(
+      `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/screening_questions`,
+      {
+        screening_questions: resultMessage,
+      }
+    );
+
+    if (code === 0) {
+      message.success("Submit screening question successfully");
+      setCandidateScreeningQuestionDrawerOpen(false);
+    } else {
+      message.error("Submit screening question failed");
     }
   };
 
@@ -1133,6 +1157,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     >
                       <Button type="primary">PDF</Button>
                     </Upload>
+                    <Button
+                      type="primary"
+                      onClick={() =>
+                        setCandidateScreeningQuestionDrawerOpen(true)
+                      }
+                    >
+                      Open Form
+                    </Button>
                   </>
                 )}
 
@@ -1223,6 +1255,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
               }}
             />
           </>
+        )}
+
+        {role === "candidate" && (
+          <CandidateScreeningQuestionDrawer
+            onClose={() => setCandidateScreeningQuestionDrawerOpen(false)}
+            candidateScreeningQuestionDrawerOpen={
+              candidateScreeningQuestionDrawerOpen
+            }
+            questions={screeningQuestions}
+            onOk={(result: TResult[]) => {
+              submitScreeningQuestion(result);
+            }}
+          />
         )}
 
         <Modal

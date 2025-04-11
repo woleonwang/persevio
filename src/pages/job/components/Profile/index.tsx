@@ -59,10 +59,17 @@ const Profile = (props: { jobId: number }) => {
     const { code, data } = await Get(`/api/jobs/${jobId}/talents`);
     if (code === 0) {
       setTalents(
-        data.talents.map((talent: any) => ({
-          ...talent,
-          evaluate_result: JSON.parse(talent.evaluate_result),
-        }))
+        data.talents.map((talent: any) => {
+          let evaluateResult;
+          try {
+            evaluateResult = JSON.parse(talent.evaluate_result);
+          } catch (e) {}
+
+          return {
+            ...talent,
+            evaluate_result: evaluateResult,
+          };
+        })
       );
     }
   };
@@ -70,6 +77,8 @@ const Profile = (props: { jobId: number }) => {
   const downloadFile = (id: number) => {
     window.open(`/api/public/jobs/${jobId}/talents/${id}/download`);
   };
+
+  console.log("selectedTalent:", selectedTalent?.evaluate_result);
 
   return (
     <div className={styles.listWrapper}>
@@ -85,6 +94,7 @@ const Profile = (props: { jobId: number }) => {
                 size="small"
                 type="primary"
                 onClick={() => setSelectedTalent(item)}
+                disabled={!item.evaluate_result}
               >
                 {t("show_result")}
               </Button>,
@@ -167,7 +177,10 @@ const Profile = (props: { jobId: number }) => {
                       </div>
                       {group.items.map((item) => {
                         return (
-                          <div key={item.criterion}>
+                          <div
+                            key={item.criterion}
+                            style={{ marginBottom: 32 }}
+                          >
                             <div className={styles.criterionTitle}>
                               <div
                                 className={classnames(
@@ -187,7 +200,7 @@ const Profile = (props: { jobId: number }) => {
                                     ),
                                     not_sure: (
                                       <QuestionCircleOutlined
-                                        style={{ color: "yellow" }}
+                                        style={{ color: "orange" }}
                                       />
                                     ),
                                     not_met: (
@@ -198,10 +211,12 @@ const Profile = (props: { jobId: number }) => {
                                   }[item.judgement]
                                 }
                               </div>
-                              <div>
-                                {t("confidence_level")}:
-                                {t(item.confidence_level)}
-                              </div>
+                              {item.confidence_level && (
+                                <div>
+                                  {t("confidence_level")}:
+                                  {t(item.confidence_level)}
+                                </div>
+                              )}
                             </div>
                             {/* <div>Points awarded: {item.points_awarded}</div> */}
                             <div className={styles.reasonRow}>

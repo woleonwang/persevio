@@ -24,6 +24,7 @@ type TJob = {
   company_id: number;
   updated_at: string;
   job_description: string;
+  screening_questions: string;
 };
 
 type TStatus = "loading" | "success" | "error";
@@ -119,6 +120,9 @@ const JobsShow = () => {
                 role="candidate"
                 jobId={parseInt(id ?? "0")}
                 sessionId={sessionId}
+                screeningQuestions={
+                  JSON.parse(job.screening_questions ?? "{}").questions ?? []
+                }
               />
             </div>
           </div>
