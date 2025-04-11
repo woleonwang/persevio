@@ -803,9 +803,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
             if (!(value.salary && value.months)) {
               return "";
             }
-            formattedValue = `${value.salary} * ${value.months} = ${
-              value.salary * value.months
-            }`;
+            formattedValue = `${value.salary}/${t("month")} * ${
+              value.months
+            } ${t("month")} = ${value.salary * value.months}`;
           }
 
           if (question.type === "select") {
@@ -829,12 +829,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
           }
 
           return question.answerFormat === "singleLine"
-            ? `${question.question
-                .replaceAll("</b>", "**")
-                .replaceAll("<b>", "**")}: ${formattedValue}`
-            : `${question.question
-                .replaceAll("</b>", "**")
-                .replaceAll("<b>", "**")}${
+            ? `**${question.question
+                .replaceAll("</b>", "")
+                .replaceAll("<b>", "")}**: ${formattedValue}`
+            : `**${question.question
+                .replaceAll("</b>", "")
+                .replaceAll("<b>", "")}**${
                 question.needPriority
                   ? ` - ${originalT(
                       "ideal_profile." + values[`${question.key}_priority`]

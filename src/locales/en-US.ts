@@ -189,7 +189,7 @@ export default {
     monthly: "Monthly",
     bonus_other: "Other",
     bonus_number: "Number",
-    bonus_type: "Select",
+    bonus_type: "Bonus Conditions",
     guaranteed: "Guaranteed",
     personal:
       "Based on personal performance, regardless of company performance",
@@ -207,6 +207,7 @@ export default {
     salary_other: "Other",
     salary: "Monthly base salary",
     months: "Number of months ",
+    month: "month",
   },
 
   ideal_profile: {
