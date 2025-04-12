@@ -713,7 +713,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
       if (code === 0) {
         message.success("Upload succeed");
-        setCandidateScreeningQuestionDrawerOpen(true);
+        if (screeningQuestions.length > 0) {
+          setCandidateScreeningQuestionDrawerOpen(true);
+        } else {
+          submitScreeningQuestion([]);
+        }
       } else {
         message.error("Upload failed");
       }
