@@ -215,7 +215,7 @@ const Profile = (props: { jobId: number }) => {
                                 }
                               </div>
                               {item.confidence_level && (
-                                <div>
+                                <div style={{ flex: "none" }}>
                                   {t("confidence_level")}:
                                   {t(item.confidence_level)}
                                 </div>
