@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Get } from "../../utils/request";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   jobId: number;
@@ -69,6 +70,11 @@ const JobInformation = (props: IProps) => {
 
   const [job, setJob] = useState<IJob>();
 
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`job_information.${key}`);
+  };
+
   useEffect(() => {
     if (jobId) {
       fetchJob();
@@ -92,37 +98,37 @@ const JobInformation = (props: IProps) => {
   }[] = [
     {
       value: "basic_info",
-      label: "Basic Information",
+      label: t("basic"),
       disabled: docUnfinised("basic_info"),
     },
     {
       value: "role_context",
-      label: "Role Context",
+      label: t("role_context"),
       disabled: docUnfinised("role_context"),
     },
     {
       value: "objectives",
-      label: "Objectives & Success Metrics",
+      label: t("objectives"),
       disabled: docUnfinised("objectives"),
     },
     {
       value: "activities",
-      label: "Day-to-day activities",
+      label: t("activities"),
       disabled: docUnfinised("activities"),
     },
     {
       value: "candidate_requirements",
-      label: "Ideal Candidate Profile & Screening Criteria",
+      label: t("ideal_candidate"),
       disabled: docUnfinised("candidate_requirements"),
     },
     {
       value: "target_companies",
-      label: "Target Companies",
+      label: t("target_companies"),
       disabled: docUnfinised("target_companies"),
     },
     {
       value: "requirement",
-      label: "JRD",
+      label: t("jrd"),
       disabled: docUnfinised("requirement"),
     },
     // {

@@ -22,7 +22,6 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
-  RightCircleOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -72,16 +71,6 @@ import ScreeningQuestionDrawer from "./components/ScreeningQuestionDrawer";
 import CandidateScreeningQuestionDrawer, {
   TResult,
 } from "./components/CandidateScreeningQuestionDrawer";
-
-const PreDefinedMessages = [
-  "Give me a brief intro about the company",
-  "Which team will this role join?",
-  "Who will this role report to?",
-  "What is the interview process like?",
-  "What is are the key objectives of this role?",
-  "How is success measured?",
-  "Does this role allow work from home?",
-];
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -265,6 +254,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
       send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
     },
   };
+
+  const PreDefinedMessages = [
+    t("question_context"),
+    t("question_company"),
+    t("question_objectives"),
+    t("question_team"),
+    t("question_candidate"),
+    t("question_interview"),
+    t("question_compensation"),
+    t("question_location"),
+    t("question_hours"),
+  ];
 
   const handleJobRequirementFormDrawerOpen = (open: boolean) => {
     setCollapseForDrawer(open);
@@ -1055,12 +1056,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   key={message}
                 >
                   <div>{message}</div>
-                  <RightCircleOutlined
+                  {/* <RightCircleOutlined
                     style={{
                       fontSize: 16,
                       color: "#1FAC6A",
                     }}
-                  />
+                  /> */}
                 </div>
               );
             })}

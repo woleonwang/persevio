@@ -69,6 +69,16 @@ export default {
 
     required: "必填",
     optional: "选填",
+
+    question_context: "跟我相对简略地介绍下这个职位的核心职责和上下文。",
+    question_company: "简单介绍下你们公司。",
+    question_objectives: "这个职位要达成的核心目标是什么？",
+    question_team: "介绍下这个职位要加入的团队。",
+    question_candidate: "你们想要招聘的理想候选人是什么样的？",
+    question_interview: "面试流程是怎么样的？",
+    question_compensation: "介绍下这个职位的薪资情况。",
+    question_location: "这个职位的工作地点是在哪？",
+    question_hours: "这个职位的工作时间要求是怎样的？",
   },
 
   job_requirement_form: {
@@ -292,6 +302,16 @@ export default {
   },
 
   candidate_screening_question: { edit_screening_questions: "完成问卷" },
+
+  job_information: {
+    basic: "职位基本信息",
+    role_context: "职位上下文",
+    objectives: "目标和核心指标",
+    activities: "日常工作",
+    ideal_candidate: "理想候选人画像 & 筛选标准",
+    target_companies: "目标公司",
+    jrd: "完整职位需求文档",
+  },
 
   cancel: "取消",
   save: "保存",

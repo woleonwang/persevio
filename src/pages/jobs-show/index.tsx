@@ -61,7 +61,7 @@ const JobsShow = () => {
         ""
       );
       setJob(data.job);
-      i18n.changeLanguage(data.lang ?? "en-US");
+      i18n.changeLanguage(data.company.lang ?? "en-US");
       setStatus("success");
     } else {
       setStatus("error");

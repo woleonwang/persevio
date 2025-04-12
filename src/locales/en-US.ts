@@ -72,6 +72,17 @@ export default {
 
     required: "Required",
     optional: "Optional",
+
+    question_context: "Give me a brief overview of this role and its context.",
+    question_company: "Give me a brief introduction of your company。",
+    question_objectives: "What are the core objectives of this role?",
+    question_team:
+      "Give me a brief introduction of the team this role will join. ",
+    question_candidate: "What is an ideal candidate look like? ",
+    question_interview: "What is the interview process? ",
+    question_compensation: "What is the compensation like?",
+    question_location: "What is the working location of this role?",
+    question_hours: "What is the working hours of this role?",
   },
 
   job_requirement_form: {
@@ -303,6 +314,16 @@ export default {
 
   candidate_screening_question: {
     edit_screening_questions: "Finish Screening Questions",
+  },
+
+  job_information: {
+    basic: "Basic Information",
+    role_context: "Role Context",
+    objectives: "Objectives & Success Metrics",
+    activities: "Day-to-day activities",
+    ideal_candidate: "Ideal Candidate Profile & Screening Criteria",
+    target_companies: "Target Companies",
+    jrd: "JRD",
   },
 
   save: "Save",
