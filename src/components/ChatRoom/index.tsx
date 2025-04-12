@@ -30,6 +30,7 @@ import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   headingsPlugin,
+  linkPlugin,
   listsPlugin,
   ListsToggle,
   MDXEditor,
@@ -1070,16 +1071,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <div className={styles.inputArea}>
             {role !== "candidate" && (
               <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-                {(chatType === "jobDescription"
-                  ? [t("make_details"), t("make_concise")]
-                  : [
-                      t("yes"),
-                      t("no"),
-                      t("accurate"),
-                      t("proposal"),
-                      t("no_others"),
-                    ]
-                ).map((text) => {
+                {[
+                  ...(chatType === "jobDescription"
+                    ? [t("make_details"), t("make_concise")]
+                    : []),
+                  t("yes"),
+                  t("no"),
+                  t("accurate"),
+                  t("proposal"),
+                  t("no_others"),
+                ].map((text) => {
                   return (
                     <Button
                       type="primary"
@@ -1314,6 +1315,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 quotePlugin(),
                 listsPlugin(),
                 thematicBreakPlugin(),
+                linkPlugin(),
                 toolbarPlugin({
                   toolbarContents: () => (
                     <>
