@@ -79,8 +79,6 @@ const Profile = (props: { jobId: number }) => {
     window.open(`/api/public/jobs/${jobId}/talents/${id}/download`);
   };
 
-  console.log("selectedTalent:", selectedTalent?.evaluate_result);
-
   return (
     <div className={styles.listWrapper}>
       <List
@@ -109,7 +107,11 @@ const Profile = (props: { jobId: number }) => {
             ]}
           >
             <List.Item.Meta
-              title={<div style={{ fontSize: 18 }}>{item.candidate?.name}</div>}
+              title={
+                <div style={{ fontSize: 18 }}>
+                  {item.evaluate_result?.talent?.name ?? "-"}
+                </div>
+              }
             />
           </List.Item>
         )}

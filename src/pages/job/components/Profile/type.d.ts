@@ -12,6 +12,9 @@ export type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
 export type TPriority = "minimum" | "big_plus" | "plus";
 
 export type TEvaluation = {
+  talent: {
+    name: string;
+  };
   summary: {
     overall: TMatchLevel;
     competency: TMatchLevel;
