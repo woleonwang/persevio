@@ -12,6 +12,7 @@ import { Get } from "../../utils/request";
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
+import { parseJSON } from "../../utils";
 
 type TCompany = {
   logo: string;
@@ -121,7 +122,7 @@ const JobsShow = () => {
                 jobId={parseInt(id ?? "0")}
                 sessionId={sessionId}
                 screeningQuestions={
-                  JSON.parse(job.screening_questions ?? "{}").questions ?? []
+                  parseJSON(job.screening_questions).questions ?? []
                 }
               />
             </div>
