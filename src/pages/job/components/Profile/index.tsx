@@ -121,7 +121,7 @@ const Profile = (props: { jobId: number }) => {
         open={!!selectedTalent}
         onClose={() => setSelectedTalent(undefined)}
         width={"800px"}
-        title={job?.name}
+        title={`${job?.name} - ${selectedTalent?.evaluate_result?.talent?.name}`}
         footer={
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button type="primary">{originalT("close")}</Button>
