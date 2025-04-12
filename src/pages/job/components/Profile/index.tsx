@@ -109,7 +109,7 @@ const Profile = (props: { jobId: number }) => {
             ]}
           >
             <List.Item.Meta
-              title={<div style={{ fontSize: 18 }}>{item.candidate.name}</div>}
+              title={<div style={{ fontSize: 18 }}>{item.candidate?.name}</div>}
             />
           </List.Item>
         )}
