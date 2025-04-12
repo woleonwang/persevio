@@ -62,7 +62,7 @@ import {
   TRoleOverviewType,
   TScreeningQuestionType,
 } from "./type";
-import { copy } from "../../utils";
+import { copy, parseJSON } from "../../utils";
 import IdealProfileForm from "./components/IdealProflieForm";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -332,7 +332,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("screening_questions"),
       handler: (tag) => {
         triggerScreeningQuestionDrawer(true);
-        setScreeningQuestion(JSON.parse(tag?.content ?? "{}"));
+        setScreeningQuestion(parseJSON(tag?.content));
       },
       autoTrigger: true,
     },
