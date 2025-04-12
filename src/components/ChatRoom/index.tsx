@@ -689,29 +689,25 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsRecording(false);
   };
 
-  const uploadFile = async (
-    fileInfo: UploadChangeParam<UploadFile<any>>,
-    fileType: "docx" | "pdf"
-  ) => {
+  const uploadFile = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
     const file = fileInfo.file;
 
     if (file && !file.status) {
-      const formatValid =
-        (fileType === "pdf" && file.type === "application/pdf") ||
-        (fileType === "docx" &&
-          file.type ===
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-      if (!formatValid) {
-        message.error(
-          `You can only upload ${fileType === "pdf" ? "PDF" : "Docx"} file!`
-        );
+      const isPdf = file.type === "application/pdf";
+      const isDocx =
+        file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      if (!(isPdf || isDocx)) {
+        message.error(`You can only upload pdf or docx file!`);
         return;
       }
 
       const formData = new FormData();
       formData.append("file", file as any);
       const { code } = await PostFormData(
-        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/${fileType}`,
+        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/${
+          isPdf ? "pdf" : "docx"
+        }`,
         formData
       );
 
@@ -1143,22 +1139,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <>
                     <Upload
                       beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadFile(fileInfo, "docx")}
+                      onChange={(fileInfo) => uploadFile(fileInfo)}
                       showUploadList={false}
-                      accept=".docx"
+                      accept=".docx,.pdf"
                       multiple={false}
                     >
-                      <Button type="primary">DOCX</Button>
-                    </Upload>
-
-                    <Upload
-                      beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadFile(fileInfo, "pdf")}
-                      showUploadList={false}
-                      accept=".pdf"
-                      multiple={false}
-                    >
-                      <Button type="primary">PDF</Button>
+                      <Button type="primary">{t("apply_now")}</Button>
                     </Upload>
                   </>
                 )}

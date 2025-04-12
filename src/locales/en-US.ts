@@ -83,6 +83,8 @@ export default {
     question_compensation: "What is the compensation like?",
     question_location: "What is the working location of this role?",
     question_hours: "What is the working hours of this role?",
+
+    apply_now: "Apply Now",
   },
 
   job_requirement_form: {

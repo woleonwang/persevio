@@ -79,6 +79,8 @@ export default {
     question_compensation: "介绍下这个职位的薪资情况。",
     question_location: "这个职位的工作地点是在哪？",
     question_hours: "这个职位的工作时间要求是怎样的？",
+
+    apply_now: "立即申请",
   },
 
   job_requirement_form: {
