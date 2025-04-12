@@ -188,6 +188,7 @@ export default {
 
     salary_structure: "Salary Structure",
     base_salary: "Base Salary",
+    salary_number: "Amount",
     bonus: "Variable Pay/Bonus",
     bonus_frequency: "Frequency",
     yearly: "Yearly",

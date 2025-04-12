@@ -180,6 +180,7 @@ export default {
 
     salary_structure: "薪资结构",
     base_salary: "基础工资",
+    salary_number: "金额",
     bonus: "奖金",
     bonus_frequency: "发放频率",
     yearly: "每年",

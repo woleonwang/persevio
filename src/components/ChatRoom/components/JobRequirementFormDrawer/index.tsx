@@ -610,9 +610,20 @@ const JobRequirementFormDrawer = (props: IProps) => {
       title: t("salary_structure"),
       questions: [
         {
-          key: "base_salary",
-          type: "base_salary",
-          question: t("base_salary"),
+          key: "base_salary_group",
+          group: t("base_salary"),
+          questions: [
+            {
+              key: "base_salary",
+              type: "base_salary",
+              question: t("salary_number"),
+            },
+            {
+              key: "base_salary_other",
+              type: "text",
+              question: t("bonus_note"),
+            },
+          ],
         },
         {
           key: "bonus",
@@ -829,12 +840,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
           }
 
           return question.answerFormat === "singleLine"
-            ? `**${question.question
+            ? `${question.question
                 .replaceAll("</b>", "")
-                .replaceAll("<b>", "")}**: ${formattedValue}`
-            : `**${question.question
+                .replaceAll("<b>", "")}: ${formattedValue}`
+            : `#### ${question.question
                 .replaceAll("</b>", "")
-                .replaceAll("<b>", "")}**${
+                .replaceAll("<b>", "")}${
                 question.needPriority
                   ? ` - ${originalT(
                       "ideal_profile." + values[`${question.key}_priority`]
@@ -854,7 +865,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               const arrayValues = values[group.key] ?? [];
 
               if (arrayValues.length) {
-                questions.push(`#### ${group.group}`);
+                questions.push(`### ${group.group}`);
               }
 
               arrayValues.forEach((groupValue: Record<string, any>) => {
@@ -884,7 +895,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 .filter(Boolean);
 
               if (answers.length) {
-                questions.push(`#### ${group.group}`);
+                questions.push(`### ${group.group}`);
               }
 
               answers.forEach((answer, index) => {
