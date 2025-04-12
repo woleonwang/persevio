@@ -715,6 +715,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
       if (code === 0) {
         message.success("Upload succeed");
+        setCandidateScreeningQuestionDrawerOpen(true);
       } else {
         message.error("Upload failed");
       }
@@ -1157,14 +1158,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     >
                       <Button type="primary">PDF</Button>
                     </Upload>
-                    <Button
-                      type="primary"
-                      onClick={() =>
-                        setCandidateScreeningQuestionDrawerOpen(true)
-                      }
-                    >
-                      Open Form
-                    </Button>
                   </>
                 )}
 
@@ -1264,8 +1257,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
               candidateScreeningQuestionDrawerOpen
             }
             questions={screeningQuestions}
-            onOk={(result: TResult[]) => {
-              submitScreeningQuestion(result);
+            onOk={async (result: TResult[]) => {
+              await submitScreeningQuestion(result);
             }}
           />
         )}

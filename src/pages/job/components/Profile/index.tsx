@@ -11,6 +11,7 @@ import { Get } from "../../../../utils/request";
 import { Button, Drawer, List } from "antd";
 import styles from "./style.module.less";
 import { TEvaluation } from "./type";
+import { parseJSON } from "../../../../utils";
 
 type TCandidate = {
   name: string;
@@ -62,7 +63,7 @@ const Profile = (props: { jobId: number }) => {
         data.talents.map((talent: any) => {
           let evaluateResult;
           try {
-            evaluateResult = JSON.parse(talent.evaluate_result);
+            evaluateResult = parseJSON(talent.evaluate_result);
           } catch (e) {}
 
           return {

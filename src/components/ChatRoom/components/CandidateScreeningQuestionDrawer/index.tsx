@@ -2,6 +2,7 @@ import { Form, Input, Button, Drawer } from "antd";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { TScreeningQuestionType } from "../../type";
+import { useState } from "react";
 
 interface IProps {
   onClose: () => void;
@@ -17,6 +18,7 @@ const CandidateScreeningQuestionDrawer = (props: IProps) => {
     props;
   const [form] = Form.useForm<Record<string, string>>();
   const { t: originalT } = useTranslation();
+  const [uploading, setUploading] = useState(false);
 
   const t = (key: string) => {
     return originalT(`candidate_screening_question.${key}`);
@@ -32,9 +34,10 @@ const CandidateScreeningQuestionDrawer = (props: IProps) => {
       mask={false}
       footer={
         <div className={styles.footer}>
-          <Button onClick={() => onClose()}>Cancel</Button>
+          <Button onClick={() => onClose()}>{originalT("cancel")}</Button>
           <Button
             type="primary"
+            disabled={uploading}
             onClick={() => {
               form.validateFields().then(async (values) => {
                 const result: TResult[] = [];
@@ -46,12 +49,13 @@ const CandidateScreeningQuestionDrawer = (props: IProps) => {
                     answer,
                   });
                 });
-
-                onOk(result);
+                setUploading(true);
+                await onOk(result);
+                setUploading(false);
               });
             }}
           >
-            Send
+            {uploading ? originalT("submitting") : originalT("submit")}
           </Button>
         </div>
       }

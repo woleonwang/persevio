@@ -301,9 +301,14 @@ export default {
     description: `Define job requirements for the {{jobName}} role by completing this conversation with Viona, your AI recruiter.`,
   },
 
+  candidate_screening_question: {
+    edit_screening_questions: "Finish Screening Questions",
+  },
+
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",
+  submitting: "Submitting...",
   add: "Add",
   close: "Close",
 };

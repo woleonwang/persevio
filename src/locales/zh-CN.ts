@@ -291,9 +291,12 @@ export default {
     description: `请和您的AI招聘专员Viona对话，以详细定义「{{jobName}}」这个职位的职位要求和上下文。`,
   },
 
+  candidate_screening_question: { edit_screening_questions: "完成问卷" },
+
   cancel: "取消",
   save: "保存",
   submit: "提交",
+  submitting: "提交中...",
   close: "关闭",
   add: "添加",
 };
