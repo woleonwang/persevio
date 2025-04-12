@@ -5,6 +5,7 @@ import { DeleteOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import { parseJSON } from "../../../../utils";
 
 type TSkill = {
   uuid?: string;
@@ -36,11 +37,8 @@ const IdealProfileForm = (props: IProps) => {
 
   useEffect(() => {
     try {
-      const startIndex = candidateRequirementsJson.indexOf("{");
-      const lastIndex = candidateRequirementsJson.lastIndexOf("}");
-      const groups: TIdealProfileGroup[] = JSON.parse(
-        candidateRequirementsJson.slice(startIndex, lastIndex + 1)
-      ).groups;
+      const groups: TIdealProfileGroup[] =
+        parseJSON(candidateRequirementsJson).groups ?? [];
 
       groups.forEach((group) => {
         group.skills.forEach((skill) => {

@@ -36,7 +36,7 @@ const ScreeningQuestionDrawer = (props: IProps) => {
       mask={false}
       footer={
         <div className={styles.footer}>
-          <Button onClick={() => onClose()}>Cancel</Button>
+          <Button onClick={() => onClose()}>{originalT("cancel")}</Button>
           <Button
             type="primary"
             onClick={() => {
@@ -47,7 +47,7 @@ const ScreeningQuestionDrawer = (props: IProps) => {
               });
             }}
           >
-            Send
+            {originalT("submit")}
           </Button>
         </div>
       }
