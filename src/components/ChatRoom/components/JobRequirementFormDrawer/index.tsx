@@ -56,7 +56,6 @@ type TQuestion = {
   }[];
   required?: boolean;
   needPriority?: boolean;
-  answerFormat?: "singleLine" | "multipleLine";
 };
 
 type TGroup = {
@@ -419,7 +418,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 },
               ],
               required: true,
-              answerFormat: "singleLine",
             },
             {
               key: "visa_type_singapore",
@@ -440,7 +438,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   valueKey: "singapore",
                 },
               ],
-              answerFormat: "singleLine",
             },
             {
               key: "visa_type_singapore_other",
@@ -452,7 +449,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   valueKey: "other_singapore_visa",
                 },
               ],
-              answerFormat: "singleLine",
             },
             {
               key: "visa_type_others",
@@ -465,7 +461,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "singapore",
                 },
               ],
-              answerFormat: "singleLine",
             },
             {
               key: "visa_type_others_other",
@@ -477,7 +472,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   valueKey: "other_visa",
                 },
               ],
-              answerFormat: "singleLine",
             },
           ],
           isArray: true,
@@ -495,7 +489,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               question: t("language"),
               options: formatOptions(["chinese", "english"]),
               required: true,
-              answerFormat: "singleLine",
             },
             {
               key: "proficiency",
@@ -507,7 +500,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "daily_conversation",
                 "proficiency_other",
               ]),
-              answerFormat: "singleLine",
             },
             {
               key: "proficiency_other",
@@ -519,7 +511,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   valueKey: "proficiency_other",
                 },
               ],
-              answerFormat: "singleLine",
             },
           ],
           isArray: true,
@@ -541,7 +532,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "some_travel",
                 "regular_travel",
               ]),
-              answerFormat: "singleLine",
             },
             {
               key: "destinations",
@@ -553,7 +543,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
-              answerFormat: "singleLine",
             },
             {
               key: "nature_of_travel",
@@ -565,7 +554,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
-              answerFormat: "singleLine",
             },
             {
               key: "regularity",
@@ -577,7 +565,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   exceptValueKey: "no_travel",
                 },
               ],
-              answerFormat: "singleLine",
             },
           ],
           needPriority: true,
@@ -806,8 +793,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
     try {
       form.validateFields().then((values) => {
         let resultStr = "";
-        const getAnswer = (question: TQuestion, value: any): string => {
+        const getAnswer = (
+          question: TQuestion,
+          value: any,
+          options?: { isSingleLine?: boolean; isSubQuestion?: boolean }
+        ): string => {
           if (!value) return "";
+
+          const { isSingleLine = false, isSubQuestion = false } = options ?? {};
 
           let formattedValue = value;
           if (question.type === "base_salary") {
@@ -839,11 +832,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
           }
 
-          return question.answerFormat === "singleLine"
+          return isSingleLine
             ? `${question.question
                 .replaceAll("</b>", "")
                 .replaceAll("<b>", "")}: ${formattedValue}`
-            : `#### ${question.question
+            : `${isSubQuestion ? "####" : "###"} ${question.question
                 .replaceAll("</b>", "")
                 .replaceAll("<b>", "")}${
                 question.needPriority
@@ -862,6 +855,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             const group = question as TGroup;
 
             if (group.isArray) {
+              // 允许添加多条记录
               const arrayValues = values[group.key] ?? [];
 
               if (arrayValues.length) {
@@ -871,13 +865,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
               arrayValues.forEach((groupValue: Record<string, any>) => {
                 const groupAnswers = group.questions
                   .map((question) =>
-                    getAnswer(question, groupValue[question.key])
+                    getAnswer(question, groupValue[question.key], {
+                      isSingleLine: true,
+                    })
                   )
                   .filter(Boolean);
 
                 groupAnswers.forEach((answer, index) => {
                   if (index === 0) {
-                    questions.push(`${answer}`);
+                    questions.push(`#### ${answer}`);
                   } else {
                     questions.push(`- ${answer}`);
                   }
@@ -890,8 +886,13 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 }
               });
             } else {
+              // 单个对象
               const answers = group.questions
-                .map((question) => getAnswer(question, values[question.key]))
+                .map((question) =>
+                  getAnswer(question, values[question.key], {
+                    isSubQuestion: true,
+                  })
+                )
                 .filter(Boolean);
 
               if (answers.length) {
@@ -982,17 +983,27 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
   const genFormItem = (
     question: TQuestion,
-    field?: FormListFieldData
+    field?: FormListFieldData,
+    options?: { isSubQuestion?: boolean }
   ): ReactNode => {
     const visible = checkVisible(question.dependencies, field);
 
     if (!visible) return null;
 
+    const { isSubQuestion = false } = options ?? {};
     return (
       <>
         <Form.Item
           label={
-            <>
+            <div
+              className={
+                (group === "salary_structure" ||
+                  group === "other_requirement") &&
+                !isSubQuestion
+                  ? styles.groupTitle
+                  : ""
+              }
+            >
               <span dangerouslySetInnerHTML={{ __html: question.question }} />
               {question.hint && (
                 <Popover
@@ -1009,7 +1020,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 {question.needPriority &&
                   genPriority(question.key, question.key)}
               </span>
-            </>
+            </div>
           }
           key={
             field?.key !== undefined
@@ -1198,7 +1209,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
                                       {itemGroup.needPriority &&
                                         genPriority(field.name, field.key)}
                                       {itemGroup.questions.map((question) =>
-                                        genFormItem(question, field)
+                                        genFormItem(question, field, {
+                                          isSubQuestion: true,
+                                        })
                                       )}
                                       <Button
                                         onClick={() => remove(field.name)}
@@ -1226,7 +1239,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
                               {itemGroup.needPriority &&
                                 genPriority(itemGroup.key, itemGroup.key)}
                               {itemGroup.questions.map((question) =>
-                                genFormItem(question)
+                                genFormItem(question, undefined, {
+                                  isSubQuestion: true,
+                                })
                               )}
                             </div>
                           </div>

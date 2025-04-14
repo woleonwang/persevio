@@ -10,7 +10,8 @@ const JobCreate = () => {
   const { fetchJobs } = globalStore;
 
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`create_job.${key}`);
 
   const createJob = () => {
     form.validateFields().then(async (values) => {
