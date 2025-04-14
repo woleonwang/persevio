@@ -40,7 +40,7 @@ const JobCreate = () => {
             <Input />
           </Form.Item>
           <Button type="primary" onClick={createJob} style={{ marginTop: 24 }}>
-            {t("submit")}
+            {originalT("submit")}
           </Button>
         </Form>
       </div>
