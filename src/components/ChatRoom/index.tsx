@@ -353,7 +353,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: async (tag) => {
         if (tag) {
           await copy(tag.content);
-          message.success("Copied");
+          message.success(t("copied"));
         }
       },
     },
@@ -1013,7 +1013,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                     shape="round"
                                     onClick={async () => {
                                       await copy(item.content);
-                                      message.success("Copied");
+                                      message.success(t("copied"));
                                     }}
                                     icon={<CopyOutlined />}
                                   />

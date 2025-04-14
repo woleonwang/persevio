@@ -82,6 +82,7 @@ export default {
     question_hours: "这个职位的工作时间要求是怎样的？",
 
     apply_now: "立即申请",
+    copied: "已复制",
   },
 
   job_requirement_form: {

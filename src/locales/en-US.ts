@@ -86,6 +86,7 @@ export default {
     question_hours: "What is the working hours of this role?",
 
     apply_now: "Apply Now",
+    copied: "Copied",
   },
 
   job_requirement_form: {
