@@ -149,7 +149,7 @@ const IdealProfileForm = (props: IProps) => {
         );
       })}
       <div className={styles.footer}>
-        <Button onClick={() => onClose()}>Cancel</Button>
+        <Button onClick={() => onClose()}>{originalT("cancel")}</Button>
         <Button
           type="primary"
           onClick={() => {
@@ -158,7 +158,7 @@ const IdealProfileForm = (props: IProps) => {
                 (group) => {
                   return {
                     ...group,
-                    skills: group.requirements
+                    requirements: group.requirements
                       .filter((requirement) => !requirement.deleted)
                       .map((requirement) => {
                         return {
@@ -174,7 +174,7 @@ const IdealProfileForm = (props: IProps) => {
             });
           }}
         >
-          Send
+          {originalT("submit")}
         </Button>
       </div>
     </Form>
