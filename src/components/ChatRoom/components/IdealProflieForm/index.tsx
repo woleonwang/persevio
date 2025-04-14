@@ -7,17 +7,17 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { parseJSON } from "../../../../utils";
 
-type TSkill = {
+type TRequirement = {
   uuid?: string;
   content: string;
-  type: "minimum" | "big_plus" | "plus";
+  type?: "minimum" | "big_plus" | "plus";
   reason: string;
   deleted?: boolean;
 };
 
 type TIdealProfileGroup = {
   name: string;
-  skills: TSkill[];
+  requirements: TRequirement[];
 };
 
 interface IProps {
@@ -41,14 +41,14 @@ const IdealProfileForm = (props: IProps) => {
         parseJSON(candidateRequirementsJson).groups ?? [];
 
       groups.forEach((group) => {
-        group.skills.forEach((skill) => {
+        group.requirements.forEach((requirement) => {
           // ${uuid}_content, ${uuid}_type
           const uuid = uuidV4();
           form.setFieldsValue({
-            [`${uuid}_content`]: skill.content,
+            [`${uuid}_content`]: requirement.content,
             [`${uuid}_type`]: "plus",
           });
-          skill.uuid = uuid;
+          requirement.uuid = uuid;
         });
       });
 
@@ -64,22 +64,25 @@ const IdealProfileForm = (props: IProps) => {
         return (
           <div key={group.name} className={styles.group}>
             <h2>{group.name}</h2>
-            {(group.skills ?? []).map((skill) => {
+            {(group.requirements ?? []).map((requirement) => {
               return (
-                <div key={skill.uuid} className={styles.skillRow}>
+                <div key={requirement.uuid} className={styles.skillRow}>
                   <Form.Item
-                    name={`${skill.uuid}_content`}
+                    name={`${requirement.uuid}_content`}
                     style={{ flex: "auto" }}
                     required
                   >
-                    <Input disabled={skill.deleted} />
+                    <Input disabled={requirement.deleted} />
                   </Form.Item>
 
                   <Form.Item
-                    name={`${skill.uuid}_type`}
+                    name={`${requirement.uuid}_type`}
                     style={{ flex: "none" }}
                   >
-                    <Radio.Group disabled={skill.deleted} buttonStyle="solid">
+                    <Radio.Group
+                      disabled={requirement.deleted}
+                      buttonStyle="solid"
+                    >
                       <Radio.Button value="minimum">
                         {t("minimum")}
                       </Radio.Button>
@@ -91,17 +94,23 @@ const IdealProfileForm = (props: IProps) => {
                   </Form.Item>
 
                   <Button
-                    icon={skill.deleted ? <UndoOutlined /> : <DeleteOutlined />}
+                    icon={
+                      requirement.deleted ? (
+                        <UndoOutlined />
+                      ) : (
+                        <DeleteOutlined />
+                      )
+                    }
                     onClick={() => {
-                      if (skill.content) {
-                        group.skills.forEach((s) => {
-                          if (s.uuid === skill.uuid) {
+                      if (requirement.content) {
+                        group.requirements.forEach((s) => {
+                          if (s.uuid === requirement.uuid) {
                             s.deleted = !s.deleted;
                           }
                         });
                       } else {
-                        group.skills = (group.skills ?? []).filter(
-                          (s) => s.uuid !== skill.uuid
+                        group.requirements = (group.requirements ?? []).filter(
+                          (s) => s.uuid !== requirement.uuid
                         );
                       }
                       setProfileGroups([...profileGroups]);
@@ -116,15 +125,15 @@ const IdealProfileForm = (props: IProps) => {
                 icon={<PlusOutlined />}
                 onClick={() => {
                   const uuid = uuidV4();
-                  const newSkill: TSkill = {
+                  const newRequirement: TRequirement = {
                     uuid,
                     content: "",
                     type: "plus",
                     reason: "",
                   };
 
-                  group.skills ??= [];
-                  group.skills.push(newSkill);
+                  group.requirements ??= [];
+                  group.requirements.push(newRequirement);
 
                   form.setFieldsValue({
                     [`${uuid}_content`]: "",
@@ -149,13 +158,13 @@ const IdealProfileForm = (props: IProps) => {
                 (group) => {
                   return {
                     ...group,
-                    skills: group.skills
-                      .filter((skill) => !skill.deleted)
-                      .map((skill) => {
+                    skills: group.requirements
+                      .filter((requirement) => !requirement.deleted)
+                      .map((requirement) => {
                         return {
-                          content: values[`${skill.uuid}_content`],
-                          type: values[`${skill.uuid}_type`],
-                          reason: skill.reason,
+                          content: values[`${requirement.uuid}_content`],
+                          type: values[`${requirement.uuid}_type`],
+                          reason: requirement.reason,
                         };
                       }),
                   };

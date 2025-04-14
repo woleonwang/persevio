@@ -11,6 +11,7 @@ export default {
   job: {
     chat: "Chat",
     document: "Job Requirement Document",
+    talent: "Talent",
   },
 
   chat: {

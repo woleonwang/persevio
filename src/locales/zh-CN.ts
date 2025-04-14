@@ -11,6 +11,7 @@ export default {
   job: {
     chat: "对话",
     document: "详细职位需求文档",
+    talent: "候选人",
   },
 
   chat: {

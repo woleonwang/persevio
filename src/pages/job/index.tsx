@@ -25,7 +25,8 @@ const Job = () => {
 
   const { setMenuCollapse } = globalStore;
 
-  const { t } = useTranslation();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job.${key}`);
 
   useEffect(() => {
     setMenuCollapse(true);
@@ -46,15 +47,15 @@ const Job = () => {
               items={[
                 {
                   key: "chat",
-                  label: t("job.chat"),
+                  label: t("chat"),
                 },
                 {
                   key: "info",
-                  label: t("job.document"),
+                  label: t("document"),
                 },
                 {
                   key: "pipeline",
-                  label: "Pipeline",
+                  label: t("talent"),
                 },
               ]}
               onChange={(type) => {

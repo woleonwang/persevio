@@ -760,7 +760,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
     );
 
     if (code === 0) {
-      message.success("Submit screening question successfully");
+      if (result.length > 0) {
+        message.success("Submit screening question successfully");
+      }
+
       setCandidateScreeningQuestionDrawerOpen(false);
     } else {
       message.error("Submit screening question failed");
@@ -1203,12 +1206,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     let message = t("edit_profiles_hint");
 
                     groups.forEach((group) => {
-                      const { name, skills } = group;
-                      if (skills.length > 0) {
+                      const { name, requirements } = group;
+                      if (requirements.length > 0) {
                         message += `\n\n**${name}:**`;
-                        skills.forEach((skill) => {
-                          message += `\n\n*   **${skill.content} - ${originalT(
-                            `ideal_profile.${skill.type}`
+                        requirements.forEach((requirement) => {
+                          message += `\n\n*   **${
+                            requirement.content
+                          } - ${originalT(
+                            `ideal_profile.${requirement.type}`
                           )}**`;
                         });
                       }
