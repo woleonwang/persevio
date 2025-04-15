@@ -249,6 +249,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
     },
+    talentEvaluateResult: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/send`),
+    },
     candidate: {
       get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
       send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
@@ -345,6 +349,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
         onChangeTab?.("info", { docType: "requirement" });
       },
       autoTrigger: true,
+    },
+    {
+      key: "talent-evaluate-result",
+      title: t("view_talent"),
+      handler: (tag) => {
+        let talentId;
+        try {
+          talentId = JSON.parse(tag?.content ?? "")?.talent_id;
+        } catch (e) {}
+        if (talentId) {
+          window.open(`/app/jobs/${jobId}/talents/${talentId}`);
+        }
+      },
     },
 
     {
@@ -840,6 +857,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 disabled: !job?.jd_doc_id,
                 isFinished: !!job?.jd_doc_id,
                 chatType: "chatbot",
+              },
+              {
+                title: t("evaluate_result"),
+                disabled: !job?.jd_doc_id,
+                isFinished: false,
+                chatType: "talentEvaluateResult",
               },
             ].map((task) => {
               return (

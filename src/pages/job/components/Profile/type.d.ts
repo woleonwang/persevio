@@ -51,3 +51,20 @@ export type TEvaluation = {
     others: string;
   };
 };
+
+export type TCandidate = {
+  name: string;
+};
+
+export type TTalent = {
+  id: number;
+  candidate_id: number;
+  status: "evaluate_succeed" | "evaluate_failed";
+  evaluate_result: TEvaluation;
+  file_path: string;
+  content: string;
+  job_id: number;
+  created_at: string;
+  updated_at: string;
+  candidate: TCandidate;
+};

@@ -1,4 +1,10 @@
-import { Outlet, useLocation, useNavigate } from "react-router";
+import {
+  Outlet,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+} from "react-router";
+
 import {
   LeftCircleFilled,
   RightCircleFilled,
@@ -31,6 +37,22 @@ type TMenu = {
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
+
+  const LayoutMapping = {
+    blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/],
+  };
+
+  const layout =
+    (
+      Object.keys(LayoutMapping) as unknown as (keyof typeof LayoutMapping)[]
+    ).find((key: keyof typeof LayoutMapping) => {
+      return LayoutMapping[key].some((regex) => {
+        if (regex.test(currentPath)) {
+          return key;
+        }
+      });
+    }) ?? "default";
+
   const navigate = useNavigate();
 
   const [inited, setInited] = useState(false);
@@ -78,6 +100,7 @@ const AppLayout = () => {
       img: <SettingOutlined />,
     },
   ];
+
   const init = async () => {
     try {
       // 校验 token
@@ -108,6 +131,23 @@ const AppLayout = () => {
       </div>
     );
   }
+
+  if (layout === "blank") {
+    return (
+      <div className={classnames(styles.container, styles.v)}>
+        <div>
+          <img src={logo} style={{ width: 220, margin: "21px 28px" }} />
+        </div>
+        <div
+          className={styles.main}
+          style={{ background: "rgba(247, 248, 250, 1)" }}
+        >
+          <Outlet />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       {menuCollapse || collapseForDrawer ? (

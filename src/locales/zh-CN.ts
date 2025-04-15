@@ -35,6 +35,7 @@ export default {
     define_interview_plan: "确定面试计划",
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
+    evaluate_result: "简历评估",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI招聘专员",
@@ -47,6 +48,7 @@ export default {
     salary_structure: "点击确定薪资结构",
     screening_questions: "点击编辑筛选问题",
     view_jrd: "查看详细职位需求文档",
+    view_talent: "查看候选人",
     no_edits: "没有要修改的",
     copy_link: "复制链接",
     open: "打开聊天机器人",

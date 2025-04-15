@@ -35,6 +35,7 @@ export default {
     define_interview_plan: "Define interview plan",
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
+    evaluate_result: "Talent evaluate result",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI recruiter",
@@ -46,7 +47,8 @@ export default {
     other_requirements: "Click here to provide other requirements",
     salary_structure: "Click here to provide salary structure",
     screening_questions: "Click here to edit screening questions",
-    view_jrd: "View Complete Job Requirement Document",
+    view_jrd: "View complete job requirement document",
+    view_talent: "View talent",
     no_edits: "Draft is good, no edits",
     copy_link: "Copy Link",
     open: "Open",

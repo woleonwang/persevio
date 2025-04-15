@@ -10,25 +10,8 @@ import classnames from "classnames";
 import { Get } from "../../../../utils/request";
 import { Button, Drawer, List } from "antd";
 import styles from "./style.module.less";
-import { TEvaluation } from "./type";
+import { TTalent } from "./type";
 import { parseJSON } from "../../../../utils";
-
-type TCandidate = {
-  name: string;
-};
-
-type TTalent = {
-  id: number;
-  candidate_id: number;
-  status: "evaluate_succeed" | "evaluate_failed";
-  evaluate_result: TEvaluation;
-  file_path: string;
-  content: string;
-  job_id: number;
-  created_at: string;
-  updated_at: string;
-  candidate: TCandidate;
-};
 
 const Profile = (props: { jobId: number }) => {
   const { jobId } = props;

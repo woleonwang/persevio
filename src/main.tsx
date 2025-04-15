@@ -16,6 +16,7 @@ import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
 import JobCoworker from "./pages/job-coworker";
+import Talent from "./pages/talent";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
@@ -44,29 +45,32 @@ createRoot(document.getElementById("root")!).render(
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/jobs/:id/chat" element={<JobsShow />}></Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/jobs/:id/chat" element={<JobsShow />} />
           <Route
             path="/jobs/:id/:companyName/:jobName"
             element={<JobsShow />}
-          ></Route>
+          />
           <Route
             path="/jobs/:invitation_token/coworker"
             element={<JobCoworker />}
-          ></Route>
+          />
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}
+            <Route path="/app/entry/create-job" element={<JobsCreate />} />
+            <Route path="/app/jobs/:jobId" element={<Job />} />
             <Route
-              path="/app/entry/create-job"
-              element={<JobsCreate />}
-            ></Route>
-            <Route path="/app/jobs/:jobId" element={<Job />}></Route>
-            <Route path="/app/company" element={<CompanyKnowledge />}></Route>
-            <Route path="/app/settings" element={<Settings />}></Route>
+              path="/app/jobs/:jobId/talents/:talentId"
+              element={<Talent />}
+              handle={{ layout: "blank" }}
+              key="talent"
+            />
+            <Route path="/app/company" element={<CompanyKnowledge />} />
+            <Route path="/app/settings" element={<Settings />} />
           </Route>
           {/* <Route path="/signup" element={<Signup />}></Route> */}
-          <Route path="/signin" element={<Signin />}></Route>
-          <Route path="/apply" element={<Apply />}></Route>
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/apply" element={<Apply />} />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>

@@ -17,6 +17,7 @@ export type TExtraTagName =
   | "other-requirements-request"
   | "salary-structure-request"
   | "screening-q-request"
+  | "talent-evaluate-result"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -64,7 +65,8 @@ export type TChatType =
   | "jobScreeningQuestion"
   | "jobInterviewPlan"
   | "jobDescription"
-  | "chatbot";
+  | "chatbot"
+  | "talentEvaluateResult";
 
 export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
 
