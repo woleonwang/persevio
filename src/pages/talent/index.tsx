@@ -15,6 +15,7 @@ import { parseJSON } from "../../utils";
 
 import styles from "./style.module.less";
 import { Popover } from "antd";
+import MarkdownContainer from "../../components/MarkdownContainer";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
@@ -63,7 +64,9 @@ const Talent = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.left}>{t("resume_body")}</div>
+      <div className={styles.left}>
+        <MarkdownContainer content={talent.parsed_content} />
+      </div>
       <div className={styles.right}>
         <div className={styles.title}>{t("evaluate_report")}</div>
         <div className={styles.body}>

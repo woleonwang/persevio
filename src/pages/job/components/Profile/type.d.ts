@@ -67,4 +67,5 @@ export type TTalent = {
   created_at: string;
   updated_at: string;
   candidate: TCandidate;
+  parsed_content: string;
 };
