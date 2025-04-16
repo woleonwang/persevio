@@ -30,6 +30,7 @@ export default {
       "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants",
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
+    define_target_companies: "Define target companies",
     define_compensation_details: "Define compensation details",
     define_screening_questions: "Define screening questions",
     define_interview_plan: "Define interview plan",

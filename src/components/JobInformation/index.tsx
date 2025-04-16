@@ -107,11 +107,6 @@ const JobInformation = (props: IProps) => {
       disabled: docUnfinised("role_context"),
     },
     {
-      value: "objectives",
-      label: t("objectives"),
-      disabled: docUnfinised("objectives"),
-    },
-    {
       value: "activities",
       label: t("activities"),
       disabled: docUnfinised("activities"),
@@ -120,11 +115,6 @@ const JobInformation = (props: IProps) => {
       value: "candidate_requirements",
       label: t("ideal_candidate"),
       disabled: docUnfinised("candidate_requirements"),
-    },
-    {
-      value: "target_companies",
-      label: t("target_companies"),
-      disabled: docUnfinised("target_companies"),
     },
     {
       value: "requirement",

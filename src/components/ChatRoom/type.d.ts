@@ -1,6 +1,7 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
+  | "final-candidate-profile-and-criteria-done"
   | "targets-done"
   | "compensation-details-done"
   | "screening-q-done"
@@ -21,6 +22,7 @@ export type TExtraTagName =
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
+  | "final-candidate-profile-and-criteria-done-btn"
   | "targets-done-btn"
   | "compensation-details-done-btn"
   | "screening-q-done-btn"
@@ -60,12 +62,13 @@ export type TMessage = {
 
 export type TChatType =
   | "jobRequirementDoc"
-  | "candidate"
+  | "jobTargetCompanies"
   | "jobCompensationDetails"
   | "jobScreeningQuestion"
   | "jobInterviewPlan"
   | "jobDescription"
   | "chatbot"
+  | "candidate"
   | "talentEvaluateResult";
 
 export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;

@@ -231,6 +231,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
       send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
     },
+    jobTargetCompanies: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TARGET_COMPANIES/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_TARGET_COMPANIES/send`),
+    },
     jobCompensationDetails: {
       get: formatUrl(
         `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`
@@ -385,6 +389,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
 
     {
+      key: "final-candidate-profile-and-criteria-done-btn",
+      title: t("define_target_companies"),
+      handler: () => setChatType("jobTargetCompanies"),
+    },
+    {
       key: "targets-done-btn",
       title: t("define_compensation_details"),
       handler: () => setChatType("jobCompensationDetails"),
@@ -425,8 +434,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
         initChatType = "jobInterviewPlan";
       } else if (job.compensation_details_doc_id) {
         initChatType = "jobScreeningQuestion";
-      } else if (job.requirement_doc_id) {
+      } else if (job.target_companies_doc_id) {
         initChatType = "jobCompensationDetails";
+      } else if (job.requirement_doc_id) {
+        initChatType = "jobTargetCompanies";
       }
       setChatType(initChatType);
     } else {
@@ -557,6 +568,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
           [
+            "final-candidate-profile-and-criteria-done",
             "targets-done",
             "compensation-details-done",
             "screening-q-done",
@@ -829,8 +841,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 chatType: "jobRequirementDoc",
               },
               {
-                title: t("define_compensation_details"),
+                title: t("define_target_companies"),
                 disabled: !job?.requirement_doc_id,
+                isFinished: !!job?.target_companies_doc_id,
+                chatType: "jobTargetCompanies",
+              },
+              {
+                title: t("define_compensation_details"),
+                disabled: !job?.target_companies_doc_id,
                 isFinished: !!job?.compensation_details_doc_id,
                 chatType: "jobCompensationDetails",
               },
