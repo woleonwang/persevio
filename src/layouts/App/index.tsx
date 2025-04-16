@@ -1,9 +1,4 @@
-import {
-  Outlet,
-  useLocation,
-  useNavigate,
-  useOutletContext,
-} from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
 import {
   LeftCircleFilled,
