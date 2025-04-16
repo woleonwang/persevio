@@ -335,6 +335,37 @@ export default {
     jrd: "JRD",
   },
 
+  talent: {
+    not_a_match: "Not a Match",
+    recommend_with_reservations: "Recommend with Reservations",
+    match_pending_verification: "Match Pending Verification",
+    match: "Match",
+    strong_match: "Strong Match",
+
+    met: "Met",
+    not_met: "Not Met",
+    not_sure: "Not Sure",
+
+    VH: "Very High",
+    H: "High",
+    N: "Normal",
+    L: "Low",
+    VL: "Very Low",
+
+    resume_body: "Resume",
+    evaluate_report: "Evaluate Report",
+    summary: "Summary",
+    overall: "Evaluate Result",
+    compensation: "Ability",
+    other: "Other",
+    rank: "Rank",
+    details: "Analysis Details",
+    details_requirement: "Role Requirements",
+    confidence: "Confidence",
+    reason: "Reason",
+    evidence: "Evidence",
+  },
+
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",

@@ -322,6 +322,37 @@ export default {
     jrd: "完整职位需求文档",
   },
 
+  talent: {
+    not_a_match: "不匹配",
+    recommend_with_reservations: "推荐",
+    match_pending_verification: "总体合适，但需要确认一些信息",
+    match: "匹配",
+    strong_match: "非常匹配",
+
+    met: "满足",
+    not_met: "不满足",
+    not_sure: "不确定",
+
+    VH: "非常高",
+    H: "高",
+    N: "普通",
+    L: "低",
+    VL: "非常低",
+
+    resume_body: "简历正文",
+    evaluate_report: "简历评估报告",
+    summary: "评估总结",
+    overall: "总体评估结果",
+    compensation: "能力适合度",
+    other: "其它指标适合度",
+    rank: "候选人排名",
+    details: "详细分析",
+    details_requirement: "具体职位要求分析",
+    confidence: "信心",
+    reason: "判断原因",
+    evidence: "简历相关原文",
+  },
+
   cancel: "取消",
   save: "保存",
   submit: "提交",

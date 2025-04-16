@@ -4,7 +4,6 @@ import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircleFilled,
-  CheckCircleOutlined,
   CloseCircleOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
@@ -15,7 +14,7 @@ import { TTalent } from "../job/components/Profile/type";
 import { parseJSON } from "../../utils";
 
 import styles from "./style.module.less";
-import { Popover, Tooltip } from "antd";
+import { Popover } from "antd";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
@@ -64,37 +63,39 @@ const Talent = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.left}>简历正文</div>
+      <div className={styles.left}>{t("resume_body")}</div>
       <div className={styles.right}>
-        <div className={styles.title}>简历评估报告</div>
+        <div className={styles.title}>{t("evaluate_report")}</div>
         <div className={styles.body}>
-          <div className={styles.blockTitle}>评估总结</div>
+          <div className={styles.blockTitle}>{t("summary")}</div>
           <div className={styles.summary}>{result.summary.reasoning}</div>
           <div className={styles.summaryMatch}>
             <div className={styles.summaryMatchTitle}>
-              <div className={styles.summaryMatchTitleText}>总体评估结果</div>
+              <div className={styles.summaryMatchTitleText}>{t("overall")}</div>
               <div className={styles.summaryMatchTitleHint}>
-                {originalT(`profile.${result.summary.overall}`)}
+                {t(result.summary.overall)}
               </div>
             </div>
             <div className={styles.summaryMeet}>
               <div className={styles.summaryMeetItem}>
-                <div className={styles.summaryMeetItemName}>能力适合度</div>
+                <div className={styles.summaryMeetItemName}>
+                  {t("compensation")}
+                </div>
                 <div className={styles.summaryMeetItemValue}>
-                  {originalT(`profile.${result.summary.competency}`)}
+                  {t(result.summary.competency)}
                 </div>
               </div>
               <div className={styles.summaryMeetItem}>
-                <div className={styles.summaryMeetItemName}>其它指标适合度</div>
+                <div className={styles.summaryMeetItemName}>{t("other")}</div>
                 <div className={styles.summaryMeetItemValue}>
-                  {originalT(`profile.${result.summary.logistics}`)}
+                  {t(result.summary.logistics)}
                 </div>
               </div>
             </div>
           </div>
           <div className={styles.rank}>
             <DoubleRightOutlined style={{ marginRight: 4, fontSize: 12 }} />
-            候选人排名:{" "}
+            {t("rank")}:{" "}
             <span style={{ fontWeight: "bold", marginLeft: 8 }}>
               1/1 processed so far
             </span>
@@ -102,32 +103,19 @@ const Talent = () => {
           </div>
 
           <div className={styles.blockTitle} style={{ marginTop: 20 }}>
-            详细分析
+            {t("details")}
           </div>
 
           <div>
-            <div className={styles.detailItemTitle}>具体职位要求分析</div>
+            <div className={styles.detailItemTitle}>
+              {t("details_requirement")}
+            </div>
             <div style={{ paddingLeft: 12 }}>
               {groupedEvaluations.map((group) => {
                 if (group.items.length === 0) return null;
 
                 return (
                   <div key={group.title} style={{ marginBottom: 20 }}>
-                    {/* <div className={styles.groupTitle}>
-                    <h3>{group.title}</h3>
-                    <div className={styles.metSummary}>
-                      {["met", "not_sure", "not_met"].map((key) => (
-                        <div key={key} className={styles.metSummaryBlock}>
-                          {
-                            group.items.filter((item) => item.judgement === key)
-                              .length
-                          }
-                          /{group.items.length}
-                          &nbsp;{t(key)}
-                        </div>
-                      ))}
-                    </div>
-                  </div> */}
                     {group.items.map((item) => {
                       const levelStyle = {
                         VH: {
@@ -204,15 +192,13 @@ const Talent = () => {
                                   }[item.judgement]
                                 }
                                 <div className={styles.tagText}>
-                                  {originalT(`profile.${item.judgement}`)}
+                                  {t(item.judgement)}
                                 </div>
                               </div>
                               <div className={styles.confidenceText}>
-                                信心:
+                                {t("confidence")}:
                                 {item.judgement === "met"
-                                  ? originalT(
-                                      `profile.${item.confidence_level}`
-                                    )
+                                  ? t(item.confidence_level)
                                   : item.reasons?.[0]?.reason}
                               </div>
                             </div>
@@ -222,7 +208,7 @@ const Talent = () => {
                             <div className={styles.reason}>
                               <div className={styles.reasonHeader}>
                                 <span className={styles.reasonTitle}>
-                                  判断原因
+                                  {t("reason")}
                                 </span>
                                 <Popover
                                   content={
@@ -238,7 +224,7 @@ const Talent = () => {
                                   }
                                 >
                                   <span className={styles.evidenceTrigger}>
-                                    简历相关原文
+                                    {t("evidence")}
                                   </span>
                                 </Popover>
                               </div>
