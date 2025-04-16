@@ -244,7 +244,7 @@ export default {
   profile: {
     not_a_match: "不匹配",
     recommend_with_reservations: "推荐",
-    match_pending_verification: "匹配（待审核）",
+    match_pending_verification: "总体合适，但需要确认一些信息",
     match: "匹配",
     strong_match: "非常匹配",
 
