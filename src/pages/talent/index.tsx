@@ -4,10 +4,10 @@ import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircleFilled,
-  CloseCircleOutlined,
+  CloseCircleFilled,
   DoubleLeftOutlined,
   DoubleRightOutlined,
-  QuestionCircleOutlined,
+  QuestionCircleFilled,
 } from "@ant-design/icons";
 import { Get } from "../../utils/request";
 import { TTalent } from "../job/components/Profile/type";
@@ -190,12 +190,12 @@ const Talent = () => {
                                       />
                                     ),
                                     not_sure: (
-                                      <QuestionCircleOutlined
+                                      <QuestionCircleFilled
                                         style={{ color: "white" }}
                                       />
                                     ),
                                     not_met: (
-                                      <CloseCircleOutlined
+                                      <CloseCircleFilled
                                         style={{ color: "white" }}
                                       />
                                     ),
