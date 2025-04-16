@@ -28,6 +28,8 @@ export default {
     next_task: "Your next task is: ",
     jd_next_task:
       "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants",
+    jrd_next_task:
+      "Here are your pending task, please let me know which one you'd like to work on next: ",
     create_job: "Open a new role",
     define_job_requirement: "Define job requirements",
     define_target_companies: "Define target companies",

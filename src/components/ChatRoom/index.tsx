@@ -75,6 +75,12 @@ import CandidateScreeningQuestionDrawer, {
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
+type TSupportTag = {
+  key: TExtraTagName;
+  title: string;
+  handler: (tag?: { name: string; content: string }) => void;
+  autoTrigger?: boolean;
+};
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
     jobId,
@@ -295,12 +301,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setScreeningQuestionDrawerOpen(open);
   };
 
-  const supportTags: {
-    key: TExtraTagName;
-    title: string;
-    handler: (tag?: { name: string; content: string }) => void;
-    autoTrigger?: boolean;
-  }[] = [
+  const supportTags: TSupportTag[] = [
     {
       key: "basic-info-request",
       title: t("share_basic"),
@@ -580,15 +581,44 @@ const ChatRoom: React.FC<IProps> = (props) => {
             resultMessages.push({
               id: `${item.id.toString()}-${step}-btn`,
               role: "ai",
-              content: step === "jd-done" ? t("jd_next_task") : t("next_task"),
+              content:
+                step === "jd-done"
+                  ? t("jd_next_task")
+                  : step === "final-candidate-profile-and-criteria-done"
+                  ? t("jrd_next_task")
+                  : t("next_task"),
               updated_at: item.updated_at,
               messageType: "system",
-              extraTags: [
-                {
-                  name: `${step}-btn`,
-                  content: "",
-                },
-              ],
+              extraTags:
+                step === "final-candidate-profile-and-criteria-done"
+                  ? [
+                      {
+                        name: "interview-plan-done-btn",
+                        content: "",
+                      },
+                      {
+                        name: `final-candidate-profile-and-criteria-done-btn`,
+                        content: "",
+                      },
+                      {
+                        name: `targets-done-btn`,
+                        content: "",
+                      },
+                      {
+                        name: `compensation-details-done-btn`,
+                        content: "",
+                      },
+                      {
+                        name: `screening-q-done-btn`,
+                        content: "",
+                      },
+                    ]
+                  : [
+                      {
+                        name: `${step}-btn`,
+                        content: "",
+                      },
+                    ],
             });
           }
         });
@@ -848,37 +878,37 @@ const ChatRoom: React.FC<IProps> = (props) => {
               },
               {
                 title: t("define_compensation_details"),
-                disabled: !job?.target_companies_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.compensation_details_doc_id,
                 chatType: "jobCompensationDetails",
               },
               {
                 title: t("define_screening_questions"),
-                disabled: !job?.compensation_details_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.screening_question_doc_id,
                 chatType: "jobScreeningQuestion",
               },
               {
                 title: t("define_interview_plan"),
-                disabled: !job?.screening_question_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.interview_plan_doc_id,
                 chatType: "jobInterviewPlan",
               },
               {
                 title: t("draft_job_description_btn"),
-                disabled: !job?.interview_plan_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.jd_doc_id,
                 chatType: "jobDescription",
               },
               {
                 title: t("create_chatbot"),
-                disabled: !job?.jd_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.jd_doc_id,
                 chatType: "chatbot",
               },
               {
                 title: t("evaluate_result"),
-                disabled: !job?.jd_doc_id,
+                disabled: !job?.requirement_doc_id,
                 isFinished: false,
                 chatType: "talentEvaluateResult",
               },
@@ -984,11 +1014,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       )}
 
                       {(() => {
-                        const visibleTags = supportTags.filter((tag) =>
-                          (item.extraTags ?? [])
-                            .map((extraTag) => extraTag.name)
-                            .includes(tag.key)
-                        );
+                        const visibleTags = (item.extraTags ?? [])
+                          .map((extraTag) => {
+                            return supportTags.find(
+                              (tag) => tag.key === extraTag.name
+                            );
+                          })
+                          .filter(Boolean) as TSupportTag[];
 
                         return (
                           <div

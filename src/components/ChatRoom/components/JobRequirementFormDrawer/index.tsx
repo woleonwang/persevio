@@ -1190,6 +1190,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         ]}
                         style={{ marginBottom: 20 }}
                         key={itemGroup.key}
+                        defaultActiveKey={itemGroup.key}
                       />
                     ) : (
                       <div key={itemGroup.key}>
