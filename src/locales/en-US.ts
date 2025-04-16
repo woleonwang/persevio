@@ -340,6 +340,7 @@ export default {
     recommend_with_reservations: "Recommend with Reservations",
     match_pending_verification: "Match Pending Verification",
     match: "Match",
+    needs_verification: "Need Verification",
     strong_match: "Strong Match",
 
     met: "Met",
