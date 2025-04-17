@@ -133,6 +133,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         });
       }
     }
+    forceUpdate();
   }, [formType, open]);
 
   const t = (key: string, params?: Record<string, string>): string => {
