@@ -1190,7 +1190,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
       {open && (
         <div style={{ flex: "auto", overflow: "auto" }}>
           {["reference", "team_context"].includes(group) && (
-            <div style={{ color: "#999" }}>{t("tips")}</div>
+            <div
+              style={{ color: "#999" }}
+              dangerouslySetInnerHTML={{ __html: t("tips") }}
+            />
           )}
           <div style={{ marginBottom: 20 }}></div>
           {questionGroup && (

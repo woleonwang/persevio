@@ -95,7 +95,7 @@ export default {
   },
 
   job_requirement_form: {
-    tips: "You don't have to answer every question below, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
+    tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
     time: "Is this a <b>full-time</b> or <b>part-time</b> role? If part-time, how many hours per week are required?",
     full_time: "Full-time",

@@ -91,7 +91,7 @@ export default {
   },
 
   job_requirement_form: {
-    tips: "下面的这些问题不是必填。但是您提供给我的信息越多，我就能更好地了解这个职位。",
+    tips: "<b style='color: black'>下面的这些问题不是必填</b>。但是您提供给我的信息越多，我就能更好地了解这个职位。",
     basic_information: "基本信息",
     time: "这个职位是<b>全职</b>还是<b>兼职</b>？",
     full_time: "全职",
