@@ -200,6 +200,7 @@ export default {
     certification:
       "Certifications, security clearances, legal requirements, etc",
     other: "Others",
+    requirement: "Requirement",
 
     create_team_succeed: "Create team succeed",
     required_error_message: "Please enter or select",
@@ -242,6 +243,7 @@ export default {
     minimum: "Minimum",
     big_plus: "Big Plus",
     plus: "Plus",
+    no_apply: "Not Apply",
     add: "Add New",
   },
 

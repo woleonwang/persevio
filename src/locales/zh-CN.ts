@@ -191,6 +191,7 @@ export default {
     onboarding: "onboard日期要求",
     certification: "职业证书，安全要求，合规要求等",
     other: "其它",
+    requirement: "要求",
 
     create_team_succeed: "团队创建成功",
     required_error_message: "请输入或者选择",
@@ -231,6 +232,7 @@ export default {
     minimum: "不可或缺",
     big_plus: "大加分项",
     plus: "加分项",
+    no_apply: "不适用优先级",
     add: "添加",
   },
 

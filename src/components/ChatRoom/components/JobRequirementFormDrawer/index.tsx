@@ -56,6 +56,7 @@ type TQuestion = {
   }[];
   required?: boolean;
   needPriority?: boolean;
+  canNoApply?: boolean;
 };
 
 type TGroup = {
@@ -66,6 +67,7 @@ type TGroup = {
   dependencies?: TDependence[];
   isArray?: boolean;
   needPriority?: boolean;
+  canNoApply?: boolean;
   needIndent?: boolean;
 };
 
@@ -100,6 +102,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         form.setFieldsValue({
           visa_requirements: [{}],
           language_group: [{}],
+          other_group: [{}],
         });
       }
     }
@@ -568,6 +571,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
           ],
           needPriority: true,
+          canNoApply: true,
           needIndent: true,
         },
 
@@ -584,10 +588,18 @@ const JobRequirementFormDrawer = (props: IProps) => {
           needPriority: true,
         },
         {
-          key: "others",
-          type: "text",
-          question: t("other"),
+          group: t("other_requirements"),
+          key: "other_group",
+          questions: [
+            {
+              key: "other_requirement",
+              type: "text",
+              question: t("requirement"),
+            },
+          ],
+          isArray: true,
           needPriority: true,
+          canNoApply: true,
         },
       ],
     },
@@ -1018,7 +1030,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
               )}
               <span className={styles.inlineFormItem}>
                 {question.needPriority &&
-                  genPriority(question.key, question.key)}
+                  genPriority(question.key, question.key, {
+                    canNoApply: question.canNoApply ?? false,
+                  })}
               </span>
             </div>
           }
@@ -1094,7 +1108,13 @@ const JobRequirementFormDrawer = (props: IProps) => {
     );
   };
 
-  const genPriority = (name: string | number, key: string | number) => {
+  const genPriority = (
+    name: string | number,
+    key: string | number,
+    options?: { canNoApply: boolean }
+  ) => {
+    const canNoApply = options?.canNoApply ?? false;
+
     return (
       <Form.Item
         key={`${key}-priority`}
@@ -1112,6 +1132,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
           <Radio.Button value="plus">
             {originalT("ideal_profile.plus")}
           </Radio.Button>
+          {canNoApply && (
+            <Radio.Button value="no_apply">
+              {originalT("ideal_profile.no_apply")}
+            </Radio.Button>
+          )}
         </Radio.Group>
       </Form.Item>
     );
@@ -1208,7 +1233,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
                                       className={styles.group}
                                     >
                                       {itemGroup.needPriority &&
-                                        genPriority(field.name, field.key)}
+                                        genPriority(field.name, field.key, {
+                                          canNoApply:
+                                            itemGroup.canNoApply ?? false,
+                                        })}
                                       {itemGroup.questions.map((question) =>
                                         genFormItem(question, field, {
                                           isSubQuestion: true,
@@ -1238,7 +1266,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
                             </div>
                             <div className={styles.group}>
                               {itemGroup.needPriority &&
-                                genPriority(itemGroup.key, itemGroup.key)}
+                                genPriority(itemGroup.key, itemGroup.key, {
+                                  canNoApply: itemGroup.canNoApply ?? false,
+                                })}
                               {itemGroup.questions.map((question) =>
                                 genFormItem(question, undefined, {
                                   isSubQuestion: true,
