@@ -348,7 +348,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "targets-done",
+      key: "final-candidate-profile-and-criteria-done",
       title: t("view_jrd"),
       handler: () => {
         onChangeTab?.("info", { docType: "requirement" });
