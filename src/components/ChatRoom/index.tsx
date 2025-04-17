@@ -429,16 +429,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setJob(job);
       setJobUrl(data.url);
       let initChatType: TChatType = "jobRequirementDoc";
-      if (job.interview_plan_doc_id) {
-        initChatType = "jobDescription";
-      } else if (job.screening_question_doc_id) {
+      if (job.screening_question_doc_id) {
         initChatType = "jobInterviewPlan";
       } else if (job.compensation_details_doc_id) {
         initChatType = "jobScreeningQuestion";
       } else if (job.target_companies_doc_id) {
         initChatType = "jobCompensationDetails";
-      } else if (job.requirement_doc_id) {
+      } else if (job.jd_doc_id) {
         initChatType = "jobTargetCompanies";
+      } else if (job.requirement_doc_id) {
+        initChatType = "jobDescription";
       }
       setChatType(initChatType);
     } else {
