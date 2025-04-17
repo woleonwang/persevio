@@ -56,6 +56,7 @@ import {
   TChatType,
   TChatTypeWithApi,
   TDoneTag,
+  TExtraTag,
   TExtraTagName,
   TMessage,
   TMessageFromApi,
@@ -390,33 +391,33 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "candidate-profile-done-btn",
-      title: t("define_target_companies"),
-      handler: () => setChatType("jobTargetCompanies"),
-    },
-    {
-      key: "targets-done-btn",
-      title: t("define_compensation_details"),
-      handler: () => setChatType("jobCompensationDetails"),
-    },
-    {
-      key: "compensation-details-done-btn",
-      title: t("define_screening_questions"),
-      handler: () => setChatType("jobScreeningQuestion"),
-    },
-    {
-      key: "screening-q-done-btn",
-      title: t("define_interview_plan"),
-      handler: () => setChatType("jobInterviewPlan"),
-    },
-    {
-      key: "interview-plan-done-btn",
+      key: "to-jd-btn",
       title: t("draft_job_description"),
       handler: () => setChatType("jobDescription"),
     },
     {
-      key: "jd-done-btn",
-      title: t("jd_done"),
+      key: "to-target-companies-btn",
+      title: t("define_target_companies"),
+      handler: () => setChatType("jobTargetCompanies"),
+    },
+    {
+      key: "to-compensation-details-btn",
+      title: t("define_compensation_details"),
+      handler: () => setChatType("jobCompensationDetails"),
+    },
+    {
+      key: "to-screening-questions-btn",
+      title: t("define_screening_questions"),
+      handler: () => setChatType("jobScreeningQuestion"),
+    },
+    {
+      key: "to-interview-plan-btn",
+      title: t("define_interview_plan"),
+      handler: () => setChatType("jobInterviewPlan"),
+    },
+    {
+      key: "to-chatbot-btn",
+      title: t("create_chatbot"),
       handler: () => setChatType("chatbot"),
     },
   ];
@@ -482,7 +483,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         apiMapping[chatType as TChatTypeWithApi].get
       );
       if (code === 0) {
-        const messageHistory = formatMessages(data.messages);
+        const messageHistory = formatMessages(data.messages, data.job);
         const isLoading = data.is_invoking === 1;
         setIsLoading(isLoading);
 
@@ -542,7 +543,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const formatMessages = (messages: TMessageFromApi[]): TMessage[] => {
+  const formatMessages = (
+    messages: TMessageFromApi[],
+    job: IJob
+  ): TMessage[] => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
 
@@ -570,55 +574,46 @@ const ChatRoom: React.FC<IProps> = (props) => {
         (
           [
             "candidate-profile-done",
+            "jd-done",
             "targets-done",
             "compensation-details-done",
             "screening-q-done",
             "interview-plan-done",
-            "jd-done",
           ] as TDoneTag[]
         ).forEach((step) => {
           if (step === tag.name) {
             resultMessages.push({
               id: `${item.id.toString()}-${step}-btn`,
               role: "ai",
-              content:
-                step === "jd-done"
-                  ? t("jd_next_task")
-                  : step === "candidate-profile-done"
-                  ? t("jrd_next_task")
-                  : t("next_task"),
+              content: t("jrd_next_task"),
               updated_at: item.updated_at,
               messageType: "system",
-              extraTags:
-                step === "candidate-profile-done"
-                  ? [
-                      {
-                        name: "interview-plan-done-btn",
-                        content: "",
-                      },
-                      {
-                        name: `candidate-profile-done-btn`,
-                        content: "",
-                      },
-                      {
-                        name: `targets-done-btn`,
-                        content: "",
-                      },
-                      {
-                        name: `compensation-details-done-btn`,
-                        content: "",
-                      },
-                      {
-                        name: `screening-q-done-btn`,
-                        content: "",
-                      },
-                    ]
-                  : [
-                      {
-                        name: `${step}-btn`,
-                        content: "",
-                      },
-                    ],
+              extraTags: [
+                !job.jd_doc_id && {
+                  name: "to-jd-btn",
+                  content: "",
+                },
+                !job.target_companies_doc_id && {
+                  name: `to-target-companies-btn`,
+                  content: "",
+                },
+                !job.compensation_details_doc_id && {
+                  name: `to-compensation-details-btn`,
+                  content: "",
+                },
+                !job.screening_question_doc_id && {
+                  name: `to-screening-questions-btn`,
+                  content: "",
+                },
+                !job.interview_plan_doc_id && {
+                  name: `to-interview-plan-btn`,
+                  content: "",
+                },
+                {
+                  name: `to-chatbot-btn`,
+                  content: "",
+                },
+              ].filter(Boolean) as TExtraTag[],
             });
           }
         });

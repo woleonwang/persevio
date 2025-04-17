@@ -239,6 +239,8 @@ export default {
     salary: "Monthly base salary",
     months: "Number of months ",
     month: "month",
+
+    no_data: "Not required",
   },
 
   ideal_profile: {

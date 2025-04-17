@@ -72,11 +72,7 @@ const IdealProfileForm = (props: IProps) => {
                     style={{ flex: "auto" }}
                     required
                   >
-                    <Input.TextArea
-                      rows={2}
-                      autoSize={{ minRows: 2, maxRows: 4 }}
-                      disabled={requirement.deleted}
-                    />
+                    <Input.TextArea rows={2} disabled={requirement.deleted} />
                   </Form.Item>
 
                   <Form.Item
@@ -98,6 +94,7 @@ const IdealProfileForm = (props: IProps) => {
                   </Form.Item>
 
                   <Button
+                    style={{ marginTop: 12 }}
                     icon={
                       requirement.deleted ? (
                         <UndoOutlined />

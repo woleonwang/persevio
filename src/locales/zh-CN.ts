@@ -229,6 +229,8 @@ export default {
     salary: "月薪",
     months: "月数",
     month: "月",
+
+    no_data: "没有/不需要。",
   },
 
   ideal_profile: {

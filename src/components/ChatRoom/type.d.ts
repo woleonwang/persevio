@@ -22,12 +22,12 @@ export type TExtraTagName =
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
-  | "candidate-profile-done-btn"
-  | "targets-done-btn"
-  | "compensation-details-done-btn"
-  | "screening-q-done-btn"
-  | "interview-plan-done-btn"
-  | "jd-done-btn";
+  | "to-jd-btn"
+  | "to-target-companies-btn"
+  | "to-compensation-details-btn"
+  | "to-screening-questions-btn"
+  | "to-interview-plan-btn"
+  | "to-chatbot-btn";
 
 export type TMessageFromApi = {
   id: number;
@@ -47,6 +47,11 @@ export type TMessageFromApi = {
   updated_at: string;
 };
 
+type TExtraTag = {
+  name: TExtraTagName;
+  content: string;
+};
+
 export type TMessage = {
   id: string;
   role: "ai" | "user";
@@ -54,10 +59,7 @@ export type TMessage = {
   updated_at: string;
   messageType?: "normal" | "system";
   messageSubType?: "normal" | "error";
-  extraTags?: {
-    name: TExtraTagName;
-    content: string;
-  }[];
+  extraTags?: TExtraTag[];
 };
 
 export type TChatType =

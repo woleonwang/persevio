@@ -12,7 +12,11 @@ import {
   Radio,
   Select,
 } from "antd";
-import { DeleteOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  QuestionCircleOutlined,
+  UndoOutlined,
+} from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
@@ -85,8 +89,31 @@ type TTeam = {
   detail: string;
 };
 
+const DeleteButton = (props: {
+  value?: boolean;
+  onChange?: (deleted: boolean) => void;
+}) => {
+  const { value, onChange } = props;
+
+  return (
+    <Button
+      onClick={() => onChange?.(!value)}
+      danger={!value}
+      icon={value ? <UndoOutlined /> : <DeleteOutlined />}
+      size="small"
+      type="text"
+    />
+  );
+};
+
 const JobRequirementFormDrawer = (props: IProps) => {
-  const { open, group = "basic_info", isCoworker, onClose, onOk } = props;
+  const {
+    open,
+    group: formType = "basic_info",
+    isCoworker,
+    onClose,
+    onOk,
+  } = props;
   const [form] = Form.useForm();
   const [createTeamForm] = Form.useForm();
   const [_, forceUpdate] = useReducer(() => ({}), {});
@@ -98,7 +125,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   useEffect(() => {
     form.resetFields();
     if (open) {
-      if (group === "other_requirement") {
+      if (formType === "other_requirement") {
         form.setFieldsValue({
           visa_requirements: [{}],
           language_group: [{}],
@@ -106,7 +133,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         });
       }
     }
-  }, [group, open]);
+  }, [formType, open]);
 
   const t = (key: string, params?: Record<string, string>): string => {
     return originalT(`job_requirement_form.${key}`, params);
@@ -423,7 +450,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   label: t("singapore"),
                 },
               ],
-              required: true,
             },
             {
               key: "visa_type_singapore",
@@ -500,7 +526,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               type: "select",
               question: t("language"),
               options: formatOptions(["chinese", "english"]),
-              required: true,
             },
             {
               key: "proficiency",
@@ -512,6 +537,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 "daily_conversation",
                 "proficiency_other",
               ]),
+              dependencies: [
+                {
+                  questionKey: "language_group.language",
+                  exists: true,
+                },
+              ],
             },
             {
               key: "proficiency_other",
@@ -757,7 +788,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   ];
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(
-    (item) => item.key === group
+    (item) => item.key === formType
   ) as unknown as TQuestionGroup;
 
   useEffect(() => {
@@ -817,11 +848,27 @@ const JobRequirementFormDrawer = (props: IProps) => {
         const getAnswer = (
           question: TQuestion,
           value: any,
-          options?: { isSingleLine?: boolean; isSubQuestion?: boolean }
+          options?: {
+            isSingleLine?: boolean;
+            isSubQuestion?: boolean;
+            outputNoData?: boolean;
+          }
         ): string => {
-          if (!value) return "";
+          const {
+            isSingleLine = false,
+            isSubQuestion = false,
+            outputNoData = false,
+          } = options ?? {};
 
-          const { isSingleLine = false, isSubQuestion = false } = options ?? {};
+          if (!value) {
+            if (outputNoData) {
+              return `${isSubQuestion ? "####" : "###"} ${question.question
+                .replaceAll("</b>", "")
+                .replaceAll("<b>", "")}\n\n${t("no_data")}`;
+            } else {
+              return "";
+            }
+          }
 
           let formattedValue = value;
           if (question.type === "base_salary") {
@@ -879,33 +926,43 @@ const JobRequirementFormDrawer = (props: IProps) => {
               // 允许添加多条记录
               const arrayValues = values[group.key] ?? [];
 
-              if (arrayValues.length) {
+              if (
+                formType === "other_requirement" &&
+                !arrayValues.filter(
+                  (groupValue: Record<string, any>) =>
+                    !groupValue.deleted && !!groupValue[group.questions[0].key]
+                ).length
+              ) {
                 questions.push(`### ${group.group}`);
-              }
+                questions.push(t("no_data"));
+              } else if (arrayValues.length > 0) {
+                questions.push(`### ${group.group}`);
+                arrayValues.forEach((groupValue: Record<string, any>) => {
+                  const groupAnswers = group.questions
+                    .map((question) =>
+                      getAnswer(question, groupValue[question.key], {
+                        isSingleLine: true,
+                      })
+                    )
+                    .filter(Boolean);
 
-              arrayValues.forEach((groupValue: Record<string, any>) => {
-                const groupAnswers = group.questions
-                  .map((question) =>
-                    getAnswer(question, groupValue[question.key], {
-                      isSingleLine: true,
-                    })
-                  )
-                  .filter(Boolean);
+                  groupAnswers.forEach((answer, index) => {
+                    if (index === 0) {
+                      questions.push(`#### ${answer}`);
+                    } else {
+                      questions.push(`- ${answer}`);
+                    }
+                  });
 
-                groupAnswers.forEach((answer, index) => {
-                  if (index === 0) {
-                    questions.push(`#### ${answer}`);
-                  } else {
-                    questions.push(`- ${answer}`);
+                  if (group.needPriority) {
+                    questions.push(
+                      `- ${originalT(
+                        "ideal_profile." + groupValue["priority"]
+                      )}`
+                    );
                   }
                 });
-
-                if (group.needPriority) {
-                  questions.push(
-                    `- ${originalT("ideal_profile." + groupValue["priority"])}`
-                  );
-                }
-              });
+              }
             } else {
               // 单个对象
               const answers = group.questions
@@ -916,31 +973,36 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 )
                 .filter(Boolean);
 
-              if (answers.length) {
+              if (formType === "other_requirement" && answers.length === 0) {
                 questions.push(`### ${group.group}`);
-              }
+                questions.push(t("no_data"));
+              } else if (answers.length > 0) {
+                questions.push(`### ${group.group}`);
 
-              answers.forEach((answer, index) => {
-                if (index === 0) {
-                  questions.push(answer);
-                } else {
-                  questions.push(group.needIndent ? `- ${answer}` : answer);
+                answers.forEach((answer, index) => {
+                  if (index === 0) {
+                    questions.push(answer);
+                  } else {
+                    questions.push(group.needIndent ? `- ${answer}` : answer);
+                  }
+                });
+
+                if (group.needPriority) {
+                  questions.push(
+                    `- ${originalT(
+                      "ideal_profile." + values[`${group.key}_priority`]
+                    )}`
+                  );
                 }
-              });
-
-              if (answers.length && group.needPriority) {
-                questions.push(
-                  `- ${originalT(
-                    "ideal_profile." + values[`${group.key}_priority`]
-                  )}`
-                );
               }
             }
           } else {
             const answer = getAnswer(
               question as TQuestion,
-              values[question.key]
+              values[question.key],
+              { outputNoData: formType === "other_requirement" }
             );
+
             if (answer) {
               questions.push(`${answer}`);
             }
@@ -1005,21 +1067,21 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const genFormItem = (
     question: TQuestion,
     field?: FormListFieldData,
-    options?: { isSubQuestion?: boolean }
+    options?: { isSubQuestion?: boolean; deleted?: boolean }
   ): ReactNode => {
     const visible = checkVisible(question.dependencies, field);
 
     if (!visible) return null;
 
-    const { isSubQuestion = false } = options ?? {};
+    const { isSubQuestion = false, deleted = false } = options ?? {};
     return (
       <>
         <Form.Item
           label={
             <div
               className={
-                (group === "salary_structure" ||
-                  group === "other_requirement") &&
+                (formType === "salary_structure" ||
+                  formType === "other_requirement") &&
                 !isSubQuestion
                   ? styles.groupTitle
                   : ""
@@ -1063,16 +1125,26 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
           ]}
         >
-          {question.type === "text" && <Input />}
+          {question.type === "text" && <Input disabled={deleted} />}
           {question.type === "textarea" && (
-            <Input.TextArea rows={2} autoSize={{ minRows: 2, maxRows: 8 }} />
+            <Input.TextArea
+              rows={2}
+              autoSize={{ minRows: 2, maxRows: 8 }}
+              disabled={deleted}
+            />
           )}
-          {question.type === "number" && <InputNumber />}
-          {question.type === "select" && <Select options={question.options} />}
+          {question.type === "number" && <InputNumber disabled={deleted} />}
+          {question.type === "select" && (
+            <Select options={question.options} disabled={deleted} />
+          )}
           {question.type === "multiple_select" && (
-            <Select options={question.options} mode="multiple" />
+            <Select
+              options={question.options}
+              mode="multiple"
+              disabled={deleted}
+            />
           )}
-          {question.type === "date" && <DatePicker />}
+          {question.type === "date" && <DatePicker disabled={deleted} />}
           {question.type === "base_salary" && <BaseSalaryInput />}
           {question.type === "team" && (
             <Select
@@ -1120,9 +1192,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const genPriority = (
     name: string | number,
     key: string | number,
-    options?: { canNoApply: boolean }
+    options?: { canNoApply: boolean; deleted?: boolean }
   ) => {
-    const canNoApply = options?.canNoApply ?? false;
+    const { canNoApply = false, deleted = false } = options ?? {};
 
     return (
       <Form.Item
@@ -1131,7 +1203,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         style={{ flex: "none" }}
         initialValue={"plus"}
       >
-        <Radio.Group buttonStyle="solid">
+        <Radio.Group buttonStyle="solid" disabled={deleted}>
           <Radio.Button value="minimum">
             {originalT("ideal_profile.minimum")}
           </Radio.Button>
@@ -1164,7 +1236,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           <Button key="back" onClick={onClose}>
             {originalT("cancel")}
           </Button>
-          {group === "reference" && (
+          {formType === "reference" && (
             <Button
               key="nothing"
               type="primary"
@@ -1189,7 +1261,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
     >
       {open && (
         <div style={{ flex: "auto", overflow: "auto" }}>
-          {["reference", "team_context"].includes(group) && (
+          {["reference", "team_context"].includes(formType) && (
             <div
               style={{ color: "#999" }}
               dangerouslySetInnerHTML={{ __html: t("tips") }}
@@ -1233,37 +1305,46 @@ const JobRequirementFormDrawer = (props: IProps) => {
                       <div key={itemGroup.key}>
                         {itemGroup.isArray ? (
                           <Form.List name={itemGroup.key}>
-                            {(fields, { add, remove }) => {
+                            {(fields, { add }) => {
                               return (
                                 <div style={{ marginBottom: 24 }}>
                                   <div className={styles.groupTitle}>
                                     {itemGroup.group}
                                   </div>
-                                  {fields.map((field) => (
-                                    <div
-                                      key={field.key}
-                                      className={styles.group}
-                                    >
-                                      {itemGroup.needPriority &&
-                                        genPriority(field.name, field.key, {
-                                          canNoApply:
-                                            itemGroup.canNoApply ?? false,
-                                        })}
-                                      {itemGroup.questions.map((question) =>
-                                        genFormItem(question, field, {
-                                          isSubQuestion: true,
-                                        })
-                                      )}
-                                      <Button
-                                        onClick={() => remove(field.name)}
-                                        danger
-                                        className={styles.deleteBtn}
-                                        icon={<DeleteOutlined />}
-                                        size="small"
-                                        type="text"
-                                      />
-                                    </div>
-                                  ))}
+                                  {fields.map((field) => {
+                                    const deleted = form.getFieldValue([
+                                      itemGroup.key,
+                                      field.name,
+                                      "deleted",
+                                    ]);
+                                    return (
+                                      <div
+                                        key={field.key}
+                                        className={styles.group}
+                                      >
+                                        {itemGroup.needPriority &&
+                                          genPriority(field.name, field.key, {
+                                            canNoApply:
+                                              itemGroup.canNoApply ?? false,
+                                            deleted,
+                                          })}
+                                        {itemGroup.questions.map((question) =>
+                                          genFormItem(question, field, {
+                                            isSubQuestion: true,
+                                            deleted,
+                                          })
+                                        )}
+
+                                        <Form.Item
+                                          key={`${field.key}-deleted`}
+                                          name={[field.name, "deleted"]}
+                                          className={styles.deleteBtn}
+                                        >
+                                          <DeleteButton />
+                                        </Form.Item>
+                                      </div>
+                                    );
+                                  })}
                                   <Button type="primary" onClick={() => add()}>
                                     {t("add", { name: itemGroup.group })}
                                   </Button>
