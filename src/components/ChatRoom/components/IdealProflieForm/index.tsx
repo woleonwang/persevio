@@ -72,7 +72,11 @@ const IdealProfileForm = (props: IProps) => {
                     style={{ flex: "auto" }}
                     required
                   >
-                    <Input disabled={requirement.deleted} />
+                    <Input.TextArea
+                      rows={2}
+                      autoSize={{ minRows: 2, maxRows: 4 }}
+                      disabled={requirement.deleted}
+                    />
                   </Form.Item>
 
                   <Form.Item

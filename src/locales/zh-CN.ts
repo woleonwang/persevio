@@ -136,7 +136,8 @@ export default {
     create_team: "创建团队",
     team_details: "团队信息",
     team_name: "团队名称",
-    team_intro: "介绍下这个团队的主要目标和职责？",
+    team_intro:
+      "介绍下这个团队的主要目标和职责？一个详细的团队介绍可以帮助Viona更好地理解这个职位",
     members_count: "不算这个新招的职位，现在这个团队有多少人？",
     menbers_detail: "简单介绍下团队成员，他们各自的职责，资历，等。",
     team_lead: "团队领导是谁？",
@@ -162,8 +163,10 @@ export default {
     wp: "WP",
     dp: "DP",
     other_singapore_visa: "其它",
-    no_visa: "We cannot sponsor Visa",
-    has_visa: "We can sponsor Visa",
+    chinese_citizen: "中国公民",
+    china_pr: "中国永居",
+    no_need_visa: "无需重新申请工作签证",
+    need_visa: "需要重新申请工作签证",
     other_visa: "其它",
     visa_type_singapore_other: "其它",
 
@@ -316,11 +319,9 @@ export default {
 
   job_information: {
     basic: "职位基本信息",
-    role_context: "职位上下文",
-    objectives: "目标和核心指标",
-    activities: "日常工作",
+    role_context: "职位总览",
+    activities: "目标 & 日常工作 ",
     ideal_candidate: "理想候选人画像 & 筛选标准",
-    target_companies: "目标公司",
     jrd: "完整职位需求文档",
   },
 

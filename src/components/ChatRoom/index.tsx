@@ -871,6 +871,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 chatType: "jobRequirementDoc",
               },
               {
+                title: t("draft_job_description_btn"),
+                disabled: !job?.requirement_doc_id,
+                isFinished: !!job?.jd_doc_id,
+                chatType: "jobDescription",
+              },
+              {
                 title: t("define_target_companies"),
                 disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.target_companies_doc_id,
@@ -893,12 +899,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 disabled: !job?.requirement_doc_id,
                 isFinished: !!job?.interview_plan_doc_id,
                 chatType: "jobInterviewPlan",
-              },
-              {
-                title: t("draft_job_description_btn"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.jd_doc_id,
-                chatType: "jobDescription",
               },
               {
                 title: t("create_chatbot"),

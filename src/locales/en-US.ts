@@ -38,7 +38,7 @@ export default {
     define_interview_plan: "Define interview plan",
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
-    evaluate_result: "Talent evaluate result",
+    evaluate_result: "Resume screening",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI recruiter",
@@ -141,7 +141,7 @@ export default {
     team_details: "Team Details",
     team_name: "Team name",
     team_intro:
-      "Brief intro about this team's core objectives and responsibilities.",
+      "Brief intro about this team's core objectives and responsibilities. A detailed team introduction can help Viona better understand the position.",
     members_count: "How many team members, excluding this new role?",
     menbers_detail:
       "Brief intro about the team members. Their responsibilities, experience levels, where they are from, etc.",
@@ -170,8 +170,10 @@ export default {
     wp: "WP",
     dp: "DP",
     other_singapore_visa: "Other",
-    no_visa: "We cannot sponsor Visa",
-    has_visa: "We can sponsor Visa",
+    chinese_citizen: "Chinese Citizen",
+    china_pr: "Chinese PR",
+    no_need_visa: "No Need to Sponsor Work Visa",
+    need_visa: "Need Visa Sponsorship",
     other_visa: "Other",
     visa_type_singapore_other: "Other",
 
@@ -329,11 +331,9 @@ export default {
 
   job_information: {
     basic: "Basic Information",
-    role_context: "Role Context",
-    objectives: "Objectives & Success Metrics",
-    activities: "Day-to-day activities",
+    role_context: "Role Overview",
+    activities: "Objectives & Day-to-day Activities",
     ideal_candidate: "Ideal Candidate Profile & Screening Criteria",
-    target_companies: "Target Companies",
     jrd: "JRD",
   },
 

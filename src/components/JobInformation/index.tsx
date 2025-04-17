@@ -121,16 +121,6 @@ const JobInformation = (props: IProps) => {
       label: t("jrd"),
       disabled: docUnfinised("requirement"),
     },
-    // {
-    //   value: "interview_plan",
-    //   label: "Interview Plan",
-    //   disabled: docUnfinised("interview_plan"),
-    // },
-    // {
-    //   value: "jd",
-    //   label: "Job Description",
-    //   disabled: docUnfinised("jd"),
-    // },
   ];
 
   const items: CollapseProps["items"] = docsOptions.map((option) => {

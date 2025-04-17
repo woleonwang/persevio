@@ -130,16 +130,19 @@ const JobRequirementFormDrawer = (props: IProps) => {
       key: "name",
       question: t("team_name"),
       type: "text",
+      required: true,
     },
     {
       key: "objectives",
       question: t("team_intro"),
       type: "textarea",
+      required: true,
     },
     {
       key: "members_count",
       question: t("members_count"),
       type: "number",
+      required: true,
     },
     {
       key: "members_detail",
@@ -457,7 +460,13 @@ const JobRequirementFormDrawer = (props: IProps) => {
               key: "visa_type_others",
               type: "multiple_select",
               question: t("visa_type"),
-              options: formatOptions(["no_visa", "has_visa", "other_visa"]),
+              options: formatOptions([
+                "chinese_citizen",
+                "china_pr",
+                "no_need_visa",
+                "need_visa",
+                "other_visa",
+              ]),
               dependencies: [
                 {
                   questionKey: "visa_requirements.visa_country",
@@ -776,22 +785,22 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const onCloseCreateTeamModal = () => setCreateTeamModelOpen(false);
 
   const createTeam = async () => {
-    const questions = createTeamForm.getFieldsValue();
+    createTeamForm.validateFields().then(async (questions) => {
+      const { code, data } = await Post<{ team: TTeam }>(
+        formatUrl(`/api/teams`),
+        {
+          name: questions.name,
+          detail: JSON.stringify(questions),
+        }
+      );
 
-    const { code, data } = await Post<{ team: TTeam }>(
-      formatUrl(`/api/teams`),
-      {
-        name: questions.name,
-        detail: JSON.stringify(questions),
+      if (code === 0) {
+        message.success(t("create_team_succeed"));
+        fetchTeams({ selectedTeamId: data?.team?.id });
+
+        onCloseCreateTeamModal();
       }
-    );
-
-    if (code === 0) {
-      message.success(t("create_team_succeed"));
-      fetchTeams({ selectedTeamId: data?.team?.id });
-
-      onCloseCreateTeamModal();
-    }
+    });
   };
 
   const canSubmit = () => {
