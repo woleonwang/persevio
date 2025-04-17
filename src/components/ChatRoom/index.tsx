@@ -348,7 +348,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "final-candidate-profile-and-criteria-done",
+      key: "candidate-profile-done",
       title: t("view_jrd"),
       handler: () => {
         onChangeTab?.("info", { docType: "requirement" });
@@ -390,7 +390,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "final-candidate-profile-and-criteria-done-btn",
+      key: "candidate-profile-done-btn",
       title: t("define_target_companies"),
       handler: () => setChatType("jobTargetCompanies"),
     },
@@ -569,7 +569,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
           [
-            "final-candidate-profile-and-criteria-done",
+            "candidate-profile-done",
             "targets-done",
             "compensation-details-done",
             "screening-q-done",
@@ -584,20 +584,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
               content:
                 step === "jd-done"
                   ? t("jd_next_task")
-                  : step === "final-candidate-profile-and-criteria-done"
+                  : step === "candidate-profile-done"
                   ? t("jrd_next_task")
                   : t("next_task"),
               updated_at: item.updated_at,
               messageType: "system",
               extraTags:
-                step === "final-candidate-profile-and-criteria-done"
+                step === "candidate-profile-done"
                   ? [
                       {
                         name: "interview-plan-done-btn",
                         content: "",
                       },
                       {
-                        name: `final-candidate-profile-and-criteria-done-btn`,
+                        name: `candidate-profile-done-btn`,
                         content: "",
                       },
                       {

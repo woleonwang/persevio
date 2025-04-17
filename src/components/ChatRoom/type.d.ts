@@ -1,7 +1,7 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
-  | "final-candidate-profile-and-criteria-done"
+  | "candidate-profile-done"
   | "targets-done"
   | "compensation-details-done"
   | "screening-q-done"
@@ -22,7 +22,7 @@ export type TExtraTagName =
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
-  | "final-candidate-profile-and-criteria-done-btn"
+  | "candidate-profile-done-btn"
   | "targets-done-btn"
   | "compensation-details-done-btn"
   | "screening-q-done-btn"
