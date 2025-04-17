@@ -1144,7 +1144,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {chatType !== "chatbot" && (
+        {!["chatbot", "talentEvaluateResult"].includes(chatType) && (
           <div className={styles.inputArea}>
             {role !== "candidate" && (
               <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
