@@ -92,4 +92,5 @@ export type TRoleOverviewType =
 export type TScreeningQuestionType = {
   question: string;
   required: boolean;
+  deleted: boolean;
 };
