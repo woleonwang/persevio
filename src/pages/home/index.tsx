@@ -238,6 +238,24 @@ const VideoContainer = (props: { src: string; withBg?: boolean }) => {
 
 const Home = () => {
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const eventSource = new EventSource("/api/stream_invoke");
+
+  //   eventSource.onmessage = (event) => {
+  //     console.log(event.data);
+  //   };
+
+  //   // eventSource.onerror = (error) => {
+  //   //   console.error("SSE error:", error.);
+  //   //   eventSource.close();
+  //   // };
+
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
