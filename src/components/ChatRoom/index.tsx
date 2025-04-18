@@ -349,7 +349,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "candidate-profile-done",
+      key: "jrd-done",
       title: t("view_jrd"),
       handler: () => {
         onChangeTab?.("info", { docType: "requirement" });
@@ -573,7 +573,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       (item.content.metadata.extra_tags ?? []).forEach((tag) => {
         (
           [
-            "candidate-profile-done",
+            "jrd-done",
             "jd-done",
             "targets-done",
             "compensation-details-done",

@@ -1,7 +1,7 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
-  | "candidate-profile-done"
+  | "jrd-done"
   | "targets-done"
   | "compensation-details-done"
   | "screening-q-done"
