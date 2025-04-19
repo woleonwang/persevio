@@ -244,7 +244,7 @@ export default {
   },
 
   ideal_profile: {
-    minimum: "Minimum",
+    minimum: "Must",
     big_plus: "Big Plus",
     plus: "Plus",
     no_apply: "Not Apply",
