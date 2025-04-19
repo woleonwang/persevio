@@ -82,6 +82,7 @@ const IdealProfileForm = (props: IProps) => {
                     <Radio.Group
                       disabled={requirement.deleted}
                       buttonStyle="solid"
+                      size="small"
                     >
                       <Radio.Button value="minimum">
                         {t("minimum")}
