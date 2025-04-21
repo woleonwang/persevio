@@ -11,19 +11,15 @@ interface IJob {
 
   basic_info_doc_id: number;
   reference_doc_id: number;
-  team_context_doc_id: number;
-
-  role_context_doc_id: number;
-  objectives_doc_id: number;
-  activities_doc_id: number;
-  candidate_requirements_doc_id: number;
-  target_companies_doc_id: number;
 
   requirement_doc_id: number;
+  jd_doc_id: number;
+  target_companies_doc_id: number;
   compensation_details_doc_id: number;
   screening_question_doc_id: number;
   interview_plan_doc_id: number;
-  jd_doc_id: number;
+  outreach_message_doc_id: number;
+  social_media_doc_id: number;
 
   jrd_survey_opened_at: string;
   status: number;

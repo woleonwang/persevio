@@ -69,7 +69,6 @@ type TGroup = {
   questions: TQuestion[];
   collapse?: boolean;
   dependencies?: TDependence[];
-  isArray?: boolean;
   needPriority?: boolean;
   canNoApply?: boolean;
   needIndent?: boolean;
@@ -124,15 +123,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
   useEffect(() => {
     form.resetFields();
-    if (open) {
-      if (formType === "other_requirement") {
-        form.setFieldsValue({
-          visa_requirements: [{}],
-          language_group: [{}],
-          other_group: [{}],
-        });
-      }
-    }
     forceUpdate();
   }, [formType, open]);
 
@@ -387,263 +377,47 @@ const JobRequirementFormDrawer = (props: IProps) => {
       ],
     },
 
-    {
-      key: "team_context",
-      title: t("team_context"),
-      questions: [
-        {
-          key: "team",
-          type: "team",
-          question: t("team"),
-        },
-        {
-          group: t("team_details"),
-          key: "team_details",
-          dependencies: [{ questionKey: "team", exists: true }],
-          collapse: true,
-          questions: TeamQuestions.map((item) => ({
-            ...item,
-            dependencies: [{ questionKey: "team", exists: true }],
-          })),
-        },
-        {
-          key: "report_to",
-          type: "textarea",
-          question: t("report_to"),
-        },
-        {
-          key: "manager_detail",
-          type: "textarea",
-          question: t("manager_detail"),
-        },
-        {
-          key: "collaborators",
-          type: "textarea",
-          question: t("collaborators"),
-        },
-        {
-          key: "team_others",
-          type: "textarea",
-          question: t("team_others"),
-        },
-      ],
-    },
-
-    {
-      key: "other_requirement",
-      title: t("other_requirements"),
-      questions: [
-        {
-          group: t("visa"),
-          key: "visa_requirements",
-          questions: [
-            {
-              key: "visa_country",
-              type: "select",
-              question: t("country"),
-              options: [
-                {
-                  value: "china",
-                  label: t("china"),
-                },
-                {
-                  value: "singapore",
-                  label: t("singapore"),
-                },
-              ],
-            },
-            {
-              key: "visa_type_singapore",
-              type: "multiple_select",
-              question: t("visa_type"),
-              options: formatOptions([
-                "singapore_citizen",
-                "singapore_pr",
-                "ep",
-                "sp",
-                "wp",
-                "dp",
-                "other_singapore_visa",
-              ]),
-              dependencies: [
-                {
-                  questionKey: "visa_requirements.visa_country",
-                  valueKey: "singapore",
-                },
-              ],
-            },
-            {
-              key: "visa_type_singapore_other",
-              type: "text",
-              question: t("visa_type_singapore_other"),
-              dependencies: [
-                {
-                  questionKey: "visa_requirements.visa_type_singapore",
-                  valueKey: "other_singapore_visa",
-                },
-              ],
-            },
-            {
-              key: "visa_type_others",
-              type: "multiple_select",
-              question: t("visa_type"),
-              options: formatOptions([
-                "chinese_citizen",
-                "china_pr",
-                "no_need_visa",
-                "need_visa",
-                "other_visa",
-              ]),
-              dependencies: [
-                {
-                  questionKey: "visa_requirements.visa_country",
-                  exceptValueKey: "singapore",
-                },
-              ],
-            },
-            {
-              key: "visa_type_others_other",
-              type: "text",
-              question: t("other_visa"),
-              dependencies: [
-                {
-                  questionKey: "visa_requirements.visa_type_others",
-                  valueKey: "other_visa",
-                },
-              ],
-            },
-          ],
-          isArray: true,
-          needPriority: true,
-          needIndent: true,
-        },
-
-        {
-          group: t("language_group"),
-          key: "language_group",
-          questions: [
-            {
-              key: "language",
-              type: "select",
-              question: t("language"),
-              options: formatOptions(["chinese", "english"]),
-            },
-            {
-              key: "proficiency",
-              type: "select",
-              question: t("proficiency"),
-              options: formatOptions([
-                "native_speaker",
-                "professional",
-                "daily_conversation",
-                "proficiency_other",
-              ]),
-              dependencies: [
-                {
-                  questionKey: "language_group.language",
-                  exists: true,
-                },
-              ],
-            },
-            {
-              key: "proficiency_other",
-              type: "text",
-              question: t("proficiency_other_name"),
-              dependencies: [
-                {
-                  questionKey: "language_group.proficiency",
-                  valueKey: "proficiency_other",
-                },
-              ],
-            },
-          ],
-          isArray: true,
-          needPriority: true,
-          needIndent: true,
-        },
-
-        {
-          group: t("travel_group"),
-          key: "travel_group",
-          questions: [
-            {
-              key: "travel_type",
-              type: "select",
-              question: t("need_travel"),
-              options: formatOptions([
-                "no_travel",
-                "hoc_travel",
-                "some_travel",
-                "regular_travel",
-              ]),
-            },
-            {
-              key: "destinations",
-              type: "text",
-              question: t("destination"),
-              dependencies: [
-                {
-                  questionKey: "travel_type",
-                  exceptValueKey: "no_travel",
-                },
-              ],
-            },
-            {
-              key: "nature_of_travel",
-              type: "text",
-              question: t("nature"),
-              dependencies: [
-                {
-                  questionKey: "travel_type",
-                  exceptValueKey: "no_travel",
-                },
-              ],
-            },
-            {
-              key: "regularity",
-              type: "text",
-              question: t("regularity"),
-              dependencies: [
-                {
-                  questionKey: "travel_type",
-                  exceptValueKey: "no_travel",
-                },
-              ],
-            },
-          ],
-          needPriority: true,
-          canNoApply: true,
-          needIndent: true,
-        },
-
-        {
-          key: "onboarding_date",
-          type: "date",
-          question: t("onboarding"),
-          needPriority: true,
-        },
-        {
-          key: "certifications",
-          type: "text",
-          question: t("certification"),
-          needPriority: true,
-        },
-        {
-          group: t("other_requirements"),
-          key: "other_group",
-          questions: [
-            {
-              key: "other_requirement",
-              type: "text",
-              question: t("requirement"),
-            },
-          ],
-          isArray: true,
-          needPriority: true,
-          canNoApply: true,
-        },
-      ],
-    },
+    // {
+    //   key: "team_context",
+    //   title: t("team_context"),
+    //   questions: [
+    //     {
+    //       key: "team",
+    //       type: "team",
+    //       question: t("team"),
+    //     },
+    //     {
+    //       group: t("team_details"),
+    //       key: "team_details",
+    //       dependencies: [{ questionKey: "team", exists: true }],
+    //       collapse: true,
+    //       questions: TeamQuestions.map((item) => ({
+    //         ...item,
+    //         dependencies: [{ questionKey: "team", exists: true }],
+    //       })),
+    //     },
+    //     {
+    //       key: "report_to",
+    //       type: "textarea",
+    //       question: t("report_to"),
+    //     },
+    //     {
+    //       key: "manager_detail",
+    //       type: "textarea",
+    //       question: t("manager_detail"),
+    //     },
+    //     {
+    //       key: "collaborators",
+    //       type: "textarea",
+    //       question: t("collaborators"),
+    //     },
+    //     {
+    //       key: "team_others",
+    //       type: "textarea",
+    //       question: t("team_others"),
+    //     },
+    //   ],
+    // },
 
     {
       key: "salary_structure",
@@ -850,16 +624,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
           question: TQuestion,
           value: any,
           options?: {
-            isSingleLine?: boolean;
             isSubQuestion?: boolean;
             outputNoData?: boolean;
           }
         ): string => {
-          const {
-            isSingleLine = false,
-            isSubQuestion = false,
-            outputNoData = false,
-          } = options ?? {};
+          const { isSubQuestion = false, outputNoData = false } = options ?? {};
 
           if (!value) {
             if (outputNoData) {
@@ -901,19 +670,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
           }
 
-          return isSingleLine
-            ? `${question.question
-                .replaceAll("</b>", "")
-                .replaceAll("<b>", "")}: ${formattedValue}`
-            : `${isSubQuestion ? "####" : "###"} ${question.question
-                .replaceAll("</b>", "")
-                .replaceAll("<b>", "")}${
-                question.needPriority
-                  ? ` - ${originalT(
-                      "ideal_profile." + values[`${question.key}_priority`]
-                    )}`
-                  : ""
-              }\n\n${formattedValue}`;
+          return `${isSubQuestion ? "####" : "###"} ${question.question
+            .replaceAll("</b>", "")
+            .replaceAll("<b>", "")}${
+            question.needPriority
+              ? ` - ${originalT(
+                  "ideal_profile." + values[`${question.key}_priority`]
+                )}`
+              : ""
+          }\n\n${formattedValue}`;
         };
 
         const questions: string[] = [];
@@ -923,85 +688,38 @@ const JobRequirementFormDrawer = (props: IProps) => {
           if (!!(question as TGroup).group) {
             const group = question as TGroup;
 
-            if (group.isArray) {
-              // 允许添加多条记录
-              const arrayValues = values[group.key] ?? [];
+            // 单个对象
+            const answers = group.questions
+              .map((question) =>
+                getAnswer(question, values[question.key], {
+                  isSubQuestion: true,
+                })
+              )
+              .filter(Boolean);
 
-              if (
-                formType === "other_requirement" &&
-                !arrayValues.filter(
-                  (groupValue: Record<string, any>) =>
-                    !groupValue.deleted && !!groupValue[group.questions[0].key]
-                ).length
-              ) {
-                questions.push(`### ${group.group}`);
-                questions.push(t("no_data"));
-              } else if (arrayValues.length > 0) {
-                questions.push(`### ${group.group}`);
-                arrayValues.forEach((groupValue: Record<string, any>) => {
-                  const groupAnswers = group.questions
-                    .map((question) =>
-                      getAnswer(question, groupValue[question.key], {
-                        isSingleLine: true,
-                      })
-                    )
-                    .filter(Boolean);
+            if (answers.length > 0) {
+              questions.push(`### ${group.group}`);
 
-                  groupAnswers.forEach((answer, index) => {
-                    if (index === 0) {
-                      questions.push(`#### ${answer}`);
-                    } else {
-                      questions.push(`- ${answer}`);
-                    }
-                  });
-
-                  if (group.needPriority) {
-                    questions.push(
-                      `- ${originalT(
-                        "ideal_profile." + groupValue["priority"]
-                      )}`
-                    );
-                  }
-                });
-              }
-            } else {
-              // 单个对象
-              const answers = group.questions
-                .map((question) =>
-                  getAnswer(question, values[question.key], {
-                    isSubQuestion: true,
-                  })
-                )
-                .filter(Boolean);
-
-              if (formType === "other_requirement" && answers.length === 0) {
-                questions.push(`### ${group.group}`);
-                questions.push(t("no_data"));
-              } else if (answers.length > 0) {
-                questions.push(`### ${group.group}`);
-
-                answers.forEach((answer, index) => {
-                  if (index === 0) {
-                    questions.push(answer);
-                  } else {
-                    questions.push(group.needIndent ? `- ${answer}` : answer);
-                  }
-                });
-
-                if (group.needPriority) {
-                  questions.push(
-                    `- ${originalT(
-                      "ideal_profile." + values[`${group.key}_priority`]
-                    )}`
-                  );
+              answers.forEach((answer, index) => {
+                if (index === 0) {
+                  questions.push(answer);
+                } else {
+                  questions.push(group.needIndent ? `- ${answer}` : answer);
                 }
+              });
+
+              if (group.needPriority) {
+                questions.push(
+                  `- ${originalT(
+                    "ideal_profile." + values[`${group.key}_priority`]
+                  )}`
+                );
               }
             }
           } else {
             const answer = getAnswer(
               question as TQuestion,
-              values[question.key],
-              { outputNoData: formType === "other_requirement" }
+              values[question.key]
             );
 
             if (answer) {
@@ -1081,9 +799,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           label={
             <div
               className={
-                (formType === "salary_structure" ||
-                  formType === "other_requirement") &&
-                !isSubQuestion
+                formType === "salary_structure" && !isSubQuestion
                   ? styles.groupTitle
                   : ""
               }
@@ -1303,74 +1019,21 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         defaultActiveKey={itemGroup.key}
                       />
                     ) : (
-                      <div key={itemGroup.key}>
-                        {itemGroup.isArray ? (
-                          <Form.List name={itemGroup.key}>
-                            {(fields, { add }) => {
-                              return (
-                                <div style={{ marginBottom: 24 }}>
-                                  <div className={styles.groupTitle}>
-                                    {itemGroup.group}
-                                  </div>
-                                  {fields.map((field) => {
-                                    const deleted = form.getFieldValue([
-                                      itemGroup.key,
-                                      field.name,
-                                      "deleted",
-                                    ]);
-                                    return (
-                                      <div
-                                        key={field.key}
-                                        className={styles.group}
-                                      >
-                                        {itemGroup.needPriority &&
-                                          genPriority(field.name, field.key, {
-                                            canNoApply:
-                                              itemGroup.canNoApply ?? false,
-                                            deleted,
-                                          })}
-                                        {itemGroup.questions.map((question) =>
-                                          genFormItem(question, field, {
-                                            isSubQuestion: true,
-                                            deleted,
-                                          })
-                                        )}
-
-                                        <Form.Item
-                                          key={`${field.key}-deleted`}
-                                          name={[field.name, "deleted"]}
-                                          className={styles.deleteBtn}
-                                        >
-                                          <DeleteButton />
-                                        </Form.Item>
-                                      </div>
-                                    );
-                                  })}
-                                  <Button type="primary" onClick={() => add()}>
-                                    {t("add", { name: itemGroup.group })}
-                                  </Button>
-                                </div>
-                              );
-                            }}
-                          </Form.List>
-                        ) : (
-                          <div style={{ marginBottom: 24 }}>
-                            <div className={styles.groupTitle}>
-                              {itemGroup.group}
-                            </div>
-                            <div className={styles.group}>
-                              {itemGroup.needPriority &&
-                                genPriority(itemGroup.key, itemGroup.key, {
-                                  canNoApply: itemGroup.canNoApply ?? false,
-                                })}
-                              {itemGroup.questions.map((question) =>
-                                genFormItem(question, undefined, {
-                                  isSubQuestion: true,
-                                })
-                              )}
-                            </div>
-                          </div>
-                        )}
+                      <div key={itemGroup.key} style={{ marginBottom: 24 }}>
+                        <div className={styles.groupTitle}>
+                          {itemGroup.group}
+                        </div>
+                        <div className={styles.group}>
+                          {itemGroup.needPriority &&
+                            genPriority(itemGroup.key, itemGroup.key, {
+                              canNoApply: itemGroup.canNoApply ?? false,
+                            })}
+                          {itemGroup.questions.map((question) =>
+                            genFormItem(question, undefined, {
+                              isSubQuestion: true,
+                            })
+                          )}
+                        </div>
                       </div>
                     );
                   } else {

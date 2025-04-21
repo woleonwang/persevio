@@ -36,6 +36,8 @@ export default {
     define_compensation_details: "确定薪资",
     define_screening_questions: "简历筛选问题",
     define_interview_plan: "确定面试计划",
+    define_outreach_message: "确定推广信息",
+    define_social_post: "确定社交素材",
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
     evaluate_result: "简历评估",
@@ -321,10 +323,15 @@ export default {
 
   job_information: {
     basic: "职位基本信息",
-    role_context: "职位总览",
-    activities: "目标 & 日常工作 ",
-    ideal_candidate: "理想候选人画像 & 筛选标准",
     jrd: "完整职位需求文档",
+    jd: "职位描述",
+    target_companies: "目标公司",
+    compensation_details: "薪资结构",
+    screening_question: "面试问题",
+    interview_plan: "面试计划",
+    outreach_message: "推广信息",
+    social_media: "社交信息",
+    updated_at: "更新于 ",
   },
 
   talent: {

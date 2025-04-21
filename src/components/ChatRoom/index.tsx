@@ -235,8 +235,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const apiMapping: Record<TChatTypeWithApi, { get: string; send: string }> = {
     jobRequirementDoc: {
-      get: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat`),
-      send: formatUrl(`/api/jobs/${jobId}/requirement_doc_chat/send`),
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/send`),
+    },
+    jobDescription: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
     },
     jobTargetCompanies: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TARGET_COMPANIES/messages`),
@@ -252,13 +256,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_SCREENING_QUESTION/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_SCREENING_QUESTION/send`),
     },
-    jobDescription: {
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
-    },
     jobInterviewPlan: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
+    },
+    jobOutreachMessage: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/send`),
+    },
+    jobSocialMedia: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/send`),
     },
     talentEvaluateResult: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
@@ -316,18 +324,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "team-context-request",
-      title: t("share_team"),
-      handler: () => openJobRequirementFormDrawer("team_context"),
-      autoTrigger: true,
-    },
-    {
-      key: "other-requirements-request",
-      title: t("other_requirements"),
-      handler: () => openJobRequirementFormDrawer("other_requirement"),
-      autoTrigger: true,
-    },
-    {
       key: "salary-structure-request",
       title: t("salary_structure"),
       handler: () => openJobRequirementFormDrawer("salary_structure"),
@@ -354,7 +350,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => {
         onChangeTab?.("info", { docType: "requirement" });
       },
-      autoTrigger: true,
     },
     {
       key: "talent-evaluate-result",
@@ -416,6 +411,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => setChatType("jobInterviewPlan"),
     },
     {
+      key: "to-outreach-btn",
+      title: t("define_outreach_message"),
+      handler: () => setChatType("jobOutreachMessage"),
+    },
+    {
+      key: "to-social-post-btn",
+      title: t("define_social_post"),
+      handler: () => setChatType("jobSocialMedia"),
+    },
+    {
       key: "to-chatbot-btn",
       title: t("create_chatbot"),
       handler: () => setChatType("chatbot"),
@@ -429,19 +434,47 @@ const ChatRoom: React.FC<IProps> = (props) => {
       const job: IJob = data.job ?? data;
       setJob(job);
       setJobUrl(data.url);
-      let initChatType: TChatType = "jobRequirementDoc";
-      if (job.screening_question_doc_id) {
-        initChatType = "jobInterviewPlan";
-      } else if (job.compensation_details_doc_id) {
-        initChatType = "jobScreeningQuestion";
-      } else if (job.target_companies_doc_id) {
-        initChatType = "jobCompensationDetails";
-      } else if (job.jd_doc_id) {
-        initChatType = "jobTargetCompanies";
-      } else if (job.requirement_doc_id) {
-        initChatType = "jobDescription";
+      // 第一个未完成的流程
+      const tasks: { type: TChatType; field: keyof IJob }[] = [
+        {
+          type: "jobRequirementDoc",
+          field: "requirement_doc_id",
+        },
+        {
+          type: "jobDescription",
+          field: "jd_doc_id",
+        },
+        {
+          type: "jobTargetCompanies",
+          field: "target_companies_doc_id",
+        },
+        {
+          type: "jobCompensationDetails",
+          field: "compensation_details_doc_id",
+        },
+        {
+          type: "jobScreeningQuestion",
+          field: "screening_question_doc_id",
+        },
+        {
+          type: "jobInterviewPlan",
+          field: "interview_plan_doc_id",
+        },
+        {
+          type: "jobOutreachMessage",
+          field: "outreach_message_doc_id",
+        },
+        {
+          type: "jobSocialMedia",
+          field: "social_media_doc_id",
+        },
+      ];
+      const unfinishTask = tasks.find((item) => !job[item.field]);
+      if (unfinishTask) {
+        setChatType(unfinishTask.type);
+      } else {
+        setChatType("talentEvaluateResult");
       }
-      setChatType(initChatType);
     } else {
       message.error("Get job failed");
     }
@@ -579,41 +612,52 @@ const ChatRoom: React.FC<IProps> = (props) => {
             "compensation-details-done",
             "screening-q-done",
             "interview-plan-done",
+            "outreach-done",
+            "social-post-done",
           ] as TDoneTag[]
         ).forEach((step) => {
           if (step === tag.name) {
+            const extraTags: (TExtraTag | false)[] = [
+              !job.jd_doc_id && {
+                name: "to-jd-btn",
+                content: "",
+              },
+              !job.target_companies_doc_id && {
+                name: `to-target-companies-btn`,
+                content: "",
+              },
+              !job.compensation_details_doc_id && {
+                name: `to-compensation-details-btn`,
+                content: "",
+              },
+              !job.screening_question_doc_id && {
+                name: `to-screening-questions-btn`,
+                content: "",
+              },
+              !job.interview_plan_doc_id && {
+                name: `to-interview-plan-btn`,
+                content: "",
+              },
+              !job.outreach_message_doc_id && {
+                name: `to-outreach-btn`,
+                content: "",
+              },
+              !job.social_media_doc_id && {
+                name: "to-social-post-btn",
+                content: "",
+              },
+              {
+                name: `to-chatbot-btn`,
+                content: "",
+              },
+            ];
             resultMessages.push({
               id: `${item.id.toString()}-${step}-btn`,
               role: "ai",
               content: t("jrd_next_task"),
               updated_at: item.updated_at,
               messageType: "system",
-              extraTags: [
-                !job.jd_doc_id && {
-                  name: "to-jd-btn",
-                  content: "",
-                },
-                !job.target_companies_doc_id && {
-                  name: `to-target-companies-btn`,
-                  content: "",
-                },
-                !job.compensation_details_doc_id && {
-                  name: `to-compensation-details-btn`,
-                  content: "",
-                },
-                !job.screening_question_doc_id && {
-                  name: `to-screening-questions-btn`,
-                  content: "",
-                },
-                !job.interview_plan_doc_id && {
-                  name: `to-interview-plan-btn`,
-                  content: "",
-                },
-                {
-                  name: `to-chatbot-btn`,
-                  content: "",
-                },
-              ].filter(Boolean) as TExtraTag[],
+              extraTags: extraTags.filter(Boolean) as TExtraTag[],
             });
           }
         });
@@ -838,7 +882,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         <div
           className={styles.left}
           style={{
-            display: collapseForDrawer ? "none" : "block",
+            display: collapseForDrawer ? "none" : "flex",
             width: taskCollapsed ? 30 : 200,
           }}
         >
@@ -852,86 +896,95 @@ const ChatRoom: React.FC<IProps> = (props) => {
               </>
             )}
           </div>
-          {!taskCollapsed &&
-            [
-              {
-                title: t("create_job"),
-                disabled: true,
-                isFinished: true,
-              },
-              {
-                title: t("define_job_requirement"),
-                disabled: false,
-                isFinished: !!job?.requirement_doc_id,
-                chatType: "jobRequirementDoc",
-              },
-              {
-                title: t("draft_job_description_btn"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.jd_doc_id,
-                chatType: "jobDescription",
-              },
-              {
-                title: t("define_target_companies"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.target_companies_doc_id,
-                chatType: "jobTargetCompanies",
-              },
-              {
-                title: t("define_compensation_details"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.compensation_details_doc_id,
-                chatType: "jobCompensationDetails",
-              },
-              {
-                title: t("define_screening_questions"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.screening_question_doc_id,
-                chatType: "jobScreeningQuestion",
-              },
-              {
-                title: t("define_interview_plan"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.interview_plan_doc_id,
-                chatType: "jobInterviewPlan",
-              },
-              {
-                title: t("create_chatbot"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: !!job?.jd_doc_id,
-                chatType: "chatbot",
-              },
-              {
-                title: t("evaluate_result"),
-                disabled: !job?.requirement_doc_id,
-                isFinished: false,
-                chatType: "talentEvaluateResult",
-              },
-            ].map((task) => {
-              return (
-                <div
-                  className={classnames(styles.taskBlock, {
-                    [styles.finished]: task.isFinished,
-                    [styles.active]: chatType === task.chatType,
-                    [styles.disabled]: task.disabled,
-                  })}
-                  onClick={() => {
-                    if (task.disabled || !task.chatType) return;
-                    setChatType(task.chatType as TChatType);
-                  }}
-                  key={task.title}
-                >
-                  <div>{task.title}</div>
-                  <div>
-                    {task.isFinished ? (
-                      <CheckOutlined />
-                    ) : (
-                      <ArrowRightOutlined />
-                    )}
+          <div className={styles.taskList}>
+            {!taskCollapsed &&
+              [
+                {
+                  title: t("define_job_requirement"),
+                  disabled: false,
+                  isFinished: !!job?.requirement_doc_id,
+                  chatType: "jobRequirementDoc",
+                },
+                {
+                  title: t("draft_job_description_btn"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.jd_doc_id,
+                  chatType: "jobDescription",
+                },
+                {
+                  title: t("define_target_companies"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.target_companies_doc_id,
+                  chatType: "jobTargetCompanies",
+                },
+                {
+                  title: t("define_compensation_details"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.compensation_details_doc_id,
+                  chatType: "jobCompensationDetails",
+                },
+                {
+                  title: t("define_screening_questions"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.screening_question_doc_id,
+                  chatType: "jobScreeningQuestion",
+                },
+                {
+                  title: t("define_interview_plan"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.interview_plan_doc_id,
+                  chatType: "jobInterviewPlan",
+                },
+                {
+                  title: t("define_outreach_message"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.outreach_message_doc_id,
+                  chatType: "jobOutreachMessage",
+                },
+                {
+                  title: t("define_social_post"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.social_media_doc_id,
+                  chatType: "jobSocialMedia",
+                },
+                {
+                  title: t("create_chatbot"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.jd_doc_id,
+                  chatType: "chatbot",
+                },
+                {
+                  title: t("evaluate_result"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: false,
+                  chatType: "talentEvaluateResult",
+                },
+              ].map((task) => {
+                return (
+                  <div
+                    className={classnames(styles.taskBlock, {
+                      [styles.finished]: task.isFinished,
+                      [styles.active]: chatType === task.chatType,
+                      [styles.disabled]: task.disabled,
+                    })}
+                    onClick={() => {
+                      if (task.disabled || !task.chatType) return;
+                      setChatType(task.chatType as TChatType);
+                    }}
+                    key={task.title}
+                  >
+                    <div>{task.title}</div>
+                    <div>
+                      {task.isFinished ? (
+                        <CheckOutlined />
+                      ) : (
+                        <ArrowRightOutlined />
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       )}
       <div

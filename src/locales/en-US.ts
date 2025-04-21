@@ -36,6 +36,8 @@ export default {
     define_compensation_details: "Define compensation details",
     define_screening_questions: "Define screening questions",
     define_interview_plan: "Define interview plan",
+    define_outreach_message: "Define outreach message",
+    define_social_post: "Define social post",
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
     evaluate_result: "Resume screening",
@@ -333,10 +335,15 @@ export default {
 
   job_information: {
     basic: "Basic Information",
-    role_context: "Role Overview",
-    activities: "Objectives & Day-to-day Activities",
-    ideal_candidate: "Ideal Candidate Profile & Screening Criteria",
     jrd: "JRD",
+    jd: "Job Description",
+    target_companies: "Target Companies",
+    compensation_details: "Compensation Details",
+    screening_question: "Screening Questions",
+    interview_plan: "Interview Plan",
+    outreach_message: "Outreach Message",
+    social_media: "Social Media",
+    updated_at: "Updated at ",
   },
 
   talent: {

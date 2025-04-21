@@ -2,23 +2,23 @@ import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
   | "jrd-done"
+  | "jd-done"
   | "targets-done"
   | "compensation-details-done"
   | "screening-q-done"
   | "interview-plan-done"
-  | "jd-done";
+  | "outreach-done"
+  | "social-post-done";
 
 export type TExtraTagName =
   // 后端生成
+  | "copy-link" // 复制链接
+  | "talent-evaluate-result"
   | "basic-info-request"
   | "reference-request"
-  | "team-context-request"
-  | "copy-link" // 复制链接
-  | "profile-feedback-and-priorities-request"
-  | "other-requirements-request"
   | "salary-structure-request"
+  | "profile-feedback-and-priorities-request"
   | "screening-q-request"
-  | "talent-evaluate-result"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -27,6 +27,8 @@ export type TExtraTagName =
   | "to-compensation-details-btn"
   | "to-screening-questions-btn"
   | "to-interview-plan-btn"
+  | "to-outreach-btn"
+  | "to-social-post-btn"
   | "to-chatbot-btn";
 
 export type TMessageFromApi = {
@@ -64,11 +66,13 @@ export type TMessage = {
 
 export type TChatType =
   | "jobRequirementDoc"
+  | "jobDescription"
   | "jobTargetCompanies"
   | "jobCompensationDetails"
   | "jobScreeningQuestion"
   | "jobInterviewPlan"
-  | "jobDescription"
+  | "jobOutreachMessage"
+  | "jobSocialMedia"
   | "chatbot"
   | "candidate"
   | "talentEvaluateResult";
@@ -84,12 +88,7 @@ export interface IProps {
   onChangeTab?: onChangeTabFunction;
 }
 
-export type TRoleOverviewType =
-  | "basic_info"
-  | "reference"
-  | "team_context"
-  | "other_requirement"
-  | "salary_structure";
+export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";
 
 export type TScreeningQuestionType = {
   question: string;

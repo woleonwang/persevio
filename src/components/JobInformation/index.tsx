@@ -4,6 +4,7 @@ import { Get } from "../../utils/request";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 interface IProps {
   jobId: number;
@@ -13,14 +14,14 @@ interface IProps {
 
 export type TJobDocType =
   | "basic_info"
-  | "role_context"
-  | "objectives"
-  | "activities"
-  | "candidate_requirements"
+  | "requirement"
+  | "jd"
   | "target_companies"
-  | "requirement";
-// | "interview_plan"
-// | "jd";
+  | "compensation_details"
+  | "screening_question"
+  | "interview_plan"
+  | "outreach_message"
+  | "social_media";
 
 const formatUrl = (url: string, role: "staff" | "coworker") => {
   if (role === "staff") return url;
@@ -35,6 +36,12 @@ const JobDocPanel = (props: {
   const { jobId, docType, role } = props;
 
   const [jobDocContent, setJobDocContent] = useState("");
+  const [jobUpdatedAt, setJobUpdatedAt] = useState("");
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`job_information.${key}`);
+  };
 
   useEffect(() => {
     fetchDoc();
@@ -46,6 +53,7 @@ const JobDocPanel = (props: {
     );
     if (code === 0) {
       setJobDocContent(data.content);
+      setJobUpdatedAt(data.updated_at);
     }
   };
 
@@ -63,7 +71,15 @@ const JobDocPanel = (props: {
     );
   }
 
-  return <MarkdownContainer content={jobDocContent} />;
+  return (
+    <div>
+      <div>
+        {t("updated_at")}
+        {jobUpdatedAt && dayjs(jobUpdatedAt).format("YYYY/MM/DD HH:mm:ss")}
+      </div>
+      <MarkdownContainer content={jobDocContent} />
+    </div>
+  );
 };
 const JobInformation = (props: IProps) => {
   const { jobId, activeDocType, role = "staff" } = props;
@@ -102,24 +118,44 @@ const JobInformation = (props: IProps) => {
       disabled: docUnfinised("basic_info"),
     },
     {
-      value: "role_context",
-      label: t("role_context"),
-      disabled: docUnfinised("role_context"),
-    },
-    {
-      value: "activities",
-      label: t("activities"),
-      disabled: docUnfinised("activities"),
-    },
-    {
-      value: "candidate_requirements",
-      label: t("ideal_candidate"),
-      disabled: docUnfinised("candidate_requirements"),
-    },
-    {
       value: "requirement",
       label: t("jrd"),
       disabled: docUnfinised("requirement"),
+    },
+    {
+      value: "jd",
+      label: t("jd"),
+      disabled: docUnfinised("jd"),
+    },
+    {
+      value: "target_companies",
+      label: t("target_companies"),
+      disabled: docUnfinised("target_companies"),
+    },
+    {
+      value: "compensation_details",
+      label: t("compensation_details"),
+      disabled: docUnfinised("compensation_details"),
+    },
+    {
+      value: "screening_question",
+      label: t("screening_question"),
+      disabled: docUnfinised("screening_question"),
+    },
+    {
+      value: "interview_plan",
+      label: t("interview_plan"),
+      disabled: docUnfinised("interview_plan"),
+    },
+    {
+      value: "outreach_message",
+      label: t("outreach_message"),
+      disabled: docUnfinised("outreach_message"),
+    },
+    {
+      value: "social_media",
+      label: t("social_media"),
+      disabled: docUnfinised("social_media"),
     },
   ];
 

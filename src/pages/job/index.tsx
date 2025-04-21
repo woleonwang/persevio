@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import ChatRoom from "../../components/ChatRoom";
 import styles from "./style.module.less";
 // import { ProfileOutlined } from "@ant-design/icons";
-import Profile from "./components/Profile";
 import { Tabs } from "antd";
 import { useParams } from "react-router";
 import JobInformation, { TJobDocType } from "../../components/JobInformation";
@@ -53,10 +52,6 @@ const Job = () => {
                   key: "info",
                   label: t("document"),
                 },
-                {
-                  key: "pipeline",
-                  label: t("talent"),
-                },
               ]}
               onChange={(type) => {
                 // initDocTypeRef.current = undefined;
@@ -83,11 +78,6 @@ const Job = () => {
                   jobId={jobId}
                   activeDocType={initDocTypeRef.current}
                 />
-              </div>
-            )}
-            {status === "pipeline" && (
-              <div className={styles.chatWrapper}>
-                <Profile jobId={jobId} />
               </div>
             )}
           </>
