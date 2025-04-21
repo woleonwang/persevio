@@ -104,7 +104,7 @@ export default {
     part_time: "Part-time",
     working_hours: "Required minimum  working hours per week",
     role: "What is the nature of this role?",
-    intership: "Intership",
+    role_intership: "Intership",
     perm: "Perm",
     contract: "Contractor",
     contract_type: "What is the expected contract type of this role? ",
@@ -116,8 +116,7 @@ export default {
     on_site: "Fully onsite",
     remote: "Fully remote",
     hybrid: "Hybrid",
-    city: "Which <b>city</b> will this role be based in?",
-    address: "What is the <b>office address</b> for this role?",
+    city: "What is the <b>office address</b> for this role?",
     seniority: "What is the <b>seniority</b> of this role?",
     seniority_hint: `- **Internship/Trainee/Entry Level** - No prior experience required; primary focus is on learning and skill development. Training and close guidance are provided to build foundational knowledge and competencies.\n\n- **Junior**  - Some relevant experience required; contributes to tasks under supervision but isn’t responsible for leading major projects or objectives. Works closely with senior team members who oversee key business goals.\n\n- **Senior**- A highly skilled individual contributor who tackles complex problems and delivers impactful results. Works independently on challenging assignments and provides technical expertise to the team. May mentor Junior members, sharing knowledge and best practices, but is primarily focused on individual contributions rather than team leadership or project management.\n\n- **Manager/Team Lead** - This role serves as a bridge between the Senior level and the Director/Head of Department level. Managers/Team Leads have direct responsibility for leading and managing a team, including performance management, coaching, and ensuring the team meets its objectives. They are experienced professionals who can independently manage projects and provide guidance to Junior and Senior team members. Unlike Senior roles, they have direct reports; unlike Directors, their focus is on team-level execution rather than broad departmental strategy.\n\n- **Director/Head of Department** - Oversees critical business functions and manages larger teams. Responsible for aligning team performance with broader company goals, driving strategic initiatives within their area of responsibility.\n\n- **Senior Executive/Leadership Team** - Sets the overall strategic direction for the company, accountable for company-wide objectives and profit and loss (P&L). Leads major business decisions and ensures alignment across all departments.`,
     intership: "Internship/Trainee/Entry Level",
@@ -375,10 +374,17 @@ export default {
     evidence: "Evidence",
   },
 
+  city_and_address_select: {
+    city: "City",
+    address: "Address",
+  },
+
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",
   submitting: "Submitting...",
   add: "Add",
   close: "Close",
+  create_succeed: "Create succeed!",
+  create: "Create",
 };

@@ -12,11 +12,7 @@ import {
   Radio,
   Select,
 } from "antd";
-import {
-  DeleteOutlined,
-  QuestionCircleOutlined,
-  UndoOutlined,
-} from "@ant-design/icons";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
 import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
@@ -26,6 +22,9 @@ import dayjs from "dayjs";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import BaseSalaryInput from "./components/BaseSalaryInput";
+import CityAndAddressSelect, {
+  TValue,
+} from "./components/CityAndAddressSelect";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -51,7 +50,8 @@ type TQuestion = {
     | "multiple_select"
     | "date"
     | "team"
-    | "base_salary";
+    | "base_salary"
+    | "city_and_address";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -88,23 +88,6 @@ type TTeam = {
   detail: string;
 };
 
-const DeleteButton = (props: {
-  value?: boolean;
-  onChange?: (deleted: boolean) => void;
-}) => {
-  const { value, onChange } = props;
-
-  return (
-    <Button
-      onClick={() => onChange?.(!value)}
-      danger={!value}
-      icon={value ? <UndoOutlined /> : <DeleteOutlined />}
-      size="small"
-      type="text"
-    />
-  );
-};
-
 const JobRequirementFormDrawer = (props: IProps) => {
   const {
     open,
@@ -132,15 +115,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
   const formatUrl = (url: string) => {
     return isCoworker ? url.replace("/api", "/api/coworker") : url;
-  };
-
-  const formatOptions = (options: string[]) => {
-    return options.map((item) => {
-      return {
-        value: item,
-        label: t(item),
-      };
-    });
   };
 
   const TeamQuestions: TQuestion[] = [
@@ -186,7 +160,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           options: [
             {
               value: "intership",
-              label: t("intership"),
+              label: t("role_intership"),
             },
             {
               value: "perm",
@@ -277,20 +251,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
         },
         {
           key: "city",
-          type: "text",
+          type: "city_and_address",
           question: t("city"),
-          dependencies: [
-            {
-              questionKey: "remote",
-              valueKey: ["onsite", "hybrid"],
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "address",
-          type: "textarea",
-          question: t("address"),
           dependencies: [
             {
               questionKey: "remote",
@@ -650,6 +612,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
             } ${t("month")} = ${value.salary * value.months}`;
           }
 
+          if (question.type === "city_and_address") {
+            const typedValue = value as TValue;
+            formattedValue = `${typedValue.cityName}. ${typedValue.addressName}`;
+          }
+
           if (question.type === "select") {
             formattedValue =
               (question.options ?? []).find((item) => item.value === value)
@@ -835,11 +802,26 @@ const JobRequirementFormDrawer = (props: IProps) => {
               : question.key
           }
           className={styles.formItem}
+          required={question.required || question.type === "city_and_address"}
           rules={[
-            {
-              required: question.required,
-              message: t("required_error_message"),
-            },
+            ...(question.type === "city_and_address"
+              ? [
+                  {
+                    validator(_: any, value: TValue, callback: any) {
+                      if (!(value.cityName && value.addressName)) {
+                        callback(new Error());
+                      }
+                      callback();
+                    },
+                    message: t("required_error_message"),
+                  },
+                ]
+              : [
+                  {
+                    required: question.required,
+                    message: t("required_error_message"),
+                  },
+                ]),
           ]}
         >
           {question.type === "text" && <Input disabled={deleted} />}
@@ -863,6 +845,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           )}
           {question.type === "date" && <DatePicker disabled={deleted} />}
           {question.type === "base_salary" && <BaseSalaryInput />}
+          {question.type === "city_and_address" && <CityAndAddressSelect />}
           {question.type === "team" && (
             <Select
               options={teams.map((team) => ({
