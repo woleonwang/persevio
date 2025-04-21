@@ -10,7 +10,7 @@ export default {
 
   job: {
     chat: "对话",
-    document: "详细职位需求文档",
+    document: "职位详情 & 资料",
     talent: "候选人",
   },
 
@@ -95,12 +95,17 @@ export default {
   job_requirement_form: {
     tips: "<b style='color: black'>下面的这些问题不是必填</b>。但是您提供给我的信息越多，我就能更好地了解这个职位。",
     basic_information: "基本信息",
-    time: "这个职位是<b>全职</b>还是<b>兼职</b>？",
-    full_time: "全职",
+    time: "工作时间要求",
+    full_time: "全职（每周至少大于40小时）",
     part_time: "兼职",
-    role: "这个职位是<b>正式员工</b>还是<b>灵活用工</b>？",
-    perm: "正式员工",
-    contract: "灵活用工",
+    working_hours: "每周要求工作时间",
+    role: "职位类型",
+    intership: "实习生",
+    perm: "长期正式员工",
+    contract: "短期合同用工",
+    contract_type: "预计合作时间",
+    long_term: "长期",
+    fixed_term: "固定期限",
     duration: "合同时长（月）",
     remote_type:
       "这个职位是<b>完全在办公室工作</b>，还是<b>完全在家工作</b>，还是<b>混合型</b>？",
@@ -142,15 +147,8 @@ export default {
       "介绍下这个团队的主要目标和职责？一个详细的团队介绍可以帮助Viona更好地理解这个职位",
     members_count: "不算这个新招的职位，现在这个团队有多少人？",
     menbers_detail: "简单介绍下团队成员，他们各自的职责，资历，等。",
-    team_lead: "团队领导是谁？",
-    team_lead_detail:
-      "简单描述下团队领导，工作经历，在公司的时间，工作风格，交流风格等。",
     team_language: "团队的工作语言。",
-    report_to: "这个职位会汇报给谁？",
-    manager_detail: "简单介绍下这个职位的直属领导。",
-    collaborators:
-      "这个职位会主要和哪些人打交道？（公司内部/外部，自己团队内部/别的团队，等）",
-    team_others: "有没有什么关于这个团队的信息你觉得候选人在加入前应该知道的？",
+    manager_detail: "这个职位的直属领导的职位名称是什么？",
 
     other_requirements: "其它要求",
     visa: "签证要求",

@@ -10,7 +10,7 @@ export default {
 
   job: {
     chat: "Chat",
-    document: "Job Requirement Document",
+    document: "Job Details & Assets",
     talent: "Talent",
   },
 
@@ -99,12 +99,17 @@ export default {
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
-    time: "Is this a <b>full-time</b> or <b>part-time</b> role? If part-time, how many hours per week are required?",
-    full_time: "Full-time",
+    time: "Work hours requirement",
+    full_time: "Full time (At least 40 hours/week）",
     part_time: "Part-time",
-    role: "Is this role a <b>perm role</b> or a <b>contract role</b>?",
-    perm: "Perm role",
-    contract: "Contract role",
+    working_hours: "Required minimum  working hours per week",
+    role: "What is the nature of this role?",
+    intership: "Intership",
+    perm: "Perm",
+    contract: "Contractor",
+    contract_type: "What is the expected contract type of this role? ",
+    long_term: "Long-term",
+    fixed_term: "Fixed-term",
     duration: "Contract duration (in months)",
     remote_type:
       "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
@@ -147,17 +152,9 @@ export default {
     members_count: "How many team members, excluding this new role?",
     menbers_detail:
       "Brief intro about the team members. Their responsibilities, experience levels, where they are from, etc.",
-    team_lead: "Who is the team lead?",
-    team_lead_detail:
-      "Brief introduction to the team lead, their working style. etc",
     team_language: "What is the working language of the team",
-    report_to: "Who will this role report to?",
     manager_detail:
-      "Brief intro about this role's direct manager, their working style, etc.",
-    collaborators:
-      "Who will be the key collaborators (internal teams/roles, external partners/clients)?",
-    team_others:
-      "Is there anything about the team that a potential candidate should know?",
+      "What is the job title of the direct manager of this position?",
 
     other_requirements: "Other Requirements",
     visa: "Visa Requirements",

@@ -168,16 +168,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
       type: "textarea",
     },
     {
-      key: "lead",
-      question: t("team_lead"),
-      type: "text",
-    },
-    {
-      key: "lead_detail",
-      question: t("team_lead_detail"),
-      type: "textarea",
-    },
-    {
       key: "team_language",
       question: t("team_language"),
       type: "text",
@@ -189,6 +179,54 @@ const JobRequirementFormDrawer = (props: IProps) => {
       key: "basic_info",
       title: t("basic_information"),
       questions: [
+        {
+          key: "role",
+          type: "select",
+          question: t("role"),
+          options: [
+            {
+              value: "intership",
+              label: t("intership"),
+            },
+            {
+              value: "perm",
+              label: t("perm"),
+            },
+            {
+              value: "contract",
+              label: t("contract"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "contract_type",
+          type: "select",
+          question: t("contract_type"),
+          options: [
+            {
+              value: "long_term",
+              label: t("long_term"),
+            },
+            {
+              value: "fixed_term",
+              label: t("fixed_term"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "contract_duration",
+          type: "number",
+          question: t("duration"),
+          dependencies: [
+            {
+              questionKey: "contract_type",
+              valueKey: "fixed_term",
+            },
+          ],
+          required: true,
+        },
         {
           key: "time",
           type: "select",
@@ -206,29 +244,13 @@ const JobRequirementFormDrawer = (props: IProps) => {
           required: true,
         },
         {
-          key: "role",
-          type: "select",
-          question: t("role"),
-          options: [
-            {
-              value: "perm",
-              label: t("perm"),
-            },
-            {
-              value: "contract",
-              label: t("contract"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "contract_duration",
+          key: "working_hours",
           type: "number",
-          question: t("duration"),
+          question: t("working_hours"),
           dependencies: [
             {
-              questionKey: "role",
-              valueKey: "contract",
+              questionKey: "time",
+              valueKey: "part-time",
             },
           ],
           required: true,
@@ -350,6 +372,26 @@ const JobRequirementFormDrawer = (props: IProps) => {
           ],
           required: true,
         },
+        {
+          key: "team",
+          type: "team",
+          question: t("team"),
+        },
+        {
+          group: t("team_details"),
+          key: "team_details",
+          dependencies: [{ questionKey: "team", exists: true }],
+          collapse: true,
+          questions: TeamQuestions.map((item) => ({
+            ...item,
+            dependencies: [{ questionKey: "team", exists: true }],
+          })),
+        },
+        {
+          key: "manager_detail",
+          type: "textarea",
+          question: t("manager_detail"),
+        },
       ],
     },
 
@@ -376,48 +418,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
         },
       ],
     },
-
-    // {
-    //   key: "team_context",
-    //   title: t("team_context"),
-    //   questions: [
-    //     {
-    //       key: "team",
-    //       type: "team",
-    //       question: t("team"),
-    //     },
-    //     {
-    //       group: t("team_details"),
-    //       key: "team_details",
-    //       dependencies: [{ questionKey: "team", exists: true }],
-    //       collapse: true,
-    //       questions: TeamQuestions.map((item) => ({
-    //         ...item,
-    //         dependencies: [{ questionKey: "team", exists: true }],
-    //       })),
-    //     },
-    //     {
-    //       key: "report_to",
-    //       type: "textarea",
-    //       question: t("report_to"),
-    //     },
-    //     {
-    //       key: "manager_detail",
-    //       type: "textarea",
-    //       question: t("manager_detail"),
-    //     },
-    //     {
-    //       key: "collaborators",
-    //       type: "textarea",
-    //       question: t("collaborators"),
-    //     },
-    //     {
-    //       key: "team_others",
-    //       type: "textarea",
-    //       question: t("team_others"),
-    //     },
-    //   ],
-    // },
 
     {
       key: "salary_structure",
