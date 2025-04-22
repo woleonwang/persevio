@@ -300,6 +300,9 @@ export default {
       footer:
         "Please ensure all company details are comprehensive, accurate, and kept current. Incomplete or outdated information will impact Viona's effectiveness",
     },
+    logo: "Logo",
+    upload_logo_succeed: "Upload logo succeed",
+    upload_logo_failed: "Upload logo failed",
   },
 
   settings: {

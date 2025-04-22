@@ -292,6 +292,9 @@ export default {
       footer:
         "请确保所有公司信息都全面、准确并保持最新。不完整或非最新的信息将会影响 Viona 的工作效能。",
     },
+    logo: "Logo",
+    upload_logo_succeed: "Logo 上传成功",
+    upload_logo_failed: "Logo上传失败",
   },
 
   settings: {

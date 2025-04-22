@@ -1,12 +1,14 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Upload } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TextAreaWithHint from "./components/TextAreaWithHint";
 import { useTranslation } from "react-i18next";
+import { PlusOutlined } from "@ant-design/icons";
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
+  const [logo, setLogo] = useState("");
 
   useEffect(() => {
     fetchCompany();
@@ -19,6 +21,7 @@ const CompanyKnowledge = () => {
         content: data.content,
         name: data.name,
       });
+      setLogo(data.logo);
     }
   };
 
@@ -41,6 +44,40 @@ const CompanyKnowledge = () => {
     <div className={styles.container}>
       <div className={styles.form}>
         <Form form={form} layout="vertical">
+          <Form.Item label={t("company.logo")} name="logo">
+            <Upload
+              action="/api/companies/logo"
+              accept="image/*"
+              maxCount={1}
+              listType="picture-card"
+              showUploadList={false}
+              headers={{
+                authorization: localStorage.getItem("token") || "",
+              }}
+              onChange={(info) => {
+                if (info.file.status === "done") {
+                  message.success(t("company.upload_logo_succeed"));
+                  fetchCompany();
+                } else if (info.file.status === "error") {
+                  message.error(t("company.upload_logo_failed"));
+                }
+              }}
+            >
+              {logo ? (
+                <img
+                  src={`/api/logo/${logo}`}
+                  alt="logo"
+                  style={{ width: "100%" }}
+                />
+              ) : (
+                <button style={{ border: 0, background: "none" }} type="button">
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </button>
+              )}
+            </Upload>
+          </Form.Item>
+
           <Form.Item
             label={t("company.name")}
             name="name"

@@ -81,7 +81,7 @@ const JobsShow = () => {
                 src={
                   company.logo.startsWith("http")
                     ? company.logo
-                    : `/company-logo/${company.logo}`
+                    : `/api/logo/${company.logo}`
                 }
                 className={styles.logo}
               />
