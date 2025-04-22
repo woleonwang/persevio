@@ -94,6 +94,8 @@ export default {
 
     apply_now: "Apply Now",
     copied: "Copied",
+    edit_message_hint:
+      "I have answered your questions, or modified your proposal, or giving my feedback below by adding/deleting/modifying your original response. I might have only made minor changes, please review thoroughly and make sure you do not omit anything.",
   },
 
   job_requirement_form: {

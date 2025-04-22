@@ -11,6 +11,7 @@ import {
   Spin,
   Modal,
   Drawer,
+  FloatButton,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -82,6 +83,7 @@ type TSupportTag = {
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
 };
+
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
     jobId,
@@ -143,6 +145,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const { t: originalT, i18n } = useTranslation();
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
+
+  const SurveyLink =
+    i18n.language === "zh-CN"
+      ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
+      : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z";
 
   useEffect(() => {
     if (role === "staff") {
@@ -555,19 +562,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
               formatUrl(`/api/jobs/${data.job.id}/open_survey`)
             );
             if (code === 0) {
-              window.open(
-                i18n.language === "zh-CN"
-                  ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
-                  : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z",
-                "popup",
-                "width=1000,height=800"
-              );
             }
           }
           setJob(data.job);
         }
       }
     }
+  };
+
+  const openSurvey = async () => {
+    window.open(SurveyLink, "popup", "width=1000,height=800");
   };
 
   const scrollToBottom = () => {
@@ -1297,6 +1301,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {role !== "candidate" && (
           <>
+            <FloatButton onClick={() => openSurvey()} type="primary" />
+
             <JobRequirementFormDrawer
               open={showJobRequirementFormDrawer}
               onClose={() => handleJobRequirementFormDrawerOpen(false)}
@@ -1412,7 +1418,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
               type="primary"
               onClick={() => {
                 setMarkdownEditMessageId(undefined);
-                sendMessage(markdownEditMessageContent);
+                sendMessage(
+                  `#### ${t(
+                    "edit_message_hint"
+                  )}\n\n${markdownEditMessageContent}`
+                );
               }}
             >
               {originalT("submit")}
