@@ -90,7 +90,8 @@ export default {
 
     apply_now: "立即申请",
     copied: "已复制",
-    edit_message_hint: "我在下方通过添加/删除/修改你的原始回复，已经回答了你的问题、修改了你的提案或提供了我的反馈。改动可能很小，请务必仔细审阅，确保没有遗漏任何内容。",
+    edit_message_hint:
+      "我在下方通过添加/删除/修改你的原始回复，已经回答了你的问题、修改了你的提案或提供了我的反馈。改动可能很小，请务必仔细审阅，确保没有遗漏任何内容。",
   },
 
   job_requirement_form: {
@@ -324,10 +325,10 @@ export default {
     jd: "职位描述",
     target_companies: "目标公司",
     compensation_details: "薪资结构",
-    screening_question: "面试问题",
+    screening_question: "简历筛选问题",
     interview_plan: "面试计划",
-    outreach_message: "邮件内容",
-    social_media: "社交信息",
+    outreach_message: "候选人触达信息",
+    social_media: "社交网络帖子",
     updated_at: "更新于 ",
   },
 
