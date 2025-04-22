@@ -139,14 +139,15 @@ const JobRequirementFormDrawer = (props: IProps) => {
       required: true,
     },
     {
-      key: "members_detail",
-      question: t("menbers_detail"),
-      type: "textarea",
-    },
-    {
       key: "team_language",
       question: t("team_language"),
       type: "text",
+      required: true,
+    },
+    {
+      key: "members_detail",
+      question: t("menbers_detail"),
+      type: "textarea",
     },
   ];
 
