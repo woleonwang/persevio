@@ -340,6 +340,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           key: "team",
           type: "team",
           question: t("team"),
+          required: true,
         },
         {
           group: t("team_details"),
@@ -355,6 +356,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           key: "manager_detail",
           type: "textarea",
           question: t("manager_detail"),
+          required: true,
         },
       ],
     },
