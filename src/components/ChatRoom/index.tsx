@@ -97,10 +97,10 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   CANDIDATE_CHAT: "candidate",
 };
 
-const CHATTYPE_MAP = Object.keys(RESOURCE_TYPE_MAP).reduce((prev, current) => {
-  prev[RESOURCE_TYPE_MAP[current]] = current;
-  return prev;
-}, {} as Record<TChatType, string>);
+// const CHATTYPE_MAP = Object.keys(RESOURCE_TYPE_MAP).reduce((prev, current) => {
+//   prev[RESOURCE_TYPE_MAP[current]] = current;
+//   return prev;
+// }, {} as Record<TChatType, string>);
 
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
