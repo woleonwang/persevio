@@ -61,6 +61,7 @@ type TQuestion = {
   required?: boolean;
   needPriority?: boolean;
   canNoApply?: boolean;
+  outputNoData?: boolean;
 };
 
 type TGroup = {
@@ -72,6 +73,7 @@ type TGroup = {
   needPriority?: boolean;
   canNoApply?: boolean;
   needIndent?: boolean;
+  outputNoData?: boolean;
 };
 
 interface IProps {
@@ -388,6 +390,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         {
           key: "base_salary_group",
           group: t("base_salary"),
+          outputNoData: true,
           questions: [
             {
               key: "base_salary",
@@ -405,10 +408,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
           key: "salary_by_result",
           type: "textarea",
           question: t("salary_by_result"),
+          outputNoData: true,
         },
         {
           key: "bonus",
           group: t("bonus"),
+          outputNoData: true,
           questions: [
             {
               key: "bonus_frequency",
@@ -469,21 +474,25 @@ const JobRequirementFormDrawer = (props: IProps) => {
           key: "commission",
           type: "textarea",
           question: t("commission"),
+          outputNoData: true,
         },
         {
           key: "equity",
           type: "textarea",
           question: t("equity"),
+          outputNoData: true,
         },
         {
           key: "allowances",
           type: "textarea",
           question: t("allowances"),
+          outputNoData: true,
         },
         {
           key: "social_security_contributions",
           type: "textarea",
           question: t("social_security_contributions"),
+          outputNoData: true,
         },
         {
           key: "benefits_perks",
@@ -493,16 +502,19 @@ const JobRequirementFormDrawer = (props: IProps) => {
               key: "insurance",
               type: "textarea",
               question: t("insurance"),
+              outputNoData: true,
             },
             {
               key: "paid_time_off",
               type: "textarea",
               question: t("paid_time_off"),
+              outputNoData: true,
             },
             {
               key: "benefits_perks_other",
               type: "textarea",
               question: t("benefits_perks_other"),
+              outputNoData: true,
             },
           ],
         },
@@ -578,13 +590,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
           value: any,
           options?: {
             isSubQuestion?: boolean;
-            outputNoData?: boolean;
           }
         ): string => {
-          const {
-            isSubQuestion = false,
-            outputNoData = formType === "salary_structure",
-          } = options ?? {};
+          const { isSubQuestion = false } = options ?? {};
+          const outputNoData = question.outputNoData ?? false;
 
           const noDataText = `${
             isSubQuestion ? "####" : "###"
@@ -690,6 +699,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   )}`
                 );
               }
+            } else if (group.outputNoData) {
+              questions.push(`### ${group.group}\n\n${t("no_data")}`);
             }
           } else {
             const answer = getAnswer(
