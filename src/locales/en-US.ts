@@ -210,6 +210,7 @@ export default {
     salary_structure: "Salary Structure",
     base_salary: "Base Salary",
     salary_number: "Amount",
+    salary_by_result: "Calculate salary based on results/output volume",
     bonus: "Variable Pay/Bonus",
     bonus_frequency: "Frequency",
     yearly: "Yearly",
@@ -218,12 +219,7 @@ export default {
     monthly: "Monthly",
     bonus_other: "Other",
     bonus_number: "Number",
-    bonus_type: "Bonus Conditions",
-    guaranteed: "Guaranteed",
-    personal:
-      "Based on personal performance, regardless of company performance",
-    personal_and_company:
-      "Based on personal performance and company/team performance",
+    bonus_type: "Bonus distribution conditions",
     bonus_note: "Notes",
     commission: "Commission",
     equity: "Equity",
@@ -231,7 +227,8 @@ export default {
     social_security_contributions: "Social Security Contributions",
     benefits_perks: "Benefits Perks",
     insurance: "Insurance",
-    paid_time_off: "Paid time-off",
+    paid_time_off:
+      "Paid Time Off (Annual Leave, Sick Leave, Maternity Leave, etc.)",
     benefits_perks_other: "Other Benefits Perks",
     salary_other: "Other",
     salary: "Monthly base salary",
@@ -239,6 +236,7 @@ export default {
     month: "month",
 
     no_data: "Not required",
+    year: "year",
   },
 
   ideal_profile: {

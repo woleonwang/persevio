@@ -11,6 +11,7 @@ import {
   Popover,
   Radio,
   Select,
+  Switch,
 } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
@@ -21,7 +22,7 @@ import dayjs from "dayjs";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
-import BaseSalaryInput from "./components/BaseSalaryInput";
+import BaseSalaryInput, { TSalaryValue } from "./components/BaseSalaryInput";
 import CityAndAddressSelect, {
   TValue,
 } from "./components/CityAndAddressSelect";
@@ -402,6 +403,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
           ],
         },
         {
+          key: "salary_by_result",
+          type: "textarea",
+          question: t("salary_by_result"),
+        },
+        {
           key: "bonus",
           group: t("bonus"),
           questions: [
@@ -450,22 +456,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
             },
             {
               key: "bonus_type",
-              type: "select",
+              type: "textarea",
               question: t("bonus_type"),
-              options: [
-                {
-                  value: "guaranteed",
-                  label: t("guaranteed"),
-                },
-                {
-                  value: "personal",
-                  label: t("personal"),
-                },
-                {
-                  value: "personal_and_company",
-                  label: t("personal_and_company"),
-                },
-              ],
             },
             {
               key: "bonus_note",
@@ -590,26 +582,39 @@ const JobRequirementFormDrawer = (props: IProps) => {
             outputNoData?: boolean;
           }
         ): string => {
-          const { isSubQuestion = false, outputNoData = false } = options ?? {};
+          const {
+            isSubQuestion = false,
+            outputNoData = formType === "salary_structure",
+          } = options ?? {};
+
+          const noDataText = `${
+            isSubQuestion ? "####" : "###"
+          } ${question.question
+            .replaceAll("</b>", "")
+            .replaceAll("<b>", "")}\n\n${t("no_data")}`;
 
           if (!value) {
-            if (outputNoData) {
-              return `${isSubQuestion ? "####" : "###"} ${question.question
-                .replaceAll("</b>", "")
-                .replaceAll("<b>", "")}\n\n${t("no_data")}`;
-            } else {
-              return "";
-            }
+            return outputNoData ? noDataText : "";
           }
 
           let formattedValue = value;
           if (question.type === "base_salary") {
-            if (!(value.salary && value.months)) {
+            const typedValue = value as TSalaryValue;
+            if (
+              !(
+                typedValue.salaryMin &&
+                typedValue.salaryMax &&
+                typedValue.months
+              )
+            ) {
               return "";
             }
-            formattedValue = `${value.salary}/${t("month")} * ${
-              value.months
-            } ${t("month")} = ${value.salary * value.months}`;
+
+            formattedValue = `(${typedValue.salaryMin} / ${t("month")} ~ ${
+              typedValue.salaryMax
+            } / ${t("month")}) * ${typedValue.months} ${t("month")} = ${
+              typedValue.salaryMin * typedValue.months
+            } ~ ${typedValue.salaryMax * typedValue.months} / ${t("year")}`;
           }
 
           if (question.type === "city_and_address") {
@@ -635,6 +640,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
           if (question.type === "date") {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
+          }
+
+          if (formattedValue === "") {
+            return outputNoData ? noDataText : "";
           }
 
           return `${isSubQuestion ? "####" : "###"} ${question.question
@@ -783,12 +792,13 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   />
                 </Popover>
               )}
-              <span className={styles.inlineFormItem}>
-                {question.needPriority &&
-                  genPriority(question.key, question.key, {
+              {question.needPriority && (
+                <span className={styles.inlineFormItem}>
+                  {genPriority(question.key, question.key, {
                     canNoApply: question.canNoApply ?? false,
                   })}
-              </span>
+                </span>
+              )}
             </div>
           }
           key={
