@@ -84,6 +84,24 @@ type TSupportTag = {
   autoTrigger?: boolean;
 };
 
+const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
+  JOB_REQUIREMENT: "jobRequirementDoc",
+  JOB_DESCRIPTION: "jobDescription",
+  JOB_TARGET_COMPANIES: "jobTargetCompanies",
+  JOB_COMPENSATION_DETAILS: "jobCompensationDetails",
+  JOB_SCREENING_QUESTION: "jobScreeningQuestion",
+  JOB_INTERVIEW_PLAN: "jobInterviewPlan",
+  JOB_OUTREACH_MESSAGE: "jobOutreachMessage",
+  JOB_SOCIAL_MEDIA: "jobSocialMedia",
+  JOB_TALENT_EVALUATE: "talentEvaluateResult",
+  CANDIDATE_CHAT: "candidate",
+};
+
+const CHATTYPE_MAP = Object.keys(RESOURCE_TYPE_MAP).reduce((prev, current) => {
+  prev[RESOURCE_TYPE_MAP[current]] = current;
+  return prev;
+}, {} as Record<TChatType, string>);
+
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
     jobId,
@@ -441,47 +459,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       const job: IJob = data.job ?? data;
       setJob(job);
       setJobUrl(data.url);
-      // 第一个未完成的流程
-      const tasks: { type: TChatType; field: keyof IJob }[] = [
-        {
-          type: "jobRequirementDoc",
-          field: "requirement_doc_id",
-        },
-        {
-          type: "jobDescription",
-          field: "jd_doc_id",
-        },
-        {
-          type: "jobTargetCompanies",
-          field: "target_companies_doc_id",
-        },
-        {
-          type: "jobCompensationDetails",
-          field: "compensation_details_doc_id",
-        },
-        {
-          type: "jobScreeningQuestion",
-          field: "screening_question_doc_id",
-        },
-        {
-          type: "jobInterviewPlan",
-          field: "interview_plan_doc_id",
-        },
-        {
-          type: "jobOutreachMessage",
-          field: "outreach_message_doc_id",
-        },
-        {
-          type: "jobSocialMedia",
-          field: "social_media_doc_id",
-        },
-      ];
-      const unfinishTask = tasks.find((item) => !job[item.field]);
-      if (unfinishTask) {
-        setChatType(unfinishTask.type);
-      } else {
-        setChatType("talentEvaluateResult");
-      }
+      setChatType(RESOURCE_TYPE_MAP[data.current_chat_type]);
     } else {
       message.error("Get job failed");
     }
