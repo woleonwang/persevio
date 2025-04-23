@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Form, Input, Button, message } from "antd";
 import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
@@ -26,6 +26,15 @@ const SignIn: React.FC = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get("token");
+    if (tokenFromUrl) {
+      localStorage.setItem("token", tokenFromUrl);
+      navigate("/app/entry/create-job", { replace: true });
+    }
+  }, []);
+
   const handleSignIn = async () => {
     if (loadingRef.current) {
       return;
@@ -44,7 +53,7 @@ const SignIn: React.FC = () => {
       if (code === 0 && data) {
         message.success("Sign in succeed");
         localStorage.setItem("token", data.token);
-        navigate("/app/entry/create-job");
+        navigate("/app/entry/create-job", { replace: true });
       } else {
         message.error("Username or password is incorrect");
       }
