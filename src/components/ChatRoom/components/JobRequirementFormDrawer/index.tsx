@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
-import { TRoleOverviewType } from "../../type";
+import { TRoleOverviewType, TUserRole } from "../../type";
 import { Get, Post } from "../../../../utils/request";
 import MarkdownContainer from "../../../MarkdownContainer";
 import dayjs from "dayjs";
@@ -79,7 +79,7 @@ type TGroup = {
 interface IProps {
   open: boolean;
   group?: TRoleOverviewType;
-  isCoworker: boolean;
+  userRole: TUserRole;
   onClose: () => void;
   onOk: (result: string) => void;
 }
@@ -94,7 +94,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const {
     open,
     group: formType = "basic_info",
-    isCoworker,
+    userRole,
     onClose,
     onOk,
   } = props;
@@ -116,7 +116,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
   };
 
   const formatUrl = (url: string) => {
-    return isCoworker ? url.replace("/api", "/api/coworker") : url;
+    if (userRole === "coworker") {
+      return url.replace("/api", "/api/coworker");
+    }
+
+    if (userRole === "trial_user") {
+      return url.replace("/api", "/api/trial_user");
+    }
+    return url;
   };
 
   const TeamQuestions: TQuestion[] = [

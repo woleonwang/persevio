@@ -107,9 +107,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
     jobId,
     sessionId,
     allowEditMessage = false,
-    role = "staff",
+    userRole = "staff",
     screeningQuestions = [],
     onChangeTab,
+    onNextTask,
   } = props;
 
   const [chatType, setChatType] = useState<TChatType>();
@@ -170,7 +171,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z";
 
   useEffect(() => {
-    if (role === "staff") {
+    if (userRole === "staff") {
       initProfile();
     }
 
@@ -189,7 +190,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setCollapseForDrawer(false);
     }, 0);
 
-    if (role === "candidate") {
+    if (userRole === "candidate") {
       setChatType("candidate");
     } else {
       initJob();
@@ -254,8 +255,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
   ];
 
   const formatUrl = (url: string) => {
-    if (role === "staff") return url;
-    return url.replace("/api", "/api/coworker");
+    if (userRole === "coworker") {
+      return url.replace("/api", "/api/coworker");
+    }
+    if (userRole === "trial_user") {
+      return url.replace("/api", "/api/trial_user");
+    }
+    return url;
   };
 
   const apiMapping: Record<TChatTypeWithApi, { get: string; send: string }> = {
@@ -373,7 +379,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
       key: "jrd-done",
       title: t("view_jrd"),
       handler: () => {
-        onChangeTab?.("info", { docType: "requirement" });
+        onNextTask
+          ? onNextTask()
+          : onChangeTab?.("info", { docType: "requirement" });
       },
     },
     {
@@ -534,7 +542,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         setMessages(messageHistory);
 
         // 如果已完成 jrd，则跳转到调查问卷
-        if (role !== "candidate") {
+        if (userRole !== "candidate" && userRole !== "trial_user") {
           if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
             const { code } = await Post(
               formatUrl(`/api/jobs/${data.job.id}/open_survey`)
@@ -567,7 +575,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     messages.forEach((item) => {
       // 过滤对该角色隐藏的消息
-      if ((item.content.metadata.hide_for_roles ?? []).includes(role)) return;
+      if ((item.content.metadata.hide_for_roles ?? []).includes(userRole))
+        return;
 
       if (
         item.content.content ||
@@ -584,66 +593,68 @@ const ChatRoom: React.FC<IProps> = (props) => {
         });
       }
 
-      // 下一步 按钮
-      (item.content.metadata.extra_tags ?? []).forEach((tag) => {
-        (
-          [
-            "jrd-done",
-            "jd-done",
-            "targets-done",
-            "compensation-details-done",
-            "screening-q-done",
-            "interview-plan-done",
-            "outreach-done",
-            "social-post-done",
-          ] as TDoneTag[]
-        ).forEach((step) => {
-          if (step === tag.name) {
-            const extraTags: (TExtraTag | false)[] = [
-              !job.jd_doc_id && {
-                name: "to-jd-btn",
-                content: "",
-              },
-              !job.target_companies_doc_id && {
-                name: `to-target-companies-btn`,
-                content: "",
-              },
-              !job.compensation_details_doc_id && {
-                name: `to-compensation-details-btn`,
-                content: "",
-              },
-              !job.screening_question_doc_id && {
-                name: `to-screening-questions-btn`,
-                content: "",
-              },
-              !job.interview_plan_doc_id && {
-                name: `to-interview-plan-btn`,
-                content: "",
-              },
-              !job.outreach_message_doc_id && {
-                name: `to-outreach-btn`,
-                content: "",
-              },
-              !job.social_media_doc_id && {
-                name: "to-social-post-btn",
-                content: "",
-              },
-              {
-                name: `to-chatbot-btn`,
-                content: "",
-              },
-            ];
-            resultMessages.push({
-              id: `${item.id.toString()}-${step}-btn`,
-              role: "ai",
-              content: t("jrd_next_task"),
-              updated_at: item.updated_at,
-              messageType: "system",
-              extraTags: extraTags.filter(Boolean) as TExtraTag[],
-            });
-          }
+      if (userRole !== "trial_user") {
+        // 下一步 按钮
+        (item.content.metadata.extra_tags ?? []).forEach((tag) => {
+          (
+            [
+              "jrd-done",
+              "jd-done",
+              "targets-done",
+              "compensation-details-done",
+              "screening-q-done",
+              "interview-plan-done",
+              "outreach-done",
+              "social-post-done",
+            ] as TDoneTag[]
+          ).forEach((step) => {
+            if (step === tag.name) {
+              const extraTags: (TExtraTag | false)[] = [
+                !job.jd_doc_id && {
+                  name: "to-jd-btn",
+                  content: "",
+                },
+                !job.target_companies_doc_id && {
+                  name: `to-target-companies-btn`,
+                  content: "",
+                },
+                !job.compensation_details_doc_id && {
+                  name: `to-compensation-details-btn`,
+                  content: "",
+                },
+                !job.screening_question_doc_id && {
+                  name: `to-screening-questions-btn`,
+                  content: "",
+                },
+                !job.interview_plan_doc_id && {
+                  name: `to-interview-plan-btn`,
+                  content: "",
+                },
+                !job.outreach_message_doc_id && {
+                  name: `to-outreach-btn`,
+                  content: "",
+                },
+                !job.social_media_doc_id && {
+                  name: "to-social-post-btn",
+                  content: "",
+                },
+                {
+                  name: `to-chatbot-btn`,
+                  content: "",
+                },
+              ];
+              resultMessages.push({
+                id: `${item.id.toString()}-${step}-btn`,
+                role: "ai",
+                content: t("jrd_next_task"),
+                updated_at: item.updated_at,
+                messageType: "system",
+                extraTags: extraTags.filter(Boolean) as TExtraTag[],
+              });
+            }
+          });
         });
-      });
+      }
     });
 
     return resultMessages;
@@ -860,7 +871,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      {chatType !== "candidate" && (
+      {(userRole === "staff" || userRole === "coworker") && (
         <div
           className={styles.left}
           style={{
@@ -1150,7 +1161,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           <div ref={messagesEndRef} />
         </div>
 
-        {role === "candidate" && (
+        {userRole === "candidate" && (
           <div className={styles.preDefinedQuestionContainer}>
             {PreDefinedMessages.map((message) => {
               return (
@@ -1176,7 +1187,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {!["chatbot", "talentEvaluateResult"].includes(chatType) && (
           <div className={styles.inputArea}>
-            {role !== "candidate" && (
+            {userRole !== "candidate" && (
               <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
                 {[
                   ...(chatType === "jobDescription"
@@ -1277,7 +1288,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {role !== "candidate" && (
+        {userRole !== "candidate" && (
           <>
             <FloatButton onClick={() => openSurvey()} type="primary" />
 
@@ -1291,7 +1302,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   handleJobRequirementFormDrawerOpen(false);
                 }
               }}
-              isCoworker={role === "coworker"}
+              userRole={userRole}
             />
 
             <Drawer
@@ -1352,7 +1363,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </>
         )}
 
-        {role === "candidate" && (
+        {userRole === "candidate" && (
           <CandidateScreeningQuestionDrawer
             onClose={() => setCandidateScreeningQuestionDrawerOpen(false)}
             candidateScreeningQuestionDrawerOpen={

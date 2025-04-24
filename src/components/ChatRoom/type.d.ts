@@ -43,7 +43,7 @@ export type TMessageFromApi = {
         name: TExtraTagName;
         content: string;
       }[];
-      hide_for_roles?: ("staff" | "coworker" | "candidate")[];
+      hide_for_roles?: ("staff" | "coworker" | "candidate" | "trial_user")[];
     };
   };
   updated_at: string;
@@ -79,13 +79,15 @@ export type TChatType =
 
 export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
 
+export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {
   jobId: number;
   sessionId?: string;
   allowEditMessage?: boolean;
-  role?: "staff" | "coworker" | "candidate";
+  userRole?: TUserRole;
   screeningQuestions?: TScreeningQuestionType[];
   onChangeTab?: onChangeTabFunction;
+  onNextTask?: () => void;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

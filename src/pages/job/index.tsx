@@ -64,7 +64,7 @@ const Job = () => {
                 <ChatRoom
                   jobId={jobId}
                   allowEditMessage
-                  role="staff"
+                  userRole="staff"
                   onChangeTab={(tab, options) => {
                     initDocTypeRef.current = options?.docType ?? undefined;
                     setStatus(tab);

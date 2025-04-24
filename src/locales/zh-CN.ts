@@ -372,6 +372,16 @@ export default {
     address: "地址",
   },
 
+  job_requirement: {
+    chat_with_viona: "和 Viona 聊聊",
+    name: "姓名",
+    company_name: "公司",
+    job_title: "职位",
+    email: "邮箱",
+    phone: "手机号",
+    job_name: "职位名称",
+  },
+
   save: "保存",
   cancel: "取消",
   submit: "提交",

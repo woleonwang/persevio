@@ -9,6 +9,7 @@ import "./index.css";
 import App from "./layouts/App";
 import Home from "./pages/home";
 import Signin from "./pages/signin";
+import Signup from "./pages/signup";
 import Job from "./pages/job";
 import JobsCreate from "./pages/jobs-create";
 import JobsShow from "./pages/jobs-show";
@@ -17,6 +18,7 @@ import Apply from "./pages/apply";
 import Settings from "./pages/settings";
 import JobCoworker from "./pages/job-coworker";
 import Talent from "./pages/talent";
+import JobRequirement from "./pages/job-requirement";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
@@ -47,6 +49,7 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/jobs/:id/chat" element={<JobsShow />} />
+          <Route path="/jobs/requirement" element={<JobRequirement />} />
           <Route
             path="/jobs/:id/:companyName/:jobName"
             element={<JobsShow />}
@@ -68,7 +71,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/app/company" element={<CompanyKnowledge />} />
             <Route path="/app/settings" element={<Settings />} />
           </Route>
-          {/* <Route path="/signup" element={<Signup />}></Route> */}
+          <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />
         </Routes>

@@ -118,7 +118,7 @@ const JobsShow = () => {
             </div>
             <div className={styles.right}>
               <ChatRoom
-                role="candidate"
+                userRole="candidate"
                 jobId={parseInt(id ?? "0")}
                 sessionId={sessionId}
                 screeningQuestions={

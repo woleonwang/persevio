@@ -15,7 +15,11 @@ export const Get = async <T = any>(
       headers: {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem(
-          url.startsWith("/api/coworker") ? "coworker_token" : "token"
+          url.startsWith("/api/coworker")
+            ? "coworker_token"
+            : url.startsWith("/api/trial_user")
+            ? "trial_user_uuid"
+            : "token"
         ),
       },
     });
@@ -36,7 +40,11 @@ export const Post = async <T = any>(
       headers: {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem(
-          url.startsWith("/api/coworker") ? "coworker_token" : "token"
+          url.startsWith("/api/coworker")
+            ? "coworker_token"
+            : url.startsWith("/api/trial_user")
+            ? "trial_user_uuid"
+            : "token"
         ),
       },
     });

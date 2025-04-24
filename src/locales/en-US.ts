@@ -382,6 +382,16 @@ export default {
     address: "Address",
   },
 
+  job_requirement: {
+    chat_with_viona: "Chat with Viona",
+    name: "Name",
+    company_name: "Company Name",
+    job_title: "Job Title",
+    email: "Email",
+    phone: "Phone",
+    job_name: "Job Name",
+  },
+
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",
