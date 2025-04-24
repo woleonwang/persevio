@@ -8,7 +8,8 @@ export type TDoneTag =
   | "screening-q-done"
   | "interview-plan-done"
   | "outreach-done"
-  | "social-post-done";
+  | "social-post-done"
+  | "faq-done";
 
 export type TExtraTagName =
   // 后端生成

@@ -93,6 +93,7 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   JOB_INTERVIEW_PLAN: "jobInterviewPlan",
   JOB_OUTREACH_MESSAGE: "jobOutreachMessage",
   JOB_SOCIAL_MEDIA: "jobSocialMedia",
+  JOB_CONFIG_CHATBOT: "chatbot",
   JOB_TALENT_EVALUATE: "talentEvaluateResult",
   CANDIDATE_CHAT: "candidate",
 };
@@ -610,6 +611,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
               "interview-plan-done",
               "outreach-done",
               "social-post-done",
+              "faq-done",
             ] as TDoneTag[]
           ).forEach((step) => {
             if (step === tag.name) {
@@ -642,7 +644,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   name: "to-social-post-btn",
                   content: "",
                 },
-                {
+                !job.config_chatbot_doc_id && {
                   name: `to-chatbot-btn`,
                   content: "",
                 },
@@ -947,7 +949,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 {
                   title: t("create_chatbot"),
                   disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.jd_doc_id,
+                  isFinished: !!job?.config_chatbot_doc_id,
                   chatType: "chatbot",
                 },
                 {
