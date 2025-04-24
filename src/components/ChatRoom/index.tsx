@@ -299,6 +299,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/send`),
     },
+    chatbot: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_CONFIG_CHATBOT/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_CONFIG_CHATBOT/send`),
+    },
     talentEvaluateResult: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/send`),
@@ -483,77 +487,77 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     if (!chatType) return;
 
-    if (chatType === "chatbot") {
-      const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
-      setMessages([
-        {
-          id: "chatbot-message",
-          role: "ai",
-          content: t("chatbot_greeting"),
-          updated_at: dayjs().format(datetimeFormat),
-          messageType: "system",
-          extraTags: [
-            {
-              name: "open-link",
-              content: url,
-            },
-            {
-              name: "copy-link",
-              content: url,
-            },
-          ],
-        },
-      ]);
-    } else {
-      const { code, data } = await Get(
-        apiMapping[chatType as TChatTypeWithApi].get
-      );
-      if (code === 0) {
-        const messageHistory = formatMessages(data.messages, data.job);
-        const isLoading = data.is_invoking === 1;
-        setIsLoading(isLoading);
+    // if (chatType === "chatbot") {
+    //   const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
+    //   setMessages([
+    //     {
+    //       id: "chatbot-message",
+    //       role: "ai",
+    //       content: t("chatbot_greeting"),
+    //       updated_at: dayjs().format(datetimeFormat),
+    //       messageType: "system",
+    //       extraTags: [
+    //         {
+    //           name: "open-link",
+    //           content: url,
+    //         },
+    //         {
+    //           name: "copy-link",
+    //           content: url,
+    //         },
+    //       ],
+    //     },
+    //   ]);
+    // } else {
+    const { code, data } = await Get(
+      apiMapping[chatType as TChatTypeWithApi].get
+    );
+    if (code === 0) {
+      const messageHistory = formatMessages(data.messages, data.job);
+      const isLoading = data.is_invoking === 1;
+      setIsLoading(isLoading);
 
-        // 自动执行标签逻辑
-        const lastMessage = messageHistory[messageHistory.length - 1];
-        if (lastMessage) {
-          if (lastMessage.id !== lastMessageIdRef.current) {
-            // 如果最后一条消息需要弹表单或者抽屉，则直接打开
-            let extraTag;
-            const autoTriggerTag = supportTags.find((supportTag) => {
-              extraTag = (lastMessage.extraTags ?? []).find(
-                (tag) => supportTag.key === tag.name && supportTag.autoTrigger
-              );
-              return !!extraTag;
-            });
-            autoTriggerTag?.handler(extraTag);
-          }
-          lastMessageIdRef.current = lastMessage.id;
-        }
-
-        // 如果正在 loading，添加 fake 消息
-        if (isLoading) {
-          messageHistory.push({
-            id: "fake_ai_id",
-            role: "ai",
-            content: "",
-            updated_at: dayjs().format(datetimeFormat),
-          });
-        }
-        setMessages(messageHistory);
-
-        // 如果已完成 jrd，则跳转到调查问卷
-        if (userRole !== "candidate" && userRole !== "trial_user") {
-          if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
-            const { code } = await Post(
-              formatUrl(`/api/jobs/${data.job.id}/open_survey`)
+      // 自动执行标签逻辑
+      const lastMessage = messageHistory[messageHistory.length - 1];
+      if (lastMessage) {
+        if (lastMessage.id !== lastMessageIdRef.current) {
+          // 如果最后一条消息需要弹表单或者抽屉，则直接打开
+          let extraTag;
+          const autoTriggerTag = supportTags.find((supportTag) => {
+            extraTag = (lastMessage.extraTags ?? []).find(
+              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
             );
-            if (code === 0) {
-            }
-          }
-          setJob(data.job);
+            return !!extraTag;
+          });
+          autoTriggerTag?.handler(extraTag);
         }
+        lastMessageIdRef.current = lastMessage.id;
+      }
+
+      // 如果正在 loading，添加 fake 消息
+      if (isLoading) {
+        messageHistory.push({
+          id: "fake_ai_id",
+          role: "ai",
+          content: "",
+          updated_at: dayjs().format(datetimeFormat),
+        });
+      }
+      setMessages(messageHistory);
+
+      // 如果已完成 jrd，则跳转到调查问卷
+      if (userRole !== "candidate" && userRole !== "trial_user") {
+        if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
+          const { code } = await Post(
+            formatUrl(`/api/jobs/${data.job.id}/open_survey`)
+          );
+          if (code === 0) {
+          }
+        }
+        setJob(data.job);
       }
     }
+    // }
   };
 
   const openSurvey = async () => {
@@ -1185,7 +1189,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {!["chatbot", "talentEvaluateResult"].includes(chatType) && (
+        {!["talentEvaluateResult"].includes(chatType) && (
           <div className={styles.inputArea}>
             {userRole !== "candidate" && (
               <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>

@@ -77,7 +77,7 @@ export type TChatType =
   | "candidate"
   | "talentEvaluateResult";
 
-export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
+export type TChatTypeWithApi = TChatType;
 
 export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {
