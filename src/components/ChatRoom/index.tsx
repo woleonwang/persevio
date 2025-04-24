@@ -123,7 +123,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
-  const [jobUrl, setJobUrl] = useState("");
+  const [_, setJobUrl] = useState("");
   const [profile, setProfile] = useState<ISettings>();
   // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
