@@ -23,6 +23,7 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -73,6 +74,9 @@ import ScreeningQuestionDrawer from "./components/ScreeningQuestionDrawer";
 import CandidateScreeningQuestionDrawer, {
   TResult,
 } from "./components/CandidateScreeningQuestionDrawer";
+import ChatbotConfigForm, {
+  TChatbotOptions,
+} from "./components/ChatbotConfigForm";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -146,6 +150,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     candidateScreeningQuestionDrawerOpen,
     setCandidateScreeningQuestionDrawerOpen,
   ] = useState(false);
+  const [chatbotOptionsModalOpen, setChatbotOptionsModalOpen] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -170,6 +175,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
     i18n.language === "zh-CN"
       ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
       : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z";
+
+  const isInterviewPlanFinished = !!job?.interview_plan_doc_id;
+  const isSalaryStructureFinished = !!job?.compensation_details_doc_id;
 
   useEffect(() => {
     if (userRole === "staff") {
@@ -485,6 +493,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const requireInterviewPlan = (job?: IJob) => {
+    return !job?.interview_plan_doc_id;
+  };
+
+  const requireCompensationDetails = (job?: IJob) => {
+    return (
+      !job?.compensation_details_doc_id && job?.chatbot_options?.allow_salary
+    );
+  };
+
   const fetchMessages = async () => {
     if (!chatType) return;
 
@@ -514,7 +532,51 @@ const ChatRoom: React.FC<IProps> = (props) => {
       apiMapping[chatType as TChatTypeWithApi].get
     );
     if (code === 0) {
-      const messageHistory = formatMessages(data.messages, data.job);
+      const job: IJob = data.job;
+      if (userRole !== "candidate") {
+        setJob(job);
+      }
+
+      if (chatType === "chatbot") {
+        if (requireInterviewPlan(job)) {
+          setMessages([
+            {
+              id: "chatbot-message",
+              role: "ai",
+              content: t("请先完成面试计划"),
+              updated_at: dayjs().format(datetimeFormat),
+              messageType: "system",
+              extraTags: [
+                {
+                  name: "to-interview-plan-btn",
+                  content: "",
+                },
+              ],
+            },
+          ]);
+          return;
+        }
+
+        if (requireCompensationDetails(job)) {
+          setMessages([
+            {
+              id: "chatbot-message",
+              role: "ai",
+              content: t("请先完成薪资配置"),
+              updated_at: dayjs().format(datetimeFormat),
+              messageType: "system",
+              extraTags: [
+                {
+                  name: "to-compensation-details-btn",
+                  content: "",
+                },
+              ],
+            },
+          ]);
+          return;
+        }
+      }
+      const messageHistory = formatMessages(data.messages, job);
       const isLoading = data.is_invoking === 1;
       setIsLoading(isLoading);
 
@@ -548,14 +610,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
       // 如果已完成 jrd，则跳转到调查问卷
       if (userRole !== "candidate" && userRole !== "trial_user") {
-        if (!!data.job.requirement_doc_id && !data.job.jrd_survey_opened_at) {
-          const { code } = await Post(
-            formatUrl(`/api/jobs/${data.job.id}/open_survey`)
-          );
-          if (code === 0) {
-          }
+        if (!!job.requirement_doc_id && !job.jrd_survey_opened_at) {
+          await Post(formatUrl(`/api/jobs/${job.id}/open_survey`));
         }
-        setJob(data.job);
       }
     }
     // }
@@ -867,6 +924,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const onSubmitChatbotOptions = async (options: TChatbotOptions) => {
+    const { code } = await Post(`/api/jobs/${job?.id}/chatbot_options`, {
+      allow_salary: options.allow_salary,
+    });
+
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      setChatbotOptionsModalOpen(false);
+      fetchMessages();
+    } else {
+      message.error(originalT("submit_failed"));
+    }
+  };
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -875,6 +946,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return <Spin spinning />;
   }
 
+  console.log(job);
+  console.log("a:" + requireCompensationDetails(job));
   return (
     <div className={styles.container}>
       {(userRole === "staff" || userRole === "coworker") && (
@@ -1191,112 +1264,141 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {!["talentEvaluateResult"].includes(chatType) && (
-          <div className={styles.inputArea}>
-            {userRole !== "candidate" && (
-              <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-                {[
-                  ...(chatType === "jobDescription"
-                    ? [t("make_details"), t("make_concise")]
-                    : []),
-                  t("yes"),
-                  t("no"),
-                  t("accurate"),
-                  t("proposal"),
-                  t("no_others"),
-                ].map((text) => {
-                  return (
-                    <Button
-                      type="primary"
-                      key={text}
-                      shape="round"
-                      onClick={() => sendMessage(text)}
-                      size="small"
-                    >
-                      {text}
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
-            <Input.TextArea
-              ref={(element) => (textInstanceRef.current = element)}
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-                if (isRecording) {
-                  originalInputRef.current = e.target.value;
-                }
-              }}
-              placeholder={
-                allowEditMessage
-                  ? t("reply_viona_directly_or_edit")
-                  : t("reply_viona")
-              }
-              style={{
-                width: "100%",
-                marginRight: "8px",
-                resize: "none",
-              }}
-              onCompositionStartCapture={() =>
-                (isCompositingRef.current = true)
-              }
-              onCompositionEndCapture={() => (isCompositingRef.current = false)}
-              onPressEnter={(e) => {
-                if (!e.shiftKey && !isCompositingRef.current) {
-                  e.preventDefault();
-                  submit();
-                }
-              }}
-              autoSize={{
-                minRows: 1,
-                maxRows: 16,
-              }}
-            />
-            <div
-              style={{
-                marginTop: 10,
-                display: "flex",
-                gap: 10,
-                justifyContent: "flex-end",
-              }}
-            >
-              <div style={{ display: "flex", gap: 10 }}>
-                {chatType === "candidate" && (
-                  <>
-                    <Upload
-                      beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadFile(fileInfo)}
-                      showUploadList={false}
-                      accept=".docx,.pdf"
-                      multiple={false}
-                    >
-                      <Button type="primary">{t("apply_now")}</Button>
-                    </Upload>
-                  </>
-                )}
-
-                <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                  {originalT("submit")}
-                </Button>
-
-                <Button
-                  type="primary"
-                  danger={isRecording}
-                  shape="circle"
-                  icon={
-                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
+        {!["talentEvaluateResult"].includes(chatType) &&
+          !(
+            chatType === "chatbot" &&
+            (requireCompensationDetails(job) || requireInterviewPlan(job))
+          ) && (
+            <div className={styles.inputArea}>
+              {userRole !== "candidate" && (
+                <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
+                  {[
+                    ...(chatType === "jobDescription"
+                      ? [t("make_details"), t("make_concise")]
+                      : []),
+                    t("yes"),
+                    t("no"),
+                    t("accurate"),
+                    t("proposal"),
+                    t("no_others"),
+                  ].map((text) => {
+                    return (
+                      <Button
+                        type="primary"
+                        key={text}
+                        shape="round"
+                        onClick={() => sendMessage(text)}
+                        size="small"
+                      >
+                        {text}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
+              <Input.TextArea
+                ref={(element) => (textInstanceRef.current = element)}
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                  if (isRecording) {
+                    originalInputRef.current = e.target.value;
                   }
-                  onClick={isRecording ? stopRecord : startRecord}
-                />
+                }}
+                placeholder={
+                  allowEditMessage
+                    ? t("reply_viona_directly_or_edit")
+                    : t("reply_viona")
+                }
+                style={{
+                  width: "100%",
+                  marginRight: "8px",
+                  resize: "none",
+                }}
+                onCompositionStartCapture={() =>
+                  (isCompositingRef.current = true)
+                }
+                onCompositionEndCapture={() =>
+                  (isCompositingRef.current = false)
+                }
+                onPressEnter={(e) => {
+                  if (!e.shiftKey && !isCompositingRef.current) {
+                    e.preventDefault();
+                    submit();
+                  }
+                }}
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 16,
+                }}
+              />
+              <div
+                style={{
+                  marginTop: 10,
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div></div>
+                <div style={{ display: "flex", gap: 10 }}>
+                  {chatType === "candidate" && (
+                    <>
+                      <Upload
+                        beforeUpload={() => false}
+                        onChange={(fileInfo) => uploadFile(fileInfo)}
+                        showUploadList={false}
+                        accept=".docx,.pdf"
+                        multiple={false}
+                      >
+                        <Button type="primary">{t("apply_now")}</Button>
+                      </Upload>
+                    </>
+                  )}
+
+                  <Button
+                    type="primary"
+                    onClick={submit}
+                    disabled={!canSubmit()}
+                  >
+                    {originalT("submit")}
+                  </Button>
+
+                  <Button
+                    type="primary"
+                    danger={isRecording}
+                    shape="circle"
+                    icon={
+                      isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
+                    }
+                    onClick={isRecording ? stopRecord : startRecord}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {userRole !== "candidate" && (
           <>
-            <FloatButton onClick={() => openSurvey()} type="primary" />
+            <FloatButton.Group>
+              {chatType === "chatbot" && job && (
+                <>
+                  <FloatButton
+                    type="primary"
+                    onClick={() => {
+                      setChatbotOptionsModalOpen(true);
+                    }}
+                    icon={<SettingOutlined />}
+                  />
+                  <ChatbotConfigForm
+                    job={job}
+                    open={chatbotOptionsModalOpen}
+                    onClose={() => setChatbotOptionsModalOpen(false)}
+                    onOk={(options) => onSubmitChatbotOptions(options)}
+                  />
+                </>
+              )}
+              <FloatButton onClick={() => openSurvey()} type="primary" />
+            </FloatButton.Group>
 
             <JobRequirementFormDrawer
               open={showJobRequirementFormDrawer}

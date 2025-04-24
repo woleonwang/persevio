@@ -27,6 +27,9 @@ interface IJob {
   created_at: string;
   updated_at: string;
   candidate_requirements_json: string;
+  chatbot_options: {
+    allow_salary: boolean;
+  };
 }
 
 interface ISettings {

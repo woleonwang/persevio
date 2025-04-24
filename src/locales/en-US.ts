@@ -396,6 +396,8 @@ export default {
   cancel: "Cancel",
   submit: "Submit",
   submitting: "Submitting...",
+  submit_succeed: "Submit succeed!",
+  submit_failed: "Submit failed!",
   add: "Add",
   close: "Close",
   create_succeed: "Create succeed!",
