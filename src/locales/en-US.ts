@@ -78,6 +78,13 @@ export default {
       "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
     edit_screening_question_hint:
       "I have edit the screening questions, revised your proposal by adding, deleting, or modifying content",
+    chatbot_greeting_1: `Viona is capable of communicating with candidates directly. She can introduce our company, answer questions about the role, and help convert curious individuals into interested applicants through direct chat.
+
+You can share Viona using this chat page link, either by including it in your job postings or sending it directly to candidates: `,
+    chatbot_greeting_2:
+      "To ensure Viona has comprehensive information before interacting with candidates, we strongly encourage you to complete the following setup tasks:",
+    chatbot_greeting_3:
+      "You can also configure Disclosure Guidelines here,  specifying what information Viona can share with candidates and at what level of detail.",
 
     required: "Required",
     optional: "Optional",

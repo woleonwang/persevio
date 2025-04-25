@@ -76,6 +76,13 @@ export default {
     edit_screening_question_hint:
       "我已经编辑了简历筛选问题，通过添加、删除或修改内容修订了你的提议。",
 
+    chatbot_greeting_1: `Viona 能够直接与候选人沟通。她可以介绍我们的公司，回答关于职位的问题，并通过直接聊天帮助将好奇的潜在候选人转变为感兴趣的申请人。
+
+您可以通过此聊天页面链接分享 Viona，可以将其包含在您的职位发布中，或直接发送给候选人：`,
+    chatbot_greeting_2:
+      "为确保 Viona 在与候选人互动前拥有全面的信息，我们强烈建议您完成以下设置任务：",
+    chatbot_greeting_3:
+      "您也可以在此处配置信息披露指南，具体规定 Viona 可以与候选人分享哪些信息以及信息的详细程度。",
     required: "必填",
     optional: "选填",
 

@@ -30,6 +30,7 @@ export type TExtraTagName =
   | "to-interview-plan-btn"
   | "to-outreach-btn"
   | "to-social-post-btn"
+  | "to-faq-btn"
   | "to-chatbot-btn"
   | "chatbot-config-btn";
 

@@ -463,6 +463,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: () => setChatType("jobSocialMedia"),
     },
     {
+      key: "to-faq-btn",
+      title: t("define_faq"),
+      handler: () => setChatType("jobFaq"),
+    },
+    {
       key: "to-chatbot-btn",
       title: t("create_chatbot"),
       handler: () => setChatType("chatbot"),
@@ -494,87 +499,64 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const requireInterviewPlan = (job?: IJob) => {
-    return !job?.interview_plan_doc_id;
-  };
-
-  const requireCompensationDetails = (job?: IJob) => {
-    return (
-      !job?.compensation_details_doc_id && job?.chatbot_options?.allow_salary
-    );
-  };
-
   const fetchMessages = async () => {
     if (!chatType) return;
 
     if (chatType === "chatbot") {
-      if (requireInterviewPlan(job)) {
-        setMessages([
-          {
-            id: "chatbot-message",
-            role: "ai",
-            content: t("require_interview_plan"),
-            updated_at: dayjs().format(datetimeFormat),
-            messageType: "system",
-            extraTags: [
-              {
-                name: "to-interview-plan-btn",
-                content: "",
-              },
-              {
-                name: "chatbot-config-btn",
-                content: "",
-              },
-            ],
-          },
-        ]);
-      } else if (requireCompensationDetails(job)) {
-        setMessages([
-          {
-            id: "chatbot-message",
-            role: "ai",
-            content: t("require_compensation"),
-            updated_at: dayjs().format(datetimeFormat),
-            messageType: "system",
-            extraTags: [
-              {
-                name: "to-compensation-details-btn",
-                content: "",
-              },
-              {
-                name: "chatbot-config-btn",
-                content: "",
-              },
-            ],
-          },
-        ]);
-        return;
-      } else {
-        const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
-        setMessages([
-          {
-            id: "chatbot-message",
-            role: "ai",
-            content: t("chatbot_greeting"),
-            updated_at: dayjs().format(datetimeFormat),
-            messageType: "system",
-            extraTags: [
-              {
-                name: "open-link",
-                content: url,
-              },
-              {
-                name: "copy-link",
-                content: url,
-              },
-              {
-                name: "chatbot-config-btn",
-                content: "",
-              },
-            ],
-          },
-        ]);
-      }
+      const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
+      setMessages([
+        {
+          id: "chatbot-message-greeting-1",
+          role: "ai",
+          content: t("chatbot_greeting_1"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+          extraTags: [
+            {
+              name: "open-link",
+              content: url,
+            },
+            {
+              name: "copy-link",
+              content: url,
+            },
+          ],
+        },
+        {
+          id: "chatbot-message-greeting-2",
+          role: "ai",
+          content: t("chatbot_greeting_2"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+          extraTags: [
+            {
+              name: "to-compensation-details-btn",
+              content: "",
+            },
+            {
+              name: "to-interview-plan-btn",
+              content: "",
+            },
+            {
+              name: "to-faq-btn",
+              content: "",
+            },
+          ],
+        },
+        {
+          id: "chatbot-message-greeting-3",
+          role: "ai",
+          content: t("chatbot_greeting_3"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+          extraTags: [
+            {
+              name: "chatbot-config-btn",
+              content: "",
+            },
+          ],
+        },
+      ]);
     } else {
       const { code, data } = await Get(
         apiMapping[chatType as TChatTypeWithApi].get

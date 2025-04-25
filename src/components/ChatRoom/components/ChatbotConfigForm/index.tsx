@@ -37,6 +37,8 @@ const ChatbotConfigForm = (props: IProps) => {
       onCancel={onClose}
       title={t("modal_title")}
       onOk={submit}
+      okText={originalT("submit")}
+      cancelText={originalT("cancel")}
     >
       <Form form={form}>
         <Form.Item label={t("allow_salary")} name="allow_salary">
