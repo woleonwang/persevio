@@ -176,9 +176,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
       : "https://igk8gb3qpgz.sg.larksuite.com/wiki/Bf5DwwQLlixR12kY7jFl8qWPg2c?fromScene=spaceOverview&table=tblYl7ujQvy1Fj1F&view=vewYMhEF8Z";
 
-  const isInterviewPlanFinished = !!job?.interview_plan_doc_id;
-  const isSalaryStructureFinished = !!job?.compensation_details_doc_id;
-
   useEffect(() => {
     if (userRole === "staff") {
       initProfile();
@@ -543,7 +540,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             {
               id: "chatbot-message",
               role: "ai",
-              content: t("请先完成面试计划"),
+              content: t("require_interview_plan"),
               updated_at: dayjs().format(datetimeFormat),
               messageType: "system",
               extraTags: [
@@ -562,7 +559,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             {
               id: "chatbot-message",
               role: "ai",
-              content: t("请先完成薪资配置"),
+              content: t("require_compensation"),
               updated_at: dayjs().format(datetimeFormat),
               messageType: "system",
               extraTags: [

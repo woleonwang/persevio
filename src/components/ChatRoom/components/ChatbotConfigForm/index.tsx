@@ -1,5 +1,6 @@
 import { Form, Modal, Switch } from "antd";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   job: IJob;
@@ -14,6 +15,9 @@ export type TChatbotOptions = {
 const ChatbotConfigForm = (props: IProps) => {
   const { open, onClose, onOk, job } = props;
   const [form] = Form.useForm();
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`chatbot_config.${key}`);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -31,11 +35,11 @@ const ChatbotConfigForm = (props: IProps) => {
     <Modal
       open={open}
       onCancel={onClose}
-      title={"Chatbot Config"}
+      title={t("modal_title")}
       onOk={submit}
     >
       <Form form={form}>
-        <Form.Item label="Talk about salary" name="allow_salary">
+        <Form.Item label={t("allow_salary")} name="allow_salary">
           <Switch />
         </Form.Item>
       </Form>

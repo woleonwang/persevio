@@ -96,6 +96,9 @@ export default {
     copied: "Copied",
     edit_message_hint:
       "I have answered your questions, or modified your proposal, or giving my feedback below by adding/deleting/modifying your original response. I might have only made minor changes, please review thoroughly and make sure you do not omit anything.",
+
+    require_compensation: "Please define compensation details first",
+    require_interview_plan: "Please define interview plan first",
   },
 
   job_requirement_form: {
@@ -127,6 +130,8 @@ export default {
     manager: "Manager/Team Lead",
     director: "Director/Head of Department",
     executive: "Senior Executive/Leadership Team",
+    work_experience:
+      "What is the ideal total years of work experience for this role? ",
     internal_employee: "Is there an internal employee level for this role?",
     head_count: "How many headcount? ",
     when_start: "When do you need this role to start?",
@@ -390,6 +395,11 @@ export default {
     email: "Email",
     phone: "Phone",
     job_name: "Job Name",
+  },
+
+  chatbot_config: {
+    modal_title: "Chatbot Config",
+    allow_salary: "Talk about salary",
   },
 
   save: "Save",

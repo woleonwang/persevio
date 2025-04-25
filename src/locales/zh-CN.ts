@@ -92,6 +92,9 @@ export default {
     copied: "已复制",
     edit_message_hint:
       "我在下方通过添加/删除/修改你的原始回复，已经回答了你的问题、修改了你的提案或提供了我的反馈。改动可能很小，请务必仔细审阅，确保没有遗漏任何内容。",
+
+    require_compensation: "请先完成薪资配置",
+    require_interview_plan: "请先完成面试计划",
   },
 
   job_requirement_form: {
@@ -123,6 +126,7 @@ export default {
     manager: "团队lead/经理",
     director: "总监/部门负责人",
     executive: "公司高管/领导团队",
+    work_experience: "理想情况下，这个职位需要有多少年的工作经验？",
     internal_employee: "这个职位有内部职级吗？",
     head_count: "计划总共招聘多少人员（headcount）？",
     when_start: "什么时候需要开始工作？",
@@ -380,6 +384,11 @@ export default {
     email: "邮箱",
     phone: "手机号",
     job_name: "职位名称",
+  },
+
+  chatbot_config: {
+    modal_title: "聊天机器人配置",
+    allow_salary: "允许聊薪资",
   },
 
   save: "保存",
