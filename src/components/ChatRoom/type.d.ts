@@ -30,7 +30,8 @@ export type TExtraTagName =
   | "to-interview-plan-btn"
   | "to-outreach-btn"
   | "to-social-post-btn"
-  | "to-chatbot-btn";
+  | "to-chatbot-btn"
+  | "chatbot-config-btn";
 
 export type TMessageFromApi = {
   id: number;

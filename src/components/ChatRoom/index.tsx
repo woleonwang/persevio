@@ -23,7 +23,6 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
-  SettingOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -128,7 +127,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
-  const [_, setJobUrl] = useState("");
+  const [jobUrl, setJobUrl] = useState("");
   const [profile, setProfile] = useState<ISettings>();
   // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
@@ -468,6 +467,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("create_chatbot"),
       handler: () => setChatType("chatbot"),
     },
+    {
+      key: "chatbot-config-btn",
+      title: t("chatbot_config"),
+      handler: () => setChatbotOptionsModalOpen(true),
+    },
   ];
 
   const initJob = async () => {
@@ -503,116 +507,127 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     if (!chatType) return;
 
-    // if (chatType === "chatbot") {
-    //   const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
-    //   setMessages([
-    //     {
-    //       id: "chatbot-message",
-    //       role: "ai",
-    //       content: t("chatbot_greeting"),
-    //       updated_at: dayjs().format(datetimeFormat),
-    //       messageType: "system",
-    //       extraTags: [
-    //         {
-    //           name: "open-link",
-    //           content: url,
-    //         },
-    //         {
-    //           name: "copy-link",
-    //           content: url,
-    //         },
-    //       ],
-    //     },
-    //   ]);
-    // } else {
-    const { code, data } = await Get(
-      apiMapping[chatType as TChatTypeWithApi].get
-    );
-    if (code === 0) {
-      const job: IJob = data.job;
-      if (userRole !== "candidate") {
-        setJob(job);
+    if (chatType === "chatbot") {
+      if (requireInterviewPlan(job)) {
+        setMessages([
+          {
+            id: "chatbot-message",
+            role: "ai",
+            content: t("require_interview_plan"),
+            updated_at: dayjs().format(datetimeFormat),
+            messageType: "system",
+            extraTags: [
+              {
+                name: "to-interview-plan-btn",
+                content: "",
+              },
+              {
+                name: "chatbot-config-btn",
+                content: "",
+              },
+            ],
+          },
+        ]);
+        return;
       }
 
-      if (chatType === "chatbot") {
-        if (requireInterviewPlan(job)) {
-          setMessages([
-            {
-              id: "chatbot-message",
-              role: "ai",
-              content: t("require_interview_plan"),
-              updated_at: dayjs().format(datetimeFormat),
-              messageType: "system",
-              extraTags: [
-                {
-                  name: "to-interview-plan-btn",
-                  content: "",
-                },
-              ],
-            },
-          ]);
-          return;
-        }
-
-        if (requireCompensationDetails(job)) {
-          setMessages([
-            {
-              id: "chatbot-message",
-              role: "ai",
-              content: t("require_compensation"),
-              updated_at: dayjs().format(datetimeFormat),
-              messageType: "system",
-              extraTags: [
-                {
-                  name: "to-compensation-details-btn",
-                  content: "",
-                },
-              ],
-            },
-          ]);
-          return;
-        }
-      }
-      const messageHistory = formatMessages(data.messages, job);
-      const isLoading = data.is_invoking === 1;
-      setIsLoading(isLoading);
-
-      // 自动执行标签逻辑
-      const lastMessage = messageHistory[messageHistory.length - 1];
-      if (lastMessage) {
-        if (lastMessage.id !== lastMessageIdRef.current) {
-          // 如果最后一条消息需要弹表单或者抽屉，则直接打开
-          let extraTag;
-          const autoTriggerTag = supportTags.find((supportTag) => {
-            extraTag = (lastMessage.extraTags ?? []).find(
-              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
-            );
-            return !!extraTag;
-          });
-          autoTriggerTag?.handler(extraTag);
-        }
-        lastMessageIdRef.current = lastMessage.id;
+      if (requireCompensationDetails(job)) {
+        setMessages([
+          {
+            id: "chatbot-message",
+            role: "ai",
+            content: t("require_compensation"),
+            updated_at: dayjs().format(datetimeFormat),
+            messageType: "system",
+            extraTags: [
+              {
+                name: "to-compensation-details-btn",
+                content: "",
+              },
+              {
+                name: "chatbot-config-btn",
+                content: "",
+              },
+            ],
+          },
+        ]);
+        return;
       }
 
-      // 如果正在 loading，添加 fake 消息
-      if (isLoading) {
-        messageHistory.push({
-          id: "fake_ai_id",
+      const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
+      setMessages([
+        {
+          id: "chatbot-message",
           role: "ai",
-          content: "",
+          content: t("chatbot_greeting"),
           updated_at: dayjs().format(datetimeFormat),
-        });
-      }
-      setMessages(messageHistory);
+          messageType: "system",
+          extraTags: [
+            {
+              name: "open-link",
+              content: url,
+            },
+            {
+              name: "copy-link",
+              content: url,
+            },
+            {
+              name: "chatbot-config-btn",
+              content: "",
+            },
+          ],
+        },
+      ]);
+    } else {
+      const { code, data } = await Get(
+        apiMapping[chatType as TChatTypeWithApi].get
+      );
+      if (code === 0) {
+        const job: IJob = data.job;
+        if (userRole !== "candidate") {
+          setJob(job);
+        }
 
-      // 如果已完成 jrd，则跳转到调查问卷
-      if (userRole !== "candidate" && userRole !== "trial_user") {
-        if (!!job.requirement_doc_id && !job.jrd_survey_opened_at) {
-          await Post(formatUrl(`/api/jobs/${job.id}/open_survey`));
+        const messageHistory = formatMessages(data.messages, job);
+        const isLoading = data.is_invoking === 1;
+        setIsLoading(isLoading);
+
+        // 自动执行标签逻辑
+        const lastMessage = messageHistory[messageHistory.length - 1];
+        if (lastMessage) {
+          if (lastMessage.id !== lastMessageIdRef.current) {
+            // 如果最后一条消息需要弹表单或者抽屉，则直接打开
+            let extraTag;
+            const autoTriggerTag = supportTags.find((supportTag) => {
+              extraTag = (lastMessage.extraTags ?? []).find(
+                (tag) => supportTag.key === tag.name && supportTag.autoTrigger
+              );
+              return !!extraTag;
+            });
+            autoTriggerTag?.handler(extraTag);
+          }
+          lastMessageIdRef.current = lastMessage.id;
+        }
+
+        // 如果正在 loading，添加 fake 消息
+        if (isLoading) {
+          messageHistory.push({
+            id: "fake_ai_id",
+            role: "ai",
+            content: "",
+            updated_at: dayjs().format(datetimeFormat),
+          });
+        }
+        setMessages(messageHistory);
+
+        // 如果已完成 jrd，则跳转到调查问卷
+        if (userRole !== "candidate" && userRole !== "trial_user") {
+          if (!!job.requirement_doc_id && !job.jrd_survey_opened_at) {
+            await Post(formatUrl(`/api/jobs/${job.id}/open_survey`));
+          }
         }
       }
     }
-    // }
   };
 
   const openSurvey = async () => {
@@ -698,7 +713,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   name: "to-social-post-btn",
                   content: "",
                 },
-                !job.config_chatbot_doc_id && {
+                {
                   name: `to-chatbot-btn`,
                   content: "",
                 },
@@ -1017,7 +1032,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 {
                   title: t("create_chatbot"),
                   disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.config_chatbot_doc_id,
+                  isFinished: !!job?.jd_doc_id,
                   chatType: "chatbot",
                 },
                 {
@@ -1259,139 +1274,112 @@ const ChatRoom: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {!["talentEvaluateResult"].includes(chatType) &&
-          !(
-            chatType === "chatbot" &&
-            (requireCompensationDetails(job) || requireInterviewPlan(job))
-          ) && (
-            <div className={styles.inputArea}>
-              {userRole !== "candidate" && (
-                <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-                  {[
-                    ...(chatType === "jobDescription"
-                      ? [t("make_details"), t("make_concise")]
-                      : []),
-                    t("yes"),
-                    t("no"),
-                    t("accurate"),
-                    t("proposal"),
-                    t("no_others"),
-                  ].map((text) => {
-                    return (
-                      <Button
-                        type="primary"
-                        key={text}
-                        shape="round"
-                        onClick={() => sendMessage(text)}
-                        size="small"
-                      >
-                        {text}
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-              <Input.TextArea
-                ref={(element) => (textInstanceRef.current = element)}
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                  if (isRecording) {
-                    originalInputRef.current = e.target.value;
-                  }
-                }}
-                placeholder={
-                  allowEditMessage
-                    ? t("reply_viona_directly_or_edit")
-                    : t("reply_viona")
+        {!["talentEvaluateResult", "chatbot"].includes(chatType) && (
+          <div className={styles.inputArea}>
+            {userRole !== "candidate" && (
+              <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
+                {[
+                  ...(chatType === "jobDescription"
+                    ? [t("make_details"), t("make_concise")]
+                    : []),
+                  t("yes"),
+                  t("no"),
+                  t("accurate"),
+                  t("proposal"),
+                  t("no_others"),
+                ].map((text) => {
+                  return (
+                    <Button
+                      type="primary"
+                      key={text}
+                      shape="round"
+                      onClick={() => sendMessage(text)}
+                      size="small"
+                    >
+                      {text}
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+            <Input.TextArea
+              ref={(element) => (textInstanceRef.current = element)}
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                if (isRecording) {
+                  originalInputRef.current = e.target.value;
                 }
-                style={{
-                  width: "100%",
-                  marginRight: "8px",
-                  resize: "none",
-                }}
-                onCompositionStartCapture={() =>
-                  (isCompositingRef.current = true)
+              }}
+              placeholder={
+                allowEditMessage
+                  ? t("reply_viona_directly_or_edit")
+                  : t("reply_viona")
+              }
+              style={{
+                width: "100%",
+                marginRight: "8px",
+                resize: "none",
+              }}
+              onCompositionStartCapture={() =>
+                (isCompositingRef.current = true)
+              }
+              onCompositionEndCapture={() => (isCompositingRef.current = false)}
+              onPressEnter={(e) => {
+                if (!e.shiftKey && !isCompositingRef.current) {
+                  e.preventDefault();
+                  submit();
                 }
-                onCompositionEndCapture={() =>
-                  (isCompositingRef.current = false)
-                }
-                onPressEnter={(e) => {
-                  if (!e.shiftKey && !isCompositingRef.current) {
-                    e.preventDefault();
-                    submit();
-                  }
-                }}
-                autoSize={{
-                  minRows: 1,
-                  maxRows: 16,
-                }}
-              />
-              <div
-                style={{
-                  marginTop: 10,
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div></div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  {chatType === "candidate" && (
-                    <>
-                      <Upload
-                        beforeUpload={() => false}
-                        onChange={(fileInfo) => uploadFile(fileInfo)}
-                        showUploadList={false}
-                        accept=".docx,.pdf"
-                        multiple={false}
-                      >
-                        <Button type="primary">{t("apply_now")}</Button>
-                      </Upload>
-                    </>
-                  )}
+              }}
+              autoSize={{
+                minRows: 1,
+                maxRows: 16,
+              }}
+            />
+            <div
+              style={{
+                marginTop: 10,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <div></div>
+              <div style={{ display: "flex", gap: 10 }}>
+                {chatType === "candidate" && (
+                  <>
+                    <Upload
+                      beforeUpload={() => false}
+                      onChange={(fileInfo) => uploadFile(fileInfo)}
+                      showUploadList={false}
+                      accept=".docx,.pdf"
+                      multiple={false}
+                    >
+                      <Button type="primary">{t("apply_now")}</Button>
+                    </Upload>
+                  </>
+                )}
 
-                  <Button
-                    type="primary"
-                    onClick={submit}
-                    disabled={!canSubmit()}
-                  >
-                    {originalT("submit")}
-                  </Button>
+                <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+                  {originalT("submit")}
+                </Button>
 
-                  <Button
-                    type="primary"
-                    danger={isRecording}
-                    shape="circle"
-                    icon={
-                      isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
-                    }
-                    onClick={isRecording ? stopRecord : startRecord}
-                  />
-                </div>
+                <Button
+                  type="primary"
+                  danger={isRecording}
+                  shape="circle"
+                  icon={
+                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
+                  }
+                  onClick={isRecording ? stopRecord : startRecord}
+                />
               </div>
             </div>
-          )}
+          </div>
+        )}
 
         {userRole !== "candidate" && (
           <>
             <FloatButton.Group>
-              {chatType === "chatbot" && job && (
-                <>
-                  <FloatButton
-                    type="primary"
-                    onClick={() => {
-                      setChatbotOptionsModalOpen(true);
-                    }}
-                    icon={<SettingOutlined />}
-                  />
-                  <ChatbotConfigForm
-                    job={job}
-                    open={chatbotOptionsModalOpen}
-                    onClose={() => setChatbotOptionsModalOpen(false)}
-                    onOk={(options) => onSubmitChatbotOptions(options)}
-                  />
-                </>
-              )}
               <FloatButton onClick={() => openSurvey()} type="primary" />
             </FloatButton.Group>
 
@@ -1465,6 +1453,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 triggerScreeningQuestionDrawer(false);
               }}
             />
+
+            {job && (
+              <ChatbotConfigForm
+                job={job}
+                open={chatbotOptionsModalOpen}
+                onClose={() => setChatbotOptionsModalOpen(false)}
+                onOk={(options) => onSubmitChatbotOptions(options)}
+              />
+            )}
           </>
         )}
 

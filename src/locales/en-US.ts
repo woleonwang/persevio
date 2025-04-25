@@ -99,6 +99,7 @@ export default {
 
     require_compensation: "Please define compensation details first",
     require_interview_plan: "Please define interview plan first",
+    chatbot_config: "Config Chatbot",
   },
 
   job_requirement_form: {
