@@ -104,7 +104,7 @@ const JobRequirement = () => {
   if (status === "register") {
     return (
       <div className={styles.container} style={{ width: 600 }}>
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" key="register">
           {["name", "company_name", "job_title", "email", "phone"].map(
             (key) => (
               <Form.Item
@@ -128,7 +128,7 @@ const JobRequirement = () => {
   if (status === "create_job") {
     return (
       <div className={styles.container} style={{ width: 600 }}>
-        <Form form={createJobform}>
+        <Form form={createJobform} key="create_job">
           <Form.Item
             label={t("job_name")}
             name="name"
