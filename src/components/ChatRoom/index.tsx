@@ -1424,8 +1424,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   onClose={() => triggerIdealProfileDrawer(false)}
                   onOk={(groups) => {
                     // 发送
-                    let message = t("edit_profiles_hint");
-
+                    let message = "";
                     groups.forEach((group) => {
                       const { name, requirements } = group;
                       if (requirements.length > 0) {
@@ -1440,7 +1439,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       }
                     });
 
-                    sendMessage(message);
+                    sendMessage(message, {
+                      before_text: t("edit_profiles_hint"),
+                    });
                     triggerIdealProfileDrawer(false);
                   }}
                 />
@@ -1453,15 +1454,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
               onClose={() => triggerScreeningQuestionDrawer(false)}
               onOk={async (questions: TScreeningQuestionType[]) => {
                 // 发送
-                let llmMessage = t("edit_screening_question_hint");
-
+                let llmMessage = "";
                 questions.forEach((question, index) => {
                   llmMessage += `\n\n${index + 1}. ${question.question} - ${t(
                     question.required ? "required" : "optional"
                   )}`;
                 });
 
-                sendMessage(llmMessage);
+                sendMessage(llmMessage, {
+                  before_text: t("edit_screening_question_hint"),
+                });
                 triggerScreeningQuestionDrawer(false);
               }}
             />
@@ -1512,11 +1514,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
               type="primary"
               onClick={() => {
                 setMarkdownEditMessageId(undefined);
-                sendMessage(
-                  `#### ${t(
-                    "edit_message_hint"
-                  )}\n\n${markdownEditMessageContent}`
-                );
+                sendMessage(markdownEditMessageContent, {
+                  before_text: `#### ${t("edit_message_hint")}\n\n`,
+                });
               }}
             >
               {originalT("submit")}
