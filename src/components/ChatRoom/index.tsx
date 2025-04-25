@@ -943,8 +943,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return <Spin spinning />;
   }
 
-  console.log(job);
-  console.log("a:" + requireCompensationDetails(job));
   return (
     <div className={styles.container}>
       {(userRole === "staff" || userRole === "coworker") && (
