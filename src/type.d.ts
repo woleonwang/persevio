@@ -20,7 +20,7 @@ interface IJob {
   interview_plan_doc_id: number;
   outreach_message_doc_id: number;
   social_media_doc_id: number;
-  config_chatbot_doc_id: number;
+  faq_doc_id: number;
 
   jrd_survey_opened_at: string;
   status: number;

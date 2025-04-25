@@ -96,7 +96,7 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   JOB_INTERVIEW_PLAN: "jobInterviewPlan",
   JOB_OUTREACH_MESSAGE: "jobOutreachMessage",
   JOB_SOCIAL_MEDIA: "jobSocialMedia",
-  JOB_CONFIG_CHATBOT: "chatbot",
+  JOB_FAQ: "jobFaq",
   JOB_TALENT_EVALUATE: "talentEvaluateResult",
   CANDIDATE_CHAT: "candidate",
 };
@@ -304,9 +304,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_SOCIAL_MEDIA/send`),
     },
-    chatbot: {
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_CONFIG_CHATBOT/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_CONFIG_CHATBOT/send`),
+    jobFaq: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_FAQ/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_FAQ/send`),
     },
     talentEvaluateResult: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
@@ -528,10 +528,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             ],
           },
         ]);
-        return;
-      }
-
-      if (requireCompensationDetails(job)) {
+      } else if (requireCompensationDetails(job)) {
         setMessages([
           {
             id: "chatbot-message",
@@ -552,32 +549,32 @@ const ChatRoom: React.FC<IProps> = (props) => {
           },
         ]);
         return;
+      } else {
+        const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
+        setMessages([
+          {
+            id: "chatbot-message",
+            role: "ai",
+            content: t("chatbot_greeting"),
+            updated_at: dayjs().format(datetimeFormat),
+            messageType: "system",
+            extraTags: [
+              {
+                name: "open-link",
+                content: url,
+              },
+              {
+                name: "copy-link",
+                content: url,
+              },
+              {
+                name: "chatbot-config-btn",
+                content: "",
+              },
+            ],
+          },
+        ]);
       }
-
-      const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
-      setMessages([
-        {
-          id: "chatbot-message",
-          role: "ai",
-          content: t("chatbot_greeting"),
-          updated_at: dayjs().format(datetimeFormat),
-          messageType: "system",
-          extraTags: [
-            {
-              name: "open-link",
-              content: url,
-            },
-            {
-              name: "copy-link",
-              content: url,
-            },
-            {
-              name: "chatbot-config-btn",
-              content: "",
-            },
-          ],
-        },
-      ]);
     } else {
       const { code, data } = await Get(
         apiMapping[chatType as TChatTypeWithApi].get
@@ -710,6 +707,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   content: "",
                 },
                 !job.social_media_doc_id && {
+                  name: "to-social-post-btn",
+                  content: "",
+                },
+                !job.faq_doc_id && {
                   name: "to-social-post-btn",
                   content: "",
                 },
@@ -1028,6 +1029,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: !job?.requirement_doc_id,
                   isFinished: !!job?.social_media_doc_id,
                   chatType: "jobSocialMedia",
+                },
+                {
+                  title: t("define_faq"),
+                  disabled: !job?.requirement_doc_id,
+                  isFinished: !!job?.faq_doc_id,
+                  chatType: "jobFaq",
                 },
                 {
                   title: t("create_chatbot"),

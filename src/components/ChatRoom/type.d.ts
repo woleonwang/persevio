@@ -75,11 +75,12 @@ export type TChatType =
   | "jobInterviewPlan"
   | "jobOutreachMessage"
   | "jobSocialMedia"
+  | "jobFaq"
   | "chatbot"
   | "candidate"
   | "talentEvaluateResult";
 
-export type TChatTypeWithApi = TChatType;
+export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
 
 export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {

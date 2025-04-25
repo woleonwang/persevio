@@ -38,6 +38,7 @@ export default {
     define_interview_plan: "Define interview plan",
     define_outreach_message: "Define outreach message",
     define_social_post: "Define social post",
+    define_faq: "How to sell this role",
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
     evaluate_result: "Resume screening",

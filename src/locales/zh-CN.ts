@@ -38,6 +38,7 @@ export default {
     define_interview_plan: "确定面试计划",
     define_outreach_message: "确定邮件内容",
     define_social_post: "确定社交素材",
+    define_faq: "如何吸引候选人",
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
     evaluate_result: "简历评估",
