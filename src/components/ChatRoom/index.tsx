@@ -1368,9 +1368,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         {userRole !== "candidate" && (
           <>
-            <FloatButton.Group>
-              <FloatButton onClick={() => openSurvey()} type="primary" />
-            </FloatButton.Group>
+            <FloatButton onClick={() => openSurvey()} type="primary" />
 
             <JobRequirementFormDrawer
               open={showJobRequirementFormDrawer}
