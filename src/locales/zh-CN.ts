@@ -345,6 +345,7 @@ export default {
     interview_plan: "面试计划",
     outreach_message: "候选人触达信息",
     social_media: "社交网络帖子",
+    faq: "如何吸引候选人",
     updated_at: "更新于 ",
   },
 

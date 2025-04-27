@@ -356,6 +356,7 @@ You can share Viona using this chat page link, either by including it in your jo
     interview_plan: "Interview Plan",
     outreach_message: "Outreach Message",
     social_media: "Social Media",
+    faq: "How to sell",
     updated_at: "Updated at ",
   },
 

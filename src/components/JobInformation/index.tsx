@@ -21,7 +21,8 @@ export type TJobDocType =
   | "screening_question"
   | "interview_plan"
   | "outreach_message"
-  | "social_media";
+  | "social_media"
+  | "faq";
 
 const formatUrl = (url: string, role: "staff" | "coworker") => {
   if (role === "staff") return url;
@@ -156,6 +157,11 @@ const JobInformation = (props: IProps) => {
       value: "social_media",
       label: t("social_media"),
       disabled: docUnfinised("social_media"),
+    },
+    {
+      value: "faq",
+      label: t("faq"),
+      disabled: docUnfinised("faq"),
     },
   ];
 
