@@ -1,4 +1,4 @@
-import { Form, Modal, Switch } from "antd";
+import { Form, Input, Modal, Select, Switch } from "antd";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,7 +10,12 @@ interface IProps {
 }
 
 export type TChatbotOptions = {
-  allow_salary: boolean;
+  allow_salary:
+    | "not_permitted"
+    | "structure_only"
+    | "structore_and_range"
+    | "specific_details";
+  others: string;
 };
 const ChatbotConfigForm = (props: IProps) => {
   const { open, onClose, onOk, job } = props;
@@ -40,9 +45,23 @@ const ChatbotConfigForm = (props: IProps) => {
       okText={originalT("submit")}
       cancelText={originalT("cancel")}
     >
-      <Form form={form}>
+      <Form form={form} layout="vertical" style={{ margin: "20px 0" }}>
         <Form.Item label={t("allow_salary")} name="allow_salary">
-          <Switch />
+          <Select
+            options={[
+              "not_permitted",
+              "structure_only",
+              "structore_and_range",
+              "specific_details",
+            ].map((key) => ({
+              label: t(key),
+              value: key,
+              title: t(`${key}_hint`),
+            }))}
+          />
+        </Form.Item>
+        <Form.Item label={t("others")} name="others">
+          <Input.TextArea rows={2} autoSize={{ minRows: 2, maxRows: 4 }} />
         </Form.Item>
       </Form>
     </Modal>

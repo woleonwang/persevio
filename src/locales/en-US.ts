@@ -408,7 +408,22 @@ You can share Viona using this chat page link, either by including it in your jo
 
   chatbot_config: {
     modal_title: "Chatbot Config",
-    allow_salary: "Talk about salary",
+    allow_salary:
+      "How would you like Viona to discuss compensation with candidates?",
+    not_permitted: "Not permitted at all",
+    not_permitted_hint:
+      "Viona should not discuss compensation details with candidates at all.",
+    structure_only: "Structure/Components Only",
+    structure_only_hint:
+      "Discusses elements like base, bonus, etc., but provides no numbers or ranges.",
+    structore_and_range: "Structure + Ranges",
+    structore_and_range_hint:
+      "Discusses components and provides general salary ranges or approximate figures.",
+    specific_details: "Specific Details",
+    specific_details_hint:
+      "Can discuss specific numerical details, precise figures, or targeted ranges for the role.",
+    others:
+      "Any other instructions to Viona when she communicates with candidates about this role? Such as things you'd like Viona to avoid talking about or things you'd like her to highlight, etc.",
   },
 
   save: "Save",

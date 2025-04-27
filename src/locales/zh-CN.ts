@@ -397,7 +397,20 @@ export default {
 
   chatbot_config: {
     modal_title: "聊天机器人配置",
-    allow_salary: "允许聊薪资",
+    allow_salary: "您希望 Viona 如何与候选人沟通薪酬方面的信息？",
+    not_permitted: "完全禁止",
+    not_permitted_hint: "Viona 不得与候选人讨论任何薪酬细节。",
+    structure_only: "仅限结构/组成部分",
+    structure_only_hint:
+      "可讨论薪酬包的构成要素（如底薪、奖金、期权、福利等），但不提供任何具体数字或薪酬范围。",
+    structore_and_range: "结构 + 大致范围",
+    structore_and_range_hint:
+      "可讨论薪酬结构和组成部分，并提供与该职位相关的大致薪酬范围或近似数字。",
+    specific_details: "具体细节",
+    specific_details_hint:
+      "可讨论具体的薪酬数字，包括精确的数字或针对该职位的具体/目标薪酬范围。",
+    others:
+      "关于 Viona 与候选人就此职位进行沟通，是否有任何其他指示？（例如：希望 Viona 避免谈论的内容、需要特别强调的方面等）",
   },
 
   save: "保存",

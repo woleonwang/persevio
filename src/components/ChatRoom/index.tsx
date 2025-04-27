@@ -922,6 +922,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const onSubmitChatbotOptions = async (options: TChatbotOptions) => {
     const { code } = await Post(`/api/jobs/${job?.id}/chatbot_options`, {
       allow_salary: options.allow_salary,
+      others: options.others,
     });
 
     if (code === 0) {
