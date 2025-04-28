@@ -42,7 +42,7 @@ const Talent = () => {
           "```markdown"
         )
           ? data.talent.parsed_content
-              .replace(/^.*```markdown/, "")
+              .replace(/^.*```markdown/s, "")
               .replace(/```$/, "")
           : data.talent.parsed_content,
       });
