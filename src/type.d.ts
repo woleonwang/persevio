@@ -28,7 +28,8 @@ interface IJob {
   updated_at: string;
   candidate_requirements_json: string;
   chatbot_options: {
-    allow_salary: boolean;
+    allow_salary: string;
+    others: string;
   };
 }
 

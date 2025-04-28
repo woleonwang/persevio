@@ -27,7 +27,8 @@ const ChatbotConfigForm = (props: IProps) => {
 
   useEffect(() => {
     form.setFieldsValue({
-      allow_salary: job.chatbot_options?.allow_salary ?? false,
+      allow_salary: job.chatbot_options?.allow_salary,
+      others: job.chatbot_options?.others,
     });
   }, []);
 
