@@ -21,6 +21,7 @@ const Talent = () => {
   const { jobId, talentId } = useParams();
 
   const [talent, setTalent] = useState<TTalent>();
+  const [meta, setMeta] = useState<{ rank: number; total: number }>();
 
   const { t: originalT } = useTranslation();
 
@@ -45,6 +46,7 @@ const Talent = () => {
               .replace(/```$/, "")
           : data.talent.parsed_content,
       });
+      setMeta(data.meta);
     }
   };
 
@@ -103,14 +105,16 @@ const Talent = () => {
               </div>
             </div>
           </div>
-          <div className={styles.rank}>
-            <DoubleRightOutlined style={{ marginRight: 4, fontSize: 12 }} />
-            {t("rank")}:{" "}
-            <span style={{ fontWeight: "bold", marginLeft: 8 }}>
-              1/1 processed so far
-            </span>
-            <DoubleLeftOutlined style={{ marginLeft: 4, fontSize: 12 }} />
-          </div>
+          {meta && (
+            <div className={styles.rank}>
+              <DoubleRightOutlined style={{ marginRight: 4, fontSize: 12 }} />
+              {t("rank")}:{" "}
+              <span style={{ fontWeight: "bold", marginLeft: 8 }}>
+                {`${meta.rank}/${meta.total} processed so far`}
+              </span>
+              <DoubleLeftOutlined style={{ marginLeft: 4, fontSize: 12 }} />
+            </div>
+          )}
 
           <div className={styles.blockTitle} style={{ marginTop: 20 }}>
             {t("details")}
