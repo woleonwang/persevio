@@ -12,6 +12,7 @@ import {
   Modal,
   Drawer,
   FloatButton,
+  Badge,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -119,6 +120,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const [chatType, setChatType] = useState<TChatType>();
   const [messages, setMessages] = useState<TMessage[]>([]);
+  const [unreadEvaluationCount, setUnreadEvaluationCount] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -487,6 +489,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setJob(job);
       setJobUrl(data.url);
       setChatType(RESOURCE_TYPE_MAP[data.current_chat_type]);
+      setUnreadEvaluationCount(data.unread_evaluation_count);
     } else {
       message.error("Get job failed");
     }
@@ -565,6 +568,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         const job: IJob = data.job;
         if (userRole !== "candidate") {
           setJob(job);
+          setUnreadEvaluationCount(data.unread_evaluation_count);
         }
 
         const messageHistory = formatMessages(data.messages, job);
@@ -693,7 +697,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   content: "",
                 },
                 !job.faq_doc_id && {
-                  name: "to-social-post-btn",
+                  name: "to-faq-btn",
                   content: "",
                 },
                 {
@@ -1030,6 +1034,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: !job?.requirement_doc_id,
                   isFinished: false,
                   chatType: "talentEvaluateResult",
+                  unreadCount: unreadEvaluationCount,
                 },
               ].map((task) => {
                 return (
@@ -1045,7 +1050,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     }}
                     key={task.title}
                   >
-                    <div>{task.title}</div>
+                    <Badge count={task.unreadCount ?? 0} size="small">
+                      <div style={{ paddingRight: 10 }}>{task.title}</div>
+                    </Badge>
                     <div>
                       {task.isFinished ? (
                         <CheckOutlined />
