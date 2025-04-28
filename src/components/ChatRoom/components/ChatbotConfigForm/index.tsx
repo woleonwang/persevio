@@ -1,6 +1,7 @@
-import { Form, Input, Modal, Select } from "antd";
+import { Form, Input, Modal, Radio } from "antd";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import styles from "./style.module.less";
 
 interface IProps {
   job: IJob;
@@ -45,19 +46,20 @@ const ChatbotConfigForm = (props: IProps) => {
       okText={originalT("submit")}
       cancelText={originalT("cancel")}
     >
-      <Form form={form} layout="vertical" style={{ margin: "20px 0" }}>
+      <Form form={form} layout="vertical" className={styles.formContainer}>
         <Form.Item label={t("allow_salary")} name="allow_salary">
-          <Select
+          <Radio.Group
             options={[
               "not_permitted",
               "structure_only",
               "structore_and_range",
               "specific_details",
-            ].map((key) => ({
-              label: t(key),
-              value: key,
-              title: t(`${key}_hint`),
-            }))}
+            ].map((key) => {
+              return {
+                value: key,
+                label: `${t(key)}: ${t(`${key}_hint`)}`,
+              };
+            })}
           />
         </Form.Item>
         <Form.Item label={t("others")} name="others">
