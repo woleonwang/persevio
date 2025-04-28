@@ -38,11 +38,11 @@ const Talent = () => {
       setTalent({
         ...data.talent,
         evaluate_result: parseJSON(data.talent.evaluate_result),
-        parsed_content: (
-          (data.talent.parsed_content ?? "") as string
-        ).startsWith("```markdown")
+        parsed_content: ((data.talent.parsed_content ?? "") as string).includes(
+          "```markdown"
+        )
           ? data.talent.parsed_content
-              .replace(/^```markdown/, "")
+              .replace(/^.*```markdown/, "")
               .replace(/```$/, "")
           : data.talent.parsed_content,
       });
