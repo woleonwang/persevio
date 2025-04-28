@@ -8,7 +8,7 @@
 }
 
 .left {
-  flex: auto;
+  flex: 1;
   background-color: white;
   border-radius: 16px;
   padding: 20px;
@@ -16,8 +16,7 @@
 }
 
 .right {
-  width: 730px;
-  flex: none;
+  flex: 1;
   margin-left: 20px;
   background-color: white;
   border-radius: 16px;
@@ -73,13 +72,22 @@
   border-bottom: 1px dashed @primary-color;
 }
 
-.summaryMatchTitleText {
-  color: @primary-color;
-}
-
 .summaryMatchTitleHint {
-  color: @primary-color;
   font-weight: bold;
+
+  &.match,
+  &.strong_match,
+  &match_pending_verification {
+    color: @primary-color;
+  }
+
+  &.recommend_with_reservations {
+    color: rgba(247, 145, 36, 1);
+  }
+
+  &.not_a_match {
+    color: red;
+  }
 }
 
 .summaryMeet {

@@ -85,8 +85,13 @@ const Talent = () => {
           </div>
           <div className={styles.summaryMatch}>
             <div className={styles.summaryMatchTitle}>
-              <div className={styles.summaryMatchTitleText}>{t("overall")}</div>
-              <div className={styles.summaryMatchTitleHint}>
+              <div>{t("overall")}</div>
+              <div
+                className={classnames(
+                  styles.summaryMatchTitleHint,
+                  styles[result.summary.overall]
+                )}
+              >
                 {t(result.summary.overall)}
               </div>
             </div>
