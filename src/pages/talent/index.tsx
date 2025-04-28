@@ -207,14 +207,14 @@ const Talent = () => {
                               </div>
                               <div className={styles.confidenceText}>
                                 {t("confidence")}:
-                                {item.judgement === "met"
+                                {["met", "not_met"].includes(item.judgement)
                                   ? t(item.confidence_level)
-                                  : item.reasons?.[0]?.reason}
+                                  : "N.A."}
                               </div>
                             </div>
                           </div>
 
-                          {item.judgement === "met" && (
+                          {["met", "not_met"].includes(item.judgement) && (
                             <div className={styles.reason}>
                               <div className={styles.reasonHeader}>
                                 <span className={styles.reasonTitle}>
