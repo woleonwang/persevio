@@ -25,6 +25,7 @@ import BaseSalaryInput, { TSalaryValue } from "./components/BaseSalaryInput";
 import CityAndAddressSelect, {
   TValue,
 } from "./components/CityAndAddressSelect";
+import TextAreaWithUploader from "./components/TextareaWithUploader";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -62,6 +63,7 @@ type TQuestion = {
   needPriority?: boolean;
   canNoApply?: boolean;
   outputNoData?: boolean;
+  allowFile?: boolean;
 };
 
 type TGroup = {
@@ -383,6 +385,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           key: "materials",
           question: t("materials"),
           type: "textarea",
+          allowFile: true,
         },
         {
           key: "usage",
@@ -862,10 +865,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
         >
           {question.type === "text" && <Input disabled={deleted} />}
           {question.type === "textarea" && (
-            <Input.TextArea
+            <TextAreaWithUploader
               rows={2}
               autoSize={{ minRows: 2, maxRows: 8 }}
               disabled={deleted}
+              allowFile={question.allowFile}
             />
           )}
           {question.type === "number" && <InputNumber disabled={deleted} />}

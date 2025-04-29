@@ -102,10 +102,12 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   CANDIDATE_CHAT: "candidate",
 };
 
-// const CHATTYPE_MAP = Object.keys(RESOURCE_TYPE_MAP).reduce((prev, current) => {
-//   prev[RESOURCE_TYPE_MAP[current]] = current;
-//   return prev;
-// }, {} as Record<TChatType, string>);
+const CHATTYPE_MAP: Record<TChatType, string> = Object.keys(
+  RESOURCE_TYPE_MAP
+).reduce((prev, current) => {
+  prev[RESOURCE_TYPE_MAP[current]] = current;
+  return prev;
+}, {} as Record<TChatType, string>);
 
 const ChatRoom: React.FC<IProps> = (props) => {
   const {
@@ -120,7 +122,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const [chatType, setChatType] = useState<TChatType>();
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const [unreadEvaluationCount, setUnreadEvaluationCount] = useState(0);
+  const [unreadMessageCount, setUnreadMessageCount] =
+    useState<Record<string, number>>();
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -489,7 +492,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setJob(job);
       setJobUrl(data.url);
       setChatType(RESOURCE_TYPE_MAP[data.current_chat_type]);
-      setUnreadEvaluationCount(data.unread_evaluation_count);
+      setUnreadMessageCount(data.unread_message_count);
     } else {
       message.error("Get job failed");
     }
@@ -568,7 +571,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         const job: IJob = data.job;
         if (userRole !== "candidate") {
           setJob(job);
-          setUnreadEvaluationCount(data.unread_evaluation_count);
+          setUnreadMessageCount(data.unread_message_count);
         }
 
         const messageHistory = formatMessages(data.messages, job);
@@ -1034,35 +1037,51 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: !job?.requirement_doc_id,
                   isFinished: false,
                   chatType: "talentEvaluateResult",
-                  unreadCount: unreadEvaluationCount,
                 },
-              ].map((task) => {
-                return (
-                  <div
-                    className={classnames(styles.taskBlock, {
-                      [styles.finished]: task.isFinished,
-                      [styles.active]: chatType === task.chatType,
-                      [styles.disabled]: task.disabled,
-                    })}
-                    onClick={() => {
-                      if (task.disabled || !task.chatType) return;
-                      setChatType(task.chatType as TChatType);
-                    }}
-                    key={task.title}
-                  >
-                    <Badge count={task.unreadCount ?? 0} size="small">
-                      <div style={{ paddingRight: 10 }}>{task.title}</div>
-                    </Badge>
-                    <div>
-                      {task.isFinished ? (
-                        <CheckOutlined />
-                      ) : (
-                        <ArrowRightOutlined />
-                      )}
+              ]
+                .sort(
+                  (a, b) =>
+                    (unreadMessageCount?.[
+                      CHATTYPE_MAP[b.chatType as TChatType]
+                    ] ?? 0) -
+                    (unreadMessageCount?.[
+                      CHATTYPE_MAP[a.chatType as TChatType]
+                    ] ?? 0)
+                )
+                .map((task) => {
+                  return (
+                    <div
+                      className={classnames(styles.taskBlock, {
+                        [styles.finished]: task.isFinished,
+                        [styles.active]: chatType === task.chatType,
+                        [styles.disabled]: task.disabled,
+                      })}
+                      onClick={() => {
+                        if (task.disabled || !task.chatType) return;
+                        setChatType(task.chatType as TChatType);
+                      }}
+                      key={task.title}
+                    >
+                      <Badge
+                        count={
+                          unreadMessageCount?.[
+                            CHATTYPE_MAP[task.chatType as TChatType]
+                          ] ?? 0
+                        }
+                        size="small"
+                      >
+                        <div style={{ paddingRight: 10 }}>{task.title}</div>
+                      </Badge>
+                      <div>
+                        {task.isFinished ? (
+                          <CheckOutlined />
+                        ) : (
+                          <ArrowRightOutlined />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
           </div>
         </div>
       )}
