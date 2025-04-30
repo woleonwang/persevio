@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, message } from "antd";
+import { GoogleOutlined } from "@ant-design/icons";
 import logo from "../../assets/logo.png";
 import { Get, Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
@@ -137,11 +138,23 @@ const Signup: React.FC = () => {
             Sign Up
           </Button>
         </Form.Item>
-        <div>
-          Already have an account?
-          <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
-            Sign In
-          </Link>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div>
+            Already have an account?
+            <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+              Sign In
+            </Link>
+          </div>
+          <Button
+            icon={<GoogleOutlined />}
+            shape="circle"
+            size="small"
+            onClick={() => {
+              window.location.href = `/api/auth/google/login?trial_user_id=${
+                trialUser?.id ?? "abc"
+              }`;
+            }}
+          />
         </div>
       </Form>
     </SignContainer>
