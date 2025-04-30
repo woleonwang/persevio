@@ -71,7 +71,7 @@ const SystemPromptFeedback = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, width: "100%" }}>
       <Table
         style={{ height: "100%", overflow: "auto" }}
         columns={columns}
