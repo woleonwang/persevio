@@ -19,6 +19,7 @@ import Settings from "./pages/settings";
 import JobCoworker from "./pages/job-coworker";
 import Talent from "./pages/talent";
 import JobRequirement from "./pages/job-requirement";
+import SystemPromptFeedback from "./pages/system-prompt-feedback";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
@@ -70,6 +71,10 @@ createRoot(document.getElementById("root")!).render(
             />
             <Route path="/app/company" element={<CompanyKnowledge />} />
             <Route path="/app/settings" element={<Settings />} />
+            <Route
+              path="/app/system_prompt"
+              element={<SystemPromptFeedback />}
+            />
           </Route>
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />} />

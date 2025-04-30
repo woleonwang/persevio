@@ -140,6 +140,15 @@ const Settings = () => {
           <Button type="primary" onClick={() => logout()}>
             {t("logout")}
           </Button>
+          {profile?.is_admin && (
+            <Button
+              type="primary"
+              onClick={() => navigate("/app/system_prompt")}
+              style={{ marginLeft: 10 }}
+            >
+              System Prompt Feedback
+            </Button>
+          )}
         </div>
       </div>
       <div className={styles.block}>
