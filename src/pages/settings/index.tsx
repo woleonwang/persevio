@@ -16,8 +16,12 @@ const Settings = () => {
   const { t: originalT, i18n } = useTranslation();
   const [allCompanies, setAllCompanies] = useState<
     {
-      value: string;
       label: string;
+      title: string;
+      options: {
+        value: string;
+        label: string;
+      }[];
     }[]
   >([]);
 
@@ -52,12 +56,20 @@ const Settings = () => {
     const { code, data } = await Get("/api/all_companies");
     if (code === 0) {
       setAllCompanies(
-        (data.companies ?? []).map((item: any) => {
-          return {
-            value: `${item.id}`,
-            label: item.name,
-          };
-        })
+        (data.companies ?? [])
+          .filter((item: any) => item.staffs.length > 0)
+          .map((company: any) => {
+            return {
+              label: company.name,
+              title: company.name,
+              options: company.staffs.map((staff: any) => {
+                return {
+                  value: staff.id,
+                  label: staff.name,
+                };
+              }),
+            };
+          })
       );
     }
   };
@@ -107,9 +119,9 @@ const Settings = () => {
     }
   };
 
-  const loginToCompany = async (companyId: string) => {
-    const { code, data } = await Post("/api/login_to_company", {
-      company_id: parseInt(companyId),
+  const loginToStaff = async (staffId: string) => {
+    const { code, data } = await Post("/api/login_to_staff", {
+      staff_id: parseInt(staffId),
     });
     if (code === 0) {
       localStorage.setItem("token", data.token);
@@ -194,7 +206,7 @@ const Settings = () => {
           <Select
             style={{ width: 300 }}
             options={allCompanies}
-            onChange={(companyId) => loginToCompany(companyId)}
+            onChange={(staffId) => loginToStaff(staffId)}
           />
         </div>
       )}
