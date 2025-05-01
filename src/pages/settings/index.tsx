@@ -16,8 +16,12 @@ const Settings = () => {
   const { t: originalT, i18n } = useTranslation();
   const [allCompanies, setAllCompanies] = useState<
     {
-      value: string;
       label: string;
+      title: string;
+      options: {
+        value: string;
+        label: string;
+      }[];
     }[]
   >([]);
 
@@ -57,7 +61,7 @@ const Settings = () => {
           .map((company: any) => {
             return {
               label: company.name,
-              key: `${company.id}`,
+              title: company.name,
               options: company.staffs.map((staff: any) => {
                 return {
                   value: staff.id,
