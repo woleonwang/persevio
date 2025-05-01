@@ -7,7 +7,7 @@ import MarkdownContainer from "../../components/MarkdownContainer";
 type TRawMessage = {
   id: number;
   content: string;
-  role: "user" | "llm";
+  role: "user" | "assistant";
   system_prompt?: string;
   request_message: TRawMessage;
 };
@@ -59,11 +59,10 @@ const SystemPromptFeedback = () => {
   const getMessages = () => {
     if (!selectedMessage?.request_message?.content) return [];
 
-    const messages: { role: "user" | "llm"; content: string }[] = JSON.parse(
-      selectedMessage.request_message.content
-    );
+    const messages: { role: "user" | "assistant"; content: string }[] =
+      JSON.parse(selectedMessage.request_message.content);
     messages.push({
-      role: "llm",
+      role: "assistant",
       content: selectedMessage.content,
     });
 
