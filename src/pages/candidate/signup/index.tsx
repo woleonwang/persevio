@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message, Steps, Upload } from "antd";
 import { Get, Post, PostFormData } from "@/utils/request";
-import { GoogleOutlined } from "@ant-design/icons";
+import { GoogleOutlined, LinkedinOutlined } from "@ant-design/icons";
 
 import CandidateProfileChat from "@/components/CandidateProfileChat";
 import logo from "@/assets/logo.png";
@@ -140,6 +140,15 @@ const CandidateSignUp: React.FC = () => {
                     size="large"
                     onClick={() => {
                       window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}`;
+                    }}
+                  />
+
+                  <Button
+                    icon={<LinkedinOutlined />}
+                    shape="circle"
+                    size="large"
+                    onClick={() => {
+                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}`;
                     }}
                   />
                 </div>
