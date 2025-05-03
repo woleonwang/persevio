@@ -4,7 +4,6 @@ import {
   List,
   Input,
   Button,
-  Upload,
   message,
   Tour,
   TourStepProps,
@@ -44,9 +43,8 @@ import {
 import "@mdxeditor/editor/style.css";
 
 import type { TextAreaRef } from "antd/es/input/TextArea";
-import type { UploadChangeParam, UploadFile } from "antd/es/upload";
 
-import { Get, Post, PostFormData } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "../../store/global";
 
@@ -77,6 +75,7 @@ import CandidateScreeningQuestionDrawer, {
 import ChatbotConfigForm, {
   TChatbotOptions,
 } from "./components/ChatbotConfigForm";
+import { useNavigate } from "react-router";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -172,6 +171,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const loadingStartedAtRef = useRef<Dayjs>();
 
   const { t: originalT, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
@@ -845,41 +845,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     setIsRecording(false);
   };
 
-  const uploadFile = async (fileInfo: UploadChangeParam<UploadFile<any>>) => {
-    const file = fileInfo.file;
-
-    if (file && !file.status) {
-      const isPdf = file.type === "application/pdf";
-      const isDocx =
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      if (!(isPdf || isDocx)) {
-        message.error(`You can only upload pdf or docx file!`);
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("file", file as any);
-      const { code } = await PostFormData(
-        `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/upload_attachment/${
-          isPdf ? "pdf" : "docx"
-        }`,
-        formData
-      );
-
-      if (code === 0) {
-        message.success("Upload succeed");
-        if (screeningQuestions.length > 0) {
-          setCandidateScreeningQuestionDrawerOpen(true);
-        } else {
-          submitScreeningQuestion([]);
-        }
-      } else {
-        message.error("Upload failed");
-      }
-    }
-  };
-
   const canMessageEdit = (item: TMessage) => {
     return (
       allowEditMessage &&
@@ -1362,17 +1327,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
               <div></div>
               <div style={{ display: "flex", gap: 10 }}>
                 {chatType === "candidate" && (
-                  <>
-                    <Upload
-                      beforeUpload={() => false}
-                      onChange={(fileInfo) => uploadFile(fileInfo)}
-                      showUploadList={false}
-                      accept=".docx,.pdf"
-                      multiple={false}
-                    >
-                      <Button type="primary">{t("apply_now")}</Button>
-                    </Upload>
-                  </>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      navigate("/signup_candidate");
+                    }}
+                  >
+                    {t("apply_now")}
+                  </Button>
                 )}
 
                 <Button type="primary" onClick={submit} disabled={!canSubmit()}>

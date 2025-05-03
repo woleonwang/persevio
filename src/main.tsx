@@ -7,6 +7,7 @@ import { initReactI18next } from "react-i18next";
 
 import "./index.css";
 import App from "./layouts/App";
+import CandidateApp from "./layouts/Candidate";
 import Home from "./pages/home";
 import Signin from "./pages/signin";
 import Signup from "./pages/signup";
@@ -20,6 +21,9 @@ import JobCoworker from "./pages/job-coworker";
 import Talent from "./pages/talent";
 import JobRequirement from "./pages/job-requirement";
 import SystemPromptFeedback from "./pages/system-prompt-feedback";
+
+import SignUpCandidate from "./pages/candidate/signup";
+import Dashboard from "./pages/candidate/Dashboard";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
@@ -76,6 +80,10 @@ createRoot(document.getElementById("root")!).render(
               element={<SystemPromptFeedback />}
             />
           </Route>
+          <Route path="/candidate" element={<CandidateApp />}>
+            <Route path="/candidate/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="/signup_candidate" element={<SignUpCandidate />} />
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />

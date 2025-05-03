@@ -40,3 +40,13 @@ interface ISettings {
   is_admin: number;
   lang: string;
 }
+
+interface ICandidateSettings {
+  id: number;
+  email: string;
+  name: string;
+  status: "init" | "extracting" | "extracted";
+  phone: string;
+  phone_confirmed_at: string;
+  resume_confirmed_at: string;
+}

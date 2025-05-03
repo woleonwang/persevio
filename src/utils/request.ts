@@ -5,6 +5,21 @@ const instance = axios.create({
   timeout: 300000,
 });
 
+const getTokenKey = (url: string): string => {
+  const tokenKey = {
+    "/api/coworker": "coworker_token",
+    "/api/trial_user": "trial_user_uuid",
+    "/api/candidate": "candidate_token",
+  };
+  let key = "token";
+  Object.keys(tokenKey).forEach((suffix) => {
+    if (url.startsWith(suffix)) {
+      key = tokenKey[suffix as keyof typeof tokenKey];
+    }
+  });
+  return key;
+};
+
 export const Get = async <T = any>(
   url: string,
   params?: Record<string, unknown>
@@ -14,13 +29,7 @@ export const Get = async <T = any>(
       params,
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem(
-          url.startsWith("/api/coworker")
-            ? "coworker_token"
-            : url.startsWith("/api/trial_user")
-            ? "trial_user_uuid"
-            : "token"
-        ),
+        Authorization: localStorage.getItem(getTokenKey(url)),
       },
     });
     return response.data;
@@ -39,13 +48,7 @@ export const Post = async <T = any>(
     response = await instance.post<{ code: number; data?: T }>(url, data, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem(
-          url.startsWith("/api/coworker")
-            ? "coworker_token"
-            : url.startsWith("/api/trial_user")
-            ? "trial_user_uuid"
-            : "token"
-        ),
+        Authorization: localStorage.getItem(getTokenKey(url)),
       },
     });
     return response.data;
