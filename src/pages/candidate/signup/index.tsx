@@ -78,7 +78,14 @@ const CandidateSignUp: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <img src={logo} className={styles.banner} />
+        <img
+          src={logo}
+          className={styles.banner}
+          onClick={() => {
+            localStorage.removeItem("candidate_token");
+            window.location.reload();
+          }}
+        />
         <div className={styles.steps}>
           <Steps
             current={steps.indexOf(pageState)}
