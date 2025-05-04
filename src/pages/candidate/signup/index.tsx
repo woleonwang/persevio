@@ -13,6 +13,7 @@ const CandidateSignUp: React.FC = () => {
     "upload" | "signin" | "phone" | "conversation" | "confirm"
   >("upload");
   const [fileId, setFileId] = useState<number>();
+  const [jobId, setJobId] = useState<string>();
   const [_, setCandidate] = useState<ICandidateSettings>();
 
   const steps = ["upload", "signin", "phone", "conversation", "confirm"];
@@ -44,6 +45,11 @@ const CandidateSignUp: React.FC = () => {
 
     if (localStorage.getItem("candidate_token")) {
       fetchProfile();
+    }
+
+    const jobId = urlParams.get("job_id");
+    if (jobId) {
+      setJobId(jobId);
     }
   }, []);
 
@@ -139,7 +145,7 @@ const CandidateSignUp: React.FC = () => {
                     shape="circle"
                     size="large"
                     onClick={() => {
-                      window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}`;
+                      window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}&job_id=${jobId}`;
                     }}
                   />
 
@@ -148,7 +154,7 @@ const CandidateSignUp: React.FC = () => {
                     shape="circle"
                     size="large"
                     onClick={() => {
-                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}`;
+                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}&job_id=${jobId}`;
                     }}
                   />
                 </div>
