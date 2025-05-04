@@ -145,7 +145,9 @@ const CandidateSignUp: React.FC = () => {
                     shape="circle"
                     size="large"
                     onClick={() => {
-                      window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}&job_id=${jobId}`;
+                      window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}&job_id=${
+                        jobId ?? ""
+                      }`;
                     }}
                   />
 
@@ -154,7 +156,9 @@ const CandidateSignUp: React.FC = () => {
                     shape="circle"
                     size="large"
                     onClick={() => {
-                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}&job_id=${jobId}`;
+                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}&job_id=${
+                        jobId ?? ""
+                      }`;
                     }}
                   />
                 </div>
