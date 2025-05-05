@@ -87,9 +87,12 @@ const CandidateSignUp: React.FC = () => {
         <img
           src={logo}
           className={styles.banner}
-          onClick={() => {
-            localStorage.removeItem("candidate_token");
-            window.location.reload();
+          onClick={async () => {
+            const { code } = await Post("/api/candidate/clear");
+            if (code === 0) {
+              localStorage.removeItem("candidate_token");
+              window.location.reload();
+            }
           }}
         />
         <div className={styles.steps}>
