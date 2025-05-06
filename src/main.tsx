@@ -23,7 +23,7 @@ import JobRequirement from "./pages/job-requirement";
 import SystemPromptFeedback from "./pages/system-prompt-feedback";
 
 import SignUpCandidate from "./pages/candidate/signup";
-import SignInCandidate from "./pages/candidate/signin";
+import SignInCandidate from "./pages/candidate/signin/index.tsx";
 
 import CandidateProfile from "./pages/candidate/CandidateProfile";
 
@@ -31,6 +31,7 @@ import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
 import SpeechToText from "./components/SpeechToText";
 import Aspirations from "./pages/candidate/Aspirations";
+import DeepAspirations from "./pages/candidate/DeepAspirations/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -88,6 +89,10 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/profile" element={<CandidateProfile />} />
             <Route path="/candidate/aspirations" element={<Aspirations />} />
+            <Route
+              path="/candidate/deep_aspirations"
+              element={<DeepAspirations />}
+            />
             <Route
               path="/candidate/deep_aspirations"
               element={<Aspirations />}

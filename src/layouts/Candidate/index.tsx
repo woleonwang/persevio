@@ -42,6 +42,11 @@ const CandidateLayout = () => {
       path: "/candidate/aspirations",
       img: <ProfileOutlined />,
     },
+    {
+      title: t("menu.deep_aspirations"),
+      path: "/candidate/deep_aspirations",
+      img: <ProfileOutlined />,
+    },
   ];
 
   const FOOTER = [
