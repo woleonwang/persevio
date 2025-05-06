@@ -29,11 +29,17 @@ type TSupportTag = {
 };
 
 interface IProps {
+  chatType: "profile" | "deep_aspirations";
   onFinish?: () => void;
 }
 
-const CandidateProfileChat: React.FC<IProps> = (props) => {
-  const { onFinish } = props;
+const ChatTypeMappings = {
+  profile: "CANDIDATE_PROFILE_CHAT",
+  deep_aspirations: "CANDIDATE_DEEP_CAREER_ASPIRATION_CHAT",
+};
+
+const CandidateChat: React.FC<IProps> = (props) => {
+  const { chatType, onFinish } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +121,7 @@ const CandidateProfileChat: React.FC<IProps> = (props) => {
 
   const fetchMessages = async () => {
     const { code, data } = await Get(
-      "/api/candidate/chat/CANDIDATE_PROFILE_CHAT/messages"
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}/messages`
     );
 
     if (code === 0) {
@@ -226,7 +232,7 @@ const CandidateProfileChat: React.FC<IProps> = (props) => {
     ]);
     setIsLoading(true);
 
-    Post("/api/candidate/chat/CANDIDATE_PROFILE_CHAT/send", {
+    Post(`/api/candidate/chat/${ChatTypeMappings[chatType]}/send`, {
       content: formattedMessage,
       metadata: metadata,
     });
@@ -459,4 +465,4 @@ const CandidateProfileChat: React.FC<IProps> = (props) => {
   );
 };
 
-export default observer(CandidateProfileChat);
+export default observer(CandidateChat);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "@/utils/request";
 
-import CandidateProfileChat from "@/components/CandidateProfileChat";
+import CandidateChat from "@/components/CandidateChat";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import BasicInfo from "./components/BasicInfo";
@@ -137,7 +137,8 @@ const CandidateSignUp: React.FC = () => {
           if (pageState === "conversation") {
             return (
               <div className={styles.chatWrapper}>
-                <CandidateProfileChat
+                <CandidateChat
+                  chatType="profile"
                   onFinish={() => navigate("/candidate/profile")}
                 />
               </div>

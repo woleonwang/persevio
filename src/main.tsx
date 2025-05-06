@@ -23,6 +23,8 @@ import JobRequirement from "./pages/job-requirement";
 import SystemPromptFeedback from "./pages/system-prompt-feedback";
 
 import SignUpCandidate from "./pages/candidate/signup";
+import SignInCandidate from "./pages/candidate/signin";
+
 import CandidateProfile from "./pages/candidate/CandidateProfile";
 
 import enUS from "./locales/en-US.ts";
@@ -86,8 +88,13 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/profile" element={<CandidateProfile />} />
             <Route path="/candidate/aspirations" element={<Aspirations />} />
+            <Route
+              path="/candidate/deep_aspirations"
+              element={<Aspirations />}
+            />
           </Route>
           <Route path="/signup_candidate" element={<SignUpCandidate />} />
+          <Route path="/signin_candidate" element={<SignInCandidate />} />
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />
