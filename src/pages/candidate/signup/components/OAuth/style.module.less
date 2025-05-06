@@ -1,0 +1,52 @@
+@primary-color: #1fac6a;
+
+.container {
+  flex: auto;
+  display: flex;
+  width: 100%;
+}
+
+.left {
+  flex: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  width: 546px;
+  border: 1px solid @primary-color;
+  border-radius: 16px;
+  padding: 40px 50px;
+}
+
+.logoWrapper {
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(234, 234, 234, 1);
+}
+
+.right {
+  flex: none;
+  width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(238, 238, 238, 1);
+}
+
+.brand {
+  width: 32px;
+  height: 32px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  border-radius: 16px;
+  margin-top: 32px;
+  font-weight: bold;
+}
