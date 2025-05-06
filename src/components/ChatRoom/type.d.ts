@@ -32,7 +32,10 @@ export type TExtraTagName =
   | "to-social-post-btn"
   | "to-faq-btn"
   | "to-chatbot-btn"
-  | "chatbot-config-btn";
+  | "chatbot-config-btn"
+
+  //candiate
+  | "interview-done";
 
 export type TMessageFromApi = {
   id: number;

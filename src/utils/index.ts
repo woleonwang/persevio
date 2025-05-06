@@ -9,3 +9,11 @@ export const parseJSON = (jsonString?: string) => {
   const lastIndex = jsonString.lastIndexOf("}");
   return JSON.parse(jsonString.slice(startIndex, lastIndex + 1));
 };
+
+export const parseMarkdown = (markdownString?: string) => {
+  if (!markdownString) return "";
+
+  return markdownString.includes("```markdown")
+    ? markdownString.replace(/^.*```markdown/s, "").replace(/```$/, "")
+    : markdownString;
+};

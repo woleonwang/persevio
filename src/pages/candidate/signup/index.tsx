@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Steps, Upload } from "antd";
-import { Get, Post, PostFormData } from "@/utils/request";
-import { GoogleOutlined, LinkedinOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message } from "antd";
+import { Get, Post } from "@/utils/request";
 
 import CandidateProfileChat from "@/components/CandidateProfileChat";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
+import BasicInfo from "./components/BasicInfo";
+import OAuth from "./components/OAuth";
+import { useNavigate } from "react-router";
+
 // import { useNavigate } from "react-router";
 
 const CandidateSignUp: React.FC = () => {
   const [pageState, setPageState] = useState<
-    "upload" | "signin" | "phone" | "conversation" | "confirm"
-  >("upload");
+    "upload" | "signin" | "phone" | "conversation"
+  >("signin");
+  console.log(pageState);
   const [fileId, setFileId] = useState<number>();
   const [jobId, setJobId] = useState<string>();
   const [_, setCandidate] = useState<ICandidateSettings>();
 
-  const steps = ["upload", "signin", "phone", "conversation", "confirm"];
-
   const [form] = Form.useForm<{ phone: string }>();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -83,90 +85,38 @@ const CandidateSignUp: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <img
-          src={logo}
-          className={styles.banner}
-          onClick={async () => {
-            const { code } = await Post("/api/candidate/clear");
-            if (code === 0) {
-              localStorage.removeItem("candidate_token");
-              window.location.reload();
-            }
-          }}
-        />
-        <div className={styles.steps}>
-          <Steps
-            current={steps.indexOf(pageState)}
-            labelPlacement="vertical"
-            items={steps.map(() => ({ disabled: true }))}
+      {pageState !== "signin" && (
+        <div className={styles.header}>
+          <img
+            src={logo}
+            className={styles.banner}
+            onClick={async () => {
+              const { code } = await Post("/api/candidate/clear");
+              if (code === 0) {
+                localStorage.removeItem("candidate_token");
+                window.location.reload();
+              }
+            }}
           />
         </div>
-      </div>
+      )}
+
       <div className={styles.main}>
         {(() => {
           if (pageState === "upload") {
             return (
-              <div className={styles.uploadWrapper}>
-                <div className={styles.title}>
-                  Apply to unlock opportunities at top companies
-                </div>
-                <Upload
-                  beforeUpload={() => false}
-                  onChange={async (fileInfo) => {
-                    const formData = new FormData();
-                    formData.append("file", fileInfo.file as any);
-                    const { code, data } = await PostFormData(
-                      `/api/upload_files`,
-                      formData
-                    );
-                    if (code === 0) {
-                      setFileId(data.upload_file.id);
-                      message.success("Upload succeed");
-                      setPageState("signin");
-                    } else {
-                      message.error("Upload failed");
-                    }
-                  }}
-                  showUploadList={false}
-                  accept=".docx,.pdf"
-                  multiple={false}
-                >
-                  <Button type="primary">Upload Resume</Button>
-                </Upload>
-              </div>
+              <BasicInfo
+                state="upload"
+                onUpload={(fileId) => {
+                  setFileId(fileId);
+                  setPageState("signin");
+                }}
+              />
             );
           }
 
-          if (pageState === "signin") {
-            return (
-              <div>
-                <h2 style={{ fontSize: 36 }}>Candidate Sign in</h2>
-                <div>
-                  <Button
-                    icon={<GoogleOutlined />}
-                    shape="circle"
-                    size="large"
-                    onClick={() => {
-                      window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}&job_id=${
-                        jobId ?? ""
-                      }`;
-                    }}
-                  />
-
-                  <Button
-                    icon={<LinkedinOutlined />}
-                    shape="circle"
-                    size="large"
-                    onClick={() => {
-                      window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}&job_id=${
-                        jobId ?? ""
-                      }`;
-                    }}
-                  />
-                </div>
-              </div>
-            );
+          if (pageState === "signin" && fileId) {
+            return <OAuth fileId={fileId} jobId={jobId} />;
           }
 
           if (pageState === "phone") {
@@ -187,7 +137,9 @@ const CandidateSignUp: React.FC = () => {
           if (pageState === "conversation") {
             return (
               <div className={styles.chatWrapper}>
-                <CandidateProfileChat />
+                <CandidateProfileChat
+                  onFinish={() => navigate("/candidate/profile")}
+                />
               </div>
             );
           }

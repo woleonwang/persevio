@@ -18,13 +18,14 @@ const useAssembly = ({
 
     realtimeTranscriber.current = new RealtimeTranscriber({
       token: data.token,
-      sampleRate: 16_000,
+      sampleRate: 16000,
     });
 
     const texts: Record<number, string> = {};
     realtimeTranscriber.current.on(
       "transcript",
       (transcript: RealtimeTranscript) => {
+        console.log("transcript:", transcript);
         let msg = "";
         texts[transcript.audio_start] = transcript.text;
         const keys = Object.keys(texts);
@@ -52,7 +53,9 @@ const useAssembly = ({
       realtimeTranscriber.current = undefined;
     });
 
+    console.log("start time:", Date.now());
     await realtimeTranscriber.current.connect();
+    console.log("connected time:", Date.now());
 
     navigator.mediaDevices
       .getUserMedia({ audio: true })

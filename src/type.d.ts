@@ -1,3 +1,9 @@
+type TPrompt = {
+  prompt_type: string;
+  content: string;
+  role: "recruiter" | "candidate";
+};
+
 interface Window {
   webkitSpeechRecognition: () => void;
   SpeechRecognition: () => void;
@@ -49,4 +55,20 @@ interface ICandidateSettings {
   phone: string;
   phone_confirmed_at: string;
   resume_confirmed_at: string;
+
+  llm_resume_doc_id: number;
+  initial_career_aspiration_doc_id: number;
+  internal_evaluate_doc_id: number;
+  deep_career_aspiration_doc_id: number;
 }
+
+type TMenu = {
+  title: string;
+  path?: string;
+  img: ReactNode;
+  children?: {
+    title: string;
+    path: string;
+    active: boolean;
+  }[];
+};

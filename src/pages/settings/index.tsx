@@ -5,10 +5,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
-type TPrompt = {
-  prompt_type: string;
-  content: string;
-};
 const Settings = () => {
   const [form] = Form.useForm();
   const [profile, setProfile] = useState<ISettings>();
@@ -88,11 +84,12 @@ const Settings = () => {
     });
   };
 
-  const updatePrompt = async (promptType: string) => {
+  const updatePrompt = async (promptType: string, role: string) => {
     const content = form.getFieldsValue()[promptType];
     const { code } = await Post("/api/update_prompt", {
       prompt_type: promptType,
       content,
+      role,
     });
     if (code === 0) {
       message.success("Update prompt succeed");
@@ -228,7 +225,7 @@ const Settings = () => {
                   <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button
                       type="primary"
-                      onClick={() => updatePrompt(item.prompt_type)}
+                      onClick={() => updatePrompt(item.prompt_type, item.role)}
                     >
                       {originalT("save")}
                     </Button>

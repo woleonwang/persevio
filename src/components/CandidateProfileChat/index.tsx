@@ -28,7 +28,12 @@ type TSupportTag = {
   autoTrigger?: boolean;
 };
 
-const CandidateProfileChat: React.FC = () => {
+interface IProps {
+  onFinish?: () => void;
+}
+
+const CandidateProfileChat: React.FC<IProps> = (props) => {
+  const { onFinish } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -99,10 +104,19 @@ const CandidateProfileChat: React.FC = () => {
     return originalT(`candidate_profile_chat.${key}`);
   };
 
-  const supportTags: TSupportTag[] = [];
+  const supportTags: TSupportTag[] = [
+    {
+      key: "interview-done",
+      title: "",
+      handler: () => onFinish?.(),
+      autoTrigger: true,
+    },
+  ];
 
   const fetchMessages = async () => {
-    const { code, data } = await Get("/api/candidate/chat/profile/messages");
+    const { code, data } = await Get(
+      "/api/candidate/chat/CANDIDATE_PROFILE_CHAT/messages"
+    );
 
     if (code === 0) {
       const messageHistory = formatMessages(data.messages);
@@ -212,7 +226,7 @@ const CandidateProfileChat: React.FC = () => {
     ]);
     setIsLoading(true);
 
-    Post("/api/candidate/chat/profile/send", {
+    Post("/api/candidate/chat/CANDIDATE_PROFILE_CHAT/send", {
       content: formattedMessage,
       metadata: metadata,
     });
@@ -342,7 +356,7 @@ const CandidateProfileChat: React.FC = () => {
                       const visibleTags = (item.extraTags ?? [])
                         .map((extraTag) => {
                           return supportTags.find(
-                            (tag) => tag.key === extraTag.name
+                            (tag) => tag.key === extraTag.name && tag.title
                           );
                         })
                         .filter(Boolean) as TSupportTag[];

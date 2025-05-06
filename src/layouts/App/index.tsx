@@ -19,17 +19,6 @@ import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 
-type TMenu = {
-  title: string;
-  path?: string;
-  img: ReactNode;
-  children?: {
-    title: string;
-    path: string;
-    active: boolean;
-  }[];
-};
-
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
 

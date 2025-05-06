@@ -23,11 +23,12 @@ import JobRequirement from "./pages/job-requirement";
 import SystemPromptFeedback from "./pages/system-prompt-feedback";
 
 import SignUpCandidate from "./pages/candidate/signup";
-import Dashboard from "./pages/candidate/Dashboard";
+import CandidateProfile from "./pages/candidate/CandidateProfile";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
 import SpeechToText from "./components/SpeechToText";
+import Aspirations from "./pages/candidate/Aspirations";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -83,7 +84,8 @@ createRoot(document.getElementById("root")!).render(
             />
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
-            <Route path="/candidate/dashboard" element={<Dashboard />} />
+            <Route path="/candidate/profile" element={<CandidateProfile />} />
+            <Route path="/candidate/aspirations" element={<Aspirations />} />
           </Route>
           <Route path="/signup_candidate" element={<SignUpCandidate />} />
           <Route path="/signup" element={<Signup />}></Route>

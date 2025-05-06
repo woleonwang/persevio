@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Get } from "../../utils/request";
 import { TTalent } from "../job/components/Profile/type";
-import { parseJSON } from "../../utils";
+import { parseJSON, parseMarkdown } from "../../utils";
 
 import styles from "./style.module.less";
 import { Popover } from "antd";
@@ -38,13 +38,7 @@ const Talent = () => {
       setTalent({
         ...data.talent,
         evaluate_result: parseJSON(data.talent.evaluate_result),
-        parsed_content: ((data.talent.parsed_content ?? "") as string).includes(
-          "```markdown"
-        )
-          ? data.talent.parsed_content
-              .replace(/^.*```markdown/s, "")
-              .replace(/```$/, "")
-          : data.talent.parsed_content,
+        parsed_content: parseMarkdown(data.talent.parsed_content),
       });
       setMeta(data.meta);
     }
