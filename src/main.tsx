@@ -99,8 +99,8 @@ createRoot(document.getElementById("root")!).render(
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
           </Route>
-          <Route path="/signup_candidate" element={<SignUpCandidate />} />
-          <Route path="/signin_candidate" element={<SignInCandidate />} />
+          <Route path="/signup-candidate" element={<SignUpCandidate />} />
+          <Route path="/signin-candidate" element={<SignInCandidate />} />
           <Route path="/signup" element={<Signup />}></Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />

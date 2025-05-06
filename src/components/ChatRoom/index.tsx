@@ -1330,7 +1330,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <Button
                     type="primary"
                     onClick={() => {
-                      navigate(`/signup_candidate?job_id=${jobId}`);
+                      navigate(`/signup-candidate?job_id=${jobId}`);
                     }}
                   >
                     {t("apply_now")}

@@ -64,11 +64,11 @@ const CandidateLayout = () => {
       if (code === 0) {
         setInited(true);
         if (!(data.candidate as ICandidateSettings).llm_resume_doc_id) {
-          navigate("/signup_candidate");
+          navigate("/signup-candidate");
         }
       }
     } catch (e) {
-      navigate("/signup_candidate");
+      navigate("/signup-candidate");
     }
   };
 
