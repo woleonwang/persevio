@@ -14,7 +14,7 @@ import { useNavigate } from "react-router";
 const CandidateSignUp: React.FC = () => {
   const [pageState, setPageState] = useState<
     "upload" | "signin" | "phone" | "conversation"
-  >("signin");
+  >("upload");
   console.log(pageState);
   const [fileId, setFileId] = useState<number>();
   const [jobId, setJobId] = useState<string>();
