@@ -2,7 +2,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import { parseMarkdown } from "@/utils";
 import { Get } from "@/utils/request";
 import { useEffect, useState } from "react";
-
+import styles from "./style.module.less";
 const Aspirations = () => {
   const [aspirationsContent, setAspirationsContent] = useState("");
 
@@ -20,8 +20,11 @@ const Aspirations = () => {
   };
 
   return (
-    <div>
-      <MarkdownContainer content={aspirationsContent} />
+    <div className={styles.container}>
+      <div className={styles.header}>Resume</div>
+      <div className={styles.markdownWrapper}>
+        <MarkdownContainer content={aspirationsContent} />
+      </div>
     </div>
   );
 };

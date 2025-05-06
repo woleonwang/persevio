@@ -3,7 +3,9 @@ import { parseMarkdown } from "@/utils";
 import { Get } from "@/utils/request";
 import { useEffect, useState } from "react";
 
-const CandidateProfile = () => {
+import styles from "./style.module.less";
+
+const CandidateResume = () => {
   const [resume, setResume] = useState("");
 
   useEffect(() => {
@@ -18,10 +20,13 @@ const CandidateProfile = () => {
   };
 
   return (
-    <div>
-      <MarkdownContainer content={resume} />
+    <div className={styles.container}>
+      <div className={styles.header}>Resume</div>
+      <div className={styles.markdownWrapper}>
+        <MarkdownContainer content={resume} />
+      </div>
     </div>
   );
 };
 
-export default CandidateProfile;
+export default CandidateResume;

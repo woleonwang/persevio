@@ -6,6 +6,10 @@ export default {
     jobs: "Jobs",
     company: "Company Info",
     settings: "Settings",
+
+    resume: "Resume",
+    aspirations: "Career Aspiration",
+    deep_aspirations: "Deep Aspirations",
   },
 
   job: {

@@ -60,6 +60,8 @@ interface ICandidateSettings {
   initial_career_aspiration_doc_id: number;
   internal_evaluate_doc_id: number;
   deep_career_aspiration_doc_id: number;
+
+  lang: string;
 }
 
 type TMenu = {
