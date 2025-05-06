@@ -15,7 +15,6 @@ import globalStore from "@/store/global";
 import classnames from "classnames";
 import Icon from "@/components/Icon";
 import logo from "../../assets/logo.png";
-import { TCandidate } from "@/pages/job/components/Profile/type";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
