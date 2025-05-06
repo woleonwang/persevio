@@ -30,7 +30,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
 import SpeechToText from "./components/SpeechToText";
-import Aspirations from "./pages/candidate/aspirations";
+import InitialAspirations from "./pages/candidate/initial-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import CandidateSettings from "./pages/candidate/settings";
 
@@ -89,14 +89,13 @@ createRoot(document.getElementById("root")!).render(
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/resume" element={<CandidateResume />} />
-            <Route path="/candidate/aspirations" element={<Aspirations />} />
             <Route
-              path="/candidate/deep_aspirations"
-              element={<DeepAspirations />}
+              path="/candidate/aspirations"
+              element={<InitialAspirations />}
             />
             <Route
               path="/candidate/deep_aspirations"
-              element={<Aspirations />}
+              element={<DeepAspirations />}
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
           </Route>

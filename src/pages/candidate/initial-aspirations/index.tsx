@@ -3,7 +3,7 @@ import { parseMarkdown } from "@/utils";
 import { Get } from "@/utils/request";
 import { useEffect, useState } from "react";
 import styles from "./style.module.less";
-const Aspirations = () => {
+const InitialAspirations = () => {
   const [aspirationsContent, setAspirationsContent] = useState("");
 
   useEffect(() => {
@@ -29,4 +29,4 @@ const Aspirations = () => {
   );
 };
 
-export default Aspirations;
+export default InitialAspirations;
