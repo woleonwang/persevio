@@ -10,13 +10,14 @@ import UploadResume from "./components/UploadResume";
 import OAuth from "./components/OAuth";
 import { useNavigate } from "react-router";
 import ConfirmPhone from "./components/ConfirmPhone";
+import { isDevelopment } from "@/utils";
 
 const CandidateSignUp: React.FC = () => {
   const [pageState, setPageState] = useState<
     "upload" | "signin" | "phone" | "conversation"
-  >("signin");
+  >(isDevelopment() ? "upload" : "upload");
 
-  const [fileId, setFileId] = useState<number>(30);
+  const [fileId, setFileId] = useState<number>();
   const [jobId, setJobId] = useState<string>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
 

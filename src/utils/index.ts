@@ -17,3 +17,7 @@ export const parseMarkdown = (markdownString?: string) => {
     ? markdownString.replace(/^.*```markdown/s, "").replace(/```$/, "")
     : markdownString;
 };
+
+export const isDevelopment = (): boolean => {
+  return process.env.NODE_ENV === "development";
+};

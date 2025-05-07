@@ -76,6 +76,7 @@ import ChatbotConfigForm, {
   TChatbotOptions,
 } from "./components/ChatbotConfigForm";
 import { useNavigate } from "react-router";
+import MarkdownEditor from "../MarkdownEditor";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -1498,28 +1499,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
               {t("tips")}
             </div>
-            <MDXEditor
-              contentEditableClassName={styles.mdEditor}
-              markdown={markdownEditMessageContent}
+            <MarkdownEditor
+              value={markdownEditMessageContent}
               onChange={(md) => setMarkdownEditMessageContent(md)}
-              plugins={[
-                headingsPlugin(),
-                quotePlugin(),
-                listsPlugin(),
-                thematicBreakPlugin(),
-                linkPlugin(),
-                toolbarPlugin({
-                  toolbarContents: () => (
-                    <>
-                      <UndoRedo />
-                      <BoldItalicUnderlineToggles />
-                      <ListsToggle options={["bullet", "number"]} />
-                      <Separator />
-                      <BlockTypeSelect />
-                    </>
-                  ),
-                }),
-              ]}
             />
           </>
         </Modal>
