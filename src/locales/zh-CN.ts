@@ -10,6 +10,7 @@ export default {
     profile: "简历",
     aspirations: "职业规划",
     deep_aspirations: "深度职位规划",
+    job_applies: "职位申请",
   },
 
   job: {

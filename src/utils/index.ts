@@ -21,3 +21,9 @@ export const parseMarkdown = (markdownString?: string) => {
 export const isDevelopment = (): boolean => {
   return process.env.NODE_ENV === "development";
 };
+
+export const getImgSrc = (originalUrl: string) => {
+  return originalUrl.startsWith("http")
+    ? originalUrl
+    : `/api/logo/${originalUrl}`;
+};

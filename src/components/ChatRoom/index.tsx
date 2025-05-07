@@ -26,20 +26,6 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  headingsPlugin,
-  linkPlugin,
-  listsPlugin,
-  ListsToggle,
-  MDXEditor,
-  quotePlugin,
-  Separator,
-  thematicBreakPlugin,
-  toolbarPlugin,
-  UndoRedo,
-} from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 
 import type { TextAreaRef } from "antd/es/input/TextArea";
@@ -1330,8 +1316,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 {chatType === "candidate" && (
                   <Button
                     type="primary"
-                    onClick={() => {
-                      navigate(`/signup-candidate?job_id=${jobId}`);
+                    onClick={async () => {
+                      const { code, data } = await Post(
+                        "/api/candidate/job_applies",
+                        {
+                          job_id: jobId,
+                        }
+                      );
+                      if (code === 0) {
+                        navigate(`/candidate/job-applies/${data.job_apply_id}`);
+                      } else if (code === 100001) {
+                        navigate(`/signup-candidate?job_id=${jobId}`);
+                      } else {
+                        message.error(originalT("submit_failed"));
+                      }
                     }}
                   >
                     {t("apply_now")}

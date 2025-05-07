@@ -33,6 +33,8 @@ import SpeechToText from "./components/SpeechToText";
 import InitialAspirations from "./pages/candidate/initial-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import CandidateSettings from "./pages/candidate/settings";
+import JobApplies from "./pages/candidate/job-applies/index.tsx";
+import JobApplyShow from "./pages/candidate/job-apply-show";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -96,6 +98,11 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/candidate/deep_aspirations"
               element={<DeepAspirations />}
+            />
+            <Route path="/candidate/job-applies" element={<JobApplies />} />
+            <Route
+              path="/candidate/job-applies/:jobApplyId"
+              element={<JobApplyShow />}
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
           </Route>

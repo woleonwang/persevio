@@ -21,6 +21,21 @@ const CandidateLayout = () => {
 
   const navigate = useNavigate();
 
+  const LayoutMapping = {
+    blank: [/^\/candidate\/job-applies\/\d+$/],
+  };
+
+  const layout =
+    (
+      Object.keys(LayoutMapping) as unknown as (keyof typeof LayoutMapping)[]
+    ).find((key: keyof typeof LayoutMapping) => {
+      return LayoutMapping[key].some((regex) => {
+        if (regex.test(currentPath)) {
+          return key;
+        }
+      });
+    }) ?? "default";
+
   const [inited, setInited] = useState(false);
 
   const { t } = useTranslation();
@@ -40,6 +55,11 @@ const CandidateLayout = () => {
     {
       title: t("menu.aspirations"),
       path: "/candidate/aspirations",
+      img: <ProfileOutlined />,
+    },
+    {
+      title: t("menu.job_applies"),
+      path: "/candidate/job-applies",
       img: <ProfileOutlined />,
     },
     {
@@ -84,6 +104,22 @@ const CandidateLayout = () => {
         }}
       >
         <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (layout === "blank") {
+    return (
+      <div className={classnames(styles.container, styles.v)}>
+        <div>
+          <img src={logo} style={{ width: 220, margin: "21px 28px" }} />
+        </div>
+        <div
+          className={styles.main}
+          style={{ background: "rgba(247, 248, 250, 1)" }}
+        >
+          <Outlet />
+        </div>
       </div>
     );
   }

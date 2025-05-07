@@ -10,6 +10,7 @@ export default {
     resume: "Resume",
     aspirations: "Career Aspiration",
     deep_aspirations: "Deep Aspirations",
+    job_applies: "Jobs for You",
   },
 
   job: {
