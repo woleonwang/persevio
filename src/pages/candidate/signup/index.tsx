@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message } from "antd";
+import { message } from "antd";
+import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 
 import CandidateChat from "@/components/CandidateChat";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
-import BasicInfo from "./components/BasicInfo";
+import UploadResume from "./components/UploadResume";
 import OAuth from "./components/OAuth";
 import { useNavigate } from "react-router";
-
-// import { useNavigate } from "react-router";
+import ConfirmPhone from "./components/ConfirmPhone";
 
 const CandidateSignUp: React.FC = () => {
   const [pageState, setPageState] = useState<
     "upload" | "signin" | "phone" | "conversation"
-  >("upload");
-  console.log(pageState);
-  const [fileId, setFileId] = useState<number>();
-  const [jobId, setJobId] = useState<string>();
-  const [_, setCandidate] = useState<ICandidateSettings>();
+  >("signin");
 
-  const [form] = Form.useForm<{ phone: string }>();
+  const [fileId, setFileId] = useState<number>(30);
+  const [jobId, setJobId] = useState<string>();
+  const [candidate, setCandidate] = useState<ICandidateSettings>();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,9 +59,6 @@ const CandidateSignUp: React.FC = () => {
     if (code === 0) {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
-      form.setFieldsValue({
-        phone: candidate.phone,
-      });
 
       if (!candidate.phone_confirmed_at) {
         setPageState("phone");
@@ -72,42 +68,46 @@ const CandidateSignUp: React.FC = () => {
     }
   };
 
-  const confirmPhone = async () => {
-    form.validateFields().then(async (values) => {
-      const { code } = await Post(`/api/candidate/confirm_phone`, {
-        phone: values.phone,
-      });
-      if (code === 0) {
-        setPageState("conversation");
-      }
-    });
-  };
-
   return (
     <div className={styles.container}>
       {pageState !== "signin" && (
-        <div className={styles.header}>
-          <img
-            src={logo}
-            className={styles.banner}
-            onClick={async () => {
-              const { code } = await Post("/api/candidate/clear");
-              if (code === 0) {
-                localStorage.removeItem("candidate_token");
-                window.location.reload();
-              }
-            }}
-          />
-        </div>
+        <>
+          <div className={styles.header}>
+            <img
+              src={logo}
+              className={styles.banner}
+              onClick={async () => {
+                const { code } = await Post("/api/candidate/clear");
+                if (code === 0) {
+                  localStorage.removeItem("candidate_token");
+                  window.location.reload();
+                }
+              }}
+            />
+          </div>
+        </>
       )}
 
       <div className={styles.main}>
+        {pageState !== "signin" && (
+          <div className={styles.stepWrapper}>
+            <div className={classnames(styles.step, styles.active)}>
+              Upload resume
+            </div>
+            <div
+              className={classnames(styles.step, {
+                [styles.active]: pageState === "conversation",
+              })}
+            >
+              Career Deep Dive
+            </div>
+          </div>
+        )}
         {(() => {
           if (pageState === "upload") {
             return (
-              <BasicInfo
-                state="upload"
-                onUpload={(fileId) => {
+              <UploadResume
+                onFinish={(fileId) => {
                   setFileId(fileId);
                   setPageState("signin");
                 }}
@@ -121,16 +121,10 @@ const CandidateSignUp: React.FC = () => {
 
           if (pageState === "phone") {
             return (
-              <Form form={form}>
-                <Form.Item
-                  label="Phone"
-                  name="phone"
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Button onClick={() => confirmPhone()}>Next</Button>
-              </Form>
+              <ConfirmPhone
+                phone={candidate?.phone}
+                onFinish={() => setPageState("conversation")}
+              />
             );
           }
 

@@ -1,3 +1,5 @@
+@primary-color: #1fac6a;
+
 .container {
   height: 100vh;
   overflow: hidden;
@@ -19,6 +21,35 @@
   width: auto;
 }
 
+.stepWrapper {
+  display: flex;
+  gap: 10px;
+  width: 450px;
+  margin-top: 30px;
+}
+
+.step {
+  flex: none;
+
+  color: rgba(153, 153, 153, 1);
+  &::before {
+    content: "";
+    display: block;
+    width: 220px;
+    height: 7px;
+    margin-bottom: 5px;
+    background-color: rgba(234, 234, 234, 1);
+  }
+
+  &.active {
+    color: @primary-color;
+    font-weight: bold;
+    &::before {
+      background-color: @primary-color;
+    }
+  }
+}
+
 .main {
   flex: auto;
   overflow: hidden;
@@ -33,4 +64,5 @@
   width: 1000px;
   display: flex;
   overflow: hidden;
+  margin-top: 30px;
 }

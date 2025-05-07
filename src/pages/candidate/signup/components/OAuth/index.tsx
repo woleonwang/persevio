@@ -45,28 +45,30 @@ const OAuth = (props: IProps) => {
       </div>
 
       <div className={styles.right}>
-        <div>
-          <div>
+        <div className={styles.textWrapper}>
+          <div className={styles.title}>
             Stop the endless job hunt. Persevio uses AI to match you with top
-            opportunities in <span>Singapore</span>.
+            opportunities in <span className={styles.primary}>Singapore</span>.
           </div>
-          <div>
-            <div>One Conversation, Many Opportunities:</div>
-            <div>
+          <div className={styles.itemBlock}>
+            <div className={styles.subTitle}>
+              One Conversation, Many Opportunities:
+            </div>
+            <div className={styles.subText}>
               Chat once with Viona, our AI recruiter. We'll then proactively
               send you highly accurate, personalized job recommendations.
             </div>
           </div>
-          <div>
-            <div>Confidentiality Assured</div>
-            <div>
+          <div className={styles.itemBlock}>
+            <div className={styles.subTitle}>Confidentiality Assured</div>
+            <div className={styles.subText}>
               Your profile remains private. Employers only see your details when
               you decide to apply for a specific role.
             </div>
           </div>
-          <div>
-            <div>Guided Application Process</div>
-            <div>
+          <div className={styles.itemBlock}>
+            <div className={styles.subTitle}>Guided Application Process</div>
+            <div className={styles.subText}>
               Viona acts as your dedicated AI copilot, supporting you every step
               of the way.
             </div>
