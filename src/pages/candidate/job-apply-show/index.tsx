@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import CandidateChat from "@/components/CandidateChat";
 import { Spin } from "antd";
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
 
   const { jobApplyId = "" } = useParams();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchApplyJob();
