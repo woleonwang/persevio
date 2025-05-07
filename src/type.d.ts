@@ -52,6 +52,19 @@ interface IJobApplyListItem {
   company_name: string;
 }
 
+interface IJobApply {
+  id: number;
+  candidate_id: number;
+  job_id: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  recommend_doc_id: number;
+  job_name: string;
+  company_logo: string;
+  company_name: string;
+}
+
 interface ISettings {
   staff_name: string;
   email: string;

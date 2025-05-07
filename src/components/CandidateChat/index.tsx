@@ -29,17 +29,19 @@ type TSupportTag = {
 };
 
 interface IProps {
-  chatType: "profile" | "deep_aspirations";
+  chatType: "profile" | "deep_aspirations" | "job_interview";
+  jobApplyId?: number;
   onFinish?: () => void;
 }
 
 const ChatTypeMappings = {
   profile: "CANDIDATE_PROFILE_CHAT",
   deep_aspirations: "CANDIDATE_DEEP_CAREER_ASPIRATION_CHAT",
+  job_interview: "CANDIDATE_JOB_INTERVIEW_CHAT",
 };
 
 const CandidateChat: React.FC<IProps> = (props) => {
-  const { chatType, onFinish } = props;
+  const { chatType, onFinish, jobApplyId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -121,7 +123,9 @@ const CandidateChat: React.FC<IProps> = (props) => {
 
   const fetchMessages = async () => {
     const { code, data } = await Get(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}/messages`
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
+      }/messages`
     );
 
     if (code === 0) {
@@ -232,10 +236,15 @@ const CandidateChat: React.FC<IProps> = (props) => {
     ]);
     setIsLoading(true);
 
-    Post(`/api/candidate/chat/${ChatTypeMappings[chatType]}/send`, {
-      content: formattedMessage,
-      metadata: metadata,
-    });
+    Post(
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
+      }/send`,
+      {
+        content: formattedMessage,
+        metadata: metadata,
+      }
+    );
   };
 
   const startRecord = async () => {
