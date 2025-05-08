@@ -62,6 +62,8 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const loadingStartedAtRef = useRef<Dayjs>();
 
   const { t: originalT, i18n } = useTranslation();
+  const t = (key: string) => originalT(`chat.${key}`);
+
   const {
     isRecording: isRecordingEn,
     startTranscription,
@@ -107,10 +109,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
       needScrollToBottom.current = false;
     }
   }, [messages]);
-
-  const t = (key: string) => {
-    return originalT(`candidate_profile_chat.${key}`);
-  };
 
   const supportTags: TSupportTag[] = [
     {

@@ -7,9 +7,13 @@ import { Get } from "@/utils/request";
 import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import styles from "../signup/components/OAuth/style.module.less";
+import { useTranslation } from "react-i18next";
 
 const CandidateSignIn: React.FC = () => {
   const navigate = useNavigate();
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_sign.${key}`);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,7 +67,7 @@ const CandidateSignIn: React.FC = () => {
             className={styles.button}
           >
             <img src={Google} className={styles.brand} />
-            Continue with Google
+            {t("connect_google")}
           </div>
 
           <div
@@ -73,7 +77,7 @@ const CandidateSignIn: React.FC = () => {
             className={styles.button}
           >
             <img src={Linkedin} className={styles.brand} />
-            Continue with Linked
+            {t("connect_linkedin")}
           </div>
         </div>
       </div>
@@ -81,31 +85,20 @@ const CandidateSignIn: React.FC = () => {
       <div className={styles.right}>
         <div className={styles.textWrapper}>
           <div className={styles.title}>
-            Stop the endless job hunt. Persevio uses AI to match you with top
-            opportunities in <span className={styles.primary}>Singapore</span>.
+            {t("connect_title")}
+            <span className={styles.primary}>{t("singapore")}</span>.
           </div>
           <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>
-              One Conversation, Many Opportunities:
-            </div>
-            <div className={styles.subText}>
-              Chat once with Viona, our AI recruiter. We'll then proactively
-              send you highly accurate, personalized job recommendations.
-            </div>
+            <div className={styles.subTitle}>{t("connect_intro_title_1")}</div>
+            <div className={styles.subText}>{t("connect_intro_content_1")}</div>
           </div>
           <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>Confidentiality Assured</div>
-            <div className={styles.subText}>
-              Your profile remains private. Employers only see your details when
-              you decide to apply for a specific role.
-            </div>
+            <div className={styles.subTitle}>{t("connect_intro_title_2")}</div>
+            <div className={styles.subText}>{t("connect_intro_content_2")}</div>
           </div>
           <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>Guided Application Process</div>
-            <div className={styles.subText}>
-              Viona acts as your dedicated AI copilot, supporting you every step
-              of the way.
-            </div>
+            <div className={styles.subTitle}>{t("connect_intro_title_3")}</div>
+            <div className={styles.subText}>{t("connect_intro_content_3")}</div>
           </div>
         </div>
       </div>

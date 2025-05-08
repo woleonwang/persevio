@@ -1,3 +1,55 @@
+const CandidateResume = {
+  candidate_resume: {
+    resume: "Resume",
+  },
+  candidate_aspirations: {
+    candidate_aspirations: "Career Aspiration",
+  },
+  job_applies: {
+    jobs: "Jobs For You",
+    applied_jobs: "Applied Jobs",
+  },
+  job_apply: {
+    applied: "Applied",
+    apply_now: "Apply Now",
+    recommend_reason: "Why We Recommended This",
+    job_description: "Job Description",
+  },
+  candidate_sign: {
+    connect_google: "Continue with Google",
+    connect_linkedin: "Continue with Linkedin",
+    connect_title:
+      "Stop the endless job hunt. Persevio uses AI to match you with top opportunities in ",
+    singapore: "Singapore",
+    connect_intro_title_1: "One Conversation, Many Opportunities:",
+    connect_intro_content_1:
+      "Chat once with Viona, our AI recruiter. We'll then proactively send you highly accurate, personalized job recommendations.",
+    connect_intro_title_2: "Confidentiality Assured",
+    connect_intro_content_2:
+      "Your profile remains private. Employers only see your details when you decide to apply for a specific role.",
+    connect_intro_title_3: "Guided Application Process",
+    connect_intro_content_3:
+      "Viona acts as your dedicated AI copilot, supporting you every step of the way.",
+
+    confirm_contact: "Confirm contact details",
+    confirm_contact_hint:
+      "Please make sure your contact details are correct. We will need to contact you for the next steps in the recruitment process.",
+    next: "Next",
+
+    email_exists: "Email exists",
+    upload_resume: "Upload Resume",
+    career_dive: "Career Deep Dive",
+
+    upload_your_resume: "Upload your resume",
+    upload_succeed: "Upload succeed",
+    upload_failed: "Upload failed",
+    upload_tips_1:
+      "Please upload a copy of your resume or your downloaded LinkedIn profile.",
+    upload_tips_2:
+      "Don't worry if it's not perfectly up-to-date! This document is not sent to employers. It simply gives our recruiters a starting point for our upcoming conversation. After your chat, we'll draft a new, polished resume specifically for your job applications.",
+  },
+};
+
 export default {
   hello: "world",
 
@@ -432,6 +484,9 @@ You can share Viona using this chat page link, either by including it in your jo
       "Any other instructions to Viona when she communicates with candidates about this role? Such as things you'd like Viona to avoid talking about or things you'd like her to highlight, etc.",
   },
 
+  ...CandidateResume,
+
+  edit: "Edit",
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",

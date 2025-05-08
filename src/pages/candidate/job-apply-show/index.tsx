@@ -17,6 +17,8 @@ const JobApplyShow = () => {
 
   const { t: originalT } = useTranslation();
 
+  const t = (key: string) => originalT(`job_apply.${key}`);
+
   useEffect(() => {
     fetchApplyJob();
   }, []);
@@ -78,7 +80,7 @@ const JobApplyShow = () => {
                 }
                 onClick={() => delivery()}
               >
-                {!!jobApply.deliveried_at ? "Applied" : "Apply Now"}
+                {!!jobApply.deliveried_at ? t("applied") : t("apply_now")}
               </Button>
             </div>
           </div>

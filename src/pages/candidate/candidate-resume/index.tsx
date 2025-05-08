@@ -15,6 +15,7 @@ const CandidateResume = () => {
   const [editResumeContent, setEditResumeContent] = useState("");
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_resume.${key}`);
 
   useEffect(() => {
     fetchResume();
@@ -40,7 +41,7 @@ const CandidateResume = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>Resume</div>
+      <div className={styles.header}>{t("resume")}</div>
       <div className={styles.markdownWrapper}>
         {isEditing ? (
           <MarkdownEditor
@@ -55,13 +56,13 @@ const CandidateResume = () => {
         {isEditing ? (
           <div>
             <Button type="primary" onClick={handleSave}>
-              Save
+              {originalT("save")}
             </Button>
             <Button
               onClick={() => setIsEditing(false)}
               style={{ marginLeft: 10 }}
             >
-              Cancel
+              {originalT("cancel")}
             </Button>
           </div>
         ) : (
@@ -72,7 +73,7 @@ const CandidateResume = () => {
               setIsEditing(true);
             }}
           >
-            Edit
+            {originalT("edit")}
           </Button>
         )}
       </div>

@@ -11,6 +11,7 @@ import OAuth from "./components/OAuth";
 import { useNavigate } from "react-router";
 import ConfirmPhone from "./components/ConfirmPhone";
 import { isDevelopment } from "@/utils";
+import { useTranslation } from "react-i18next";
 
 const CandidateSignUp: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -22,13 +23,15 @@ const CandidateSignUp: React.FC = () => {
   const [candidate, setCandidate] = useState<ICandidateSettings>();
 
   const navigate = useNavigate();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_sign.${key}`);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get("error");
     const code = urlParams.get("code");
     if (error === "google_login_failed" && code === "100001") {
-      message.error("Email exists");
+      message.error(t("email_exists"));
     }
 
     const tokenFromUrl = urlParams.get("token");
@@ -93,14 +96,14 @@ const CandidateSignUp: React.FC = () => {
         {pageState !== "signin" && (
           <div className={styles.stepWrapper}>
             <div className={classnames(styles.step, styles.active)}>
-              Upload resume
+              {t("upload_resume")}
             </div>
             <div
               className={classnames(styles.step, {
                 [styles.active]: pageState === "conversation",
               })}
             >
-              Career Deep Dive
+              {t("career_dive")}
             </div>
           </div>
         )}

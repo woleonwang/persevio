@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 import { Post } from "@/utils/request";
 import styles from "./style.module.less";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   phone?: string;
@@ -11,6 +12,11 @@ interface IProps {
 const ConfirmPhone = (props: IProps) => {
   const { phone, onFinish } = props;
   const [form] = Form.useForm<{ phone: string }>();
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`candidate_sign.${key}`);
+  };
 
   useEffect(() => {
     if (!phone) return;
@@ -29,14 +35,11 @@ const ConfirmPhone = (props: IProps) => {
   return (
     <div style={{ width: 600, marginTop: 95 }}>
       <Form form={form}>
-        <div className={styles.title}>Confirm contact details </div>
+        <div className={styles.title}>{t("confirm_contact")}</div>
         <Form.Item name="phone" rules={[{ required: true }]}>
           <Input size="large" />
         </Form.Item>
-        <div className={styles.hint}>
-          Please make sure your contact details are correct. We will need to
-          contact you for the next steps in the recruitment process.
-        </div>
+        <div className={styles.hint}>{t("confirm_contact_hint")}</div>
       </Form>
 
       <div style={{ textAlign: "center", marginTop: 240 }}>
@@ -49,7 +52,7 @@ const ConfirmPhone = (props: IProps) => {
           shape="round"
           style={{ paddingLeft: 30, paddingRight: 30 }}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>

@@ -419,6 +419,7 @@ export default {
       "关于 Viona 与候选人就此职位进行沟通，是否有任何其他指示？（例如：希望 Viona 避免谈论的内容、需要特别强调的方面等）",
   },
 
+  edit: "编辑",
   save: "保存",
   cancel: "取消",
   submit: "提交",

@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
 import { getImgSrc } from "@/utils";
+import { useTranslation } from "react-i18next";
 const JobApplies = () => {
   const [jobApplies, setJobApplies] = useState<IJobApplyListItem[]>([]);
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job_applies.${key}`);
 
   useEffect(() => {
     fetchApplyJobs();
@@ -18,9 +22,9 @@ const JobApplies = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>Jobs For You</div>
+      <div className={styles.header}>{t("jobs")}</div>
       <div className={styles.main}>
-        <div className={styles.title}>Applied Jobs</div>
+        <div className={styles.title}>{t("applied_jobs")}</div>
         {jobApplies.map((jobApply) => {
           return (
             <div

@@ -17,6 +17,7 @@ const InitialAspirations = () => {
   const [editAspirationsContent, setEditAspirationsContent] = useState("");
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_aspirations.${key}`);
 
   useEffect(() => {
     fetchAspirations();
@@ -47,7 +48,7 @@ const InitialAspirations = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>Career Aspiration</div>
+      <div className={styles.header}>{t("career_aspirations")}</div>
       <div className={styles.markdownWrapper}>
         {isEditing ? (
           <MarkdownEditor
@@ -62,13 +63,13 @@ const InitialAspirations = () => {
         {isEditing ? (
           <div>
             <Button type="primary" onClick={handleSave}>
-              Save
+              {originalT("save")}
             </Button>
             <Button
               onClick={() => setIsEditing(false)}
               style={{ marginLeft: 10 }}
             >
-              Cancel
+              {originalT("cancel")}
             </Button>
           </div>
         ) : (
@@ -79,7 +80,7 @@ const InitialAspirations = () => {
               setIsEditing(true);
             }}
           >
-            Edit
+            {originalT("edit")}
           </Button>
         )}
       </div>

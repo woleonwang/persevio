@@ -3,6 +3,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { PostFormData } from "@/utils/request";
 import styles from "./style.module.less";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   onFinish: (fileId: number) => void;
@@ -12,9 +13,12 @@ const UploadResume = (props: IProps) => {
   const { onFinish } = props;
   const [fileId, setFileId] = useState<number>();
 
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_sign.${key}`);
+
   return (
     <div className={styles.basicInfoWrapper}>
-      <div className={styles.title}>Upload your resume</div>
+      <div className={styles.title}>{t("upload_your_resume")}</div>
       <div className={styles.uploadWrapper}>
         <Upload
           beforeUpload={() => false}
@@ -27,9 +31,9 @@ const UploadResume = (props: IProps) => {
             );
             if (code === 0) {
               setFileId(data.upload_file.id);
-              message.success("Upload succeed");
+              message.success(t("upload_succeed"));
             } else {
-              message.error("Upload failed");
+              message.error(t("upload_failed"));
             }
           }}
           showUploadList={false}
@@ -38,16 +42,8 @@ const UploadResume = (props: IProps) => {
         >
           <UploadOutlined className={styles.uploadIcon} />
         </Upload>
-        <div className={styles.uploadTips}>
-          Please upload a copy of your resume or your downloaded LinkedIn
-          profile.
-        </div>
-        <div className={styles.uploadTips}>
-          Don't worry if it's not perfectly up-to-date! This document is not
-          sent to employers. It simply gives our recruiters a starting point for
-          our upcoming conversation. After your chat, we'll draft a new,
-          polished resume specifically for your job applications.
-        </div>
+        <div className={styles.uploadTips}>{t("upload_tips_1")}</div>
+        <div className={styles.uploadTips}>{t("upload_tips_2")}</div>
       </div>
       <div style={{ textAlign: "center", marginTop: 50 }}>
         <Button
@@ -62,7 +58,7 @@ const UploadResume = (props: IProps) => {
           shape="round"
           style={{ paddingLeft: 30, paddingRight: 30 }}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>
