@@ -103,10 +103,6 @@ const Talent = () => {
             </div>
           </div>
 
-          <div className={styles.blockTitle}>{t("summary")}</div>
-          <div className={styles.summary}>
-            <MarkdownContainer content={result.summary.reasoning} />
-          </div>
           {meta && (
             <div className={styles.rank}>
               <DoubleRightOutlined style={{ marginRight: 4, fontSize: 12 }} />
@@ -117,6 +113,11 @@ const Talent = () => {
               <DoubleLeftOutlined style={{ marginLeft: 4, fontSize: 12 }} />
             </div>
           )}
+
+          <div className={styles.blockTitle}>{t("summary")}</div>
+          <div className={styles.summary}>
+            <MarkdownContainer content={result.summary.reasoning} />
+          </div>
 
           <div className={styles.blockTitle} style={{ marginTop: 20 }}>
             {t("details")}
