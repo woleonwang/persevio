@@ -12,7 +12,7 @@ import { Get } from "../../utils/request";
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
-import { parseJSON } from "../../utils";
+import { parseJd, parseJSON } from "../../utils";
 
 type TCompany = {
   logo: string;
@@ -56,10 +56,7 @@ const JobsShow = () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`);
     if (code === 0) {
       setCompany(data.company);
-      data.job.job_description = data.job.job_description.replaceAll(
-        /<chatbot-delete>.*<\/chatbot-delete>/g,
-        ""
-      );
+      data.job.job_description = parseJd(data.job.job_description);
       setJob(data.job);
       i18n.changeLanguage(data.company.lang ?? "en-US");
       setStatus("success");

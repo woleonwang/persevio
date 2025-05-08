@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import styles from "./style.module.less";
-import { Get } from "@/utils/request";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
+import { Button, message, Spin } from "antd";
+
+import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { Button, Spin } from "antd";
-import { getImgSrc } from "@/utils";
+import { getImgSrc, parseJd } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
+
+import styles from "./style.module.less";
+
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
 
   const { jobApplyId = "" } = useParams();
+
+  const { t: originalT } = useTranslation();
 
   useEffect(() => {
     fetchApplyJob();
@@ -23,8 +29,20 @@ const JobApplyShow = () => {
       setJobApply({
         ...data.job_apply,
         recommend_reason: data.recommend_reason,
-        jd: data.jd,
+        jd: parseJd(data.jd),
       });
+    }
+  };
+
+  const delivery = async () => {
+    const { code } = await Post(
+      `/api/candidate/job_applies/${jobApplyId}/delivery`
+    );
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      fetchApplyJob();
+    } else {
+      message.error(originalT("submit_failed"));
     }
   };
 
@@ -55,9 +73,12 @@ const JobApplyShow = () => {
               <Button
                 type="primary"
                 shape="round"
-                disabled={!jobApply.interview_finished_at}
+                disabled={
+                  !jobApply.interview_finished_at || !!jobApply.deliveried_at
+                }
+                onClick={() => delivery()}
               >
-                Apply Now
+                {!!jobApply.deliveried_at ? "Applied" : "Apply Now"}
               </Button>
             </div>
           </div>

@@ -51,6 +51,7 @@ interface IJobApplyListItem {
   company_logo: string;
   company_name: string;
   interview_finished_at: string;
+  deliveried_at: string;
 }
 
 interface IJobApply extends IJobApplyListItem {

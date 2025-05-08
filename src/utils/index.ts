@@ -27,3 +27,7 @@ export const getImgSrc = (originalUrl: string) => {
     ? originalUrl
     : `/api/logo/${originalUrl}`;
 };
+
+export const parseJd = (originalJd: string) => {
+  return originalJd.replaceAll(/<chatbot-delete>.*<\/chatbot-delete>/g, "");
+};
