@@ -29,7 +29,6 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
-import SpeechToText from "./components/SpeechToText";
 import InitialAspirations from "./pages/candidate/initial-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import CandidateSettings from "./pages/candidate/settings";
@@ -61,7 +60,6 @@ createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/speech_to_text" element={<SpeechToText />} />
           <Route path="/jobs/:id/chat" element={<JobsShow />} />
           <Route path="/jobs/requirement" element={<JobRequirement />} />
           <Route

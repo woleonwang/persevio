@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Avatar, List, Input, Button } from "antd";
-import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
+import {
+  AudioMutedOutlined,
+  AudioOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import "@mdxeditor/editor/style.css";
@@ -65,12 +69,17 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const t = (key: string) => originalT(`chat.${key}`);
 
   const {
+    isConnecting,
     isRecording: isRecordingEn,
     startTranscription,
     endTranscription,
   } = useAssembly({
-    onTextChange: (result) => {
+    onPartialTextChange: (result) => {
       setInputValue(originalInputRef.current + result);
+    },
+    onFinish: (result) => {
+      originalInputRef.current = originalInputRef.current + result;
+      setInputValue(originalInputRef.current);
     },
   });
 
@@ -461,7 +470,16 @@ const CandidateChat: React.FC<IProps> = (props) => {
                 type="primary"
                 danger={isRecording}
                 shape="circle"
-                icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
+                disabled={isRecording && isConnecting}
+                icon={
+                  isRecording && isConnecting ? (
+                    <LoadingOutlined spin />
+                  ) : isRecording ? (
+                    <AudioMutedOutlined />
+                  ) : (
+                    <AudioOutlined />
+                  )
+                }
                 onClick={isRecording ? stopRecord : startRecord}
               />
             </div>

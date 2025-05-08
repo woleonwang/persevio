@@ -1,18 +1,68 @@
-import { useRef, useState } from "react";
-import { RealtimeTranscriber, RealtimeTranscript } from "assemblyai/streaming";
+import { useEffect, useRef, useState } from "react";
+import {
+  FinalTranscript,
+  PartialTranscript,
+  RealtimeTranscriber,
+  RealtimeTranscript,
+} from "assemblyai/streaming";
 import RecordRTC from "recordrtc";
 import { Post } from "@/utils/request";
 
 const useAssembly = ({
-  onTextChange,
+  onPartialTextChange,
+  onFinish,
 }: {
-  onTextChange: (text: string) => void;
+  onPartialTextChange: (text: string) => void;
+  onFinish: (text: string) => void;
 }) => {
   const realtimeTranscriber = useRef<RealtimeTranscriber>();
   const recorder = useRef<RecordRTC>();
+  const [isConnecting, setIsConnecting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const textsRef = useRef<Record<number, string>>({});
+
+  useEffect(() => {
+    return () => {
+      realtimeTranscriber.current?.close();
+      recorder.current?.destroy();
+    };
+  }, []);
 
   const startTranscription = async () => {
+    setIsRecording(true);
+    if (!realtimeTranscriber.current) {
+      await initConnection();
+    }
+
+    if (recorder.current?.state === "paused") {
+      recorder.current?.resumeRecording();
+    } else {
+      recorder.current?.startRecording();
+    }
+  };
+
+  const endTranscription = async () => {
+    setIsRecording(false);
+    recorder.current?.pauseRecording();
+  };
+
+  const getTranscription = (transcript: RealtimeTranscript): string => {
+    const texts = textsRef.current;
+    let msg = "";
+    texts[transcript.audio_start] = transcript.text;
+    const keys = Object.keys(texts);
+    keys.sort((a: string, b: string) => parseInt(a) - parseInt(b));
+    for (const key of keys) {
+      const intKey = parseInt(key);
+      if (texts[intKey]) {
+        msg += ` ${texts[intKey]}`;
+      }
+    }
+    return msg;
+  };
+
+  const initConnection = async () => {
+    setIsConnecting(true);
     const { code, data } = await Post("/api/candidate/assembly/token");
     if (code !== 0) return;
 
@@ -21,22 +71,22 @@ const useAssembly = ({
       sampleRate: 16000,
     });
 
-    const texts: Record<number, string> = {};
+    realtimeTranscriber.current.configureEndUtteranceSilenceThreshold;
+
     realtimeTranscriber.current.on(
-      "transcript",
-      (transcript: RealtimeTranscript) => {
-        console.log("transcript:", transcript);
-        let msg = "";
-        texts[transcript.audio_start] = transcript.text;
-        const keys = Object.keys(texts);
-        keys.sort((a: string, b: string) => parseInt(a) - parseInt(b));
-        for (const key of keys) {
-          const intKey = parseInt(key);
-          if (texts[intKey]) {
-            msg += ` ${texts[intKey]}`;
-          }
-        }
-        onTextChange(msg);
+      "transcript.partial",
+      (transcript: PartialTranscript) => {
+        const msg = getTranscription(transcript);
+        onPartialTextChange(msg);
+      }
+    );
+
+    realtimeTranscriber.current.on(
+      "transcript.final",
+      (transcript: FinalTranscript) => {
+        const msg = getTranscription(transcript);
+        onFinish(msg);
+        textsRef.current = {};
       }
     );
 
@@ -51,54 +101,40 @@ const useAssembly = ({
     realtimeTranscriber.current.on("close", (code, reason) => {
       console.log(`Connection closed: ${code} ${reason}`);
       realtimeTranscriber.current = undefined;
+      initConnection();
     });
 
-    console.log("start time:", Date.now());
     await realtimeTranscriber.current.connect();
-    console.log("connected time:", Date.now());
 
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        // @ts-ignore
-        recorder.current = RecordRTC(stream, {
-          type: "audio",
-          mimeType: "audio/webm;codecs=pcm",
-          recorderType: RecordRTC.StereoAudioRecorder,
-          timeSlice: 250,
-          desiredSampRate: 16000,
-          numberOfAudioChannels: 1,
-          bufferSize: 4096,
-          audioBitsPerSecond: 128000,
-          ondataavailable: async (blob: Blob) => {
-            if (!realtimeTranscriber.current) return;
-            const buffer = await blob.arrayBuffer();
-            realtimeTranscriber.current.sendAudio(buffer);
-          },
-        });
+    if (!recorder.current) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // @ts-ignore
+      recorder.current = RecordRTC(stream, {
+        type: "audio",
+        mimeType: "audio/webm;codecs=pcm",
+        recorderType: RecordRTC.StereoAudioRecorder,
+        timeSlice: 250,
+        desiredSampRate: 16000,
+        numberOfAudioChannels: 1,
+        bufferSize: 4096,
+        audioBitsPerSecond: 128000,
+        ondataavailable: async (blob: Blob) => {
+          if (!realtimeTranscriber.current) return;
+          const buffer = await blob.arrayBuffer();
+          console.log("send data:", buffer.byteLength);
+          realtimeTranscriber.current?.sendAudio(buffer);
+        },
+      });
+    }
 
-        recorder.current?.startRecording();
-      })
-      .catch((err) => console.error(err));
-
-    setIsRecording(true);
-  };
-
-  const endTranscription = async () => {
-    setIsRecording(false);
-    if (!realtimeTranscriber.current) return;
-    await realtimeTranscriber.current.close();
-    realtimeTranscriber.current = undefined;
-
-    if (!recorder.current) return;
-    recorder.current.destroy();
-    recorder.current = undefined;
+    setIsConnecting(false);
   };
 
   return {
     startTranscription,
     endTranscription,
     isRecording,
+    isConnecting,
   };
 };
 
