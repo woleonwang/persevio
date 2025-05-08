@@ -73,10 +73,6 @@ const Talent = () => {
       <div className={styles.right}>
         <div className={styles.title}>{t("evaluate_report")}</div>
         <div className={styles.body}>
-          <div className={styles.blockTitle}>{t("summary")}</div>
-          <div className={styles.summary}>
-            <MarkdownContainer content={result.summary.reasoning} />
-          </div>
           <div className={styles.summaryMatch}>
             <div className={styles.summaryMatchTitle}>
               <div>{t("overall")}</div>
@@ -105,6 +101,11 @@ const Talent = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className={styles.blockTitle}>{t("summary")}</div>
+          <div className={styles.summary}>
+            <MarkdownContainer content={result.summary.reasoning} />
           </div>
           {meta && (
             <div className={styles.rank}>
