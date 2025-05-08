@@ -45,7 +45,7 @@ const Settings = () => {
 
   const logout = () => {
     localStorage.removeItem("candidate_token");
-    navigate("/signin_candidate");
+    navigate("/signin-candidate");
   };
 
   return (

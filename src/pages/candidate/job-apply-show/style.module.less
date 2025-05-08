@@ -1,3 +1,5 @@
+@primary-color: #1fac6a;
+
 .container {
   flex: auto;
   display: flex;
@@ -5,28 +7,21 @@
   overflow: hidden;
 }
 
-.header {
-  padding: 32px 20px;
-  font-size: 20px;
-  font-weight: bold;
-  border-bottom: 1px solid rgba(234, 234, 234, 1);
-  flex: none;
-}
-
 .main {
   flex: auto;
   overflow: auto;
-  margin: 20px;
-  padding: 0 24px;
-  background-color: rgba(244, 244, 246, 1);
-  border: 1px solid rgba(234, 234, 234, 1);
-  border-radius: 16px;
+  padding: 20px 40px;
+  display: flex;
+  gap: 15px;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 12px 0;
+.left {
+  flex: 6;
+  background-color: white;
+  padding: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .jobApplyCard {
@@ -34,31 +29,86 @@
   border-radius: 16px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 20px;
-  cursor: pointer;
+  justify-content: space-between;
+  flex: none;
+
+  .basicInfo {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .companyLogo {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+  }
+
+  .jobName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .tags {
+    display: flex;
+    margin-top: 12px;
+  }
+
+  .companyName {
+    padding: 4px 16px;
+    background-color: rgba(252, 240, 255, 1);
+    border-radius: 44px;
+    color: rgba(146, 115, 163, 1);
+  }
 }
 
-.companyLogo {
-  width: 100px;
-  height: 100px;
-  border-radius: 10px;
-}
-
-.jobName {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.tags {
+.recommendReason {
+  background-color: rgba(246, 246, 246, 1);
+  border-radius: 16px;
+  margin-top: 24px;
+  padding: 20px 0;
+  height: 200px;
+  overflow: hidden;
+  flex: none;
   display: flex;
-  margin-top: 12px;
+  flex-direction: column;
+
+  .recommendReasonTitle {
+    position: relative;
+    border-left: 4px solid @primary-color;
+    padding-left: 20px;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  .recommendReasonContent {
+    margin: 20px 20px 0;
+    overflow: auto;
+  }
 }
 
-.companyName {
-  padding: 4px 16px;
-  background-color: rgba(252, 240, 255, 1);
-  border-radius: 44px;
-  color: rgba(146, 115, 163, 1);
+.jd {
+  margin-top: 24px;
+  padding: 20px 0;
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .jdTitle {
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  .jdContent {
+    margin: 20px 20px 0;
+    overflow: auto;
+  }
+}
+
+.right {
+  flex: 4;
+  display: flex;
+  overflow: hidden;
 }

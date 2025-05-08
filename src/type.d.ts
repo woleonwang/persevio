@@ -50,19 +50,12 @@ interface IJobApplyListItem {
   job_name: string;
   company_logo: string;
   company_name: string;
+  interview_finished_at: string;
 }
 
-interface IJobApply {
-  id: number;
-  candidate_id: number;
-  job_id: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  recommend_doc_id: number;
-  job_name: string;
-  company_logo: string;
-  company_name: string;
+interface IJobApply extends IJobApplyListItem {
+  recommend_reason: string;
+  jd: string;
 }
 
 interface ISettings {
@@ -81,6 +74,7 @@ interface ICandidateSettings {
   phone: string;
   phone_confirmed_at: string;
   resume_confirmed_at: string;
+  interview_finished_at: string;
 
   llm_resume_doc_id: number;
   initial_career_aspiration_doc_id: number;
