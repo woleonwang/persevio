@@ -12,7 +12,7 @@ import { Get } from "../../utils/request";
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
-import { parseJd, parseJSON } from "../../utils";
+import { parseJd } from "../../utils";
 
 type TCompany = {
   logo: string;
@@ -118,9 +118,6 @@ const JobsShow = () => {
                 userRole="candidate"
                 jobId={parseInt(id ?? "0")}
                 sessionId={sessionId}
-                screeningQuestions={
-                  parseJSON(job.screening_questions).questions ?? []
-                }
               />
             </div>
           </div>

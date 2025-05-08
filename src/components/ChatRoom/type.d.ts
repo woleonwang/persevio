@@ -92,7 +92,6 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   userRole?: TUserRole;
-  screeningQuestions?: TScreeningQuestionType[];
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;
 }

@@ -55,9 +55,6 @@ import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import MarkdownContainer from "../MarkdownContainer";
 import ScreeningQuestionDrawer from "./components/ScreeningQuestionDrawer";
-import CandidateScreeningQuestionDrawer, {
-  TResult,
-} from "./components/CandidateScreeningQuestionDrawer";
 import ChatbotConfigForm, {
   TChatbotOptions,
 } from "./components/ChatbotConfigForm";
@@ -101,7 +98,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     sessionId,
     allowEditMessage = false,
     userRole = "staff",
-    screeningQuestions = [],
     onChangeTab,
     onNextTask,
   } = props;
@@ -136,10 +132,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [screeningQuestion, setScreeningQuestion] = useState<{
     questions: TScreeningQuestionType[];
   }>();
-  const [
-    candidateScreeningQuestionDrawerOpen,
-    setCandidateScreeningQuestionDrawerOpen,
-  ] = useState(false);
   const [chatbotOptionsModalOpen, setChatbotOptionsModalOpen] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
@@ -854,30 +846,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const submitScreeningQuestion = async (result: TResult[]) => {
-    let resultMessage = "";
-    result.forEach((r) => {
-      resultMessage += `## ${r.question}\n\n ${r.answer}\n\n`;
-    });
-
-    const { code } = await Post(
-      `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/screening_questions`,
-      {
-        screening_questions: resultMessage,
-      }
-    );
-
-    if (code === 0) {
-      if (result.length > 0) {
-        message.success("Submit screening question successfully");
-      }
-
-      setCandidateScreeningQuestionDrawerOpen(false);
-    } else {
-      message.error("Submit screening question failed");
-    }
-  };
-
   const onSubmitChatbotOptions = async (options: TChatbotOptions) => {
     const { code } = await Post(`/api/jobs/${job?.id}/chatbot_options`, {
       allow_salary: options.allow_salary,
@@ -1230,12 +1198,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   key={message}
                 >
                   <div>{message}</div>
-                  {/* <RightCircleOutlined
-                    style={{
-                      fontSize: 16,
-                      color: "#1FAC6A",
-                    }}
-                  /> */}
                 </div>
               );
             })}
@@ -1438,19 +1400,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
               />
             )}
           </>
-        )}
-
-        {userRole === "candidate" && (
-          <CandidateScreeningQuestionDrawer
-            onClose={() => setCandidateScreeningQuestionDrawerOpen(false)}
-            candidateScreeningQuestionDrawerOpen={
-              candidateScreeningQuestionDrawerOpen
-            }
-            questions={screeningQuestions}
-            onOk={async (result: TResult[]) => {
-              await submitScreeningQuestion(result);
-            }}
-          />
         )}
 
         <Modal
