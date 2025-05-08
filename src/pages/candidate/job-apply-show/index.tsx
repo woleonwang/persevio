@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
-import { Button, message, Spin } from "antd";
+import { Button, Drawer, message, Spin } from "antd";
 
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
@@ -12,6 +12,7 @@ import styles from "./style.module.less";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
+  const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
 
   const { jobApplyId = "" } = useParams();
 
@@ -82,32 +83,53 @@ const JobApplyShow = () => {
               >
                 {!!jobApply.deliveried_at ? t("applied") : t("apply_now")}
               </Button>
+
+              <Button
+                style={{ marginLeft: 10 }}
+                type="primary"
+                shape="round"
+                onClick={() => setChatDrawerOpen(true)}
+              >
+                {t("interview")}
+              </Button>
             </div>
           </div>
 
           <div className={styles.recommendReason}>
             <div className={styles.recommendReasonTitle}>
-              Why We Recommended This
+              {t("recommend_reason")}
             </div>
             <div className={styles.recommendReasonContent}>
               <MarkdownContainer content={jobApply.recommend_reason} />
             </div>
           </div>
-
+        </div>
+        <div className={styles.right}>
           <div className={styles.jd}>
-            <div className={styles.jdTitle}>Job Description</div>
+            <div className={styles.jdTitle}>{t("job_description")}</div>
             <div className={styles.jdContent}>
               <MarkdownContainer content={jobApply.jd} />
             </div>
           </div>
         </div>
-        <div className={styles.right}>
+      </div>
+
+      <Drawer
+        open={chatDrawerOpen}
+        width={1200}
+        onClose={() => setChatDrawerOpen(false)}
+        title={t("interview")}
+      >
+        <div style={{ height: "100%", display: "flex" }}>
           <CandidateChat
             chatType="job_interview"
             jobApplyId={parseInt(jobApplyId)}
+            onFinish={() => {
+              fetchApplyJob();
+            }}
           />
         </div>
-      </div>
+      </Drawer>
     </div>
   );
 };

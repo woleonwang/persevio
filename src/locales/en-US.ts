@@ -14,6 +14,7 @@ const CandidateResume = {
     apply_now: "Apply Now",
     recommend_reason: "Why We Recommended This",
     job_description: "Job Description",
+    interview: "Interview",
   },
   candidate_sign: {
     connect_google: "Continue with Google",

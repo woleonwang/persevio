@@ -16,7 +16,7 @@
 }
 
 .left {
-  flex: 6;
+  flex: 1;
   background-color: white;
   padding: 40px;
   overflow: hidden;
@@ -68,9 +68,8 @@
   border-radius: 16px;
   margin-top: 24px;
   padding: 20px 0;
-  height: 200px;
   overflow: hidden;
-  flex: none;
+  flex: auto;
   display: flex;
   flex-direction: column;
 
@@ -86,6 +85,12 @@
     margin: 20px 20px 0;
     overflow: auto;
   }
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 }
 
 .jd {
@@ -105,10 +110,4 @@
     margin: 20px 20px 0;
     overflow: auto;
   }
-}
-
-.right {
-  flex: 4;
-  display: flex;
-  overflow: hidden;
 }
