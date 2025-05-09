@@ -498,4 +498,5 @@ You can share Viona using this chat page link, either by including it in your jo
   close: "Close",
   create_succeed: "Create succeed!",
   create: "Create",
+  back: "Back",
 };

@@ -358,7 +358,7 @@ export default {
     not_a_match: "不匹配",
     recommend_with_reservations: "推荐",
     match_pending_verification: "总体合适，但需要确认一些信息",
-    needs_verification: "但需要确认一些信息",
+    needs_verification: "需要确认一些信息",
     match: "匹配",
     strong_match: "非常匹配",
 
@@ -430,4 +430,5 @@ export default {
   add: "添加",
   create_succeed: "创建成功",
   create: "创建",
+  back: "返回",
 };

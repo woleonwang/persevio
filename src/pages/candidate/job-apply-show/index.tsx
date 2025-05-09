@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Button, Drawer, message, Spin } from "antd";
+import { LeftCircleOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { getImgSrc, parseJd } from "@/utils";
+import { parseJd } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
+import CompanyLogo from "../components/CompanyLogo";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
 
   const { jobApplyId = "" } = useParams();
+
+  const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
 
@@ -55,14 +59,18 @@ const JobApplyShow = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.header}>
+        <div>{originalT("job_applies.jobs")}</div>
+        <LeftCircleOutlined
+          style={{ color: "#1FAC6A", cursor: "pointer" }}
+          onClick={() => navigate("/candidate/job-applies")}
+        />
+      </div>
       <div className={styles.main}>
         <div className={styles.left}>
           <div className={styles.jobApplyCard}>
             <div className={styles.basicInfo}>
-              <img
-                src={getImgSrc(jobApply.company_logo)}
-                className={styles.companyLogo}
-              />
+              <CompanyLogo logo={jobApply.company_logo} />
               <div>
                 <div className={styles.jobName}>{jobApply.job_name}</div>
                 <div className={styles.tags}>
@@ -94,21 +102,20 @@ const JobApplyShow = () => {
               </Button>
             </div>
           </div>
-
+          <div className={styles.jd}>
+            <div className={styles.jdTitle}>{t("job_description")}</div>
+            <div className={styles.jdContent}>
+              <MarkdownContainer content={jobApply.jd} />
+            </div>
+          </div>
+        </div>
+        <div className={styles.right}>
           <div className={styles.recommendReason}>
             <div className={styles.recommendReasonTitle}>
               {t("recommend_reason")}
             </div>
             <div className={styles.recommendReasonContent}>
               <MarkdownContainer content={jobApply.recommend_reason} />
-            </div>
-          </div>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.jd}>
-            <div className={styles.jdTitle}>{t("job_description")}</div>
-            <div className={styles.jdContent}>
-              <MarkdownContainer content={jobApply.jd} />
             </div>
           </div>
         </div>

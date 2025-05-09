@@ -22,7 +22,7 @@ const CandidateLayout = () => {
   const navigate = useNavigate();
 
   const LayoutMapping = {
-    blank: [/^\/candidate\/job-applies\/\d+$/],
+    blank: [],
   };
 
   const layout =
@@ -30,6 +30,7 @@ const CandidateLayout = () => {
       Object.keys(LayoutMapping) as unknown as (keyof typeof LayoutMapping)[]
     ).find((key: keyof typeof LayoutMapping) => {
       return LayoutMapping[key].some((regex) => {
+        // @ts-ignore
         if (regex.test(currentPath)) {
           return key;
         }

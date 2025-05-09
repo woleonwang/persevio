@@ -10,7 +10,7 @@ import {
   QuestionCircleFilled,
 } from "@ant-design/icons";
 import { Get } from "../../utils/request";
-import { TTalent } from "../job/components/Profile/type";
+import { TEvaluation, TTalent } from "./type";
 import { parseJSON, parseMarkdown } from "../../utils";
 
 import styles from "./style.module.less";
@@ -42,6 +42,37 @@ const Talent = () => {
       });
       setMeta(data.meta);
     }
+  };
+
+  const getReasoning = (result: TEvaluation) => {
+    let reasoning = `Minimum Requirements: ${result.job_requirements_met?.minimum_requirements}; 
+Big Plus Requirements: ${result.job_requirements_met?.big_plus_requirements}; 
+Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
+
+    if (result.evaluation_summary?.strengths?.length > 0) {
+      reasoning += "\n\nStrengths:";
+      result.evaluation_summary.strengths.forEach((strength: string) => {
+        reasoning += `\n- ${strength}`;
+      });
+    }
+
+    if (result.evaluation_summary?.potential_gaps?.length > 0) {
+      reasoning += "\n\nPotential Gaps:";
+      result.evaluation_summary.potential_gaps.forEach((gap: string) => {
+        reasoning += `\n- ${gap}`;
+      });
+    }
+
+    if (result.evaluation_summary?.career_motivations?.length > 0) {
+      reasoning += "\n\nCareer Motivations:";
+      result.evaluation_summary.career_motivations.forEach(
+        (motivation: string) => {
+          reasoning += `\n- ${motivation}`;
+        }
+      );
+    }
+
+    return reasoning;
   };
 
   if (!talent) {
@@ -79,10 +110,10 @@ const Talent = () => {
               <div
                 className={classnames(
                   styles.summaryMatchTitleHint,
-                  styles[result.summary.overall]
+                  styles[result.overall_match_level]
                 )}
               >
-                {t(result.summary.overall)}
+                {t(result.overall_match_level)}
               </div>
             </div>
             <div className={styles.summaryMeet}>
@@ -91,13 +122,13 @@ const Talent = () => {
                   {t("compensation")}
                 </div>
                 <div className={styles.summaryMeetItemValue}>
-                  {t(result.summary.competency)}
+                  {t(result.competency_match)}
                 </div>
               </div>
               <div className={styles.summaryMeetItem}>
                 <div className={styles.summaryMeetItemName}>{t("other")}</div>
                 <div className={styles.summaryMeetItemValue}>
-                  {t(result.summary.logistics)}
+                  {t(result.logistic_other_match)}
                 </div>
               </div>
             </div>
@@ -116,7 +147,7 @@ const Talent = () => {
 
           <div className={styles.blockTitle}>{t("summary")}</div>
           <div className={styles.summary}>
-            <MarkdownContainer content={result.summary.reasoning} />
+            <MarkdownContainer content={getReasoning(result)} />
           </div>
 
           <div className={styles.blockTitle} style={{ marginTop: 20 }}>

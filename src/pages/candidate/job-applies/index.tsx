@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
-import { getImgSrc } from "@/utils";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import CompanyLogo from "../components/CompanyLogo";
 const JobApplies = () => {
   const [jobApplies, setJobApplies] = useState<IJobApplyListItem[]>([]);
+
+  const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_applies.${key}`);
@@ -31,13 +34,10 @@ const JobApplies = () => {
               key={jobApply.id}
               className={styles.jobApplyCard}
               onClick={() => {
-                window.open(`/candidate/job-applies/${jobApply.id}`, "_blank");
+                navigate(`/candidate/job-applies/${jobApply.id}`);
               }}
             >
-              <img
-                src={getImgSrc(jobApply.company_logo)}
-                className={styles.companyLogo}
-              />
+              <CompanyLogo logo={jobApply.company_logo} />
               <div>
                 <div className={styles.jobName}>{jobApply.job_name}</div>
                 <div className={styles.tags}>

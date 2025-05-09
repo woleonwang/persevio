@@ -3,7 +3,8 @@ export type TMatchLevel =
   | "recommend_with_reservations"
   | "match_pending_verification"
   | "match"
-  | "strong_match";
+  | "strong_match"
+  | "needs_verification";
 
 export type TMeetType = "met" | "not_met" | "not_sure";
 
@@ -15,20 +16,24 @@ export type TEvaluation = {
   talent: {
     name: string;
   };
-  summary: {
-    overall: TMatchLevel;
-    competency: TMatchLevel;
-    logistics: TMatchLevel;
-    reasoning: string;
-    suitability_score: {
-      minimum: number;
-      big_plus: number;
-      plus: number;
-      bonus: number;
-      total: number;
-    };
-    calculated_rank: string;
+
+  overall_match_level: TMatchLevel;
+  competency_match: TMatchLevel;
+  logistic_other_match: TMatchLevel;
+  suitability_score: number;
+
+  job_requirements_met: {
+    minimum_requirements: string;
+    big_plus_requirements: string;
+    plus_requirements: string;
   };
+
+  evaluation_summary: {
+    strengths: string[];
+    potential_gaps: string[];
+    career_motivations: string[];
+  };
+
   evaluation: {
     criterion: string;
     judgement: TMeetType;
@@ -40,16 +45,6 @@ export type TEvaluation = {
     }[];
     priority: TPriority;
   }[];
-  bonus: {
-    alignment: string[];
-    suitability: string[];
-    bonus_awarded: {
-      target_company: string[];
-      prestigious_company: string[];
-      bonus_points: number;
-    };
-    others: string;
-  };
 };
 
 export type TCandidate = {
