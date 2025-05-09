@@ -11,10 +11,12 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
+import ChatRoom from "@/components/ChatRoom";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
+  const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
 
   const { jobApplyId = "" } = useParams();
 
@@ -84,10 +86,14 @@ const JobApplyShow = () => {
               <Button
                 type="primary"
                 shape="round"
-                disabled={
-                  !jobApply.interview_finished_at || !!jobApply.deliveried_at
-                }
-                onClick={() => delivery()}
+                disabled={!!jobApply.deliveried_at}
+                onClick={() => {
+                  if (jobApply.interview_finished_at) {
+                    delivery();
+                  } else {
+                    setInterviewChatDrawerOpen(true);
+                  }
+                }}
               >
                 {!!jobApply.deliveried_at ? t("applied") : t("apply_now")}
               </Button>
@@ -98,15 +104,12 @@ const JobApplyShow = () => {
                 shape="round"
                 onClick={() => setChatDrawerOpen(true)}
               >
-                {t("interview")}
+                {originalT("chat_with_viona")}
               </Button>
             </div>
           </div>
           <div className={styles.jd}>
-            <div className={styles.jdTitle}>{t("job_description")}</div>
-            <div className={styles.jdContent}>
-              <MarkdownContainer content={jobApply.jd} />
-            </div>
+            <MarkdownContainer content={jobApply.jd} />
           </div>
         </div>
         <div className={styles.right}>
@@ -125,6 +128,22 @@ const JobApplyShow = () => {
         open={chatDrawerOpen}
         width={1200}
         onClose={() => setChatDrawerOpen(false)}
+        title={originalT("chat_with_viona")}
+      >
+        <div style={{ height: "100%", display: "flex" }}>
+          <ChatRoom
+            userRole="candidate"
+            jobId={jobApply.job_id}
+            sessionId={`${jobApply.candidate_id}`}
+            disableApply
+          />
+        </div>
+      </Drawer>
+
+      <Drawer
+        open={interviewChatDrawerOpen}
+        width={1200}
+        onClose={() => setInterviewChatDrawerOpen(false)}
         title={t("interview")}
       >
         <div style={{ height: "100%", display: "flex" }}>
@@ -133,6 +152,7 @@ const JobApplyShow = () => {
             jobApplyId={parseInt(jobApplyId)}
             onFinish={() => {
               fetchApplyJob();
+              message.success(t("finish_interview_hint"));
             }}
           />
         </div>

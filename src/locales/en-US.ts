@@ -15,6 +15,7 @@ const CandidateResume = {
     recommend_reason: "Why We Recommended This",
     job_description: "Job Description",
     interview: "Interview",
+    finish_interview_hint: "Interivew has finished, You can apply now!",
   },
   candidate_sign: {
     connect_google: "Continue with Google",
@@ -456,7 +457,6 @@ You can share Viona using this chat page link, either by including it in your jo
   },
 
   job_requirement: {
-    chat_with_viona: "Chat with Viona",
     name: "Name",
     company_name: "Company Name",
     job_title: "Job Title",
@@ -499,4 +499,5 @@ You can share Viona using this chat page link, either by including it in your jo
   create_succeed: "Create succeed!",
   create: "Create",
   back: "Back",
+  chat_with_viona: "Chat with Viona",
 };

@@ -392,7 +392,6 @@ export default {
   },
 
   job_requirement: {
-    chat_with_viona: "和 Viona 聊聊",
     name: "姓名",
     company_name: "公司",
     job_title: "职位",
@@ -431,4 +430,5 @@ export default {
   create_succeed: "创建成功",
   create: "创建",
   back: "返回",
+  chat_with_viona: "和 Viona 聊聊",
 };

@@ -98,6 +98,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     sessionId,
     allowEditMessage = false,
     userRole = "staff",
+    disableApply = false,
     onChangeTab,
     onNextTask,
   } = props;
@@ -1275,7 +1276,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             >
               <div></div>
               <div style={{ display: "flex", gap: 10 }}>
-                {chatType === "candidate" && (
+                {chatType === "candidate" && !disableApply && (
                   <Button
                     type="primary"
                     onClick={async () => {
