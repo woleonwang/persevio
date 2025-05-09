@@ -1280,18 +1280,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   <Button
                     type="primary"
                     onClick={async () => {
-                      const { code, data } = await Post(
+                      const { code } = await Post(
                         "/api/candidate/job_applies",
                         {
                           job_id: jobId,
                         }
                       );
-                      if (code === 0) {
-                        navigate(`/candidate/job-applies/${data.job_apply_id}`);
-                      } else if (code === 100001) {
+                      if (code === 100001) {
                         navigate(`/signup-candidate?job_id=${jobId}`);
                       } else {
-                        message.error(originalT("submit_failed"));
+                        navigate(`/candidate/job-applies`);
                       }
                     }}
                   >

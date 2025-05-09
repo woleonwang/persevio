@@ -21,6 +21,7 @@ import globalStore from "../../store/global";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const LayoutMapping = {
     blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/],
@@ -75,7 +76,13 @@ const AppLayout = () => {
       path: "/app/company",
       img: <FileDoneOutlined />,
     },
-  ];
+    {
+      title: t("管理职位"),
+      path: "/app/admin/jobs",
+      img: <FileDoneOutlined />,
+      requireAdmin: true,
+    },
+  ].filter((item) => !item.requireAdmin || isAdmin);
 
   const FOOTER = [
     {
@@ -94,6 +101,7 @@ const AppLayout = () => {
         setInited(true);
         // 获取职位
         fetchJobs();
+        setIsAdmin(data.is_admin);
       }
     } catch (e) {
       navigate("/signin");

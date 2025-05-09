@@ -35,6 +35,8 @@ import CandidateSettings from "./pages/candidate/settings";
 import JobApplies from "./pages/candidate/job-applies/index.tsx";
 import JobApplyShow from "./pages/candidate/job-apply-show";
 
+import AdminJobs from "./pages/admin/jobs";
+
 i18n.use(initReactI18next).init({
   resources: {
     "en-US": {
@@ -86,6 +88,7 @@ createRoot(document.getElementById("root")!).render(
               path="/app/system_prompt"
               element={<SystemPromptFeedback />}
             />
+            <Route path="/app/admin/jobs" element={<AdminJobs />} />
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/resume" element={<CandidateResume />} />

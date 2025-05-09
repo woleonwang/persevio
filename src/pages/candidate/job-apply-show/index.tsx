@@ -37,7 +37,7 @@ const JobApplyShow = () => {
     if (code === 0) {
       setJobApply({
         ...data.job_apply,
-        recommend_reason: data.recommend_reason,
+        recommend_reason: data.recommend_reason ?? `### ${t("waiting")}`,
         jd: parseJd(data.jd),
       });
     }

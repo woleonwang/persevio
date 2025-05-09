@@ -16,6 +16,7 @@ const CandidateResume = {
     job_description: "Job Description",
     interview: "Interview",
     finish_interview_hint: "Interivew has finished, You can apply now!",
+    waiting: "Viona is writing, please wait...",
   },
   candidate_sign: {
     connect_google: "Continue with Google",

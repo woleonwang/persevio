@@ -9,6 +9,10 @@ interface Window {
   SpeechRecognition: () => void;
 }
 
+interface ICompany {
+  id: number;
+  name: string;
+}
 interface IJob {
   id: number;
   company_id: number;
@@ -89,6 +93,7 @@ type TMenu = {
   title: string;
   path?: string;
   img: ReactNode;
+  requireAdmin?: boolean;
   children?: {
     title: string;
     path: string;
