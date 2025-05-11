@@ -20,6 +20,8 @@ const useAssembly = ({
   const [isConnecting, setIsConnecting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const textsRef = useRef<Record<number, string>>({});
+  const isRecordingRef = useRef(false);
+  isRecordingRef.current = isRecording;
 
   useEffect(() => {
     return () => {
@@ -76,6 +78,7 @@ const useAssembly = ({
     realtimeTranscriber.current.on(
       "transcript.partial",
       (transcript: PartialTranscript) => {
+        if (!isRecordingRef.current) return;
         const msg = getTranscription(transcript);
         onPartialTextChange(msg);
       }
@@ -84,8 +87,10 @@ const useAssembly = ({
     realtimeTranscriber.current.on(
       "transcript.final",
       (transcript: FinalTranscript) => {
-        const msg = getTranscription(transcript);
-        onFinish(msg);
+        if (isRecordingRef.current) {
+          const msg = getTranscription(transcript);
+          onFinish(msg);
+        }
         textsRef.current = {};
       }
     );

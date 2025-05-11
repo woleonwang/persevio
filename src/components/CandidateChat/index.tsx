@@ -312,6 +312,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
       recognitionRef.current?.stop();
       setIsRecordingZh(false);
     }
+    originalInputRef.current = "";
   };
 
   return (
