@@ -1286,7 +1286,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           job_id: jobId,
                         }
                       );
-                      if (code === 100001) {
+                      if (code === 10001) {
                         navigate(`/signup-candidate?job_id=${jobId}`);
                       } else {
                         navigate(`/candidate/job-applies`);

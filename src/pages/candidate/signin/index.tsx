@@ -19,7 +19,7 @@ const CandidateSignIn: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get("error");
     const code = urlParams.get("code");
-    if (error === "google_login_failed" && code === "100001") {
+    if (error === "google_login_failed" && code === "10001") {
       message.error("Email exists");
     }
 
