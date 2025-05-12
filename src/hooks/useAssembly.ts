@@ -46,6 +46,8 @@ const useAssembly = ({
   const endTranscription = async () => {
     setIsRecording(false);
     recorder.current?.pauseRecording();
+    recorder.current?.reset();
+    textsRef.current = {};
   };
 
   const getTranscription = (transcript: RealtimeTranscript): string => {
