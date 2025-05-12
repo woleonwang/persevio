@@ -49,6 +49,11 @@ const CandidateLayout = () => {
 
   const MENU: TMenu[] = [
     {
+      title: t("menu.home"),
+      path: "/candidate/home",
+      img: <ProfileOutlined />,
+    },
+    {
       title: t("menu.resume"),
       path: "/candidate/resume",
       img: <ProfileOutlined />,

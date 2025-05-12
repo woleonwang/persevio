@@ -7,6 +7,7 @@ export default {
     company: "公司知识库",
     settings: "设置",
 
+    home: "Home",
     profile: "简历",
     aspirations: "职业规划",
     deep_aspirations: "深度职位规划",

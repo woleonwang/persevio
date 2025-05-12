@@ -89,6 +89,24 @@ interface ICandidateSettings {
   lang: string;
 }
 
+interface IRecommendedJob {
+  id: number;
+  job_id: number;
+  candidate_id: number;
+  job: {
+    id: number;
+    name: string;
+    company_id: number;
+    company: {
+      id: number;
+      name: string;
+      logo: string;
+    };
+  };
+  status: "INITIAL" | "ACCEPTED" | "REJECTED";
+  created_at: string;
+}
+
 type TMenu = {
   title: string;
   path?: string;

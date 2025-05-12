@@ -1,0 +1,91 @@
+@primary-color: #1fac6a;
+
+.container {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  padding: 32px 20px;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(234, 234, 234, 1);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.main {
+  flex: auto;
+  overflow: auto;
+  padding: 20px 40px;
+  display: flex;
+  gap: 15px;
+}
+
+.left {
+  flex: 1;
+  background-color: white;
+  padding: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.recommendedJobCard {
+  background-color: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+
+  .basicInfo {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .jobName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .tags {
+    display: flex;
+    margin-top: 12px;
+  }
+
+  .companyName {
+    padding: 4px 16px;
+    background-color: rgba(252, 240, 255, 1);
+    border-radius: 44px;
+    color: rgba(146, 115, 163, 1);
+  }
+
+  .status {
+    padding: 4px 16px;
+    border-radius: 44px;
+
+    &.accepted {
+      background-color: rgba(229, 247, 247, 1);
+      color: rgba(31, 172, 106, 1);
+    }
+
+    &.rejected {
+      background-color: rgba(255, 246, 246, 1);
+      color: rgba(255, 102, 102, 1);
+    }
+  }
+}
+
+.jd {
+  margin-top: 24px;
+  padding: 20px 0;
+  flex: auto;
+  overflow: auto;
+}

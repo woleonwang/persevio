@@ -1,8 +1,7 @@
-import { Button, message, Upload } from "antd";
+import { message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { PostFormData } from "@/utils/request";
 import styles from "./style.module.less";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
@@ -11,7 +10,6 @@ interface IProps {
 
 const UploadResume = (props: IProps) => {
   const { onFinish } = props;
-  const [fileId, setFileId] = useState<number>();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
@@ -30,7 +28,7 @@ const UploadResume = (props: IProps) => {
               formData
             );
             if (code === 0) {
-              setFileId(data.upload_file.id);
+              onFinish(data.upload_file.id);
               message.success(t("upload_succeed"));
             } else {
               message.error(t("upload_failed"));
@@ -44,22 +42,6 @@ const UploadResume = (props: IProps) => {
         </Upload>
         <div className={styles.uploadTips}>{t("upload_tips_1")}</div>
         <div className={styles.uploadTips}>{t("upload_tips_2")}</div>
-      </div>
-      <div style={{ textAlign: "center", marginTop: 50 }}>
-        <Button
-          type="primary"
-          disabled={!fileId}
-          onClick={() => {
-            if (fileId) {
-              onFinish(fileId);
-            }
-          }}
-          size="large"
-          shape="round"
-          style={{ paddingLeft: 30, paddingRight: 30 }}
-        >
-          {t("next")}
-        </Button>
       </div>
     </div>
   );

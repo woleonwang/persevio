@@ -5,6 +5,10 @@ const CandidateResume = {
   candidate_aspirations: {
     candidate_aspirations: "Career Aspiration",
   },
+  candidate_home: {
+    home: "Home",
+    recommended_jobs: "Recommended Jobs",
+  },
   job_applies: {
     jobs: "Jobs For You",
     applied_jobs: "Applied Jobs",
@@ -62,6 +66,7 @@ export default {
     company: "Company Info",
     settings: "Settings",
 
+    home: "Home",
     resume: "Resume",
     aspirations: "Career Aspiration",
     deep_aspirations: "Deep Aspirations",

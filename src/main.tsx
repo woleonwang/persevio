@@ -32,10 +32,12 @@ import zhCN from "./locales/zh-CN.ts";
 import InitialAspirations from "./pages/candidate/initial-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import CandidateSettings from "./pages/candidate/settings";
-import JobApplies from "./pages/candidate/job-applies/index.tsx";
+import JobApplies from "./pages/candidate/job-applies";
 import JobApplyShow from "./pages/candidate/job-apply-show";
+import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
+import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -91,6 +93,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/app/admin/jobs" element={<AdminJobs />} />
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
+            <Route path="/candidate/home" element={<CandidateHome />} />
             <Route path="/candidate/resume" element={<CandidateResume />} />
             <Route
               path="/candidate/aspirations"
@@ -104,6 +107,10 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/candidate/job-applies/:jobApplyId"
               element={<JobApplyShow />}
+            />
+            <Route
+              path="/candidate/recommended-jobs/:recommendedJobId"
+              element={<RecommendedJobShow />}
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
           </Route>
