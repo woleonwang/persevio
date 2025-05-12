@@ -24,7 +24,7 @@ const RecommendedJobShow = () => {
 
   const { t: originalT } = useTranslation();
 
-  const t = (key: string) => originalT(`recommended_jobs.${key}`);
+  // const t = (key: string) => originalT(`recommended_jobs.${key}`);
 
   useEffect(() => {
     fetchRecommendedJob();
