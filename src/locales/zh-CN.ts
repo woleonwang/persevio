@@ -385,6 +385,11 @@ export default {
     confidence: "信心",
     reason: "判断原因",
     evidence: "简历相关原文",
+    accept: "通过",
+    reject: "拒绝",
+    feedback: "反馈",
+    accepted: "已通过",
+    rejected: "已拒绝",
   },
 
   city_and_address_select: {

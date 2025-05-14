@@ -84,17 +84,15 @@ const CandidateLayout = () => {
   ];
 
   const init = async () => {
-    try {
-      // 校验 token
-      const { code, data } = await Get("/api/candidate/settings");
-      if (code === 0) {
-        setInited(true);
-        if (!(data.candidate as ICandidateSettings).llm_resume_doc_id) {
-          navigate("/signup-candidate");
-        }
+    // 校验 token
+    const { code, data } = await Get("/api/candidate/settings");
+    if (code === 0) {
+      setInited(true);
+      if (!(data.candidate as ICandidateSettings).llm_resume_doc_id) {
+        navigate("/signup-candidate");
       }
-    } catch (e) {
-      navigate("/signup-candidate");
+    } else {
+      navigate("/signin-candidate");
     }
   };
 

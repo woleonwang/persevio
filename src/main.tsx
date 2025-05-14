@@ -37,6 +37,7 @@ import JobApplyShow from "./pages/candidate/job-apply-show";
 import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
+import AdminJobApplies from "./pages/admin/job-applies";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 
 i18n.use(initReactI18next).init({
@@ -91,6 +92,7 @@ createRoot(document.getElementById("root")!).render(
               element={<SystemPromptFeedback />}
             />
             <Route path="/app/admin/jobs" element={<AdminJobs />} />
+            <Route path="/app/admin/job-applies" element={<AdminJobApplies />} />
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/home" element={<CandidateHome />} />

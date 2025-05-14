@@ -25,13 +25,13 @@ const SignIn: React.FC = () => {
   const loadingRef = useRef<boolean>(false);
 
   const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get("token");
+  const redirect = decodeURIComponent(urlParams.get("redirect") ?? "");
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tokenFromUrl = urlParams.get("token");
     if (tokenFromUrl) {
-      localStorage.setItem("token", tokenFromUrl);
-      navigate("/app/entry/create-job", { replace: true });
+      signInSucceed(tokenFromUrl);
     }
   }, []);
 
@@ -52,14 +52,18 @@ const SignIn: React.FC = () => {
 
       if (code === 0 && data) {
         message.success("Sign in succeed");
-        localStorage.setItem("token", data.token);
-        navigate("/app/entry/create-job", { replace: true });
+        signInSucceed(data.token);
       } else {
         message.error("Username or password is incorrect");
       }
 
       loadingRef.current = false;
     });
+  };
+
+  const signInSucceed = (token: string) => {
+    localStorage.setItem("token", token);
+    navigate(redirect ?? "/app/entry/create-job", { replace: true });
   };
 
   return (

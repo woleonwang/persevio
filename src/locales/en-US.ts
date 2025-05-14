@@ -455,6 +455,11 @@ You can share Viona using this chat page link, either by including it in your jo
     confidence: "Confidence",
     reason: "Reason",
     evidence: "Evidence",
+    accept: "Accept",
+    reject: "Reject",
+    feedback: "Feedback",
+    accepted: "Accepted",
+    rejected: "Rejected",
   },
 
   city_and_address_select: {

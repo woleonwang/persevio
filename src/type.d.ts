@@ -43,11 +43,13 @@ interface IJob {
   };
 }
 
+type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
+
 interface IJobApplyListItem {
   id: number;
   candidate_id: number;
   job_id: number;
-  status: string;
+  status: TJobListStatus;
   created_at: string;
   updated_at: string;
   recommend_doc_id: number;

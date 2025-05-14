@@ -23,6 +23,8 @@ const AppLayout = () => {
   const currentPath = useLocation().pathname;
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const currentUrl = encodeURIComponent(location.pathname + location.search);
+
   const LayoutMapping = {
     blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/],
   };
@@ -77,8 +79,14 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
     },
     {
-      title: t("管理职位"),
+      title: t("职位管理"),
       path: "/app/admin/jobs",
+      img: <FileDoneOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: t("申请管理"),
+      path: "/app/admin/job-applies",
       img: <FileDoneOutlined />,
       requireAdmin: true,
     },
@@ -93,18 +101,16 @@ const AppLayout = () => {
   ];
 
   const init = async () => {
-    try {
-      // 校验 token
-      const { code, data } = await Get("/api/settings");
-      if (code === 0) {
-        i18n.changeLanguage(data.lang ?? "en-US");
-        setInited(true);
-        // 获取职位
-        fetchJobs();
-        setIsAdmin(data.is_admin);
-      }
-    } catch (e) {
-      navigate("/signin");
+    // 校验 token
+    const { code, data } = await Get("/api/settings");
+    if (code === 0) {
+      i18n.changeLanguage(data.lang ?? "en-US");
+      setInited(true);
+      // 获取职位
+      fetchJobs();
+      setIsAdmin(data.is_admin);
+    } else {
+      navigate(`/signin?redirect=${currentUrl}`);
     }
   };
 

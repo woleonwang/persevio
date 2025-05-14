@@ -5,23 +5,23 @@ import { useTranslation } from "react-i18next";
 import {
   CheckCircleFilled,
   CloseCircleFilled,
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
   QuestionCircleFilled,
 } from "@ant-design/icons";
-import { Get } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 import { TEvaluation, TTalent } from "./type";
 import { parseJSON, parseMarkdown } from "../../utils";
 
 import styles from "./style.module.less";
-import { Popover } from "antd";
+import { Button, Input, message, Modal, Popover } from "antd";
 import MarkdownContainer from "../../components/MarkdownContainer";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
 
   const [talent, setTalent] = useState<TTalent>();
-  const [meta, setMeta] = useState<{ rank: number; total: number }>();
+  const [feedbackReasonModalOpen, setFeedbackReasonModalOpen] = useState(false);
+  const [feedbackReason, setFeedbackReason] = useState("");
+  // const [meta, setMeta] = useState<{ rank: number; total: number }>();
 
   const { t: originalT } = useTranslation();
 
@@ -40,7 +40,7 @@ const Talent = () => {
         evaluate_result: parseJSON(data.talent.evaluate_result),
         parsed_content: parseMarkdown(data.talent.parsed_content),
       });
-      setMeta(data.meta);
+      // setMeta(data.meta);
     }
   };
 
@@ -75,6 +75,22 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
     return reasoning;
   };
 
+  const feedback = async (action: "accept" | "reject", reason?: string) => {
+    const { code } = await Post(
+      `/api/jobs/${jobId}/talents/${talentId}/feedback/${action}`,
+      {
+        feedback: reason,
+      }
+    );
+
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      fetchTalent();
+    } else {
+      message.error(originalT("submit_failed"));
+    }
+  };
+
   if (!talent) {
     return <div>loading...</div>;
   }
@@ -99,6 +115,41 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
   return (
     <div className={styles.container}>
       <div className={styles.left}>
+        <div className={styles.resumeHeader}>
+          <div className={styles.resumeTitle}>{t("resume_body")}</div>
+          <div>
+            {talent.status === "evaluate_succeed" && (
+              <>
+                <Button
+                  type="primary"
+                  shape="round"
+                  onClick={() => feedback("accept")}
+                >
+                  {t("accept")}
+                </Button>
+                <Button
+                  type="primary"
+                  danger
+                  shape="round"
+                  style={{ marginLeft: 10 }}
+                  onClick={() => setFeedbackReasonModalOpen(true)}
+                >
+                  {t("reject")}
+                </Button>
+              </>
+            )}
+            {talent.status === "accepted" && (
+              <div className={classnames(styles.status, styles.accepted)}>
+                {t("accepted")}
+              </div>
+            )}
+            {talent.status === "rejected" && (
+              <div className={classnames(styles.status, styles.rejected)}>
+                {t("rejected")}
+              </div>
+            )}
+          </div>
+        </div>
         <MarkdownContainer content={talent.parsed_content} />
       </div>
       <div className={styles.right}>
@@ -134,7 +185,7 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
             </div>
           </div>
 
-          {meta && (
+          {/* {meta && (
             <div className={styles.rank}>
               <DoubleRightOutlined style={{ marginRight: 4, fontSize: 12 }} />
               {t("rank")}:{" "}
@@ -143,16 +194,14 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
               </span>
               <DoubleLeftOutlined style={{ marginLeft: 4, fontSize: 12 }} />
             </div>
-          )}
+          )} */}
 
           <div className={styles.blockTitle}>{t("summary")}</div>
           <div className={styles.summary}>
             <MarkdownContainer content={getReasoning(result)} />
           </div>
 
-          <div className={styles.blockTitle} style={{ marginTop: 20 }}>
-            {t("details")}
-          </div>
+          <div className={styles.blockTitle}>{t("details")}</div>
 
           <div>
             <div className={styles.detailItemTitle}>
@@ -298,6 +347,29 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
           </div>
         </div>
       </div>
+
+      <Modal
+        open={feedbackReasonModalOpen}
+        title={t("feedback")}
+        onCancel={() => setFeedbackReasonModalOpen(false)}
+        onOk={async () => {
+          await feedback("reject", feedbackReason);
+          setFeedbackReasonModalOpen(false);
+          setFeedbackReason("");
+        }}
+        okButtonProps={{
+          disabled: !feedbackReason,
+        }}
+        okText={originalT("submit")}
+        cancelText={originalT("cancel")}
+      >
+        <Input.TextArea
+          value={feedbackReason}
+          onChange={(e) => setFeedbackReason(e.target.value)}
+          rows={4}
+          style={{ marginTop: 10 }}
+        />
+      </Modal>
     </div>
   );
 };

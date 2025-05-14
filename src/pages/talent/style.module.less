@@ -15,6 +15,32 @@
   overflow: auto;
 }
 
+.resumeHeader {
+  display: flex;
+  justify-content: space-between;
+
+  .resumeTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: @primary-color;
+  }
+
+  .status {
+    padding: 4px 16px;
+    border-radius: 44px;
+
+    &.accepted {
+      background-color: rgba(229, 247, 247, 1);
+      color: rgba(31, 172, 106, 1);
+    }
+
+    &.rejected {
+      background-color: rgba(255, 246, 246, 1);
+      color: rgba(255, 102, 102, 1);
+    }
+  }
+}
+
 .right {
   flex: 1;
   margin-left: 20px;
@@ -40,6 +66,7 @@
   font-size: 16px;
   font-weight: bold;
   color: @primary-color;
+  margin-top: 20px;
 }
 
 .rank {

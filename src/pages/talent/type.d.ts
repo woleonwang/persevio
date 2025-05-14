@@ -54,7 +54,7 @@ export type TCandidate = {
 export type TTalent = {
   id: number;
   candidate_id: number;
-  status: "evaluate_succeed" | "evaluate_failed";
+  status: "evaluate_succeed" | "evaluate_failed" | "accepted" | "rejected";
   evaluate_result: TEvaluation;
   file_path: string;
   content: string;
