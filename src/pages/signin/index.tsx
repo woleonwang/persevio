@@ -63,7 +63,7 @@ const SignIn: React.FC = () => {
 
   const signInSucceed = (token: string) => {
     localStorage.setItem("token", token);
-    navigate(redirect ?? "/app/entry/create-job", { replace: true });
+    navigate(redirect || "/app/entry/create-job", { replace: true });
   };
 
   return (

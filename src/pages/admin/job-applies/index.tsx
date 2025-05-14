@@ -44,9 +44,7 @@ const JobApplies = () => {
 
   const fetchJobApplies = async () => {
     const { code, data } = await Get(
-      `/api/admin/job_applies?status=${
-        status ?? ""
-      }&page=${page}&size=${PAGE_SIZE}`
+      `/api/admin/job_applies?status=${status}&page=${page}&size=${PAGE_SIZE}`
     );
 
     if (code === 0) {
