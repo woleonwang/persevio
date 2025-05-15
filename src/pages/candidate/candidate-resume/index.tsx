@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import MarkdownContainer from "@/components/MarkdownContainer";
 import { parseJSON } from "@/utils";
-import { Get, Post } from "@/utils/request";
+import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
-import MarkdownEditor from "@/components/MarkdownEditor";
-import { Button, message } from "antd";
 import { useTranslation } from "react-i18next";
 
 type TWorkExperience = {
