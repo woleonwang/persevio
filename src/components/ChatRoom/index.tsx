@@ -1084,7 +1084,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
       >
         {chatType === "jobRequirementDoc" && (
           <div className={styles.progressWrapper}>
-            <div>{t("progress")}</div>
+            <div style={{ flex: "none", color: "#1fac6a" }}>
+              {t("progress")}
+            </div>
             <Progress
               percent={jrdProgress}
               style={{ flex: "auto" }}
