@@ -23,6 +23,7 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -60,6 +61,7 @@ import ChatbotConfigForm, {
 } from "./components/ChatbotConfigForm";
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
+import useAssembly from "@/hooks/useAssembly";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -109,7 +111,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     useState<Record<string, number>>();
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecordingZh, setIsRecordingZh] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
   const [taskCollapsed, setTaskCollapsed] = useState(false);
 
@@ -142,7 +144,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const recognitionRef = useRef<any>();
   const originalInputRef = useRef<string>("");
   const isRecordingRef = useRef(false);
-  isRecordingRef.current = isRecording;
+  isRecordingRef.current = isRecordingZh;
   const textInstanceRef = useRef<TextAreaRef | null>();
   const editMessageTourElementRef = useRef<
     HTMLButtonElement | HTMLAnchorElement | null
@@ -154,6 +156,23 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const navigate = useNavigate();
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
+
+  const {
+    isConnecting,
+    isRecording: isRecordingEn,
+    startTranscription,
+    endTranscription,
+  } = useAssembly({
+    onPartialTextChange: (result) => {
+      setInputValue(originalInputRef.current + result);
+    },
+    onFinish: (result) => {
+      originalInputRef.current = originalInputRef.current + result;
+      setInputValue(originalInputRef.current);
+    },
+  });
+
+  const isRecording = i18n.language === "zh-CN" ? isRecordingZh : isRecordingEn;
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -774,55 +793,64 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const startRecord = async () => {
-    if (!recognitionRef.current) {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (i18n.language === "en-US") {
+      startTranscription();
+    } else {
+      if (!recognitionRef.current) {
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
 
-      //@ts-ignore
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = i18n.language;
+        //@ts-ignore
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = i18n.language;
 
-      recognition.onresult = (event: any) => {
-        if (!isRecordingRef.current) return;
+        recognition.onresult = (event: any) => {
+          if (!isRecordingRef.current) return;
 
-        let result = "";
-        let isFinal = false;
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          result += event.results[i][0].transcript ?? "";
-          if (event.results[i].isFinal) {
-            isFinal = true;
+          let result = "";
+          let isFinal = false;
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            result += event.results[i][0].transcript ?? "";
+            if (event.results[i].isFinal) {
+              isFinal = true;
+            }
           }
-        }
-        console.log("result: ", result, " length:", result.length);
-        if (!result) {
-          console.log("events:", event.results);
-        }
-        setInputValue(originalInputRef.current + result);
-        if (isFinal) {
-          originalInputRef.current += result;
-        }
-      };
-      recognition.onend = () => {
-        console.log("end");
-        setIsRecording(false);
-      };
-      recognition.onerror = () => {
-        console.log("error");
-      };
-      recognitionRef.current = recognition;
-    }
+          console.log("result: ", result, " length:", result.length);
+          if (!result) {
+            console.log("events:", event.results);
+          }
+          setInputValue(originalInputRef.current + result);
+          if (isFinal) {
+            originalInputRef.current += result;
+          }
+        };
+        recognition.onend = () => {
+          console.log("end");
+          setIsRecordingZh(false);
+        };
+        recognition.onerror = () => {
+          console.log("error");
+        };
+        recognitionRef.current = recognition;
+      }
 
-    setIsRecording(true);
+      setIsRecordingZh(true);
+      recognitionRef.current?.start();
+    }
     originalInputRef.current = inputValue;
-    recognitionRef.current?.start();
     textInstanceRef.current?.focus();
   };
 
   const stopRecord = () => {
-    recognitionRef.current?.stop();
-    setIsRecording(false);
+    if (i18n.language === "en-US") {
+      endTranscription();
+    } else {
+      recognitionRef.current?.stop();
+      setIsRecordingZh(false);
+    }
+    originalInputRef.current = "";
   };
 
   const canMessageEdit = (item: TMessage) => {
@@ -1305,8 +1333,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   type="primary"
                   danger={isRecording}
                   shape="circle"
+                  disabled={isRecording && isConnecting}
                   icon={
-                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
+                    isRecording && isConnecting ? (
+                      <LoadingOutlined spin />
+                    ) : isRecording ? (
+                      <AudioMutedOutlined />
+                    ) : (
+                      <AudioOutlined />
+                    )
                   }
                   onClick={isRecording ? stopRecord : startRecord}
                 />

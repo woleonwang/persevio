@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import classnames from "classnames";
 import styles from "../style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import dayjs from "dayjs";
 
 const PAGE_SIZE = 10;
 
@@ -104,8 +105,11 @@ const JobApplies = () => {
       },
     },
     {
-      title: "状态",
-      dataIndex: "status",
+      title: "申请时间",
+      dataIndex: "deliveried_at",
+      render: (deliveriedAt: string) => {
+        return dayjs(deliveriedAt).format("YYYY-MM-DD HH:mm:ss");
+      },
     },
   ];
 
