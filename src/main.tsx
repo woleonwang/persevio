@@ -29,7 +29,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
-import InitialAspirations from "./pages/candidate/initial-aspirations";
+import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import CandidateSettings from "./pages/candidate/settings";
 import JobApplies from "./pages/candidate/job-applies";
@@ -92,14 +92,17 @@ createRoot(document.getElementById("root")!).render(
               element={<SystemPromptFeedback />}
             />
             <Route path="/app/admin/jobs" element={<AdminJobs />} />
-            <Route path="/app/admin/job-applies" element={<AdminJobApplies />} />
+            <Route
+              path="/app/admin/job-applies"
+              element={<AdminJobApplies />}
+            />
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/home" element={<CandidateHome />} />
             <Route path="/candidate/resume" element={<CandidateResume />} />
             <Route
               path="/candidate/aspirations"
-              element={<InitialAspirations />}
+              element={<CareerAspirations />}
             />
             <Route
               path="/candidate/deep_aspirations"

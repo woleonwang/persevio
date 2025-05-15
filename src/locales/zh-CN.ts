@@ -110,6 +110,8 @@ export default {
     require_compensation: "请先完成薪资配置",
     require_interview_plan: "请先完成面试计划",
     chatbot_config: "配置聊天机器人",
+
+    progress: "进度",
   },
 
   job_requirement_form: {

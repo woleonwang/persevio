@@ -3,7 +3,7 @@ const CandidateResume = {
     resume: "Resume",
   },
   candidate_aspirations: {
-    candidate_aspirations: "Career Aspiration",
+    career_aspirations: "Career Aspiration",
   },
   candidate_home: {
     home: "Home",
@@ -173,6 +173,8 @@ You can share Viona using this chat page link, either by including it in your jo
     require_compensation: "Please define compensation details first",
     require_interview_plan: "Please define interview plan first",
     chatbot_config: "Config Chatbot",
+
+    progress: "Progress",
   },
 
   job_requirement_form: {
@@ -321,9 +323,9 @@ You can share Viona using this chat page link, either by including it in your jo
   },
 
   ideal_profile: {
-    minimum: "Must",
-    big_plus: "Big Plus",
-    plus: "Plus",
+    minimum: "Minimum Requirements",
+    big_plus: "Big Plus Requirements",
+    plus: "Plus Requirements",
     no_apply: "Not Apply",
     add: "Add New",
   },

@@ -84,9 +84,9 @@ interface ICandidateSettings {
   interview_finished_at: string;
 
   llm_resume_doc_id: number;
-  initial_career_aspiration_doc_id: number;
+  career_aspiration_doc_id: number;
   internal_evaluate_doc_id: number;
-  deep_career_aspiration_doc_id: number;
+  career_aspiration_json_doc_id: number;
 
   lang: string;
 }

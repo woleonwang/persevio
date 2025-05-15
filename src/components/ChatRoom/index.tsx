@@ -12,6 +12,7 @@ import {
   Drawer,
   FloatButton,
   Badge,
+  Progress,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -114,6 +115,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [isRecordingZh, setIsRecordingZh] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
   const [taskCollapsed, setTaskCollapsed] = useState(false);
+  const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -577,6 +579,24 @@ const ChatRoom: React.FC<IProps> = (props) => {
         const isLoading = data.is_invoking === 1;
         setIsLoading(isLoading);
 
+        if (chatType === "jobRequirementDoc") {
+          const tagPrograss = {
+            "stage2-start": 15,
+            "stage3-start": 55,
+            "stage4-start": 80,
+            "stage5-start": 90,
+          };
+
+          let progress = 0;
+          messageHistory.forEach((message) => {
+            (message.extraTags ?? []).forEach((tag) => {
+              if (Object.keys(tagPrograss).includes(tag.name)) {
+                progress = tagPrograss[tag.name as keyof typeof tagPrograss];
+              }
+            });
+          });
+          setJrdProgress(progress);
+        }
         // 自动执行标签逻辑
         const lastMessage = messageHistory[messageHistory.length - 1];
         if (lastMessage) {
@@ -1038,6 +1058,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
         className={styles.right}
         style={collapseForDrawer ? { width: "40vw", flex: "none" } : {}}
       >
+        {chatType === "jobRequirementDoc" && (
+          <div className={styles.progressWrapper}>
+            <div>{t("progress")}</div>
+            <Progress
+              percent={jrdProgress}
+              style={{ flex: "auto" }}
+              strokeColor={"#1FAC6A"}
+            />
+          </div>
+        )}
         <div className={styles.listArea}>
           <List
             dataSource={messages}

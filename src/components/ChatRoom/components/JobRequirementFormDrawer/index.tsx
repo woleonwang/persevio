@@ -387,18 +387,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
           type: "textarea",
           allowFile: true,
         },
-        {
-          key: "usage",
-          type: "textarea",
-          question: t("usage"),
-          dependencies: [
-            {
-              questionKey: "materials",
-              exists: true,
-            },
-          ],
-          required: true,
-        },
       ],
     },
 

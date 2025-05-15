@@ -33,6 +33,11 @@ export type TExtraTagName =
   | "to-faq-btn"
   | "to-chatbot-btn"
   | "chatbot-config-btn"
+  | "stage1-start"
+  | "stage2-start"
+  | "stage3-start"
+  | "stage4-start"
+  | "stage5-start"
 
   //candiate
   | "interview-done";

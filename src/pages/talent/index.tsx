@@ -204,15 +204,13 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
           <div className={styles.blockTitle}>{t("details")}</div>
 
           <div>
-            <div className={styles.detailItemTitle}>
-              {t("details_requirement")}
-            </div>
             <div style={{ paddingLeft: 12 }}>
               {groupedEvaluations.map((group) => {
                 if (group.items.length === 0) return null;
 
                 return (
                   <div key={group.title} style={{ marginBottom: 20 }}>
+                    <div className={styles.detailItemTitle}>{group.title}</div>
                     {group.items.map((item) => {
                       const levelStyle = {
                         VH: {
