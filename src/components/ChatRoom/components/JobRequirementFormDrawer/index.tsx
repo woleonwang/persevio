@@ -186,6 +186,22 @@ const JobRequirementFormDrawer = (props: IProps) => {
           required: true,
         },
         {
+          key: "role_type",
+          type: "select",
+          question: t("role_type"),
+          options: [
+            {
+              value: "individual_contributor",
+              label: t("individual_contributor_role"),
+            },
+            {
+              value: "manager",
+              label: t("manager_role"),
+            },
+          ],
+          required: true,
+        },
+        {
           key: "contract_type",
           type: "select",
           question: t("contract_type"),
