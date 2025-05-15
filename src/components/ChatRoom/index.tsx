@@ -88,6 +88,12 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   CANDIDATE_CHAT: "candidate",
 };
 
+const visibleTasksForCoworker = [
+  "jobRequirementDoc",
+  "jobDescription",
+  "jobCompensationDetails",
+];
+
 const CHATTYPE_MAP: Record<TChatType, string> = Object.keys(
   RESOURCE_TYPE_MAP
 ).reduce((prev, current) => {
@@ -492,7 +498,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
       const job: IJob = data.job ?? data;
       setJob(job);
       setJobUrl(data.url);
-      setChatType(RESOURCE_TYPE_MAP[data.current_chat_type]);
+
+      const defaultChatType = RESOURCE_TYPE_MAP[data.current_chat_type];
+      setChatType(
+        userRole === "staff" ||
+          visibleTasksForCoworker.includes(defaultChatType)
+          ? defaultChatType
+          : "jobRequirementDoc"
+      );
       setUnreadMessageCount(data.unread_message_count);
     } else {
       message.error("Get job failed");
@@ -694,35 +707,41 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   name: "to-jd-btn",
                   content: "",
                 },
-                !job.target_companies_doc_id && {
-                  name: `to-target-companies-btn`,
-                  content: "",
-                },
+                userRole !== "coworker" &&
+                  !job.target_companies_doc_id && {
+                    name: `to-target-companies-btn`,
+                    content: "",
+                  },
                 !job.compensation_details_doc_id && {
                   name: `to-compensation-details-btn`,
                   content: "",
                 },
-                !job.screening_question_doc_id && {
-                  name: `to-screening-questions-btn`,
-                  content: "",
-                },
-                !job.interview_plan_doc_id && {
-                  name: `to-interview-plan-btn`,
-                  content: "",
-                },
-                !job.outreach_message_doc_id && {
-                  name: `to-outreach-btn`,
-                  content: "",
-                },
-                !job.social_media_doc_id && {
-                  name: "to-social-post-btn",
-                  content: "",
-                },
-                !job.faq_doc_id && {
-                  name: "to-faq-btn",
-                  content: "",
-                },
-                {
+                userRole !== "coworker" &&
+                  !job.screening_question_doc_id && {
+                    name: `to-screening-questions-btn`,
+                    content: "",
+                  },
+                userRole !== "coworker" &&
+                  !job.interview_plan_doc_id && {
+                    name: `to-interview-plan-btn`,
+                    content: "",
+                  },
+                userRole !== "coworker" &&
+                  !job.outreach_message_doc_id && {
+                    name: `to-outreach-btn`,
+                    content: "",
+                  },
+                userRole !== "coworker" &&
+                  !job.social_media_doc_id && {
+                    name: "to-social-post-btn",
+                    content: "",
+                  },
+                userRole !== "coworker" &&
+                  !job.faq_doc_id && {
+                    name: "to-faq-btn",
+                    content: "",
+                  },
+                userRole !== "coworker" && {
                   name: `to-chatbot-btn`,
                   content: "",
                 },
@@ -1008,6 +1027,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   chatType: "talentEvaluateResult",
                 },
               ]
+                .filter(
+                  (task) =>
+                    visibleTasksForCoworker.includes(task.chatType) ||
+                    userRole === "staff"
+                )
                 .sort(
                   (a, b) =>
                     (unreadMessageCount?.[
