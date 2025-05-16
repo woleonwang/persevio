@@ -124,6 +124,11 @@ const JobInformation = (props: IProps) => {
       disabled: docUnfinised("requirement"),
     },
     {
+      value: "compensation_details",
+      label: t("compensation_details"),
+      disabled: docUnfinised("compensation_details"),
+    },
+    {
       value: "jd",
       label: t("jd"),
       disabled: docUnfinised("jd"),
@@ -132,11 +137,6 @@ const JobInformation = (props: IProps) => {
       value: "target_companies",
       label: t("target_companies"),
       disabled: docUnfinised("target_companies"),
-    },
-    {
-      value: "compensation_details",
-      label: t("compensation_details"),
-      disabled: docUnfinised("compensation_details"),
     },
     {
       value: "screening_question",
