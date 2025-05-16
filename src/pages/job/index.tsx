@@ -8,8 +8,9 @@ import JobInformation, { TJobDocType } from "../../components/JobInformation";
 import { observer } from "mobx-react-lite";
 import globalStore from "../../store/global";
 import { useTranslation } from "react-i18next";
+import Talents from "./components/talents";
 
-export type TTabKey = "chat" | "info" | "pipeline";
+export type TTabKey = "chat" | "info" | "talents";
 export type onChangeTabFunction = (
   tab: TTabKey,
   options?: { docType?: TJobDocType }
@@ -52,6 +53,10 @@ const Job = () => {
                   key: "info",
                   label: t("document"),
                 },
+                {
+                  key: "talents",
+                  label: t("talents"),
+                },
               ]}
               onChange={(type) => {
                 // initDocTypeRef.current = undefined;
@@ -78,6 +83,11 @@ const Job = () => {
                   jobId={jobId}
                   activeDocType={initDocTypeRef.current}
                 />
+              </div>
+            )}
+            {status === "talents" && (
+              <div className={styles.chatWrapper}>
+                <Talents jobId={jobId} />
               </div>
             )}
           </>

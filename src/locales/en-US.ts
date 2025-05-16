@@ -76,7 +76,7 @@ export default {
   job: {
     chat: "Chat",
     document: "Job Details & Assets",
-    talent: "Talent",
+    talents: "Candidates",
   },
 
   chat: {
@@ -507,6 +507,12 @@ You can share Viona using this chat page link, either by including it in your jo
       "Can discuss specific numerical details, precise figures, or targeted ranges for the role.",
     others:
       "Any other instructions to Viona when she communicates with candidates about this role? Such as things you'd like Viona to avoid talking about or things you'd like her to highlight, etc.",
+  },
+
+  talents: {
+    status_evaluate_succeed: "Pending",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
   },
 
   ...CandidateResume,

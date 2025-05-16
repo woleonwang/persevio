@@ -17,7 +17,7 @@ export default {
   job: {
     chat: "对话",
     document: "职位详情 & 资料",
-    talent: "候选人",
+    talents: "候选人",
   },
 
   chat: {
@@ -169,7 +169,7 @@ export default {
       "任何你认为可以帮我建立起一个对这个职位初步印象的信息都可以在这分享给我。",
     usage:
       "我该怎么用这个参考资料？比如，告诉我这是个你写的简单的职位需求表？别的类似的职位？里面哪些信息我可以用，哪些不能用？",
-    no_materials: "暂无参考资料",
+    no_materials: "没有可提供的材料",
 
     team_context: "团队信息",
     team: "这个职位会加入哪个<b>团队</b>？",
@@ -435,6 +435,12 @@ export default {
       "可讨论具体的薪酬数字，包括精确的数字或针对该职位的具体/目标薪酬范围。",
     others:
       "关于 Viona 与候选人就此职位进行沟通，是否有任何其他指示？（例如：希望 Viona 避免谈论的内容、需要特别强调的方面等）",
+  },
+
+  talents: {
+    status_evaluate_succeed: "Pending",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
   },
 
   edit: "编辑",

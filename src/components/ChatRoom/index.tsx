@@ -1089,6 +1089,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         display: text ? "block" : "none",
                       }}
                       color={color}
+                      key={task.chatType}
                     >
                       <div
                         className={classnames(styles.taskBlock, {
