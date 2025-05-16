@@ -8,6 +8,7 @@ import { TTalent } from "@/pages/talent/type";
 
 import styles from "./style.module.less";
 import { parseJSON } from "@/utils";
+import dayjs from "dayjs";
 
 interface IProps {
   jobId: number;
@@ -63,27 +64,38 @@ const Talents: React.FC<IProps> = (props) => {
             }
             className={styles.talentPanel}
           >
-            <div
-              className={classnames(
-                styles.avatar,
-                styles[`color-${(talent.candidate.name.charCodeAt(0) % 8) + 1}`]
-              )}
-            >
-              {talent.candidate.name[0]}
-            </div>
-            <div>
-              <div className={styles.name}> {talent.candidate.name}</div>
-              <div className={styles.info}>
-                {!!talent.evaluate_result.overall_match_level && (
-                  <div className={classnames(styles.tag, styles.level)}>
-                    {originalT(
-                      `talent.${talent.evaluate_result.overall_match_level}`
-                    )}
-                  </div>
+            <div className={styles.left}>
+              <div
+                className={classnames(
+                  styles.avatar,
+                  styles[
+                    `color-${(talent.candidate.name.charCodeAt(0) % 8) + 1}`
+                  ]
                 )}
-                <div className={classnames(styles.tag, styles[talent.status])}>
-                  {t(`status_${talent.status}`)}
+              >
+                {talent.candidate.name[0]}
+              </div>
+              <div>
+                <div className={styles.name}> {talent.candidate.name}</div>
+                <div className={styles.info}>
+                  {!!talent.evaluate_result.overall_match_level && (
+                    <div className={classnames(styles.tag, styles.level)}>
+                      {originalT(
+                        `talent.${talent.evaluate_result.overall_match_level}`
+                      )}
+                    </div>
+                  )}
+                  <div
+                    className={classnames(styles.tag, styles[talent.status])}
+                  >
+                    {t(`status_${talent.status}`)}
+                  </div>
                 </div>
+              </div>
+            </div>
+            <div className={styles.right}>
+              <div style={{ fontSize: 14, color: "#666" }}>
+                {dayjs(talent.created_at).format("YYYY-MM-DD HH:mm:ss")}
               </div>
             </div>
           </div>
