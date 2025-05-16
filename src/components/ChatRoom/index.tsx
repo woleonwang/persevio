@@ -12,7 +12,7 @@ import {
   Drawer,
   FloatButton,
   Badge,
-  Progress,
+  Steps,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -594,10 +594,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         if (chatType === "jobRequirementDoc") {
           const tagPrograss = {
-            "stage2-start": 15,
-            "stage3-start": 55,
-            "stage4-start": 80,
-            "stage5-start": 90,
+            "mileston2-start": 1,
+            "mileston3-start": 2,
+            "mileston4-start": 3,
+            "profile-feedback-and-priorities-request": 3,
           };
 
           let progress = 0;
@@ -703,19 +703,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
           ).forEach((step) => {
             if (step === tag.name) {
               const extraTags: (TExtraTag | false)[] = [
-                !job.jd_doc_id && {
-                  name: "to-jd-btn",
+                !job.compensation_details_doc_id && {
+                  name: `to-compensation-details-btn`,
                   content: "",
                 },
+                !job.jd_doc_id &&
+                  !!job.compensation_details_doc_id && {
+                    name: "to-jd-btn",
+                    content: "",
+                  },
                 userRole !== "coworker" &&
                   !job.target_companies_doc_id && {
                     name: `to-target-companies-btn`,
                     content: "",
                   },
-                !job.compensation_details_doc_id && {
-                  name: `to-compensation-details-btn`,
-                  content: "",
-                },
                 userRole !== "coworker" &&
                   !job.screening_question_doc_id && {
                     name: `to-screening-questions-btn`,
@@ -929,6 +930,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const optionalTaskDisabled = !job?.jd_doc_id;
+
   const maxIdOfAIMessage = [...messages]
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
@@ -965,64 +968,74 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: false,
                   isFinished: !!job?.requirement_doc_id,
                   chatType: "jobRequirementDoc",
-                },
-                {
-                  title: t("draft_job_description_btn"),
-                  disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.jd_doc_id,
-                  chatType: "jobDescription",
-                },
-                {
-                  title: t("define_target_companies"),
-                  disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.target_companies_doc_id,
-                  chatType: "jobTargetCompanies",
+                  type: "required",
                 },
                 {
                   title: t("define_compensation_details"),
                   disabled: !job?.requirement_doc_id,
                   isFinished: !!job?.compensation_details_doc_id,
                   chatType: "jobCompensationDetails",
+                  type: "required",
                 },
                 {
-                  title: t("define_screening_questions"),
-                  disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.screening_question_doc_id,
-                  chatType: "jobScreeningQuestion",
+                  title: t("draft_job_description_btn"),
+                  disabled: !job?.compensation_details_doc_id,
+                  isFinished: !!job?.jd_doc_id,
+                  chatType: "jobDescription",
+                  type: "required",
+                },
+                {
+                  title: t("define_target_companies"),
+                  disabled: optionalTaskDisabled,
+                  isFinished: !!job?.target_companies_doc_id,
+                  chatType: "jobTargetCompanies",
+                  type: "optional",
                 },
                 {
                   title: t("define_interview_plan"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: !!job?.interview_plan_doc_id,
                   chatType: "jobInterviewPlan",
+                  type: "optional",
                 },
                 {
                   title: t("define_outreach_message"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: !!job?.outreach_message_doc_id,
                   chatType: "jobOutreachMessage",
+                  type: "optional",
                 },
                 {
                   title: t("define_social_post"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: !!job?.social_media_doc_id,
                   chatType: "jobSocialMedia",
+                  type: "optional",
                 },
                 {
                   title: t("define_faq"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: !!job?.faq_doc_id,
                   chatType: "jobFaq",
+                  type: "optional",
                 },
                 {
                   title: t("create_chatbot"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: !!job?.jd_doc_id,
                   chatType: "chatbot",
+                  type: "optional",
+                },
+                {
+                  title: t("define_screening_questions"),
+                  disabled: optionalTaskDisabled,
+                  isFinished: !!job?.screening_question_doc_id,
+                  chatType: "jobScreeningQuestion",
+                  type: "candidate",
                 },
                 {
                   title: t("evaluate_result"),
-                  disabled: !job?.requirement_doc_id,
+                  disabled: optionalTaskDisabled,
                   isFinished: false,
                   chatType: "talentEvaluateResult",
                 },
@@ -1042,37 +1055,72 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     ] ?? 0)
                 )
                 .map((task) => {
+                  const { color, text } =
+                    {
+                      required: {
+                        color: "red",
+                        text: t("essential"),
+                      },
+                      optional: {
+                        color: "green",
+
+                        text: t("optional_task"),
+                      },
+                      candidate: {
+                        color: "blue",
+                        text: t("candidate"),
+                      },
+                    }[task.type ?? ""] ?? {};
+
                   return (
-                    <div
-                      className={classnames(styles.taskBlock, {
-                        [styles.finished]: task.isFinished,
-                        [styles.active]: chatType === task.chatType,
-                        [styles.disabled]: task.disabled,
-                      })}
-                      onClick={() => {
-                        if (task.disabled || !task.chatType) return;
-                        setChatType(task.chatType as TChatType);
+                    <Badge.Ribbon
+                      text={text}
+                      placement="start"
+                      style={{
+                        left: 0,
+                        top: 0,
+                        display: text ? "block" : "none",
                       }}
-                      key={task.title}
+                      color={color}
                     >
-                      <Badge
-                        count={
-                          unreadMessageCount?.[
-                            CHATTYPE_MAP[task.chatType as TChatType]
-                          ] ?? 0
-                        }
-                        size="small"
+                      <div
+                        className={classnames(styles.taskBlock, {
+                          [styles.finished]: task.isFinished,
+                          [styles.active]: chatType === task.chatType,
+                          [styles.disabled]: task.disabled,
+                        })}
+                        onClick={() => {
+                          if (task.disabled || !task.chatType) return;
+                          setChatType(task.chatType as TChatType);
+                        }}
+                        key={task.title}
                       >
-                        <div style={{ paddingRight: 10 }}>{task.title}</div>
-                      </Badge>
-                      <div>
-                        {task.isFinished ? (
-                          <CheckOutlined />
-                        ) : (
-                          <ArrowRightOutlined />
-                        )}
+                        <Badge
+                          count={
+                            unreadMessageCount?.[
+                              CHATTYPE_MAP[task.chatType as TChatType]
+                            ] ?? 0
+                          }
+                          size="small"
+                        >
+                          <div
+                            style={{
+                              paddingRight: 10,
+                              color: task.disabled ? "#a1a1a1" : "",
+                            }}
+                          >
+                            {task.title}
+                          </div>
+                        </Badge>
+                        <div>
+                          {task.isFinished ? (
+                            <CheckOutlined />
+                          ) : (
+                            <ArrowRightOutlined />
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    </Badge.Ribbon>
                   );
                 })}
           </div>
@@ -1084,13 +1132,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
       >
         {chatType === "jobRequirementDoc" && (
           <div className={styles.progressWrapper}>
-            <div style={{ flex: "none", color: "#1fac6a" }}>
-              {t("progress")}
-            </div>
-            <Progress
-              percent={jrdProgress}
-              style={{ flex: "auto" }}
-              strokeColor={"#1FAC6A"}
+            <Steps
+              progressDot
+              direction="horizontal"
+              size="small"
+              current={jrdProgress}
+              items={[
+                { title: t("gather_basic_information") },
+                { title: t("confirm_key_role_parameters") },
+                { title: t("define_detailed_objectives") },
+                { title: t("define_ideal_candidate_profile") },
+                { title: t("define_screening_criteria") },
+              ]}
             />
           </div>
         )}

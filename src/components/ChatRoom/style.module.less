@@ -43,9 +43,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 64px;
+  height: 80px;
   padding: 0 16px;
   margin-bottom: 8px;
+  margin-left: 8px;
   cursor: pointer;
 
   &.disabled {
@@ -73,10 +74,15 @@
 }
 
 .progressWrapper {
-  width: 600px;
-  margin: 20px auto;
-  display: flex;
-  gap: 12px;
+  margin: 20px 40px;
+
+  :global {
+    .ant-steps-item-content {
+      width: 200px !important;
+      position: relative;
+      left: -30px;
+    }
+  }
 }
 
 .listArea {

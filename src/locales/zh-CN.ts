@@ -111,7 +111,15 @@ export default {
     require_interview_plan: "请先完成面试计划",
     chatbot_config: "配置聊天机器人",
 
-    progress: "进度",
+    gather_basic_information: "获取职位基本信息",
+    confirm_key_role_parameters: "确定关键职位参数",
+    define_detailed_objectives: "详细定义职位目标&职责",
+    define_ideal_candidate_profile: "定义理想画像",
+    define_screening_criteria: "定义筛选标准",
+
+    essential: "必要",
+    optional_task: "非必要",
+    candidate: "候选人",
   },
 
   job_requirement_form: {
