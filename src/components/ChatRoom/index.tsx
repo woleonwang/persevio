@@ -713,39 +713,46 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.target_companies_doc_id && {
+                  !job.target_companies_doc_id &&
+                  !optionalTaskDisabled && {
                     name: `to-target-companies-btn`,
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.screening_question_doc_id && {
+                  !job.screening_question_doc_id &&
+                  !optionalTaskDisabled && {
                     name: `to-screening-questions-btn`,
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.interview_plan_doc_id && {
+                  !job.interview_plan_doc_id &&
+                  !optionalTaskDisabled && {
                     name: `to-interview-plan-btn`,
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.outreach_message_doc_id && {
+                  !job.outreach_message_doc_id &&
+                  !optionalTaskDisabled && {
                     name: `to-outreach-btn`,
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.social_media_doc_id && {
+                  !job.social_media_doc_id &&
+                  !optionalTaskDisabled && {
                     name: "to-social-post-btn",
                     content: "",
                   },
                 userRole !== "coworker" &&
-                  !job.faq_doc_id && {
+                  !job.faq_doc_id &&
+                  !optionalTaskDisabled && {
                     name: "to-faq-btn",
                     content: "",
                   },
-                userRole !== "coworker" && {
-                  name: `to-chatbot-btn`,
-                  content: "",
-                },
+                userRole !== "coworker" &&
+                  !optionalTaskDisabled && {
+                    name: `to-chatbot-btn`,
+                    content: "",
+                  },
               ];
               resultMessages.push({
                 id: `${item.id.toString()}-${step}-btn`,
