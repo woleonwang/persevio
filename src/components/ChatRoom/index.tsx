@@ -594,9 +594,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         if (chatType === "jobRequirementDoc") {
           const tagPrograss = {
-            mileston2: 1,
-            mileston3: 2,
-            mileston4: 3,
+            "jindu-two": 1,
+            "jindu-three": 2,
+            "jindu-four": 3,
             "profile-feedback-and-priorities-request": 4,
           };
 
