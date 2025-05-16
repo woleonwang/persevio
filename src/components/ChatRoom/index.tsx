@@ -597,7 +597,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             "mileston2-start": 1,
             "mileston3-start": 2,
             "mileston4-start": 3,
-            "profile-feedback-and-priorities-request": 3,
+            "profile-feedback-and-priorities-request": 4,
           };
 
           let progress = 0;
