@@ -33,9 +33,9 @@ export type TExtraTagName =
   | "to-faq-btn"
   | "to-chatbot-btn"
   | "chatbot-config-btn"
-  | "mileston2-start"
-  | "mileston3-start"
-  | "mileston4-start"
+  | "mileston2"
+  | "mileston3"
+  | "mileston4"
 
   //candiate
   | "interview-done";
