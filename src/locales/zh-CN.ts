@@ -120,6 +120,23 @@ export default {
     essential: "必要",
     optional_task: "非必要",
     candidate: "候选人",
+
+    post_job_greeting_1:
+      "Post your job on Persevio, and we'll start connecting you with highly suitable, pre-vetted candidates for your open role.",
+    post_job_greeting_2: `How is Persevio different from traditional job boards?
+
+a. Access Exclusive Talent: Reach top-tier candidates, including passive professionals not actively searching on LinkedIn or other job boards. Our unique model attracts high-caliber individuals you won't find elsewhere.
+
+b. Save Time with Pre-Screened Candidates: Every candidate we recommend has passed a thorough pre-screening interview where we assess their experience and suitability, ensuring you only meet qualified individuals.
+
+c. Receive Relevant Applications Only: Your job posting isn't public. We share it exclusively with a curated group of candidates whose skills and experience closely match your role, eliminating a flood of unsuitable applications.
+
+d. Gain Deeper Candidate Insights: Go beyond the CV. For every recommended candidate, you'll receive an in-depth analysis report
+
+e. Post Your Job for Free: There's no cost to post your vacancies and start discovering exceptional talent.`,
+    post_job_btn: "Post Your Job Now",
+    post_job_done: "Your job has been posted to Persevio",
+    post_job: "Post Your Job",
   },
 
   job_requirement_form: {

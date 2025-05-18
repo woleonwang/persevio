@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useReducer } from "react";
 import {
   Avatar,
   List,
@@ -159,6 +159,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
+  const [needToFetchMessage, triggerFetchMessage] = useReducer(() => ({}), {});
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -210,7 +211,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     if (userRole === "candidate") {
       setChatType("candidate");
     } else {
-      initJob();
+      fetchJob({ init: true });
     }
   }, [jobId]);
 
@@ -239,7 +240,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       needScrollToBottom.current = true;
       fetchMessages();
     }
-  }, [chatType]);
+  }, [chatType, needToFetchMessage]);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -489,9 +490,20 @@ const ChatRoom: React.FC<IProps> = (props) => {
       title: t("chatbot_config"),
       handler: () => setChatbotOptionsModalOpen(true),
     },
+    {
+      key: "post-job-btn",
+      title: t("post_job_btn"),
+      handler: async () => {
+        const { code } = await Post(`/api/jobs/${jobId}/post_job`);
+        if (code === 0) {
+          await fetchJob();
+          triggerFetchMessage();
+        }
+      },
+    },
   ];
 
-  const initJob = async () => {
+  const fetchJob = async (options?: { init: boolean }) => {
     const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
 
     if (code === 0) {
@@ -499,13 +511,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setJob(job);
       setJobUrl(data.url);
 
-      const defaultChatType = RESOURCE_TYPE_MAP[data.current_chat_type];
-      setChatType(
-        userRole === "staff" ||
-          visibleTasksForCoworker.includes(defaultChatType)
-          ? defaultChatType
-          : "jobRequirementDoc"
-      );
+      if (options?.init) {
+        const defaultChatType = RESOURCE_TYPE_MAP[data.current_chat_type];
+        setChatType(
+          userRole === "staff" ||
+            visibleTasksForCoworker.includes(defaultChatType)
+            ? defaultChatType
+            : "jobRequirementDoc"
+        );
+      }
+
       setUnreadMessageCount(data.unread_message_count);
     } else {
       message.error("Get job failed");
@@ -522,7 +537,45 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     if (!chatType) return;
 
-    if (chatType === "chatbot") {
+    if (chatType === "jobPost") {
+      const messages = [
+        {
+          id: "post-job-message-greeting-1",
+          role: "ai",
+          content: !!job?.posted_at
+            ? `${t("post_job_greeting_1")}\n\n${t("post_job_done")}`
+            : t("post_job_greeting_1"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+          extraTags: !!job?.posted_at
+            ? []
+            : [
+                {
+                  name: "post-job-btn",
+                  content: "",
+                },
+              ],
+        },
+        {
+          id: "post-job-message-greeting-2",
+          role: "ai",
+          content: t("post_job_greeting_2"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+        },
+      ];
+      if (job?.posted_at) {
+        messages.push({
+          id: "post-job-message-greeting-3",
+          role: "ai",
+          content: t("jrd_next_task"),
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+          extraTags: getNextStepsExtraTags(job),
+        });
+      }
+      setMessages(messages as TMessage[]);
+    } else if (chatType === "chatbot") {
       const url = jobUrl ?? `${window.location.origin}/jobs/${jobId}/chat`;
       setMessages([
         {
@@ -658,6 +711,63 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const getNextStepsExtraTags = (job?: IJob): TExtraTag[] => {
+    if (!job) return [];
+
+    return [
+      !job.compensation_details_doc_id && {
+        name: `to-compensation-details-btn`,
+        content: "",
+      },
+      !job.jd_doc_id &&
+        !!job.compensation_details_doc_id && {
+          name: "to-jd-btn",
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.target_companies_doc_id &&
+        !optionalTaskDisabled && {
+          name: `to-target-companies-btn`,
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.screening_question_doc_id &&
+        !optionalTaskDisabled && {
+          name: `to-screening-questions-btn`,
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.interview_plan_doc_id &&
+        !optionalTaskDisabled && {
+          name: `to-interview-plan-btn`,
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.outreach_message_doc_id &&
+        !optionalTaskDisabled && {
+          name: `to-outreach-btn`,
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.social_media_doc_id &&
+        !optionalTaskDisabled && {
+          name: "to-social-post-btn",
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !job.faq_doc_id &&
+        !optionalTaskDisabled && {
+          name: "to-faq-btn",
+          content: "",
+        },
+      userRole !== "coworker" &&
+        !optionalTaskDisabled && {
+          name: `to-chatbot-btn`,
+          content: "",
+        },
+    ].filter(Boolean) as TExtraTag[];
+  };
+
   const formatMessages = (
     messages: TMessageFromApi[],
     job: IJob
@@ -702,65 +812,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
             ] as TDoneTag[]
           ).forEach((step) => {
             if (step === tag.name) {
-              const extraTags: (TExtraTag | false)[] = [
-                !job.compensation_details_doc_id && {
-                  name: `to-compensation-details-btn`,
-                  content: "",
-                },
-                !job.jd_doc_id &&
-                  !!job.compensation_details_doc_id && {
-                    name: "to-jd-btn",
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.target_companies_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: `to-target-companies-btn`,
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.screening_question_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: `to-screening-questions-btn`,
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.interview_plan_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: `to-interview-plan-btn`,
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.outreach_message_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: `to-outreach-btn`,
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.social_media_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: "to-social-post-btn",
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !job.faq_doc_id &&
-                  !optionalTaskDisabled && {
-                    name: "to-faq-btn",
-                    content: "",
-                  },
-                userRole !== "coworker" &&
-                  !optionalTaskDisabled && {
-                    name: `to-chatbot-btn`,
-                    content: "",
-                  },
-              ];
               resultMessages.push({
                 id: `${item.id.toString()}-${step}-btn`,
                 role: "ai",
                 content: t("jrd_next_task"),
                 updated_at: item.updated_at,
                 messageType: "system",
-                extraTags: extraTags.filter(Boolean) as TExtraTag[],
+                extraTags: getNextStepsExtraTags(job),
               });
             }
           });
@@ -937,7 +995,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const optionalTaskDisabled = !job?.jd_doc_id;
+  const optionalTaskDisabled = !job?.posted_at;
 
   const maxIdOfAIMessage = [...messages]
     .reverse()
@@ -989,6 +1047,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: !job?.compensation_details_doc_id,
                   isFinished: !!job?.jd_doc_id,
                   chatType: "jobDescription",
+                  type: "required",
+                },
+                {
+                  title: t("post_job"),
+                  disabled: !job?.jd_doc_id,
+                  isFinished: !!job?.posted_at,
+                  chatType: "jobPost",
                   type: "required",
                 },
                 {

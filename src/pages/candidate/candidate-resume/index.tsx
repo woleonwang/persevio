@@ -4,6 +4,7 @@ import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import { Empty } from "antd";
 
 type TWorkExperience = {
   /** Legal employer name from verified sources */
@@ -87,6 +88,10 @@ const CandidateResume = () => {
   //     message.success(originalT("submit_succeed"));
   //   }
   // };
+
+  if (!resume) {
+    return <Empty description={t("no_resume")} />;
+  }
 
   return (
     <div className={styles.container}>

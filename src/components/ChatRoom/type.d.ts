@@ -20,6 +20,9 @@ export type TExtraTagName =
   | "salary-structure-request"
   | "profile-feedback-and-priorities-request"
   | "screening-q-request"
+  | "jindu-two"
+  | "jindu-three"
+  | "jindu-four"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -33,9 +36,7 @@ export type TExtraTagName =
   | "to-faq-btn"
   | "to-chatbot-btn"
   | "chatbot-config-btn"
-  | "jindu-two"
-  | "jindu-three"
-  | "jindu-four"
+  | "post-job-btn"
   //candiate
   | "interview-done";
 
@@ -74,9 +75,10 @@ export type TMessage = {
 
 export type TChatType =
   | "jobRequirementDoc"
-  | "jobDescription"
-  | "jobTargetCompanies"
   | "jobCompensationDetails"
+  | "jobDescription"
+  | "jobPost"
+  | "jobTargetCompanies"
   | "jobScreeningQuestion"
   | "jobInterviewPlan"
   | "jobOutreachMessage"
@@ -86,7 +88,7 @@ export type TChatType =
   | "candidate"
   | "talentEvaluateResult";
 
-export type TChatTypeWithApi = Exclude<TChatType, "chatbot">;
+export type TChatTypeWithApi = Exclude<TChatType, "chatbot", "jobPost">;
 
 export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {
