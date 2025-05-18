@@ -94,6 +94,7 @@ export default {
     next_task: "Your next task is: ",
     jd_next_task:
       "With the interview plan and official job description (JD) finalized, I can confidently discuss the role with candidates and answer any questions they may have.  Simply attach me (the link below) to the JD, or share it via email/message to candidates. I'll help convert curious candidates into interested applicants",
+    required_task_next_text: "Your next task is:",
     jrd_next_task:
       "Here are your pending task, please let me know which one you'd like to work on next: ",
     create_job: "Open a new role",
@@ -352,9 +353,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   ideal_profile: {
-    minimum: "Minimum Requirements",
-    big_plus: "Big Plus Requirements",
-    plus: "Plus Requirements",
+    minimum: "Must",
+    big_plus: "Big Plus",
+    plus: "Plus",
     no_apply: "Not Apply",
     add: "Add New",
   },

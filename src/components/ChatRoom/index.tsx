@@ -365,13 +365,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const supportTags: TSupportTag[] = [
     {
-      key: "basic-info-request",
+      key: "huoqujibenxinxi-jindu-one",
       title: t("share_basic"),
       handler: () => openJobRequirementFormDrawer("basic_info"),
       autoTrigger: true,
     },
     {
-      key: "reference-request",
+      key: "huoqucailiao",
       title: t("share_reference"),
       handler: () => openJobRequirementFormDrawer("reference"),
       autoTrigger: true,
@@ -383,7 +383,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "profile-feedback-and-priorities-request",
+      key: "shaixuanbiaozhun",
       title: t("ideal_profile"),
       handler: () => triggerIdealProfileDrawer(true),
       autoTrigger: true,
@@ -650,7 +650,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             "jindu-two": 1,
             "jindu-three": 2,
             "jindu-four": 3,
-            "profile-feedback-and-priorities-request": 4,
+            shaixuanbiaozhun: 4,
           };
 
           let progress = 0;
@@ -815,7 +815,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
               resultMessages.push({
                 id: `${item.id.toString()}-${step}-btn`,
                 role: "ai",
-                content: t("jrd_next_task"),
+                content: [
+                  "jrd-done",
+                  "jd-done",
+                  "compensation-details-done",
+                ].includes(step)
+                  ? t("required_task_next_text")
+                  : t("jrd_next_task"),
                 updated_at: item.updated_at,
                 messageType: "system",
                 extraTags: getNextStepsExtraTags(job),

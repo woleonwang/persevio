@@ -15,10 +15,10 @@ export type TExtraTagName =
   // 后端生成
   | "copy-link" // 复制链接
   | "talent-evaluate-result"
-  | "basic-info-request"
-  | "reference-request"
+  | "huoqujibenxinxi-jindu-one"
+  | "huoqucailiao"
   | "salary-structure-request"
-  | "profile-feedback-and-priorities-request"
+  | "shaixuanbiaozhun"
   | "screening-q-request"
   | "jindu-two"
   | "jindu-three"
