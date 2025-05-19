@@ -53,7 +53,7 @@ const Settings = () => {
     if (code === 0) {
       setAllCompanies(
         (data.companies ?? [])
-          .filter((item: any) => item.staffs.length > 0)
+          .filter((item: any) => (item.staffs ?? []).length > 0)
           .map((company: any) => {
             return {
               label: company.name,
