@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, message, Select } from "antd";
+import { Button, Empty, Form, Input, message, Select } from "antd";
 
 import { parseJSON } from "@/utils";
 import { Get, Post } from "@/utils/request";
@@ -21,6 +21,7 @@ const CareerAspirations = () => {
   const t = (key: string) => originalT(`candidate_aspirations.${key}`);
 
   const [form] = Form.useForm<TCareerAspiration>();
+  const [ready, setReady] = useState(false);
 
   const [hasEdited, setHasEdited] = useState(false);
   useEffect(() => {
@@ -33,6 +34,7 @@ const CareerAspirations = () => {
     );
     if (code === 0) {
       form.setFieldsValue(parseJSON(data.content));
+      setReady(true);
     }
   };
 
@@ -51,6 +53,10 @@ const CareerAspirations = () => {
       }
     });
   };
+
+  if (!ready) {
+    return <Empty style={{ marginTop: 200 }} description={t("pending")} />;
+  }
 
   return (
     <div className={styles.container}>

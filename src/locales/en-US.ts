@@ -5,6 +5,7 @@ const CandidateResume = {
   },
   candidate_aspirations: {
     career_aspirations: "Career Aspiration",
+    pending: "Career Aspiration is generating...",
   },
   candidate_home: {
     home: "Home",

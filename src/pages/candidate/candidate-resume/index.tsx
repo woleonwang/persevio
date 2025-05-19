@@ -90,7 +90,7 @@ const CandidateResume = () => {
   // };
 
   if (!resume) {
-    return <Empty description={t("no_resume")} />;
+    return <Empty style={{ marginTop: 200 }} description={t("pending")} />;
   }
 
   return (

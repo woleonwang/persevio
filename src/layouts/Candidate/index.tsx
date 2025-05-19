@@ -88,7 +88,7 @@ const CandidateLayout = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setInited(true);
-      if (!(data.candidate as ICandidateSettings).llm_resume_doc_id) {
+      if (!(data.candidate as ICandidateSettings).interview_finished_at) {
         navigate("/signup-candidate");
       }
     } else {
