@@ -439,21 +439,25 @@ const ChatRoom: React.FC<IProps> = (props) => {
         }
       },
     },
-
+    {
+      key: "to-compensation-details-btn",
+      title: t("define_compensation_details"),
+      handler: () => setChatType("jobCompensationDetails"),
+    },
     {
       key: "to-jd-btn",
       title: t("draft_job_description"),
       handler: () => setChatType("jobDescription"),
     },
     {
+      key: "to-post-job-btn",
+      title: t("post_job"),
+      handler: () => setChatType("jobPost"),
+    },
+    {
       key: "to-target-companies-btn",
       title: t("define_target_companies"),
       handler: () => setChatType("jobTargetCompanies"),
-    },
-    {
-      key: "to-compensation-details-btn",
-      title: t("define_compensation_details"),
-      handler: () => setChatType("jobCompensationDetails"),
     },
     {
       key: "to-screening-questions-btn",
@@ -571,7 +575,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           content: t("jrd_next_task"),
           updated_at: dayjs().format(datetimeFormat),
           messageType: "system",
-          extraTags: getNextStepsExtraTags(job),
+          extraTags: getNextStepsExtraTags(job, "post-job-done"),
         });
       }
       setMessages(messages as TMessage[]);
@@ -711,61 +715,70 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const getNextStepsExtraTags = (job?: IJob): TExtraTag[] => {
+  const getNextStepsExtraTags = (job: IJob, step: TDoneTag): TExtraTag[] => {
     if (!job) return [];
 
-    return [
-      !job.compensation_details_doc_id && {
-        name: `to-compensation-details-btn`,
-        content: "",
-      },
-      !job.jd_doc_id &&
-        !!job.compensation_details_doc_id && {
-          name: "to-jd-btn",
+    if (step === "jrd-done") {
+      return [
+        {
+          name: `to-compensation-details-btn`,
           content: "",
         },
-      userRole !== "coworker" &&
+      ];
+    } else if (step === "compensation-details-done") {
+      return [
+        {
+          name: `to-jd-btn`,
+          content: "",
+        },
+      ];
+    } else if (step === "jd-done") {
+      return [
+        {
+          name: `to-post-job-btn`,
+          content: "",
+        },
+      ];
+    } else if (userRole === "coworker") {
+      return [];
+    } else {
+      return [
         !job.target_companies_doc_id &&
-        !optionalTaskDisabled && {
-          name: `to-target-companies-btn`,
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: `to-target-companies-btn`,
+            content: "",
+          },
         !job.screening_question_doc_id &&
-        !optionalTaskDisabled && {
-          name: `to-screening-questions-btn`,
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: `to-screening-questions-btn`,
+            content: "",
+          },
         !job.interview_plan_doc_id &&
-        !optionalTaskDisabled && {
-          name: `to-interview-plan-btn`,
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: `to-interview-plan-btn`,
+            content: "",
+          },
         !job.outreach_message_doc_id &&
-        !optionalTaskDisabled && {
-          name: `to-outreach-btn`,
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: `to-outreach-btn`,
+            content: "",
+          },
         !job.social_media_doc_id &&
-        !optionalTaskDisabled && {
-          name: "to-social-post-btn",
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: "to-social-post-btn",
+            content: "",
+          },
         !job.faq_doc_id &&
-        !optionalTaskDisabled && {
-          name: "to-faq-btn",
-          content: "",
-        },
-      userRole !== "coworker" &&
+          !optionalTaskDisabled && {
+            name: "to-faq-btn",
+            content: "",
+          },
         !optionalTaskDisabled && {
           name: `to-chatbot-btn`,
           content: "",
         },
-    ].filter(Boolean) as TExtraTag[];
+      ].filter(Boolean) as TExtraTag[];
+    }
   };
 
   const formatMessages = (
@@ -824,7 +837,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   : t("jrd_next_task"),
                 updated_at: item.updated_at,
                 messageType: "system",
-                extraTags: getNextStepsExtraTags(job),
+                extraTags: getNextStepsExtraTags(job, step),
               });
             }
           });

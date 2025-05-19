@@ -2,9 +2,10 @@ import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
   | "jrd-done"
-  | "jd-done"
-  | "targets-done"
   | "compensation-details-done"
+  | "jd-done"
+  | "post-job-done"
+  | "targets-done"
   | "screening-q-done"
   | "interview-plan-done"
   | "outreach-done"
@@ -26,9 +27,10 @@ export type TExtraTagName =
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
-  | "to-jd-btn"
-  | "to-target-companies-btn"
   | "to-compensation-details-btn"
+  | "to-jd-btn"
+  | "to-post-job-btn"
+  | "to-target-companies-btn"
   | "to-screening-questions-btn"
   | "to-interview-plan-btn"
   | "to-outreach-btn"
