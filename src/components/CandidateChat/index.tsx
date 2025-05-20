@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button } from "antd";
+import { Avatar, List, Input, Button, message } from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -123,7 +123,13 @@ const CandidateChat: React.FC<IProps> = (props) => {
     {
       key: "interview-done",
       title: "",
-      handler: () => onFinish?.(),
+      handler: () => {
+        message.success(
+          "This conversation has been finished, redirect to dashboard in 5 seconds",
+          5,
+          () => onFinish?.()
+        );
+      },
       autoTrigger: true,
     },
   ];
