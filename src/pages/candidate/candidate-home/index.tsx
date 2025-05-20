@@ -55,8 +55,8 @@ const CandidateHome = () => {
                       )}
                     >
                       {recommendedJob.status === "ACCEPTED"
-                        ? "Accepted"
-                        : "Rejected"}
+                        ? originalT("accepted")
+                        : originalT("rejected")}
                     </div>
                   )}
                 </div>

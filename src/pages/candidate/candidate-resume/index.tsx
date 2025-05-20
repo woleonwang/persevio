@@ -103,35 +103,35 @@ const CandidateResume = () => {
             {resume.current_position}
           </div>
           <div className={styles.panel}>
-            <div className={styles.panelTitle}>Basic Info</div>
+            <div className={styles.panelTitle}>{t("basic_info")}</div>
             <div className={styles.row}>
               <div className={styles.item}>
-                <div className={styles.label}>Email:</div>
+                <div className={styles.label}>{t("email")}</div>
                 <div>{resume.email || "N/A"}</div>
               </div>
               <div className={styles.item}>
-                <div className={styles.label}>Phone:</div>
+                <div className={styles.label}>{t("phone")}</div>
                 <div>{resume.phone}</div>
               </div>
             </div>
 
             <div className={styles.row}>
               <div className={styles.item}>
-                <div className={styles.label}>Currently based in:</div>
+                <div className={styles.label}>{t("base_in")}</div>
                 <div>{resume.current_based_in}</div>
               </div>
             </div>
 
             <div className={styles.row}>
               <div className={styles.item}>
-                <div className={styles.label}>Work Authorization:</div>
+                <div className={styles.label}>{t("work_authorization")}</div>
                 <div>{resume.work_authorization || "N/A"}</div>
               </div>
             </div>
           </div>
 
           <div className={styles.panel}>
-            <div className={styles.panelTitle}>Core Competencies</div>
+            <div className={styles.panelTitle}>{t("core_competencies")}</div>
             <div className={styles.competenciesWrapper}>
               {resume.core_competencies?.map((competency) => (
                 <div key={competency} className={styles.competency}>
@@ -142,7 +142,7 @@ const CandidateResume = () => {
           </div>
 
           <div className={styles.panel}>
-            <div className={styles.panelTitle}>Work Experience</div>
+            <div className={styles.panelTitle}>{t("work_experiences")}</div>
             {resume.work_experience?.map((workExperience, i) => (
               <div key={i} className={styles.workExperience}>
                 <div className={styles.companyName}>
@@ -157,23 +157,23 @@ const CandidateResume = () => {
                 </div>
 
                 <div className={styles.infoRow}>
-                  <div>Core role objectives/scopes:</div>
+                  <div>{t("core_role_objectives")}</div>
                   <div>{workExperience.core_role_objectives || "N/A"}</div>
                 </div>
                 <div className={styles.infoRow}>
-                  <div>Team Context:</div>
+                  <div>{t("team_context")}</div>
                   <div>{workExperience.team_context || "N/A"}</div>
                 </div>
                 <div className={styles.infoRow}>
-                  <div>Projects involved:</div>
+                  <div>{t("projects_involved")}</div>
                   <div>{workExperience.projects_involved || "N/A"}</div>
                 </div>
                 <div className={styles.infoRow}>
-                  <div>Key achievements:</div>
+                  <div>{t("key_achivements")}</div>
                   <div>{workExperience.key_achievements || "N/A"}</div>
                 </div>
                 <div className={styles.infoRow}>
-                  <div>Summary:</div>
+                  <div>{t("summary")}</div>
                   <div>{workExperience.summary || "N/A"}</div>
                 </div>
               </div>
@@ -181,7 +181,7 @@ const CandidateResume = () => {
           </div>
 
           <div className={styles.panel}>
-            <div className={styles.panelTitle}>Education</div>
+            <div className={styles.panelTitle}>{t("education")}</div>
             <div>
               {resume.education?.map((education, i) => (
                 <div key={i} className={styles.educationExperience}>

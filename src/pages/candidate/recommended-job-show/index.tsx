@@ -84,8 +84,8 @@ const RecommendedJobShow = () => {
                       )}
                     >
                       {recommendedJob.status === "ACCEPTED"
-                        ? "Accepted"
-                        : "Rejected"}
+                        ? originalT("accepted")
+                        : originalT("rejected")}
                     </div>
                   )}
                 </div>
@@ -107,7 +107,7 @@ const RecommendedJobShow = () => {
                     shape="round"
                     onClick={() => updateStatus("accept")}
                   >
-                    Accept
+                    {originalT("accept")}
                   </Button>
 
                   <Button
@@ -117,7 +117,7 @@ const RecommendedJobShow = () => {
                     danger
                     onClick={() => updateStatus("reject")}
                   >
-                    Reject
+                    {originalT("reject")}
                   </Button>
                 </>
               )}

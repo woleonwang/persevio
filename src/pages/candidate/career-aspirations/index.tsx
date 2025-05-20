@@ -24,6 +24,7 @@ const CareerAspirations = () => {
   const [ready, setReady] = useState(false);
 
   const [hasEdited, setHasEdited] = useState(false);
+
   useEffect(() => {
     fetchAspirations();
   }, []);
@@ -67,7 +68,7 @@ const CareerAspirations = () => {
           layout="vertical"
           onFieldsChange={() => setHasEdited(true)}
         >
-          <Form.Item name="desired_role" label="Desired Role">
+          <Form.Item name="desired_role" label={t("desired_role")}>
             <Input />
           </Form.Item>
           <div
@@ -79,29 +80,35 @@ const CareerAspirations = () => {
           >
             <Form.Item
               name="minimum_salary"
-              label="Minimum Salary"
+              label={t("minimum_salary")}
               style={{ flex: "auto" }}
             >
               <Input />
             </Form.Item>
             <Form.Item
               name="maximum_salary"
-              label="Maximum Salary"
+              label={t("maximum_salary")}
               style={{ flex: "auto" }}
             >
               <Input />
             </Form.Item>
           </div>
-          <Form.Item name="remote_preference" label="Remote Preference">
+          <Form.Item name="remote_preference" label={t("remote_preference")}>
             <Input />
           </Form.Item>
-          <Form.Item name="preferred_locations" label="Preferred Locations">
+          <Form.Item
+            name="preferred_locations"
+            label={t("preferred_locations")}
+          >
             <Select mode="tags" />
           </Form.Item>
-          <Form.Item name="preferred_industries" label="Preferred Industries">
+          <Form.Item
+            name="preferred_industries"
+            label={t("preferred_industries")}
+          >
             <Select mode="tags" />
           </Form.Item>
-          <Form.Item name="job_search_status" label="Job Search Status">
+          <Form.Item name="job_search_status" label={t("job_search_status")}>
             <Input />
           </Form.Item>
         </Form>

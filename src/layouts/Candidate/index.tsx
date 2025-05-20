@@ -39,7 +39,7 @@ const CandidateLayout = () => {
 
   const [inited, setInited] = useState(false);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
 
@@ -88,6 +88,7 @@ const CandidateLayout = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setInited(true);
+      i18n.changeLanguage(data.candidate.lang ?? "zh-CN");
       if (!(data.candidate as ICandidateSettings).interview_finished_at) {
         navigate("/signup-candidate");
       }

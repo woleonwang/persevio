@@ -1,3 +1,83 @@
+const CandidateResume = {
+  candidate_resume: {
+    resume: "简历",
+    pending: "简历生成中...",
+    basic_info: "基本信息",
+    email: "邮箱：",
+    phone: "电话：",
+    base_in: "目前所在地：",
+    work_authorization: "工作许可：",
+    core_competencies: "核心能力",
+    work_experiences: "工作经验",
+    core_role_objectives: "岗位核心目标/职责：",
+    team_context: "团队背景：",
+    projects_involved: "参与的项目：",
+    key_achivements: "关键成就：",
+    summary: "总结：",
+    education: "教育经历",
+  },
+  candidate_aspirations: {
+    career_aspirations: "职业目标",
+    pending: "职业目标生成中...",
+    desired_role: "期望职位",
+    minimum_salary: "最低薪资",
+    maximum_salary: "最高薪资",
+    remote_preference: "远程工作偏好",
+    preferred_locations: "期望工作地点",
+    preferred_industries: "期望行业",
+    job_search_status: "求职状态",
+  },
+  candidate_home: {
+    home: "首页",
+    recommended_jobs: "为您推荐的职位",
+  },
+  job_applies: {
+    jobs: "适合您的职位",
+    applied_jobs: "已申请职位",
+  },
+  job_apply: {
+    applied: "已申请",
+    apply_now: "立即申请",
+    recommend_reason: "为何推荐此职位",
+    job_description: "职位描述",
+    interview: "面试",
+    finish_interview_hint: "面试已完成，您可以提交申请了！",
+    waiting: "Viona 正在撰写中，请稍候...",
+  },
+  candidate_sign: {
+    connect_google: "使用 Google 登录",
+    connect_linkedin: "使用 LinkedIn 登录",
+    connect_title:
+      "结束无尽的求职之旅。Persevio 使用 AI 帮您匹配优质机会，尤其在",
+    singapore: "新加坡",
+    connect_intro_title_1: "一次对话，多个机会：",
+    connect_intro_content_1:
+      "与我们的 AI 招聘顾问 Viona 聊一次天，我们将主动向您发送高度精准、个性化的职位推荐。",
+    connect_intro_title_2: "隐私有保障",
+    connect_intro_content_2:
+      "您的资料保持私密。只有当您决定申请某个具体职位时，雇主才能看到您的信息。",
+    connect_intro_title_3: "全程引导式申请流程",
+    connect_intro_content_3:
+      "Viona 将作为您的专属 AI 助手，在每一步为您提供支持。",
+
+    confirm_contact: "确认联系方式",
+    confirm_contact_hint:
+      "请确保您的联系信息正确无误。招聘流程后续步骤中我们需要联系您。",
+    next: "下一步",
+
+    email_exists: "邮箱已存在",
+    upload_resume: "上传简历",
+    career_dive: "深入职业探索",
+
+    upload_your_resume: "上传您的简历",
+    upload_succeed: "上传成功",
+    upload_failed: "上传失败",
+    upload_tips_1: "请上传一份您的简历副本或下载的 LinkedIn 简历。",
+    upload_tips_2:
+      "即使简历不是最新的也无需担心！这份文档不会发送给雇主。它只是为我们接下来的对话提供一个起点。聊天结束后，我们会为您特定的求职需求起草一份全新的、更完善的简历。",
+  },
+};
+
 export default {
   hello: "世界",
 
@@ -8,7 +88,7 @@ export default {
     settings: "设置",
 
     home: "Home",
-    profile: "简历",
+    resume: "简历",
     aspirations: "职业规划",
     deep_aspirations: "深度职位规划",
     job_applies: "职位申请",
@@ -123,21 +203,21 @@ export default {
     candidate: "候选人",
 
     post_job_greeting_1:
-      "Post your job on Persevio, and we'll start connecting you with highly suitable, pre-vetted candidates for your open role.",
-    post_job_greeting_2: `How is Persevio different from traditional job boards?
+      "将您的职位发布在 Persevio 上，我们将开始为您匹配高度合适的、经过预先筛选的候选人，助力您招聘到理想人选。",
+    post_job_greeting_2: `Persevio 与传统招聘网站有何不同？
 
-a. Access Exclusive Talent: Reach top-tier candidates, including passive professionals not actively searching on LinkedIn or other job boards. Our unique model attracts high-caliber individuals you won't find elsewhere.
+a. 获取专属人才：接触到顶级候选人，包括那些并未在 LinkedIn 或其他招聘平台上积极求职的被动型专业人士。我们的独特模式能够吸引到你在其他地方找不到的高素质人才。
 
-b. Save Time with Pre-Screened Candidates: Every candidate we recommend has passed a thorough pre-screening interview where we assess their experience and suitability, ensuring you only meet qualified individuals.
+b. 节省时间，候选人已预先筛选：我们推荐的每一位候选人都经过全面的初步面试筛选，评估其经验和适合度，确保您只会见到合格的人选。
 
-c. Receive Relevant Applications Only: Your job posting isn't public. We share it exclusively with a curated group of candidates whose skills and experience closely match your role, eliminating a flood of unsuitable applications.
+c. 只接收相关职位申请：您的职位发布不会公开。我们仅将职位分享给经过筛选、技能和经验高度匹配的一组候选人，避免大量不合适的申请涌入。
 
-d. Gain Deeper Candidate Insights: Go beyond the CV. For every recommended candidate, you'll receive an in-depth analysis report
+d. 获得更深入的候选人洞察：超越简历本身。对于每位推荐的候选人，您都将收到一份详细的分析报告。
 
-e. Post Your Job for Free: There's no cost to post your vacancies and start discovering exceptional talent.`,
-    post_job_btn: "Post Your Job Now",
-    post_job_done: "Your job has been posted to Persevio",
-    post_job: "Post Your Job",
+e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越人才，无需任何费用。`,
+    post_job_btn: "发布您的职位",
+    post_job_done: "您的职位已发布到 Persevio",
+    post_job: "发布职位",
   },
 
   job_requirement_form: {
@@ -456,10 +536,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   talents: {
-    status_evaluate_succeed: "Pending",
-    status_accepted: "Accepted",
-    status_rejected: "Rejected",
+    status_evaluate_succeed: "待审核",
+    status_accepted: "已通过",
+    status_rejected: "已拒绝",
   },
+
+  ...CandidateResume,
 
   edit: "编辑",
   save: "保存",
@@ -474,4 +556,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   create: "创建",
   back: "返回",
   chat_with_viona: "和 Viona 聊聊",
+
+  accept: "通过",
+  reject: "拒绝",
+  accepted: "已通过",
+  rejected: "已拒绝",
 };

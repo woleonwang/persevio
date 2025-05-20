@@ -1,5 +1,5 @@
-import { Button } from "antd";
-import { Get } from "@/utils/request";
+import { Button, message, Select } from "antd";
+import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 const Settings = () => {
   const [profile, setProfile] = useState<ICandidateSettings>();
   const navigate = useNavigate();
-  const { t: originalT } = useTranslation();
+  const { t: originalT, i18n } = useTranslation();
 
   const t = (key: string) => {
     return originalT(`settings.${key}`);
@@ -25,23 +25,23 @@ const Settings = () => {
     }
   };
 
-  // const updateLang = async (lang: string) => {
-  //   const { code } = await Post("/api/candidate/language", {
-  //     lang,
-  //   });
-  //   if (code === 0) {
-  //     message.success(t("update_lang_success"));
-  //     if (profile) {
-  //       setProfile({
-  //         ...profile,
-  //         lang,
-  //       });
-  //     }
-  //     i18n.changeLanguage(lang);
-  //   } else {
-  //     message.error(t("update_lang_success"));
-  //   }
-  // };
+  const updateLang = async (lang: string) => {
+    const { code } = await Post("/api/candidate/language", {
+      lang,
+    });
+    if (code === 0) {
+      message.success(t("update_lang_success"));
+      if (profile) {
+        setProfile({
+          ...profile,
+          lang,
+        });
+      }
+      i18n.changeLanguage(lang);
+    } else {
+      message.error(t("update_lang_success"));
+    }
+  };
 
   const logout = () => {
     localStorage.removeItem("candidate_token");
@@ -81,7 +81,7 @@ const Settings = () => {
             {originalT("save")}
           </Button>
         </Form>
-      </div>
+      </div> */}
 
       <div className={styles.block}>
         <div className={styles.title}>{t("language")}</div>
@@ -101,7 +101,7 @@ const Settings = () => {
           value={profile?.lang}
           onChange={(lang) => updateLang(lang)}
         />
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -25,9 +25,8 @@ const JobApplies = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>{t("jobs")}</div>
+      <div className={styles.header}>{t("applied_jobs")}</div>
       <div className={styles.main}>
-        <div className={styles.title}>{t("applied_jobs")}</div>
         {jobApplies.map((jobApply) => {
           return (
             <div
