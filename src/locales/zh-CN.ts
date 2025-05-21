@@ -85,6 +85,7 @@ export default {
     newRole: "创建职位",
     jobs: "职位",
     company: "公司知识库",
+    interviewer: "面试官",
     settings: "设置",
 
     home: "Home",

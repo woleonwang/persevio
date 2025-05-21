@@ -39,6 +39,7 @@ import CandidateHome from "./pages/candidate/candidate-home";
 import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
+import Interviewer from "./pages/staff/interviewer";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -86,6 +87,7 @@ createRoot(document.getElementById("root")!).render(
               key="talent"
             />
             <Route path="/app/company" element={<CompanyKnowledge />} />
+            <Route path="/app/interviewer" element={<Interviewer />} />
             <Route path="/app/settings" element={<Settings />} />
             <Route
               path="/app/system_prompt"

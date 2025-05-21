@@ -87,6 +87,7 @@ export default {
     jobs: "Jobs",
     company: "Company Info",
     settings: "Settings",
+    interviewer: "Interviewer",
 
     home: "Home",
     resume: "Resume",

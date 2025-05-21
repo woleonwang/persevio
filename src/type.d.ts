@@ -121,3 +121,12 @@ type TMenu = {
     active: boolean;
   }[];
 };
+
+interface IInterviewer {
+  id: number;
+  company_id: number;
+  name: string;
+  email: string;
+  created_at: string;
+  updateted_at: string;
+}
