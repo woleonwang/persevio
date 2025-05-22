@@ -1,0 +1,38 @@
+@primary-color: #1fac6a;
+
+.container {
+  flex: auto;
+  overflow: auto;
+  margin: 20px;
+  padding: 24px;
+  background-color: rgba(244, 244, 246, 1);
+  border: 1px solid rgba(234, 234, 234, 1);
+  border-radius: 16px;
+
+  .panel {
+    background-color: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 16px;
+  }
+
+  .panelTitle {
+    border-left: 4px solid @primary-color;
+    margin-left: -24px;
+    padding-left: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .infoRow {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+
+    & > div:first-child {
+      flex: none;
+      width: 180px;
+      color: rgba(153, 153, 153, 1);
+    }
+  }
+}
