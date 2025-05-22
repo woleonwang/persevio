@@ -61,7 +61,7 @@ const RecommendReason = (props: IProps) => {
               (item) => {
                 return (
                   <div className={classnames(styles.criterionTitle)} key={item}>
-                    {item}
+                    <MarkdownContainer content={item} />
                   </div>
                 );
               }
@@ -75,7 +75,7 @@ const RecommendReason = (props: IProps) => {
             (item) => {
               return (
                 <div className={classnames(styles.criterionTitle)} key={item}>
-                  {item}
+                  <MarkdownContainer content={item} />
                 </div>
               );
             }
