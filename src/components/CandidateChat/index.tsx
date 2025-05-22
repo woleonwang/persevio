@@ -33,19 +33,25 @@ type TSupportTag = {
 };
 
 interface IProps {
-  chatType: "profile" | "deep_aspirations" | "job_interview";
+  chatType:
+    | "profile"
+    | "deep_aspirations"
+    | "job_interview"
+    | "work_experience";
   jobApplyId?: number;
   onFinish?: () => void;
+  workExperienceCompanyName?: string;
 }
 
 const ChatTypeMappings = {
   profile: "CANDIDATE_PROFILE_CHAT",
   deep_aspirations: "CANDIDATE_DEEP_CAREER_ASPIRATION_CHAT",
   job_interview: "CANDIDATE_JOB_INTERVIEW_CHAT",
+  work_experience: "CANDIDATE_WORK_EXPERIENCE_CHAT",
 };
 
 const CandidateChat: React.FC<IProps> = (props) => {
-  const { chatType, onFinish, jobApplyId } = props;
+  const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -135,6 +141,21 @@ const CandidateChat: React.FC<IProps> = (props) => {
   ];
 
   const fetchMessages = async () => {
+    if (chatType === "work_experience") {
+      setMessages([
+        {
+          id: "chatbot-message-greeting-1",
+          role: "ai",
+          content: `Hi, it's me, Viona, your dedicated career copilot again. This time, I'd like to further understand your experience at ${workExperienceCompanyName} so I send you even more accurate job recommendations. 
+
+Shall we start now?`,
+          updated_at: dayjs().format(datetimeFormat),
+          messageType: "system",
+        },
+      ]);
+      return;
+    }
+
     const { code, data } = await Get(
       `/api/candidate/chat/${ChatTypeMappings[chatType]}${
         jobApplyId ? `/${jobApplyId}` : ""

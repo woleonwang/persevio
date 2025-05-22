@@ -1,4 +1,12 @@
 const CandidateResume = {
+  recommend_reason: {
+    recommend_reason: "为何推荐此职位",
+    overall: "Overall",
+    competency_match: "Competency",
+    career_aspirations_match: "Aspirations",
+    summary: "Summary",
+    detailed_alignment_analysis: "Detailed Alignment Analysis",
+  },
   career_aspirations: {
     metadata: "元数据",
     transcript_date: "访谈记录日期",
@@ -94,6 +102,8 @@ const CandidateResume = {
     important_tasks: "重要任务",
     deep_aspirations: "深度职业规划",
     deep_aspirations_hint: "帮助我了解您的职业规划，以便为您推荐最合适的职位。",
+    work_experience_hint:
+      "帮助我深入了解您的工作经历，以便为您推荐最合适的职位。",
   },
   job_applies: {
     jobs: "适合您的职位",
@@ -102,7 +112,6 @@ const CandidateResume = {
   job_apply: {
     applied: "已申请",
     apply_now: "立即申请",
-    recommend_reason: "为何推荐此职位",
     job_description: "职位描述",
     interview: "面试",
     finish_interview_hint: "面试已完成，您可以提交申请了！",

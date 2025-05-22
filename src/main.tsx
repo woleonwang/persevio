@@ -40,6 +40,7 @@ import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import Interviewer from "./pages/staff/interviewer";
+import WorkExperience from "./pages/candidate/work-experience";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -109,6 +110,10 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/candidate/home/deep-aspirations"
               element={<DeepAspirations />}
+            />
+            <Route
+              path="/candidate/home/work-experience/:companyName"
+              element={<WorkExperience />}
             />
             <Route path="/candidate/job-applies" element={<JobApplies />} />
             <Route

@@ -61,8 +61,53 @@ interface IJobApplyListItem {
   deliveried_at: string;
 }
 
+// Enums
+type OverallPotentialFitLevel =
+  | "Strongly Recommend"
+  | "Recommend"
+  | "Worth Considering";
+
+type CompetencyMatchLevel =
+  | "Qualified"
+  | "Over Qualified"
+  | "Slightly Underqualified";
+
+type CareerAspirationsMatchLevel =
+  | "Strong Match"
+  | "Largely Match"
+  | "Partial Match"
+  | "Aspirations Not Yet Fully Defined";
+
+// Interfaces
+interface OverallPotentialFit {
+  level: OverallPotentialFitLevel;
+  summary: string;
+}
+
+interface CompetencyMatch {
+  level: CompetencyMatchLevel;
+  summary: string;
+}
+
+interface CareerAspirationsMatch {
+  level: CareerAspirationsMatchLevel;
+  summary: string;
+}
+
+interface DetailedAlignmentAnalysis {
+  why_you_might_be_interested: string[];
+  potential_gaps_or_considerations: string[];
+}
+
+interface RoleOpportunityReport {
+  overall_potential_fit: OverallPotentialFit;
+  competency_match: CompetencyMatch;
+  career_aspirations_match: CareerAspirationsMatch;
+  detailed_alignment_analysis: DetailedAlignmentAnalysis;
+}
+
 interface IJobApply extends IJobApplyListItem {
-  recommend_reason: string;
+  recommend_reason: RoleOpportunityReport;
   jd: string;
 }
 
@@ -108,6 +153,7 @@ interface IRecommendedJob {
   };
   status: "INITIAL" | "ACCEPTED" | "REJECTED";
   created_at: string;
+  recommendReason: RoleOpportunityReport;
 }
 
 type TMenu = {

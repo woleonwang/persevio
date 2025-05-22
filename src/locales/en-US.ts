@@ -1,4 +1,12 @@
 const CandidateResume = {
+  recommend_reason: {
+    recommend_reason: "Why We Recommended This",
+    overall: "Overall",
+    competency_match: "Competency",
+    career_aspirations_match: "Aspirations",
+    summary: "Summary",
+    detailed_alignment_analysis: "Detailed Alignment Analysis",
+  },
   career_aspirations: {
     metadata: "Metadata",
     transcript_date: "Transcript Date",
@@ -101,6 +109,8 @@ const CandidateResume = {
     deep_aspirations: "Career aspirations deep dive",
     deep_aspirations_hint:
       "Help me understand your career aspirations so I can recommend the most suitable jobs to you.",
+    work_experience_hint:
+      "Help me understand your work experience in depth so I can better recommend suitable opportunities to you.",
   },
   job_applies: {
     jobs: "Your jobs",
@@ -108,7 +118,6 @@ const CandidateResume = {
   job_apply: {
     applied: "Applied",
     apply_now: "Apply Now",
-    recommend_reason: "Why We Recommended This",
     job_description: "Job Description",
     interview: "Interview",
     finish_interview_hint: "Interivew has finished, You can apply now!",

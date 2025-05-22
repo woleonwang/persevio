@@ -50,6 +50,46 @@ const CandidateHome = () => {
               </Button>
             </div>
           </div>
+          <div className={styles.taskCard}>
+            <div className={styles.taskCardTitle}>
+              {"Deep dive into your work at 100offer"}
+            </div>
+            <div className={styles.taskCardHint}>
+              {t("work_experience_hint")}
+            </div>
+            <div>
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() =>
+                  navigate("/candidate/home/work-experience/100offer")
+                }
+                style={{ width: "100%", marginTop: 20 }}
+              >
+                Start Now
+              </Button>
+            </div>
+          </div>
+          <div className={styles.taskCard}>
+            <div className={styles.taskCardTitle}>
+              {"Deep dive into your work at Youzhao"}
+            </div>
+            <div className={styles.taskCardHint}>
+              {t("work_experience_hint")}
+            </div>
+            <div>
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() =>
+                  navigate("/candidate/home/work-experience/Youzhao")
+                }
+                style={{ width: "100%", marginTop: 20 }}
+              >
+                Start Now
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       <div className={styles.homePanel}>

@@ -3,15 +3,15 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { Button, Drawer, message, Spin } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
-
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { parseJd } from "@/utils";
+import { parseJd, parseJSON } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
+import RecommendReason from "@/components/RecommendReason";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
@@ -28,6 +28,11 @@ const JobApplyShow = () => {
 
   useEffect(() => {
     fetchApplyJob();
+    const urlParams = new URLSearchParams(window.location.search);
+    const open = urlParams.get("open");
+    if (open === "1") {
+      setInterviewChatDrawerOpen(true);
+    }
   }, []);
 
   const fetchApplyJob = async () => {
@@ -37,7 +42,8 @@ const JobApplyShow = () => {
     if (code === 0) {
       setJobApply({
         ...data.job_apply,
-        recommend_reason: data.recommend_reason ?? `### ${t("waiting")}`,
+        recommend_reason:
+          parseJSON(data.recommend_reason) || `### ${t("waiting")}`,
         jd: parseJd(data.jd),
       });
     }
@@ -58,6 +64,8 @@ const JobApplyShow = () => {
   if (!jobApply) {
     return <Spin />;
   }
+
+  const result = jobApply.recommend_reason;
 
   return (
     <div className={styles.container}>
@@ -113,14 +121,7 @@ const JobApplyShow = () => {
           </div>
         </div>
         <div className={styles.right}>
-          <div className={styles.recommendReason}>
-            <div className={styles.recommendReasonTitle}>
-              {t("recommend_reason")}
-            </div>
-            <div className={styles.recommendReasonContent}>
-              <MarkdownContainer content={jobApply.recommend_reason} />
-            </div>
-          </div>
+          <RecommendReason result={result} />
         </div>
       </div>
 

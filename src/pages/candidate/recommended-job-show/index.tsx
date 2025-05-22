@@ -6,12 +6,13 @@ import { LeftCircleOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 
 import { Get, Post } from "@/utils/request";
-import { parseJd } from "@/utils";
+import { parseJd, parseJSON } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
+import RecommendReason from "@/components/RecommendReason";
 
 const RecommendedJobShow = () => {
   const [recommendedJob, setRecommendedJob] = useState<IRecommendedJob>();
@@ -35,18 +36,25 @@ const RecommendedJobShow = () => {
       `/api/candidate/recommended_jobs/${recommendedJobId}`
     );
     if (code === 0) {
-      setRecommendedJob(data.recommended_job);
+      setRecommendedJob({
+        ...data.recommended_job,
+        recommendReason: parseJSON(data.recommend_reason),
+      });
       setJd(parseJd(data.jd));
     }
   };
 
   const updateStatus = async (action: "accept" | "reject") => {
-    const { code } = await Post(
+    const { code, data } = await Post(
       `/api/candidate/recommended_jobs/${recommendedJobId}/${action}`
     );
     if (code === 0) {
       message.success(originalT("submit_succeed"));
-      fetchRecommendedJob();
+      if (action === "accept") {
+        navigate(`/candidate/job-applies/${data.job_apply_id}?open=1`);
+      } else {
+        fetchRecommendedJob();
+      }
     } else {
       message.error(originalT("submit_failed"));
     }
@@ -126,6 +134,9 @@ const RecommendedJobShow = () => {
           <div className={styles.jd}>
             <MarkdownContainer content={jd} />
           </div>
+        </div>
+        <div className={styles.recommendReason}>
+          <RecommendReason result={recommendedJob.recommendReason} />
         </div>
       </div>
 
