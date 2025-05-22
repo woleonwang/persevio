@@ -1,6 +1,6 @@
 const CandidateResume = {
   candidate_resume: {
-    resume: "简历",
+    profile: "简历",
     pending: "简历生成中...",
     basic_info: "基本信息",
     email: "邮箱：",
@@ -28,6 +28,8 @@ const CandidateResume = {
     publications: "发表作品",
     certifications: "证书",
     awards_and_honors: "获得奖项/荣誉",
+    resume: "简历",
+    biography: "个人传记",
   },
   candidate_aspirations: {
     career_aspirations: "职业目标",
@@ -43,10 +45,12 @@ const CandidateResume = {
   candidate_home: {
     home: "首页",
     recommended_jobs: "为您推荐的职位",
+    important_tasks: "重要任务",
+    deep_aspirations: "深度职业规划",
   },
   job_applies: {
     jobs: "适合您的职位",
-    applied_jobs: "已申请职位",
+    applied_jobs: "您的职位",
   },
   job_apply: {
     applied: "已申请",
@@ -102,9 +106,9 @@ export default {
     settings: "设置",
 
     home: "Home",
-    resume: "简历",
+    profile: "简历",
     aspirations: "职业规划",
-    deep_aspirations: "深度职位规划",
+    deep_aspirations: "深度职业规划",
     job_applies: "职位申请",
   },
 

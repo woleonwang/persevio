@@ -45,7 +45,7 @@ const CandidateSignIn: React.FC = () => {
   const fetchProfile = async () => {
     const { code } = await Get(`/api/candidate/settings`);
     if (code === 0) {
-      navigate("/candidate/resume");
+      navigate("/candidate/profile");
     }
   };
 

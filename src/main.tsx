@@ -101,13 +101,13 @@ createRoot(document.getElementById("root")!).render(
           </Route>
           <Route path="/candidate" element={<CandidateApp />}>
             <Route path="/candidate/home" element={<CandidateHome />} />
-            <Route path="/candidate/resume" element={<CandidateResume />} />
+            <Route path="/candidate/profile" element={<CandidateResume />} />
             <Route
               path="/candidate/aspirations"
               element={<CareerAspirations />}
             />
             <Route
-              path="/candidate/deep_aspirations"
+              path="/candidate/home/deep-aspirations"
               element={<DeepAspirations />}
             />
             <Route path="/candidate/job-applies" element={<JobApplies />} />

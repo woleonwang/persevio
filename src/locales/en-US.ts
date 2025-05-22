@@ -1,6 +1,6 @@
 const CandidateResume = {
   candidate_resume: {
-    resume: "Resume",
+    profile: "Profile",
     pending: "Resume is generating...",
     basic_info: "Basic Info",
     email: "Email:",
@@ -28,6 +28,8 @@ const CandidateResume = {
     publications: "Publications",
     certifications: "Certifications",
     awards_and_honors: "Awards & Honors",
+    resume: "Resume",
+    biography: "Professional Biography",
   },
   candidate_aspirations: {
     career_aspirations: "Career Aspiration",
@@ -43,10 +45,11 @@ const CandidateResume = {
   candidate_home: {
     home: "Home",
     recommended_jobs: "Recommended Jobs",
+    important_tasks: "Important Tasks",
+    deep_aspirations: "Deep Aspirations",
   },
   job_applies: {
-    jobs: "Jobs For You",
-    applied_jobs: "Applied Jobs",
+    jobs: "Your jobs",
   },
   job_apply: {
     applied: "Applied",
@@ -103,10 +106,10 @@ export default {
     interviewer: "Interviewer",
 
     home: "Home",
-    resume: "Resume",
+    profile: "Profile",
     aspirations: "Career Aspiration",
     deep_aspirations: "Deep Aspirations",
-    job_applies: "Jobs for You",
+    job_applies: "Your jobs",
   },
 
   job: {

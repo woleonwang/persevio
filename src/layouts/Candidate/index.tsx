@@ -54,8 +54,8 @@ const CandidateLayout = () => {
       img: <ProfileOutlined />,
     },
     {
-      title: t("menu.resume"),
-      path: "/candidate/resume",
+      title: t("menu.profile"),
+      path: "/candidate/profile",
       img: <ProfileOutlined />,
     },
     {
@@ -66,11 +66,6 @@ const CandidateLayout = () => {
     {
       title: t("menu.job_applies"),
       path: "/candidate/job-applies",
-      img: <ProfileOutlined />,
-    },
-    {
-      title: t("menu.deep_aspirations"),
-      path: "/candidate/deep_aspirations",
       img: <ProfileOutlined />,
     },
   ];

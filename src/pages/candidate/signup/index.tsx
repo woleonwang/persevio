@@ -137,7 +137,7 @@ const CandidateSignUp: React.FC = () => {
               <div className={styles.chatWrapper}>
                 <CandidateChat
                   chatType="profile"
-                  onFinish={() => navigate("/candidate/resume")}
+                  onFinish={() => navigate("/candidate/profile")}
                 />
               </div>
             );

@@ -7,6 +7,7 @@ import { Get } from "@/utils/request";
 import CompanyLogo from "../components/CompanyLogo";
 
 import styles from "./style.module.less";
+import { Button } from "antd";
 const CandidateHome = () => {
   const [recommendedJobs, setRecommendedJobs] = useState<IRecommendedJob[]>([]);
 
@@ -29,7 +30,26 @@ const CandidateHome = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>{t("home")}</div>
-      <div className={styles.main}>
+      <div className={styles.homeTitle}>Welcome back</div>
+      <div className={classnames(styles.homePanel, styles.tasks)}>
+        <div className={styles.title}>{t("important_tasks")}</div>
+        <div className={styles.taskCardWrapper}>
+          <div className={styles.taskCard}>
+            <div className={styles.taskCardTitle}>{t("deep_aspirations")}</div>
+            <div>
+              <Button
+                type="primary"
+                shape="round"
+                onClick={() => navigate("/candidate/home/deep-aspirations")}
+                style={{ width: "100%", marginTop: 20 }}
+              >
+                Start Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={styles.homePanel}>
         <div className={styles.title}>{t("recommended_jobs")}</div>
         {recommendedJobs.map((recommendedJob) => {
           return (

@@ -1,3 +1,5 @@
+@primary-color: #1fac6a;
+
 .container {
   flex: auto;
   display: flex;
@@ -13,14 +15,44 @@
   flex: none;
 }
 
-.main {
-  flex: auto;
-  overflow: auto;
+.homeTitle {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 24px 20px 0;
+}
+
+.homePanel {
   margin: 20px;
-  padding: 0 24px;
   background-color: rgba(244, 244, 246, 1);
   border: 1px solid rgba(234, 234, 234, 1);
   border-radius: 16px;
+  padding: 0 24px;
+}
+
+.taskCardWrapper {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.taskCard {
+  background-color: white;
+  border-radius: 24px;
+  width: 310px;
+  padding: 20px;
+
+  .taskCardTitle {
+    font-size: 16px;
+    font-weight: bold;
+    border-left: 4px solid @primary-color;
+    margin-left: -20px;
+    padding-left: 20px;
+  }
+}
+
+.main {
+  flex: auto;
+  overflow: auto;
 }
 
 .title {
