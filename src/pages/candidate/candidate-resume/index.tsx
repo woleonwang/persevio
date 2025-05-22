@@ -9,6 +9,7 @@ import { Empty } from "antd";
 type TWorkExperience = {
   /** Legal employer name from verified sources */
   company_name?: string;
+  employer_context?: string;
   /** Validated job title during tenure */
   position?: string;
   /** Employment period in 'MM/YYYY-MM/YYYY' format */
@@ -23,6 +24,7 @@ type TWorkExperience = {
   projects_involved?: string;
   /** Quantified accomplishments from transcript priority */
   key_achievements?: string;
+  reason_for_leaving_or_current_status?: string;
   /** Concise role overview combining objectives/achievements */
   summary?: string;
 };
@@ -32,10 +34,12 @@ type TEducation = {
   school_name?: string;
   /** Complete degree title (e.g., 'BSc Computer Science') */
   degree?: string;
+  major?: string;
   /** Study period in 'MM/YYYY-MM/YYYY' format */
   duration?: string;
   /** GPA/Honors class if explicitly mentioned */
-  grade?: string;
+  grade_or_honors?: string;
+  other_relevant_info?: string[];
 };
 
 interface TResume {
@@ -51,12 +55,29 @@ interface TResume {
   current_based_in?: string;
   /** List of work permits/visas (e.g., 'Singapore PR, EU Blue Card') */
   work_authorization?: string;
+  /** Candidate highlights from transcript/resume */
+  candidate_highlights?: string[];
+  career_summary?: {
+    core_career_track?: string;
+    narrative?: string;
+    primary_work_environments?: string[];
+    primary_work_languages?: {
+      language: string;
+      proficiency?: string;
+    }[];
+  };
   /** Validated skills/domain expertise (e.g., 'B2B SaaS Sales: Enterprise Accounts') */
   core_competencies?: string[];
+  other_competencies?: string[];
   /** Work experience in reverse chronological order */
   work_experience?: TWorkExperience[];
   /** Education background information */
   education?: TEducation[];
+  additional_qualifications?: {
+    publications?: string[];
+    certifications?: string[];
+    awards_and_honors?: string[];
+  };
 }
 const CandidateResume = () => {
   const [resume, setResume] = useState<TResume>();
@@ -131,9 +152,61 @@ const CandidateResume = () => {
           </div>
 
           <div className={styles.panel}>
+            <div className={styles.panelTitle}>{t("hightlight")}</div>
+            <div className={styles.highlightWrapper}>
+              {(resume.candidate_highlights ?? []).map((highlight, index) => (
+                <div key={highlight} className={styles.highlight}>
+                  {index + 1}. {highlight}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.panel}>
+            <div className={styles.panelTitle}>{t("career_summary")}</div>
+            <div className={styles.careerSummaryWrapper}>
+              <div className={styles.infoRow}>
+                <div>{t("core_career_track")}</div>
+                <div>{resume.career_summary?.core_career_track || "N/A"}</div>
+              </div>
+              <div className={styles.infoRow}>
+                <div>{t("narrative")}</div>
+                <div>{resume.career_summary?.narrative || "N/A"}</div>
+              </div>
+              <div className={styles.infoRow}>
+                <div>{t("primary_work_environments")}</div>
+                <div>
+                  {(
+                    resume.career_summary?.primary_work_environments ?? []
+                  ).join("、") || "N/A"}
+                </div>
+              </div>
+              <div className={styles.infoRow}>
+                <div>{t("primary_work_languages")}</div>
+                <div>
+                  {(resume.career_summary?.primary_work_languages ?? [])
+                    .map((lang) => `${lang.language}(${lang.proficiency})`)
+                    .join("、")}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.panel}>
             <div className={styles.panelTitle}>{t("core_competencies")}</div>
             <div className={styles.competenciesWrapper}>
               {resume.core_competencies?.map((competency) => (
+                <div key={competency} className={styles.competency}>
+                  {competency}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.panel}>
+            <div className={styles.panelTitle}>{t("other_competencies")}</div>
+            <div className={styles.competenciesWrapper}>
+              {resume.other_competencies?.map((competency) => (
                 <div key={competency} className={styles.competency}>
                   {competency}
                 </div>
@@ -157,6 +230,10 @@ const CandidateResume = () => {
                 </div>
 
                 <div className={styles.infoRow}>
+                  <div>{t("employer_context")}</div>
+                  <div>{workExperience.employer_context || "N/A"}</div>
+                </div>
+                <div className={styles.infoRow}>
                   <div>{t("core_role_objectives")}</div>
                   <div>{workExperience.core_role_objectives || "N/A"}</div>
                 </div>
@@ -176,6 +253,13 @@ const CandidateResume = () => {
                   <div>{t("summary")}</div>
                   <div>{workExperience.summary || "N/A"}</div>
                 </div>
+                <div className={styles.infoRow}>
+                  <div>{t("reason_for_leaving_or_current_status")}</div>
+                  <div>
+                    {workExperience.reason_for_leaving_or_current_status ||
+                      "N/A"}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -186,17 +270,74 @@ const CandidateResume = () => {
               {resume.education?.map((education, i) => (
                 <div key={i} className={styles.educationExperience}>
                   <div className={styles.school}>{education.school_name}</div>
-                  <div className={styles.degree}>{education.degree}</div>
+                  <div className={styles.degree}>
+                    {education.major} - {education.degree}
+                  </div>
                   <div className={styles.hint}>
                     <div>{education.duration}</div>
-                    {!!education.grade && (
-                      <div className={styles.grade}>{education.grade}</div>
+                    {!!education.grade_or_honors && (
+                      <div className={styles.grade}>
+                        {education.grade_or_honors}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ marginTop: 10 }}>
+                    {(education.other_relevant_info ?? []).map(
+                      (info, index) => {
+                        return (
+                          <div key={info}>
+                            {index + 1}. {info}
+                          </div>
+                        );
+                      }
                     )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {(() => {
+            const publications =
+              resume.additional_qualifications?.publications ?? [];
+            const certifications =
+              resume.additional_qualifications?.certifications ?? [];
+            const awardsAndHonors =
+              resume.additional_qualifications?.awards_and_honors ?? [];
+            if (
+              !publications.length &&
+              !certifications.length &&
+              !awardsAndHonors.length
+            ) {
+              return null;
+            }
+
+            return (
+              <div className={styles.panel}>
+                <div className={styles.panelTitle}>
+                  {t("additional_qualifications")}
+                </div>
+                {publications.length > 0 && (
+                  <div className={styles.infoRow}>
+                    <div>{t("publications")}</div>
+                    <div>{publications.join("、")}</div>
+                  </div>
+                )}
+                {certifications.length > 0 && (
+                  <div className={styles.infoRow}>
+                    <div>{t("certifications")}</div>
+                    <div>{certifications.join("、")}</div>
+                  </div>
+                )}
+                {awardsAndHonors.length > 0 && (
+                  <div className={styles.infoRow}>
+                    <div>{t("awards_and_honors")}</div>
+                    <div>{awardsAndHonors.join("、")}</div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
     </div>
