@@ -27,6 +27,12 @@
   border: 1px solid rgba(234, 234, 234, 1);
   border-radius: 16px;
   padding: 0 24px;
+  flex: auto;
+  overflow: auto;
+
+  &.tasks {
+    flex: none;
+  }
 }
 
 .taskCardWrapper {
@@ -47,6 +53,12 @@
     border-left: 4px solid @primary-color;
     margin-left: -20px;
     padding-left: 20px;
+  }
+
+  .taskCardHint {
+    font-size: 14px;
+    margin-top: 8px;
+    padding: 0 5px;
   }
 }
 

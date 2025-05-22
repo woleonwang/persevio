@@ -36,6 +36,9 @@ const CandidateHome = () => {
         <div className={styles.taskCardWrapper}>
           <div className={styles.taskCard}>
             <div className={styles.taskCardTitle}>{t("deep_aspirations")}</div>
+            <div className={styles.taskCardHint}>
+              {t("deep_aspirations_hint")}
+            </div>
             <div>
               <Button
                 type="primary"

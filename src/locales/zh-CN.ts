@@ -93,6 +93,7 @@ const CandidateResume = {
     recommended_jobs: "为您推荐的职位",
     important_tasks: "重要任务",
     deep_aspirations: "深度职业规划",
+    deep_aspirations_hint: "帮助我了解您的职业规划，以便为您推荐最合适的职位。",
   },
   job_applies: {
     jobs: "适合您的职位",

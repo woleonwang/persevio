@@ -98,7 +98,9 @@ const CandidateResume = {
     home: "Home",
     recommended_jobs: "Recommended Jobs",
     important_tasks: "Important Tasks",
-    deep_aspirations: "Deep Aspirations",
+    deep_aspirations: "Career aspirations deep dive",
+    deep_aspirations_hint:
+      "Help me understand your career aspirations so I can recommend the most suitable jobs to you.",
   },
   job_applies: {
     jobs: "Your jobs",
