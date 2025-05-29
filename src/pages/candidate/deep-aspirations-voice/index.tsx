@@ -1,10 +1,9 @@
-import CandidateChat from "@/components/CandidateChat";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-// import CandidateChatVoice from "@/components/CandidateChatVoice";
-const DeepAspirations = () => {
+import CandidateChatVoice from "@/components/CandidateChatVoice";
+const DeepAspirationsVoice = () => {
   const { t: originalT } = useTranslation();
   const navigate = useNavigate();
 
@@ -18,10 +17,10 @@ const DeepAspirations = () => {
         />
       </div>
       <div style={{ flex: "auto", overflow: "hidden", display: "flex" }}>
-        <CandidateChat chatType="deep_aspirations" />
+        <CandidateChatVoice chatType="deep_aspirations" />
       </div>
     </div>
   );
 };
 
-export default DeepAspirations;
+export default DeepAspirationsVoice;

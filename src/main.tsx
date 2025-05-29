@@ -31,6 +31,7 @@ import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
+import DeepAspirationsVoice from "./pages/candidate/deep-aspirations-voice";
 import CandidateSettings from "./pages/candidate/settings";
 import JobApplies from "./pages/candidate/job-applies";
 import JobApplyShow from "./pages/candidate/job-apply-show";
@@ -108,8 +109,16 @@ createRoot(document.getElementById("root")!).render(
               element={<CareerAspirations />}
             />
             <Route
+              path="/candidate/aspirations"
+              element={<CareerAspirations />}
+            />
+            <Route
               path="/candidate/home/deep-aspirations"
               element={<DeepAspirations />}
+            />
+            <Route
+              path="/candidate/home/deep-aspirations-voice"
+              element={<DeepAspirationsVoice />}
             />
             <Route
               path="/candidate/home/work-experience/:companyName"

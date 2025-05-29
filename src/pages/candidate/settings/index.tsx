@@ -48,6 +48,14 @@ const Settings = () => {
     navigate("/signin-candidate");
   };
 
+  const clear = async () => {
+    const { code } = await Post("/api/candidate/clear");
+    if (code === 0) {
+      localStorage.removeItem("candidate_token");
+      navigate("/signin-candidate");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.block}>
@@ -63,6 +71,14 @@ const Settings = () => {
         <div className={styles.item}>
           <Button type="primary" onClick={() => logout()}>
             {t("logout")}
+          </Button>
+
+          <Button
+            type="primary"
+            onClick={() => clear()}
+            style={{ marginLeft: 10 }}
+          >
+            注销
           </Button>
         </div>
       </div>
