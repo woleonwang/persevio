@@ -7,11 +7,12 @@ import { useTranslation } from "react-i18next";
 
 interface IProps {
   phone?: string;
+  name?: string;
   onFinish: () => void;
 }
 const ConfirmPhone = (props: IProps) => {
-  const { phone, onFinish } = props;
-  const [form] = Form.useForm<{ phone: string }>();
+  const { phone, name, onFinish } = props;
+  const [form] = Form.useForm<{ phone: string; name: string }>();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => {
@@ -19,13 +20,13 @@ const ConfirmPhone = (props: IProps) => {
   };
 
   useEffect(() => {
-    if (!phone) return;
-    form.setFieldsValue({ phone });
-  }, [phone]);
+    form.setFieldsValue({ phone, name });
+  }, [phone, name]);
   const confirmPhone = async () => {
     form.validateFields().then(async (values) => {
-      const { code } = await Post(`/api/candidate/confirm_phone`, {
+      const { code } = await Post(`/api/candidate/confirm_contact_info`, {
         phone: values.phone,
+        name: values.name,
       });
       if (code === 0) {
         onFinish();
@@ -36,6 +37,9 @@ const ConfirmPhone = (props: IProps) => {
     <div style={{ width: 600, marginTop: 95 }}>
       <Form form={form}>
         <div className={styles.title}>{t("confirm_contact")}</div>
+        <Form.Item name="name" rules={[{ required: true }]}>
+          <Input size="large" />
+        </Form.Item>
         <Form.Item name="phone" rules={[{ required: true }]}>
           <Input size="large" />
         </Form.Item>

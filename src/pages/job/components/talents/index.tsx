@@ -56,6 +56,7 @@ const Talents: React.FC<IProps> = (props) => {
   return (
     <div className={styles.talentsContainer}>
       {talents.map((talent) => {
+        const name = talent.evaluate_result.talent?.name ?? "";
         return (
           <div
             key={talent.id}
@@ -68,15 +69,13 @@ const Talents: React.FC<IProps> = (props) => {
               <div
                 className={classnames(
                   styles.avatar,
-                  styles[
-                    `color-${(talent.candidate.name.charCodeAt(0) % 8) + 1}`
-                  ]
+                  styles[`color-${(name.charCodeAt(0) % 8) + 1}`]
                 )}
               >
-                {talent.candidate.name[0]}
+                {name[0]}
               </div>
               <div>
-                <div className={styles.name}> {talent.candidate.name}</div>
+                <div className={styles.name}>{name}</div>
                 <div className={styles.info}>
                   {!!talent.evaluate_result.overall_match_level && (
                     <div className={classnames(styles.tag, styles.level)}>

@@ -127,6 +127,7 @@ const CandidateSignUp: React.FC = () => {
             return (
               <ConfirmPhone
                 phone={candidate?.phone}
+                name={candidate?.name}
                 onFinish={() => setPageState("conversation")}
               />
             );

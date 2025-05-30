@@ -58,18 +58,9 @@ interface TResume {
   work_authorization?: string;
   /** Candidate highlights from transcript/resume */
   candidate_highlights?: string[];
-  career_summary?: {
-    core_career_track?: string;
-    narrative?: string;
-    primary_work_environments?: string[];
-    primary_work_languages?: {
-      language: string;
-      proficiency?: string;
-    }[];
-  };
   /** Validated skills/domain expertise (e.g., 'B2B SaaS Sales: Enterprise Accounts') */
-  core_competencies?: string[];
-  other_competencies?: string[];
+  core_competencies?: { name: string; experiences: string[] }[];
+  other_competencies?: { name: string; experiences: string[] }[];
   /** Work experience in reverse chronological order */
   work_experience?: TWorkExperience[];
   /** Education background information */
@@ -231,54 +222,40 @@ Gengxin reflects that the US venture faced different challenges than Singapore. 
           </div>
 
           <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("career_summary")}</div>
-            <div className={styles.careerSummaryWrapper}>
-              <div className={styles.infoRow}>
-                <div>{t("core_career_track")}</div>
-                <div>{resume.career_summary?.core_career_track || "N/A"}</div>
-              </div>
-              <div className={styles.infoRow}>
-                <div>{t("narrative")}</div>
-                <div>{resume.career_summary?.narrative || "N/A"}</div>
-              </div>
-              <div className={styles.infoRow}>
-                <div>{t("primary_work_environments")}</div>
-                <div>
-                  {(
-                    resume.career_summary?.primary_work_environments ?? []
-                  ).join("、") || "N/A"}
-                </div>
-              </div>
-              <div className={styles.infoRow}>
-                <div>{t("primary_work_languages")}</div>
-                <div>
-                  {(resume.career_summary?.primary_work_languages ?? [])
-                    .map((lang) => `${lang.language}(${lang.proficiency})`)
-                    .join("、")}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.panel}>
             <div className={styles.panelTitle}>{t("core_competencies")}</div>
             <div className={styles.competenciesWrapper}>
-              {resume.core_competencies?.map((competency) => (
-                <div key={competency} className={styles.competency}>
-                  {competency}
-                </div>
-              ))}
+              {Array.isArray(resume.core_competencies) &&
+                resume.core_competencies.map((competency) => (
+                  <div key={competency.name} className={styles.competency}>
+                    <div className={styles.subTitle}>{competency.name}</div>
+                    {competency.experiences.map((item, index) => {
+                      return (
+                        <div key={index} style={{ marginTop: 8 }}>{`${
+                          index + 1
+                        }. ${item}`}</div>
+                      );
+                    })}
+                  </div>
+                ))}
             </div>
           </div>
 
           <div className={styles.panel}>
             <div className={styles.panelTitle}>{t("other_competencies")}</div>
             <div className={styles.competenciesWrapper}>
-              {resume.other_competencies?.map((competency) => (
-                <div key={competency} className={styles.competency}>
-                  {competency}
-                </div>
-              ))}
+              {Array.isArray(resume.other_competencies) &&
+                resume.other_competencies.map((competency) => (
+                  <div key={competency.name} className={styles.competency}>
+                    <div className={styles.subTitle}>{competency.name}</div>
+                    {competency.experiences.map((item, index) => {
+                      return (
+                        <div key={index} style={{ marginTop: 8 }}>{`${
+                          index + 1
+                        }. ${item}`}</div>
+                      );
+                    })}
+                  </div>
+                ))}
             </div>
           </div>
 
@@ -286,7 +263,7 @@ Gengxin reflects that the US venture faced different challenges than Singapore. 
             <div className={styles.panelTitle}>{t("work_experiences")}</div>
             {resume.work_experience?.map((workExperience, i) => (
               <div key={i} className={styles.workExperience}>
-                <div className={styles.companyName}>
+                <div className={styles.subTitle}>
                   {workExperience.company_name}
                 </div>
                 <div className={styles.companyInfo}>
@@ -297,37 +274,50 @@ Gengxin reflects that the US venture faced different challenges than Singapore. 
                   <div>{workExperience.location}</div>
                 </div>
 
-                <div className={styles.infoRow}>
-                  <div>{t("employer_context")}</div>
-                  <div>{workExperience.employer_context || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("core_role_objectives")}</div>
-                  <div>{workExperience.core_role_objectives || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("team_context")}</div>
-                  <div>{workExperience.team_context || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("projects_involved")}</div>
-                  <div>{workExperience.projects_involved || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("key_achivements")}</div>
-                  <div>{workExperience.key_achievements || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("summary")}</div>
-                  <div>{workExperience.summary || "N/A"}</div>
-                </div>
-                <div className={styles.infoRow}>
-                  <div>{t("reason_for_leaving_or_current_status")}</div>
-                  <div>
-                    {workExperience.reason_for_leaving_or_current_status ||
-                      "N/A"}
+                {!!workExperience.employer_context && (
+                  <div className={styles.infoRow}>
+                    <div>{t("employer_context")}</div>
+                    <div>{workExperience.employer_context}</div>
                   </div>
-                </div>
+                )}
+                {!!workExperience.core_role_objectives && (
+                  <div className={styles.infoRow}>
+                    <div>{t("core_role_objectives")}</div>
+                    <div>{workExperience.core_role_objectives}</div>
+                  </div>
+                )}
+                {!!workExperience.team_context && (
+                  <div className={styles.infoRow}>
+                    <div>{t("team_context")}</div>
+                    <div>{workExperience.team_context}</div>
+                  </div>
+                )}
+                {!!workExperience.projects_involved && (
+                  <div className={styles.infoRow}>
+                    <div>{t("projects_involved")}</div>
+                    <div>{workExperience.projects_involved}</div>
+                  </div>
+                )}
+                {!!workExperience.key_achievements && (
+                  <div className={styles.infoRow}>
+                    <div>{t("key_achivements")}</div>
+                    <div>{workExperience.key_achievements}</div>
+                  </div>
+                )}
+                {!!workExperience.summary && (
+                  <div className={styles.infoRow}>
+                    <div>{t("summary")}</div>
+                    <div>{workExperience.summary}</div>
+                  </div>
+                )}
+                {!!workExperience.reason_for_leaving_or_current_status && (
+                  <div className={styles.infoRow}>
+                    <div>{t("reason_for_leaving_or_current_status")}</div>
+                    <div>
+                      {workExperience.reason_for_leaving_or_current_status}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
