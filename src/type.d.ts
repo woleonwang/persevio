@@ -109,6 +109,12 @@ interface RoleOpportunityReport {
 interface IJobApply extends IJobApplyListItem {
   recommend_reason: RoleOpportunityReport;
   jd: string;
+  talentStatus:
+    | ""
+    | "evaluate_succeed"
+    | "evaluate_failed"
+    | "accepted"
+    | "rejected";
 }
 
 interface ISettings {

@@ -1,22 +1,39 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
-import { Button, Drawer, message, Spin } from "antd";
+import { Button, Drawer, message, Spin, Steps } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { parseJd, parseJSON } from "@/utils";
+import { parseJd } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
-import RecommendReason from "@/components/RecommendReason";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
+  const applyStatus = ((): number => {
+    if (!jobApply) {
+      return 0;
+    }
+
+    if (
+      jobApply.talentStatus === "accepted" ||
+      jobApply.talentStatus === "rejected"
+    ) {
+      return 2;
+    }
+
+    if (!!jobApply.deliveried_at) {
+      return 1;
+    }
+
+    return 0;
+  })();
 
   const { jobApplyId = "" } = useParams();
 
@@ -42,9 +59,8 @@ const JobApplyShow = () => {
     if (code === 0) {
       setJobApply({
         ...data.job_apply,
-        recommend_reason:
-          parseJSON(data.recommend_reason) || `### ${t("waiting")}`,
         jd: parseJd(data.jd),
+        talentStatus: data.talent_status,
       });
     }
   };
@@ -64,8 +80,6 @@ const JobApplyShow = () => {
   if (!jobApply) {
     return <Spin />;
   }
-
-  const result = jobApply.recommend_reason;
 
   return (
     <div className={styles.container}>
@@ -91,20 +105,22 @@ const JobApplyShow = () => {
               </div>
             </div>
             <div>
-              <Button
-                type="primary"
-                shape="round"
-                disabled={!!jobApply.deliveried_at}
-                onClick={() => {
-                  if (jobApply.interview_finished_at) {
-                    delivery();
-                  } else {
-                    setInterviewChatDrawerOpen(true);
-                  }
-                }}
-              >
-                {!!jobApply.deliveried_at ? t("applied") : t("apply_now")}
-              </Button>
+              {!jobApply.deliveried_at && (
+                <Button
+                  type="primary"
+                  shape="round"
+                  disabled={!!jobApply.deliveried_at}
+                  onClick={() => {
+                    if (jobApply.interview_finished_at) {
+                      delivery();
+                    } else {
+                      setInterviewChatDrawerOpen(true);
+                    }
+                  }}
+                >
+                  {t("apply_now")}
+                </Button>
+              )}
 
               <Button
                 style={{ marginLeft: 10 }}
@@ -121,7 +137,17 @@ const JobApplyShow = () => {
           </div>
         </div>
         <div className={styles.right}>
-          <RecommendReason result={result} />
+          <Steps
+            progressDot
+            direction="vertical"
+            size="small"
+            current={applyStatus}
+            items={[
+              { title: "Interview" },
+              { title: "Resume Submitted" },
+              { title: "Resume Processed" },
+            ]}
+          />
         </div>
       </div>
 

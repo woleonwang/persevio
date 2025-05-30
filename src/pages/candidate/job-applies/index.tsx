@@ -19,6 +19,11 @@ const JobApplies = () => {
   const fetchApplyJobs = async () => {
     const { code, data } = await Get("/api/candidate/job_applies");
     if (code === 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const open = urlParams.get("open");
+      if (open === "1" && data.job_applies.length > 0) {
+        navigate(`/candidate/job-applies/${data.job_applies[0].id}`);
+      }
       setJobApplies(data.job_applies);
     }
   };
