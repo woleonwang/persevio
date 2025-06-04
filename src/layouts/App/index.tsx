@@ -19,7 +19,6 @@ import { message, Modal, Popover, Spin } from "antd";
 import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
-import { on } from "events";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
