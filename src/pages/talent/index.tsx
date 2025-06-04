@@ -12,15 +12,27 @@ import { TEvaluation, TTalent } from "./type";
 import { parseJSON, parseMarkdown } from "../../utils";
 
 import styles from "./style.module.less";
-import { Button, Input, message, Modal, Popover } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Popover,
+  Select,
+} from "antd";
 import MarkdownContainer from "../../components/MarkdownContainer";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
 
+  const [form] = Form.useForm<IInterview>();
   const [talent, setTalent] = useState<TTalent>();
+  const [interviewers, setInterviewers] = useState<IInterviewer[]>([]);
   const [feedbackReasonModalOpen, setFeedbackReasonModalOpen] = useState(false);
   const [feedbackReason, setFeedbackReason] = useState("");
+  const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   // const [meta, setMeta] = useState<{ rank: number; total: number }>();
 
   const { t: originalT } = useTranslation();
@@ -29,6 +41,7 @@ const Talent = () => {
 
   useEffect(() => {
     fetchTalent();
+    fetchInterviewers();
   }, []);
 
   const fetchTalent = async () => {
@@ -41,6 +54,14 @@ const Talent = () => {
         parsed_content: parseMarkdown(data.talent.parsed_content),
       });
       // setMeta(data.meta);
+    }
+  };
+
+  const fetchInterviewers = async () => {
+    const { code, data } = await Get(`/api/interviewers`);
+
+    if (code === 0) {
+      setInterviewers(data.interviewers);
     }
   };
 
@@ -73,6 +94,24 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
     }
 
     return reasoning;
+  };
+
+  const createInterview = async () => {
+    form.validateFields().then(async (values) => {
+      const { code } = await Post(
+        `/api/jobs/${talent?.job_id}/talents/${talent?.id}/interviews`,
+        {
+          name: values.name,
+          mode: values.mode,
+          duration: values.duration,
+          interviewer_ids: [values.interviewer_id],
+        }
+      );
+      if (code === 0) {
+        message.success(originalT("submit_succeed"));
+        fetchTalent();
+      }
+    });
   };
 
   const feedback = async (action: "accept" | "reject", reason?: string) => {
@@ -139,8 +178,19 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
               </>
             )}
             {talent.status === "accepted" && (
-              <div className={classnames(styles.status, styles.accepted)}>
-                {t("accepted")}
+              <div
+                style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}
+              >
+                <div className={classnames(styles.status, styles.accepted)}>
+                  {t("accepted")}
+                </div>
+                <Button
+                  type="primary"
+                  shape="round"
+                  onClick={() => setInterviewModalOpen(true)}
+                >
+                  安排面试
+                </Button>
               </div>
             )}
             {talent.status === "rejected" && (
@@ -367,6 +417,49 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
           rows={4}
           style={{ marginTop: 10 }}
         />
+      </Modal>
+
+      <Modal
+        open={interviewModalOpen}
+        title={"添加面试"}
+        onCancel={() => setInterviewModalOpen(false)}
+        onOk={async () => {
+          await createInterview();
+          setFeedbackReasonModalOpen(false);
+        }}
+      >
+        <Form form={form} labelCol={{ span: 4 }}>
+          <Form.Item label="名称" name="name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="类型" name="mode" rules={[{ required: true }]}>
+            <Select
+              options={[
+                { value: "ONLINE", label: "线上面试" },
+                { value: "ONSITE", label: "线下面试" },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            label="时长(分钟)"
+            name="duration"
+            rules={[{ required: true }]}
+          >
+            <InputNumber />
+          </Form.Item>
+          <Form.Item
+            label="面试官"
+            name="interviewer_id"
+            rules={[{ required: true }]}
+          >
+            <Select
+              options={interviewers.map((interviewer) => ({
+                value: interviewer.id,
+                label: interviewer.name,
+              }))}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

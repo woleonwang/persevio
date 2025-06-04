@@ -182,3 +182,11 @@ interface IInterviewer {
   created_at: string;
   updateted_at: string;
 }
+
+interface IInterview {
+  id: number;
+  name: string;
+  mode: "ONLINE" | "ONSITE";
+  duration: number;
+  interviewer_id: number;
+}
