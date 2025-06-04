@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   CheckCircleFilled,
   CloseCircleFilled,
+  EyeOutlined,
   QuestionCircleFilled,
 } from "@ant-design/icons";
 import { Get, Post } from "../../utils/request";
@@ -23,13 +24,15 @@ import {
   Select,
 } from "antd";
 import MarkdownContainer from "../../components/MarkdownContainer";
+import TimeRangePicker from "@/components/TimeRangePicker";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
 
-  const [form] = Form.useForm<IInterview>();
+  const [form] = Form.useForm<IInterviewRequest>();
   const [talent, setTalent] = useState<TTalent>();
   const [interviewers, setInterviewers] = useState<IInterviewer[]>([]);
+  const [interviews, setInterviews] = useState<IInterview[]>([]);
   const [feedbackReasonModalOpen, setFeedbackReasonModalOpen] = useState(false);
   const [feedbackReason, setFeedbackReason] = useState("");
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
@@ -42,6 +45,7 @@ const Talent = () => {
   useEffect(() => {
     fetchTalent();
     fetchInterviewers();
+    fetchInterviews();
   }, []);
 
   const fetchTalent = async () => {
@@ -62,6 +66,16 @@ const Talent = () => {
 
     if (code === 0) {
       setInterviewers(data.interviewers);
+    }
+  };
+
+  const fetchInterviews = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${jobId}/talents/${talentId}/interviews`
+    );
+
+    if (code === 0) {
+      setInterviews(data.interviews);
     }
   };
 
@@ -105,6 +119,7 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
           mode: values.mode,
           duration: values.duration,
           interviewer_ids: [values.interviewer_id],
+          time_slots: values.timeSlots,
         }
       );
       if (code === 0) {
@@ -191,6 +206,52 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
                 >
                   安排面试
                 </Button>
+                <Popover
+                  title="Interviews"
+                  content={
+                    <div>
+                      {interviews.map((item) => {
+                        const interviewMember = item.interview_members.find(
+                          (item) => item.interviewer_id != 0
+                        );
+                        return (
+                          <div key={item.id}>
+                            <div>
+                              <div>面试名称</div>
+                              <div>{item.name}</div>
+                            </div>
+                            <div>
+                              <div>面试类型</div>
+                              <div>{item.mode}</div>
+                            </div>
+                            <div>
+                              <div>面试时长</div>
+                              <div>{item.duration}</div>
+                            </div>
+                            <div>
+                              <div>面试官</div>
+                              <div>
+                                {
+                                  interviewers.find(
+                                    (i) => i.id === interviewMember?.id
+                                  )?.name
+                                }
+                              </div>
+                            </div>
+                            <div>
+                              <div>面试时间</div>
+                              <div>待定</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  }
+                >
+                  <EyeOutlined
+                    style={{ color: "#1FAC6A", cursor: "pointer" }}
+                  />
+                </Popover>
               </div>
             )}
             {talent.status === "rejected" && (
@@ -425,7 +486,8 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
         onCancel={() => setInterviewModalOpen(false)}
         onOk={async () => {
           await createInterview();
-          setFeedbackReasonModalOpen(false);
+          await fetchInterviews();
+          setInterviewModalOpen(false);
         }}
       >
         <Form form={form} labelCol={{ span: 4 }}>
@@ -458,6 +520,13 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
                 label: interviewer.name,
               }))}
             />
+          </Form.Item>
+          <Form.Item
+            label="面试时间"
+            name="timeSlots"
+            rules={[{ required: true }]}
+          >
+            <TimeRangePicker />
           </Form.Item>
         </Form>
       </Modal>

@@ -190,4 +190,21 @@ interface IInterview {
   mode: "ONLINE" | "ONSITE";
   duration: number;
   interviewer_id: number;
+  interview_members: {
+    id: number;
+    interview_id: number;
+    candidate_id: number;
+    interviewer_id: number;
+    time_slots: { from: string; to: string }[];
+  }[];
+}
+interface IInterviewRequest {
+  name: string;
+  mode: "ONLINE" | "ONSITE";
+  duration: number;
+  interviewer_id: number;
+  timeSlots: {
+    from: string;
+    to: string;
+  }[];
 }
