@@ -171,6 +171,7 @@ type TMenu = {
     title: string;
     path: string;
     active: boolean;
+    onRemove?: () => void;
   }[];
 };
 

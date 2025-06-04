@@ -5,6 +5,7 @@ import {
   RightCircleFilled,
   FileDoneOutlined,
   SettingOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
@@ -14,10 +15,11 @@ import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Popover, Spin } from "antd";
-import { Get } from "../../utils/request";
+import { message, Modal, Popover, Spin } from "antd";
+import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
+import { on } from "events";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -66,10 +68,27 @@ const AppLayout = () => {
       img: <Job />,
       children: jobs.map((job) => {
         const path = `/app/jobs/${job.id}`;
+        const isActive = currentPath.startsWith(path);
         return {
           title: job.name,
           path,
-          active: currentPath.startsWith(path),
+          active: isActive,
+          onRemove: () => {
+            Modal.confirm({
+              title: "Delete Job",
+              content: `Are you sure you want to delete【${job.name}】?`,
+              onOk: async () => {
+                const { code } = await Post(`/api/jobs/${job.id}/destroy`);
+                if (code === 0) {
+                  message.success(t("submit_succeed"));
+                  fetchJobs();
+                  if (isActive) {
+                    navigate("/app/entry/create-job");
+                  }
+                }
+              },
+            });
+          },
         };
       }),
     },
@@ -285,7 +304,18 @@ const AppLayout = () => {
                               key={child.path}
                               onClick={() => navigate(child.path)}
                             >
-                              {child.title}
+                              <div>{child.title}</div>
+                              {!!child.onRemove && (
+                                <div
+                                  className={styles.deleteIcon}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    child.onRemove?.();
+                                  }}
+                                >
+                                  <DeleteOutlined />
+                                </div>
+                              )}
                             </div>
                           );
                         })}

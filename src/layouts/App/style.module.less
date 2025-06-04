@@ -77,12 +77,27 @@
   padding: 10px 12px 10px 60px;
   font-size: 14px;
   color: rgba(102, 102, 102, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 
   &.active,
   &:hover {
     background-color: white;
     font-weight: bold;
     color: #333333;
+  }
+
+  &:hover {
+    .deleteIcon {
+      visibility: visible;
+    }
+  }
+
+  .deleteIcon {
+    visibility: hidden;
+    color: red;
   }
 }
 
