@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
-import { Button, Drawer, message, Spin, Steps } from "antd";
+import { Button, Drawer, message, Modal, Select, Spin, Steps } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
@@ -11,11 +11,16 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
+import dayjs, { Dayjs } from "dayjs";
 
+type TimeSlot = { from: string; to: string };
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
+  const [interviewModalOpen, setInterviewModalOpen] = useState(false);
+  const [interviewTimeValue, setInterviewTimeValue] = useState("");
+
   const applyStatus = ((): number => {
     if (!jobApply) {
       return 0;
@@ -52,6 +57,7 @@ const JobApplyShow = () => {
     }
   }, []);
 
+  const interview = (jobApply?.interviews ?? [])[0];
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
       `/api/candidate/job_applies/${jobApplyId}`
@@ -61,6 +67,7 @@ const JobApplyShow = () => {
         ...data.job_apply,
         jd: parseJd(data.jd),
         talentStatus: data.talent_status,
+        interviews: data.interviews,
       });
     }
   };
@@ -76,6 +83,53 @@ const JobApplyShow = () => {
       message.error(originalT("submit_failed"));
     }
   };
+
+  function splitTimeRanges(ranges: TimeSlot[], duration: number): TimeSlot[] {
+    if (!ranges.length) return [];
+
+    const sortedRanges = ranges
+      .map((range) => ({
+        from: dayjs(range.from),
+        to: dayjs(range.to),
+      }))
+      .sort((a, b) => a.from.diff(b.from));
+
+    const merged: { from: Dayjs; to: Dayjs }[] = [];
+    for (const range of sortedRanges) {
+      if (merged.length === 0) {
+        merged.push(range);
+      } else {
+        const last = merged[merged.length - 1];
+        if (range.from.isBefore(last.to)) {
+          // 有重叠，合并
+          merged[merged.length - 1] = {
+            from: last.from,
+            to: range.to.isAfter(last.to) ? range.to : last.to,
+          };
+        } else {
+          merged.push(range);
+        }
+      }
+    }
+
+    const result: TimeSlot[] = [];
+    for (const mergedRange of merged) {
+      let currentStart = mergedRange.from;
+
+      while (
+        currentStart.add(duration, "minute").isBefore(mergedRange.to) ||
+        currentStart.add(duration, "minute").isSame(mergedRange.to)
+      ) {
+        result.push({
+          from: currentStart.toISOString(),
+          to: currentStart.add(duration, "minute").toISOString(),
+        });
+        currentStart = currentStart.add(30, "minute"); // 粒度为半小时
+      }
+    }
+
+    return result;
+  }
 
   if (!jobApply) {
     return <Spin />;
@@ -130,6 +184,17 @@ const JobApplyShow = () => {
               >
                 {originalT("chat_with_viona")}
               </Button>
+
+              {(jobApply.interviews ?? []).length > 0 && (
+                <Button
+                  style={{ marginLeft: 10 }}
+                  type="primary"
+                  shape="round"
+                  onClick={() => setInterviewModalOpen(true)}
+                >
+                  回应面试
+                </Button>
+              )}
             </div>
           </div>
           <div className={styles.jd}>
@@ -184,6 +249,84 @@ const JobApplyShow = () => {
           />
         </div>
       </Drawer>
+
+      <Modal
+        title="确认面试时间"
+        okButtonProps={{
+          disabled: !interviewTimeValue,
+        }}
+        open={interviewModalOpen}
+        onCancel={() => setInterviewModalOpen(false)}
+        onOk={async () => {
+          const { code } = await Post(
+            `/api/candidate/job_applies/${jobApply.id}/interviews/${interview.id}/confirm_time`,
+            {
+              start_time: interviewTimeValue,
+            }
+          );
+
+          if (code === 0) {
+            message.success("面试时间确认成功");
+            setInterviewModalOpen(false);
+            fetchApplyJob();
+          }
+        }}
+      >
+        {interview && (
+          <div>
+            <div>
+              <div>
+                <div>面试名称</div>
+                <div>{interview.name}</div>
+              </div>
+              <div>
+                <div>面试类型</div>
+                <div>{interview.mode}</div>
+              </div>
+              <div>
+                <div>面试时长</div>
+                <div>{interview.duration}</div>
+              </div>
+              <div>
+                <div>面试官</div>
+                <div>
+                  {
+                    interview.interview_members.find(
+                      (item) => item.interviewer_id != 0
+                    )?.interviewer?.name
+                  }
+                </div>
+              </div>
+              <div>
+                <div>面试时间</div>
+                <div>
+                  <Select
+                    style={{ width: "100%" }}
+                    value={interviewTimeValue}
+                    onChange={(v) => setInterviewTimeValue(v)}
+                    options={(() => {
+                      const timeSlots =
+                        interview.interview_members.find(
+                          (item) => item.interviewer_id != 0
+                        )?.time_slots?.scopes ?? [];
+
+                      const options = splitTimeRanges(
+                        timeSlots,
+                        interview.duration
+                      );
+
+                      return options.map((option) => ({
+                        value: option.from,
+                        label: `${option.from} ~ ${option.to}`,
+                      }));
+                    })()}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

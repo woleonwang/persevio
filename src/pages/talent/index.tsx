@@ -25,6 +25,7 @@ import {
 } from "antd";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import TimeRangePicker from "@/components/TimeRangePicker";
+import dayjs from "dayjs";
 
 const Talent = () => {
   const { jobId, talentId } = useParams();
@@ -240,7 +241,13 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
                             </div>
                             <div>
                               <div>面试时间</div>
-                              <div>待定</div>
+                              <div>
+                                {item.scheduled_at
+                                  ? dayjs(item.scheduled_at).format(
+                                      "YYYY-MM-DD HH:mm"
+                                    )
+                                  : "待定"}
+                              </div>
                             </div>
                           </div>
                         );

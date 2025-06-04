@@ -115,6 +115,7 @@ interface IJobApply extends IJobApplyListItem {
     | "evaluate_failed"
     | "accepted"
     | "rejected";
+  interviews: IInterview[];
 }
 
 interface ISettings {
@@ -189,13 +190,17 @@ interface IInterview {
   name: string;
   mode: "ONLINE" | "ONSITE";
   duration: number;
+  scheduled_at: string;
   interviewer_id: number;
   interview_members: {
     id: number;
     interview_id: number;
     candidate_id: number;
     interviewer_id: number;
-    time_slots: { from: string; to: string }[];
+    time_slots: {
+      scopes: { from: string; to: string }[];
+    };
+    interviewer?: IInterviewer;
   }[];
 }
 interface IInterviewRequest {
