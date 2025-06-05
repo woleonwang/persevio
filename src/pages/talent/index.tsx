@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Get, Post } from "../../utils/request";
 import { TEvaluation, TTalent } from "./type";
-import { parseJSON, parseMarkdown } from "../../utils";
+import { formatInterviewMode, parseJSON, parseMarkdown } from "../../utils";
 
 import styles from "./style.module.less";
 import {
@@ -208,45 +208,47 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
                   安排面试
                 </Button>
                 <Popover
-                  title="Interviews"
+                  title={<span style={{ fontSize: 16 }}>已安排面试</span>}
                   content={
-                    <div>
+                    <div style={{ width: 400 }}>
                       {interviews.map((item) => {
                         const interviewMember = item.interview_members.find(
                           (item) => item.interviewer_id != 0
                         );
+
                         return (
-                          <div key={item.id}>
-                            <div>
-                              <div>面试名称</div>
+                          <div key={item.id} className={styles.interviewPanel}>
+                            <div className={styles.interviewItem}>
+                              <div>面试名称:</div>
                               <div>{item.name}</div>
                             </div>
-                            <div>
-                              <div>面试类型</div>
-                              <div>{item.mode}</div>
+                            <div className={styles.interviewItem}>
+                              <div>面试类型:</div>
+                              <div>{formatInterviewMode(item.mode)}</div>
                             </div>
-                            <div>
-                              <div>面试时长</div>
+                            <div className={styles.interviewItem}>
+                              <div>面试时长:</div>
                               <div>{item.duration}</div>
                             </div>
-                            <div>
-                              <div>面试官</div>
+                            <div className={styles.interviewItem}>
+                              <div>面试官:</div>
                               <div>
                                 {
                                   interviewers.find(
-                                    (i) => i.id === interviewMember?.id
+                                    (i) =>
+                                      i.id === interviewMember?.interviewer_id
                                   )?.name
                                 }
                               </div>
                             </div>
-                            <div>
-                              <div>面试时间</div>
+                            <div className={styles.interviewItem}>
+                              <div>面试时间:</div>
                               <div>
                                 {item.scheduled_at
                                   ? dayjs(item.scheduled_at).format(
                                       "YYYY-MM-DD HH:mm"
                                     )
-                                  : "待定"}
+                                  : "等待候选人选择"}
                               </div>
                             </div>
                           </div>
@@ -495,6 +497,7 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
           await createInterview();
           await fetchInterviews();
           setInterviewModalOpen(false);
+          form.resetFields();
         }}
       >
         <Form form={form} labelCol={{ span: 4 }}>
@@ -529,7 +532,7 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
             />
           </Form.Item>
           <Form.Item
-            label="面试时间"
+            label="可选时间"
             name="timeSlots"
             rules={[{ required: true }]}
           >

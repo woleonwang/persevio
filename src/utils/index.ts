@@ -31,3 +31,7 @@ export const getImgSrc = (originalUrl: string) => {
 export const parseJd = (originalJd: string) => {
   return originalJd.replaceAll(/<chatbot-delete>.*<\/chatbot-delete>/g, "");
 };
+
+export const formatInterviewMode = (mode: "ONSITE" | "ONLINE") => {
+  return mode === "ONSITE" ? "现场面试" : "远程面试";
+};

@@ -5,7 +5,7 @@ import { Button, Drawer, message, Modal, Select, Spin, Steps } from "antd";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { parseJd } from "@/utils";
+import { formatInterviewMode, parseJd } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
@@ -19,7 +19,9 @@ const JobApplyShow = () => {
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
-  const [interviewTimeValue, setInterviewTimeValue] = useState("");
+  const [interviewTimeValueMap, setInterviewTimeValueMap] = useState<
+    Record<string, string>
+  >({});
 
   const applyStatus = ((): number => {
     if (!jobApply) {
@@ -56,8 +58,6 @@ const JobApplyShow = () => {
       setInterviewChatDrawerOpen(true);
     }
   }, []);
-
-  const interview = (jobApply?.interviews ?? [])[0];
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
       `/api/candidate/job_applies/${jobApplyId}`
@@ -252,43 +252,46 @@ const JobApplyShow = () => {
 
       <Modal
         title="确认面试时间"
-        okButtonProps={{
-          disabled: !interviewTimeValue,
-        }}
         open={interviewModalOpen}
         onCancel={() => setInterviewModalOpen(false)}
         onOk={async () => {
-          const { code } = await Post(
-            `/api/candidate/job_applies/${jobApply.id}/interviews/${interview.id}/confirm_time`,
-            {
-              start_time: interviewTimeValue,
+          const keys = Object.keys(interviewTimeValueMap);
+          for (let interviewId of keys) {
+            const { code } = await Post(
+              `/api/candidate/job_applies/${jobApply.id}/interviews/${interviewId}/confirm_time`,
+              {
+                start_time: interviewTimeValueMap[interviewId],
+              }
+            );
+            if (code !== 0) {
+              message.success(originalT("submit_failed"));
+              return;
             }
-          );
-
-          if (code === 0) {
-            message.success("面试时间确认成功");
-            setInterviewModalOpen(false);
-            fetchApplyJob();
           }
+
+          message.success("面试时间确认成功");
+          setInterviewModalOpen(false);
+          fetchApplyJob();
+          setInterviewTimeValueMap({});
         }}
       >
-        {interview && (
-          <div>
-            <div>
-              <div>
-                <div>面试名称</div>
+        {(jobApply?.interviews ?? []).map((interview) => {
+          return (
+            <div className={styles.interviewPanel}>
+              <div className={styles.interviewItem}>
+                <div>面试名称:</div>
                 <div>{interview.name}</div>
               </div>
-              <div>
-                <div>面试类型</div>
-                <div>{interview.mode}</div>
+              <div className={styles.interviewItem}>
+                <div>面试类型:</div>
+                <div>{formatInterviewMode(interview.mode)}</div>
               </div>
-              <div>
-                <div>面试时长</div>
+              <div className={styles.interviewItem}>
+                <div>面试时长:</div>
                 <div>{interview.duration}</div>
               </div>
-              <div>
-                <div>面试官</div>
+              <div className={styles.interviewItem}>
+                <div>面试官:</div>
                 <div>
                   {
                     interview.interview_members.find(
@@ -297,35 +300,46 @@ const JobApplyShow = () => {
                   }
                 </div>
               </div>
-              <div>
-                <div>面试时间</div>
-                <div>
-                  <Select
-                    style={{ width: "100%" }}
-                    value={interviewTimeValue}
-                    onChange={(v) => setInterviewTimeValue(v)}
-                    options={(() => {
-                      const timeSlots =
-                        interview.interview_members.find(
-                          (item) => item.interviewer_id != 0
-                        )?.time_slots?.scopes ?? [];
+              <div className={styles.interviewItem}>
+                <div>面试时间:</div>
+                <div style={{ display: "flex", gap: 12 }}>
+                  {interview.scheduled_at ? (
+                    dayjs(interview.scheduled_at).format("YYYY-MM-DD HH:mm")
+                  ) : (
+                    <Select
+                      value={interviewTimeValueMap[interview.id]}
+                      style={{ width: "100%" }}
+                      onChange={(v) =>
+                        setInterviewTimeValueMap({
+                          ...interviewTimeValueMap,
+                          [interview.id]: v,
+                        })
+                      }
+                      options={(() => {
+                        const timeSlots =
+                          interview.interview_members.find(
+                            (item) => item.interviewer_id != 0
+                          )?.time_slots?.scopes ?? [];
 
-                      const options = splitTimeRanges(
-                        timeSlots,
-                        interview.duration
-                      );
+                        const options = splitTimeRanges(
+                          timeSlots,
+                          interview.duration
+                        );
 
-                      return options.map((option) => ({
-                        value: option.from,
-                        label: `${option.from} ~ ${option.to}`,
-                      }));
-                    })()}
-                  />
+                        return options.map((option) => ({
+                          value: option.from,
+                          label: `${dayjs(option.from).format(
+                            "YYYY-MM-DD HH:mm"
+                          )} ~ ${dayjs(option.to).format("YYYY-MM-DD HH:mm")}`,
+                        }));
+                      })()}
+                    />
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })}
       </Modal>
     </div>
   );
