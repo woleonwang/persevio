@@ -288,7 +288,7 @@ const JobApplyShow = () => {
               </div>
               <div className={styles.interviewItem}>
                 <div>面试时长:</div>
-                <div>{interview.duration}</div>
+                <div>{interview.duration} 分钟</div>
               </div>
               <div className={styles.interviewItem}>
                 <div>面试官:</div>

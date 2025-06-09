@@ -42,6 +42,7 @@ import AdminJobApplies from "./pages/admin/job-applies";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import Interviewer from "./pages/staff/interviewer";
 import WorkExperience from "./pages/candidate/work-experience";
+import VoiceChat from "./pages/candidate/voice-chat";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -134,6 +135,7 @@ createRoot(document.getElementById("root")!).render(
               element={<RecommendedJobShow />}
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
+            <Route path="/candidate/voice-chat" element={<VoiceChat />} />
           </Route>
           <Route path="/signup-candidate" element={<SignUpCandidate />} />
           <Route path="/signin-candidate" element={<SignInCandidate />} />

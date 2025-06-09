@@ -228,7 +228,7 @@ Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
                             </div>
                             <div className={styles.interviewItem}>
                               <div>面试时长:</div>
-                              <div>{item.duration}</div>
+                              <div>{item.duration} 分钟</div>
                             </div>
                             <div className={styles.interviewItem}>
                               <div>面试官:</div>
