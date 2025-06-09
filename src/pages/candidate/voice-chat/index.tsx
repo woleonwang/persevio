@@ -73,20 +73,21 @@ const VoiceChat = () => {
 
   return (
     <div>
-      <Button
-        onClick={async () => {
-          const { code } = await Post("/api/candidate/voice_chat/start", {
-            payload: pcmDataRef.current,
-          });
+      {!isStart && (
+        <Button
+          onClick={async () => {
+            const { code } = await Post("/api/candidate/voice_chat/start", {
+              payload: pcmDataRef.current,
+            });
 
-          if (code === 0) {
-            setIsStart(true);
-          }
-        }}
-        disabled={isStart}
-      >
-        开始对话
-      </Button>
+            if (code === 0) {
+              setIsStart(true);
+            }
+          }}
+        >
+          开始对话
+        </Button>
+      )}
 
       {!!isStart &&
         (isRecording ? (
@@ -117,11 +118,11 @@ const VoiceChat = () => {
               }
             }}
           >
-            Stop
+            停止录音
           </Button>
         ) : (
           <Button onClick={() => start()} disabled={isResponse}>
-            Start
+            开始录音
           </Button>
         ))}
     </div>
