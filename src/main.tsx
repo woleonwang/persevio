@@ -136,6 +136,10 @@ createRoot(document.getElementById("root")!).render(
             />
             <Route path="/candidate/settings" element={<CandidateSettings />} />
             <Route path="/candidate/voice-chat" element={<VoiceChat />} />
+            <Route
+              path="/candidate/voice-chat/:model"
+              element={<VoiceChat />}
+            />
           </Route>
           <Route path="/signup-candidate" element={<SignUpCandidate />} />
           <Route path="/signin-candidate" element={<SignInCandidate />} />

@@ -364,12 +364,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const supportTags: TSupportTag[] = [
-    {
-      key: "huoqujibenxinxi-jindu-one",
-      title: t("share_basic"),
-      handler: () => openJobRequirementFormDrawer("basic_info"),
-      autoTrigger: true,
-    },
+    // {
+    //   key: "huoqujibenxinxi-jindu-one",
+    //   title: t("share_basic"),
+    //   handler: () => openJobRequirementFormDrawer("basic_info"),
+    //   autoTrigger: true,
+    // },
     {
       key: "huoqucailiao",
       title: t("share_reference"),
@@ -383,7 +383,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "shaixuanbiaozhun",
+      key: "jindu-four",
       title: t("ideal_profile"),
       handler: () => triggerIdealProfileDrawer(true),
       autoTrigger: true,
@@ -651,6 +651,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
         if (chatType === "jobRequirementDoc") {
           const tagPrograss = {
+            "huoqujibenxinxi-jindu-one": 0,
             "jindu-two": 1,
             "jindu-three": 2,
             "jindu-four": 3,
@@ -1580,21 +1581,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 <IdealProfileForm
                   candidateRequirementsJson={job.candidate_requirements_json}
                   onClose={() => triggerIdealProfileDrawer(false)}
-                  onOk={(groups) => {
+                  onOk={(requirements) => {
                     // 发送
                     let message = "";
-                    groups.forEach((group) => {
-                      const { name, requirements } = group;
-                      if (requirements.length > 0) {
-                        message += `\n\n**${name}:**`;
-                        requirements.forEach((requirement) => {
-                          message += `\n\n*   **${
-                            requirement.content
-                          } - ${originalT(
-                            `ideal_profile.${requirement.type}`
-                          )}**`;
-                        });
-                      }
+                    requirements.forEach((requirement) => {
+                      message += `\n\n*   **${
+                        requirement.content
+                      } - ${originalT(`ideal_profile.${requirement.type}`)}**`;
                     });
 
                     sendMessage(message, {

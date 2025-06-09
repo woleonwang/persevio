@@ -2,8 +2,9 @@ import useRecorder from "@/hooks/useRecorder";
 import { Get, Post } from "@/utils/request";
 import { Button, message } from "antd";
 import { useRef, useState } from "react";
+import { useParams } from "react-router";
 
-const audioContext = new AudioContext({ sampleRate: 24000 });
+const audioContext = new AudioContext({ sampleRate: 16000 });
 const gain = audioContext.createGain();
 gain.gain.value = 0.8;
 gain.connect(audioContext.destination);
@@ -12,6 +13,24 @@ const VoiceChat = () => {
   const audioQueueRef = useRef<AudioBufferSourceNode[]>([]);
   const [isStart, setIsStart] = useState(false);
   const [isResponse, setIsResponse] = useState(false);
+  const { model } = useParams();
+
+  const API: {
+    start: string;
+    send: string;
+    get: string;
+  } = {
+    gemini: {
+      start: "/api/candidate/voice_chat/gemini/start",
+      send: "/api/candidate/voice_chat/gemini/send",
+      get: "/api/candidate/voice_chat/gemini/message",
+    },
+    chatgpt: {
+      start: "/api/candidate/voice_chat/start",
+      send: "/api/candidate/voice_chat/send",
+      get: "/api/candidate/voice_chat/message",
+    },
+  }[model ?? "chatgpt"] as typeof API;
 
   const { start, stop, isRecording } = useRecorder({
     onAudioData: (buffer) => {
@@ -76,9 +95,7 @@ const VoiceChat = () => {
       {!isStart && (
         <Button
           onClick={async () => {
-            const { code } = await Post("/api/candidate/voice_chat/start", {
-              payload: pcmDataRef.current,
-            });
+            const { code } = await Post(API.start);
 
             if (code === 0) {
               setIsStart(true);
@@ -94,7 +111,7 @@ const VoiceChat = () => {
           <Button
             onClick={async () => {
               stop();
-              const { code } = await Post("/api/candidate/voice_chat/send", {
+              const { code } = await Post(API.send, {
                 payload: pcmDataRef.current,
               });
               if (code === 0) {
@@ -102,9 +119,7 @@ const VoiceChat = () => {
 
                 setIsResponse(true);
                 const intervalId = setInterval(async () => {
-                  const { code, data } = await Get(
-                    "/api/candidate/voice_chat/message"
-                  );
+                  const { code, data } = await Get(API.get);
 
                   if (code === 0) {
                     if (data.payload) {
