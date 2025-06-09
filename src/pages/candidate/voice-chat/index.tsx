@@ -73,7 +73,10 @@ const VoiceChat = () => {
       }
     };
     audioQueueRef.current.push(source);
-    if (audioQueueRef.current.length === 1) {
+    if (
+      audioQueueRef.current.length === 1 &&
+      (audioQueueRef.current[0].buffer?.length ?? 0) > 48000
+    ) {
       source.start();
     }
   };
@@ -114,6 +117,7 @@ const VoiceChat = () => {
               const { code } = await Post(API.send, {
                 payload: pcmDataRef.current,
               });
+              pcmDataRef.current = "";
               if (code === 0) {
                 message.success("Message Send");
 
