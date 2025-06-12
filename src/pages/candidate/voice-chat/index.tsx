@@ -14,6 +14,12 @@ const VoiceChat = () => {
   const [isStart, setIsStart] = useState(false);
   const [isResponse, setIsResponse] = useState(false);
   const { model } = useParams();
+  const [transcriptions, setTranscriptions] = useState<
+    {
+      role: "user" | "assistant";
+      content: "";
+    }[]
+  >([]);
 
   const API: {
     start: string;
@@ -73,10 +79,7 @@ const VoiceChat = () => {
       }
     };
     audioQueueRef.current.push(source);
-    if (
-      audioQueueRef.current.length === 1 &&
-      (audioQueueRef.current[0].buffer?.length ?? 0) > 48000
-    ) {
+    if (audioQueueRef.current.length === 1) {
       source.start();
     }
   };
@@ -122,18 +125,52 @@ const VoiceChat = () => {
                 message.success("Message Send");
 
                 setIsResponse(true);
+
                 const intervalId = setInterval(async () => {
                   const { code, data } = await Get(API.get);
 
                   if (code === 0) {
-                    if (data.payload) {
-                      playPcmFromData(data.payload);
+                    const { payload, status, text, textStatus, inputText } =
+                      data;
+                    if (inputText) {
+                      setTranscriptions((transcriptions) => [
+                        ...transcriptions,
+                        { role: "user", content: inputText },
+                      ]);
                     }
-                    if (data.status === "IDLE") {
+
+                    debugger;
+
+                    if (text) {
+                      setTranscriptions((transcriptions) => {
+                        if (
+                          transcriptions.length === 0 ||
+                          transcriptions[transcriptions.length - 1].role ===
+                            "user"
+                        ) {
+                          transcriptions.push({
+                            role: "assistant",
+                            content: text,
+                          });
+                        } else {
+                          transcriptions[transcriptions.length - 1].content +=
+                            text;
+                        }
+
+                        return [...transcriptions];
+                      });
+                    }
+
+                    if (payload) {
+                      console.log("receive data length: ", payload.length);
+                      playPcmFromData(payload);
+                    }
+
+                    if (status === "IDLE" && textStatus === "IDLE") {
                       clearInterval(intervalId);
                     }
                   }
-                }, 1000);
+                }, 500);
               }
             }}
           >
@@ -144,6 +181,17 @@ const VoiceChat = () => {
             开始录音
           </Button>
         ))}
+
+      <div>
+        {transcriptions.map((item, index) => {
+          return (
+            <div key={index} style={{ marginTop: 20 }}>
+              <div>{item.role === "assistant" ? "Viona" : "You"}</div>
+              <div>{item.content}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

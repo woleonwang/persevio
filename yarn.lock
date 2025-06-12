@@ -2035,10 +2035,10 @@ aria-hidden@^1.2.4:
   dependencies:
     tslib "^2.0.0"
 
-assemblyai@^4.12.2:
-  version "4.12.2"
-  resolved "https://registry.yarnpkg.com/assemblyai/-/assemblyai-4.12.2.tgz#7fac4838b5e1c522113346a295ae96102e593e76"
-  integrity sha512-T0QPhKfKoIV1hiQgUvH8fmxYeDsNZI8gSvJHCntJnzQF/WwbtMrebc4z6rFy29QP1tp28iXlmABGRZjHwW0LEQ==
+assemblyai@^4.13.2:
+  version "4.13.2"
+  resolved "https://registry.yarnpkg.com/assemblyai/-/assemblyai-4.13.2.tgz#caa6ca5f8e1b5b9781197d720d5a0bf4f905dd64"
+  integrity sha512-4bDnJUSIP90+OcPFgvCe9SEnAGGjcLYGDfAkUHbTckb0nLNN+Zek88rzOU6EpQTNKIzjCqIm+yB7dH1VbgvylA==
   dependencies:
     ws "^8.18.0"
 
