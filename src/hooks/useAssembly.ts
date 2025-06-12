@@ -14,7 +14,6 @@ const useAssembly = ({
   const recorder = useRef<RecordRTC>();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const textsRef = useRef<Record<number, string>>({});
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
 
@@ -42,7 +41,6 @@ const useAssembly = ({
     setIsRecording(false);
     recorder.current?.pauseRecording();
     recorder.current?.reset();
-    textsRef.current = {};
   };
 
   const initConnection = async () => {
@@ -55,14 +53,15 @@ const useAssembly = ({
     realtimeTranscriber.current = new StreamingTranscriber({
       token: data.token,
       sampleRate: 16000,
+      formatTurns: true,
     });
 
-    realtimeTranscriber.current.on("turn", ({ end_of_turn, transcript }) => {
-      if (end_of_turn) {
+    realtimeTranscriber.current.on("turn", (event) => {
+      const { transcript, turn_is_formatted } = event;
+      if (turn_is_formatted) {
         if (isRecordingRef.current) {
-          onFinish(transcript);
+          onFinish(transcript + " ");
         }
-        textsRef.current = {};
       } else {
         if (!isRecordingRef.current) return;
         onPartialTextChange(transcript);
