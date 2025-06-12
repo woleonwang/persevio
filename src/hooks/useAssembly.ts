@@ -14,13 +14,14 @@ const useAssembly = ({
   const recorder = useRef<RecordRTC>();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const mediaStreamRef = useRef<MediaStream>();
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
 
   useEffect(() => {
     return () => {
       realtimeTranscriber.current?.close();
-      recorder.current?.destroy();
+      endTranscription();
     };
   }, []);
 
@@ -30,17 +31,20 @@ const useAssembly = ({
       await initConnection();
     }
 
-    if (recorder.current?.state === "paused") {
-      recorder.current?.resumeRecording();
-    } else {
-      recorder.current?.startRecording();
+    if (!recorder.current) {
+      await initWebRTC();
     }
+
+    recorder.current?.startRecording();
   };
 
   const endTranscription = async () => {
     setIsRecording(false);
-    recorder.current?.pauseRecording();
-    recorder.current?.reset();
+    recorder.current?.destroy();
+    recorder.current = undefined;
+    (mediaStreamRef.current?.getTracks() ?? []).forEach((track) =>
+      track.stop()
+    );
   };
 
   const initConnection = async () => {
@@ -69,6 +73,7 @@ const useAssembly = ({
     });
 
     realtimeTranscriber.current.on("error", (event) => {
+      console.log(`12345 Connection error`);
       if (!realtimeTranscriber.current) return;
 
       console.error(event);
@@ -77,39 +82,45 @@ const useAssembly = ({
     });
 
     realtimeTranscriber.current.on("close", (code, reason) => {
-      console.log(`Connection closed: ${code} ${reason}`);
+      console.log(`12345 Connection closed: ${code} ${reason}`);
       realtimeTranscriber.current = undefined;
-      initConnection();
     });
 
     await realtimeTranscriber.current.connect();
 
     console.log("connected", new Date().toISOString());
 
-    if (!recorder.current) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // @ts-ignore
-      recorder.current = RecordRTC(stream, {
-        type: "audio",
-        mimeType: "audio/webm;codecs=pcm",
-        recorderType: RecordRTC.StereoAudioRecorder,
-        timeSlice: 250,
-        desiredSampRate: 16000,
-        numberOfAudioChannels: 1,
-        bufferSize: 4096,
-        audioBitsPerSecond: 128000,
-        ondataavailable: async (blob: Blob) => {
-          if (!realtimeTranscriber.current) return;
-          const buffer = await blob.arrayBuffer();
-          // console.log("send data:", buffer.byteLength);
-          realtimeTranscriber.current?.sendAudio(buffer);
-        },
-      });
-    }
-
     setIsConnecting(false);
   };
 
+  const initWebRTC = async () => {
+    mediaStreamRef.current = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+    // @ts-ignore
+    recorder.current = RecordRTC(mediaStreamRef.current, {
+      type: "audio",
+      mimeType: "audio/webm;codecs=pcm",
+      recorderType: RecordRTC.StereoAudioRecorder,
+      timeSlice: 250,
+      desiredSampRate: 16000,
+      numberOfAudioChannels: 1,
+      bufferSize: 4096,
+      audioBitsPerSecond: 128000,
+      ondataavailable: async (blob: Blob) => {
+        if (!realtimeTranscriber.current) return;
+        const buffer = await blob.arrayBuffer();
+        // console.log("send data:", buffer.byteLength);
+        try {
+          realtimeTranscriber.current?.sendAudio(buffer);
+        } catch (e) {
+          console.log("send data error:", e);
+          realtimeTranscriber.current = undefined;
+          endTranscription();
+        }
+      },
+    });
+  };
   return {
     startTranscription,
     endTranscription,
