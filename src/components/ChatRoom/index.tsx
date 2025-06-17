@@ -802,6 +802,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
           content: item.content.content,
+          thinking: item.content.thinking ?? "",
           updated_at: item.updated_at,
           messageType: item.content.metadata.message_type || "normal",
           messageSubType: item.content.metadata.message_sub_type || "normal",
@@ -1284,6 +1285,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         }
                       )}
                     >
+                      {!!item.thinking && (
+                        <div
+                          style={{
+                            backgroundColor: "#f1f1f1",
+                            margin: "12px 0",
+                            padding: "12px",
+                            borderRadius: "16px",
+                            color: "gray",
+                          }}
+                        >
+                          <MarkdownContainer content={item.thinking} />
+                        </div>
+                      )}
                       {item.id === "fake_ai_id" ? (
                         <p>
                           {loadingText}

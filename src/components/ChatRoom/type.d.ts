@@ -46,6 +46,7 @@ export type TMessageFromApi = {
   id: number;
   content: {
     content: string;
+    thinking?: string;
     role: "user" | "assistant";
     metadata: {
       message_type: "" | "system" | "normal";
@@ -69,6 +70,7 @@ export type TMessage = {
   id: string;
   role: "ai" | "user";
   content: string;
+  thinking?: string;
   updated_at: string;
   messageType?: "normal" | "system";
   messageSubType?: "normal" | "error";
