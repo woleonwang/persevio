@@ -211,13 +211,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !isRecording) {
+      if (e.ctrlKey && !isRecording) {
         startTranscription();
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === "Space" && isRecording) {
+      if (e.key === "Control" && isRecording) {
         endTranscription();
       }
     };
@@ -1582,7 +1582,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   type="primary"
                   danger={isRecording}
                   shape="circle"
-                  disabled={isRecording}
                   icon={
                     isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
                   }
