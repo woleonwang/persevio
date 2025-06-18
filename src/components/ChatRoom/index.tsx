@@ -24,7 +24,6 @@ import {
   DoubleLeftOutlined,
   DoubleRightOutlined,
   EditOutlined,
-  LoadingOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -62,7 +61,8 @@ import ChatbotConfigForm, {
 } from "./components/ChatbotConfigForm";
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
-import useAssembly from "@/hooks/useAssembly";
+// import useAssembly from "@/hooks/useAssembly";
+import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -166,18 +166,29 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
+  // const {
+  //   isConnecting,
+  //   isRecording: isRecordingEn,
+  //   startTranscription,
+  //   endTranscription,
+  // } = useAssembly({
+  //   onPartialTextChange: (result) => {
+  //     setInputValue(originalInputRef.current + result);
+  //   },
+  //   onFinish: (result) => {
+  //     originalInputRef.current = originalInputRef.current + result;
+  //     setInputValue(originalInputRef.current);
+  //   },
+  // });
+
   const {
-    isConnecting,
     isRecording: isRecordingEn,
     startTranscription,
     endTranscription,
-  } = useAssembly({
-    onPartialTextChange: (result) => {
-      setInputValue(originalInputRef.current + result);
-    },
+  } = useAssemblyOffline({
     onFinish: (result) => {
-      originalInputRef.current = originalInputRef.current + result;
-      setInputValue(originalInputRef.current);
+      // console.log(result);
+      sendMessage(result);
     },
   });
 
@@ -197,6 +208,28 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setCollapseForDrawer(false);
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !isRecording) {
+        startTranscription();
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === "Space" && isRecording) {
+        endTranscription();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [isRecording, startTranscription, endTranscription]);
 
   useEffect(() => {
     setChatType(undefined);
@@ -1549,15 +1582,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   type="primary"
                   danger={isRecording}
                   shape="circle"
-                  disabled={isRecording && isConnecting}
+                  disabled={isRecording}
                   icon={
-                    isRecording && isConnecting ? (
-                      <LoadingOutlined spin />
-                    ) : isRecording ? (
-                      <AudioMutedOutlined />
-                    ) : (
-                      <AudioOutlined />
-                    )
+                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
                   }
                   onClick={isRecording ? stopRecord : startRecord}
                 />

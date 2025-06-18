@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, List, Button, message } from "antd";
+import { Avatar, List, Button } from "antd";
 import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs from "dayjs";
 import "@mdxeditor/editor/style.css";
-import { v4 as uuidV4 } from "uuid";
 
-import { Get } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
@@ -43,6 +42,7 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
   const { isRecording, startTranscription, endTranscription } =
     useAssemblyOffline({
       onFinish: (result) => {
+        // console.log(result);
         sendMessage(result);
       },
     });
@@ -50,6 +50,29 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
   useEffect(() => {
     fetchMessages();
   }, []);
+
+  // INSERT_YOUR_CODE
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !isRecording) {
+        startTranscription();
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === "Space" && isRecording) {
+        endTranscription();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [isRecording, startTranscription, endTranscription]);
 
   const fetchMessages = async () => {
     const { code, data } = await Get(
@@ -100,63 +123,45 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
       },
     ]);
 
-    const uuid = uuidV4();
-    const response = await fetch(
+    await Post(
       `/api/candidate/chat/${ChatTypeMappings[chatType]}${
         jobApplyId ? `/${jobApplyId}` : ""
       }/send`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("candidate_token") ?? "",
-        },
-        body: JSON.stringify({
-          content: formattedMessage,
-          mode: "voice",
-          uuid,
-        }),
+        content: formattedMessage,
       }
     );
 
-    const intervalId = setInterval(async () => {
-      const { code, data } = await Get(`/api/candidate/voice_text/${uuid}`);
-      if (code === 0) {
-        setMessages((messages) => {
-          return [
-            ...messages,
-            {
-              id: "fake_ai_id",
-              role: "ai",
-              content: data.content,
-              updated_at: dayjs().format(datetimeFormat),
-            },
-          ];
-        });
-      }
-    }, 1000);
+    // const intervalId = setInterval(async () => {
+    //   const { code, data } = await Get(`/api/candidate/voice_text/${uuid}`);
+    //   if (code === 0) {
+    //     setMessages((messages) => {
+    //       return [
+    //         ...messages,
+    //         {
+    //           id: "fake_ai_id",
+    //           role: "ai",
+    //           content: data.content,
+    //           updated_at: dayjs().format(datetimeFormat),
+    //         },
+    //       ];
+    //     });
+    //   }
+    // }, 1000);
 
-    const arrayBuffer = await response.arrayBuffer();
-    const audioContext = new AudioContext();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    // const arrayBuffer = await response.arrayBuffer();
+    // const audioContext = new AudioContext();
+    // const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start(0);
-    source.onended = () => {
-      message.success("播放完毕");
-      clearInterval(intervalId);
-      fetchMessages();
-    };
-  };
-
-  const startRecord = async () => {
-    startTranscription();
-  };
-
-  const stopRecord = () => {
-    endTranscription();
+    // const source = audioContext.createBufferSource();
+    // source.buffer = audioBuffer;
+    // source.connect(audioContext.destination);
+    // source.start(0);
+    // source.onended = () => {
+    //   message.success("播放完毕");
+    //   clearInterval(intervalId);
+    //   fetchMessages();
+    // };
   };
 
   return (
@@ -230,7 +235,6 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
                 danger={isRecording}
                 shape="circle"
                 icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
-                onClick={isRecording ? stopRecord : startRecord}
               />
             </div>
           </div>

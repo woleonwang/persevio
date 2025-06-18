@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-import { AssemblyAI } from "assemblyai";
+// import { AssemblyAI } from "assemblyai";
+import { Post } from "@/utils/request";
 
-const client = new AssemblyAI({
-  apiKey: "d708a718408d4c718c165013ee1365a4", // 替换成你的 AssemblyAI API Key
-});
+// const client = new AssemblyAI({
+//   apiKey: "d708a718408d4c718c165013ee1365a4", // 替换成你的 AssemblyAI API Key
+// });
 const useAssemblyOffline = ({
   onFinish,
 }: {
@@ -40,7 +41,9 @@ const useAssemblyOffline = ({
 
   const initConnection = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
+    mediaRecorderRef.current = new MediaRecorder(stream, {
+      mimeType: "audio/webm",
+    });
     const recorder = mediaRecorderRef.current;
 
     recorder.ondataavailable = (event) => {
@@ -52,17 +55,31 @@ const useAssemblyOffline = ({
     };
 
     recorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunksRef.current, {
+      // INSERT_YOUR_CODE
+      // 将 audioChunksRef.current（Blob 数组）合并为一个 Blob，然后转为 base64 字符串
+      const mergedBlob = new Blob(audioChunksRef.current, {
         type: "audio/webm",
       });
+      const arrayBuffer = await mergedBlob.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+      let binary = "";
+      for (let i = 0; i < uint8Array.length; i++) {
+        binary += String.fromCharCode(uint8Array[i]);
+      }
+      const base64String = window.btoa(binary);
 
-      console.log("data length: ", audioBlob.size);
-      const transcript = await client.transcripts.transcribe({
-        audio: audioBlob,
+      console.log("data length: ", base64String.length);
+      console.log("start:", new Date().toISOString());
+      // const transcript = await client.transcripts.transcribe({
+      //   audio: audioBlob,
+      // });
+      const { data } = await Post("/api/candidate/stt/send", {
+        payload: base64String,
       });
+      console.log("end:", new Date().toISOString());
       console.log("finished, result is: ");
-      console.log(transcript.text);
-      onFinish(transcript.text ?? "");
+      console.log(data.result);
+      onFinish(data.result ?? "");
       // 清理 stream tracks
       // stream.getTracks().forEach((track) => track.stop());
     };

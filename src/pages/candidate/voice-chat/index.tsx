@@ -139,8 +139,6 @@ const VoiceChat = () => {
                       ]);
                     }
 
-                    debugger;
-
                     if (text) {
                       setTranscriptions((transcriptions) => {
                         if (
