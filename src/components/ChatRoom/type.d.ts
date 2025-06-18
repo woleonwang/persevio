@@ -16,13 +16,13 @@ export type TExtraTagName =
   // 后端生成
   | "copy-link" // 复制链接
   | "talent-evaluate-result"
-  // | "huoqujibenxinxi-jindu-one"
+  | "huoqujibenxinxi-jindu-one"
   | "huoqucailiao"
   | "salary-structure-request"
   | "shaixuanbiaozhun"
   | "screening-q-request"
   | "jindu-two"
-  | "jindu-three"
+  // | "jindu-three"
   | "jindu-four"
   | TDoneTag
   // 前端生成

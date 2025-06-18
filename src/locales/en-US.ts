@@ -277,11 +277,10 @@ You can share Viona using this chat page link, either by including it in your jo
     require_interview_plan: "Please define interview plan first",
     chatbot_config: "Config Chatbot",
 
-    gather_basic_information: "Gather Basic Information",
-    confirm_key_role_parameters: "Confirm Key Role Parameters",
-    define_detailed_objectives: "Define Detailed Objectives & Responsibilities",
+    gather_basic_information: "Gather Role Overview",
+    confirm_key_role_parameters: "Understand Key Parameters",
     define_ideal_candidate_profile: "Define Ideal Candidate Profile",
-    define_screening_criteria: "Define Screening Criteria",
+    define_screening_criteria: "Final Alignment",
 
     essential: "Essential",
     optional_task: "Optional",

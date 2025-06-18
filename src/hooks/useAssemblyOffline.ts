@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 
 // import { AssemblyAI } from "assemblyai";
 import { Post } from "@/utils/request";
-
 // const client = new AssemblyAI({
 //   apiKey: "d708a718408d4c718c165013ee1365a4", // 替换成你的 AssemblyAI API Key
 // });
@@ -18,6 +17,8 @@ const useAssemblyOffline = ({
   const mediaRecorderRef = useRef<MediaRecorder>();
   // 存放录音数据
   const audioChunksRef = useRef<Blob[]>([]);
+  // stream 实例
+  const streamRef = useRef<MediaStream>();
 
   useEffect(() => {
     return () => {
@@ -26,23 +27,24 @@ const useAssemblyOffline = ({
   }, []);
 
   const startTranscription = async () => {
-    setIsRecording(true);
-    if (!mediaRecorderRef.current) {
-      await initConnection();
-    }
+    await initConnection();
     audioChunksRef.current = [];
     mediaRecorderRef.current?.start();
+    setIsRecording(true);
   };
 
   const endTranscription = async () => {
-    setIsRecording(false);
     mediaRecorderRef.current?.stop();
+    setIsRecording(false);
   };
 
   const initConnection = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream, {
-      mimeType: "audio/webm",
+    streamRef.current = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+    mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
+      mimeType: "audio/webm;codec=Opus",
+      audioBitsPerSecond: 8000,
     });
     const recorder = mediaRecorderRef.current;
 
@@ -57,9 +59,7 @@ const useAssemblyOffline = ({
     recorder.onstop = async () => {
       // INSERT_YOUR_CODE
       // 将 audioChunksRef.current（Blob 数组）合并为一个 Blob，然后转为 base64 字符串
-      const mergedBlob = new Blob(audioChunksRef.current, {
-        type: "audio/webm",
-      });
+      const mergedBlob = new Blob(audioChunksRef.current);
       const arrayBuffer = await mergedBlob.arrayBuffer();
       const uint8Array = new Uint8Array(arrayBuffer);
       let binary = "";
@@ -81,7 +81,9 @@ const useAssemblyOffline = ({
       console.log(data.result);
       onFinish(data.result ?? "");
       // 清理 stream tracks
-      // stream.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
     };
   };
 

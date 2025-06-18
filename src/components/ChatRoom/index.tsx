@@ -159,6 +159,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
+  const listContainerRef = useRef<HTMLDivElement | null>();
   const [needToFetchMessage, triggerFetchMessage] = useReducer(() => ({}), {});
 
   const { t: originalT, i18n } = useTranslation();
@@ -397,12 +398,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const supportTags: TSupportTag[] = [
-    // {
-    //   key: "huoqujibenxinxi-jindu-one",
-    //   title: t("share_basic"),
-    //   handler: () => openJobRequirementFormDrawer("basic_info"),
-    //   autoTrigger: true,
-    // },
+    {
+      key: "huoqujibenxinxi-jindu-one",
+      title: t("share_basic"),
+      handler: () => openJobRequirementFormDrawer("basic_info"),
+      autoTrigger: true,
+    },
     {
       key: "huoqucailiao",
       title: t("share_reference"),
@@ -686,9 +687,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
           const tagPrograss = {
             "huoqujibenxinxi-jindu-one": 0,
             "jindu-two": 1,
-            "jindu-three": 2,
-            "jindu-four": 3,
-            shaixuanbiaozhun: 4,
+            // "jindu-three": 2,
+            "jindu-four": 2,
+            shaixuanbiaozhun: 3,
           };
 
           let progress = 0;
@@ -745,7 +746,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
+      // 先滚动到底部，再向上滚动 100px
       messagesEndRef.current.scrollIntoView();
+      if (messagesEndRef.current.parentElement) {
+        messagesEndRef.current.parentElement.scrollTop -= 120;
+      }
     }
   };
 
@@ -1267,199 +1272,218 @@ const ChatRoom: React.FC<IProps> = (props) => {
               items={[
                 { title: t("gather_basic_information") },
                 { title: t("confirm_key_role_parameters") },
-                { title: t("define_detailed_objectives") },
                 { title: t("define_ideal_candidate_profile") },
                 { title: t("define_screening_criteria") },
               ]}
             />
           </div>
         )}
-        <div className={styles.listArea}>
+        <div
+          className={styles.listArea}
+          ref={(e) => (listContainerRef.current = e)}
+        >
           <List
             dataSource={messages}
             split={false}
-            renderItem={(item, index) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      icon={
-                        item.role === "user" ? (
-                          <img src={UserAvatar} />
-                        ) : (
-                          <img src={VionaAvatar} />
-                        )
-                      }
-                    />
-                  }
-                  title={
-                    <div>
-                      <span style={{ fontSize: 18 }}>
-                        {item.role === "user"
-                          ? "You"
-                          : `Viona, ${
-                              chatType === "candidate"
-                                ? t("viona_intro_candidate")
-                                : t("viona_intro_staff")
-                            }`}
-                      </span>
-                      <span className={styles.timestamp}>
-                        {dayjs(item.updated_at).format(datetimeFormat)}
-                      </span>
-                    </div>
-                  }
-                  description={
-                    <div
-                      className={classnames(
-                        styles.messageContainer,
-                        item.role === "user" ? styles.user : "",
-                        {
-                          [styles.lastMessage]: index === messages.length - 1,
+            renderItem={(item, index) => {
+              const isLast = index === messages.length - 1;
+              return (
+                <List.Item
+                  style={
+                    isLast
+                      ? {
+                          minHeight:
+                            (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
+                          alignItems: "flex-start",
                         }
-                      )}
-                    >
-                      {!!item.thinking && (
-                        <div
-                          style={{
-                            backgroundColor: "#f1f1f1",
-                            margin: "12px 0",
-                            padding: "12px",
-                            borderRadius: "16px",
-                            color: "gray",
-                          }}
-                        >
-                          <MarkdownContainer content={item.thinking} />
-                        </div>
-                      )}
-                      {item.id === "fake_ai_id" ? (
-                        <p>
-                          {loadingText}
-                          {dayjs().diff(
-                            loadingStartedAtRef.current ?? dayjs(),
-                            "second"
-                          ) > 30
-                            ? `(${t("viona_is_thinking")})`
-                            : ""}
-                        </p>
-                      ) : (
-                        <MarkdownContainer
-                          onClick={() => {
-                            if (canMessageEdit(item)) {
-                              setMarkdownEditMessageId(item.id);
-                              setMarkdownEditMessageContent(item.content);
-                            }
-                          }}
-                          content={
-                            item.messageSubType === "error"
-                              ? "Something wrong with Viona, please retry."
-                              : item.content
+                      : {}
+                  }
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        icon={
+                          item.role === "user" ? (
+                            <img src={UserAvatar} />
+                          ) : (
+                            <img src={VionaAvatar} />
+                          )
+                        }
+                      />
+                    }
+                    title={
+                      <div>
+                        <span style={{ fontSize: 18 }}>
+                          {item.role === "user"
+                            ? "You"
+                            : `Viona, ${
+                                chatType === "candidate"
+                                  ? t("viona_intro_candidate")
+                                  : t("viona_intro_staff")
+                              }`}
+                        </span>
+                        <span className={styles.timestamp}>
+                          {dayjs(item.updated_at).format(datetimeFormat)}
+                        </span>
+                      </div>
+                    }
+                    description={
+                      <div
+                        className={classnames(
+                          styles.messageContainer,
+                          item.role === "user" ? styles.user : "",
+                          {
+                            [styles.lastMessage]: index === messages.length - 1,
                           }
-                        />
-                      )}
-
-                      {(() => {
-                        const visibleTags = (item.extraTags ?? [])
-                          .map((extraTag) => {
-                            return supportTags.find(
-                              (tag) => tag.key === extraTag.name
-                            );
-                          })
-                          .filter(Boolean) as TSupportTag[];
-
-                        return (
+                        )}
+                      >
+                        {!!item.thinking && (
                           <div
                             style={{
-                              marginTop: 16,
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: 8,
+                              backgroundColor: "#f1f1f1",
+                              margin: "12px 0",
+                              padding: "12px",
+                              borderRadius: "16px",
+                              color: "gray",
                             }}
                           >
-                            {visibleTags.map((tag) => {
-                              return (
-                                <div style={{ marginBottom: 16 }} key={tag.key}>
-                                  <Button
-                                    type="primary"
-                                    onClick={() => {
-                                      const extraTag = (
-                                        item.extraTags ?? []
-                                      ).find(
-                                        (extraTag) => extraTag.name === tag.key
-                                      );
-                                      tag.handler(extraTag);
-                                    }}
-                                  >
-                                    {tag.title}
-                                  </Button>
-                                </div>
+                            <MarkdownContainer content={item.thinking} />
+                          </div>
+                        )}
+                        {item.id === "fake_ai_id" ? (
+                          <p>
+                            {loadingText}
+                            {dayjs().diff(
+                              loadingStartedAtRef.current ?? dayjs(),
+                              "second"
+                            ) > 30
+                              ? `(${t("viona_is_thinking")})`
+                              : ""}
+                          </p>
+                        ) : (
+                          <MarkdownContainer
+                            onClick={() => {
+                              if (canMessageEdit(item)) {
+                                setMarkdownEditMessageId(item.id);
+                                setMarkdownEditMessageContent(item.content);
+                              }
+                            }}
+                            content={
+                              item.messageSubType === "error"
+                                ? "Something wrong with Viona, please retry."
+                                : item.content
+                            }
+                          />
+                        )}
+
+                        {(() => {
+                          const visibleTags = (item.extraTags ?? [])
+                            .map((extraTag) => {
+                              return supportTags.find(
+                                (tag) => tag.key === extraTag.name
                               );
-                            })}
-                          </div>
-                        );
-                      })()}
+                            })
+                            .filter(Boolean) as TSupportTag[];
 
-                      {(() => {
-                        const canEditing = canMessageEdit(item);
+                          return (
+                            <div
+                              style={{
+                                marginTop: 16,
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 8,
+                              }}
+                            >
+                              {visibleTags.map((tag) => {
+                                return (
+                                  <div
+                                    style={{ marginBottom: 16 }}
+                                    key={tag.key}
+                                  >
+                                    <Button
+                                      type="primary"
+                                      onClick={() => {
+                                        const extraTag = (
+                                          item.extraTags ?? []
+                                        ).find(
+                                          (extraTag) =>
+                                            extraTag.name === tag.key
+                                        );
+                                        tag.handler(extraTag);
+                                      }}
+                                    >
+                                      {tag.title}
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })()}
 
-                        const canDelete =
-                          !!profile?.is_admin &&
-                          item.messageType === "normal" &&
-                          !["fake_ai_id", "fake_user_id"].includes(item.id);
-                        // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+                        {(() => {
+                          const canEditing = canMessageEdit(item);
 
-                        return canEditing || canDelete ? (
-                          <div className={styles.operationArea}>
-                            <Button.Group>
-                              {canEditing && (
-                                <>
+                          const canDelete =
+                            !!profile?.is_admin &&
+                            item.messageType === "normal" &&
+                            !["fake_ai_id", "fake_user_id"].includes(item.id);
+                          // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+
+                          return canEditing || canDelete ? (
+                            <div className={styles.operationArea}>
+                              <Button.Group>
+                                {canEditing && (
+                                  <>
+                                    <Button
+                                      shape="round"
+                                      onClick={() => {
+                                        setMarkdownEditMessageId(item.id);
+                                        setMarkdownEditMessageContent(
+                                          item.content
+                                        );
+                                      }}
+                                      icon={<EditOutlined />}
+                                      ref={(e) => {
+                                        if (maxIdOfAIMessage === item.id)
+                                          editMessageTourElementRef.current = e;
+                                      }}
+                                    />
+                                    <Button
+                                      shape="round"
+                                      onClick={async () => {
+                                        await copy(item.content);
+                                        message.success(t("copied"));
+                                      }}
+                                      icon={<CopyOutlined />}
+                                    />
+                                  </>
+                                )}
+                                {canDelete && (
                                   <Button
                                     shape="round"
                                     onClick={() => {
-                                      setMarkdownEditMessageId(item.id);
-                                      setMarkdownEditMessageContent(
-                                        item.content
-                                      );
+                                      if (
+                                        confirm(
+                                          "Confirm to delete messages after this message?"
+                                        )
+                                      ) {
+                                        deleteMessage(parseInt(item.id));
+                                      }
                                     }}
-                                    icon={<EditOutlined />}
-                                    ref={(e) => {
-                                      if (maxIdOfAIMessage === item.id)
-                                        editMessageTourElementRef.current = e;
-                                    }}
+                                    icon={<DeleteOutlined />}
                                   />
-                                  <Button
-                                    shape="round"
-                                    onClick={async () => {
-                                      await copy(item.content);
-                                      message.success(t("copied"));
-                                    }}
-                                    icon={<CopyOutlined />}
-                                  />
-                                </>
-                              )}
-                              {canDelete && (
-                                <Button
-                                  shape="round"
-                                  onClick={() => {
-                                    if (
-                                      confirm(
-                                        "Confirm to delete messages after this message?"
-                                      )
-                                    ) {
-                                      deleteMessage(parseInt(item.id));
-                                    }
-                                  }}
-                                  icon={<DeleteOutlined />}
-                                />
-                              )}
-                            </Button.Group>
-                          </div>
-                        ) : null;
-                      })()}
-                    </div>
-                  }
-                />
-              </List.Item>
-            )}
+                                )}
+                              </Button.Group>
+                            </div>
+                          ) : null;
+                        })()}
+                      </div>
+                    }
+                  />
+                </List.Item>
+              );
+            }}
           />
           <div ref={messagesEndRef} />
         </div>

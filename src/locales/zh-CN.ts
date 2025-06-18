@@ -268,9 +268,8 @@ export default {
 
     gather_basic_information: "获取职位基本信息",
     confirm_key_role_parameters: "确定关键职位参数",
-    define_detailed_objectives: "详细定义职位目标&职责",
     define_ideal_candidate_profile: "定义理想画像",
-    define_screening_criteria: "定义筛选标准",
+    define_screening_criteria: "最终对齐",
 
     essential: "必要",
     optional_task: "非必要",
