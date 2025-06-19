@@ -29,8 +29,6 @@ import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import "@mdxeditor/editor/style.css";
 
-import type { TextAreaRef } from "antd/es/input/TextArea";
-
 import { Get, Post } from "../../utils/request";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "../../store/global";
@@ -61,7 +59,6 @@ import ChatbotConfigForm, {
 } from "./components/ChatbotConfigForm";
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
-// import useAssembly from "@/hooks/useAssembly";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
@@ -118,7 +115,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     useState<Record<string, number>>();
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecordingZh, setIsRecordingZh] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
   const [taskCollapsed, setTaskCollapsed] = useState(false);
   const [jrdProgress, setJrdProgress] = useState<number>(0);
@@ -149,11 +145,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
-  const recognitionRef = useRef<any>();
-  const originalInputRef = useRef<string>("");
-  const isRecordingRef = useRef(false);
-  isRecordingRef.current = isRecordingZh;
-  const textInstanceRef = useRef<TextAreaRef | null>();
   const editMessageTourElementRef = useRef<
     HTMLButtonElement | HTMLAnchorElement | null
   >();
@@ -167,33 +158,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
-  // const {
-  //   isConnecting,
-  //   isRecording: isRecordingEn,
-  //   startTranscription,
-  //   endTranscription,
-  // } = useAssembly({
-  //   onPartialTextChange: (result) => {
-  //     setInputValue(originalInputRef.current + result);
-  //   },
-  //   onFinish: (result) => {
-  //     originalInputRef.current = originalInputRef.current + result;
-  //     setInputValue(originalInputRef.current);
-  //   },
-  // });
-
-  const {
-    isRecording: isRecordingEn,
-    startTranscription,
-    endTranscription,
-  } = useAssemblyOffline({
-    onFinish: (result) => {
-      // console.log(result);
-      sendMessage(result);
-    },
-  });
-
-  const isRecording = i18n.language === "zh-CN" ? isRecordingZh : isRecordingEn;
+  const { isRecording, startTranscription, endTranscription } =
+    useAssemblyOffline({
+      onFinish: (result) => {
+        // console.log(result);
+        sendMessage(result);
+      },
+    });
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -957,64 +928,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
   };
 
   const startRecord = async () => {
-    if (i18n.language === "en-US") {
-      startTranscription();
-    } else {
-      if (!recognitionRef.current) {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-
-        //@ts-ignore
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = i18n.language;
-
-        recognition.onresult = (event: any) => {
-          if (!isRecordingRef.current) return;
-
-          let result = "";
-          let isFinal = false;
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            result += event.results[i][0].transcript ?? "";
-            if (event.results[i].isFinal) {
-              isFinal = true;
-            }
-          }
-          console.log("result: ", result, " length:", result.length);
-          if (!result) {
-            console.log("events:", event.results);
-          }
-          setInputValue(originalInputRef.current + result);
-          if (isFinal) {
-            originalInputRef.current += result;
-          }
-        };
-        recognition.onend = () => {
-          console.log("end");
-          setIsRecordingZh(false);
-        };
-        recognition.onerror = () => {
-          console.log("error");
-        };
-        recognitionRef.current = recognition;
-      }
-
-      setIsRecordingZh(true);
-      recognitionRef.current?.start();
-    }
-    originalInputRef.current = inputValue;
-    textInstanceRef.current?.focus();
+    startTranscription();
   };
 
   const stopRecord = () => {
-    if (i18n.language === "en-US") {
-      endTranscription();
-    } else {
-      recognitionRef.current?.stop();
-      setIsRecordingZh(false);
-    }
-    originalInputRef.current = "";
+    endTranscription();
   };
 
   const canMessageEdit = (item: TMessage) => {
@@ -1535,13 +1453,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
               </div>
             )}
             <Input.TextArea
-              ref={(element) => (textInstanceRef.current = element)}
               value={inputValue}
               onChange={(e) => {
                 setInputValue(e.target.value);
-                if (isRecording) {
-                  originalInputRef.current = e.target.value;
-                }
               }}
               placeholder={
                 allowEditMessage
