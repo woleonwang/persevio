@@ -39,40 +39,15 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
   const { chatType, jobApplyId } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
 
-  const { isRecording, startTranscription, endTranscription } =
-    useAssemblyOffline({
-      onFinish: (result) => {
-        // console.log(result);
-        sendMessage(result);
-      },
-    });
+  const { isRecording } = useAssemblyOffline({
+    onFinish: (result) => {
+      sendMessage(result);
+    },
+  });
 
   useEffect(() => {
     fetchMessages();
   }, []);
-
-  // INSERT_YOUR_CODE
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !isRecording) {
-        startTranscription();
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === "Space" && isRecording) {
-        endTranscription();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [isRecording, startTranscription, endTranscription]);
 
   const fetchMessages = async () => {
     const { code, data } = await Get(

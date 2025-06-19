@@ -161,7 +161,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const { isRecording, startTranscription, endTranscription } =
     useAssemblyOffline({
       onFinish: (result) => {
-        // console.log(result);
+        console.log("handle result:", result);
         sendMessage(result);
       },
     });
@@ -180,28 +180,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setCollapseForDrawer(false);
     };
   }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && !isRecording) {
-        startTranscription();
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Control" && isRecording) {
-        endTranscription();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [isRecording, startTranscription, endTranscription]);
 
   useEffect(() => {
     setChatType(undefined);
@@ -867,8 +845,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const submit = async () => {
     if (!canSubmit()) return;
 
-    stopRecord();
-
     setInputValue("");
 
     await sendMessage(inputValue.trim().replaceAll("\n", "\n\n"));
@@ -893,7 +869,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       after_text?: string;
     }
   ) => {
-    if (!chatType || isLoading) return;
+    if (!chatType || isLoading) {
+      console.log("stop:", chatType, isLoading);
+      return;
+    }
 
     const formattedMessage = rawMessage.trim();
     needScrollToBottom.current = true;
@@ -925,14 +904,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setMessages(messages);
       message.error("Your quota has been exhausted.");
     }
-  };
-
-  const startRecord = async () => {
-    startTranscription();
-  };
-
-  const stopRecord = () => {
-    endTranscription();
   };
 
   const canMessageEdit = (item: TMessage) => {
@@ -1523,7 +1494,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   icon={
                     isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
                   }
-                  onClick={isRecording ? stopRecord : startRecord}
+                  onClick={isRecording ? endTranscription : startTranscription}
                 />
               </div>
             </div>

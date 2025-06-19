@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-
-// import { AssemblyAI } from "assemblyai";
 import { Post } from "@/utils/request";
-// const client = new AssemblyAI({
-//   apiKey: "d708a718408d4c718c165013ee1365a4", // 替换成你的 AssemblyAI API Key
-// });
+
 const useAssemblyOffline = ({
   onFinish,
 }: {
@@ -25,6 +21,28 @@ const useAssemblyOffline = ({
       mediaRecorderRef.current?.stop();
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && !isRecording) {
+        startTranscription();
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Control" && isRecording) {
+        endTranscription();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [isRecording, onFinish]);
 
   const startTranscription = async () => {
     await initConnection();
