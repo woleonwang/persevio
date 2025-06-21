@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useReducer } from "react";
+
 import {
   Avatar,
   List,
@@ -27,6 +28,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
+import { ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post } from "../../utils/request";
@@ -60,6 +62,7 @@ import ChatbotConfigForm, {
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
+import ReactDOM from "react-dom";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -1640,6 +1643,24 @@ const ChatRoom: React.FC<IProps> = (props) => {
           closable={false}
         />
       </div>
+      {ReactDOM.createPortal(
+        <div
+          style={{
+            position: "fixed",
+            zIndex: 999999,
+            width: "100vw",
+            height: "100vh",
+            left: 0,
+            top: 0,
+            display: isRecording ? "flex" : "none",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ScaleLoader color="#1FAC6A" height={70} width={8} />
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

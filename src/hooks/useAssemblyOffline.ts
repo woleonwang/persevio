@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Post } from "@/utils/request";
+import { message } from "antd";
 
 const useAssemblyOffline = ({
   onFinish,
@@ -91,13 +92,18 @@ const useAssemblyOffline = ({
       // const transcript = await client.transcripts.transcribe({
       //   audio: audioBlob,
       // });
-      const { data } = await Post("/api/candidate/stt/send", {
+      const { code, data } = await Post("/api/candidate/stt/send", {
         payload: base64String,
       });
-      console.log("end:", new Date().toISOString());
-      console.log("finished, result is: ");
-      console.log(data.result);
-      onFinish(data.result ?? "");
+      if (code === 0) {
+        console.log("end:", new Date().toISOString());
+        console.log("finished, result is: ");
+        console.log(data.result);
+        onFinish(data.result ?? "");
+      } else {
+        message.error("Transcription failed, please try again.");
+      }
+
       // 清理 stream tracks
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
