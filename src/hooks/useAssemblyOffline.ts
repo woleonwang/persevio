@@ -107,7 +107,7 @@ const useAssemblyOffline = ({
       console.log("start:", new Date().toISOString());
 
       setIsTranscribing(true);
-      const { code, data } = await Post("/api/candidate/stt/send", {
+      const { code, data } = await Post("/api/stt/send", {
         payload: base64String,
       });
       if (code === 0) {
