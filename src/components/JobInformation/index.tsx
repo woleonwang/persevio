@@ -1,10 +1,11 @@
-import { Collapse, CollapseProps, Spin } from "antd";
+import { Button, Collapse, CollapseProps, message, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Get } from "../../utils/request";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import { copy } from "@/utils";
 
 interface IProps {
   jobId: number;
@@ -74,9 +75,20 @@ const JobDocPanel = (props: {
 
   return (
     <div>
-      <div>
-        {t("updated_at")}
-        {jobUpdatedAt && dayjs(jobUpdatedAt).format("YYYY/MM/DD HH:mm:ss")}
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div>
+          {t("updated_at")}
+          {jobUpdatedAt && dayjs(jobUpdatedAt).format("YYYY/MM/DD HH:mm:ss")}
+        </div>
+        <Button
+          onClick={async () => {
+            await copy(jobDocContent);
+            message.success(originalT("copied"));
+          }}
+          type="primary"
+        >
+          {originalT("copy")}
+        </Button>
       </div>
       <MarkdownContainer content={jobDocContent} />
     </div>

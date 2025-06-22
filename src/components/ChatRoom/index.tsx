@@ -28,7 +28,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import { ScaleLoader } from "react-spinners";
+import { ClipLoader, ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post } from "../../utils/request";
@@ -161,13 +161,18 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
-  const { isRecording, startTranscription, endTranscription } =
-    useAssemblyOffline({
-      onFinish: (result) => {
-        console.log("handle result:", result);
-        sendMessage(result);
-      },
-    });
+  const {
+    isRecording,
+    startTranscription,
+    endTranscription,
+    volume,
+    isTranscribing,
+  } = useAssemblyOffline({
+    onFinish: (result) => {
+      // console.log("handle result:", result);
+      sendMessage(result);
+    },
+  });
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -1652,12 +1657,32 @@ const ChatRoom: React.FC<IProps> = (props) => {
             height: "100vh",
             left: 0,
             top: 0,
-            display: isRecording ? "flex" : "none",
+            display: isRecording || isTranscribing ? "flex" : "none",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <ScaleLoader color="#1FAC6A" height={70} width={8} />
+          <div
+            style={{
+              backgroundColor: "rgba(0,0,0,0.1)",
+              width: 80,
+              height: 80,
+              borderRadius: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {isRecording ? (
+              <ScaleLoader
+                color="#1FAC6A"
+                height={60 * Math.min(1, volume * 3) + 5}
+                width={8}
+              />
+            ) : (
+              <ClipLoader color="#1FAC6A" size={32} />
+            )}
+          </div>
         </div>,
         document.body
       )}

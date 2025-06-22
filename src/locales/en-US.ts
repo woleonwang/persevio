@@ -654,4 +654,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   reject: "Reject",
   accepted: "Accepted",
   rejected: "Rejected",
+
+  copy: "Copy",
+  copied: "Copied",
 };

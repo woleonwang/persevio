@@ -8,6 +8,9 @@ const useAssemblyOffline = ({
   onFinish: (text: string) => void;
 }) => {
   const [isRecording, setIsRecording] = useState(false);
+  const [volume, setVolume] = useState(0);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
   // 录音实例
@@ -16,6 +19,14 @@ const useAssemblyOffline = ({
   const audioChunksRef = useRef<Blob[]>([]);
   // stream 实例
   const streamRef = useRef<MediaStream>();
+
+  const volumeMonitorRef = useRef<
+    Partial<{
+      audioContext: AudioContext;
+      analyser: AnalyserNode;
+      animationFrameId: number;
+    }>
+  >({});
 
   useEffect(() => {
     return () => {
@@ -54,6 +65,11 @@ const useAssemblyOffline = ({
 
   const endTranscription = async () => {
     mediaRecorderRef.current?.stop();
+    if (volumeMonitorRef.current.animationFrameId) {
+      cancelAnimationFrame(volumeMonitorRef.current.animationFrameId);
+    }
+    volumeMonitorRef.current.audioContext?.close();
+    volumeMonitorRef.current.analyser?.disconnect();
     setIsRecording(false);
   };
 
@@ -89,9 +105,8 @@ const useAssemblyOffline = ({
 
       console.log("data length: ", base64String.length);
       console.log("start:", new Date().toISOString());
-      // const transcript = await client.transcripts.transcribe({
-      //   audio: audioBlob,
-      // });
+
+      setIsTranscribing(true);
       const { code, data } = await Post("/api/candidate/stt/send", {
         payload: base64String,
       });
@@ -104,17 +119,54 @@ const useAssemblyOffline = ({
         message.error("Transcription failed, please try again.");
       }
 
+      setIsTranscribing(false);
+
       // 清理 stream tracks
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
+
+    const audioContext = new AudioContext();
+    volumeMonitorRef.current.audioContext = audioContext;
+    const source = audioContext.createMediaStreamSource(streamRef.current);
+    const analyser = audioContext.createAnalyser();
+    volumeMonitorRef.current.analyser = analyser;
+    analyser.fftSize = 256;
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    source.connect(analyser);
+
+    const processAudio = () => {
+      // 获取时域数据
+      analyser.getByteTimeDomainData(dataArray);
+
+      // 计算 RMS (Root Mean Square) 来表示音量
+      let sumSquares = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const amplitude = (dataArray[i] - 128) / 128.0; // 将 0-255 范围映射到 -1 到 1
+        sumSquares += amplitude * amplitude;
+      }
+      const rms = Math.sqrt(sumSquares / dataArray.length);
+
+      // RMS 值通常在 0 到 1 之间，0 表示没有声音，1 表示最大音量
+
+      // 更新 ScaleLoading 的高度
+      setVolume(rms);
+
+      // 持续监听音频数据
+      volumeMonitorRef.current.animationFrameId =
+        requestAnimationFrame(processAudio);
+    };
+
+    processAudio();
   };
 
   return {
     startTranscription,
     endTranscription,
     isRecording,
+    isTranscribing,
+    volume,
   };
 };
 
