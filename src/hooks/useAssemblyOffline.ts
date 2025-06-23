@@ -4,8 +4,10 @@ import { message } from "antd";
 
 const useAssemblyOffline = ({
   onFinish,
+  disabled,
 }: {
   onFinish: (text: string) => void;
+  disabled?: boolean;
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -54,32 +56,53 @@ const useAssemblyOffline = ({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [isRecording, onFinish]);
+  }, [isRecording, onFinish, disabled]);
 
   const startTranscription = async () => {
+    if (disabled) return;
+
+    setIsRecording(true);
     await initConnection();
     audioChunksRef.current = [];
     mediaRecorderRef.current?.start();
-    setIsRecording(true);
   };
 
   const endTranscription = async () => {
     mediaRecorderRef.current?.stop();
+    clear();
+    setIsRecording(false);
+  };
+
+  const clear = () => {
+    // 清理 stream tracks
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+    }
+
     if (volumeMonitorRef.current.animationFrameId) {
       cancelAnimationFrame(volumeMonitorRef.current.animationFrameId);
     }
     volumeMonitorRef.current.audioContext?.close();
     volumeMonitorRef.current.analyser?.disconnect();
-    setIsRecording(false);
+
+    streamRef.current = undefined;
+    mediaRecorderRef.current = undefined;
+    volumeMonitorRef.current = {};
   };
 
   const initConnection = async () => {
     streamRef.current = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
+
+    if (!isRecordingRef.current) {
+      clear();
+      return;
+    }
+
     mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
       mimeType: "audio/webm;codec=Opus",
-      audioBitsPerSecond: 8000,
+      audioBitsPerSecond: 4000,
     });
     const recorder = mediaRecorderRef.current;
 
@@ -92,38 +115,40 @@ const useAssemblyOffline = ({
     };
 
     recorder.onstop = async () => {
-      // INSERT_YOUR_CODE
-      // 将 audioChunksRef.current（Blob 数组）合并为一个 Blob，然后转为 base64 字符串
-      const mergedBlob = new Blob(audioChunksRef.current);
-      const arrayBuffer = await mergedBlob.arrayBuffer();
-      const uint8Array = new Uint8Array(arrayBuffer);
-      let binary = "";
-      for (let i = 0; i < uint8Array.length; i++) {
-        binary += String.fromCharCode(uint8Array[i]);
-      }
-      const base64String = window.btoa(binary);
-
-      console.log("data length: ", base64String.length);
-      console.log("start:", new Date().toISOString());
-
-      setIsTranscribing(true);
-      const { code, data } = await Post("/api/stt/send", {
-        payload: base64String,
-      });
-      if (code === 0) {
-        console.log("end:", new Date().toISOString());
-        console.log("finished, result is: ");
-        console.log(data.result);
-        onFinish(data.result ?? "");
+      console.log("length:", audioChunksRef.current.length);
+      if (audioChunksRef.current.length === 0) {
+        message.error("No voice recorded.");
       } else {
-        message.error("Transcription failed, please try again.");
-      }
+        // 将 audioChunksRef.current（Blob 数组）合并为一个 Blob，然后转为 base64 字符串
+        const mergedBlob = new Blob(audioChunksRef.current);
+        const arrayBuffer = await mergedBlob.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        let binary = "";
+        for (let i = 0; i < uint8Array.length; i++) {
+          binary += String.fromCharCode(uint8Array[i]);
+        }
+        const base64String = window.btoa(binary);
 
-      setIsTranscribing(false);
+        console.log("data length: ", base64String.length);
+        console.log("start:", new Date().toISOString());
 
-      // 清理 stream tracks
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        if (base64String.length === 0) {
+          message.error("No voice recorded.");
+          return;
+        }
+        setIsTranscribing(true);
+        const { code, data } = await Post("/api/stt/send", {
+          payload: base64String,
+        });
+        if (code === 0) {
+          console.log("end:", new Date().toISOString());
+          console.log("finished, result is: ");
+          console.log(data.result);
+          onFinish(data.result ?? "");
+        } else {
+          message.error("Transcription failed, please try again.");
+        }
+        setIsTranscribing(false);
       }
     };
 

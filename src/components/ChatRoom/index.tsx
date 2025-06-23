@@ -172,6 +172,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
       // console.log("handle result:", result);
       sendMessage(result);
     },
+    disabled: isLoading,
   });
 
   const SurveyLink =
