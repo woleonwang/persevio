@@ -1,6 +1,14 @@
-import { Button, Collapse, CollapseProps, message, Spin } from "antd";
+import {
+  Button,
+  Collapse,
+  CollapseProps,
+  Input,
+  message,
+  Spin,
+  Upload,
+} from "antd";
 import { useEffect, useState } from "react";
-import { Get } from "../../utils/request";
+import { Get, Post, PostFormData } from "../../utils/request";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
@@ -91,6 +99,72 @@ const JobDocPanel = (props: {
         </Button>
       </div>
       <MarkdownContainer content={jobDocContent} />
+    </div>
+  );
+};
+
+const JobEditableField = (props: {
+  jobId: number;
+  fieldContent: string;
+  fieldKey: string;
+}) => {
+  const { jobId, fieldContent, fieldKey } = props;
+  const [value, setValue] = useState(fieldContent);
+
+  const updateField = async (value: string) => {
+    const { code } = await Post(
+      `/api/jobs/${jobId}/update_field_for_interview_design_or_feedback`,
+      {
+        [fieldKey]: value,
+      }
+    );
+    if (code === 0) {
+      message.success("保存成功");
+    } else {
+      message.error("保存失败");
+    }
+  };
+
+  return (
+    <div>
+      <Input.TextArea
+        rows={10}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <Button
+        type="primary"
+        onClick={() => updateField(value)}
+        style={{ marginTop: 16 }}
+      >
+        更新
+      </Button>
+      {fieldKey === "resume_for_interview_design" && (
+        <Upload
+          beforeUpload={() => false}
+          onChange={async (fileInfo) => {
+            const formData = new FormData();
+            formData.append("file", fileInfo.file as any);
+            const { code, data } = await PostFormData(
+              `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+              formData
+            );
+            if (code === 0) {
+              setValue(data.resume);
+              updateField(data.resume);
+            } else {
+              message.error("上传失败");
+            }
+          }}
+          showUploadList={false}
+          accept=".docx,.pdf"
+          multiple={false}
+        >
+          <Button type="primary" style={{ marginLeft: 16 }}>
+            上传简历
+          </Button>
+        </Upload>
+      )}
     </div>
   );
 };
@@ -196,7 +270,53 @@ const JobInformation = (props: IProps) => {
     <div className={styles.container}>
       <Collapse
         key={job?.id}
-        items={items}
+        items={[
+          ...items,
+          {
+            key: "resume",
+            label: "候选人简历",
+            children: job && (
+              <JobEditableField
+                jobId={job.id}
+                fieldContent={job.resume_for_interview_design}
+                fieldKey="resume_for_interview_design"
+              />
+            ),
+          },
+          {
+            key: "feedback",
+            label: "上轮面试评价",
+            children: job && (
+              <JobEditableField
+                jobId={job.id}
+                fieldContent={job.feedback_for_interview_design}
+                fieldKey="feedback_for_interview_design"
+              />
+            ),
+          },
+          {
+            key: "interview_transcript",
+            label: "面试笔录",
+            children: job && (
+              <JobEditableField
+                jobId={job.id}
+                fieldContent={job.interview_transcript_for_interview_feedback}
+                fieldKey="interview_transcript_for_interview_feedback"
+              />
+            ),
+          },
+          {
+            key: "interview_design",
+            label: "面试设计",
+            children: job && (
+              <JobEditableField
+                jobId={job.id}
+                fieldContent={job.interview_design_for_interview_feedback}
+                fieldKey="interview_design_for_interview_feedback"
+              />
+            ),
+          },
+        ]}
         defaultActiveKey={activeDocType ? [activeDocType] : []}
       />
     </div>

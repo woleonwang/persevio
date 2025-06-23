@@ -42,6 +42,11 @@ interface IJob {
     allow_salary: string;
     others: string;
   };
+
+  resume_for_interview_design: string;
+  feedback_for_interview_design: string;
+  interview_transcript_for_interview_feedback: string;
+  interview_design_for_interview_feedback: string;
 }
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";

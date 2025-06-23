@@ -88,6 +88,8 @@ export type TChatType =
   | "jobOutreachMessage"
   | "jobSocialMedia"
   | "jobFaq"
+  | "jobInterviewDesign"
+  | "jobInterviewFeedback"
   | "chatbot"
   | "candidate"
   | "talentEvaluateResult";

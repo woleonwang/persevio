@@ -85,6 +85,8 @@ const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
   JOB_SOCIAL_MEDIA: "jobSocialMedia",
   JOB_FAQ: "jobFaq",
   JOB_TALENT_EVALUATE: "talentEvaluateResult",
+  JOB_INTERVIEW_DESIGN: "jobInterviewDesign",
+  JOB_INTERVIEW_FEEDBACK: "jobInterviewFeedback",
   CANDIDATE_CHAT: "candidate",
 };
 
@@ -312,6 +314,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
     jobFaq: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_FAQ/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_FAQ/send`),
+    },
+    jobInterviewDesign: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_DESIGN/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_DESIGN/send`),
+    },
+    jobInterviewFeedback: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_FEEDBACK/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_FEEDBACK/send`),
     },
     talentEvaluateResult: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
@@ -1067,6 +1077,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: optionalTaskDisabled,
                   isFinished: false,
                   chatType: "talentEvaluateResult",
+                },
+                {
+                  title: "设计面试",
+                  isFinished: false,
+                  chatType: "jobInterviewDesign",
+                },
+                {
+                  title: "面试反馈",
+                  isFinished: false,
+                  chatType: "jobInterviewFeedback",
                 },
               ]
                 .filter(
