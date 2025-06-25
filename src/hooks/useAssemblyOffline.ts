@@ -102,7 +102,7 @@ const useAssemblyOffline = ({
 
     mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
       mimeType: "audio/webm;codec=Opus",
-      audioBitsPerSecond: 4000,
+      audioBitsPerSecond: 8000,
     });
     const recorder = mediaRecorderRef.current;
 
