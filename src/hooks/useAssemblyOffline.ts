@@ -53,7 +53,7 @@ const useAssemblyOffline = ({
       const isRecording = isRecordingRef.current;
       const disabled = disabledRef.current;
 
-      if (disabled) {
+      if (disabled || e.repeat) {
         return;
       }
 
