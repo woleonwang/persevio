@@ -577,7 +577,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           content: t("jrd_next_task"),
           updated_at: dayjs().format(datetimeFormat),
           messageType: "system",
-          extraTags: getNextStepsExtraTags(job, "post-job-done"),
+          extraTags: getNextStepsExtraTags(job),
         });
       }
       setMessages(messages as TMessage[]);
@@ -722,70 +722,23 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const getNextStepsExtraTags = (job: IJob, step: TDoneTag): TExtraTag[] => {
-    if (!job) return [];
+  const getNextStepsExtraTags = (job: IJob): TExtraTag[] => {
+    if (!job || userRole === "coworker") return [];
 
-    if (step === "jrd-done") {
-      return [
-        {
-          name: `to-compensation-details-btn`,
-          content: "",
-        },
-      ];
-    } else if (step === "compensation-details-done") {
-      return [
-        {
-          name: `to-jd-btn`,
-          content: "",
-        },
-      ];
-    } else if (step === "jd-done") {
-      return [
-        {
-          name: `to-post-job-btn`,
-          content: "",
-        },
-      ];
-    } else if (userRole === "coworker") {
-      return [];
-    } else {
-      return [
-        !job.target_companies_doc_id &&
-          !optionalTaskDisabled && {
-            name: `to-target-companies-btn`,
-            content: "",
-          },
-        !job.screening_question_doc_id &&
-          !optionalTaskDisabled && {
-            name: `to-screening-questions-btn`,
-            content: "",
-          },
-        !job.interview_plan_doc_id &&
-          !optionalTaskDisabled && {
-            name: `to-interview-plan-btn`,
-            content: "",
-          },
-        !job.outreach_message_doc_id &&
-          !optionalTaskDisabled && {
-            name: `to-outreach-btn`,
-            content: "",
-          },
-        !job.social_media_doc_id &&
-          !optionalTaskDisabled && {
-            name: "to-social-post-btn",
-            content: "",
-          },
-        !job.faq_doc_id &&
-          !optionalTaskDisabled && {
-            name: "to-faq-btn",
-            content: "",
-          },
-        !optionalTaskDisabled && {
-          name: `to-chatbot-btn`,
-          content: "",
-        },
-      ].filter(Boolean) as TExtraTag[];
-    }
+    return [
+      !job.compensation_details_doc_id && {
+        name: `to-compensation-details-btn`,
+        content: "",
+      },
+      !job.jd_doc_id && {
+        name: `to-jd-btn`,
+        content: "",
+      },
+      !job.interview_plan_doc_id && {
+        name: `to-interview-plan-btn`,
+        content: "",
+      },
+    ].filter(Boolean) as TExtraTag[];
   };
 
   const formatMessages = (
@@ -836,16 +789,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
               resultMessages.push({
                 id: `${item.id.toString()}-${step}-btn`,
                 role: "ai",
-                content: [
-                  "jrd-done",
-                  "jd-done",
-                  "compensation-details-done",
-                ].includes(step)
-                  ? t("required_task_next_text")
-                  : t("jrd_next_task"),
+                content: t("jrd_next_task"),
                 updated_at: item.updated_at,
                 messageType: "system",
-                extraTags: getNextStepsExtraTags(job, step),
+                extraTags: getNextStepsExtraTags(job),
               });
             }
           });
@@ -962,7 +909,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
-  const optionalTaskDisabled = !job?.posted_at;
+  // const optionalTaskDisabled = !job?.posted_at;
 
   const maxIdOfAIMessage = [...messages]
     .reverse()
@@ -1000,94 +947,45 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   disabled: false,
                   isFinished: !!job?.requirement_doc_id,
                   chatType: "jobRequirementDoc",
-                  type: "required",
                 },
                 {
                   title: t("define_compensation_details"),
                   disabled: !job?.requirement_doc_id,
                   isFinished: !!job?.compensation_details_doc_id,
                   chatType: "jobCompensationDetails",
-                  type: "required",
                 },
                 {
                   title: t("draft_job_description_btn"),
-                  disabled: !job?.compensation_details_doc_id,
+                  disabled: !job?.requirement_doc_id,
                   isFinished: !!job?.jd_doc_id,
                   chatType: "jobDescription",
-                  type: "required",
-                },
-                {
-                  title: t("post_job"),
-                  disabled: !job?.jd_doc_id,
-                  isFinished: !!job?.posted_at,
-                  chatType: "jobPost",
-                  type: "required",
-                },
-                {
-                  title: t("define_target_companies"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.target_companies_doc_id,
-                  chatType: "jobTargetCompanies",
-                  type: "optional",
                 },
                 {
                   title: t("define_interview_plan"),
-                  disabled: optionalTaskDisabled,
+                  disabled: !job?.requirement_doc_id,
                   isFinished: !!job?.interview_plan_doc_id,
                   chatType: "jobInterviewPlan",
-                  type: "optional",
-                },
-                {
-                  title: t("define_outreach_message"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.outreach_message_doc_id,
-                  chatType: "jobOutreachMessage",
-                  type: "optional",
-                },
-                {
-                  title: t("define_social_post"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.social_media_doc_id,
-                  chatType: "jobSocialMedia",
-                  type: "optional",
-                },
-                {
-                  title: t("define_faq"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.faq_doc_id,
-                  chatType: "jobFaq",
-                  type: "optional",
-                },
-                {
-                  title: t("create_chatbot"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.jd_doc_id,
-                  chatType: "chatbot",
-                  type: "optional",
-                },
-                {
-                  title: t("define_screening_questions"),
-                  disabled: optionalTaskDisabled,
-                  isFinished: !!job?.screening_question_doc_id,
-                  chatType: "jobScreeningQuestion",
-                  type: "candidate",
                 },
                 {
                   title: t("evaluate_result"),
-                  disabled: optionalTaskDisabled,
+                  disabled: !job?.requirement_doc_id,
                   isFinished: false,
                   chatType: "talentEvaluateResult",
                 },
-                {
-                  title: "设计面试",
-                  isFinished: false,
-                  chatType: "jobInterviewDesign",
-                },
-                {
-                  title: "面试反馈",
-                  isFinished: false,
-                  chatType: "jobInterviewFeedback",
-                },
+                ...(profile?.is_admin
+                  ? [
+                      {
+                        title: "设计面试",
+                        isFinished: false,
+                        chatType: "jobInterviewDesign",
+                      },
+                      {
+                        title: "面试反馈",
+                        isFinished: false,
+                        chatType: "jobInterviewFeedback",
+                      },
+                    ]
+                  : []),
               ]
                 .filter(
                   (task) =>
@@ -1104,73 +1002,61 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     ] ?? 0)
                 )
                 .map((task) => {
-                  const { color, text } =
-                    {
-                      required: {
-                        color: "red",
-                        text: t("essential"),
-                      },
-                      optional: {
-                        color: "green",
+                  // const { color, text } =
+                  //   {
+                  //     required: {
+                  //       color: "red",
+                  //       text: t("essential"),
+                  //     },
+                  //     optional: {
+                  //       color: "green",
 
-                        text: t("optional_task"),
-                      },
-                      candidate: {
-                        color: "blue",
-                        text: t("candidate"),
-                      },
-                    }[task.type ?? ""] ?? {};
+                  //       text: t("optional_task"),
+                  //     },
+                  //     candidate: {
+                  //       color: "blue",
+                  //       text: t("candidate"),
+                  //     },
+                  //   }[task.type ?? ""] ?? {};
 
                   return (
-                    <Badge.Ribbon
-                      text={text}
-                      placement="start"
-                      style={{
-                        left: 0,
-                        top: 0,
-                        display: text ? "block" : "none",
+                    <div
+                      className={classnames(styles.taskBlock, {
+                        [styles.finished]: task.isFinished,
+                        [styles.active]: chatType === task.chatType,
+                        [styles.disabled]: task.disabled,
+                      })}
+                      onClick={() => {
+                        if (task.disabled || !task.chatType) return;
+                        setChatType(task.chatType as TChatType);
                       }}
-                      color={color}
-                      key={task.chatType}
+                      key={task.title}
                     >
-                      <div
-                        className={classnames(styles.taskBlock, {
-                          [styles.finished]: task.isFinished,
-                          [styles.active]: chatType === task.chatType,
-                          [styles.disabled]: task.disabled,
-                        })}
-                        onClick={() => {
-                          if (task.disabled || !task.chatType) return;
-                          setChatType(task.chatType as TChatType);
-                        }}
-                        key={task.title}
+                      <Badge
+                        count={
+                          unreadMessageCount?.[
+                            CHATTYPE_MAP[task.chatType as TChatType]
+                          ] ?? 0
+                        }
+                        size="small"
                       >
-                        <Badge
-                          count={
-                            unreadMessageCount?.[
-                              CHATTYPE_MAP[task.chatType as TChatType]
-                            ] ?? 0
-                          }
-                          size="small"
+                        <div
+                          style={{
+                            paddingRight: 10,
+                            color: task.disabled ? "#a1a1a1" : "",
+                          }}
                         >
-                          <div
-                            style={{
-                              paddingRight: 10,
-                              color: task.disabled ? "#a1a1a1" : "",
-                            }}
-                          >
-                            {task.title}
-                          </div>
-                        </Badge>
-                        <div>
-                          {task.isFinished ? (
-                            <CheckOutlined />
-                          ) : (
-                            <ArrowRightOutlined />
-                          )}
+                          {task.title}
                         </div>
+                      </Badge>
+                      <div>
+                        {task.isFinished ? (
+                          <CheckOutlined />
+                        ) : (
+                          <ArrowRightOutlined />
+                        )}
                       </div>
-                    </Badge.Ribbon>
+                    </div>
                   );
                 })}
           </div>

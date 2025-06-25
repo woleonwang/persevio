@@ -172,6 +172,7 @@ const JobInformation = (props: IProps) => {
   const { jobId, activeDocType, role = "staff" } = props;
 
   const [job, setJob] = useState<IJob>();
+  const [profile, setProfile] = useState<ISettings>();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => {
@@ -179,10 +180,21 @@ const JobInformation = (props: IProps) => {
   };
 
   useEffect(() => {
+    initProfile();
+  }, []);
+
+  useEffect(() => {
     if (jobId) {
       fetchJob();
     }
   }, [jobId]);
+
+  const initProfile = async () => {
+    const { code, data } = await Get("/api/settings");
+    if (code === 0) {
+      setProfile(data);
+    }
+  };
 
   const fetchJob = async () => {
     const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`, role));
@@ -219,36 +231,36 @@ const JobInformation = (props: IProps) => {
       label: t("jd"),
       disabled: docUnfinised("jd"),
     },
-    {
-      value: "target_companies",
-      label: t("target_companies"),
-      disabled: docUnfinised("target_companies"),
-    },
-    {
-      value: "screening_question",
-      label: t("screening_question"),
-      disabled: docUnfinised("screening_question"),
-    },
+    // {
+    //   value: "target_companies",
+    //   label: t("target_companies"),
+    //   disabled: docUnfinised("target_companies"),
+    // },
+    // {
+    //   value: "screening_question",
+    //   label: t("screening_question"),
+    //   disabled: docUnfinised("screening_question"),
+    // },
     {
       value: "interview_plan",
       label: t("interview_plan"),
       disabled: docUnfinised("interview_plan"),
     },
-    {
-      value: "outreach_message",
-      label: t("outreach_message"),
-      disabled: docUnfinised("outreach_message"),
-    },
-    {
-      value: "social_media",
-      label: t("social_media"),
-      disabled: docUnfinised("social_media"),
-    },
-    {
-      value: "faq",
-      label: t("faq"),
-      disabled: docUnfinised("faq"),
-    },
+    // {
+    //   value: "outreach_message",
+    //   label: t("outreach_message"),
+    //   disabled: docUnfinised("outreach_message"),
+    // },
+    // {
+    //   value: "social_media",
+    //   label: t("social_media"),
+    //   disabled: docUnfinised("social_media"),
+    // },
+    // {
+    //   value: "faq",
+    //   label: t("faq"),
+    //   disabled: docUnfinised("faq"),
+    // },
   ];
 
   const items: CollapseProps["items"] = docsOptions.map((option) => {
@@ -272,50 +284,56 @@ const JobInformation = (props: IProps) => {
         key={job?.id}
         items={[
           ...items,
-          {
-            key: "resume",
-            label: "候选人简历",
-            children: job && (
-              <JobEditableField
-                jobId={job.id}
-                fieldContent={job.resume_for_interview_design}
-                fieldKey="resume_for_interview_design"
-              />
-            ),
-          },
-          {
-            key: "feedback",
-            label: "上轮面试评价",
-            children: job && (
-              <JobEditableField
-                jobId={job.id}
-                fieldContent={job.feedback_for_interview_design}
-                fieldKey="feedback_for_interview_design"
-              />
-            ),
-          },
-          {
-            key: "interview_transcript",
-            label: "面试笔录",
-            children: job && (
-              <JobEditableField
-                jobId={job.id}
-                fieldContent={job.interview_transcript_for_interview_feedback}
-                fieldKey="interview_transcript_for_interview_feedback"
-              />
-            ),
-          },
-          {
-            key: "interview_design",
-            label: "面试设计",
-            children: job && (
-              <JobEditableField
-                jobId={job.id}
-                fieldContent={job.interview_design_for_interview_feedback}
-                fieldKey="interview_design_for_interview_feedback"
-              />
-            ),
-          },
+          ...(profile?.is_admin
+            ? [
+                {
+                  key: "resume",
+                  label: "候选人简历",
+                  children: job && (
+                    <JobEditableField
+                      jobId={job.id}
+                      fieldContent={job.resume_for_interview_design}
+                      fieldKey="resume_for_interview_design"
+                    />
+                  ),
+                },
+                {
+                  key: "feedback",
+                  label: "上轮面试评价",
+                  children: job && (
+                    <JobEditableField
+                      jobId={job.id}
+                      fieldContent={job.feedback_for_interview_design}
+                      fieldKey="feedback_for_interview_design"
+                    />
+                  ),
+                },
+                {
+                  key: "interview_transcript",
+                  label: "面试笔录",
+                  children: job && (
+                    <JobEditableField
+                      jobId={job.id}
+                      fieldContent={
+                        job.interview_transcript_for_interview_feedback
+                      }
+                      fieldKey="interview_transcript_for_interview_feedback"
+                    />
+                  ),
+                },
+                {
+                  key: "interview_design",
+                  label: "面试设计",
+                  children: job && (
+                    <JobEditableField
+                      jobId={job.id}
+                      fieldContent={job.interview_design_for_interview_feedback}
+                      fieldKey="interview_design_for_interview_feedback"
+                    />
+                  ),
+                },
+              ]
+            : []),
         ]}
         defaultActiveKey={activeDocType ? [activeDocType] : []}
       />
