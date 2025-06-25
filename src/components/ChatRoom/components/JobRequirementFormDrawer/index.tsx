@@ -166,6 +166,26 @@ const JobRequirementFormDrawer = (props: IProps) => {
       title: t("basic_information"),
       questions: [
         {
+          key: "resson",
+          type: "select",
+          question: t("reason"),
+          options: [
+            {
+              value: "intership",
+              label: t("role_intership"),
+            },
+            {
+              value: "perm",
+              label: t("perm"),
+            },
+            {
+              value: "contract",
+              label: t("contract"),
+            },
+          ],
+          required: true,
+        },
+        {
           key: "role",
           type: "select",
           question: t("role"),

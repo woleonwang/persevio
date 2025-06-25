@@ -17,8 +17,6 @@ import {
 } from "antd";
 import {
   ArrowRightOutlined,
-  AudioMutedOutlined,
-  AudioOutlined,
   CheckOutlined,
   CopyOutlined,
   DeleteOutlined,
@@ -163,13 +161,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const { collapseForDrawer, setCollapseForDrawer } = globalStore;
 
-  const {
-    isRecording,
-    startTranscription,
-    endTranscription,
-    volume,
-    isTranscribing,
-  } = useAssemblyOffline({
+  const { isRecording, volume, isTranscribing } = useAssemblyOffline({
     onFinish: (result) => {
       // console.log("handle result:", result);
       sendMessage(result);
@@ -1401,16 +1393,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 <Button type="primary" onClick={submit} disabled={!canSubmit()}>
                   {originalT("submit")}
                 </Button>
-
-                <Button
-                  type="primary"
-                  danger={isRecording}
-                  shape="circle"
-                  icon={
-                    isRecording ? <AudioMutedOutlined /> : <AudioOutlined />
-                  }
-                  onClick={isRecording ? endTranscription : startTranscription}
-                />
               </div>
             </div>
           </div>

@@ -15,6 +15,10 @@ const useAssemblyOffline = ({
 
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
+
+  const disabledRef = useRef(false);
+  disabledRef.current = (disabled ?? false) || isTranscribing;
+
   // 录音实例
   const mediaRecorderRef = useRef<MediaRecorder>();
   // 存放录音数据
@@ -30,6 +34,13 @@ const useAssemblyOffline = ({
     }>
   >({});
 
+  const recordingStateRef = useRef({
+    timeoutId: 0,
+    isHotKeyPressed: false,
+    stoppedByComboKey: false,
+    isPersistRecording: false,
+  });
+
   useEffect(() => {
     return () => {
       mediaRecorderRef.current?.stop();
@@ -38,29 +49,73 @@ const useAssemblyOffline = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && !isRecording) {
-        startTranscription();
+      const state = recordingStateRef.current;
+      const isRecording = isRecordingRef.current;
+      const disabled = disabledRef.current;
+
+      if (disabled) {
+        return;
+      }
+
+      if (e.key.toLowerCase() !== "control") {
+        // 其它按键，结束录音
+        if (state.timeoutId > 0) {
+          clearTimeout(state.timeoutId);
+          state.timeoutId = 0;
+        }
+        if (isRecording) {
+          state.stoppedByComboKey = true;
+          endTranscription();
+        }
+        return;
+      }
+
+      state.isHotKeyPressed = true;
+      if (isRecording && state.isPersistRecording) {
+        endTranscription();
+      } else {
+        if (state.timeoutId > 0) {
+          // 等待状态，立即进入录音状态
+          clearTimeout(state.timeoutId);
+          state.timeoutId = 0;
+          state.isPersistRecording = true;
+          startTranscription();
+        } else {
+          state.timeoutId = window.setTimeout(() => {
+            state.timeoutId = 0;
+            if (state.isHotKeyPressed) {
+              state.isPersistRecording = false;
+              startTranscription();
+            }
+          }, 500);
+        }
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Control" && isRecording) {
+      if (e.key.toLowerCase() !== "control") return;
+
+      // 长按 ctrl 松开结束录音（非双击模式）
+      const state = recordingStateRef.current;
+      const isRecording = isRecordingRef.current;
+
+      state.isHotKeyPressed = false;
+
+      if (isRecording && !state.isPersistRecording) {
         endTranscription();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown, true);
+    window.addEventListener("keyup", handleKeyUp, true);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("keydown", handleKeyDown, true);
+      window.removeEventListener("keyup", handleKeyUp, true);
     };
-  }, [isRecording, onFinish, disabled]);
+  }, [disabled, onFinish]);
 
   const startTranscription = async () => {
-    if (disabled) return;
-
     setIsRecording(true);
     await initConnection();
     audioChunksRef.current = [];
@@ -91,9 +146,11 @@ const useAssemblyOffline = ({
   };
 
   const initConnection = async () => {
+    console.log("start stream: ", new Date().toISOString());
     streamRef.current = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
+    console.log("end stream: ", new Date().toISOString());
 
     if (!isRecordingRef.current) {
       clear();
@@ -145,8 +202,6 @@ const useAssemblyOffline = ({
           console.log("finished, result is: ");
           console.log(data.result);
           onFinish(data.result ?? "");
-        } else {
-          message.error("Transcription failed, please try again.");
         }
         setIsTranscribing(false);
       }
