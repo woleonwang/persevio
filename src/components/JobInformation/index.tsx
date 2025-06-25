@@ -4,6 +4,7 @@ import {
   CollapseProps,
   Input,
   message,
+  Modal,
   Spin,
   Upload,
 } from "antd";
@@ -14,6 +15,7 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { copy } from "@/utils";
+import MarkdownEditor from "../MarkdownEditor";
 
 interface IProps {
   jobId: number;
@@ -47,6 +49,8 @@ const JobDocPanel = (props: {
 
   const [jobDocContent, setJobDocContent] = useState("");
   const [jobUpdatedAt, setJobUpdatedAt] = useState("");
+  const [markdownEditModalOpen, setMarkdownEditModalOpen] = useState(false);
+  const [editValue, setEditValue] = useState("");
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => {
@@ -64,6 +68,22 @@ const JobDocPanel = (props: {
     if (code === 0) {
       setJobDocContent(data.content);
       setJobUpdatedAt(data.updated_at);
+    }
+  };
+
+  const updateContent = async () => {
+    const { code } = await Post(
+      formatUrl(`/api/jobs/${jobId}/docs/${docType}`, role),
+      {
+        content: editValue,
+      }
+    );
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      setMarkdownEditModalOpen(false);
+      fetchDoc();
+    } else {
+      message.success(originalT("submit_failed"));
     }
   };
 
@@ -97,8 +117,43 @@ const JobDocPanel = (props: {
         >
           {originalT("copy")}
         </Button>
+        <Button
+          onClick={() => {
+            setEditValue(jobDocContent);
+            setMarkdownEditModalOpen(true);
+          }}
+          type="primary"
+        >
+          {originalT("edit")}
+        </Button>
       </div>
       <MarkdownContainer content={jobDocContent} />
+      <Modal
+        open={!!markdownEditModalOpen}
+        onCancel={() => {
+          setMarkdownEditModalOpen(false);
+        }}
+        width={"80vw"}
+        getContainer={document.body}
+        destroyOnClose
+        centered
+        footer={[
+          <Button key="cancel" onClick={() => setMarkdownEditModalOpen(false)}>
+            {originalT("cancel")}
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => {
+              updateContent();
+            }}
+          >
+            {originalT("submit")}
+          </Button>,
+        ]}
+      >
+        <MarkdownEditor value={editValue} onChange={(md) => setEditValue(md)} />
+      </Modal>
     </div>
   );
 };
