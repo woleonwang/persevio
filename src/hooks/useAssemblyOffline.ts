@@ -172,6 +172,11 @@ const useAssemblyOffline = ({
     };
 
     recorder.onstop = async () => {
+      if (recordingStateRef.current.stoppedByComboKey) {
+        recordingStateRef.current.stoppedByComboKey = false;
+        return;
+      }
+
       console.log("length:", audioChunksRef.current.length);
       if (audioChunksRef.current.length === 0) {
         message.error("No voice recorded.");
