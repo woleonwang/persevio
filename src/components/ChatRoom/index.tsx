@@ -1154,7 +1154,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           }
                         )}
                       >
-                        {!!item.thinking && (
+                        {!!item.thinking && !!profile?.is_admin && (
                           <div
                             style={{
                               backgroundColor: "#f1f1f1",
