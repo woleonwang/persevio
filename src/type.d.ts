@@ -218,3 +218,12 @@ interface IInterviewRequest {
     to: string;
   }[];
 }
+
+interface TInterviewDesigner {
+  id: number;
+  resume: string;
+  last_feedback: string;
+  round: number;
+  created_at: string;
+  updated_at: string;
+}

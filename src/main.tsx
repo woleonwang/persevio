@@ -43,6 +43,10 @@ import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import Interviewer from "./pages/staff/interviewer";
 import WorkExperience from "./pages/candidate/work-experience";
 import VoiceChat from "./pages/candidate/voice-chat";
+import InterviewDesigners from "./pages/interview-designers";
+import InterviewDesignersCreate from "./pages/interview-designers/interview-designers-create";
+import InterviewDesignersEdit from "./pages/interview-designers/interview-designers-edit";
+import InteviewDesignersChat from "./pages/interview-designers/interview-designers-chat";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -89,6 +93,27 @@ createRoot(document.getElementById("root")!).render(
               handle={{ layout: "blank" }}
               key="talent"
             />
+            <Route
+              path="/app/jobs/:jobId/interview-designers"
+              element={<InterviewDesigners />}
+              key="interview_designers"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-designers/new"
+              element={<InterviewDesignersCreate />}
+              key="interview_designers_new"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-designers/:interviewDesignerId/edit"
+              element={<InterviewDesignersEdit />}
+              key="interview_designers_edit"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-designers/:interviewDesignerId/chat"
+              element={<InteviewDesignersChat />}
+              key="interview_designers_chat"
+            />
+
             <Route path="/app/company" element={<CompanyKnowledge />} />
             <Route path="/app/interviewer" element={<Interviewer />} />
             <Route path="/app/settings" element={<Settings />} />

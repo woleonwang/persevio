@@ -105,6 +105,8 @@ export interface IProps {
   disableApply?: boolean;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;
+  jobInterviewDesignerId?: number;
+  hideSidebar?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

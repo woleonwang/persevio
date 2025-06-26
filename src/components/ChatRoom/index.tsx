@@ -110,6 +110,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     disableApply = false,
     onChangeTab,
     onNextTask,
+    jobInterviewDesignerId,
+    hideSidebar = false,
   } = props;
 
   const [chatType, setChatType] = useState<TChatType>();
@@ -196,6 +198,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
     if (userRole === "candidate") {
       setChatType("candidate");
+    } else if (!!jobInterviewDesignerId) {
+      setChatType("jobInterviewDesign");
     } else {
       fetchJob({ init: true });
     }
@@ -308,8 +312,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_FAQ/send`),
     },
     jobInterviewDesign: {
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_DESIGN/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_DESIGN/send`),
+      get: formatUrl(
+        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/messages`
+      ),
+      send: formatUrl(
+        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/send`
+      ),
     },
     jobInterviewFeedback: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_FEEDBACK/messages`),
@@ -913,7 +921,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      {(userRole === "staff" || userRole === "coworker") && (
+      {(userRole === "staff" || userRole === "coworker") && !hideSidebar && (
         <div
           className={styles.left}
           style={{
@@ -1019,8 +1027,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         [styles.disabled]: task.disabled,
                       })}
                       onClick={() => {
-                        if (task.disabled || !task.chatType) return;
-                        setChatType(task.chatType as TChatType);
+                        if (task.chatType === "jobInterviewDesign") {
+                          navigate(`/app/jobs/${jobId}/interview-designers`);
+                        } else {
+                          if (task.disabled || !task.chatType) return;
+                          setChatType(task.chatType as TChatType);
+                        }
                       }}
                       key={task.title}
                     >
