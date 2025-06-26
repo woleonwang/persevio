@@ -1242,6 +1242,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           const canEditing = canMessageEdit(item);
 
                           const canDelete =
+                            chatType !== "jobInterviewDesign" &&
+                            chatType !== "jobInterviewFeedback" &&
                             !!profile?.is_admin &&
                             item.messageType === "normal" &&
                             !["fake_ai_id", "fake_user_id"].includes(item.id);
