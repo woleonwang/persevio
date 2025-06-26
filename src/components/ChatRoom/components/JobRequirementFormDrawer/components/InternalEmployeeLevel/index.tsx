@@ -26,9 +26,9 @@ const InternalEmployeeLevel = (props: IProps) => {
   const selectRef = useRef<number>();
 
   const { t: originalT } = useTranslation();
-  const t = (key: string, params?: Record<string, string>): string => {
-    return originalT(`internal_employee_level.${key}`, params);
-  };
+  // const t = (key: string, params?: Record<string, string>): string => {
+  //   return originalT(`internal_employee_level.${key}`, params);
+  // };
 
   useEffect(() => {
     fetchInternalEmployeeLevels();
