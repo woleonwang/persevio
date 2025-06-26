@@ -47,6 +47,10 @@ import InterviewDesigners from "./pages/interview-designers";
 import InterviewDesignersCreate from "./pages/interview-designers/interview-designers-create";
 import InterviewDesignersEdit from "./pages/interview-designers/interview-designers-edit";
 import InteviewDesignersChat from "./pages/interview-designers/interview-designers-chat";
+import InterviewFeedbacks from "./pages/interview-feedbacks";
+import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-designers-create";
+import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-designers-edit";
+import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-designers-chat";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -112,6 +116,26 @@ createRoot(document.getElementById("root")!).render(
               path="/app/jobs/:jobId/interview-designers/:interviewDesignerId/chat"
               element={<InteviewDesignersChat />}
               key="interview_designers_chat"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-feedbacks"
+              element={<InterviewFeedbacks />}
+              key="interview_feedbacks"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-feedbacks/new"
+              element={<InterviewFeedbacksCreate />}
+              key="interview_feedbacks_new"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-feedbacks/:interviewFeedbackId/edit"
+              element={<InterviewFeedbacksEdit />}
+              key="interview_feedbacks_edit"
+            />
+            <Route
+              path="/app/jobs/:jobId/interview-feedbacks/:interviewFeedbackId/chat"
+              element={<InteviewFeedbacksChat />}
+              key="interview_feedbacks_chat"
             />
 
             <Route path="/app/company" element={<CompanyKnowledge />} />

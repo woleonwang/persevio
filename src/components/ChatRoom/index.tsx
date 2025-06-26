@@ -111,6 +111,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     onChangeTab,
     onNextTask,
     jobInterviewDesignerId,
+    jobInterviewFeedbackId,
     hideSidebar = false,
   } = props;
 
@@ -200,6 +201,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
       setChatType("candidate");
     } else if (!!jobInterviewDesignerId) {
       setChatType("jobInterviewDesign");
+    } else if (!!jobInterviewFeedbackId) {
+      setChatType("jobInterviewFeedback");
     } else {
       fetchJob({ init: true });
     }
@@ -320,8 +323,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
       ),
     },
     jobInterviewFeedback: {
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_FEEDBACK/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_FEEDBACK/send`),
+      get: formatUrl(
+        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/messages`
+      ),
+      send: formatUrl(
+        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/send`
+      ),
     },
     talentEvaluateResult: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_TALENT_EVALUATE/messages`),
@@ -1029,6 +1036,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
                       onClick={() => {
                         if (task.chatType === "jobInterviewDesign") {
                           navigate(`/app/jobs/${jobId}/interview-designers`);
+                        } else if (task.chatType === "jobInterviewFeedback") {
+                          navigate(`/app/jobs/${jobId}/interview-feedbacks`);
                         } else {
                           if (task.disabled || !task.chatType) return;
                           setChatType(task.chatType as TChatType);

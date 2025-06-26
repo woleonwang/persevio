@@ -227,3 +227,13 @@ interface TInterviewDesigner {
   created_at: string;
   updated_at: string;
 }
+
+interface TInterviewFeedback {
+  id: number;
+  name: string;
+  resume: string;
+  interview_transcript: string;
+  interview_design: number;
+  created_at: string;
+  updated_at: string;
+}

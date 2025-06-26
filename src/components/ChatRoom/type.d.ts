@@ -106,6 +106,7 @@ export interface IProps {
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;
   jobInterviewDesignerId?: number;
+  jobInterviewFeedbackId?: number;
   hideSidebar?: boolean;
 }
 

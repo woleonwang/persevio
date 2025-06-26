@@ -7,9 +7,9 @@ import { useNavigate, useParams } from "react-router";
 import { Button } from "antd";
 import dayjs from "dayjs";
 
-const InterviewDesigners = () => {
-  const [interviewDesigners, setInterviewDesigners] = useState<
-    TInterviewDesigner[]
+const InterviewFeedbacks = () => {
+  const [interviewFeedbacks, setInterviewFeedbacks] = useState<
+    TInterviewFeedback[]
   >([]);
 
   const { jobId } = useParams();
@@ -17,23 +17,23 @@ const InterviewDesigners = () => {
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`interview_designers.${key}`);
+  // const t = (key: string) => originalT(`interview_feedbacks.${key}`);
 
   useEffect(() => {
-    fetchInterviewDesigners();
+    fetchInterviewFeedbacks();
   }, []);
 
-  const fetchInterviewDesigners = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/interview_designers`);
+  const fetchInterviewFeedbacks = async () => {
+    const { code, data } = await Get(`/api/jobs/${jobId}/interview_feedbacks`);
     if (code === 0) {
-      setInterviewDesigners(data.interview_designers);
+      setInterviewFeedbacks(data.interview_feedbacks);
     }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>{originalT("Interview Design")}</div>
+        <div>{originalT("Interview Feedbacks")}</div>
         <LeftCircleOutlined
           style={{ color: "#1FAC6A", cursor: "pointer" }}
           onClick={() => navigate(`/app/jobs/${jobId}`)}
@@ -44,22 +44,20 @@ const InterviewDesigners = () => {
           <Button
             type="primary"
             onClick={() =>
-              navigate(`/app/jobs/${jobId}/interview-designers/new`)
+              navigate(`/app/jobs/${jobId}/interview-feedbacks/new`)
             }
           >
             New Chat
           </Button>
         </div>
-        {interviewDesigners.map((interviewDesigner) => {
+        {interviewFeedbacks.map((interviewFeedback) => {
           return (
-            <div key={interviewDesigner.id} className={styles.jobApplyCard}>
+            <div key={interviewFeedback.id} className={styles.jobApplyCard}>
               <div>
-                <div className={styles.jobName}>
-                  Round {interviewDesigner.round}
-                </div>
+                <div className={styles.jobName}>{interviewFeedback.name}</div>
                 <div style={{ fontSize: "14px", color: "#999", marginTop: 8 }}>
                   Created At:{" "}
-                  {dayjs(interviewDesigner.updated_at).format(
+                  {dayjs(interviewFeedback.updated_at).format(
                     "YYYY-MM-DD HH:mm:ss"
                   )}
                 </div>
@@ -68,7 +66,7 @@ const InterviewDesigners = () => {
                     type="primary"
                     onClick={() =>
                       navigate(
-                        `/app/jobs/${jobId}/interview-designers/${interviewDesigner.id}/chat`
+                        `/app/jobs/${jobId}/interview-feedbacks/${interviewFeedback.id}/chat`
                       )
                     }
                   >
@@ -78,7 +76,7 @@ const InterviewDesigners = () => {
                     type="primary"
                     onClick={() =>
                       navigate(
-                        `/app/jobs/${jobId}/interview-designers/${interviewDesigner.id}/edit`
+                        `/app/jobs/${jobId}/interview-feedbacks/${interviewFeedback.id}/edit`
                       )
                     }
                     style={{ marginLeft: 12 }}
@@ -95,4 +93,4 @@ const InterviewDesigners = () => {
   );
 };
 
-export default InterviewDesigners;
+export default InterviewFeedbacks;
