@@ -1,5 +1,5 @@
-import { Button, Form, Input, message } from "antd";
-import { Get, Post } from "../../../utils/request";
+import { Button, Form, Input, message, Upload } from "antd";
+import { Get, Post, PostFormData } from "../../../utils/request";
 import { useNavigate, useParams } from "react-router";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
@@ -73,6 +73,30 @@ const InterviewFeedbacksEdit = () => {
           >
             <Input.TextArea rows={10} />
           </Form.Item>
+          <Upload
+            beforeUpload={() => false}
+            onChange={async (fileInfo) => {
+              const formData = new FormData();
+              formData.append("file", fileInfo.file as any);
+              const { code, data } = await PostFormData(
+                `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                formData
+              );
+              if (code === 0) {
+                message.success("Upload succeed");
+                form.setFieldValue("resume", data.resume);
+              } else {
+                message.error("Upload failed");
+              }
+            }}
+            showUploadList={false}
+            accept=".docx,.pdf"
+            multiple={false}
+          >
+            <Button type="primary" style={{ marginBottom: 16 }}>
+              Upload Resume
+            </Button>
+          </Upload>
           <Form.Item label={t("Interview Plan")} name="interview_design">
             <Input.TextArea rows={10} />
           </Form.Item>
