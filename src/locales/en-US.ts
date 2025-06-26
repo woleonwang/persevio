@@ -307,21 +307,17 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
-    time: "Work hours requirement",
-    full_time: "Full time (At least 40 hours/week）",
-    part_time: "Part-time",
-    working_hours: "Required minimum  working hours per week",
-    role: "What is the nature of this role?",
-    role_intership: "Intership",
+    reason: "Reason for creating this role",
+    back_fill: "Back-fill",
+    new_role: "New role",
+    employment_type: "Employment type",
     perm: "Perm",
-    role_type: "This role is a?",
-    individual_contributor_role: "Individual Contributor Role",
-    manager_role: "Manager Role",
     contract: "Contractor",
-    contract_type: "What is the expected contract type of this role? ",
-    long_term: "Long-term",
-    fixed_term: "Fixed-term",
     duration: "Contract duration (in months)",
+    time: "Workload requirement",
+    full_time: "Full time (40+ hours a week）",
+    part_time: "Part-time",
+    working_hours: "Hours required per week",
     remote_type:
       "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
     on_site: "Fully onsite",
@@ -338,14 +334,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     executive: "Senior Executive/Leadership Team",
     work_experience:
       "What is the ideal total years of work experience for this role? ",
-    internal_employee: "Is there an internal employee level for this role?",
-    head_count: "How many headcount? ",
-    when_start: "When do you need this role to start?",
-    soon: "As soon as possible",
-    one_month: "Within 1 month",
-    two_month: "Within 2 month",
-    three_month: "Within 3 month",
-    not_hurry: "We are not in a hurry",
+    internal_employee:
+      "The <b>Internal Employee Level</b> or grade, if applicable",
+    head_count: "How many headcount to hire?",
 
     reference: "Reference materials",
     materials:
@@ -365,8 +356,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     menbers_detail:
       "Brief intro about the team members. Their responsibilities, experience levels, where they are from, etc.",
     team_language: "What is the working language of the team",
-    manager_detail:
-      "What is the job title of the direct manager of this position?",
+    manager_detail: "Who will this role <b>report to</b>?",
 
     other_requirements: "Other Requirements",
     visa: "Visa Requirements",
@@ -597,6 +587,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   city_and_address_select: {
     city: "City",
     address: "Address",
+  },
+
+  manager_detail: {
+    job_title: "Job title",
+    name: "Name",
   },
 
   job_requirement: {

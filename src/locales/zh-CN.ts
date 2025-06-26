@@ -296,21 +296,17 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   job_requirement_form: {
     tips: "<b style='color: black'>下面的这些问题不是必填</b>。但是您提供给我的信息越多，我就能更好地了解这个职位。",
     basic_information: "基本信息",
+    reason: "职位创建原因",
+    back_fill: "填补空缺",
+    new_role: "新职位",
+    employment_type: "聘用形式",
+    perm: "长期正式员工",
+    contract: "短期合同用工",
+    duration: "合同时长（月）",
     time: "工作时间要求",
     full_time: "全职（每周至少大于40小时）",
     part_time: "兼职",
     working_hours: "每周要求工作时间",
-    role: "职位类型",
-    role_intership: "实习生",
-    perm: "长期正式员工",
-    role_type: "这是个什么类型的职位?",
-    individual_contributor_role: "个人贡献者（IC）",
-    manager_role: "管理者",
-    contract: "短期合同用工",
-    contract_type: "预计合作时间",
-    long_term: "长期",
-    fixed_term: "固定期限",
-    duration: "合同时长（月）",
     remote_type:
       "这个职位是<b>完全在办公室工作</b>，还是<b>完全在家工作</b>，还是<b>混合型</b>？",
     on_site: "完全在办公室工作",
@@ -328,12 +324,6 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     work_experience: "理想情况下，这个职位需要有多少年的工作经验？",
     internal_employee: "这个职位有内部职级吗？",
     head_count: "计划总共招聘多少人员（headcount）？",
-    when_start: "什么时候需要开始工作？",
-    soon: "越快越好",
-    one_month: "1个月内",
-    two_month: "2个月内",
-    three_month: "3个月内",
-    not_hurry: "不着急",
 
     reference: "参考资料",
     materials:
@@ -352,7 +342,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     members_count: "不算这个新招的职位，现在这个团队有多少人？",
     menbers_detail: "简单介绍下团队成员，他们各自的职责，资历，等。",
     team_language: "团队的工作语言。",
-    manager_detail: "这个职位的直属领导的职位名称是什么？",
+    manager_detail: "这个职位的汇报给谁？",
 
     other_requirements: "其它要求",
     visa: "签证要求",
@@ -579,6 +569,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   city_and_address_select: {
     city: "城市",
     address: "地址",
+  },
+
+  manager_detail: {
+    job_title: "职位名称",
+    name: "姓名",
   },
 
   job_requirement: {

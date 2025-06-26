@@ -26,6 +26,12 @@ import CityAndAddressSelect, {
   TValue,
 } from "./components/CityAndAddressSelect";
 import TextAreaWithUploader from "./components/TextareaWithUploader";
+import ManagerDetail, {
+  TManangerDetailValue,
+} from "./components/ManagerDetail";
+import InternalEmployeeLevel, {
+  TInternalEmployeeLevelValue,
+} from "./components/InternalEmployeeLevel";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -52,7 +58,9 @@ type TQuestion = {
     | "date"
     | "team"
     | "base_salary"
-    | "city_and_address";
+    | "city_and_address"
+    | "manager_detail"
+    | "internal_employee_level";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -139,19 +147,16 @@ const JobRequirementFormDrawer = (props: IProps) => {
       key: "objectives",
       question: t("team_intro"),
       type: "textarea",
-      required: true,
     },
     {
       key: "members_count",
       question: t("members_count"),
       type: "number",
-      required: true,
     },
     {
       key: "team_language",
       question: t("team_language"),
       type: "text",
-      required: true,
     },
     {
       key: "members_detail",
@@ -166,14 +171,25 @@ const JobRequirementFormDrawer = (props: IProps) => {
       title: t("basic_information"),
       questions: [
         {
-          key: "resson",
+          key: "reason",
           type: "select",
           question: t("reason"),
           options: [
             {
-              value: "intership",
-              label: t("role_intership"),
+              value: "back_fill",
+              label: t("back_fill"),
             },
+            {
+              value: "new_role",
+              label: t("new_role"),
+            },
+          ],
+        },
+        {
+          key: "employment_type",
+          type: "multiple_select",
+          question: t("employment_type"),
+          options: [
             {
               value: "perm",
               label: t("perm"),
@@ -183,59 +199,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               label: t("contract"),
             },
           ],
-          required: true,
-        },
-        {
-          key: "role",
-          type: "select",
-          question: t("role"),
-          options: [
-            {
-              value: "intership",
-              label: t("role_intership"),
-            },
-            {
-              value: "perm",
-              label: t("perm"),
-            },
-            {
-              value: "contract",
-              label: t("contract"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "role_type",
-          type: "select",
-          question: t("role_type"),
-          options: [
-            {
-              value: "individual_contributor",
-              label: t("individual_contributor_role"),
-            },
-            {
-              value: "manager",
-              label: t("manager_role"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "contract_type",
-          type: "select",
-          question: t("contract_type"),
-          options: [
-            {
-              value: "long_term",
-              label: t("long_term"),
-            },
-            {
-              value: "fixed_term",
-              label: t("fixed_term"),
-            },
-          ],
-          required: true,
         },
         {
           key: "contract_duration",
@@ -243,11 +206,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
           question: t("duration"),
           dependencies: [
             {
-              questionKey: "contract_type",
-              valueKey: "fixed_term",
+              questionKey: "employment_type",
+              valueKey: "contract",
             },
           ],
-          required: true,
         },
         {
           key: "time",
@@ -263,7 +225,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               label: t("part_time"),
             },
           ],
-          required: true,
         },
         {
           key: "working_hours",
@@ -275,7 +236,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               valueKey: "part-time",
             },
           ],
-          required: true,
         },
         {
           key: "remote",
@@ -287,15 +247,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
               label: t("on_site"),
             },
             {
-              value: "remote",
-              label: t("remote"),
-            },
-            {
               value: "hybrid",
               label: t("hybrid"),
             },
+            {
+              value: "remote",
+              label: t("remote"),
+            },
           ],
-          required: true,
         },
         {
           key: "city",
@@ -307,7 +266,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
               valueKey: ["onsite", "hybrid"],
             },
           ],
-          required: true,
         },
         {
           key: "seniority",
@@ -340,59 +298,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
               label: t("executive"),
             },
           ],
-          required: true,
-        },
-        {
-          key: "work_experience",
-          type: "number",
-          question: t("work_experience"),
-          required: true,
-        },
-        {
-          key: "internal_employee",
-          type: "textarea",
-          question: t("internal_employee"),
-          required: true,
-        },
-        {
-          key: "headcount",
-          type: "number",
-          question: t("head_count"),
-          required: true,
-        },
-        {
-          key: "when_start",
-          type: "select",
-          question: t("when_start"),
-          options: [
-            {
-              value: "soon",
-              label: t("soon"),
-            },
-            {
-              value: "one_month",
-              label: t("one_month"),
-            },
-            {
-              value: "two_month",
-              label: t("two_month"),
-            },
-            {
-              value: "three_month",
-              label: t("three_month"),
-            },
-            {
-              value: "not_hurry",
-              label: t("not_hurry"),
-            },
-          ],
-          required: true,
         },
         {
           key: "team",
           type: "team",
           question: t("team"),
-          required: true,
         },
         {
           group: t("team_details"),
@@ -406,9 +316,18 @@ const JobRequirementFormDrawer = (props: IProps) => {
         },
         {
           key: "manager_detail",
-          type: "textarea",
+          type: "manager_detail",
           question: t("manager_detail"),
-          required: true,
+        },
+        {
+          key: "internal_employee",
+          type: "internal_employee_level",
+          question: t("internal_employee"),
+        },
+        {
+          key: "headcount",
+          type: "number",
+          question: t("head_count"),
         },
       ],
     },
@@ -673,6 +592,18 @@ const JobRequirementFormDrawer = (props: IProps) => {
             formattedValue = `${typedValue.cityName}. ${typedValue.addressName}`;
           }
 
+          if (question.type === "manager_detail") {
+            const typedValue = value as TManangerDetailValue;
+            formattedValue = [typedValue.jobTitle, typedValue.name]
+              .filter(Boolean)
+              .join(", ");
+          }
+
+          if (question.type === "internal_employee_level") {
+            const typedValue = value as TInternalEmployeeLevelValue;
+            formattedValue = `${typedValue.name}`;
+          }
+
           if (question.type === "select") {
             formattedValue =
               (question.options ?? []).find((item) => item.value === value)
@@ -865,27 +796,43 @@ const JobRequirementFormDrawer = (props: IProps) => {
               : question.key
           }
           className={styles.formItem}
-          required={question.required || question.type === "city_and_address"}
-          rules={[
-            ...(question.type === "city_and_address"
-              ? [
-                  {
-                    validator(_: any, value: TValue, callback: any) {
-                      if (!(value.cityName && value.addressName)) {
-                        callback(new Error());
-                      }
-                      callback();
-                    },
-                    message: t("required_error_message"),
-                  },
-                ]
-              : [
-                  {
-                    required: question.required,
-                    message: t("required_error_message"),
-                  },
-                ]),
-          ]}
+          required={question.required}
+          // rules={[
+          //   ...(question.type === "city_and_address"
+          //     ? [
+          //         {
+          //           validator(_: any, value: TValue, callback: any) {
+          //             if (!(value.cityName && value.addressName)) {
+          //               callback(new Error());
+          //             }
+          //             callback();
+          //           },
+          //           message: t("required_error_message"),
+          //         },
+          //       ]
+          //     : question.type === "manager_detail"
+          //     ? [
+          //         {
+          //           validator(
+          //             _: any,
+          //             value: TManangerDetailValue,
+          //             callback: any
+          //           ) {
+          //             if (!(value.name && value.jobTitle)) {
+          //               callback(new Error());
+          //             }
+          //             callback();
+          //           },
+          //           message: t("required_error_message"),
+          //         },
+          //       ]
+          //     : [
+          //         {
+          //           required: question.required,
+          //           message: t("required_error_message"),
+          //         },
+          //       ]),
+          // ]}
         >
           {question.type === "text" && <Input disabled={deleted} />}
           {question.type === "textarea" && (
@@ -910,6 +857,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
           {question.type === "date" && <DatePicker disabled={deleted} />}
           {question.type === "base_salary" && <BaseSalaryInput />}
           {question.type === "city_and_address" && <CityAndAddressSelect />}
+          {question.type === "internal_employee_level" && (
+            <InternalEmployeeLevel />
+          )}
+          {question.type === "manager_detail" && <ManagerDetail />}
           {question.type === "team" && (
             <Select
               options={teams.map((team) => ({

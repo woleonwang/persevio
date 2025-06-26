@@ -49,6 +49,7 @@ const useAssemblyOffline = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log("down");
       const state = recordingStateRef.current;
       const isRecording = isRecordingRef.current;
       const disabled = disabledRef.current;
