@@ -43,7 +43,7 @@ const ManagerDetail = (props: IProps) => {
       />
 
       <Input
-        value={jobTitle}
+        value={name}
         style={{ flex: 1 }}
         onChange={(e) => onNameChange(e.target.value)}
         placeholder={t("name")}
