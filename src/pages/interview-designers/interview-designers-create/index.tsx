@@ -82,7 +82,7 @@ const InterviewDesignersCreate = () => {
               Upload Resume
             </Button>
           </Upload>
-          <Form.Item label={t("Last Round Feedback")} name="lastFeedback">
+          <Form.Item label={t("Last Round Feedback")} name="last_feedback">
             <Input.TextArea rows={10} />
           </Form.Item>
           <div style={{ marginTop: 24 }}>
