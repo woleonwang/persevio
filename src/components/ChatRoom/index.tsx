@@ -793,14 +793,17 @@ const ChatRoom: React.FC<IProps> = (props) => {
             ] as TDoneTag[]
           ).forEach((step) => {
             if (step === tag.name) {
-              resultMessages.push({
-                id: `${item.id.toString()}-${step}-btn`,
-                role: "ai",
-                content: t("jrd_next_task"),
-                updated_at: item.updated_at,
-                messageType: "system",
-                extraTags: getNextStepsExtraTags(job),
-              });
+              const nextExtraTags = getNextStepsExtraTags(job);
+              if (nextExtraTags.length > 0) {
+                resultMessages.push({
+                  id: `${item.id.toString()}-${step}-btn`,
+                  role: "ai",
+                  content: t("jrd_next_task"),
+                  updated_at: item.updated_at,
+                  messageType: "system",
+                  extraTags: nextExtraTags,
+                });
+              }
             }
           });
         });
