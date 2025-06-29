@@ -215,7 +215,7 @@ export default {
     viona_intro_staff: "AI recruiter",
 
     share_basic: "Click here to share basic information",
-    share_reference: "Click here to share references",
+    share_reference: "Upload Document",
     share_team: "Click here to share team context",
     ideal_profile: "Click here to edit ideal profile",
     other_requirements: "Click here to provide other requirements",

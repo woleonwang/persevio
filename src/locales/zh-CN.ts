@@ -208,7 +208,7 @@ export default {
     viona_intro_staff: "AI招聘专员",
 
     share_basic: "点击补充基本信息",
-    share_reference: "点击分享参考资料",
+    share_reference: "上传文档",
     share_team: "点击分享团队信息",
     ideal_profile: "点击编辑理想候选人画像",
     other_requirements: "点击确定其它要求",
