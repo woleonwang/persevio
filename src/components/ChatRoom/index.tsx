@@ -14,6 +14,7 @@ import {
   FloatButton,
   Badge,
   Steps,
+  Upload,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -29,7 +30,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { ClipLoader, ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
-import { Get, Post } from "../../utils/request";
+import { Get, Post, PostFormData } from "../../utils/request";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "../../store/global";
 
@@ -382,8 +383,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
     {
       key: "huoqucailiao",
       title: t("share_reference"),
-      handler: () => openJobRequirementFormDrawer("reference"),
-      autoTrigger: true,
+      handler: () => {},
+      // autoTrigger: true,
     },
     {
       key: "salary-structure-request",
@@ -1220,20 +1221,50 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                     style={{ marginBottom: 16 }}
                                     key={tag.key}
                                   >
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        const extraTag = (
-                                          item.extraTags ?? []
-                                        ).find(
-                                          (extraTag) =>
-                                            extraTag.name === tag.key
-                                        );
-                                        tag.handler(extraTag);
-                                      }}
-                                    >
-                                      {tag.title}
-                                    </Button>
+                                    {tag.key === "huoqucailiao" ? (
+                                      <Upload
+                                        beforeUpload={() => false}
+                                        onChange={async (fileInfo) => {
+                                          const formData = new FormData();
+                                          formData.append(
+                                            "file",
+                                            fileInfo.file as any
+                                          );
+                                          const { code, data } =
+                                            await PostFormData(
+                                              `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                              formData
+                                            );
+                                          if (code === 0) {
+                                            sendMessage(data.resume);
+                                          } else {
+                                            message.error("Upload failed");
+                                          }
+                                        }}
+                                        showUploadList={false}
+                                        accept="text/plain,.docx,.pdf"
+                                        multiple={false}
+                                      >
+                                        <Button type="primary">
+                                          {tag.title}
+                                        </Button>
+                                      </Upload>
+                                    ) : (
+                                      <Button
+                                        type="primary"
+                                        onClick={() => {
+                                          const extraTag = (
+                                            item.extraTags ?? []
+                                          ).find(
+                                            (extraTag) =>
+                                              extraTag.name === tag.key
+                                          );
+                                          tag.handler(extraTag);
+                                        }}
+                                      >
+                                        {tag.title}
+                                      </Button>
+                                    )}
                                   </div>
                                 );
                               })}
