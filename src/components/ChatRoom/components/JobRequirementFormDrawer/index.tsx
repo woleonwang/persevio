@@ -329,6 +329,25 @@ const JobRequirementFormDrawer = (props: IProps) => {
           type: "number",
           question: t("head_count"),
         },
+        {
+          key: "urgency",
+          type: "select",
+          question: t("urgency"),
+          options: [
+            {
+              value: "p0",
+              label: "P0",
+            },
+            {
+              value: "p1",
+              label: "P1",
+            },
+            {
+              value: "p2",
+              label: "P2",
+            },
+          ],
+        },
       ],
     },
 

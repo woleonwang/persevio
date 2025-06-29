@@ -324,6 +324,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     work_experience: "理想情况下，这个职位需要有多少年的工作经验？",
     internal_employee: "这个职位有内部职级吗？",
     head_count: "计划总共招聘多少人员（headcount）？",
+    urgency: "职位紧急度/优先度?",
 
     reference: "参考资料",
     materials:

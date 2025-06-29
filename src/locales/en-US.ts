@@ -337,6 +337,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     internal_employee:
       "The <b>Internal Employee Level</b> or grade, if applicable",
     head_count: "How many headcount to hire?",
+    urgency: "How urgent?/What is its priority(P0/P1/P2)?",
 
     reference: "Reference materials",
     materials:
