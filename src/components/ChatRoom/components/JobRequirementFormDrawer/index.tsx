@@ -114,7 +114,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const [createTeamModelOpen, setCreateTeamModelOpen] = useState(false);
   const [teams, setTeams] = useState<TTeam[]>([]);
 
-  const { t: originalT } = useTranslation();
+  const { t: originalT, i18n } = useTranslation();
 
   useEffect(() => {
     form.resetFields();
@@ -169,186 +169,329 @@ const JobRequirementFormDrawer = (props: IProps) => {
     {
       key: "basic_info",
       title: t("basic_information"),
-      questions: [
-        {
-          key: "reason",
-          type: "select",
-          question: t("reason"),
-          options: [
-            {
-              value: "back_fill",
-              label: t("back_fill"),
-            },
-            {
-              value: "new_role",
-              label: t("new_role"),
-            },
-          ],
-        },
-        {
-          key: "employment_type",
-          type: "multiple_select",
-          question: t("employment_type"),
-          options: [
-            {
-              value: "perm",
-              label: t("perm"),
-            },
-            {
-              value: "contract",
-              label: t("contract"),
-            },
-          ],
-        },
-        {
-          key: "contract_duration",
-          type: "number",
-          question: t("duration"),
-          dependencies: [
-            {
-              questionKey: "employment_type",
-              valueKey: "contract",
-            },
-          ],
-        },
-        {
-          key: "time",
-          type: "select",
-          question: t("time"),
-          options: [
-            {
-              value: "full-time",
-              label: t("full_time"),
-            },
-            {
-              value: "part-time",
-              label: t("part_time"),
-            },
-          ],
-        },
-        {
-          key: "working_hours",
-          type: "number",
-          question: t("working_hours"),
-          dependencies: [
-            {
-              questionKey: "time",
-              valueKey: "part-time",
-            },
-          ],
-        },
-        {
-          key: "remote",
-          type: "select",
-          question: t("remote_type"),
-          options: [
-            {
-              value: "onsite",
-              label: t("on_site"),
-            },
-            {
-              value: "hybrid",
-              label: t("hybrid"),
-            },
-            {
-              value: "remote",
-              label: t("remote"),
-            },
-          ],
-        },
-        {
-          key: "city",
-          type: "city_and_address",
-          question: t("city"),
-          dependencies: [
-            {
-              questionKey: "remote",
-              valueKey: ["onsite", "hybrid"],
-            },
-          ],
-        },
-        {
-          key: "seniority",
-          type: "select",
-          question: t("seniority"),
-          hint: t("seniority_hint"),
-          options: [
-            {
-              value: "intership",
-              label: t("intership"),
-            },
-            {
-              value: "junior",
-              label: t("junior"),
-            },
-            {
-              value: "senior",
-              label: t("senior"),
-            },
-            {
-              value: "manager",
-              label: t("manager"),
-            },
-            {
-              value: "director",
-              label: t("director"),
-            },
-            {
-              value: "executive",
-              label: t("executive"),
-            },
-          ],
-        },
-        {
-          key: "team",
-          type: "team",
-          question: t("team"),
-        },
-        {
-          group: t("team_details"),
-          key: "team_details",
-          dependencies: [{ questionKey: "team", exists: true }],
-          collapse: true,
-          questions: TeamQuestions.map((item) => ({
-            ...item,
-            dependencies: [{ questionKey: "team", exists: true }],
-          })),
-        },
-        {
-          key: "manager_detail",
-          type: "manager_detail",
-          question: t("manager_detail"),
-        },
-        {
-          key: "internal_employee",
-          type: "internal_employee_level",
-          question: t("internal_employee"),
-        },
-        {
-          key: "headcount",
-          type: "number",
-          question: t("head_count"),
-        },
-        {
-          key: "urgency",
-          type: "select",
-          question: t("urgency"),
-          options: [
-            {
-              value: "p0",
-              label: "P0",
-            },
-            {
-              value: "p1",
-              label: "P1",
-            },
-            {
-              value: "p2",
-              label: "P2",
-            },
-          ],
-        },
-      ],
+      questions:
+        i18n.language === "en-US"
+          ? [
+              {
+                key: "reason",
+                type: "select",
+                question: t("reason"),
+                options: [
+                  {
+                    value: "back_fill",
+                    label: t("back_fill"),
+                  },
+                  {
+                    value: "new_role",
+                    label: t("new_role"),
+                  },
+                ],
+              },
+              {
+                key: "employment_type",
+                type: "multiple_select",
+                question: t("employment_type"),
+                options: [
+                  {
+                    value: "perm",
+                    label: t("perm"),
+                  },
+                  {
+                    value: "contract",
+                    label: t("contract"),
+                  },
+                ],
+              },
+              {
+                key: "contract_duration",
+                type: "number",
+                question: t("duration"),
+                dependencies: [
+                  {
+                    questionKey: "employment_type",
+                    valueKey: "contract",
+                  },
+                ],
+              },
+              {
+                key: "time",
+                type: "select",
+                question: t("time"),
+                options: [
+                  {
+                    value: "full-time",
+                    label: t("full_time"),
+                  },
+                  {
+                    value: "part-time",
+                    label: t("part_time"),
+                  },
+                ],
+              },
+              {
+                key: "working_hours",
+                type: "number",
+                question: t("working_hours"),
+                dependencies: [
+                  {
+                    questionKey: "time",
+                    valueKey: "part-time",
+                  },
+                ],
+              },
+              {
+                key: "remote",
+                type: "select",
+                question: t("remote_type"),
+                options: [
+                  {
+                    value: "onsite",
+                    label: t("on_site"),
+                  },
+                  {
+                    value: "hybrid",
+                    label: t("hybrid"),
+                  },
+                  {
+                    value: "remote",
+                    label: t("remote"),
+                  },
+                ],
+              },
+              {
+                key: "city",
+                type: "city_and_address",
+                question: t("city"),
+                dependencies: [
+                  {
+                    questionKey: "remote",
+                    valueKey: ["onsite", "hybrid"],
+                  },
+                ],
+              },
+              {
+                key: "seniority",
+                type: "select",
+                question: t("seniority"),
+                hint: t("seniority_hint"),
+                options: [
+                  {
+                    value: "intership",
+                    label: t("intership"),
+                  },
+                  {
+                    value: "junior",
+                    label: t("junior"),
+                  },
+                  {
+                    value: "senior",
+                    label: t("senior"),
+                  },
+                  {
+                    value: "manager",
+                    label: t("manager"),
+                  },
+                  {
+                    value: "director",
+                    label: t("director"),
+                  },
+                  {
+                    value: "executive",
+                    label: t("executive"),
+                  },
+                ],
+              },
+              {
+                key: "team",
+                type: "team",
+                question: t("team"),
+              },
+              {
+                group: t("team_details"),
+                key: "team_details",
+                dependencies: [{ questionKey: "team", exists: true }],
+                collapse: true,
+                questions: TeamQuestions.map((item) => ({
+                  ...item,
+                  dependencies: [{ questionKey: "team", exists: true }],
+                })),
+              },
+              {
+                key: "manager_detail",
+                type: "manager_detail",
+                question: t("manager_detail"),
+              },
+              {
+                key: "internal_employee",
+                type: "internal_employee_level",
+                question: t("internal_employee"),
+              },
+              {
+                key: "headcount",
+                type: "number",
+                question: t("head_count"),
+              },
+              {
+                key: "urgency",
+                type: "select",
+                question: t("urgency"),
+                options: [
+                  {
+                    value: "p0",
+                    label: "P0",
+                  },
+                  {
+                    value: "p1",
+                    label: "P1",
+                  },
+                  {
+                    value: "p2",
+                    label: "P2",
+                  },
+                ],
+              },
+            ]
+          : [
+              {
+                key: "team",
+                type: "team",
+                question: "所属部门",
+              },
+              {
+                group: t("team_details"),
+                key: "team_details",
+                dependencies: [{ questionKey: "team", exists: true }],
+                collapse: true,
+                questions: TeamQuestions.map((item) => ({
+                  ...item,
+                  dependencies: [{ questionKey: "team", exists: true }],
+                })),
+              },
+              {
+                key: "manager_detail",
+                type: "manager_detail",
+                question: "这个职位汇报给谁?",
+              },
+              {
+                key: "reason",
+                type: "select",
+                question: "职位创建原因",
+                options: [
+                  {
+                    value: "back_fill",
+                    label: t("back_fill"),
+                  },
+                  {
+                    value: "new_role",
+                    label: t("new_role"),
+                  },
+                ],
+              },
+              {
+                key: "belongs_to",
+                type: "select",
+                question: "所属条线",
+                options: [
+                  "游戏研发",
+                  "游戏策划",
+                  "游戏产品",
+                  "游戏美术",
+                  "互联网产研",
+                  "职能",
+                  "基础",
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+              },
+              {
+                key: "internal_employee",
+                type: "internal_employee_level",
+                question: "内部职级",
+              },
+              {
+                key: "headcount",
+                type: "number",
+                question: "需求人数",
+              },
+              {
+                key: "urgency",
+                type: "select",
+                question: "招聘优先级",
+                options: [
+                  {
+                    value: "p0",
+                    label: "P0",
+                  },
+                  {
+                    value: "p1",
+                    label: "P1",
+                  },
+                  {
+                    value: "p2",
+                    label: "P2",
+                  },
+                ],
+              },
+              {
+                key: "remote",
+                type: "select",
+                question: t("remote_type"),
+                options: [
+                  {
+                    value: "onsite",
+                    label: t("on_site"),
+                  },
+                  {
+                    value: "hybrid",
+                    label: t("hybrid"),
+                  },
+                  {
+                    value: "remote",
+                    label: t("remote"),
+                  },
+                ],
+              },
+              {
+                key: "city",
+                type: "city_and_address",
+                question: "办公地址",
+                dependencies: [
+                  {
+                    questionKey: "remote",
+                    valueKey: ["onsite", "hybrid"],
+                  },
+                ],
+              },
+              {
+                key: "employee_type",
+                type: "select",
+                question: "招聘类型",
+                options: [
+                  "实习：仅实习，不提供转正",
+                  "校招：可实习转正（不确定有转正HC)",
+                  "校招：可实习转正（有转正HC，特殊情况可发校招Offer)",
+                  "仅社招",
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+              },
+              {
+                key: "need_writing",
+                type: "select",
+                question: "是否需要笔试？",
+                options: ["是", "否"].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+              },
+              {
+                key: "intern_duration",
+                type: "text",
+                question: "请注明最短实习时长",
+              },
+            ],
     },
 
     {
