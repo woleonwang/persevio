@@ -29,9 +29,6 @@ import TextAreaWithUploader from "./components/TextareaWithUploader";
 import ManagerDetail, {
   TManangerDetailValue,
 } from "./components/ManagerDetail";
-import InternalEmployeeLevel, {
-  TInternalEmployeeLevelValue,
-} from "./components/InternalEmployeeLevel";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -59,8 +56,7 @@ type TQuestion = {
     | "team"
     | "base_salary"
     | "city_and_address"
-    | "manager_detail"
-    | "internal_employee_level";
+    | "manager_detail";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -323,7 +319,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               },
               {
                 key: "internal_employee",
-                type: "internal_employee_level",
+                type: "text",
                 question: t("internal_employee"),
               },
               {
@@ -406,7 +402,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               },
               {
                 key: "internal_employee",
-                type: "internal_employee_level",
+                type: "text",
                 question: "内部职级",
               },
               {
@@ -761,10 +757,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .join(", ");
           }
 
-          if (question.type === "internal_employee_level") {
-            const typedValue = value as TInternalEmployeeLevelValue;
-            formattedValue = `${typedValue.name}`;
-          }
+          // if (question.type === "internal_employee_level") {
+          //   const typedValue = value as TInternalEmployeeLevelValue;
+          //   formattedValue = `${typedValue.name}`;
+          // }
 
           if (question.type === "select") {
             formattedValue =
@@ -1019,9 +1015,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
           {question.type === "date" && <DatePicker disabled={deleted} />}
           {question.type === "base_salary" && <BaseSalaryInput />}
           {question.type === "city_and_address" && <CityAndAddressSelect />}
-          {question.type === "internal_employee_level" && (
+          {/* {question.type === "internal_employee_level" && (
             <InternalEmployeeLevel />
-          )}
+          )} */}
           {question.type === "manager_detail" && <ManagerDetail />}
           {question.type === "team" && (
             <Select
