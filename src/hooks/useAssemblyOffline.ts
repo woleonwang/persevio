@@ -203,7 +203,7 @@ const useAssemblyOffline = ({
         const { code, data } = await Post("/api/stt/send", {
           payload: base64String,
         });
-        if (code === 0) {
+        if (code === 0 && data.result) {
           console.log("end:", new Date().toISOString());
           console.log("finished, result is: ");
           console.log(data.result);

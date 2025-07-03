@@ -170,7 +170,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
       // console.log("handle result:", result);
       sendMessage(result);
     },
-    disabled: isLoading,
+    disabled:
+      isLoading ||
+      showJobRequirementFormDrawer ||
+      idealProfileDrawerOpen ||
+      !!markdownEditMessageId,
   });
 
   const SurveyLink =
@@ -1183,12 +1187,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           </p>
                         ) : (
                           <MarkdownContainer
-                            onClick={() => {
-                              if (canMessageEdit(item)) {
-                                setMarkdownEditMessageId(item.id);
-                                setMarkdownEditMessageContent(item.content);
-                              }
-                            }}
                             content={
                               item.messageSubType === "error"
                                 ? "Something wrong with Viona, please retry."

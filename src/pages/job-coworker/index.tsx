@@ -76,8 +76,15 @@ const JobCoworker = () => {
       });
 
       if (code === 0) {
-        setCoworker(data.coworker);
         localStorage.setItem("coworker_token", data.token);
+
+        const { code: infoCode, data: infoData } = await Get(
+          "/api/coworker/info"
+        );
+        if (infoCode === 0) {
+          setCoworker(infoData.coworker);
+          i18n.changeLanguage(infoData.company.lang);
+        }
       }
     });
   };

@@ -1,5 +1,5 @@
-import { Form, Input, Button, Radio } from "antd";
-import { useEffect, useState } from "react";
+import { Form, Input, Button, Radio, Alert } from "antd";
+import { useEffect, useReducer, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
 import { DeleteOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 
@@ -10,7 +10,7 @@ import { parseJSON } from "../../../../utils";
 type TRequirement = {
   uuid?: string;
   content: string;
-  type?: "minimum" | "big_plus" | "plus";
+  type?: "minimum" | "plus";
   deleted?: boolean;
 };
 
@@ -24,6 +24,7 @@ const IdealProfileForm = (props: IProps) => {
   const [form] = Form.useForm();
   const [requirements, setRequirements] = useState<TRequirement[]>([]);
   const { t: originalT } = useTranslation();
+  const [_, forceUpdate] = useReducer(() => ({}), {});
 
   const t = (key: string) => {
     return originalT(`ideal_profile.${key}`);
@@ -39,7 +40,6 @@ const IdealProfileForm = (props: IProps) => {
         const uuid = uuidV4();
         form.setFieldsValue({
           [`${uuid}_content`]: requirement.content,
-          [`${uuid}_type`]: "plus",
         });
         requirement.uuid = uuid;
       });
@@ -50,8 +50,25 @@ const IdealProfileForm = (props: IProps) => {
     }
   }, []);
 
+  const canSubmit = () => {
+    const values = form.getFieldsValue();
+    return requirements
+      .filter((requirement) => !requirement.deleted)
+      .every((requirement) => {
+        return (
+          !!values[`${requirement.uuid}_content`] &&
+          !!values[`${requirement.uuid}_type`]
+        );
+      });
+  };
+
   return (
-    <Form form={form}>
+    <Form form={form} onFieldsChange={() => forceUpdate()}>
+      <Alert
+        message={"请选择每条标准是理想候选人画像中的基本要求，还是作为加分项。"}
+        type="success"
+        style={{ marginBottom: 20 }}
+      />
       {(requirements ?? []).map((requirement) => {
         return (
           <div key={requirement.uuid} className={styles.skillRow}>
@@ -73,7 +90,6 @@ const IdealProfileForm = (props: IProps) => {
                 size="small"
               >
                 <Radio.Button value="minimum">{t("minimum")}</Radio.Button>
-                <Radio.Button value="big_plus">{t("big_plus")}</Radio.Button>
                 <Radio.Button value="plus">{t("plus")}</Radio.Button>
               </Radio.Group>
             </Form.Item>
@@ -141,6 +157,7 @@ const IdealProfileForm = (props: IProps) => {
               onOk(result);
             });
           }}
+          disabled={!canSubmit()}
         >
           {originalT("submit")}
         </Button>
