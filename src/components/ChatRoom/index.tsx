@@ -62,6 +62,7 @@ import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
+import SelectOptionsForm from "./components/SelectOptionsForm";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -147,6 +148,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
     questions: TScreeningQuestionType[];
   }>();
   const [chatbotOptionsModalOpen, setChatbotOptionsModalOpen] = useState(false);
+
+  const [selectOptionsType, setSelectOptionsType] = useState<
+    "high_level_responsibility" | "day_to_day_tasks" | "icp"
+  >();
+  const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -517,6 +523,30 @@ const ChatRoom: React.FC<IProps> = (props) => {
           await fetchJob();
           triggerFetchMessage();
         }
+      },
+    },
+    {
+      key: "extract-high-level-responsibility",
+      title: "核心职责清单",
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("high_level_responsibility");
+      },
+    },
+    {
+      key: "extract-day-to-day-tasks",
+      title: "每日任务清单",
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("day_to_day_tasks");
+      },
+    },
+    {
+      key: "extract-icp",
+      title: "理想候选人画像",
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("icp");
       },
     },
   ];
@@ -1499,6 +1529,45 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 />
               )}
             </Drawer>
+
+            <Modal
+              open={selectOptionsModalOpen}
+              footer={null}
+              destroyOnClose
+              style={{ top: "5vh" }}
+              width={"80vw"}
+              onCancel={() => setSelectOptionsModalOpen(false)}
+              title={
+                selectOptionsType === "high_level_responsibility"
+                  ? "高级别职责草案"
+                  : selectOptionsType === "day_to_day_tasks"
+                  ? "建议日常任务清单"
+                  : "理想候选人画像(ICP)"
+              }
+            >
+              {job && selectOptionsType && (
+                <div
+                  style={{
+                    height: "80vh",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <SelectOptionsForm
+                    job={job}
+                    type={selectOptionsType}
+                    onOk={(result) => {
+                      sendMessage(result);
+                      setSelectOptionsModalOpen(false);
+                    }}
+                    onClose={() => {
+                      setSelectOptionsModalOpen(false);
+                    }}
+                  />
+                </div>
+              )}
+            </Modal>
 
             <ScreeningQuestionDrawer
               screeningQuestionDrawerOpen={screeningQuestionDrawerOpen}

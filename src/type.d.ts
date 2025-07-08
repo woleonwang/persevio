@@ -38,6 +38,10 @@ interface IJob {
   created_at: string;
   updated_at: string;
   candidate_requirements_json: string;
+  high_level_responsibility_json: string;
+  day_to_day_tasks_json: string;
+  icp_json: string;
+
   chatbot_options: {
     allow_salary: string;
     others: string;
