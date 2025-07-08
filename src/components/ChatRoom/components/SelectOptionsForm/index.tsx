@@ -135,7 +135,7 @@ const SelectOptionsForm = (props: IProps) => {
   }, []);
 
   function hasSkills(obj: any): obj is { skills: string[] } {
-    return obj && Array.isArray(obj.skills);
+    return obj && Array.isArray(obj.skills) && obj.skills.length > 0;
   }
 
   const canSubmit = () => {
