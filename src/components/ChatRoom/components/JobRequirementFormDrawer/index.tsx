@@ -29,6 +29,7 @@ import TextAreaWithUploader from "./components/TextareaWithUploader";
 import ManagerDetail, {
   TManangerDetailValue,
 } from "./components/ManagerDetail";
+import PercentageInput from "./components/PercentageInput";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -56,7 +57,8 @@ type TQuestion = {
     | "team"
     | "base_salary"
     | "city_and_address"
-    | "manager_detail";
+    | "manager_detail"
+    | "percentage";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -351,7 +353,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               {
                 key: "team",
                 type: "team",
-                question: "所属部门",
+                question: "这个职位将加入哪个团队？",
               },
               {
                 group: t("team_details"),
@@ -369,123 +371,50 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 question: "这个职位汇报给谁?",
               },
               {
-                key: "reason",
-                type: "select",
-                question: "职位创建原因",
-                options: [
-                  {
-                    value: "back_fill",
-                    label: t("back_fill"),
-                  },
-                  {
-                    value: "new_role",
-                    label: t("new_role"),
-                  },
-                ],
-              },
-              {
-                key: "belongs_to",
-                type: "select",
-                question: "所属条线",
-                options: [
-                  "游戏研发",
-                  "游戏策划",
-                  "游戏产品",
-                  "游戏美术",
-                  "互联网产研",
-                  "职能",
-                  "基础",
-                ].map((item) => ({
-                  value: item,
-                  label: item,
-                })),
-              },
-              {
-                key: "internal_employee",
-                type: "text",
-                question: "内部职级",
-              },
-              {
-                key: "headcount",
-                type: "number",
-                question: "需求人数",
-              },
-              {
-                key: "urgency",
-                type: "select",
-                question: "招聘优先级",
-                options: [
-                  {
-                    value: "p0",
-                    label: "P0",
-                  },
-                  {
-                    value: "p1",
-                    label: "P1",
-                  },
-                  {
-                    value: "p2",
-                    label: "P2",
-                  },
-                ],
-              },
-              {
-                key: "remote",
-                type: "select",
-                question: t("remote_type"),
-                options: [
-                  {
-                    value: "onsite",
-                    label: t("on_site"),
-                  },
-                  {
-                    value: "hybrid",
-                    label: t("hybrid"),
-                  },
-                  {
-                    value: "remote",
-                    label: t("remote"),
-                  },
-                ],
-              },
-              {
-                key: "city",
-                type: "city_and_address",
-                question: "办公地址",
-                dependencies: [
-                  {
-                    questionKey: "remote",
-                    valueKey: ["onsite", "hybrid"],
-                  },
-                ],
-              },
-              {
                 key: "employee_type",
                 type: "select",
-                question: "招聘类型",
+                question: "这个职位的级别是什么？",
                 options: [
-                  "实习：仅实习，不提供转正",
-                  "校招：可实习转正（不确定有转正HC)",
-                  "校招：可实习转正（有转正HC，特殊情况可发校招Offer)",
-                  "仅社招",
+                  "实习生",
+                  "应届毕业生/无经验",
+                  "初级/少量经验",
+                  "中级/有一定经验",
+                  "高级/经验非常丰富,",
                 ].map((item) => ({
                   value: item,
                   label: item,
                 })),
               },
               {
-                key: "need_writing",
-                type: "select",
-                question: "是否需要笔试？",
-                options: ["是", "否"].map((item) => ({
+                key: "percentage",
+                type: "percentage",
+                question:
+                  "这个职位的贡献类型是什么？（请为以下各项提供百分比，总和需为 100%）",
+                options: [
+                  "动手执行具体任务",
+                  "项目/计划/关键举措负责人",
+                  "团队管理",
+                  "高层战略",
+                ].map((item) => ({
                   value: item,
                   label: item,
                 })),
               },
               {
-                key: "intern_duration",
-                type: "text",
-                question: "请注明最短实习时长",
+                key: "influence",
+                type: "select",
+                question: "这个职位将产生什么级别的影响？",
+                options: [
+                  "仅影响分配给他们的任务。",
+                  "直接影响他们负责的项目/计划/举措的结果。",
+                  "直接影响一个团队的绩效。",
+                  "直接影响多个团队/部门的绩效。",
+                  "直接影响产品线/业务部门/公司层面的举措结果。",
+                  "直接影响整个公司的绩效。",
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
               },
             ],
     },
@@ -757,6 +686,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .join(", ");
           }
 
+          if (question.type === "percentage") {
+            const typedValue = value as Record<string, number>;
+            formattedValue = Object.keys(typedValue)
+              .filter((key) => !!typedValue[key])
+              .map((key) => `${key}: ${typedValue[key]}%`)
+              .join("\n\n");
+          }
+
           // if (question.type === "internal_employee_level") {
           //   const typedValue = value as TInternalEmployeeLevelValue;
           //   formattedValue = `${typedValue.name}`;
@@ -955,42 +892,29 @@ const JobRequirementFormDrawer = (props: IProps) => {
           }
           className={styles.formItem}
           required={question.required}
-          // rules={[
-          //   ...(question.type === "city_and_address"
-          //     ? [
-          //         {
-          //           validator(_: any, value: TValue, callback: any) {
-          //             if (!(value.cityName && value.addressName)) {
-          //               callback(new Error());
-          //             }
-          //             callback();
-          //           },
-          //           message: t("required_error_message"),
-          //         },
-          //       ]
-          //     : question.type === "manager_detail"
-          //     ? [
-          //         {
-          //           validator(
-          //             _: any,
-          //             value: TManangerDetailValue,
-          //             callback: any
-          //           ) {
-          //             if (!(value.name && value.jobTitle)) {
-          //               callback(new Error());
-          //             }
-          //             callback();
-          //           },
-          //           message: t("required_error_message"),
-          //         },
-          //       ]
-          //     : [
-          //         {
-          //           required: question.required,
-          //           message: t("required_error_message"),
-          //         },
-          //       ]),
-          // ]}
+          rules={
+            question.type === "percentage"
+              ? [
+                  {
+                    validator(
+                      _: any,
+                      value: Record<string, number>,
+                      callback: any
+                    ) {
+                      const sum = Object.values(value).reduce(
+                        (sum, val) => sum + val,
+                        0
+                      );
+                      if (sum > 0 && sum !== 100) {
+                        callback(new Error());
+                      }
+                      callback();
+                    },
+                    message: "百分比之和必须等于100",
+                  },
+                ]
+              : []
+          }
         >
           {question.type === "text" && <Input disabled={deleted} />}
           {question.type === "textarea" && (
@@ -1019,6 +943,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
             <InternalEmployeeLevel />
           )} */}
           {question.type === "manager_detail" && <ManagerDetail />}
+          {question.type === "percentage" && (
+            <PercentageInput
+              options={(question.options ?? []).map((item) => item.label)}
+            />
+          )}
           {question.type === "team" && (
             <Select
               options={teams.map((team) => ({
@@ -1101,7 +1030,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
       open={open}
       onClose={onClose}
       title={questionGroup.title}
-      width={"50vw"}
+      width={"90vw"}
       destroyOnClose
       mask={false}
       footer={

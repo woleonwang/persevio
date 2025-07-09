@@ -1673,6 +1673,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             display: isRecording || isTranscribing ? "flex" : "none",
             alignItems: "center",
             justifyContent: "center",
+            pointerEvents: "none",
           }}
         >
           <div
