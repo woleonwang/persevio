@@ -29,7 +29,7 @@ type TOption = {
   uuid: string;
 };
 const SelectOptionsForm = (props: IProps) => {
-  const { type, job, onClose, onOk } = props;
+  const { type, job, onOk } = props;
   const [form] = Form.useForm();
   const [groups, setGroups] = useState<TGroup[]>([]);
   const [_, forceUpdate] = useReducer(() => ({}), {});
