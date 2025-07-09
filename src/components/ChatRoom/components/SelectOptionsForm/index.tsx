@@ -246,7 +246,7 @@ const SelectOptionsForm = (props: IProps) => {
       <Form
         form={form}
         onFieldsChange={() => forceUpdate()}
-        style={{ flex: 1, overflow: "auto" }}
+        // style={{ flex: 1, overflow: "auto" }}
       >
         {type !== "icp" && (
           <Alert
@@ -302,7 +302,6 @@ const SelectOptionsForm = (props: IProps) => {
         })}
       </Form>
       <div className={styles.footer}>
-        <Button onClick={() => onClose()}>{originalT("cancel")}</Button>
         <Button
           type="primary"
           onClick={() => {

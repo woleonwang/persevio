@@ -1534,8 +1534,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
               open={selectOptionsModalOpen}
               footer={null}
               destroyOnClose
-              style={{ top: "5vh" }}
-              width={"80vw"}
+              style={{
+                top: 0,
+                maxWidth: "100vw",
+                height: "100vh",
+              }}
+              width="100vw"
               onCancel={() => setSelectOptionsModalOpen(false)}
               title={
                 selectOptionsType === "high_level_responsibility"
@@ -1544,14 +1548,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   ? "建议日常任务清单"
                   : "理想候选人画像(ICP)"
               }
+              closable={false}
+              maskClosable={false}
             >
               {job && selectOptionsType && (
                 <div
                   style={{
-                    height: "80vh",
-                    overflow: "hidden",
-                    display: "flex",
-                    flexDirection: "column",
+                    height: "calc(100vh - 72px)",
+                    overflow: "auto",
                   }}
                 >
                   <SelectOptionsForm

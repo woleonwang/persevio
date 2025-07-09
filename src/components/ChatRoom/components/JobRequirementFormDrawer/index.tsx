@@ -402,6 +402,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   value: item,
                   label: item,
                 })),
+                required: true,
               },
               {
                 key: "influence",
