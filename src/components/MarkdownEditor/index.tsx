@@ -11,6 +11,7 @@ import {
   thematicBreakPlugin,
   toolbarPlugin,
   UndoRedo,
+  tablePlugin,
 } from "@mdxeditor/editor";
 import styles from "./style.module.less";
 
@@ -18,12 +19,13 @@ interface IProps {
   value: string;
   onChange: (value: string) => void;
 }
+
 const MarkdownEditor: React.FC<IProps> = (props) => {
   const { value, onChange } = props;
   return (
     <MDXEditor
       contentEditableClassName={styles.mdEditor}
-      markdown={value}
+      markdown={value.replaceAll("<br>", ``)}
       onChange={(md) => onChange(md)}
       plugins={[
         headingsPlugin(),
@@ -31,6 +33,7 @@ const MarkdownEditor: React.FC<IProps> = (props) => {
         listsPlugin(),
         thematicBreakPlugin(),
         linkPlugin(),
+        tablePlugin(),
         toolbarPlugin({
           toolbarContents: () => (
             <>

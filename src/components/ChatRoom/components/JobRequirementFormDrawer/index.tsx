@@ -354,6 +354,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 key: "team",
                 type: "team",
                 question: "这个职位将加入哪个团队？",
+                required: true,
               },
               {
                 group: t("team_details"),
@@ -369,6 +370,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 key: "manager_detail",
                 type: "manager_detail",
                 question: "这个职位汇报给谁?",
+                required: true,
               },
               {
                 key: "employee_type",
@@ -384,6 +386,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   value: item,
                   label: item,
                 })),
+                required: true,
               },
               {
                 key: "percentage",
@@ -415,6 +418,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   value: item,
                   label: item,
                 })),
+                required: true,
               },
             ],
     },
@@ -905,12 +909,36 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         (sum, val) => sum + val,
                         0
                       );
-                      if (sum > 0 && sum !== 100) {
+                      if (sum !== 100) {
                         callback(new Error());
                       }
                       callback();
                     },
-                    message: "百分比之和必须等于100",
+                    message: "请填写百分比，且百分比之和必须等于100",
+                  },
+                ]
+              : question.type === "manager_detail"
+              ? [
+                  {
+                    validator(
+                      _: any,
+                      value: Record<string, number>,
+                      callback: any
+                    ) {
+                      const typedValue = value as TManangerDetailValue;
+                      if (!typedValue.jobTitle || !typedValue.name) {
+                        callback(new Error());
+                      }
+                      callback();
+                    },
+                    message: "请填写职位和姓名",
+                  },
+                ]
+              : question.required
+              ? [
+                  {
+                    required: true,
+                    message: t("required_error_message"),
                   },
                 ]
               : []
