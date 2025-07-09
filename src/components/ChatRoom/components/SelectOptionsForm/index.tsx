@@ -196,7 +196,7 @@ const SelectOptionsForm = (props: IProps) => {
                         paddingLeft: 12,
                       }}
                     >
-                      <Radio.Group options={["面试基本要求", "面试加分项"]} />
+                      <Radio.Group options={["面试重点考察项", "面试考察项"]} />
                     </Form.Item>
                     <ReloadOutlined
                       style={{
