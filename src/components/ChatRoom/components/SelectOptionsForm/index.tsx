@@ -1,7 +1,7 @@
 import { Form, Input, Button, Radio, Alert, Checkbox } from "antd";
 import { useEffect, useReducer, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
 import { parseJSON } from "../../../../utils";
@@ -46,7 +46,6 @@ const SelectOptionsForm = (props: IProps) => {
         const groupOptions: TOption[] = [];
 
         options.forEach((option) => {
-          // ${uuid}_content, ${uuid}_type
           const uuid = uuidV4();
           form.setFieldsValue({
             [`${uuid}_content`]: option,
@@ -141,11 +140,11 @@ const SelectOptionsForm = (props: IProps) => {
   const canSubmit = () => {
     const values = form.getFieldsValue();
     const checkGroup = (group: TSubGroup): boolean => {
-      debugger;
       return group.options.every((option) => {
         return (
           (type === "icp"
-            ? !values[`${option.uuid}_type`]
+            ? !values[`${option.uuid}_resume_type`] &&
+              !values[`${option.uuid}_interview_type`]
             : !values[`${option.uuid}_checked`]) ||
           !!values[`${option.uuid}_content`]
         );
@@ -184,17 +183,36 @@ const SelectOptionsForm = (props: IProps) => {
                     <Checkbox style={{ marginTop: 12, marginLeft: 12 }} />
                   </Form.Item>
                 ) : (
-                  <Form.Item name={`${option.uuid}_type`}>
-                    <Radio.Group
-                      style={{ marginTop: 12 }}
-                      options={[
-                        "简历基本要求",
-                        "简历加分项",
-                        "面试基本要求",
-                        "面试加分项",
-                      ]}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Form.Item name={`${option.uuid}_resume_type`}>
+                      <Radio.Group options={["简历基本要求", "简历加分项"]} />
+                    </Form.Item>
+
+                    <Form.Item
+                      name={`${option.uuid}_interview_type`}
+                      style={{
+                        borderLeft: "1px solid #eee",
+                        marginLeft: 12,
+                        paddingLeft: 12,
+                      }}
+                    >
+                      <Radio.Group options={["面试基本要求", "面试加分项"]} />
+                    </Form.Item>
+                    <ReloadOutlined
+                      style={{
+                        marginBottom: 24,
+                        marginLeft: 12,
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        form.setFieldsValue({
+                          [`${option.uuid}_resume_type`]: "",
+                          [`${option.uuid}_interview_type`]: "",
+                        });
+                        forceUpdate();
+                      }}
                     />
-                  </Form.Item>
+                  </div>
                 )}
               </div>
             );
@@ -321,60 +339,65 @@ const SelectOptionsForm = (props: IProps) => {
                   .join("\n\n");
                 onOk(result);
               } else {
+                const hasValue = (option: TOption) => {
+                  return (
+                    values[`${option.uuid}_resume_type`] ||
+                    values[`${option.uuid}_interview_type`]
+                  );
+                };
+
+                const genResult = (option: TOption): string => {
+                  return hasValue(option)
+                    ? `- **${values[`${option.uuid}_content`]} - ${[
+                        values[`${option.uuid}_resume_type`],
+                        values[`${option.uuid}_interview_type`],
+                      ]
+                        .filter(Boolean)
+                        .join("、")}**`
+                    : "";
+                };
+
                 const result = groups
                   .filter((group) => {
                     if (!!group.options) {
-                      return !!(group.options ?? []).find(
-                        (option) => values[`${option.uuid}_type`]
+                      return !!(group.options ?? []).find((option) =>
+                        hasValue(option)
                       );
                     } else {
                       return !!(group.subGroups ?? []).find((subGroup) =>
-                        subGroup.options.find(
-                          (option) => values[`${option.uuid}_type`]
-                        )
+                        subGroup.options.find((option) => hasValue(option))
                       );
                     }
                   })
-                  .map(
-                    (group) =>
-                      `### ${group.title}\n\n ${
-                        group.options
-                          ? (group.options ?? [])
-                              .map((option) => {
-                                return values[`${option.uuid}_type`]
-                                  ? `- **${
-                                      values[`${option.uuid}_content`]
-                                    } - ${values[`${option.uuid}_type`]}**`
-                                  : "";
-                              })
-                              .filter(Boolean)
-                              .join("\n\n")
-                          : (group.subGroups ?? [])
-                              .filter((subGroup) =>
-                                subGroup.options.find(
-                                  (option) => values[`${option.uuid}_type`]
+                  .map((group) => {
+                    return `### ${group.title}\n\n ${
+                      group.options
+                        ? (group.options ?? [])
+                            .map((option) => {
+                              return genResult(option);
+                            })
+                            .filter(Boolean)
+                            .join("\n\n")
+                        : (group.subGroups ?? [])
+                            .filter((subGroup) =>
+                              subGroup.options.find((option) =>
+                                hasValue(option)
+                              )
+                            )
+                            .map(
+                              (subGroup) =>
+                                `#### ${subGroup.title}\n\n ${(
+                                  subGroup.options ?? []
                                 )
-                              )
-                              .map(
-                                (subGroup) =>
-                                  `#### ${subGroup.title}\n\n ${(
-                                    subGroup.options ?? []
-                                  )
-                                    .map((option) => {
-                                      return values[`${option.uuid}_type`]
-                                        ? `- **${
-                                            values[`${option.uuid}_content`]
-                                          } - ${
-                                            values[`${option.uuid}_type`]
-                                          }**`
-                                        : "";
-                                    })
-                                    .filter(Boolean)
-                                    .join("\n\n")}`
-                              )
-                              .join("\n\n")
-                      }`
-                  )
+                                  .map((option) => {
+                                    return genResult(option);
+                                  })
+                                  .filter(Boolean)
+                                  .join("\n\n")}`
+                            )
+                            .join("\n\n")
+                    }`;
+                  })
                   .join("\n\n");
                 onOk(result);
               }
