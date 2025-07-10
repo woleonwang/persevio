@@ -394,10 +394,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 question:
                   "这个职位的贡献类型是什么？（请为以下各项提供百分比，总和需为 100%）",
                 options: [
-                  "动手执行具体任务",
-                  "项目/计划/关键举措负责人",
-                  "团队管理",
-                  "高层战略",
+                  "执行上级安排的具体任务",
+                  "负责具体项目/具体目标的推动和完成",
+                  "管团队/管人",
+                  "设计高层战略/计划",
                 ].map((item) => ({
                   value: item,
                   label: item,
@@ -410,11 +410,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 question: "这个职位将产生什么级别的影响？",
                 options: [
                   "仅影响分配给他们的任务。",
-                  "直接影响他们负责的项目/计划/举措的结果。",
-                  "直接影响一个团队的绩效。",
-                  "直接影响多个团队/部门的绩效。",
-                  "直接影响产品线/业务部门/公司层面的举措结果。",
-                  "直接影响整个公司的绩效。",
+                  "直接影响他们负责的具体项目/具体目标的结果。",
+                  "直接影响一个团队的工作成绩。",
+                  "直接影响多个团队/部门的工作成绩。",
+                  "直接影响整条产品线/业务线的结果。",
+                  "直接影响整个公司的工作成绩。",
                 ].map((item) => ({
                   value: item,
                   label: item,
@@ -1059,14 +1059,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
       open={open}
       onClose={onClose}
       title={questionGroup.title}
-      width={"90vw"}
+      width={"100vw"}
       destroyOnClose
+      closable={false}
       mask={false}
       footer={
         <div className={styles.drawerFooter}>
-          <Button key="back" onClick={onClose}>
-            {originalT("cancel")}
-          </Button>
           {formType === "reference" && (
             <Button
               key="nothing"
