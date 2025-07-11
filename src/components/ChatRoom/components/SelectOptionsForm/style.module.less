@@ -5,6 +5,13 @@
 .skillRow {
   display: flex;
   gap: 4px;
+
+  :global {
+    .ant-checkbox .ant-checkbox-inner {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
 
 .footer {
@@ -13,4 +20,5 @@
   gap: 10px;
   flex: none;
   margin-top: 20px;
+  padding: 0 150px;
 }

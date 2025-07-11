@@ -94,6 +94,7 @@ const visibleTasksForCoworker = [
   "jobRequirementDoc",
   "jobDescription",
   "jobCompensationDetails",
+  "jobInterviewPlan",
 ];
 
 const CHATTYPE_MAP: Record<TChatType, string> = Object.keys(

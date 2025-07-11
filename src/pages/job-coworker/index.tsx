@@ -123,7 +123,15 @@ const JobCoworker = () => {
               style={collapseForDrawer ? { width: "100%" } : {}}
             >
               {status === "chat" && (
-                <ChatRoom jobId={job.id} allowEditMessage userRole="coworker" />
+                <ChatRoom
+                  jobId={job.id}
+                  allowEditMessage
+                  userRole="coworker"
+                  onChangeTab={(tab, options) => {
+                    initDocTypeRef.current = options?.docType ?? undefined;
+                    setStatus(tab);
+                  }}
+                />
               )}
               {status === "info" && (
                 <JobInformation

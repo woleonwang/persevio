@@ -171,16 +171,15 @@ const SelectOptionsForm = (props: IProps) => {
                   name={`${option.uuid}_content`}
                   style={{ flex: "auto" }}
                 >
-                  <Input.TextArea rows={2} />
+                  <Input.TextArea rows={1} />
                 </Form.Item>
 
                 {type !== "icp" ? (
                   <Form.Item
                     name={`${option.uuid}_checked`}
-                    style={{ width: 40 }}
                     valuePropName="checked"
                   >
-                    <Checkbox style={{ marginTop: 12, marginLeft: 12 }} />
+                    <Checkbox style={{ marginLeft: 12 }} />
                   </Form.Item>
                 ) : (
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -246,6 +245,7 @@ const SelectOptionsForm = (props: IProps) => {
       <Form
         form={form}
         onFieldsChange={() => forceUpdate()}
+        style={{ padding: "20px 150px" }}
         // style={{ flex: 1, overflow: "auto" }}
       >
         {type !== "icp" && (
