@@ -573,8 +573,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   },
 
   manager_detail: {
-    job_title: "职位名称",
-    name: "姓名",
+    job_title: "直属领导的职位名称是什么？",
+    name: "直属领导姓名",
   },
 
   job_requirement: {

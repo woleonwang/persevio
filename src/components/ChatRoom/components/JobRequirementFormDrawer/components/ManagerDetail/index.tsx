@@ -36,17 +36,16 @@ const ManagerDetail = (props: IProps) => {
   return (
     <div className={styles.container}>
       <Input
-        value={jobTitle}
-        style={{ flex: 1 }}
-        onChange={(e) => onJobTitleChange(e.target.value)}
-        placeholder={t("job_title")}
-      />
-
-      <Input
         value={name}
         style={{ flex: 1 }}
         onChange={(e) => onNameChange(e.target.value)}
         placeholder={t("name")}
+      />
+      <Input
+        value={jobTitle}
+        style={{ flex: 1 }}
+        onChange={(e) => onJobTitleChange(e.target.value)}
+        placeholder={t("job_title")}
       />
     </div>
   );
