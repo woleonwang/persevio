@@ -177,6 +177,7 @@ type TMenu = {
   path?: string;
   img: ReactNode;
   requireAdmin?: boolean;
+  key?: string;
   children?: {
     title: string;
     path: string;

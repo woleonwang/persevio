@@ -6,6 +6,7 @@ import {
   FileDoneOutlined,
   SettingOutlined,
   DeleteOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
@@ -15,7 +16,7 @@ import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { message, Modal, Popover, Spin } from "antd";
+import { Input, message, Modal, Popover, Spin } from "antd";
 import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
@@ -23,6 +24,8 @@ import globalStore from "../../store/global";
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const currentUrl = encodeURIComponent(location.pathname + location.search);
 
@@ -63,33 +66,36 @@ const AppLayout = () => {
     },
     {
       title: t("menu.jobs"),
+      key: "jobs",
       // path: "/app/jobs",
       img: <Job />,
-      children: jobs.map((job) => {
-        const path = `/app/jobs/${job.id}`;
-        const isActive = currentPath.startsWith(path);
-        return {
-          title: job.name,
-          path,
-          active: isActive,
-          onRemove: () => {
-            Modal.confirm({
-              title: "Delete Job",
-              content: `Are you sure you want to delete【${job.name}】?`,
-              onOk: async () => {
-                const { code } = await Post(`/api/jobs/${job.id}/destroy`);
-                if (code === 0) {
-                  message.success(t("submit_succeed"));
-                  fetchJobs();
-                  if (isActive) {
-                    navigate("/app/entry/create-job");
+      children: jobs
+        .filter((job) => !searchKeyword || job.name.includes(searchKeyword))
+        .map((job) => {
+          const path = `/app/jobs/${job.id}`;
+          const isActive = currentPath.startsWith(path);
+          return {
+            title: job.name,
+            path,
+            active: isActive,
+            onRemove: () => {
+              Modal.confirm({
+                title: "Delete Job",
+                content: `Are you sure you want to delete【${job.name}】?`,
+                onOk: async () => {
+                  const { code } = await Post(`/api/jobs/${job.id}/destroy`);
+                  if (code === 0) {
+                    message.success(t("submit_succeed"));
+                    fetchJobs();
+                    if (isActive) {
+                      navigate("/app/entry/create-job");
+                    }
                   }
-                }
-              },
-            });
-          },
-        };
-      }),
+                },
+              });
+            },
+          };
+        }),
     },
     {
       title: t("menu.company"),
@@ -291,9 +297,32 @@ const AppLayout = () => {
                         }}
                       />
                       <span style={{ marginLeft: 16 }}>{item.title}</span>
+                      {item.key === "jobs" && (
+                        <div style={{ position: "absolute", right: 20 }}>
+                          <SearchOutlined
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSearchKeyword("");
+                              setShowSearch((current) => !current);
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                     {item.children && (
                       <div className={styles.subMenuContainer}>
+                        {showSearch && (
+                          <div style={{ padding: "0 16px" }}>
+                            <Input.Search
+                              placeholder="请输入"
+                              enterButton={false}
+                              onChange={(e) => {
+                                setSearchKeyword(e.target.value);
+                              }}
+                              value={searchKeyword}
+                            />
+                          </div>
+                        )}
                         {item.children.map((child) => {
                           return (
                             <div
