@@ -8,6 +8,8 @@ import { initReactI18next } from "react-i18next";
 import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
+import Share from "./layouts/Share";
+
 import Home from "./pages/home";
 import Signin from "./pages/signin";
 import Signup from "./pages/signup";
@@ -87,6 +89,10 @@ createRoot(document.getElementById("root")!).render(
             path="/jobs/:invitation_token/coworker"
             element={<JobCoworker />}
           />
+          <Route path="/share" element={<Share />}>
+            <Route path="/share/create-job" element={<JobsCreate share />} />
+          </Route>
+
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}
             <Route path="/app/entry/create-job" element={<JobsCreate />} />

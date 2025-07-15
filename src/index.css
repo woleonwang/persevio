@@ -112,3 +112,31 @@ th {
 table {
   margin: 12px 0;
 }
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.fs-20 {
+  font-size: 20px;
+}
+
+.fs-20-b {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.fs-36 {
+  font-size: 36px;
+}
+
+.fs-36-b {
+  font-size: 36px;
+  font-weight: bold;
+}
