@@ -172,71 +172,147 @@ const JobRequirementFormDrawer = (props: IProps) => {
         i18n.language === "en-US"
           ? [
               {
-                key: "reason",
+                key: "team",
+                type: "team",
+                question: "Which team will this role join?",
+                required: true,
+              },
+              {
+                group: t("team_details"),
+                key: "team_details",
+                dependencies: [{ questionKey: "team", exists: true }],
+                collapse: true,
+                questions: TeamQuestions.map((item) => ({
+                  ...item,
+                  dependencies: [{ questionKey: "team", exists: true }],
+                })),
+              },
+              {
+                key: "manager_detail",
+                type: "manager_detail",
+                question: "Who will this role report to?",
+                required: true,
+              },
+              {
+                key: "employee_type",
                 type: "select",
-                question: t("reason"),
+                question: "What is the seniority of this role?",
                 options: [
-                  {
-                    value: "back_fill",
-                    label: t("back_fill"),
-                  },
-                  {
-                    value: "new_role",
-                    label: t("new_role"),
-                  },
-                ],
+                  "Internship",
+                  "Fresh Graduate/Entry-Level/No prior experience required",
+                  "Junior/Some experience required",
+                  "Mid-level/Solid experience required",
+                  "Senior/Extensive experience and proven expertise required",
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+                required: true,
               },
               {
-                key: "employment_type",
-                type: "multiple_select",
-                question: t("employment_type"),
+                key: "percentage",
+                type: "percentage",
+                question:
+                  "What is the primary nature of work and type of contribution expected from this role?",
                 options: [
-                  {
-                    value: "perm",
-                    label: t("perm"),
-                  },
-                  {
-                    value: "contract",
-                    label: t("contract"),
-                  },
-                ],
+                  "Execution Level: Primarily responsible for completing specific, well-defined tasks assigned by a manager.",
+                  "Project/Objective Ownership: Drives a complete project from initiation to delivery, or achieves a specific business objective, often requiring cross-functional coordination and resource integration.",
+                  "People/Team Management: Accountable for the overall results of an entire team. Responsibilities include daily team management, talent development, performance evaluation, recruitment, and motivation to ensure the team effectively collaborates to meet goals.",
+                  "Strategic Planning & Development: Responsible for, or deeply involved in, the discussion, formulation, and implementation of long-term development strategies and business plans for the company or a specific business line.",
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+                required: true,
               },
               {
-                key: "contract_duration",
-                type: "number",
-                question: t("duration"),
-                dependencies: [
-                  {
-                    questionKey: "employment_type",
-                    valueKey: "contract",
-                  },
-                ],
-              },
-              {
-                key: "time",
+                key: "influence",
                 type: "select",
-                question: t("time"),
+                question:
+                  "What level of impact is expected from this position?",
                 options: [
                   {
-                    value: "full-time",
-                    label: t("full_time"),
+                    value: "influence_1",
+                    label: (
+                      <>
+                        <b>Task-Level Impact:</b>
+                        This role is confined to efficiently and accurately
+                        completing assigned, specific tasks. Success is measured
+                        by the quality and efficiency of task completion.
+                      </>
+                    ),
+                    text: "**Task-Level Impact:** This role is confined to efficiently and accurately completing assigned, specific tasks. Success is measured by the quality and efficiency of task completion.",
                   },
                   {
-                    value: "part-time",
-                    label: t("part_time"),
+                    value: "influence_2",
+                    label: (
+                      <>
+                        <b>Project-Level Impact:</b>
+                        This role is a key contributor to, or directly
+                        responsible for, the success of specific projects. The
+                        quality of their work directly determines whether
+                        projects are delivered on time, within quality
+                        standards, and on budget.
+                      </>
+                    ),
+                    text: "**Project-Level Impact:** This role is a key contributor to, or directly responsible for, the success of specific projects. The quality of their work directly determines whether projects are delivered on time, within quality standards, and on budget.",
                   },
-                ],
-              },
-              {
-                key: "working_hours",
-                type: "number",
-                question: t("working_hours"),
-                dependencies: [
                   {
-                    questionKey: "time",
-                    valueKey: "part-time",
+                    value: "influence_3",
+                    label: (
+                      <>
+                        <b>Team-Level Impact:</b>
+                        This role is responsible for, or a primary contributor
+                        to, the overall performance and goals of their team.
+                        Their output significantly influences the team's
+                        ultimate achievements.
+                      </>
+                    ),
+                    text: "**Team-Level Impact:** This role is responsible for, or a primary contributor to, the overall performance and goals of their team. Their output significantly influences the team's ultimate achievements.",
+                  },
+                  {
+                    value: "influence_4",
+                    label: (
+                      <>
+                        <b>Cross-Functional/Department-Level Impact:</b>
+                        This role leads or coordinates collaboration across
+                        multiple teams or an entire department. Their
+                        effectiveness directly impacts the efficiency of
+                        cross-functional synergy and the achievement of broader
+                        departmental goals.
+                      </>
+                    ),
+                    text: "**Cross-Functional/Department-Level Impact:** This role leads or coordinates collaboration across multiple teams or an entire department. Their effectiveness directly impacts the efficiency of cross-functional synergy and the achievement of broader departmental goals.",
+                  },
+                  {
+                    value: "influence_5",
+                    label: (
+                      <>
+                        <b>Business/Product-Line Level Impact:</b>
+                        The decisions and outcomes from this role directly shape
+                        the market performance and commercial success of a
+                        specific product or business line, directly influencing
+                        its revenue, market share, or user growth.
+                      </>
+                    ),
+                    text: "**Business/Product-Line Level Impact: ** The decisions and outcomes from this role directly shape the market performance and commercial success of a specific product or business line, directly influencing its revenue, market share, or user growth.",
+                  },
+                  {
+                    value: "influence_6",
+                    label: (
+                      <>
+                        <b>Company-Level Impact:</b>
+                        This role's work will decisively influence the company's
+                        overall strategy, financial health, or market
+                        reputation. Its success or failure is crucial to the
+                        company's long-term development and core
+                        competitiveness.
+                      </>
+                    ),
+                    text: "**Company-Level Impact: ** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
                   },
                 ],
+                required: true,
               },
               {
                 key: "remote",
@@ -256,6 +332,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     label: t("remote"),
                   },
                 ],
+                required: true,
               },
               {
                 key: "city",
@@ -267,87 +344,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     valueKey: ["onsite", "hybrid"],
                   },
                 ],
-              },
-              {
-                key: "seniority",
-                type: "select",
-                question: t("seniority"),
-                hint: t("seniority_hint"),
-                options: [
-                  {
-                    value: "intership",
-                    label: t("intership"),
-                  },
-                  {
-                    value: "junior",
-                    label: t("junior"),
-                  },
-                  {
-                    value: "senior",
-                    label: t("senior"),
-                  },
-                  {
-                    value: "manager",
-                    label: t("manager"),
-                  },
-                  {
-                    value: "director",
-                    label: t("director"),
-                  },
-                  {
-                    value: "executive",
-                    label: t("executive"),
-                  },
-                ],
-              },
-              {
-                key: "team",
-                type: "team",
-                question: t("team"),
-              },
-              {
-                group: t("team_details"),
-                key: "team_details",
-                dependencies: [{ questionKey: "team", exists: true }],
-                collapse: true,
-                questions: TeamQuestions.map((item) => ({
-                  ...item,
-                  dependencies: [{ questionKey: "team", exists: true }],
-                })),
-              },
-              {
-                key: "manager_detail",
-                type: "manager_detail",
-                question: t("manager_detail"),
-              },
-              {
-                key: "internal_employee",
-                type: "text",
-                question: t("internal_employee"),
-              },
-              {
-                key: "headcount",
-                type: "number",
-                question: t("head_count"),
-              },
-              {
-                key: "urgency",
-                type: "select",
-                question: t("urgency"),
-                options: [
-                  {
-                    value: "p0",
-                    label: "P0",
-                  },
-                  {
-                    value: "p1",
-                    label: "P1",
-                  },
-                  {
-                    value: "p2",
-                    label: "P2",
-                  },
-                ],
+                required: true,
               },
             ]
           : [
@@ -475,6 +472,38 @@ const JobRequirementFormDrawer = (props: IProps) => {
                       </>
                     ),
                     text: "**公司级别影响：** 此职位的工作将对**公司的整体战略、财务状况或市场声誉产生重要影响**，其成败关系到公司的长期发展和核心竞争力** 。",
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "remote",
+                type: "select",
+                question: t("remote_type"),
+                options: [
+                  {
+                    value: "onsite",
+                    label: t("on_site"),
+                  },
+                  {
+                    value: "hybrid",
+                    label: t("hybrid"),
+                  },
+                  {
+                    value: "remote",
+                    label: t("remote"),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "city",
+                type: "city_and_address",
+                question: t("city"),
+                dependencies: [
+                  {
+                    questionKey: "remote",
+                    valueKey: ["onsite", "hybrid"],
                   },
                 ],
                 required: true,
@@ -974,7 +1003,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                       }
                       callback();
                     },
-                    message: "请填写百分比，且百分比之和必须等于100",
+                    message: t("percentage_message"),
                   },
                 ]
               : question.type === "manager_detail"
@@ -991,7 +1020,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                       }
                       callback();
                     },
-                    message: "请填写职位和姓名",
+                    message: t("manager_message"),
                   },
                 ]
               : question.required
