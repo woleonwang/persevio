@@ -313,13 +313,13 @@ const AppLayout = () => {
                       <div className={styles.subMenuContainer}>
                         {showSearch && (
                           <div style={{ padding: "0 16px" }}>
-                            <Input.Search
+                            <Input
                               placeholder="请输入"
-                              enterButton={false}
                               onChange={(e) => {
                                 setSearchKeyword(e.target.value);
                               }}
                               value={searchKeyword}
+                              allowClear
                             />
                           </div>
                         )}

@@ -53,6 +53,7 @@ import InterviewFeedbacks from "./pages/interview-feedbacks";
 import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-designers-create";
 import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-designers-edit";
 import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-designers-chat";
+import JobChat from "./pages/job-chat";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -96,6 +97,10 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}
             <Route path="/app/entry/create-job" element={<JobsCreate />} />
+            <Route
+              path="/app/jobs/:jobId/chat/:chatType"
+              element={<JobChat />}
+            />
             <Route path="/app/jobs/:jobId" element={<Job />} />
             <Route
               path="/app/jobs/:jobId/talents/:talentId"
