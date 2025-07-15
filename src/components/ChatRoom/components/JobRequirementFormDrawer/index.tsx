@@ -419,7 +419,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     ),
                   },
                   {
-                    value: "influence_1",
+                    value: "influence_2",
                     label: (
                       <>
                         <b>项目层面影响：</b>
@@ -429,7 +429,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     ),
                   },
                   {
-                    value: "influence_1",
+                    value: "influence_3",
                     label: (
                       <>
                         <b>团队级影响：</b>
@@ -439,7 +439,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     ),
                   },
                   {
-                    value: "influence_1",
+                    value: "influence_4",
                     label: (
                       <>
                         <b>跨团队/部门协同级影响：</b>
@@ -449,7 +449,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     ),
                   },
                   {
-                    value: "influence_1",
+                    value: "influence_5",
                     label: (
                       <>
                         <b>业务线/产品线级别：</b>
@@ -459,7 +459,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     ),
                   },
                   {
-                    value: "influence_1",
+                    value: "influence_6",
                     label: (
                       <>
                         <b>公司级别影响：</b>
