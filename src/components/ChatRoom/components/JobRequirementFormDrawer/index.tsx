@@ -64,6 +64,7 @@ type TQuestion = {
   options?: {
     value: string;
     label: React.ReactNode;
+    text?: string;
   }[];
   required?: boolean;
   needPriority?: boolean;
@@ -417,6 +418,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>任务的完成质量和效率</b>。
                       </>
                     ),
+                    text: "**任务执行层面影响：** 这个职位的影响仅限于分配给他们任务，其成功标准是**任务的完成质量和效率** 。",
                   },
                   {
                     value: "influence_2",
@@ -427,6 +429,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>项目能否按时、按质、按预算交付</b>。
                       </>
                     ),
+                    text: "**项目层面影响：** 此职位是特定项目成功的关键贡献者或负责人，其工作质量直接决定**项目能否按时、按质、按预算交付** 。",
                   },
                   {
                     value: "influence_3",
@@ -437,6 +440,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>团队是否能达成其工作目标</b>。
                       </>
                     ),
+                    text: "**团队级影响：** 此职位是其所在团队的整体业绩和目标的负责人或核心贡献者，其产出将显著影响**团队是否能达成其工作目标** 。",
                   },
                   {
                     value: "influence_4",
@@ -447,6 +451,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>跨团队协同的效率和部门整体目标的实现</b>。
                       </>
                     ),
+                    text: "**跨团队/部门协同级影响：** 此职位需要主导或协调多个团队/整个部门的合作，其工作成效直接关系到**跨团队协同的效率和部门整体目标的实现** 。",
                   },
                   {
                     value: "influence_5",
@@ -457,6 +462,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>该业务的收入、市场份额或用户增长</b>。
                       </>
                     ),
+                    text: "**业务线/产品线级别：** 此职位的决策和成果将直接塑造某一产品线或业务线的市场表现和商业成功，直接影响**该业务的收入、市场份额或用户增长** 。",
                   },
                   {
                     value: "influence_6",
@@ -468,6 +474,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         ，其成败关系到公司的长期发展和核心竞争力。
                       </>
                     ),
+                    text: "**公司级别影响：** 此职位的工作将对**公司的整体战略、财务状况或市场声誉产生重要影响**，其成败关系到公司的长期发展和核心竞争力** 。",
                   },
                 ],
                 required: true,
@@ -756,9 +763,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
           // }
 
           if (question.type === "select") {
-            formattedValue =
-              (question.options ?? []).find((item) => item.value === value)
-                ?.label ?? "";
+            const option = (question.options ?? []).find(
+              (item) => item.value === value
+            );
+            formattedValue = option?.text ?? option?.label ?? "";
           }
 
           if (question.type === "multiple_select") {
