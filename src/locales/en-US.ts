@@ -441,6 +441,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
     no_data: "Not required",
     year: "year",
+
+    percentage_message:
+      "Please fill in the percentages; their sum must equal 100%.",
+    manager_message: "Please fill in the manager's job title and name.",
   },
 
   ideal_profile: {
@@ -591,8 +595,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   manager_detail: {
-    job_title: "Job title",
-    name: "Name",
+    job_title: "Job title of the direct manager",
+    name: "Name of the direct manager",
   },
 
   job_requirement: {

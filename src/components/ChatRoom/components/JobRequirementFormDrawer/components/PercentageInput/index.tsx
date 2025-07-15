@@ -34,10 +34,10 @@ const PercentageInput = (props: IProps) => {
           align="middle"
           style={{ marginBottom: 8, marginLeft: 12 }}
         >
-          <Col flex="auto">
+          <Col span={22}>
             <Text>{option}</Text>
           </Col>
-          <Col>
+          <Col span={2} style={{ textAlign: "right" }}>
             <InputNumber
               min={0}
               max={100}

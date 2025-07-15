@@ -140,3 +140,9 @@ table {
   font-size: 36px;
   font-weight: bold;
 }
+
+.ant-select-item-option-content {
+  white-space: normal !important; /* 允许文本换行 */
+  word-break: break-word !important; /* 强制单词在必要时断开 */
+  /* 你可能还需要调整行高或其他布局属性 */
+}
