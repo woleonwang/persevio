@@ -143,8 +143,7 @@ const SelectOptionsForm = (props: IProps) => {
       return group.options.every((option) => {
         return (
           (type === "icp"
-            ? !values[`${option.uuid}_resume_type`] &&
-              !values[`${option.uuid}_interview_type`]
+            ? !values[`${option.uuid}_type`]
             : !values[`${option.uuid}_checked`]) ||
           !!values[`${option.uuid}_content`]
         );
@@ -183,20 +182,10 @@ const SelectOptionsForm = (props: IProps) => {
                   </Form.Item>
                 ) : (
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <Form.Item name={`${option.uuid}_resume_type`}>
-                      <Radio.Group options={["简历基本要求", "简历加分项"]} />
+                    <Form.Item name={`${option.uuid}_type`}>
+                      <Radio.Group options={["核心要求", "加分项"]} />
                     </Form.Item>
 
-                    <Form.Item
-                      name={`${option.uuid}_interview_type`}
-                      style={{
-                        borderLeft: "1px solid #eee",
-                        marginLeft: 12,
-                        paddingLeft: 12,
-                      }}
-                    >
-                      <Radio.Group options={["面试重点考察项", "面试考察项"]} />
-                    </Form.Item>
                     <ReloadOutlined
                       style={{
                         marginBottom: 24,
@@ -205,8 +194,7 @@ const SelectOptionsForm = (props: IProps) => {
                       }}
                       onClick={() => {
                         form.setFieldsValue({
-                          [`${option.uuid}_resume_type`]: "",
-                          [`${option.uuid}_interview_type`]: "",
+                          [`${option.uuid}_type`]: "",
                         });
                         forceUpdate();
                       }}
@@ -339,20 +327,14 @@ const SelectOptionsForm = (props: IProps) => {
                 onOk(result);
               } else {
                 const hasValue = (option: TOption) => {
-                  return (
-                    values[`${option.uuid}_resume_type`] ||
-                    values[`${option.uuid}_interview_type`]
-                  );
+                  return values[`${option.uuid}_type`];
                 };
 
                 const genResult = (option: TOption): string => {
                   return hasValue(option)
-                    ? `- **${values[`${option.uuid}_content`]} - ${[
-                        values[`${option.uuid}_resume_type`],
-                        values[`${option.uuid}_interview_type`],
-                      ]
-                        .filter(Boolean)
-                        .join("、")}**`
+                    ? `- **${values[`${option.uuid}_content`]} - ${
+                        values[`${option.uuid}_type`]
+                      }**`
                     : "";
                 };
 
