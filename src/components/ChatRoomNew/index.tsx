@@ -12,15 +12,21 @@ import {
   FloatButton,
   Steps,
   Upload,
+  Tooltip,
 } from "antd";
-import { CopyOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  AudioMutedOutlined,
+  AudioOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import { ClipLoader, ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post, PostFormData } from "../../utils/request";
-import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
@@ -43,7 +49,9 @@ import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
-import SelectOptionsForm from "./components/SelectOptionsForm";
+
+import SelectOptionsForm from "../ChatRoom/components/SelectOptionsForm";
+import JobRequirementFormDrawer from "../ChatRoom/components/JobRequirementFormDrawer";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -63,8 +71,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     share = false,
     jobInterviewDesignerId,
     jobInterviewFeedbackId,
-    onChangeTab,
-    onNextTask,
+    viewDoc,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -72,6 +79,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
   const [jrdProgress, setJrdProgress] = useState<number>(0);
+  const [textInputVisible, setTextInputVisible] = useState(false);
+  const [inputPlaceholder, setInputPlaceholder] = useState("");
+  const [audioHintVisible, setAudioHintVisible] = useState(true);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -106,7 +116,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const { isRecording, volume, isTranscribing } = useAssemblyOffline({
+  const {
+    startTranscription,
+    endTranscription,
+    isRecording,
+    volume,
+    isTranscribing,
+    isStartRecordingOutside,
+  } = useAssemblyOffline({
     onFinish: (result) => {
       // console.log("handle result:", result);
       sendMessage(result);
@@ -128,6 +145,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     fetchJob();
     fetchMessages();
     needScrollToBottom.current = true;
+
+    setTimeout(() => setAudioHintVisible(false), 5000);
   }, []);
 
   useEffect(() => {
@@ -185,7 +204,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   };
 
   const changeChatType = (chatType: TChatType) => {
-    navigate(`/jobs/${jobId}/chat/${chatType}`);
+    navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
   const apiMapping: Record<TChatType, { get: string; send: string }> = {
@@ -274,11 +293,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "jrd-done",
       title: t("view_jrd"),
-      handler: () => {
-        onNextTask
-          ? onNextTask()
-          : onChangeTab?.("info", { docType: "requirement" });
-      },
+      handler: () => viewDoc?.("requirement"),
     },
 
     {
@@ -563,6 +578,81 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     .reverse()
     .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
 
+  const genPredefinedButton = () => {
+    return (
+      <div style={{ gap: 5, display: "flex" }}>
+        {[
+          ...(chatType === "jobDescription"
+            ? [t("make_details"), t("make_concise")]
+            : []),
+          t("yes"),
+          t("no"),
+          t("accurate"),
+          t("proposal"),
+          t("no_others"),
+        ].map((text) => {
+          return (
+            <Button
+              type="primary"
+              key={text}
+              shape="round"
+              onClick={() => sendMessage(text)}
+              size="small"
+            >
+              {text}
+            </Button>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const genRecordButton = () => {
+    return (
+      <Tooltip
+        styles={{
+          body: {
+            width: 400,
+          },
+        }}
+        placement="right"
+        title={
+          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+        }
+        open={audioHintVisible}
+      >
+        {!isRecording && !isTranscribing ? (
+          <Button
+            style={{
+              width: 64,
+              height: 64,
+            }}
+            shape="circle"
+            type="primary"
+            onClick={() => startTranscription()}
+            icon={<AudioOutlined style={{ fontSize: 36 }} />}
+            iconPosition="start"
+          />
+        ) : (
+          <Button
+            style={{
+              width: 64,
+              height: 64,
+              backgroundColor: "rgba(224, 46, 42, 0.1)",
+              color: "rgb(224, 46, 42)",
+            }}
+            shape="circle"
+            type="primary"
+            disabled={isTranscribing || !isStartRecordingOutside}
+            onClick={() => endTranscription()}
+            icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
+            iconPosition="start"
+          />
+        )}
+      </Tooltip>
+    );
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.right}>
@@ -830,72 +920,66 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         </div>
 
         <div className={styles.inputArea}>
-          <div style={{ marginBottom: 10, gap: 5, display: "flex" }}>
-            {[
-              ...(chatType === "jobDescription"
-                ? [t("make_details"), t("make_concise")]
-                : []),
-              t("yes"),
-              t("no"),
-              t("accurate"),
-              t("proposal"),
-              t("no_others"),
-            ].map((text) => {
-              return (
-                <Button
-                  type="primary"
-                  key={text}
-                  shape="round"
-                  onClick={() => sendMessage(text)}
-                  size="small"
-                >
-                  {text}
-                </Button>
-              );
-            })}
+          <div className={classnames("flex-center")}>
+            {genPredefinedButton()}
           </div>
-
-          <Input.TextArea
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={
-              allowEditMessage
-                ? t("reply_viona_directly_or_edit")
-                : t("reply_viona")
-            }
-            style={{
-              width: "100%",
-              marginRight: "8px",
-              resize: "none",
-            }}
-            onCompositionStartCapture={() => (isCompositingRef.current = true)}
-            onCompositionEndCapture={() => (isCompositingRef.current = false)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey && !isCompositingRef.current) {
-                e.preventDefault();
-                submit();
-              }
-            }}
-            autoSize={{
-              minRows: 1,
-              maxRows: 16,
-            }}
-          />
           <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
+            className={classnames("flex-center", "gap-12")}
+            style={{ marginTop: 12 }}
           >
-            <div></div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                {originalT("submit")}
-              </Button>
-            </div>
+            {genRecordButton()}
+            <Input.TextArea
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              placeholder={textInputVisible ? inputPlaceholder : ""}
+              style={
+                textInputVisible
+                  ? {
+                      width: 600,
+                      marginRight: "8px",
+                      resize: "none",
+                      overflow: "hidden",
+                    }
+                  : {
+                      width: 0,
+                      height: 0,
+                      padding: 0,
+                      border: "none",
+                    }
+              }
+              onCompositionStartCapture={() =>
+                (isCompositingRef.current = true)
+              }
+              onCompositionEndCapture={() => (isCompositingRef.current = false)}
+              onPressEnter={(e) => {
+                if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              autoSize={{
+                minRows: 2,
+                maxRows: 16,
+              }}
+            />
+            {
+              <EditOutlined
+                onClick={() => {
+                  if (textInputVisible) {
+                    setTextInputVisible(false);
+                    setInputPlaceholder("");
+                  } else {
+                    setTextInputVisible(true);
+                    setTimeout(() => {
+                      setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                    }, 400);
+                  }
+                }}
+                style={{ fontSize: 24, color: "gray" }}
+              />
+            }
           </div>
         </div>
 
@@ -911,6 +995,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               handleJobRequirementFormDrawerOpen(false);
             }
           }}
+          userRole="staff"
         />
 
         <Modal

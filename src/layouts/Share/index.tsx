@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useParams } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 
 import classnames from "classnames";
 import logo from "../../assets/logo.png";

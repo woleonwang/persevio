@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { message } from "antd";
 import { useNavigate, useParams } from "react-router";
@@ -48,19 +49,41 @@ const JobChat = () => {
       <div className={styles.jobMain}>
         {job && (
           <>
-            <div style={{ flex: "none" }}>
-              {job.name} -{" "}
-              {chatType === "job-requirement" ? "详细定义职位需求" : ""}
+            <div
+              style={{
+                flex: "none",
+                padding: "12px 0",
+                textAlign: "center",
+                position: "relative",
+              }}
+            >
+              <ArrowLeftOutlined
+                style={{
+                  position: "absolute",
+                  left: 18,
+                  top: 18,
+                  fontSize: 20,
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  navigate(`/app/jobs/${jobId}/board`);
+                }}
+              />
+              <span style={{ fontSize: 20, fontWeight: "bold" }}>
+                {job.name}
+              </span>{" "}
+              - {chatType === "job-requirement" ? "详细定义职位需求" : ""}
             </div>
             <div className={styles.chatWrapper}>
               <ChatRoomNew
+                key={chatType}
                 jobId={jobId}
                 allowEditMessage
                 userRole="staff"
                 chatType={chatTypeMappings[chatType] as TChatType}
-                onChangeTab={(tab, options) => {
+                viewDoc={(docType: string) => {
                   // TODO
-                  navigate("");
+                  navigate(docType);
                 }}
               />
             </div>

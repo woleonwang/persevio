@@ -225,7 +225,7 @@ export default {
     viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
     edit_profiles_hint:
       "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
-    reply_viona_directly_or_edit: "回复 Viona 或者编辑 Viona 的消息",
+    reply_viona_directly_or_edit: "回复 Viona 的消息",
     reply_viona: "回复 Viona",
 
     edit_message: "编辑消息",

@@ -37,8 +37,8 @@ const useAssemblyOffline = ({
   const recordingStateRef = useRef({
     timeoutId: 0,
     isHotKeyPressed: false,
-    stoppedByComboKey: false,
     isPersistRecording: false,
+    isStartRecordingOutside: false,
   });
 
   useEffect(() => {
@@ -49,24 +49,21 @@ const useAssemblyOffline = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("down");
       const state = recordingStateRef.current;
       const isRecording = isRecordingRef.current;
+      const isStartRecordingOutside =
+        recordingStateRef.current.isStartRecordingOutside;
       const disabled = disabledRef.current;
 
-      if (disabled || e.repeat) {
-        return;
-      }
+      if (isRecording && isStartRecordingOutside) return;
+
+      if (disabled || e.repeat) return;
 
       if (e.key.toLowerCase() !== "control") {
         // 其它按键，结束录音
         if (state.timeoutId > 0) {
           clearTimeout(state.timeoutId);
           state.timeoutId = 0;
-        }
-        if (isRecording) {
-          state.stoppedByComboKey = true;
-          endTranscription();
         }
         return;
       }
@@ -96,9 +93,13 @@ const useAssemblyOffline = ({
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "control") return;
 
+      const isStartRecordingOutside =
+        recordingStateRef.current.isStartRecordingOutside;
       // 长按 ctrl 松开结束录音（非双击模式）
       const state = recordingStateRef.current;
       const isRecording = isRecordingRef.current;
+
+      if (isRecording && isStartRecordingOutside) return;
 
       state.isHotKeyPressed = false;
 
@@ -117,6 +118,10 @@ const useAssemblyOffline = ({
   }, [disabled, onFinish]);
 
   const startTranscription = async () => {
+    if (disabled) {
+      return;
+    }
+
     setIsRecording(true);
     await initConnection();
     audioChunksRef.current = [];
@@ -126,7 +131,6 @@ const useAssemblyOffline = ({
   const endTranscription = async () => {
     mediaRecorderRef.current?.stop();
     clear();
-    setIsRecording(false);
   };
 
   const clear = () => {
@@ -173,13 +177,10 @@ const useAssemblyOffline = ({
     };
 
     recorder.onstop = async () => {
-      if (recordingStateRef.current.stoppedByComboKey) {
-        recordingStateRef.current.stoppedByComboKey = false;
-        return;
-      }
-
       console.log("length:", audioChunksRef.current.length);
+
       if (audioChunksRef.current.length === 0) {
+        setIsRecording(false);
         message.error("No voice recorded.");
       } else {
         // 将 audioChunksRef.current（Blob 数组）合并为一个 Blob，然后转为 base64 字符串
@@ -193,8 +194,9 @@ const useAssemblyOffline = ({
         const base64String = window.btoa(binary);
 
         console.log("data length: ", base64String.length);
-        console.log("start:", new Date().toISOString());
+        console.log("start transcribe:", new Date().toISOString());
 
+        setIsRecording(false);
         if (base64String.length === 0) {
           message.error("No voice recorded.");
           return;
@@ -204,7 +206,7 @@ const useAssemblyOffline = ({
           payload: base64String,
         });
         if (code === 0 && data.result) {
-          console.log("end:", new Date().toISOString());
+          console.log("end transcribe:", new Date().toISOString());
           console.log("finished, result is: ");
           console.log(data.result);
           onFinish(data.result ?? "");
@@ -247,11 +249,24 @@ const useAssemblyOffline = ({
     processAudio();
   };
 
+  const startTranscriptionOutside = () => {
+    recordingStateRef.current.isStartRecordingOutside = true;
+    startTranscription();
+  };
+
+  const endTranscriptionOutside = () => {
+    if (!recordingStateRef.current.isStartRecordingOutside) return;
+
+    recordingStateRef.current.isStartRecordingOutside = false;
+    endTranscription();
+  };
+
   return {
-    startTranscription,
-    endTranscription,
+    startTranscription: startTranscriptionOutside,
+    endTranscription: endTranscriptionOutside,
     isRecording,
     isTranscribing,
+    isStartRecordingOutside: recordingStateRef.current.isStartRecordingOutside,
     volume,
   };
 };
