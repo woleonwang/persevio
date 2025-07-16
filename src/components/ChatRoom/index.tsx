@@ -528,7 +528,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "extract-high-level-responsibility",
-      title: "核心职责清单",
+      title: t("extract_high_level_responsibility"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("high_level_responsibility");
@@ -536,7 +536,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "extract-day-to-day-tasks",
-      title: "每日任务清单",
+      title: t("extract_day_to_day_tasks"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("day_to_day_tasks");
@@ -544,7 +544,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     },
     {
       key: "extract-icp",
-      title: "理想候选人画像",
+      title: t("extract_icp"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
@@ -1544,10 +1544,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
               onCancel={() => setSelectOptionsModalOpen(false)}
               title={
                 selectOptionsType === "high_level_responsibility"
-                  ? "高级别职责草案"
+                  ? t("extract_high_level_responsibility")
                   : selectOptionsType === "day_to_day_tasks"
-                  ? "建议日常任务清单"
-                  : "理想候选人画像(ICP)"
+                  ? t("extract_day_to_day_tasks")
+                  : t("extract_icp")
               }
               closable={false}
               maskClosable={false}

@@ -291,6 +291,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     post_job_btn: "发布您的职位",
     post_job_done: "您的职位已发布到 Persevio",
     post_job: "发布职位",
+
+    extract_high_level_responsibility: "编辑核心职责清单",
+    extract_day_to_day_tasks: "编辑日常具体工作清单",
+    extract_icp: "确定候选人评估标准",
   },
 
   job_requirement_form: {
@@ -429,19 +433,13 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     manager_message: "请填写职位和姓名",
   },
 
-  ideal_profile: {
-    minimum: "不可或缺",
-    big_plus: "大加分项",
-    plus: "加分项",
-    no_apply: "不适用优先级",
-    add: "添加",
-  },
+  select_options: {
+    core_requirements: "核心要求",
+    plus_points: "加分项",
 
-  screening_question: {
-    edit_screening_questions: "编辑筛选问题",
-    question: "问题",
-    required: "必填",
-    add: "添加问题",
+    high_level_responsibility_alert: "请选择或者调整职责内容，以满足您的预期",
+    day_to_day_alert:
+      "请选择或者调整当前职责中最重要、最具代表性的任务，以满足您的预期。",
   },
 
   profile: {

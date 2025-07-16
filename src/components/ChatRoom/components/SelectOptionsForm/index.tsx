@@ -36,6 +36,10 @@ const SelectOptionsForm = (props: IProps) => {
 
   const { t: originalT } = useTranslation();
 
+  const t = (key: string) => {
+    return originalT(`select_options.${key}`);
+  };
+
   useEffect(() => {
     try {
       let groups: TGroup[] = [];
@@ -183,7 +187,9 @@ const SelectOptionsForm = (props: IProps) => {
                 ) : (
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Form.Item name={`${option.uuid}_type`}>
-                      <Radio.Group options={["核心要求", "加分项"]} />
+                      <Radio.Group
+                        options={[t("core_requirements"), t("plus_points")]}
+                      />
                     </Form.Item>
 
                     <ReloadOutlined
@@ -240,8 +246,8 @@ const SelectOptionsForm = (props: IProps) => {
           <Alert
             message={
               type === "high_level_responsibility"
-                ? "请选择或者调整职责内容，以满足您的预期"
-                : "请选择或者调整当前职责中最重要、最具代表性的任务，以满足您的预期。"
+                ? t("high_level_responsibility_alert")
+                : t("day_to_day_alert")
             }
             type="success"
             style={{ marginBottom: 20 }}

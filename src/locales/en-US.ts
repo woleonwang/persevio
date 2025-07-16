@@ -302,6 +302,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     post_job_btn: "Post Your Job Now",
     post_job_done: "Your job has been posted to Persevio",
     post_job: "Post Your Job",
+
+    extract_high_level_responsibility: "Edit Key Responsibilities",
+    extract_day_to_day_tasks: "Edit Day-to-Day Tasks",
+    extract_icp: "Define Candidate Assessment Criteria",
   },
 
   job_requirement_form: {
@@ -447,19 +451,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     manager_message: "Please fill in the manager's job title and name.",
   },
 
-  ideal_profile: {
-    minimum: "Must",
-    big_plus: "Big Plus",
-    plus: "Plus",
-    no_apply: "Not Apply",
-    add: "Add New",
-  },
+  select_options: {
+    core_requirements: "Core Requirements",
+    plus_points: "Plus Points",
 
-  screening_question: {
-    edit_screening_questions: "Edit Screening Questions",
-    question: "Question",
-    required: "Required",
-    add: "Add Question",
+    high_level_responsibility_alert:
+      "Please choose or modify the responsibilities to align with your expectations.",
+    day_to_day_alert:
+      "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
   },
 
   profile: {
