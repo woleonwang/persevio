@@ -459,6 +459,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please choose or modify the responsibilities to align with your expectations.",
     day_to_day_alert:
       "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
+    core_responsibility: "Core Responsibility",
+    secondary_responsibility: "Secondary Responsibility",
   },
 
   profile: {

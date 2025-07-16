@@ -440,6 +440,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     high_level_responsibility_alert: "请选择或者调整职责内容，以满足您的预期",
     day_to_day_alert:
       "请选择或者调整当前职责中最重要、最具代表性的任务，以满足您的预期。",
+    core_responsibility: "核心职责",
+    secondary_responsibility: "次要职责",
   },
 
   profile: {

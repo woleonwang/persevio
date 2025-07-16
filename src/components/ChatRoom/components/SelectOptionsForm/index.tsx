@@ -146,7 +146,7 @@ const SelectOptionsForm = (props: IProps) => {
     const checkGroup = (group: TSubGroup): boolean => {
       return group.options.every((option) => {
         return (
-          (type === "icp"
+          (type === "icp" || type === "high_level_responsibility"
             ? !values[`${option.uuid}_type`]
             : !values[`${option.uuid}_checked`]) ||
           !!values[`${option.uuid}_content`]
@@ -164,56 +164,74 @@ const SelectOptionsForm = (props: IProps) => {
   };
 
   const renderOptions = (group: TSubGroup) => {
+    const genRadioGroup = (option: TOption, radioOptions: string[]) => {
+      return (
+        <Radio.Group>
+          {radioOptions.map((label) => (
+            <Radio
+              key={label}
+              value={label}
+              onClick={(e) => {
+                // @ts-ignore
+                if (e.target.checked) {
+                  form.setFieldsValue({
+                    [`${option.uuid}_type`]: "",
+                  });
+                  forceUpdate();
+                }
+              }}
+            >
+              {label}
+            </Radio>
+          ))}
+        </Radio.Group>
+      );
+    };
     return (
       <div>
         <div>
           {group.options.map((option) => {
             return (
               <div key={option.uuid} className={styles.skillRow}>
+                {type === "high_level_responsibility" ? (
+                  <Form.Item name={`${option.uuid}_type`}>
+                    {genRadioGroup(option, [
+                      t("core_responsibility"),
+                      t("secondary_responsibility"),
+                    ])}
+                  </Form.Item>
+                ) : type === "day_to_day_tasks" ? (
+                  <Form.Item
+                    name={`${option.uuid}_checked`}
+                    valuePropName="checked"
+                  >
+                    <Checkbox style={{ marginRight: 12 }} />
+                  </Form.Item>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Form.Item name={`${option.uuid}_type`}>
+                      {genRadioGroup(option, [
+                        t("core_requirements"),
+                        t("plus_points"),
+                      ])}
+                    </Form.Item>
+                  </div>
+                )}
+
                 <Form.Item
                   name={`${option.uuid}_content`}
                   style={{ flex: "auto" }}
                 >
                   <Input.TextArea rows={1} />
                 </Form.Item>
-
-                {type !== "icp" ? (
-                  <Form.Item
-                    name={`${option.uuid}_checked`}
-                    valuePropName="checked"
-                  >
-                    <Checkbox style={{ marginLeft: 12 }} />
-                  </Form.Item>
-                ) : (
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <Form.Item name={`${option.uuid}_type`}>
-                      <Radio.Group
-                        options={[t("core_requirements"), t("plus_points")]}
-                      />
-                    </Form.Item>
-
-                    <ReloadOutlined
-                      style={{
-                        marginBottom: 24,
-                        marginLeft: 12,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        form.setFieldsValue({
-                          [`${option.uuid}_type`]: "",
-                        });
-                        forceUpdate();
-                      }}
-                    />
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
         <div>
           <Button
-            type="primary"
+            color="primary"
+            variant="outlined"
             icon={<PlusOutlined />}
             onClick={() => {
               const uuid = uuidV4();
@@ -263,6 +281,9 @@ const SelectOptionsForm = (props: IProps) => {
                     fontWeight: "bold",
                     marginBottom: 10,
                     marginTop: 30,
+                    color: "#1FAC6A",
+                    paddingLeft: 6,
+                    borderLeft: "3px solid #1FAC6A",
                   }}
                 >
                   {group.title}
@@ -303,8 +324,10 @@ const SelectOptionsForm = (props: IProps) => {
               if (type === "high_level_responsibility") {
                 const result = (groups[0]?.options ?? [])
                   .map((option) => {
-                    return values[`${option.uuid}_checked`]
-                      ? `- **${values[`${option.uuid}_content`]}**`
+                    return values[`${option.uuid}_type`]
+                      ? `- **${values[`${option.uuid}_content`]}** - ${
+                          values[`${option.uuid}_type`]
+                        }**`
                       : "";
                   })
                   .filter(Boolean)
