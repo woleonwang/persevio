@@ -54,7 +54,11 @@ const InterviewFeedbacks = () => {
           return (
             <div key={interviewFeedback.id} className={styles.jobApplyCard}>
               <div>
-                <div className={styles.jobName}>{interviewFeedback.name}</div>
+                <div className={styles.jobName}>
+                  {interviewFeedback.talent
+                    ? `${interviewFeedback.talent.name} - Round ${interviewFeedback.round}`
+                    : "Unknown Talent"}
+                </div>
                 <div style={{ fontSize: "14px", color: "#999", marginTop: 8 }}>
                   Created At:{" "}
                   {dayjs(interviewFeedback.updated_at).format(

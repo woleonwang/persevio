@@ -72,6 +72,7 @@ type TSupportTag = {
   title: string;
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
+  block?: boolean;
 };
 
 const RESOURCE_TYPE_MAP: Record<string, TChatType> = {
@@ -392,9 +393,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "huoqucailiao",
+      key: "upload-jd",
       title: t("share_reference"),
       handler: () => {},
+      block: true,
       // autoTrigger: true,
     },
     {
@@ -1018,20 +1020,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   isFinished: false,
                   chatType: "talentEvaluateResult",
                 },
-                ...(profile?.is_admin
-                  ? [
-                      {
-                        title: "设计面试",
-                        isFinished: false,
-                        chatType: "jobInterviewDesign",
-                      },
-                      {
-                        title: "面试反馈",
-                        isFinished: false,
-                        chatType: "jobInterviewFeedback",
-                      },
-                    ]
-                  : []),
+
+                {
+                  title: "设计面试",
+                  isFinished: false,
+                  disabled: !job?.interview_plan_doc_id,
+                  chatType: "jobInterviewDesign",
+                },
+                {
+                  title: "面试反馈",
+                  isFinished: false,
+                  disabled: !job?.interview_plan_doc_id,
+                  chatType: "jobInterviewFeedback",
+                },
               ]
                 .filter(
                   (task) =>
@@ -1073,12 +1074,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                         [styles.disabled]: task.disabled,
                       })}
                       onClick={() => {
+                        if (task.disabled || !task.chatType) return;
+
                         if (task.chatType === "jobInterviewDesign") {
                           navigate(`/app/jobs/${jobId}/interview-designers`);
                         } else if (task.chatType === "jobInterviewFeedback") {
                           navigate(`/app/jobs/${jobId}/interview-feedbacks`);
                         } else {
-                          if (task.disabled || !task.chatType) return;
                           setChatType(task.chatType as TChatType);
                         }
                       }}
@@ -1236,68 +1238,108 @@ const ChatRoom: React.FC<IProps> = (props) => {
                             .filter(Boolean) as TSupportTag[];
 
                           return (
-                            <div
-                              style={{
-                                marginTop: 16,
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 8,
-                              }}
-                            >
-                              {visibleTags.map((tag) => {
-                                return (
-                                  <div
-                                    style={{ marginBottom: 16 }}
-                                    key={tag.key}
-                                  >
-                                    {tag.key === "huoqucailiao" ? (
-                                      <Upload
-                                        beforeUpload={() => false}
-                                        onChange={async (fileInfo) => {
-                                          const formData = new FormData();
-                                          formData.append(
-                                            "file",
-                                            fileInfo.file as any
-                                          );
-                                          const { code, data } =
-                                            await PostFormData(
-                                              `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                              formData
-                                            );
-                                          if (code === 0) {
-                                            sendMessage(data.resume);
-                                          } else {
-                                            message.error("Upload failed");
-                                          }
-                                        }}
-                                        showUploadList={false}
-                                        accept="text/plain,.docx,.pdf"
-                                        multiple={false}
+                            <>
+                              <div
+                                style={{
+                                  marginTop: 16,
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 8,
+                                }}
+                              >
+                                {visibleTags
+                                  .filter((tag) => !tag.block)
+                                  .map((tag) => {
+                                    return (
+                                      <div
+                                        style={{ marginBottom: 16 }}
+                                        key={tag.key}
                                       >
-                                        <Button type="primary">
+                                        <Button
+                                          type="primary"
+                                          onClick={() => {
+                                            const extraTag = (
+                                              item.extraTags ?? []
+                                            ).find(
+                                              (extraTag) =>
+                                                extraTag.name === tag.key
+                                            );
+                                            tag.handler(extraTag);
+                                          }}
+                                        >
                                           {tag.title}
                                         </Button>
-                                      </Upload>
-                                    ) : (
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                              {visibleTags
+                                .filter((tag) => tag.block)
+                                .map((tag) => (
+                                  <div style={{ width: "100%" }}>
+                                    <Upload.Dragger
+                                      beforeUpload={() => false}
+                                      onChange={async (fileInfo) => {
+                                        const formData = new FormData();
+                                        formData.append(
+                                          "file",
+                                          fileInfo.file as any
+                                        );
+                                        const { code, data } =
+                                          await PostFormData(
+                                            `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                            formData
+                                          );
+                                        if (code === 0) {
+                                          sendMessage(data.resume);
+                                        } else {
+                                          message.error("Upload failed");
+                                        }
+                                      }}
+                                      showUploadList={false}
+                                      accept="text/plain,.doc,.docx,.pdf"
+                                      multiple={false}
+                                      style={{
+                                        background: "rgb(239, 249, 239)",
+                                        color: "#1FAC6A",
+                                        marginBottom: 16,
+                                      }}
+                                    >
+                                      {tag.title}
+                                    </Upload.Dragger>
+                                    {/* <Upload
+                                      beforeUpload={() => false}
+                                      onChange={async (fileInfo) => {
+                                        const formData = new FormData();
+                                        formData.append(
+                                          "file",
+                                          fileInfo.file as any
+                                        );
+                                        const { code, data } =
+                                          await PostFormData(
+                                            `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                            formData
+                                          );
+                                        if (code === 0) {
+                                          sendMessage(data.resume);
+                                        } else {
+                                          message.error("Upload failed");
+                                        }
+                                      }}
+                                      showUploadList={false}
+                                      accept="text/plain,.docx,.pdf"
+                                      multiple={false}
+                                    >
                                       <Button
                                         type="primary"
-                                        onClick={() => {
-                                          const extraTag = (
-                                            item.extraTags ?? []
-                                          ).find(
-                                            (extraTag) =>
-                                              extraTag.name === tag.key
-                                          );
-                                          tag.handler(extraTag);
-                                        }}
+                                        style={{ width: "100%" }}
                                       >
                                         {tag.title}
                                       </Button>
-                                    )}
+                                    </Upload> */}
                                   </div>
-                                );
-                              })}
-                            </div>
+                                ))}
+                            </>
                           );
                         })()}
 

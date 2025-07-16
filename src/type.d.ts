@@ -225,6 +225,10 @@ interface IInterviewRequest {
 
 interface TInterviewDesigner {
   id: number;
+  talent: {
+    id: number;
+    name: string;
+  };
   resume: string;
   last_feedback: string;
   round: number;
@@ -234,10 +238,12 @@ interface TInterviewDesigner {
 
 interface TInterviewFeedback {
   id: number;
-  name: string;
-  resume: string;
+  talent: {
+    id: number;
+    name: string;
+  };
+  round: number;
   interview_transcript: string;
-  interview_design: number;
   created_at: string;
   updated_at: string;
 }

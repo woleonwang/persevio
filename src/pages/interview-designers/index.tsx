@@ -55,7 +55,9 @@ const InterviewDesigners = () => {
             <div key={interviewDesigner.id} className={styles.jobApplyCard}>
               <div>
                 <div className={styles.jobName}>
-                  Round {interviewDesigner.round}
+                  {interviewDesigner.talent
+                    ? `${interviewDesigner.talent.name} - Round ${interviewDesigner.round}`
+                    : "Unknown Talent"}
                 </div>
                 <div style={{ fontSize: "14px", color: "#999", marginTop: 8 }}>
                   Created At:{" "}

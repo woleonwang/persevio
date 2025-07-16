@@ -1,7 +1,7 @@
 import { Form, Input, Button, Radio, Alert, Checkbox } from "antd";
 import { useEffect, useReducer, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
 import { parseJSON } from "../../../../utils";
