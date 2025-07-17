@@ -701,10 +701,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
         if (chatType === "jobRequirementDoc") {
           const tagPrograss = {
             "huoqujibenxinxi-jindu-one": 0,
-            "jindu-two": 1,
-            // "jindu-three": 2,
-            "jindu-four": 2,
-            shaixuanbiaozhun: 3,
+            "extract-high-level-responsibility": 1,
+            "extract-day-to-day-tasks": 2,
+            "extract-icp": 3,
           };
 
           let progress = 0;
@@ -1125,9 +1124,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
               current={jrdProgress}
               items={[
                 { title: t("gather_basic_information") },
-                { title: t("confirm_key_role_parameters") },
-                { title: t("define_ideal_candidate_profile") },
-                { title: t("define_screening_criteria") },
+                { title: t("high_level_responsibility") },
+                { title: t("day_to_day_tasks") },
+                { title: t("icp") },
               ]}
             />
           </div>

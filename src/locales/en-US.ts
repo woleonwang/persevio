@@ -306,6 +306,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     extract_high_level_responsibility: "Edit Key Responsibilities",
     extract_day_to_day_tasks: "Edit Day-to-Day Tasks",
     extract_icp: "Define Candidate Assessment Criteria",
+
+    high_level_responsibility: "Key Responsibilities",
+    day_to_day_tasks: "Day-to-Day Tasks",
+    icp: "Candidate Assessment Criteria",
   },
 
   job_requirement_form: {

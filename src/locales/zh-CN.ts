@@ -295,6 +295,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     extract_high_level_responsibility: "编辑核心职责清单",
     extract_day_to_day_tasks: "编辑日常具体工作清单",
     extract_icp: "确定候选人评估标准",
+
+    high_level_responsibility: "核心职责清单",
+    day_to_day_tasks: "日常具体工作清单",
+    icp: "候选人评估标准",
   },
 
   job_requirement_form: {
