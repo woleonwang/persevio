@@ -175,7 +175,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   const { isRecording, volume, isTranscribing } = useAssemblyOffline({
     onFinish: (result) => {
-      // console.log("handle result:", result);
       sendMessage(result);
     },
     disabled:
@@ -535,6 +534,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("high_level_responsibility");
       },
+      block: true,
     },
     {
       key: "extract-day-to-day-tasks",
@@ -543,6 +543,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("day_to_day_tasks");
       },
+      block: true,
     },
     {
       key: "extract-icp",
@@ -551,6 +552,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
       },
+      block: true,
     },
   ];
 
@@ -1014,12 +1016,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   isFinished: !!job?.interview_plan_doc_id,
                   chatType: "jobInterviewPlan",
                 },
-                {
-                  title: t("evaluate_result"),
-                  disabled: !job?.requirement_doc_id,
-                  isFinished: false,
-                  chatType: "talentEvaluateResult",
-                },
 
                 {
                   title: "推荐面试问题",
@@ -1276,67 +1272,61 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               {visibleTags
                                 .filter((tag) => tag.block)
                                 .map((tag) => (
-                                  <div style={{ width: "100%" }}>
-                                    <Upload.Dragger
-                                      beforeUpload={() => false}
-                                      onChange={async (fileInfo) => {
-                                        const formData = new FormData();
-                                        formData.append(
-                                          "file",
-                                          fileInfo.file as any
-                                        );
-                                        const { code, data } =
-                                          await PostFormData(
-                                            `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                            formData
+                                  <div style={{ width: "100%" }} key={tag.key}>
+                                    {tag.key === "upload-jd" ? (
+                                      <Upload.Dragger
+                                        beforeUpload={() => false}
+                                        onChange={async (fileInfo) => {
+                                          const formData = new FormData();
+                                          formData.append(
+                                            "file",
+                                            fileInfo.file as any
                                           );
-                                        if (code === 0) {
-                                          sendMessage(data.resume);
-                                        } else {
-                                          message.error("Upload failed");
-                                        }
-                                      }}
-                                      showUploadList={false}
-                                      accept="text/plain,.doc,.docx,.pdf"
-                                      multiple={false}
-                                      style={{
-                                        background: "rgb(239, 249, 239)",
-                                        color: "#1FAC6A",
-                                        marginBottom: 16,
-                                      }}
-                                    >
-                                      {tag.title}
-                                    </Upload.Dragger>
-                                    {/* <Upload
-                                      beforeUpload={() => false}
-                                      onChange={async (fileInfo) => {
-                                        const formData = new FormData();
-                                        formData.append(
-                                          "file",
-                                          fileInfo.file as any
-                                        );
-                                        const { code, data } =
-                                          await PostFormData(
-                                            `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                            formData
-                                          );
-                                        if (code === 0) {
-                                          sendMessage(data.resume);
-                                        } else {
-                                          message.error("Upload failed");
-                                        }
-                                      }}
-                                      showUploadList={false}
-                                      accept="text/plain,.docx,.pdf"
-                                      multiple={false}
-                                    >
+                                          const { code, data } =
+                                            await PostFormData(
+                                              `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                              formData
+                                            );
+                                          if (code === 0) {
+                                            sendMessage(data.resume);
+                                          } else {
+                                            message.error("Upload failed");
+                                          }
+                                        }}
+                                        showUploadList={false}
+                                        accept="text/plain,.doc,.docx,.pdf"
+                                        multiple={false}
+                                        style={{
+                                          background: "rgb(239, 249, 239)",
+                                          color: "#1FAC6A",
+                                          marginBottom: 16,
+                                        }}
+                                      >
+                                        {tag.title}
+                                      </Upload.Dragger>
+                                    ) : (
                                       <Button
-                                        type="primary"
-                                        style={{ width: "100%" }}
+                                        type="dashed"
+                                        style={{
+                                          width: "100%",
+                                          height: 56,
+                                          marginBottom: 16,
+                                          background: "rgb(239, 249, 239)",
+                                          color: "#1FAC6A",
+                                        }}
+                                        onClick={() => {
+                                          const extraTag = (
+                                            item.extraTags ?? []
+                                          ).find(
+                                            (extraTag) =>
+                                              extraTag.name === tag.key
+                                          );
+                                          tag.handler(extraTag);
+                                        }}
                                       >
                                         {tag.title}
                                       </Button>
-                                    </Upload> */}
+                                    )}
                                   </div>
                                 ))}
                             </>
@@ -1725,9 +1715,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
         >
           <div
             style={{
-              backgroundColor: "rgba(0,0,0,0.1)",
-              width: 80,
-              height: 80,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              width: 100,
+              height: 100,
               borderRadius: 20,
               display: "flex",
               alignItems: "center",
@@ -1737,8 +1727,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
             {isRecording ? (
               <ScaleLoader
                 color="#1FAC6A"
-                height={60 * Math.min(1, volume * 3) + 5}
-                width={8}
+                height={75 * Math.min(1, volume * 3) + 5}
+                width={10}
               />
             ) : (
               <ClipLoader color="#1FAC6A" size={32} />

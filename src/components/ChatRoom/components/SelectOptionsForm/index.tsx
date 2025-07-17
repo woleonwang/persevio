@@ -143,6 +143,8 @@ const SelectOptionsForm = (props: IProps) => {
 
   const canSubmit = () => {
     const values = form.getFieldsValue();
+    // 1. 选中的选项必须有值；
+    // 2. 至少选中一个
     const checkGroup = (group: TSubGroup): boolean => {
       return group.options.every((option) => {
         return (
@@ -154,13 +156,31 @@ const SelectOptionsForm = (props: IProps) => {
       });
     };
 
-    return groups.every((group) => {
+    const noEmptyOption = groups.every((group) => {
       if (!!group.options) {
         return checkGroup(group as TSubGroup);
       } else {
         return group.subGroups?.every((subGroup) => checkGroup(subGroup));
       }
     });
+
+    const existsSelected = (group: TSubGroup): boolean => {
+      return !!group.options.find((option) => {
+        return type === "icp" || type === "high_level_responsibility"
+          ? values[`${option.uuid}_type`]
+          : values[`${option.uuid}_checked`];
+      });
+    };
+
+    const selectAtLeastOne = groups.find((group) => {
+      if (!!group.options) {
+        return existsSelected(group as TSubGroup);
+      } else {
+        return group.subGroups?.every((subGroup) => existsSelected(subGroup));
+      }
+    });
+
+    return noEmptyOption && selectAtLeastOne;
   };
 
   const renderOptions = (group: TSubGroup) => {
