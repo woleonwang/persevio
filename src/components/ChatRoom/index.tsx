@@ -1022,13 +1022,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 },
 
                 {
-                  title: "设计面试",
+                  title: "推荐面试问题",
                   isFinished: false,
                   disabled: !job?.interview_plan_doc_id,
                   chatType: "jobInterviewDesign",
                 },
                 {
-                  title: "面试反馈",
+                  title: "生成面试评价",
                   isFinished: false,
                   disabled: !job?.interview_plan_doc_id,
                   chatType: "jobInterviewFeedback",
