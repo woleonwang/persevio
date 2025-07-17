@@ -23,6 +23,7 @@ const InteviewFeedbacksChat = () => {
           jobId={parseInt(jobId ?? "0")}
           jobInterviewFeedbackId={parseInt(interviewFeedbackId ?? "0")}
           hideSidebar={true}
+          allowEditMessage
         />
       </div>
     </div>
