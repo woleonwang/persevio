@@ -1017,13 +1017,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 },
 
                 {
-                  title: "推荐面试问题",
+                  title: t("recommend_interview_question"),
                   isFinished: false,
                   disabled: !job?.interview_plan_doc_id,
                   chatType: "jobInterviewDesign",
                 },
                 {
-                  title: "生成面试评价",
+                  title: t("generate_interview_feedback"),
                   isFinished: false,
                   disabled: !job?.interview_plan_doc_id,
                   chatType: "jobInterviewFeedback",
@@ -1093,6 +1093,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                           style={{
                             paddingRight: 10,
                             color: task.disabled ? "#a1a1a1" : "",
+                            lineHeight: 1.5,
                           }}
                         >
                           {task.title}

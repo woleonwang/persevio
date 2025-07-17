@@ -29,6 +29,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
+import zhCNReact from "antd/es/locale/zh_CN"; // 中文
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import DeepAspirationsVoice from "./pages/candidate/deep-aspirations-voice";
@@ -73,6 +74,7 @@ createRoot(document.getElementById("root")!).render(
           colorPrimary: "#1FAC6A",
         },
       }}
+      locale={zhCNReact}
     >
       <BrowserRouter>
         <Routes>

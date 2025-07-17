@@ -25,8 +25,8 @@ const InterviewFeedbacksForm = (props: IProps) => {
   const isSubmittingRef = useRef(false);
 
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  // const t = (key: string) => originalT(`create_interview_feedback.${key}`);
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`interview_feedback.${key}`);
 
   useEffect(() => {
     if (type === "edit") fetchInterviewFeedback();
@@ -59,7 +59,9 @@ const InterviewFeedbacksForm = (props: IProps) => {
       );
       if (code === 0) {
         message.success(
-          type === "create" ? "Create succeed" : "Update succeed"
+          type === "create"
+            ? originalT("create_succeed")
+            : originalT("update_succeed")
         );
         navigate(`/app/jobs/${jobId}/interview-feedbacks`);
       }
@@ -70,16 +72,12 @@ const InterviewFeedbacksForm = (props: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {t(
-          type === "create"
-            ? "New Interview Feedback"
-            : "Edit Interview Feedback Context"
-        )}
+        {originalT(type === "create" ? "new" : "edit")}
       </div>
       <div className={styles.main}>
         <Form form={form} layout="vertical">
           <Form.Item
-            label={t("Candidate Resume")}
+            label={t("resume")}
             name="talent_id"
             rules={[{ required: true }]}
           >
@@ -87,7 +85,7 @@ const InterviewFeedbacksForm = (props: IProps) => {
           </Form.Item>
 
           <Form.Item
-            label={t("Round")}
+            label={t("round_field")}
             name="round"
             rules={[{ required: true }]}
           >
@@ -95,8 +93,9 @@ const InterviewFeedbacksForm = (props: IProps) => {
           </Form.Item>
 
           <Form.Item
-            label={t("Interview Transcript")}
+            label={t("interview_transcript")}
             name="interview_transcript"
+            rules={[{ required: true }]}
           >
             <Input.TextArea rows={10} />
           </Form.Item>
@@ -107,7 +106,7 @@ const InterviewFeedbacksForm = (props: IProps) => {
               onClick={submit}
               disabled={isSubmittingRef.current}
             >
-              {t("submit")}
+              {originalT("submit")}
             </Button>
 
             <Button
@@ -115,7 +114,7 @@ const InterviewFeedbacksForm = (props: IProps) => {
               onClick={() => navigate(-1)}
               style={{ marginLeft: 12 }}
             >
-              {t("back")}
+              {originalT("back")}
             </Button>
           </div>
         </Form>

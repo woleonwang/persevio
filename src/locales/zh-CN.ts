@@ -203,6 +203,8 @@ export default {
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
     evaluate_result: "简历评估",
+    recommend_interview_question: "推荐面试问题",
+    generate_interview_feedback: "生成面试评价",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI招聘专员",
@@ -616,8 +618,31 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     status_rejected: "已拒绝",
   },
 
+  interview_designer: {
+    title: "面试问题",
+    new_chat: "创建",
+    round: "第{{round}}轮",
+    chat: "对话",
+    edit_context: "编辑上下文",
+    resume: "候选人简历",
+    round_field: "面试轮次",
+    last_round_feedback: "上轮反馈",
+  },
+
+  interview_feedback: {
+    title: "面试反馈",
+    new_chat: "创建",
+    round: "第{{round}}轮",
+    chat: "对话",
+    edit_context: "编辑上下文",
+    resume: "候选人简历",
+    round_field: "面试轮次",
+    interview_transcript: "面试对话",
+  },
+
   ...CandidateResume,
 
+  new: "创建",
   edit: "编辑",
   save: "保存",
   cancel: "取消",
@@ -629,8 +654,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   add: "添加",
   create_succeed: "创建成功",
   create: "创建",
+  update_succeed: "编辑成功",
   back: "返回",
   chat_with_viona: "和 Viona 聊聊",
+  created_at: "创建时间",
+  chat_title: "对话",
 
   accept: "通过",
   reject: "拒绝",

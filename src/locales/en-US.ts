@@ -210,6 +210,8 @@ export default {
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
     evaluate_result: "Resume screening",
+    recommend_interview_question: "Recommend Interview Question",
+    generate_interview_feedback: "Generate Interview Feedback",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI recruiter",
@@ -639,8 +641,31 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     status_rejected: "Rejected",
   },
 
+  interview_designer: {
+    title: "Interview Design",
+    new_chat: "New Chat",
+    round: "Round {{round}}",
+    chat: "Chat",
+    edit_context: "Edit Context",
+    resume: "Candidate Resume",
+    round_field: "Round",
+    last_round_feedback: "Last Round Feedback",
+  },
+
+  interview_feedback: {
+    title: "Interview Feedback",
+    new_chat: "New Chat",
+    round: "Round {{round}}",
+    chat: "Chat",
+    edit_context: "Edit Context",
+    resume: "Candidate Resume",
+    round_field: "Round",
+    interview_transcript: "Interview Transcript",
+  },
+
   ...CandidateResume,
 
+  new: "Create",
   edit: "Edit",
   save: "Save",
   cancel: "Cancel",
@@ -648,12 +673,15 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   submitting: "Submitting...",
   submit_succeed: "Submit succeed!",
   submit_failed: "Submit failed!",
-  add: "Add",
   close: "Close",
+  add: "Add",
   create_succeed: "Create succeed!",
   create: "Create",
+  update_succeed: "Update Succeed!",
   back: "Back",
   chat_with_viona: "Chat with Viona",
+  created_at: "Created At",
+  chat_title: "Chat",
 
   accept: "Accept",
   reject: "Reject",

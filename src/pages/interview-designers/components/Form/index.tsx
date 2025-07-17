@@ -35,7 +35,8 @@ const InterviewDesignerForm = (props: IProps) => {
   const isSubmittingRef = useRef(false);
 
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`interview_designer.${key}`);
 
   const formValues = form.getFieldsValue();
 
@@ -103,7 +104,9 @@ const InterviewDesignerForm = (props: IProps) => {
       );
       if (code === 0) {
         message.success(
-          type === "create" ? "Create succeed" : "Update succeed"
+          type === "create"
+            ? originalT("create_succeed")
+            : originalT("update_succeed")
         );
         navigate(`/app/jobs/${jobId}/interview-designers`);
       }
@@ -114,16 +117,12 @@ const InterviewDesignerForm = (props: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {t(
-          type === "create"
-            ? "New Interview Design"
-            : "Edit Interview Design Context"
-        )}
+        {originalT(type === "create" ? "new" : "edit")}
       </div>
       <div className={styles.main}>
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
           <Form.Item
-            label={t("Candidate Resume")}
+            label={t("resume")}
             name="talent_id"
             rules={[{ required: true }]}
           >
@@ -131,14 +130,14 @@ const InterviewDesignerForm = (props: IProps) => {
           </Form.Item>
 
           <Form.Item
-            label={t("Round")}
+            label={t("round_field")}
             name="round"
             rules={[{ required: true }]}
           >
             <InputNumber min={1} />
           </Form.Item>
 
-          <Form.Item label={t("Last Round Feedback")} name="last_feedback">
+          <Form.Item label={t("last_round_feedback")} name="last_feedback">
             <MarkdownEditor
               style={{ backgroundColor: "white", padding: 12 }}
               key={formValues.round}
@@ -150,7 +149,7 @@ const InterviewDesignerForm = (props: IProps) => {
               onClick={submit}
               disabled={isSubmittingRef.current}
             >
-              {t("submit")}
+              {originalT("submit")}
             </Button>
 
             <Button
@@ -158,7 +157,7 @@ const InterviewDesignerForm = (props: IProps) => {
               onClick={() => navigate(-1)}
               style={{ marginLeft: 12 }}
             >
-              {t("back")}
+              {originalT("back")}
             </Button>
           </div>
         </Form>
