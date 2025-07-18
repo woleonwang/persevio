@@ -11,11 +11,14 @@ import { TChatType } from "@/components/ChatRoomNew/type";
 
 const chatTypeMappings = {
   "job-requirement": "jobRequirementDoc",
+  "job-description": "jobDescription",
+  "job-interview-plan": "jobInterviewPlan",
 };
+
 const JobChat = () => {
   const { jobId: jobIdStr, chatType = "job-requirement" } = useParams<{
     jobId: string;
-    chatType: "job-requirement";
+    chatType: "job-requirement" | "job-description" | "job-interview-plan";
   }>();
   const jobId = parseInt(jobIdStr ?? "0");
 
@@ -32,6 +35,12 @@ const JobChat = () => {
     setMenuCollapse(true);
     fetchJob();
   }, []);
+
+  const chatTypeTitle = {
+    "job-requirement": "详细定义职位需求",
+    "job-description": "定义 JD",
+    "job-interview-plan": "定义面试计划&评分卡",
+  };
 
   const fetchJob = async () => {
     const { code, data } = await Get(`/api/jobs/${jobId}`);
@@ -72,7 +81,7 @@ const JobChat = () => {
               <span style={{ fontSize: 20, fontWeight: "bold" }}>
                 {job.name}
               </span>{" "}
-              - {chatType === "job-requirement" ? "详细定义职位需求" : ""}
+              - {chatTypeTitle[chatType]}
             </div>
             <div className={styles.chatWrapper}>
               <ChatRoomNew

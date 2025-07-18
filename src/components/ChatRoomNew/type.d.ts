@@ -7,7 +7,7 @@ export type TExtraTagName =
   | "copy-link" // 复制链接
   | "talent-evaluate-result"
   | "huoqujibenxinxi-jindu-one"
-  | "huoqucailiao"
+  | "upload-jd"
   | "salary-structure-request"
   | "shaixuanbiaozhun"
   | "screening-q-request"

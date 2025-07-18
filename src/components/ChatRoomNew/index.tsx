@@ -40,7 +40,7 @@ import {
   TMessage,
   TMessageFromApi,
   TRoleOverviewType,
-} from "./type";
+} from "./type.d";
 import { copy } from "../../utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -61,6 +61,7 @@ type TSupportTag = {
   title: string;
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
+  block?: boolean;
 };
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -203,7 +204,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     return url;
   };
 
-  const changeChatType = (chatType: TChatType) => {
+  const changeChatType = (chatType: string) => {
     navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
@@ -255,34 +256,37 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       autoTrigger: true,
     },
     {
-      key: "huoqucailiao",
+      key: "upload-jd",
       title: t("share_reference"),
       handler: () => {},
-      // autoTrigger: true,
+      block: true,
     },
     {
       key: "extract-high-level-responsibility",
-      title: "核心职责清单",
+      title: t("extract_high_level_responsibility"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("high_level_responsibility");
       },
+      block: true,
     },
     {
       key: "extract-day-to-day-tasks",
-      title: "每日任务清单",
+      title: t("extract_day_to_day_tasks"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("day_to_day_tasks");
       },
+      block: true,
     },
     {
       key: "extract-icp",
-      title: "理想候选人画像",
+      title: t("extract_icp"),
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
       },
+      block: true,
     },
     {
       key: "salary-structure-request",
@@ -318,12 +322,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "to-jd-btn",
       title: t("draft_job_description"),
-      handler: () => changeChatType("jobDescription"),
+      handler: () => changeChatType("job-description"),
     },
     {
       key: "to-interview-plan-btn",
       title: t("define_interview_plan"),
-      handler: () => changeChatType("jobInterviewPlan"),
+      handler: () => changeChatType("job-interview-plan"),
     },
   ];
 
@@ -665,9 +669,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               current={jrdProgress}
               items={[
                 { title: t("gather_basic_information") },
-                { title: "核心职责清单" },
-                { title: "每日任务清单" },
-                { title: "理想候选人画像" },
+                { title: t("high_level_responsibility") },
+                { title: t("day_to_day_tasks") },
+                { title: t("icp") },
               ]}
             />
           </div>
@@ -770,30 +774,47 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                             .filter(Boolean) as TSupportTag[];
 
                           return (
-                            <div
-                              style={{
-                                marginTop: 16,
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 8,
-                              }}
-                            >
-                              {visibleTags.map((tag) => {
-                                return (
-                                  <div
-                                    style={{
-                                      marginBottom: 16,
-                                      ...(tag.key === "jrd-done"
-                                        ? {
-                                            borderRight: "1px solid #d9d9d9",
-                                            paddingRight: 8,
-                                          }
-                                        : {}),
-                                    }}
-                                    key={tag.key}
-                                  >
-                                    {tag.key === "huoqucailiao" ? (
-                                      <Upload
+                            <>
+                              <div
+                                style={{
+                                  marginTop: 16,
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 8,
+                                }}
+                              >
+                                {visibleTags
+                                  .filter((tag) => !tag.block)
+                                  .map((tag) => {
+                                    return (
+                                      <div
+                                        style={{ marginBottom: 16 }}
+                                        key={tag.key}
+                                      >
+                                        <Button
+                                          type="primary"
+                                          onClick={() => {
+                                            const extraTag = (
+                                              item.extraTags ?? []
+                                            ).find(
+                                              (extraTag) =>
+                                                extraTag.name === tag.key
+                                            );
+                                            tag.handler(extraTag);
+                                          }}
+                                        >
+                                          {tag.title}
+                                        </Button>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                              {visibleTags
+                                .filter((tag) => tag.block)
+                                .map((tag) => (
+                                  <div style={{ width: "100%" }} key={tag.key}>
+                                    {tag.key === "upload-jd" ? (
+                                      <Upload.Dragger
                                         beforeUpload={() => false}
                                         onChange={async (fileInfo) => {
                                           const formData = new FormData();
@@ -813,16 +834,26 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           }
                                         }}
                                         showUploadList={false}
-                                        accept="text/plain,.docx,.pdf"
+                                        accept="text/plain,.doc,.docx,.pdf"
                                         multiple={false}
+                                        style={{
+                                          background: "rgb(239, 249, 239)",
+                                          color: "#1FAC6A",
+                                          marginBottom: 16,
+                                        }}
                                       >
-                                        <Button type="primary">
-                                          {tag.title}
-                                        </Button>
-                                      </Upload>
+                                        {tag.title}
+                                      </Upload.Dragger>
                                     ) : (
                                       <Button
-                                        type="primary"
+                                        type="dashed"
+                                        style={{
+                                          width: "100%",
+                                          height: 56,
+                                          marginBottom: 16,
+                                          background: "rgb(239, 249, 239)",
+                                          color: "#1FAC6A",
+                                        }}
                                         onClick={() => {
                                           const extraTag = (
                                             item.extraTags ?? []
@@ -832,21 +863,13 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           );
                                           tag.handler(extraTag);
                                         }}
-                                        style={
-                                          tag.key === "jrd-done"
-                                            ? {
-                                                backgroundColor: "#5489f3",
-                                              }
-                                            : {}
-                                        }
                                       >
                                         {tag.title}
                                       </Button>
                                     )}
                                   </div>
-                                );
-                              })}
-                            </div>
+                                ))}
+                            </>
                           );
                         })()}
 
@@ -1010,11 +1033,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           width="100vw"
           onCancel={() => setSelectOptionsModalOpen(false)}
           title={
-            selectOptionsType === "high_level_responsibility"
-              ? "高级别职责草案"
-              : selectOptionsType === "day_to_day_tasks"
-              ? "建议日常任务清单"
-              : "理想候选人画像(ICP)"
+            {
+              high_level_responsibility: t("extract_high_level_responsibility"),
+              day_to_day_tasks: t("extract_day_to_day_tasks"),
+              icp: t("extract_icp"),
+            }[selectOptionsType ?? "icp"]
           }
           closable={false}
           maskClosable={false}
@@ -1120,9 +1143,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         >
           <div
             style={{
-              backgroundColor: "rgba(0,0,0,0.1)",
-              width: 80,
-              height: 80,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              width: 100,
+              height: 100,
               borderRadius: 20,
               display: "flex",
               alignItems: "center",
@@ -1132,8 +1155,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
             {isRecording ? (
               <ScaleLoader
                 color="#1FAC6A"
-                height={60 * Math.min(1, volume * 3) + 5}
-                width={8}
+                height={75 * Math.min(1, volume * 3) + 5}
+                width={10}
               />
             ) : (
               <ClipLoader color="#1FAC6A" size={32} />
