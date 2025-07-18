@@ -20,6 +20,7 @@ const SelectOrUploadTalent = (props: IProps) => {
 
   const [talents, setTalents] = useState<TTalent[]>([]);
   const [internalValue, setInternalValue] = useState<number>();
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchTalents();
@@ -61,14 +62,20 @@ const SelectOrUploadTalent = (props: IProps) => {
         <Upload
           beforeUpload={() => false}
           onChange={async (fileInfo) => {
+            if (isUploading) return;
+
             const formData = new FormData();
             formData.append("file", fileInfo.file as any);
+
+            setIsUploading(true);
             const { code, data } = await PostFormData(
               `/api/jobs/${jobId}/upload_resume_for_interview_design`,
               formData
             );
+
             if (code !== 0) {
               message.error("Upload failed");
+              setIsUploading(false);
               return;
             }
 
@@ -84,12 +91,16 @@ const SelectOrUploadTalent = (props: IProps) => {
               setInternalValue(data2.talent_id);
               onChange?.(data2.talent_id);
             }
+
+            setIsUploading(false);
           }}
           showUploadList={false}
-          accept=".docx,.pdf"
+          accept=".docx,.doc,.pdf"
           multiple={false}
         >
-          <Button type="primary">Upload Resume</Button>
+          <Button type="primary" loading={isUploading} disabled={isUploading}>
+            Upload Resume
+          </Button>
         </Upload>
       </div>
 
