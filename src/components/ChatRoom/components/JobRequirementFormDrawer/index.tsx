@@ -379,7 +379,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   "应届毕业生/无经验",
                   "初级/少量经验",
                   "中级/有一定经验",
-                  "高级/经验非常丰富,",
+                  "高级/经验非常丰富",
                 ].map((item) => ({
                   value: item,
                   label: item,

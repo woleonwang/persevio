@@ -12,7 +12,7 @@ const InteviewDesignersChat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>{originalT("Chat")}</div>
+        <div>{originalT("chat_title")}</div>
         <LeftCircleOutlined
           style={{ color: "#1FAC6A", cursor: "pointer" }}
           onClick={() => navigate(-1)}
@@ -23,6 +23,7 @@ const InteviewDesignersChat = () => {
           jobId={parseInt(jobId ?? "0")}
           jobInterviewDesignerId={parseInt(interviewDesignerId ?? "0")}
           hideSidebar={true}
+          allowEditMessage
         />
       </div>
     </div>

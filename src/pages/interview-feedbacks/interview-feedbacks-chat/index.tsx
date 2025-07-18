@@ -12,7 +12,7 @@ const InteviewFeedbacksChat = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>{originalT("Chat")}</div>
+        <div>{originalT("chat_title")}</div>
         <LeftCircleOutlined
           style={{ color: "#1FAC6A", cursor: "pointer" }}
           onClick={() => navigate(-1)}
@@ -23,6 +23,7 @@ const InteviewFeedbacksChat = () => {
           jobId={parseInt(jobId ?? "0")}
           jobInterviewFeedbackId={parseInt(interviewFeedbackId ?? "0")}
           hideSidebar={true}
+          allowEditMessage
         />
       </div>
     </div>

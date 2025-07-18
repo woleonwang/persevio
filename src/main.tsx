@@ -31,6 +31,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
+import zhCNReact from "antd/es/locale/zh_CN"; // 中文
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import DeepAspirationsVoice from "./pages/candidate/deep-aspirations-voice";
@@ -50,9 +51,9 @@ import InterviewDesignersCreate from "./pages/interview-designers/interview-desi
 import InterviewDesignersEdit from "./pages/interview-designers/interview-designers-edit";
 import InteviewDesignersChat from "./pages/interview-designers/interview-designers-chat";
 import InterviewFeedbacks from "./pages/interview-feedbacks";
-import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-designers-create";
-import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-designers-edit";
-import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-designers-chat";
+import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-feedback-create";
+import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-feedbacks-edit";
+import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-feedbacks-chat";
 import JobChat from "./pages/job-chat";
 
 i18n.use(initReactI18next).init({
@@ -76,6 +77,7 @@ createRoot(document.getElementById("root")!).render(
           colorPrimary: "#1FAC6A",
         },
       }}
+      locale={zhCNReact}
     >
       <BrowserRouter>
         <Routes>

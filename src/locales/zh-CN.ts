@@ -203,12 +203,14 @@ export default {
     draft_job_description: "写职位描述（JD）",
     create_chatbot: "候选人Chatbot",
     evaluate_result: "简历评估",
+    recommend_interview_question: "推荐面试问题",
+    generate_interview_feedback: "生成面试评价",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI招聘专员",
 
     share_basic: "点击补充基本信息",
-    share_reference: "上传文档",
+    share_reference: "上传职位描述",
     share_team: "点击分享团队信息",
     ideal_profile: "点击编辑理想候选人画像",
     other_requirements: "点击确定其它要求",
@@ -291,6 +293,14 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     post_job_btn: "发布您的职位",
     post_job_done: "您的职位已发布到 Persevio",
     post_job: "发布职位",
+
+    extract_high_level_responsibility: "编辑核心职责清单",
+    extract_day_to_day_tasks: "编辑日常具体工作清单",
+    extract_icp: "确定候选人评估标准",
+
+    high_level_responsibility: "核心职责清单",
+    day_to_day_tasks: "日常具体工作清单",
+    icp: "候选人评估标准",
   },
 
   job_requirement_form: {
@@ -429,19 +439,15 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     manager_message: "请填写职位和姓名",
   },
 
-  ideal_profile: {
-    minimum: "不可或缺",
-    big_plus: "大加分项",
-    plus: "加分项",
-    no_apply: "不适用优先级",
-    add: "添加",
-  },
+  select_options: {
+    core_requirements: "核心要求",
+    plus_points: "加分项",
 
-  screening_question: {
-    edit_screening_questions: "编辑筛选问题",
-    question: "问题",
-    required: "必填",
-    add: "添加问题",
+    high_level_responsibility_alert: "请选择或者调整职责内容，以满足您的预期",
+    day_to_day_alert:
+      "请选择或者调整当前职责中最重要、最具代表性的任务，以满足您的预期。",
+    core_responsibility: "核心职责",
+    secondary_responsibility: "次要职责",
   },
 
   profile: {
@@ -612,8 +618,31 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     status_rejected: "已拒绝",
   },
 
+  interview_designer: {
+    title: "面试问题",
+    new_chat: "创建",
+    round: "第{{round}}轮",
+    chat: "对话",
+    edit_context: "编辑上下文",
+    resume: "候选人简历",
+    round_field: "面试轮次",
+    last_round_feedback: "上轮反馈",
+  },
+
+  interview_feedback: {
+    title: "面试反馈",
+    new_chat: "创建",
+    round: "第{{round}}轮",
+    chat: "对话",
+    edit_context: "编辑上下文",
+    resume: "候选人简历",
+    round_field: "面试轮次",
+    interview_transcript: "面试对话",
+  },
+
   ...CandidateResume,
 
+  new: "创建",
   edit: "编辑",
   save: "保存",
   cancel: "取消",
@@ -625,8 +654,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   add: "添加",
   create_succeed: "创建成功",
   create: "创建",
+  update_succeed: "编辑成功",
   back: "返回",
   chat_with_viona: "和 Viona 聊聊",
+  created_at: "创建时间",
+  chat_title: "对话",
 
   accept: "通过",
   reject: "拒绝",

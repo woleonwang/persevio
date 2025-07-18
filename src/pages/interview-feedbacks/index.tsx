@@ -17,7 +17,8 @@ const InterviewFeedbacks = () => {
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`interview_feedbacks.${key}`);
+  const t = (key: string, params?: Record<string, string>) =>
+    originalT(`interview_feedback.${key}`, params);
 
   useEffect(() => {
     fetchInterviewFeedbacks();
@@ -33,7 +34,7 @@ const InterviewFeedbacks = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>{originalT("Interview Feedbacks")}</div>
+        <div>{t("title")}</div>
         <LeftCircleOutlined
           style={{ color: "#1FAC6A", cursor: "pointer" }}
           onClick={() => navigate(`/app/jobs/${jobId}`)}
@@ -47,16 +48,22 @@ const InterviewFeedbacks = () => {
               navigate(`/app/jobs/${jobId}/interview-feedbacks/new`)
             }
           >
-            New Chat
+            {t("new_chat")}
           </Button>
         </div>
         {interviewFeedbacks.map((interviewFeedback) => {
           return (
             <div key={interviewFeedback.id} className={styles.jobApplyCard}>
               <div>
-                <div className={styles.jobName}>{interviewFeedback.name}</div>
+                <div className={styles.jobName}>
+                  {interviewFeedback.talent
+                    ? `${interviewFeedback.talent.name} - ${t("round", {
+                        round: interviewFeedback.round?.toString(),
+                      })}`
+                    : "Unknown Talent"}
+                </div>
                 <div style={{ fontSize: "14px", color: "#999", marginTop: 8 }}>
-                  Created At:{" "}
+                  {originalT("created_at")}:{" "}
                   {dayjs(interviewFeedback.updated_at).format(
                     "YYYY-MM-DD HH:mm:ss"
                   )}
@@ -70,7 +77,7 @@ const InterviewFeedbacks = () => {
                       )
                     }
                   >
-                    Chat
+                    {t("chat")}
                   </Button>
                   <Button
                     type="primary"
@@ -81,7 +88,7 @@ const InterviewFeedbacks = () => {
                     }
                     style={{ marginLeft: 12 }}
                   >
-                    Edit Context
+                    {t("edit_context")}
                   </Button>
                 </div>
               </div>

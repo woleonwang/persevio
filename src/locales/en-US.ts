@@ -210,12 +210,14 @@ export default {
     draft_job_description: "Draft job description",
     create_chatbot: "Create chatbot for candidate",
     evaluate_result: "Resume screening",
+    recommend_interview_question: "Recommend Interview Question",
+    generate_interview_feedback: "Generate Interview Feedback",
 
     viona_intro_candidate: "your application copilot",
     viona_intro_staff: "AI recruiter",
 
     share_basic: "Click here to share basic information",
-    share_reference: "Upload Document",
+    share_reference: "Upload JD",
     share_team: "Click here to share team context",
     ideal_profile: "Click here to edit ideal profile",
     other_requirements: "Click here to provide other requirements",
@@ -302,6 +304,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     post_job_btn: "Post Your Job Now",
     post_job_done: "Your job has been posted to Persevio",
     post_job: "Post Your Job",
+
+    extract_high_level_responsibility: "Edit Key Responsibilities",
+    extract_day_to_day_tasks: "Edit Day-to-Day Tasks",
+    extract_icp: "Define Candidate Assessment Criteria",
+
+    high_level_responsibility: "Key Responsibilities",
+    day_to_day_tasks: "Day-to-Day Tasks",
+    icp: "Candidate Assessment Criteria",
   },
 
   job_requirement_form: {
@@ -447,19 +457,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     manager_message: "Please fill in the manager's job title and name.",
   },
 
-  ideal_profile: {
-    minimum: "Must",
-    big_plus: "Big Plus",
-    plus: "Plus",
-    no_apply: "Not Apply",
-    add: "Add New",
-  },
+  select_options: {
+    core_requirements: "Core Requirements",
+    plus_points: "Plus Points",
 
-  screening_question: {
-    edit_screening_questions: "Edit Screening Questions",
-    question: "Question",
-    required: "Required",
-    add: "Add Question",
+    high_level_responsibility_alert:
+      "Please choose or modify the responsibilities to align with your expectations.",
+    day_to_day_alert:
+      "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
+    core_responsibility: "Core Responsibility",
+    secondary_responsibility: "Secondary Responsibility",
   },
 
   profile: {
@@ -634,8 +641,31 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     status_rejected: "Rejected",
   },
 
+  interview_designer: {
+    title: "Interview Design",
+    new_chat: "New Chat",
+    round: "Round {{round}}",
+    chat: "Chat",
+    edit_context: "Edit Context",
+    resume: "Candidate Resume",
+    round_field: "Round",
+    last_round_feedback: "Last Round Feedback",
+  },
+
+  interview_feedback: {
+    title: "Interview Feedback",
+    new_chat: "New Chat",
+    round: "Round {{round}}",
+    chat: "Chat",
+    edit_context: "Edit Context",
+    resume: "Candidate Resume",
+    round_field: "Round",
+    interview_transcript: "Interview Transcript",
+  },
+
   ...CandidateResume,
 
+  new: "Create",
   edit: "Edit",
   save: "Save",
   cancel: "Cancel",
@@ -643,12 +673,15 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   submitting: "Submitting...",
   submit_succeed: "Submit succeed!",
   submit_failed: "Submit failed!",
-  add: "Add",
   close: "Close",
+  add: "Add",
   create_succeed: "Create succeed!",
   create: "Create",
+  update_succeed: "Update Succeed!",
   back: "Back",
   chat_with_viona: "Chat with Viona",
+  created_at: "Created At",
+  chat_title: "Chat",
 
   accept: "Accept",
   reject: "Reject",
