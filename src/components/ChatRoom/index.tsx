@@ -772,10 +772,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
     if (!job || userRole === "coworker") return [];
 
     return [
-      !job.compensation_details_doc_id && {
-        name: `to-compensation-details-btn`,
-        content: "",
-      },
+      // !job.compensation_details_doc_id && {
+      //   name: `to-compensation-details-btn`,
+      //   content: "",
+      // },
       !job.jd_doc_id && {
         name: `to-jd-btn`,
         content: "",
@@ -997,12 +997,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   isFinished: !!job?.requirement_doc_id,
                   chatType: "jobRequirementDoc",
                 },
-                {
-                  title: t("define_compensation_details"),
-                  disabled: !job?.requirement_doc_id,
-                  isFinished: !!job?.compensation_details_doc_id,
-                  chatType: "jobCompensationDetails",
-                },
+                // {
+                //   title: t("define_compensation_details"),
+                //   disabled: !job?.requirement_doc_id,
+                //   isFinished: !!job?.compensation_details_doc_id,
+                //   chatType: "jobCompensationDetails",
+                // },
                 {
                   title: t("draft_job_description_btn"),
                   disabled: !job?.requirement_doc_id,
