@@ -210,7 +210,9 @@ const JobBoard = () => {
                         <Button
                           type="default"
                           onClick={() => {
-                            navigate(`/jobs/${talent.id}/talent`);
+                            navigate(
+                              `/app/jobs/${job.id}/talents/${talent.id}/chat`
+                            );
                           }}
                         >
                           {talent.name}

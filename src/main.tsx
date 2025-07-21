@@ -57,6 +57,7 @@ import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-feedbac
 import JobChat from "./pages/job-chat";
 import JobDocument from "./pages/job-document";
 import JobBoard from "./pages/job-board";
+import TalentChat from "./pages/talent/chat";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -110,6 +111,12 @@ createRoot(document.getElementById("root")!).render(
               element={<JobDocument />}
             />
             <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
+            <Route
+              path="/app/jobs/:jobId/talents/:talentId/chat"
+              element={<TalentChat />}
+              key="talentChat"
+            />
+
             <Route path="/app/jobs/:jobId" element={<Job />} />
             <Route
               path="/app/jobs/:jobId/talents/:talentId"
