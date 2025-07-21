@@ -248,3 +248,9 @@ interface TInterviewFeedback {
   created_at: string;
   updated_at: string;
 }
+
+type TTalent = {
+  id: number;
+  name: string;
+  parsed_content: string;
+};

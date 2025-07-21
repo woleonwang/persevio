@@ -35,3 +35,15 @@ export const parseJd = (originalJd: string) => {
 export const formatInterviewMode = (mode: "ONSITE" | "ONLINE") => {
   return mode === "ONSITE" ? "现场面试" : "远程面试";
 };
+
+export const checkJobDotStatus = (jobId: number, type: string): boolean => {
+  const dotStatus = JSON.parse(localStorage.getItem(`job_dot`) ?? "{}");
+  return !!dotStatus[jobId]?.[type];
+};
+
+export const setJobDotStatus = (jobId: number, type: string) => {
+  const dotStatus = JSON.parse(localStorage.getItem(`job_dot`) ?? "{}");
+  dotStatus[jobId] = dotStatus[jobId] ?? {};
+  dotStatus[jobId][type] = Date.now();
+  localStorage.setItem(`job_dot`, JSON.stringify(dotStatus));
+};
