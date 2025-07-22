@@ -14,7 +14,7 @@ import Home from "./pages/home";
 import Signin from "./pages/signin";
 import Signup from "./pages/signup";
 import Job from "./pages/job";
-import JobsCreate from "./pages/jobs-create";
+import JobsCreate from "./pages/job/create/index.tsx";
 import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
@@ -54,10 +54,11 @@ import InterviewFeedbacks from "./pages/interview-feedbacks";
 import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-feedback-create";
 import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-feedbacks-edit";
 import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-feedbacks-chat";
-import JobChat from "./pages/job-chat";
-import JobDocument from "./pages/job-document";
-import JobBoard from "./pages/job-board";
+import JobChat from "./pages/job/chat";
+import JobDocument from "./pages/job/document";
+import JobBoard from "./pages/job/board";
 import TalentChat from "./pages/talent/chat";
+import TalentSelect from "./pages/talent/select";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -111,6 +112,11 @@ createRoot(document.getElementById("root")!).render(
               element={<JobDocument />}
             />
             <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
+            <Route
+              path="/app/jobs/:jobId/talents/select/:chatType"
+              element={<TalentSelect />}
+              key="talentSelect"
+            />
             <Route
               path="/app/jobs/:jobId/talents/:talentId/chat"
               element={<TalentChat />}

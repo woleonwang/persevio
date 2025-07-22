@@ -134,10 +134,24 @@ const JobBoard = () => {
                 制定面试计划&评分卡
               </Button>
             </Badge>
-            <Button disabled={!job.interview_plan_doc_id}>
+            <Button
+              disabled={!job.interview_plan_doc_id}
+              onClick={() => {
+                navigate(
+                  `/app/jobs/${job.id}/talents/select/interview_designer`
+                );
+              }}
+            >
               推荐候选人面试问题
             </Button>
-            <Button disabled={!job.interview_plan_doc_id}>
+            <Button
+              disabled={!job.interview_plan_doc_id}
+              onClick={() => {
+                navigate(
+                  `/app/jobs/${job.id}/talents/select/interview_feedback`
+                );
+              }}
+            >
               填写候选人评分卡
             </Button>
           </div>

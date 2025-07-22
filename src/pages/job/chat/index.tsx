@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import styles from "./style.module.less";
 import { useNavigate, useParams } from "react-router";
 import { observer } from "mobx-react-lite";
-import globalStore from "../../store/global";
+import { Spin } from "antd";
+
+import globalStore from "@/store/global";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import { TChatType } from "@/components/ChatRoomNew/type";
 import useJob from "@/hooks/useJob";
-import { Spin } from "antd";
+
+import styles from "./style.module.less";
 
 const chatTypeMappings = {
   "job-requirement": "jobRequirementDoc",
