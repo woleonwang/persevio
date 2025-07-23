@@ -59,6 +59,7 @@ import JobDocument from "./pages/job/document";
 import JobBoard from "./pages/job/board";
 import TalentChat from "./pages/talent/chat";
 import TalentSelect from "./pages/talent/select";
+import TalentDetail from "./pages/talent/detail";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -121,6 +122,11 @@ createRoot(document.getElementById("root")!).render(
               path="/app/jobs/:jobId/talents/:talentId/chat"
               element={<TalentChat />}
               key="talentChat"
+            />
+            <Route
+              path="/app/jobs/:jobId/talents/:talentId/detail"
+              element={<TalentDetail />}
+              key="talentDetail"
             />
 
             <Route path="/app/jobs/:jobId" element={<Job />} />

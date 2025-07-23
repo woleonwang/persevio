@@ -5,18 +5,19 @@ import useJob from "@/hooks/useJob";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import SelectOrUploadTalent from "@/components/SelectOrUploadTalent";
 
-type TChatType = "interview_designer" | "interview_feedback";
 const TalentSelect = () => {
   const { job } = useJob();
 
-  const { chatType } = useParams<{ chatType: TChatType }>();
+  const { chatType } = useParams<{ chatType: TTalentChatType }>();
 
   const navigate = useNavigate();
 
   const onSubmit = (talentId: number) => {
     if (!job) return;
 
-    navigate(`/app/jobs/${job.id}/talents/${talentId}/chat?chatType=${chatType}`);
+    navigate(
+      `/app/jobs/${job.id}/talents/${talentId}/chat?chatType=${chatType}`
+    );
   };
 
   if (!job) {

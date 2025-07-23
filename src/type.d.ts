@@ -233,6 +233,7 @@ interface TInterviewDesigner {
   resume: string;
   last_feedback: string;
   round: number;
+  interview_game_plan_doc: string;
   created_at: string;
   updated_at: string;
 }
@@ -254,3 +255,5 @@ type TTalent = {
   name: string;
   parsed_content: string;
 };
+
+type TTalentChatType = "interview_designer" | "interview_feedback";

@@ -6,8 +6,7 @@ import { Button, Radio, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import InterviewDesignerForm from "./components/InterviewDesignForm";
 import InterviewFeedbacksForm from "./components/InterviewFeedbackForm";
-
-type TChatType = "interview_designer" | "interview_feedback";
+import { useNavigate } from "react-router";
 
 const totalRound = 4;
 
@@ -16,13 +15,15 @@ const TalentChat = () => {
   const { talent } = useTalent();
   const initChatType = (new URLSearchParams(window.location.search).get(
     "chatType"
-  ) ?? "interview_designer") as TChatType;
+  ) ?? "interview_designer") as TTalentChatType;
   const [round, setRound] = useState<number>(1);
-  const [chatType, setChatType] = useState<TChatType>(initChatType);
+  const [chatType, setChatType] = useState<TTalentChatType>(initChatType);
   const [chatInstance, setChatInstance] = useState<
     TInterviewFeedback | TInterviewDesigner
   >();
   const [isEditing, setIsEditing] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (job) {
@@ -49,8 +50,8 @@ const TalentChat = () => {
     <div>
       <div>
         {talent.name} - {job.name}
-        {!!chatInstance && (
-          <div>
+        <div>
+          {!!chatInstance && (
             <Button
               onClick={() => {
                 setIsEditing(true);
@@ -58,8 +59,15 @@ const TalentChat = () => {
             >
               编辑上下文
             </Button>
-          </div>
-        )}
+          )}
+          <Button
+            onClick={() => {
+              navigate(`/app/jobs/${job.id}/talents/${talent.id}/detail`);
+            }}
+          >
+            面试详情
+          </Button>
+        </div>
       </div>
       {!isEditing && (
         <div>
