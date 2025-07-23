@@ -28,7 +28,7 @@ const useTalent = () => {
     }
   };
 
-  return { talent };
+  return { talent, fetchTalent };
 };
 
 export default useTalent;

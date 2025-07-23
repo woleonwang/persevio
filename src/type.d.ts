@@ -41,6 +41,7 @@ interface IJob {
   high_level_responsibility_json: string;
   day_to_day_tasks_json: string;
   icp_json: string;
+  interview_plan_json: string;
 
   chatbot_options: {
     allow_salary: string;
@@ -246,6 +247,8 @@ interface TInterviewFeedback {
   };
   round: number;
   interview_transcript: string;
+  feedback_json: string;
+  evaluate_result: string;
   created_at: string;
   updated_at: string;
 }
@@ -253,6 +256,8 @@ interface TInterviewFeedback {
 type TTalent = {
   id: number;
   name: string;
+  status: string;
+  feedback: string;
   parsed_content: string;
 };
 

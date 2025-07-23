@@ -16,7 +16,10 @@ const TalentChat = () => {
   const initChatType = (new URLSearchParams(window.location.search).get(
     "chatType"
   ) ?? "interview_designer") as TTalentChatType;
-  const [round, setRound] = useState<number>(1);
+
+  const initRound =
+    new URLSearchParams(window.location.search).get("round") ?? "1";
+  const [round, setRound] = useState<number>(parseInt(initRound));
   const [chatType, setChatType] = useState<TTalentChatType>(initChatType);
   const [chatInstance, setChatInstance] = useState<
     TInterviewFeedback | TInterviewDesigner
