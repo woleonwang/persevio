@@ -139,11 +139,12 @@ const JobDocument = () => {
         {" 职位详情"}
       </div>
       <div className={styles.body}>
-        <div className={styles.leftMenu}>
+        <div className={styles.left}>
           {Object.keys(chatTypeTitle).map((item) => {
             return (
               <Badge
                 key={item}
+                styles={{ root: { width: "100%" } }}
                 dot={
                   docHasReady(item as TChatType) &&
                   !checkJobDotStatus(job.id, item)
@@ -155,7 +156,13 @@ const JobDocument = () => {
                     setJobDotStatus(job.id, item);
                     navigate(`/app/jobs/${job.id}/document/${item}`);
                   }}
-                  style={{ width: "100%" }}
+                  style={{
+                    width: "100%",
+                    borderRadius: "0",
+                    fontSize: 16,
+                    height: 60,
+                  }}
+                  size="large"
                 >
                   {chatTypeTitle[item as keyof typeof chatTypeTitle]}
                 </Button>
@@ -163,36 +170,21 @@ const JobDocument = () => {
             );
           })}
         </div>
-        <div>
-          <div>
-            <div>
-              {chatTypeTitle[chatType]}{" "}
-              {updatedAt && dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}
-              更新
+        <div className={styles.right}>
+          <div className={styles.docHeader}>
+            <div className={styles.docTitle}>
+              {chatTypeTitle[chatType]}
+              <span className={styles.timestamp}>
+                {updatedAt &&
+                  `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}更新`}
+              </span>
             </div>
-            <div>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: "txt",
-                      label: "TXT",
-                      onClick: () => {
-                        downloadAsType("txt");
-                      },
-                    },
-                    {
-                      key: "markdown",
-                      label: "Markdown",
-                      onClick: () => {
-                        downloadAsType("markdown");
-                      },
-                    },
-                  ],
+            <div className={styles.operations}>
+              <DownloadOutlined
+                onClick={() => {
+                  downloadAsType("markdown");
                 }}
-              >
-                <DownloadOutlined />
-              </Dropdown>
+              />
               <ShareAltOutlined />
               <CopyOutlined
                 onClick={async () => {
@@ -206,9 +198,19 @@ const JobDocument = () => {
                   setIsEditing(true);
                 }}
               />
+
+              <Button
+                type="primary"
+                onClick={() => {
+                  navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                }}
+                style={{ marginLeft: "12px" }}
+              >
+                与 Viona 对话
+              </Button>
             </div>
           </div>
-          <div>
+          <div className={styles.docContent}>
             {documentContent ? (
               isEditing ? (
                 <div>
@@ -216,27 +218,22 @@ const JobDocument = () => {
                     value={editingValue}
                     onChange={(md) => setEditingValue(md)}
                   />
-                  <div>
-                    <Button onClick={() => setIsEditing(false)}>取消</Button>
-                    <Button onClick={() => updateDoc()} type="primary">
-                      保存
-                    </Button>
-                  </div>
                 </div>
               ) : (
                 <MarkdownContainer content={documentContent} />
               )
             ) : (
-              <div>
+              <div style={{ marginTop: 120 }}>
                 <Empty
                   description={
-                    <div>
+                    <div style={{ marginTop: 20 }}>
                       请先与 Viona 对话获取职位需求表
                       <Button
                         type="primary"
                         onClick={() => {
                           navigate(`/app/jobs/${job.id}/chat/${chatType}`);
                         }}
+                        style={{ marginLeft: "12px" }}
                       >
                         与 Viona 对话
                       </Button>
@@ -246,6 +243,18 @@ const JobDocument = () => {
               </div>
             )}
           </div>
+          {isEditing && (
+            <div>
+              <Button onClick={() => setIsEditing(false)}>取消</Button>
+              <Button
+                onClick={() => updateDoc()}
+                type="primary"
+                style={{ marginLeft: 12 }}
+              >
+                保存
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
