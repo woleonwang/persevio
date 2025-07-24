@@ -13,7 +13,7 @@ const useJob = () => {
 
   useEffect(() => {
     fetchJob();
-  }, []);
+  }, [jobId]);
 
   const fetchJob = async () => {
     const { code, data } = await Get(`/api/jobs/${jobId}`);

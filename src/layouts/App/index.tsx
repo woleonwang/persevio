@@ -72,7 +72,7 @@ const AppLayout = () => {
       children: jobs
         .filter((job) => !searchKeyword || job.name.includes(searchKeyword))
         .map((job) => {
-          const path = `/app/jobs/${job.id}`;
+          const path = `/app/jobs/${job.id}/board`;
           const isActive = currentPath.startsWith(path);
           return {
             title: job.name,

@@ -8,7 +8,7 @@ import {
 import styles from "./style.module.less";
 import { useNavigate, useParams } from "react-router";
 import useJob from "@/hooks/useJob";
-import { Badge, Button, Dropdown, Empty, message, Spin } from "antd";
+import { Badge, Button, Dropdown, Empty, message, Spin, Tabs } from "antd";
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { useEffect, useState } from "react";
@@ -124,134 +124,127 @@ const JobDocument = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.jobMain}>
-        <div
+      <div className={styles.header}>
+        <ArrowLeftOutlined
           style={{
-            flex: "none",
-            padding: "12px 0",
-            position: "relative",
+            fontSize: 20,
+            cursor: "pointer",
+            margin: "0 20px",
           }}
-        >
-          <ArrowLeftOutlined
-            style={{
-              fontSize: 20,
-              cursor: "pointer",
-              margin: "0 20px",
-            }}
-            onClick={() => {
-              navigate(`/app/jobs/${job.id}/board`);
-            }}
-          />
-          <span style={{ fontSize: 20, fontWeight: "bold" }}>{job.name}</span> -
-          {"职位详情 "}
-        </div>
-        <div className={styles.chatWrapper}>
-          <div>
-            {Object.keys(chatTypeTitle).map((item) => {
-              return (
-                <Badge
-                  key={item}
-                  dot={
-                    docHasReady(item as TChatType) &&
-                    !checkJobDotStatus(job.id, item)
-                  }
+          onClick={() => {
+            navigate(`/app/jobs/${job.id}/board`);
+          }}
+        />
+        <span style={{ fontSize: 20, fontWeight: "bold" }}>{job.name}</span> -
+        {" 职位详情"}
+      </div>
+      <div className={styles.body}>
+        <div className={styles.leftMenu}>
+          {Object.keys(chatTypeTitle).map((item) => {
+            return (
+              <Badge
+                key={item}
+                dot={
+                  docHasReady(item as TChatType) &&
+                  !checkJobDotStatus(job.id, item)
+                }
+              >
+                <Button
+                  type={chatType === item ? "primary" : "default"}
+                  onClick={() => {
+                    setJobDotStatus(job.id, item);
+                    navigate(`/app/jobs/${job.id}/document/${item}`);
+                  }}
+                  style={{ width: "100%" }}
                 >
-                  <Button
-                    type={chatType === item ? "primary" : "default"}
-                    onClick={() => {
-                      setJobDotStatus(job.id, item);
-                      navigate(`/app/jobs/${job.id}/document/${item}`);
-                    }}
-                  >
-                    {chatTypeTitle[item as keyof typeof chatTypeTitle]}
-                  </Button>
-                </Badge>
-              );
-            })}
+                  {chatTypeTitle[item as keyof typeof chatTypeTitle]}
+                </Button>
+              </Badge>
+            );
+          })}
+        </div>
+        <div>
+          <div>
+            <div>
+              {chatTypeTitle[chatType]}{" "}
+              {updatedAt && dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}
+              更新
+            </div>
+            <div>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "txt",
+                      label: "TXT",
+                      onClick: () => {
+                        downloadAsType("txt");
+                      },
+                    },
+                    {
+                      key: "markdown",
+                      label: "Markdown",
+                      onClick: () => {
+                        downloadAsType("markdown");
+                      },
+                    },
+                  ],
+                }}
+              >
+                <DownloadOutlined />
+              </Dropdown>
+              <ShareAltOutlined />
+              <CopyOutlined
+                onClick={async () => {
+                  await copy(documentContent);
+                  message.success("Copied");
+                }}
+              />
+              <EditOutlined
+                onClick={() => {
+                  setEditingValue(documentContent);
+                  setIsEditing(true);
+                }}
+              />
+            </div>
           </div>
           <div>
-            <div>
-              <div>
-                {chatTypeTitle[chatType]}{" "}
-                {updatedAt && dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}
-                更新
-              </div>
-              <div>
-                <Dropdown
-                  menu={{
-                    items: [
-                      {
-                        key: "txt",
-                        label: "TXT",
-                        onClick: () => {
-                          downloadAsType("txt");
-                        },
-                      },
-                      {
-                        key: "markdown",
-                        label: "Markdown",
-                        onClick: () => {
-                          downloadAsType("markdown");
-                        },
-                      },
-                    ],
-                  }}
-                >
-                  <DownloadOutlined />
-                </Dropdown>
-                <ShareAltOutlined />
-                <CopyOutlined
-                  onClick={async () => {
-                    await copy(documentContent);
-                    message.success("Copied");
-                  }}
-                />
-                <EditOutlined
-                  onClick={() => {
-                    setEditingValue(documentContent);
-                    setIsEditing(true);
-                  }}
-                />
-              </div>
-            </div>
-            <div>
-              {documentContent ? (
-                isEditing ? (
+            {documentContent ? (
+              isEditing ? (
+                <div>
+                  <MarkdownEditor
+                    value={editingValue}
+                    onChange={(md) => setEditingValue(md)}
+                  />
                   <div>
-                    <MarkdownEditor
-                      value={editingValue}
-                      onChange={(md) => setEditingValue(md)}
-                    />
+                    <Button onClick={() => setIsEditing(false)}>取消</Button>
+                    <Button onClick={() => updateDoc()} type="primary">
+                      保存
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <MarkdownContainer content={documentContent} />
+              )
+            ) : (
+              <div>
+                <Empty
+                  description={
                     <div>
-                      <Button onClick={() => setIsEditing(false)}>取消</Button>
-                      <Button onClick={() => updateDoc()} type="primary">
-                        保存
+                      请先与 Viona 对话获取职位需求表
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                        }}
+                      >
+                        与 Viona 对话
                       </Button>
                     </div>
-                  </div>
-                ) : (
-                  <MarkdownContainer content={documentContent} />
-                )
-              ) : (
-                <div>
-                  <Empty
-                    description={
-                      <div>
-                        请先与 Viona 对话获取职位需求表
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            navigate(`/app/jobs/${job.id}/chat/${chatType}`);
-                          }}
-                        >
-                          与 Viona 对话
-                        </Button>
-                      </div>
-                    }
-                  />
-                </div>
-              )}
-            </div>
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

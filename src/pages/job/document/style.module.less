@@ -6,66 +6,23 @@
 }
 
 .header {
-  padding: 32px 20px;
   border-bottom: 1px solid #eeeeee;
   font-size: 20px;
   font-weight: bold;
   flex: none;
+  padding: 12px 0;
 }
 
 .body {
   flex: auto;
   overflow: hidden;
   display: flex;
+  margin: 40px 120px;
 }
 
-.jobList {
-  width: 300px;
+.leftMenu {
   flex: none;
   border-right: 1px solid #eeeeee;
-  padding: 20px;
-  overflow: auto;
-}
-
-.jobItem {
-  background-color: #f9fafb;
-  border: 1px solid #eeeeee;
-  border-radius: 12px;
-  padding: 22px 18px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-}
-
-.active {
-  color: #1fac6a;
-}
-
-.jobMain {
-  flex: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-.chatWrapper {
-  overflow: auto;
-  flex: auto;
-  display: flex;
-}
-
-.pipelineWrapper {
-  padding: 20px;
-  flex: auto;
-}
-
-.tabs {
-  flex: none;
-
-  :global {
-    .ant-tabs-nav {
-      margin-bottom: 0;
-    }
-  }
 }
