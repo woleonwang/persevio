@@ -1,3 +1,4 @@
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import useJob from "@/hooks/useJob";
 import useTalent from "@/hooks/useTalent";
@@ -8,7 +9,8 @@ import InterviewDesignerForm from "./components/InterviewDesignForm";
 import InterviewFeedbacksForm from "./components/InterviewFeedbackForm";
 import { useNavigate } from "react-router";
 
-const totalRound = 4;
+import styles from "./style.module.less";
+import { parseJSON } from "@/utils";
 
 const TalentChat = () => {
   const { job } = useJob();
@@ -25,6 +27,7 @@ const TalentChat = () => {
     TInterviewFeedback | TInterviewDesigner
   >();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoadingInstance, setIsLoadingInstance] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,6 +36,12 @@ const TalentChat = () => {
       fetchChatInstance();
     }
   }, [job, chatType, round]);
+
+  const interviewPlan = parseJSON(
+    job?.interview_plan_json
+  ) as TInterviewPlanDetail;
+
+  const totalRound = (interviewPlan.rounds ?? []).length;
 
   const fetchChatInstance = async () => {
     const { code, data } = await Get(
@@ -43,22 +52,42 @@ const TalentChat = () => {
     } else {
       setChatInstance(undefined);
     }
+    setIsLoadingInstance(false);
   };
 
-  if (!job || !talent) {
+  if (!job || !talent || isLoadingInstance) {
     return <Spin />;
   }
 
   return (
-    <div>
-      <div>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <ArrowLeftOutlined
+          style={{
+            position: "absolute",
+            left: 0,
+            fontSize: 20,
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            navigate(`/app/jobs/${job.id}/board`);
+          }}
+        />
         {talent.name} - {job.name}
-        <div>
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            fontSize: 20,
+            cursor: "pointer",
+          }}
+        >
           {!!chatInstance && (
             <Button
               onClick={() => {
                 setIsEditing(true);
               }}
+              style={{ marginRight: 12 }}
             >
               编辑上下文
             </Button>
@@ -73,7 +102,7 @@ const TalentChat = () => {
         </div>
       </div>
       {!isEditing && (
-        <div>
+        <div className={styles.selector}>
           <Select
             value={round}
             onChange={(value) => setRound(value)}
@@ -86,7 +115,10 @@ const TalentChat = () => {
           <Radio.Group
             optionType="button"
             value={chatType}
-            onChange={(e) => setChatType(e.target.value)}
+            onChange={(e) => {
+              setChatType(e.target.value);
+              setIsLoadingInstance(true);
+            }}
             options={[
               {
                 label: "推荐面试问题",
@@ -101,7 +133,7 @@ const TalentChat = () => {
         </div>
       )}
 
-      <div>
+      <div className={styles.body}>
         {!!chatInstance ? (
           isEditing ? (
             chatType === "interview_designer" ? (
@@ -112,7 +144,8 @@ const TalentChat = () => {
                 talentId={talent.id}
                 round={round}
                 interviewDesignerId={chatInstance.id}
-                onFinish={() => {}}
+                onFinish={() => fetchChatInstance()}
+                onCancel={() => setIsEditing(false)}
               />
             ) : (
               <InterviewFeedbacksForm
@@ -122,28 +155,27 @@ const TalentChat = () => {
                 talentId={talent.id}
                 round={round}
                 interviewFeedbackId={chatInstance.id}
-                onFinish={() => {}}
+                onFinish={() => fetchChatInstance()}
+                onCancel={() => setIsEditing(false)}
               />
             )
           ) : (
-            <div>
-              <ChatRoomNew
-                key={chatType}
-                jobId={job.id}
-                allowEditMessage
-                userRole="staff"
-                chatType={
-                  chatType === "interview_designer"
-                    ? "jobInterviewDesign"
-                    : "jobInterviewFeedback"
-                }
-                {...{
-                  [chatType === "interview_designer"
-                    ? "jobInterviewDesignerId"
-                    : "jobInterviewFeedbackId"]: chatInstance.id,
-                }}
-              />
-            </div>
+            <ChatRoomNew
+              key={chatType}
+              jobId={job.id}
+              allowEditMessage
+              userRole="staff"
+              chatType={
+                chatType === "interview_designer"
+                  ? "jobInterviewDesign"
+                  : "jobInterviewFeedback"
+              }
+              {...{
+                [chatType === "interview_designer"
+                  ? "jobInterviewDesignerId"
+                  : "jobInterviewFeedbackId"]: chatInstance.id,
+              }}
+            />
           )
         ) : chatType === "interview_designer" ? (
           <InterviewDesignerForm
@@ -152,7 +184,7 @@ const TalentChat = () => {
             jobId={job.id}
             talentId={talent.id}
             round={round}
-            onFinish={() => {}}
+            onFinish={() => fetchChatInstance()}
           />
         ) : (
           <InterviewFeedbacksForm
@@ -161,7 +193,7 @@ const TalentChat = () => {
             jobId={job.id}
             talentId={talent.id}
             round={round}
-            onFinish={() => {}}
+            onFinish={() => fetchChatInstance()}
           />
         )}
       </div>

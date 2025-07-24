@@ -23,10 +23,19 @@ interface IProps {
   round: number;
   interviewDesignerId?: number;
   onFinish: () => void;
+  onCancel?: () => void;
 }
 
 const InterviewDesignerForm = (props: IProps) => {
-  const { type, jobId, talentId, round, interviewDesignerId, onFinish } = props;
+  const {
+    type,
+    jobId,
+    talentId,
+    round,
+    interviewDesignerId,
+    onFinish,
+    onCancel,
+  } = props;
 
   const [form] = Form.useForm<TFormValue>();
   const [feedbacks, setFeedbacks] = useState<TFeedback[]>([]);
@@ -108,7 +117,9 @@ const InterviewDesignerForm = (props: IProps) => {
       <div className={styles.main}>
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
           <Form.Item label={t("last_round_feedback")} name="last_feedback">
-            <MarkdownEditor style={{ backgroundColor: "white", padding: 12 }} />
+            <MarkdownEditor
+              style={{ backgroundColor: "white", padding: 12, height: "600px" }}
+            />
           </Form.Item>
           <div style={{ marginTop: 24 }}>
             <Button
@@ -118,6 +129,16 @@ const InterviewDesignerForm = (props: IProps) => {
             >
               {originalT("submit")}
             </Button>
+
+            {type === "edit" && (
+              <Button
+                onClick={() => onCancel?.()}
+                disabled={isSubmittingRef.current}
+                style={{ marginLeft: 12 }}
+              >
+                {originalT("cancel")}
+              </Button>
+            )}
           </div>
         </Form>
       </div>

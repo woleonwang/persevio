@@ -16,10 +16,19 @@ interface IProps {
   round: number;
   interviewFeedbackId?: number;
   onFinish: () => void;
+  onCancel?: () => void;
 }
 
 const InterviewFeedbacksForm = (props: IProps) => {
-  const { type, jobId, talentId, round, interviewFeedbackId, onFinish } = props;
+  const {
+    type,
+    jobId,
+    talentId,
+    round,
+    interviewFeedbackId,
+    onFinish,
+    onCancel,
+  } = props;
 
   const [form] = Form.useForm<TFormValue>();
 
@@ -78,7 +87,7 @@ const InterviewFeedbacksForm = (props: IProps) => {
             name="interview_transcript"
             rules={[{ required: true }]}
           >
-            <Input.TextArea rows={10} />
+            <Input.TextArea rows={20} />
           </Form.Item>
 
           <div style={{ marginTop: 24 }}>
@@ -89,6 +98,16 @@ const InterviewFeedbacksForm = (props: IProps) => {
             >
               {originalT("submit")}
             </Button>
+
+            {type === "edit" && (
+              <Button
+                onClick={() => onCancel?.()}
+                disabled={isSubmittingRef.current}
+                style={{ marginLeft: 12 }}
+              >
+                {originalT("cancel")}
+              </Button>
+            )}
           </div>
         </Form>
       </div>

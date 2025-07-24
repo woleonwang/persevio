@@ -262,3 +262,16 @@ type TTalent = {
 };
 
 type TTalentChatType = "interview_designer" | "interview_feedback";
+
+type TInterviewPlanDetail = {
+  rounds: {
+    interviewer: string;
+  }[];
+  signals: [
+    {
+      title: string;
+      description: string;
+      level: "must_have" | "good_to_have";
+    }
+  ];
+};

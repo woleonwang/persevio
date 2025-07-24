@@ -24,35 +24,10 @@ import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import dayjs from "dayjs";
-import { parseJSON } from "@/utils";
+import { copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 
 const { Title, Text } = Typography;
-
-const scoreCardContent = `
-# 面试评分卡
-
-| 维度         | 评分（1-5） | 评语           |
-| ------------ | ----------- | -------------- |
-| 专业能力     |             |                |
-| 沟通表达     |             |                |
-| 团队协作     |             |                |
-| 解决问题能力 |             |                |
-| 综合评价     |             |                |
-`;
-
-type TInterviewPlanDetail = {
-  rounds: {
-    interviewer: string;
-  }[];
-  signals: [
-    {
-      title: string;
-      description: string;
-      level: "must_have" | "good_to_have";
-    }
-  ];
-};
 
 type TInterviewFeedbackDetail = {
   result: "recommend" | "pending" | "reject";
@@ -171,32 +146,20 @@ const TalentDetail: React.FC = () => {
   };
 
   const handleDownload = () => {
-    const blob = new Blob(
-      [
-        tabKey === "interview_designer"
-          ? interviewDesigner?.interview_game_plan_doc || ""
-          : scoreCardContent,
-      ],
-      { type: "text/markdown" }
-    );
+    const blob = new Blob([interviewDesigner?.interview_game_plan_doc || ""], {
+      type: "text/markdown",
+    });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download =
-      tabKey === "interview_designer"
-        ? `Round ${roundKey} - 推荐面试问题.md`
-        : "面试评分卡.md";
+    a.download = `Round ${roundKey} - 推荐面试问题.md`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(
-        tabKey === "interview_designer"
-          ? interviewDesigner?.interview_game_plan_doc || ""
-          : scoreCardContent
-      );
+      await copy(interviewDesigner?.interview_game_plan_doc || "");
       message.success("已复制到剪贴板");
     } catch {
       message.error("复制失败");
