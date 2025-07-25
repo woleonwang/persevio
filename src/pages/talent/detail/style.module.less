@@ -81,3 +81,104 @@
     }
   }
 }
+
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  :global {
+    .anticon {
+      font-size: 20px;
+    }
+  }
+}
+
+.feedbackBody {
+  flex: auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.feedbackItem {
+  margin-top: 20px;
+}
+
+.feedbackBlock {
+  position: relative;
+}
+
+.feedbackTitle {
+  border-left: 4px solid #1fac6a;
+  padding-left: 8px;
+
+  .updatedAt {
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+.primary {
+  color: #1fac6a;
+  font-weight: bold;
+}
+
+.interviewer {
+  font-weight: bold;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.signalContainer {
+  background-color: #f1f1f1;
+  padding: 12px;
+  border-left: 4px solid #1fac6a;
+  border-radius: 4px;
+  margin-bottom: 12px;
+
+  &.danger {
+    border-left: 4px solid #ee0000;
+  }
+}
+
+.signalHeader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  .signalLevel {
+    border-radius: 16px;
+    padding: 0 12px;
+    font-size: 14px;
+    &.must_have {
+      background-color: #ffebeb;
+      color: #cc6666;
+      border: 1px solid #cc6666;
+    }
+
+    &.good_to_have {
+      background-color: #e5eefa;
+      color: #6699cc;
+      border: 1px solid #6699cc;
+    }
+  }
+
+  .signalTitle {
+    font-weight: bold;
+  }
+}
+
+.interviewPanelContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.card {
+  width: 30%;
+  flex: none;
+  background-color: white;
+  padding: 12px;
+  border-radius: 4px;
+}

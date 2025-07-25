@@ -3,8 +3,6 @@ import {
   Tabs,
   Button,
   Typography,
-  Space,
-  Tooltip,
   message,
   Empty,
   Radio,
@@ -19,7 +17,7 @@ import {
   EditOutlined,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
-import VionaAvatar from "@/assets/viona-avatar.png";
+import classnames from "classnames";
 import useJob from "@/hooks/useJob";
 import useTalent from "@/hooks/useTalent";
 import { Get, Post } from "@/utils/request";
@@ -30,45 +28,42 @@ import { copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 
 import styles from "./style.module.less";
+import FeedbackSummary from "./components/FeedbackSummary";
+import FeedbackSignal from "./components/FeedbackSignal";
+import FeedbackCustomizeSignal from "./components/FeedbackCustomizeSignal";
 
 const { Title, Text } = Typography;
 
-type TInterviewFeedbackDetail = {
-  result: "recommend" | "pending" | "reject";
-  feedback: string;
-  next_round_concern: string;
+const talentStatusOptions = [
+  {
+    label: "强烈推荐：超出标准。高度自信。",
+    value: "strong_recommend",
+  },
+  {
+    label: "推荐：符合标准。有信心。",
+    value: "recommend",
+  },
+  {
+    label:
+      "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
+    value: "pending",
+  },
+  {
+    label: "不予录用（资历不足）：未达到核心技能或经验水平要求。",
+    value: "reject_insufficient_skill",
+  },
+  {
+    label:
+      "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
+    value: "reject_mismatch",
+  },
+];
 
-  predefine_signals: [
-    {
-      title: string;
-      evaluation:
-        | "exceeds"
-        | "meets"
-        | "likely_meets"
-        | "likely_does_not_meets"
-        | "does_not_meets"
-        | "not_assessed";
-      basis: string;
-      evidences: string;
-    }
-  ];
-
-  other_signals: [
-    {
-      title: string;
-      basis: string;
-      evidences: string;
-    }
-  ];
-
-  dangers: [
-    {
-      title: string;
-      basis: string;
-      evidences: string;
-    }
-  ];
+const signalLevelMappings = {
+  must_have: "必须具备",
+  good_to_have: "加分项",
 };
+
 const TalentDetail: React.FC = () => {
   const { job } = useJob();
   const { talent, fetchTalent } = useTalent();
@@ -93,7 +88,7 @@ const TalentDetail: React.FC = () => {
   useEffect(() => {
     // 初始化
     if (job && talent) {
-      setTabKey("interview_designer");
+      setTabKey("interview_feedback");
       setRoundKey("1");
     }
   }, [job, talent]);
@@ -185,13 +180,30 @@ const TalentDetail: React.FC = () => {
     setEditingInterviewDesignerValue(interviewDesigner.interview_game_plan_doc);
   };
 
-  const handleChat = () => {
+  const handleDesignerChat = () => {
     navigate(
       `/app/jobs/${job?.id}/talents/${talent?.id}/chat?chatType=interview_designer&round=${roundKey}`
     );
   };
 
-  const submitTalent = () => {};
+  const submitTalent = () => {
+    form.validateFields().then(async (values) => {
+      const { status, feedback } = values;
+      const { code } = await Post(
+        `/api/jobs/${job?.id}/talents/${talent?.id}`,
+        {
+          status,
+          feedback,
+        }
+      );
+
+      if (code === 0) {
+        fetchTalent();
+        setIsEditingTalent(false);
+        message.success("更新成功");
+      }
+    });
+  };
 
   const interviewPlan = parseJSON(
     job?.interview_plan_json
@@ -275,7 +287,7 @@ const TalentDetail: React.FC = () => {
                     <EditOutlined onClick={handleEdit} />
                     <Button
                       type="primary"
-                      onClick={handleChat}
+                      onClick={handleDesignerChat}
                       style={{ marginLeft: "12px" }}
                     >
                       与 Viona 对话
@@ -314,131 +326,81 @@ const TalentDetail: React.FC = () => {
                       </div>
                     </>
                   ) : (
-                    <MarkdownContainer
-                      content={interviewDesigner.interview_game_plan_doc}
-                    />
+                    <div
+                      style={{
+                        flex: "auto",
+                        overflow: "auto",
+                        padding: "0 24px",
+                      }}
+                    >
+                      <MarkdownContainer
+                        content={interviewDesigner.interview_game_plan_doc}
+                      />
+                    </div>
                   )
                 ) : (
-                  <Empty />
+                  <Empty
+                    style={{ marginTop: 120 }}
+                    description={
+                      <div>
+                        请先与Viona对话获取推荐面试计划
+                        <Button
+                          type="primary"
+                          onClick={handleDesignerChat}
+                          style={{ marginLeft: "12px" }}
+                        >
+                          与 Viona 对话
+                        </Button>
+                      </div>
+                    }
+                  />
                 )}
               </div>
             </>
           )}
           {tabKey === "interview_feedback" && (
             <>
-              <Title level={4} style={{ marginBottom: 24 }}>
-                面试评分卡
-              </Title>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: 16,
-                }}
-              >
-                <Text
-                  type="secondary"
-                  style={{
-                    fontSize: 12,
-                    whiteSpace: "nowrap",
-                    flex: "none",
-                  }}
-                >
-                  更新时间：2024-06-05 11:00
-                </Text>
-                <Space size="middle" style={{ marginLeft: "auto" }}>
-                  <Tooltip title="下载">
-                    <Button
-                      type="text"
-                      icon={<DownloadOutlined />}
-                      onClick={handleDownload}
-                    />
-                  </Tooltip>
-                  <Tooltip title="分享">
-                    <Button
-                      type="text"
-                      icon={<ShareAltOutlined />}
-                      onClick={handleShare}
-                    />
-                  </Tooltip>
-                  <Tooltip title="复制">
-                    <Button
-                      type="text"
-                      icon={<CopyOutlined />}
-                      onClick={handleCopy}
-                    />
-                  </Tooltip>
-                  <Tooltip title="编辑">
-                    <Button
-                      type="text"
-                      icon={<EditOutlined />}
-                      onClick={handleEdit}
-                    />
-                  </Tooltip>
-                </Space>
-                <Button
-                  type="primary"
-                  style={{
-                    marginLeft: 24,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  onClick={handleChat}
-                >
-                  <img
-                    src={VionaAvatar}
-                    alt="Viona"
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "50%",
-                      marginRight: 8,
-                    }}
-                  />
-                  与 Viona 对话
-                </Button>
+              <div className={styles.feedbackHeader}>
+                <Title level={4} style={{ marginBottom: 24 }}>
+                  面试评分卡
+                </Title>
               </div>
-              <div
-                style={{
-                  border: "1px solid #f0f0f0",
-                  borderRadius: 8,
-                  padding: 24,
-                  background: "#fcfcfc",
-                  maxHeight: "60vh",
-                  overflow: "auto",
-                }}
-              >
+
+              <div className={styles.feedbackBody}>
                 <div>
-                  <div>最终决定与理由</div>
+                  <div>
+                    <Title level={5}>
+                      最终决定与理由{" "}
+                      {!isEditingTalent && (
+                        <Button
+                          icon={<EditOutlined />}
+                          onClick={() => {
+                            form.setFieldsValue({
+                              status: talent?.status,
+                              feedback: talent?.feedback,
+                            });
+                            setIsEditingTalent(true);
+                          }}
+                          style={{ marginLeft: 12 }}
+                        />
+                      )}
+                    </Title>
+                  </div>
+
                   {isEditingTalent ? (
-                    <Form form={form}>
-                      <Form.Item name="status" label="总体招聘委员会推荐">
+                    <Form form={form} layout="vertical">
+                      <Form.Item
+                        name="status"
+                        label="总体招聘委员会推荐"
+                        rules={[{ required: true }]}
+                      >
                         <Radio.Group
-                          options={[
-                            {
-                              label: "强烈推荐：超出标准。高度自信。",
-                              value: "strong_recommend",
-                            },
-                            {
-                              label: "推荐：符合标准。有信心。",
-                              value: "recommend",
-                            },
-                            {
-                              label:
-                                "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
-                              value: "pending",
-                            },
-                            {
-                              label:
-                                "不予录用（资历不足）：未达到核心技能或经验水平要求。",
-                              value: "reject_insufficient_skill",
-                            },
-                            {
-                              label:
-                                "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
-                              value: "reject_mismatch",
-                            },
-                          ]}
+                          options={talentStatusOptions}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 8,
+                          }}
                         />
                       </Form.Item>
                       <Form.Item
@@ -452,31 +414,36 @@ const TalentDetail: React.FC = () => {
                         <Button type="primary" onClick={() => submitTalent()}>
                           提交
                         </Button>
-                        <Button onClick={() => setIsEditingTalent(false)}>
+                        <Button
+                          onClick={() => setIsEditingTalent(false)}
+                          style={{ marginLeft: 12 }}
+                        >
                           取消
                         </Button>
                       </div>
                     </Form>
                   ) : (
-                    <div>
-                      <div>总体招聘委员会推荐: {talent?.status}</div>
-                      <div>最终理由: {talent?.feedback}</div>
-                      <Button
-                        onClick={() => {
-                          form.setFieldsValue({
-                            status: talent?.status,
-                            feedback: talent?.feedback,
-                          });
-                          setIsEditingTalent(true);
-                        }}
-                      >
-                        编辑
-                      </Button>
+                    <div className={styles.feedbackBlock}>
+                      <div className={styles.primary} style={{ marginTop: 12 }}>
+                        总体招聘委员会推荐
+                      </div>
+                      <div style={{ marginTop: 6 }}>
+                        {
+                          talentStatusOptions.find(
+                            (item) => item.value === talent?.status
+                          )?.label
+                        }
+                      </div>
+                      <div className={styles.primary} style={{ marginTop: 12 }}>
+                        最终理由
+                      </div>
+                      <div style={{ marginTop: 6 }}> {talent?.feedback}</div>
                     </div>
                   )}
                 </div>
+
                 <div>
-                  <div>面试反馈</div>
+                  <Title level={5}>面试反馈</Title>
                   <div>
                     {new Array(totalRound).fill(0).map((_, index) => {
                       const currentRound = index + 1;
@@ -486,14 +453,19 @@ const TalentDetail: React.FC = () => {
 
                       if (!interviewFeedback?.feedback_json) {
                         return (
-                          <div key={index}>
-                            <div>
-                              {currentRound}面{" "}
-                              {interviewPlan.rounds[index].interviewer}
+                          <div key={index} className={styles.feedbackItem}>
+                            <div className={styles.feedbackTitle}>
+                              <span className={styles.primary}>
+                                {currentRound}面{" "}
+                              </span>
+                              <span className={styles.interviewer}>
+                                {interviewPlan.rounds[index].interviewer}
+                              </span>
                             </div>
                             <Empty
                               description={
                                 <Button
+                                  type="primary"
                                   onClick={() => {
                                     navigate(
                                       `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
@@ -503,207 +475,163 @@ const TalentDetail: React.FC = () => {
                                   请先反馈
                                 </Button>
                               }
+                              style={{ margin: "60px 0" }}
                             />
                           </div>
                         );
                       }
 
-                      const interviewFeedbackDetail = parseJSON(
-                        interviewFeedback.feedback_json
-                      ) as TInterviewFeedbackDetail;
-
                       return (
-                        <div key={interviewFeedback.id}>
-                          <div>
-                            {currentRound}面{" "}
-                            {interviewPlan.rounds[index].interviewer} -{" "}
-                            {dayjs(interviewFeedback.updated_at).format(
-                              "YYYY-MM-DD HH:mm:ss"
-                            )}
-                          </div>
-
-                          <div>
-                            <div>
-                              总体推荐: {interviewFeedbackDetail.result}
-                            </div>
-                            <div>
-                              <MarkdownContainer
-                                content={interviewFeedbackDetail.feedback}
-                              />
-                            </div>
-                            <div>下一轮可操作性建议</div>
-                            <div>
-                              <MarkdownContainer
-                                content={
-                                  interviewFeedbackDetail.next_round_concern
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
+                        <FeedbackSummary
+                          jobId={job.id}
+                          talentId={talent.id}
+                          interviewPlan={interviewPlan}
+                          interviewFeedback={interviewFeedback}
+                          onSubmit={() => fetchInterviewFeedbacks()}
+                        />
                       );
                     })}
                   </div>
                 </div>
 
                 <div>
-                  <div>待评估信号</div>
+                  <Title level={4} style={{ marginBottom: 24 }}>
+                    待评估信号
+                  </Title>
                   <div>
-                    {interviewPlan.signals.map((signal) => {
-                      return (
-                        <div key={signal.title}>
-                          <div>
-                            <div>{signal.level}</div>
-                            <div>{signal.title}</div>
-                          </div>
-                          <div>{signal.description}</div>
-                          <div>
-                            {(interviewPlan.rounds ?? []).map(
-                              (round, index) => {
-                                const interviewFeedbackDetail = parseJSON(
-                                  interviewFeedbacks?.find(
-                                    (feedback) => feedback.round === index + 1
-                                  )?.feedback_json
-                                ) as TInterviewFeedbackDetail;
+                    {interviewPlan.signals
+                      .sort((a, b) =>
+                        a.level === "good_to_have" && b.level === "must_have"
+                          ? 1
+                          : -1
+                      )
+                      .map((signal) => {
+                        return (
+                          <div
+                            key={signal.title}
+                            className={styles.signalContainer}
+                          >
+                            <div className={styles.signalHeader}>
+                              <div
+                                className={classnames(
+                                  styles.signalLevel,
+                                  styles[signal.level]
+                                )}
+                              >
+                                {signalLevelMappings[signal.level]}
+                              </div>
+                              <div className={styles.signalTitle}>
+                                {signal.title}
+                              </div>
+                            </div>
+                            <div style={{ marginTop: 8 }}>
+                              {signal.description}
+                            </div>
+                            <div className={styles.interviewPanelContainer}>
+                              {(interviewPlan.rounds ?? []).map(
+                                (round, index) => {
+                                  const interviewFeedback =
+                                    interviewFeedbacks?.find(
+                                      (feedback) => feedback.round === index + 1
+                                    );
 
-                                const currentSingleFeedback =
-                                  interviewFeedbackDetail.predefine_signals?.find(
-                                    (signalFeedback) =>
-                                      signalFeedback.title === signal.title
+                                  if (!interviewFeedback) return <></>;
+
+                                  return (
+                                    <div
+                                      className={styles.card}
+                                      key={interviewFeedback.id}
+                                    >
+                                      <FeedbackSignal
+                                        jobId={job.id}
+                                        talentId={talent.id}
+                                        interviewerName={round.interviewer}
+                                        signalTitle={signal.title}
+                                        interviewFeedback={interviewFeedback}
+                                        onSubmit={() =>
+                                          fetchInterviewFeedbacks()
+                                        }
+                                      />
+                                    </div>
                                   );
-
-                                return (
-                                  <div key={index}>
-                                    <div>
-                                      <div>
-                                        <div>面试官</div>
-                                        <div>{round.interviewer}</div>
-                                      </div>
-                                      <div>
-                                        <Radio.Group
-                                          value={
-                                            currentSingleFeedback?.evaluation
-                                          }
-                                          optionType="button"
-                                          options={[
-                                            {
-                                              label: "+++",
-                                              value: "exceeds",
-                                            },
-                                            {
-                                              label: "++",
-                                              value: "meets",
-                                            },
-                                            {
-                                              label: "+",
-                                              value: "likely_meets",
-                                            },
-                                            {
-                                              label: "-",
-                                              value: "likely_does_not_meets",
-                                            },
-                                            {
-                                              label: "--",
-                                              value: "does_not_meets",
-                                            },
-                                            {
-                                              label: "?",
-                                              value: "not_assessed",
-                                            },
-                                          ]}
-                                        />
-                                      </div>
-                                    </div>
-                                    <div>
-                                      {currentSingleFeedback?.basis ?? ""}
-                                    </div>
-                                    <div>
-                                      <Tooltip
-                                        title={currentSingleFeedback?.evidences}
-                                      >
-                                        证据
-                                      </Tooltip>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                            )}
+                                }
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        );
+                      })}
+                  </div>
+                </div>
+
+                <div>
+                  <Title level={4} style={{ marginBottom: 24 }}>
+                    其它观察到的信号
+                  </Title>
+                  <div>
+                    {interviewFeedbacks.map((feedback) => {
+                      const interviewFeedbackDetail = parseJSON(
+                        feedback.feedback_json
+                      ) as TInterviewFeedbackDetail;
+                      return (interviewFeedbackDetail.other_signals ?? []).map(
+                        (signal) => {
+                          return (
+                            <div
+                              className={styles.signalContainer}
+                              key={signal.title}
+                            >
+                              <FeedbackCustomizeSignal
+                                jobId={job.id}
+                                interviewerName={
+                                  interviewPlan.rounds[feedback.round - 1]
+                                    .interviewer
+                                }
+                                signalTitle={signal.title}
+                                type="others"
+                                interviewFeedback={feedback}
+                                onSubmit={() => fetchInterviewFeedbacks()}
+                              />
+                            </div>
+                          );
+                        }
                       );
                     })}
                   </div>
                 </div>
 
                 <div>
-                  <div>其它观察到的信号</div>
+                  <Title level={4} style={{ marginBottom: 24 }}>
+                    主要顾虑/红线问题
+                  </Title>
                   <div>
                     {interviewFeedbacks.map((feedback) => {
                       const interviewFeedbackDetail = parseJSON(
                         feedback.feedback_json
                       ) as TInterviewFeedbackDetail;
-
-                      const round = interviewPlan.rounds[feedback.round - 1];
-
-                      const otherSignals =
-                        interviewFeedbackDetail.other_signals ?? [];
-                      return otherSignals.map((signal) => {
-                        return (
-                          <div key={signal.title}>
-                            <div>
-                              <div>{signal.title}</div>
+                      return (interviewFeedbackDetail.dangers ?? []).map(
+                        (signal) => {
+                          return (
+                            <div
+                              className={classnames(
+                                styles.signalContainer,
+                                styles.danger
+                              )}
+                              key={signal.title}
+                            >
+                              <FeedbackCustomizeSignal
+                                jobId={job.id}
+                                interviewerName={
+                                  interviewPlan.rounds[feedback.round - 1]
+                                    .interviewer
+                                }
+                                signalTitle={signal.title}
+                                type="dangers"
+                                interviewFeedback={feedback}
+                                onSubmit={() => fetchInterviewFeedbacks()}
+                              />
                             </div>
-                            <div>
-                              <div>
-                                <div>面试官</div>
-                                <div>{round.interviewer}</div>
-                              </div>
-                              <div>{signal?.basis ?? ""}</div>
-                              <div>
-                                <Tooltip title={signal?.evidences}>
-                                  证据
-                                </Tooltip>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      });
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <div>主要顾虑/红线问题</div>
-                  <div>
-                    {interviewFeedbacks.map((feedback) => {
-                      const interviewFeedbackDetail = parseJSON(
-                        feedback.feedback_json
-                      ) as TInterviewFeedbackDetail;
-
-                      const round = interviewPlan.rounds[feedback.round - 1];
-
-                      const dangers = interviewFeedbackDetail.dangers ?? [];
-                      return dangers.map((danger) => {
-                        return (
-                          <div key={danger.title}>
-                            <div>
-                              <div>{danger.title}</div>
-                            </div>
-                            <div>
-                              <div>
-                                <div>面试官</div>
-                                <div>{round.interviewer}</div>
-                              </div>
-                              <div>{danger?.basis ?? ""}</div>
-                              <div>
-                                <Tooltip title={danger?.evidences}>
-                                  证据
-                                </Tooltip>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      });
+                          );
+                        }
+                      );
                     })}
                   </div>
                 </div>

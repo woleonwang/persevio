@@ -2,7 +2,7 @@ import { Avatar, Badge, Button, message, Spin, Upload } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeftOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { ShareAltOutlined } from "@ant-design/icons";
 
 import { checkJobDotStatus, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";

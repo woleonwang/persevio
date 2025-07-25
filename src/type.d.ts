@@ -275,3 +275,34 @@ type TInterviewPlanDetail = {
     }
   ];
 };
+
+type TPredefinedSignal = {
+  title: string;
+  evaluation:
+    | "exceeds"
+    | "meets"
+    | "likely_meets"
+    | "likely_does_not_meets"
+    | "does_not_meets"
+    | "not_assessed";
+  basis: string;
+  evidences: string;
+};
+
+type TCustomizeSignal = {
+  title: string;
+  basis: string;
+  evidences: string;
+};
+
+type TInterviewFeedbackDetail = {
+  result: "recommend" | "pending" | "reject";
+  feedback: string;
+  next_round_concern: string;
+
+  predefine_signals: TPredefinedSignal[];
+
+  other_signals: TCustomizeSignal[];
+
+  dangers: TCustomizeSignal[];
+};

@@ -1,6 +1,5 @@
-import { Button, Form, Input, InputNumber, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { Get, Post } from "@/utils/request";
-import { useNavigate, useParams } from "react-router";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";

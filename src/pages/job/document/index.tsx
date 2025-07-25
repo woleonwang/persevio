@@ -8,7 +8,7 @@ import {
 import styles from "./style.module.less";
 import { useNavigate, useParams } from "react-router";
 import useJob from "@/hooks/useJob";
-import { Badge, Button, Dropdown, Empty, message, Spin, Tabs } from "antd";
+import { Badge, Button, Empty, message, Spin } from "antd";
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { useEffect, useState } from "react";
