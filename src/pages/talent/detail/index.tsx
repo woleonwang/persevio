@@ -10,12 +10,14 @@ import {
   Radio,
   Form,
   Input,
+  Spin,
 } from "antd";
 import {
   DownloadOutlined,
   ShareAltOutlined,
   CopyOutlined,
   EditOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import useJob from "@/hooks/useJob";
@@ -26,6 +28,8 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import dayjs from "dayjs";
 import { copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
+
+import styles from "./style.module.less";
 
 const { Title, Text } = Typography;
 
@@ -146,7 +150,9 @@ const TalentDetail: React.FC = () => {
   };
 
   const handleDownload = () => {
-    const blob = new Blob([interviewDesigner?.interview_game_plan_doc || ""], {
+    if (!interviewDesignerReady) return;
+
+    const blob = new Blob([interviewDesigner.interview_game_plan_doc], {
       type: "text/markdown",
     });
     const url = window.URL.createObjectURL(blob);
@@ -158,8 +164,10 @@ const TalentDetail: React.FC = () => {
   };
 
   const handleCopy = async () => {
+    if (!interviewDesignerReady) return;
+
     try {
-      await copy(interviewDesigner?.interview_game_plan_doc || "");
+      await copy(interviewDesigner.interview_game_plan_doc || "");
       message.success("已复制到剪贴板");
     } catch {
       message.error("复制失败");
@@ -171,14 +179,16 @@ const TalentDetail: React.FC = () => {
   };
 
   const handleEdit = () => {
-    if (!interviewDesigner) return;
+    if (!interviewDesignerReady) return;
 
     setIsEditingInterviewDesigner(true);
     setEditingInterviewDesignerValue(interviewDesigner.interview_game_plan_doc);
   };
 
   const handleChat = () => {
-    message.info("与 Viona 对话功能待实现");
+    navigate(
+      `/app/jobs/${job?.id}/talents/${talent?.id}/chat?chatType=interview_designer&round=${roundKey}`
+    );
   };
 
   const submitTalent = () => {};
@@ -189,545 +199,518 @@ const TalentDetail: React.FC = () => {
 
   const totalRound = (interviewPlan.rounds ?? []).length;
 
+  const interviewDesignerReady = !!interviewDesigner?.interview_game_plan_doc;
+
+  if (!job || !talent) {
+    return <Spin />;
+  }
+
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#fff" }}>
-      {/* 左侧垂直Tab */}
-      <div
-        style={{
-          width: 180,
-          borderRight: "1px solid #f0f0f0",
-          paddingTop: 32,
-          background: "#fafbfc",
-        }}
-      >
-        <Tabs
-          tabPosition="left"
-          activeKey={tabKey}
-          onChange={(type) => setTabKey(type as TTalentChatType)}
-          items={[
-            {
-              key: "interview_designer",
-              label: "推荐面试问题",
-            },
-            {
-              key: "interview_feedback",
-              label: "面试评分卡",
-            },
-          ]}
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <ArrowLeftOutlined
+          style={{
+            fontSize: 20,
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            navigate(-1);
+          }}
         />
+        <div>
+          {talent.name} - {job.name}
+        </div>
       </div>
-      {/* 右侧内容区 */}
-      <div style={{ flex: 1, padding: "40px 48px", overflow: "auto" }}>
-        {tabKey === "interview_designer" && (
-          <>
-            <Title level={4} style={{ marginBottom: 24 }}>
-              推荐面试问题
-            </Title>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              {/* 横向Tab */}
-              <Tabs
-                activeKey={roundKey}
-                onChange={setRoundKey}
-                items={new Array(totalRound).fill(0).map((_, index) => ({
-                  key: `${index + 1}`,
-                  label: `Round ${index + 1}`,
-                }))}
-                style={{ flex: "none" }}
-              />
-              {/* 更新时间 */}
-              <Text
-                type="secondary"
-                style={{
-                  marginLeft: 16,
-                  fontSize: 12,
-                  whiteSpace: "nowrap",
-                  flex: "none",
-                }}
-              >
-                更新时间：
-                {!!interviewDesigner &&
-                  dayjs(interviewDesigner.updated_at).format(
-                    "YYYY-MM-DD HH:mm:ss"
+      <div className={styles.main}>
+        <div className={styles.left}>
+          <Tabs
+            tabPosition="left"
+            activeKey={tabKey}
+            onChange={(type) => setTabKey(type as TTalentChatType)}
+            style={{ height: "100%" }}
+            items={[
+              {
+                key: "interview_designer",
+                label: "推荐面试问题",
+              },
+              {
+                key: "interview_feedback",
+                label: "面试评分卡",
+              },
+            ]}
+          />
+        </div>
+        {/* 右侧内容区 */}
+        <div className={styles.right}>
+          {tabKey === "interview_designer" && (
+            <>
+              <Title level={4} style={{ marginBottom: 24 }}>
+                推荐面试问题
+              </Title>
+              <div className={styles.designerHeader}>
+                <div className={styles.headerLeft}>
+                  <Tabs
+                    activeKey={roundKey}
+                    onChange={setRoundKey}
+                    items={new Array(totalRound).fill(0).map((_, index) => ({
+                      key: `${index + 1}`,
+                      label: `Round ${index + 1}`,
+                    }))}
+                    style={{ flex: "none" }}
+                  />
+                  {interviewDesignerReady && (
+                    <Text type="secondary" className={styles.updatedAt}>
+                      更新时间：
+                      {dayjs(interviewDesigner.updated_at).format(
+                        "YYYY-MM-DD HH:mm:ss"
+                      )}
+                    </Text>
                   )}
-              </Text>
-              {!!interviewDesigner && (
-                <>
-                  <Space size="middle" style={{ marginLeft: "auto" }}>
-                    <Tooltip title="下载">
-                      <Button
-                        type="text"
-                        icon={<DownloadOutlined />}
-                        onClick={handleDownload}
-                      />
-                    </Tooltip>
-                    <Tooltip title="分享">
-                      <Button
-                        type="text"
-                        icon={<ShareAltOutlined />}
-                        onClick={handleShare}
-                      />
-                    </Tooltip>
-                    <Tooltip title="复制">
-                      <Button
-                        type="text"
-                        icon={<CopyOutlined />}
-                        onClick={handleCopy}
-                      />
-                    </Tooltip>
-                    <Tooltip title="编辑">
-                      <Button
-                        type="text"
-                        icon={<EditOutlined />}
-                        onClick={handleEdit}
-                      />
-                    </Tooltip>
-                  </Space>
-                  <Button
-                    type="primary"
-                    style={{
-                      marginLeft: 24,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                    onClick={handleChat}
-                  >
-                    <img
-                      src={VionaAvatar}
-                      alt="Viona"
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: "50%",
-                        marginRight: 8,
-                      }}
-                    />
-                    与 Viona 对话
-                  </Button>
-                </>
-              )}
-            </div>
-            <div
-              style={{
-                border: "1px solid #f0f0f0",
-                borderRadius: 8,
-                padding: 24,
-                background: "#fcfcfc",
-                maxHeight: "60vh",
-                overflow: "auto",
-              }}
-            >
-              {!!interviewDesigner ? (
-                isEditingInterviewDesigner ? (
-                  <div>
-                    <MarkdownEditor
-                      value={editingInterviewDesignerValue}
-                      onChange={(val) => setEditingInterviewDesignerValue(val)}
-                    />
-                    <div>
-                      <Button
-                        onClick={() => setIsEditingInterviewDesigner(false)}
-                      >
-                        取消
-                      </Button>
-                      <Button
-                        onClick={() => updateInterviewDesignerDoc()}
-                        type="primary"
-                      >
-                        保存
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <MarkdownContainer
-                    content={interviewDesigner.interview_game_plan_doc}
-                  />
-                )
-              ) : (
-                <Empty />
-              )}
-            </div>
-          </>
-        )}
-        {tabKey === "interview_feedback" && (
-          <>
-            <Title level={4} style={{ marginBottom: 24 }}>
-              面试评分卡
-            </Title>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: 16,
-              }}
-            >
-              <Text
-                type="secondary"
-                style={{
-                  fontSize: 12,
-                  whiteSpace: "nowrap",
-                  flex: "none",
-                }}
-              >
-                更新时间：2024-06-05 11:00
-              </Text>
-              <Space size="middle" style={{ marginLeft: "auto" }}>
-                <Tooltip title="下载">
-                  <Button
-                    type="text"
-                    icon={<DownloadOutlined />}
-                    onClick={handleDownload}
-                  />
-                </Tooltip>
-                <Tooltip title="分享">
-                  <Button
-                    type="text"
-                    icon={<ShareAltOutlined />}
-                    onClick={handleShare}
-                  />
-                </Tooltip>
-                <Tooltip title="复制">
-                  <Button
-                    type="text"
-                    icon={<CopyOutlined />}
-                    onClick={handleCopy}
-                  />
-                </Tooltip>
-                <Tooltip title="编辑">
-                  <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={handleEdit}
-                  />
-                </Tooltip>
-              </Space>
-              <Button
-                type="primary"
-                style={{
-                  marginLeft: 24,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-                onClick={handleChat}
-              >
-                <img
-                  src={VionaAvatar}
-                  alt="Viona"
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: "50%",
-                    marginRight: 8,
-                  }}
-                />
-                与 Viona 对话
-              </Button>
-            </div>
-            <div
-              style={{
-                border: "1px solid #f0f0f0",
-                borderRadius: 8,
-                padding: 24,
-                background: "#fcfcfc",
-                maxHeight: "60vh",
-                overflow: "auto",
-              }}
-            >
-              <div>
-                <div>最终决定与理由</div>
-                {isEditingTalent ? (
-                  <Form form={form}>
-                    <Form.Item name="status" label="总体招聘委员会推荐">
-                      <Radio.Group
-                        options={[
-                          {
-                            label: "强烈推荐：超出标准。高度自信。",
-                            value: "strong_recommend",
-                          },
-                          {
-                            label: "推荐：符合标准。有信心。",
-                            value: "recommend",
-                          },
-                          {
-                            label:
-                              "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
-                            value: "pending",
-                          },
-                          {
-                            label:
-                              "不予录用（资历不足）：未达到核心技能或经验水平要求。",
-                            value: "reject_insufficient_skill",
-                          },
-                          {
-                            label:
-                              "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
-                            value: "reject_mismatch",
-                          },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="最终理由"
-                      name="feedback"
-                      rules={[{ required: true }]}
-                    >
-                      <Input.TextArea rows={4} />
-                    </Form.Item>
-                    <div>
-                      <Button type="primary" onClick={() => submitTalent()}>
-                        提交
-                      </Button>
-                      <Button onClick={() => setIsEditingTalent(false)}>
-                        取消
-                      </Button>
-                    </div>
-                  </Form>
-                ) : (
-                  <div>
-                    <div>总体招聘委员会推荐: {talent?.status}</div>
-                    <div>最终理由: {talent?.feedback}</div>
+                </div>
+                {interviewDesignerReady && (
+                  <div className={styles.headerRight}>
+                    <DownloadOutlined onClick={handleDownload} />
+                    <ShareAltOutlined onClick={handleShare} />
+                    <CopyOutlined onClick={handleCopy} />
+                    <EditOutlined onClick={handleEdit} />
                     <Button
-                      onClick={() => {
-                        form.setFieldsValue({
-                          status: talent?.status,
-                          feedback: talent?.feedback,
-                        });
-                        setIsEditingTalent(true);
-                      }}
+                      type="primary"
+                      onClick={handleChat}
+                      style={{ marginLeft: "12px" }}
                     >
-                      编辑
+                      与 Viona 对话
                     </Button>
                   </div>
                 )}
               </div>
-              <div>
-                <div>面试反馈</div>
+              <div className={styles.designerBody}>
+                {!!interviewDesignerReady ? (
+                  isEditingInterviewDesigner ? (
+                    <>
+                      <MarkdownEditor
+                        value={editingInterviewDesignerValue}
+                        onChange={(val) =>
+                          setEditingInterviewDesignerValue(val)
+                        }
+                        style={{
+                          flex: "auto",
+                          overflow: "hidden",
+                          display: "flex",
+                        }}
+                      />
+                      <div>
+                        <Button
+                          onClick={() => updateInterviewDesignerDoc()}
+                          type="primary"
+                        >
+                          保存
+                        </Button>
+                        <Button
+                          onClick={() => setIsEditingInterviewDesigner(false)}
+                          style={{ marginLeft: 12 }}
+                        >
+                          取消
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <MarkdownContainer
+                      content={interviewDesigner.interview_game_plan_doc}
+                    />
+                  )
+                ) : (
+                  <Empty />
+                )}
+              </div>
+            </>
+          )}
+          {tabKey === "interview_feedback" && (
+            <>
+              <Title level={4} style={{ marginBottom: 24 }}>
+                面试评分卡
+              </Title>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: 16,
+                }}
+              >
+                <Text
+                  type="secondary"
+                  style={{
+                    fontSize: 12,
+                    whiteSpace: "nowrap",
+                    flex: "none",
+                  }}
+                >
+                  更新时间：2024-06-05 11:00
+                </Text>
+                <Space size="middle" style={{ marginLeft: "auto" }}>
+                  <Tooltip title="下载">
+                    <Button
+                      type="text"
+                      icon={<DownloadOutlined />}
+                      onClick={handleDownload}
+                    />
+                  </Tooltip>
+                  <Tooltip title="分享">
+                    <Button
+                      type="text"
+                      icon={<ShareAltOutlined />}
+                      onClick={handleShare}
+                    />
+                  </Tooltip>
+                  <Tooltip title="复制">
+                    <Button
+                      type="text"
+                      icon={<CopyOutlined />}
+                      onClick={handleCopy}
+                    />
+                  </Tooltip>
+                  <Tooltip title="编辑">
+                    <Button
+                      type="text"
+                      icon={<EditOutlined />}
+                      onClick={handleEdit}
+                    />
+                  </Tooltip>
+                </Space>
+                <Button
+                  type="primary"
+                  style={{
+                    marginLeft: 24,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  onClick={handleChat}
+                >
+                  <img
+                    src={VionaAvatar}
+                    alt="Viona"
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      marginRight: 8,
+                    }}
+                  />
+                  与 Viona 对话
+                </Button>
+              </div>
+              <div
+                style={{
+                  border: "1px solid #f0f0f0",
+                  borderRadius: 8,
+                  padding: 24,
+                  background: "#fcfcfc",
+                  maxHeight: "60vh",
+                  overflow: "auto",
+                }}
+              >
                 <div>
-                  {new Array(totalRound).fill(0).map((_, index) => {
-                    const currentRound = index + 1;
-                    const interviewFeedback = interviewFeedbacks?.find(
-                      (item) => item.round === currentRound
-                    );
-
-                    if (!interviewFeedback?.feedback_json) {
-                      return (
-                        <div key={index}>
-                          <div>
-                            {currentRound}面{" "}
-                            {interviewPlan.rounds[index].interviewer}
-                          </div>
-                          <Empty
-                            description={
-                              <Button
-                                onClick={() => {
-                                  navigate(
-                                    `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
-                                  );
-                                }}
-                              >
-                                请先反馈
-                              </Button>
-                            }
-                          />
-                        </div>
+                  <div>最终决定与理由</div>
+                  {isEditingTalent ? (
+                    <Form form={form}>
+                      <Form.Item name="status" label="总体招聘委员会推荐">
+                        <Radio.Group
+                          options={[
+                            {
+                              label: "强烈推荐：超出标准。高度自信。",
+                              value: "strong_recommend",
+                            },
+                            {
+                              label: "推荐：符合标准。有信心。",
+                              value: "recommend",
+                            },
+                            {
+                              label:
+                                "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
+                              value: "pending",
+                            },
+                            {
+                              label:
+                                "不予录用（资历不足）：未达到核心技能或经验水平要求。",
+                              value: "reject_insufficient_skill",
+                            },
+                            {
+                              label:
+                                "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
+                              value: "reject_mismatch",
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="最终理由"
+                        name="feedback"
+                        rules={[{ required: true }]}
+                      >
+                        <Input.TextArea rows={4} />
+                      </Form.Item>
+                      <div>
+                        <Button type="primary" onClick={() => submitTalent()}>
+                          提交
+                        </Button>
+                        <Button onClick={() => setIsEditingTalent(false)}>
+                          取消
+                        </Button>
+                      </div>
+                    </Form>
+                  ) : (
+                    <div>
+                      <div>总体招聘委员会推荐: {talent?.status}</div>
+                      <div>最终理由: {talent?.feedback}</div>
+                      <Button
+                        onClick={() => {
+                          form.setFieldsValue({
+                            status: talent?.status,
+                            feedback: talent?.feedback,
+                          });
+                          setIsEditingTalent(true);
+                        }}
+                      >
+                        编辑
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <div>面试反馈</div>
+                  <div>
+                    {new Array(totalRound).fill(0).map((_, index) => {
+                      const currentRound = index + 1;
+                      const interviewFeedback = interviewFeedbacks?.find(
+                        (item) => item.round === currentRound
                       );
-                    }
 
-                    const interviewFeedbackDetail = parseJSON(
-                      interviewFeedback.feedback_json
-                    ) as TInterviewFeedbackDetail;
-
-                    return (
-                      <div key={interviewFeedback.id}>
-                        <div>
-                          {currentRound}面{" "}
-                          {interviewPlan.rounds[index].interviewer} -{" "}
-                          {dayjs(interviewFeedback.updated_at).format(
-                            "YYYY-MM-DD HH:mm:ss"
-                          )}
-                        </div>
-
-                        <div>
-                          <div>总体推荐: {interviewFeedbackDetail.result}</div>
-                          <div>
-                            <MarkdownContainer
-                              content={interviewFeedbackDetail.feedback}
-                            />
-                          </div>
-                          <div>下一轮可操作性建议</div>
-                          <div>
-                            <MarkdownContainer
-                              content={
-                                interviewFeedbackDetail.next_round_concern
+                      if (!interviewFeedback?.feedback_json) {
+                        return (
+                          <div key={index}>
+                            <div>
+                              {currentRound}面{" "}
+                              {interviewPlan.rounds[index].interviewer}
+                            </div>
+                            <Empty
+                              description={
+                                <Button
+                                  onClick={() => {
+                                    navigate(
+                                      `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
+                                    );
+                                  }}
+                                >
+                                  请先反馈
+                                </Button>
                               }
                             />
                           </div>
+                        );
+                      }
+
+                      const interviewFeedbackDetail = parseJSON(
+                        interviewFeedback.feedback_json
+                      ) as TInterviewFeedbackDetail;
+
+                      return (
+                        <div key={interviewFeedback.id}>
+                          <div>
+                            {currentRound}面{" "}
+                            {interviewPlan.rounds[index].interviewer} -{" "}
+                            {dayjs(interviewFeedback.updated_at).format(
+                              "YYYY-MM-DD HH:mm:ss"
+                            )}
+                          </div>
+
+                          <div>
+                            <div>
+                              总体推荐: {interviewFeedbackDetail.result}
+                            </div>
+                            <div>
+                              <MarkdownContainer
+                                content={interviewFeedbackDetail.feedback}
+                              />
+                            </div>
+                            <div>下一轮可操作性建议</div>
+                            <div>
+                              <MarkdownContainer
+                                content={
+                                  interviewFeedbackDetail.next_round_concern
+                                }
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <div>待评估信号</div>
                 <div>
-                  {interviewPlan.signals.map((signal) => {
-                    return (
-                      <div key={signal.title}>
-                        <div>
-                          <div>{signal.level}</div>
-                          <div>{signal.title}</div>
-                        </div>
-                        <div>{signal.description}</div>
-                        <div>
-                          {(interviewPlan.rounds ?? []).map((round, index) => {
-                            const interviewFeedbackDetail = parseJSON(
-                              interviewFeedbacks?.find(
-                                (feedback) => feedback.round === index + 1
-                              )?.feedback_json
-                            ) as TInterviewFeedbackDetail;
-
-                            const currentSingleFeedback =
-                              interviewFeedbackDetail.predefine_signals?.find(
-                                (signalFeedback) =>
-                                  signalFeedback.title === signal.title
-                              );
-
-                            return (
-                              <div key={index}>
-                                <div>
-                                  <div>
-                                    <div>面试官</div>
-                                    <div>{round.interviewer}</div>
-                                  </div>
-                                  <div>
-                                    <Radio.Group
-                                      value={currentSingleFeedback?.evaluation}
-                                      optionType="button"
-                                      options={[
-                                        {
-                                          label: "+++",
-                                          value: "exceeds",
-                                        },
-                                        {
-                                          label: "++",
-                                          value: "meets",
-                                        },
-                                        {
-                                          label: "+",
-                                          value: "likely_meets",
-                                        },
-                                        {
-                                          label: "-",
-                                          value: "likely_does_not_meets",
-                                        },
-                                        {
-                                          label: "--",
-                                          value: "does_not_meets",
-                                        },
-                                        {
-                                          label: "?",
-                                          value: "not_assessed",
-                                        },
-                                      ]}
-                                    />
-                                  </div>
-                                </div>
-                                <div>{currentSingleFeedback?.basis ?? ""}</div>
-                                <div>
-                                  <Tooltip
-                                    title={currentSingleFeedback?.evidences}
-                                  >
-                                    证据
-                                  </Tooltip>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <div>其它观察到的信号</div>
-                <div>
-                  {interviewFeedbacks.map((feedback) => {
-                    const interviewFeedbackDetail = parseJSON(
-                      feedback.feedback_json
-                    ) as TInterviewFeedbackDetail;
-
-                    const round = interviewPlan.rounds[feedback.round - 1];
-
-                    const otherSignals =
-                      interviewFeedbackDetail.other_signals ?? [];
-                    return otherSignals.map((signal) => {
+                  <div>待评估信号</div>
+                  <div>
+                    {interviewPlan.signals.map((signal) => {
                       return (
                         <div key={signal.title}>
                           <div>
+                            <div>{signal.level}</div>
                             <div>{signal.title}</div>
                           </div>
+                          <div>{signal.description}</div>
                           <div>
-                            <div>
-                              <div>面试官</div>
-                              <div>{round.interviewer}</div>
-                            </div>
-                            <div>{signal?.basis ?? ""}</div>
-                            <div>
-                              <Tooltip title={signal?.evidences}>证据</Tooltip>
-                            </div>
+                            {(interviewPlan.rounds ?? []).map(
+                              (round, index) => {
+                                const interviewFeedbackDetail = parseJSON(
+                                  interviewFeedbacks?.find(
+                                    (feedback) => feedback.round === index + 1
+                                  )?.feedback_json
+                                ) as TInterviewFeedbackDetail;
+
+                                const currentSingleFeedback =
+                                  interviewFeedbackDetail.predefine_signals?.find(
+                                    (signalFeedback) =>
+                                      signalFeedback.title === signal.title
+                                  );
+
+                                return (
+                                  <div key={index}>
+                                    <div>
+                                      <div>
+                                        <div>面试官</div>
+                                        <div>{round.interviewer}</div>
+                                      </div>
+                                      <div>
+                                        <Radio.Group
+                                          value={
+                                            currentSingleFeedback?.evaluation
+                                          }
+                                          optionType="button"
+                                          options={[
+                                            {
+                                              label: "+++",
+                                              value: "exceeds",
+                                            },
+                                            {
+                                              label: "++",
+                                              value: "meets",
+                                            },
+                                            {
+                                              label: "+",
+                                              value: "likely_meets",
+                                            },
+                                            {
+                                              label: "-",
+                                              value: "likely_does_not_meets",
+                                            },
+                                            {
+                                              label: "--",
+                                              value: "does_not_meets",
+                                            },
+                                            {
+                                              label: "?",
+                                              value: "not_assessed",
+                                            },
+                                          ]}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div>
+                                      {currentSingleFeedback?.basis ?? ""}
+                                    </div>
+                                    <div>
+                                      <Tooltip
+                                        title={currentSingleFeedback?.evidences}
+                                      >
+                                        证据
+                                      </Tooltip>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )}
                           </div>
                         </div>
                       );
-                    });
-                  })}
+                    })}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <div>主要顾虑/红线问题</div>
                 <div>
-                  {interviewFeedbacks.map((feedback) => {
-                    const interviewFeedbackDetail = parseJSON(
-                      feedback.feedback_json
-                    ) as TInterviewFeedbackDetail;
+                  <div>其它观察到的信号</div>
+                  <div>
+                    {interviewFeedbacks.map((feedback) => {
+                      const interviewFeedbackDetail = parseJSON(
+                        feedback.feedback_json
+                      ) as TInterviewFeedbackDetail;
 
-                    const round = interviewPlan.rounds[feedback.round - 1];
+                      const round = interviewPlan.rounds[feedback.round - 1];
 
-                    const dangers = interviewFeedbackDetail.dangers ?? [];
-                    return dangers.map((danger) => {
-                      return (
-                        <div key={danger.title}>
-                          <div>
-                            <div>{danger.title}</div>
-                          </div>
-                          <div>
+                      const otherSignals =
+                        interviewFeedbackDetail.other_signals ?? [];
+                      return otherSignals.map((signal) => {
+                        return (
+                          <div key={signal.title}>
                             <div>
-                              <div>面试官</div>
-                              <div>{round.interviewer}</div>
+                              <div>{signal.title}</div>
                             </div>
-                            <div>{danger?.basis ?? ""}</div>
                             <div>
-                              <Tooltip title={danger?.evidences}>证据</Tooltip>
+                              <div>
+                                <div>面试官</div>
+                                <div>{round.interviewer}</div>
+                              </div>
+                              <div>{signal?.basis ?? ""}</div>
+                              <div>
+                                <Tooltip title={signal?.evidences}>
+                                  证据
+                                </Tooltip>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    });
-                  })}
+                        );
+                      });
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <div>主要顾虑/红线问题</div>
+                  <div>
+                    {interviewFeedbacks.map((feedback) => {
+                      const interviewFeedbackDetail = parseJSON(
+                        feedback.feedback_json
+                      ) as TInterviewFeedbackDetail;
+
+                      const round = interviewPlan.rounds[feedback.round - 1];
+
+                      const dangers = interviewFeedbackDetail.dangers ?? [];
+                      return dangers.map((danger) => {
+                        return (
+                          <div key={danger.title}>
+                            <div>
+                              <div>{danger.title}</div>
+                            </div>
+                            <div>
+                              <div>
+                                <div>面试官</div>
+                                <div>{round.interviewer}</div>
+                              </div>
+                              <div>{danger?.basis ?? ""}</div>
+                              <div>
+                                <Tooltip title={danger?.evidences}>
+                                  证据
+                                </Tooltip>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
