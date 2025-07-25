@@ -155,6 +155,7 @@ const Settings = () => {
     CANDIDATE_INTERNAL_EVALUATE_CHAT: "生成内部评估文档",
     CANDIDATE_RECOMMEND_FOR_JOB_CHAT: "生成推荐报告",
     CANDIDATE_JOB_INTERVIEW_CHAT: "职位内的面试",
+    UTILS_MERGE_INTERVIEW_FEEDBACKS: "合并面试反馈",
   };
 
   return (
