@@ -1100,8 +1100,18 @@ const JobRequirementFormDrawer = (props: IProps) => {
               onChange={(value) => {
                 const selectedTeam = teams.find((team) => team.id === value);
 
-                if (selectedTeam)
-                  form.setFieldsValue(JSON.parse(selectedTeam.detail));
+                if (selectedTeam) {
+                  const detailObj = JSON.parse(selectedTeam.detail);
+                  // const allFields = form.getFieldsValue();
+                  // console.log(detailObj);
+                  // Object.keys(allFields).forEach((key) => {
+                  //   console.log(
+                  //     "set field " + key + " value " + detailObj[key]
+                  //   );
+                  //   form.setFieldValue(key, detailObj[key]);
+                  // });
+                  form.setFieldsValue(detailObj);
+                }
               }}
             />
           )}

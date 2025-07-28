@@ -118,6 +118,10 @@ const JobBoard = () => {
                   navigate(`/app/jobs/${job.id}/chat/job-requirement`);
                 }}
                 size="large"
+                {...(!!job.requirement_doc_id && {
+                  color: "primary",
+                  variant: "outlined",
+                })}
               >
                 详细定义职位需求
               </Button>
@@ -135,6 +139,10 @@ const JobBoard = () => {
                   navigate(`/app/jobs/${job.id}/chat/job-description`);
                 }}
                 size="large"
+                {...(!!job.jd_doc_id && {
+                  color: "primary",
+                  variant: "outlined",
+                })}
               >
                 确定职位描述(JD)
               </Button>
@@ -152,6 +160,10 @@ const JobBoard = () => {
                   navigate(`/app/jobs/${job.id}/chat/job-interview-plan`);
                 }}
                 size="large"
+                {...(!!job.interview_plan_doc_id && {
+                  color: "primary",
+                  variant: "outlined",
+                })}
               >
                 制定面试计划&评分卡
               </Button>
@@ -194,7 +206,7 @@ const JobBoard = () => {
               }
             >
               <Button
-                disabled={!job.requirement_doc_id}
+                // disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_description_doc");
                   navigate(`/app/jobs/${job.id}/document/job-requirement`);
@@ -211,7 +223,7 @@ const JobBoard = () => {
               }
             >
               <Button
-                disabled={!job.jd_doc_id}
+                // disabled={!job.jd_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_description_doc");
                   navigate(`/app/jobs/${job.id}/document/job-description`);
@@ -228,7 +240,7 @@ const JobBoard = () => {
               }
             >
               <Button
-                disabled={!job.interview_plan_doc_id}
+                // disabled={!job.interview_plan_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_interview_plan_doc");
                   navigate(`/app/jobs/${job.id}/document/job-interview-plan`);

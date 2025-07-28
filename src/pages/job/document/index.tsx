@@ -179,36 +179,38 @@ const JobDocument = () => {
                   `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}更新`}
               </span>
             </div>
-            <div className={styles.operations}>
-              <DownloadOutlined
-                onClick={() => {
-                  downloadAsType("markdown");
-                }}
-              />
-              <ShareAltOutlined />
-              <CopyOutlined
-                onClick={async () => {
-                  await copy(documentContent);
-                  message.success("Copied");
-                }}
-              />
-              <EditOutlined
-                onClick={() => {
-                  setEditingValue(documentContent);
-                  setIsEditing(true);
-                }}
-              />
+            {!!documentContent && (
+              <div className={styles.operations}>
+                <DownloadOutlined
+                  onClick={() => {
+                    downloadAsType("markdown");
+                  }}
+                />
+                <ShareAltOutlined />
+                <CopyOutlined
+                  onClick={async () => {
+                    await copy(documentContent);
+                    message.success("Copied");
+                  }}
+                />
+                <EditOutlined
+                  onClick={() => {
+                    setEditingValue(documentContent);
+                    setIsEditing(true);
+                  }}
+                />
 
-              <Button
-                type="primary"
-                onClick={() => {
-                  navigate(`/app/jobs/${job.id}/chat/${chatType}`);
-                }}
-                style={{ marginLeft: "12px" }}
-              >
-                与 Viona 对话
-              </Button>
-            </div>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                  }}
+                  style={{ marginLeft: "12px" }}
+                >
+                  与 Viona 对话
+                </Button>
+              </div>
+            )}
           </div>
           <div className={styles.docContent}>
             {documentContent ? (
@@ -227,16 +229,39 @@ const JobDocument = () => {
                 <Empty
                   description={
                     <div style={{ marginTop: 20 }}>
-                      请先与 Viona 对话获取职位需求表
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          navigate(`/app/jobs/${job.id}/chat/${chatType}`);
-                        }}
-                        style={{ marginLeft: "12px" }}
-                      >
-                        与 Viona 对话
-                      </Button>
+                      {!job.requirement_doc_id ? (
+                        <>
+                          请先与 Viona 对话获取职位需求表
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              navigate(
+                                `/app/jobs/${job.id}/chat/job-requirement`
+                              );
+                            }}
+                            style={{ marginLeft: "12px" }}
+                          >
+                            与 Viona 对话
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          {`请先与Viona对话制定${
+                            chatType === "job-description"
+                              ? "职位描述"
+                              : "面试计划&评分卡"
+                          }`}
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                            }}
+                            style={{ marginLeft: "12px" }}
+                          >
+                            与 Viona 对话
+                          </Button>
+                        </>
+                      )}
                     </div>
                   }
                 />

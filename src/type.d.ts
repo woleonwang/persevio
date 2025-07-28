@@ -276,15 +276,18 @@ type TInterviewPlanDetail = {
   ];
 };
 
+type TEvaluation =
+  | "exceeds"
+  | "meets"
+  | "likely_meets"
+  | "likely_does_not_meets"
+  | "does_not_meets"
+  | "uncertain"
+  | "not_assessed";
+
 type TPredefinedSignal = {
   title: string;
-  evaluation:
-    | "exceeds"
-    | "meets"
-    | "likely_meets"
-    | "likely_does_not_meets"
-    | "does_not_meets"
-    | "not_assessed";
+  evaluation: TEvaluation;
   basis: string;
   evidences: string;
 };
@@ -297,6 +300,7 @@ type TCustomizeSignal = {
 
 type TInterviewFeedbackDetail = {
   result: "recommend" | "pending" | "reject";
+  interviewer_name?: string;
   feedback: string;
   next_round_concern: string;
 

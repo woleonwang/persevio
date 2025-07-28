@@ -38,7 +38,7 @@ const JobCreate = (props: IProps) => {
       if (code === 0) {
         message.success("Create job succeed");
         fetchJobs();
-        navigate(`/app/jobs/${data.job_id}`);
+        navigate(`/app/jobs/${data.job_id}/board`);
       }
       isSubmittingRef.current = false;
     }

@@ -14,37 +14,33 @@ interface IProps {
   onSubmit: () => void;
 }
 
-type TEvaluation =
-  | "exceeds"
-  | "meets"
-  | "likely_meets"
-  | "likely_does_not_meets"
-  | "does_not_meets"
-  | "not_assessed";
-
 const signalEvaluationOptions: { label: string; value: TEvaluation }[] = [
   {
-    label: "+++",
+    label: "超出预期",
     value: "exceeds",
   },
   {
-    label: "++",
+    label: "达标",
     value: "meets",
   },
   {
-    label: "+",
+    label: "大概率达标",
     value: "likely_meets",
   },
   {
-    label: "-",
+    label: "大概率不达标",
     value: "likely_does_not_meets",
   },
   {
-    label: "--",
+    label: "不达标",
     value: "does_not_meets",
   },
   {
-    label: "?",
+    label: "不确定",
+    value: "uncertain",
+  },
+  {
+    label: "本次面试未涉及",
     value: "not_assessed",
   },
 ];
@@ -68,9 +64,6 @@ const FeedbackSignal = (props: IProps) => {
   const currentSingleFeedback = interviewFeedbackDetail.predefine_signals?.find(
     (signalFeedback) => signalFeedback.title === signalTitle
   );
-
-  console.log(signalTitle);
-  console.log(interviewFeedbackDetail);
 
   const submitSignalFeedback = () => {
     form.validateFields().then(async (values) => {
@@ -117,15 +110,11 @@ const FeedbackSignal = (props: IProps) => {
               label="评估结果"
               rules={[{ required: true }]}
             >
-              <Radio.Group
-                optionType="button"
-                options={signalEvaluationOptions}
-                size="small"
-              />
+              <Radio.Group options={signalEvaluationOptions} size="small" />
             </Form.Item>
 
             <Form.Item name="basis" label="依据" rules={[{ required: true }]}>
-              <Input.TextArea />
+              <Input.TextArea rows={4} />
             </Form.Item>
 
             <div style={{ marginTop: 8 }}>
@@ -174,6 +163,7 @@ const FeedbackSignal = (props: IProps) => {
               <Tooltip
                 title={currentSingleFeedback.evidences}
                 trigger={"click"}
+                styles={{ body: { whiteSpace: "pre-wrap" } }}
               >
                 <Button shape="round" style={{ marginLeft: 8 }}>
                   证据

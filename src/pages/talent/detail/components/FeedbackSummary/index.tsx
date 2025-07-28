@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { useState } from "react";
 import { CopyOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Form, message, Radio } from "antd";
+import { Button, Form, Input, message, Radio } from "antd";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { Post } from "@/utils/request";
 import { useNavigate } from "react-router";
@@ -33,6 +33,7 @@ const feedbackStatusOptions = [
 ];
 
 type TFormValue = {
+  interviewer_name: string;
   result: "recommend" | "pending" | "reject";
   feedback: string;
   next_round_concern: string;
@@ -51,6 +52,10 @@ const FeedbackSummary = (props: IProps) => {
 
   const submitFeedback = () => {
     form.validateFields().then(async (values) => {
+      if (values["interviewer_name"] === defaultInterviewerName) {
+        values.interviewer_name = "";
+      }
+
       const { code } = await Post(
         `/api/jobs/${jobId}/interview_feedbacks/${interviewFeedback.id}/json`,
         {
@@ -67,13 +72,16 @@ const FeedbackSummary = (props: IProps) => {
     });
   };
 
+  const defaultInterviewerName =
+    interviewPlan.rounds[interviewFeedback.round - 1].interviewer;
+  const mergedInterviewerName =
+    interviewFeedbackDetail.interviewer_name ?? defaultInterviewerName;
+
   return (
     <div key={interviewFeedback.id} className={styles.feedbackItem}>
       <div className={styles.feedbackTitle}>
         <span className={styles.primary}>{interviewFeedback.round}面</span>
-        <span className={styles.interviewer}>
-          {interviewPlan.rounds[interviewFeedback.round - 1].interviewer}
-        </span>
+        <span className={styles.interviewer}>{mergedInterviewerName}</span>
         <span className={styles.updatedAt}>
           {dayjs(interviewFeedback.updated_at).format("YYYY-MM-DD HH:mm:ss")}
         </span>
@@ -99,7 +107,10 @@ const FeedbackSummary = (props: IProps) => {
           icon={<EditOutlined />}
           onClick={() => {
             setIsEditing(true);
-            form.setFieldsValue(interviewFeedbackDetail);
+            form.setFieldsValue({
+              ...interviewFeedbackDetail,
+              interviewer_name: mergedInterviewerName,
+            });
           }}
           style={{ marginLeft: 10 }}
         />
@@ -123,6 +134,13 @@ const FeedbackSummary = (props: IProps) => {
             <div className={styles.feedbackBlock}>
               <Form form={form} layout="vertical">
                 <Form.Item
+                  label="面试官"
+                  name="interviewer_name"
+                  rules={[{ required: true }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
                   label="总体推荐"
                   name="result"
                   rules={[{ required: true }]}
@@ -141,14 +159,28 @@ const FeedbackSummary = (props: IProps) => {
                   label="本轮小结"
                   rules={[{ required: true }]}
                 >
-                  <MarkdownEditor style={{ height: 300, overflow: "auto" }} />
+                  <MarkdownEditor
+                    style={{
+                      border: "1px solid #dddddd",
+                      borderRadius: 8,
+                      height: 300,
+                      overflow: "auto",
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="next_round_concern"
                   label="下轮可操作性建议"
                   rules={[{ required: true }]}
                 >
-                  <MarkdownEditor style={{ height: 300, overflow: "auto" }} />
+                  <MarkdownEditor
+                    style={{
+                      border: "1px solid #dddddd",
+                      borderRadius: 8,
+                      height: 300,
+                      overflow: "auto",
+                    }}
+                  />
                 </Form.Item>
               </Form>
             </div>

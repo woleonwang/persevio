@@ -20,6 +20,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  SendOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -34,7 +35,6 @@ import styles from "./style.module.less";
 import {
   IProps,
   TChatType,
-  TDoneTag,
   TExtraTag,
   TExtraTagName,
   TMessage,
@@ -62,6 +62,7 @@ type TSupportTag = {
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
   block?: boolean;
+  color?: "blue";
 };
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -297,7 +298,20 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "jrd-done",
       title: t("view_jrd"),
-      handler: () => viewDoc?.("requirement"),
+      color: "blue",
+      handler: () => viewDoc?.("job-requirement"),
+    },
+    {
+      key: "jd-done",
+      title: t("view_jd"),
+      color: "blue",
+      handler: () => viewDoc?.("job-description"),
+    },
+    {
+      key: "interview-plan-done",
+      title: t("view_interview_plan"),
+      color: "blue",
+      handler: () => viewDoc?.("job-interview-plan"),
     },
 
     {
@@ -452,7 +466,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         item.content.metadata.message_sub_type === "error"
       ) {
         const extraTags = item.content.metadata.extra_tags || [];
-        if (extraTags.map((item) => item.name).includes("jrd-done")) {
+        if (
+          ["jrd-done", "jd-done", "interview-plan-done"].find((tag) =>
+            extraTags.map((item) => item.name).includes(tag as TExtraTagName)
+          )
+        ) {
           extraTags.push(...getNextStepsExtraTags(job));
         }
         resultMessages.push({
@@ -466,25 +484,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           extraTags: extraTags,
         });
       }
-
-      // 下一步 按钮
-      (item.content.metadata.extra_tags ?? []).forEach((tag) => {
-        (["jd-done", "interview-plan-done"] as TDoneTag[]).forEach((step) => {
-          if (step === tag.name) {
-            const nextExtraTags = getNextStepsExtraTags(job);
-            if (nextExtraTags.length > 0) {
-              resultMessages.push({
-                id: `${item.id.toString()}-${step}-btn`,
-                role: "ai",
-                content: t("jrd_next_task"),
-                updated_at: item.updated_at,
-                messageType: "system",
-                extraTags: nextExtraTags,
-              });
-            }
-          }
-        });
-      });
     });
 
     return resultMessages;
@@ -792,7 +791,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         key={tag.key}
                                       >
                                         <Button
-                                          type="primary"
+                                          variant="solid"
+                                          color={tag.color ?? "primary"}
                                           onClick={() => {
                                             const extraTag = (
                                               item.extraTags ?? []
@@ -988,20 +988,28 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               }}
             />
             {
-              <EditOutlined
-                onClick={() => {
-                  if (textInputVisible) {
-                    setTextInputVisible(false);
-                    setInputPlaceholder("");
-                  } else {
-                    setTextInputVisible(true);
-                    setTimeout(() => {
-                      setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                    }, 400);
-                  }
-                }}
-                style={{ fontSize: 24, color: "gray" }}
-              />
+              <>
+                {textInputVisible && (
+                  <SendOutlined
+                    onClick={() => submit()}
+                    style={{ fontSize: 24, color: "#1FAC6A" }}
+                  />
+                )}
+                <EditOutlined
+                  onClick={() => {
+                    if (textInputVisible) {
+                      setTextInputVisible(false);
+                      setInputPlaceholder("");
+                    } else {
+                      setTextInputVisible(true);
+                      setTimeout(() => {
+                        setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                      }, 400);
+                    }
+                  }}
+                  style={{ fontSize: 24, color: "gray" }}
+                />
+              </>
             }
           </div>
         </div>

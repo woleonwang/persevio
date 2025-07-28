@@ -464,16 +464,20 @@ const TalentDetail: React.FC = () => {
                             </div>
                             <Empty
                               description={
-                                <Button
-                                  type="primary"
-                                  onClick={() => {
-                                    navigate(
-                                      `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
-                                    );
-                                  }}
-                                >
-                                  请先反馈
-                                </Button>
+                                <>
+                                  请先与Viona对话填写面试评分卡
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      navigate(
+                                        `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
+                                      );
+                                    }}
+                                    style={{ marginLeft: 12 }}
+                                  >
+                                    与Viona对话
+                                  </Button>
+                                </>
                               }
                               style={{ margin: "60px 0" }}
                             />
@@ -537,6 +541,10 @@ const TalentDetail: React.FC = () => {
 
                                   if (!interviewFeedback) return <></>;
 
+                                  const interviewFeedbackDetail = parseJSON(
+                                    interviewFeedback.feedback_json
+                                  ) as TInterviewFeedbackDetail;
+
                                   return (
                                     <div
                                       className={styles.card}
@@ -545,7 +553,10 @@ const TalentDetail: React.FC = () => {
                                       <FeedbackSignal
                                         jobId={job.id}
                                         talentId={talent.id}
-                                        interviewerName={round.interviewer}
+                                        interviewerName={
+                                          interviewFeedbackDetail.interviewer_name ??
+                                          round.interviewer
+                                        }
                                         signalTitle={signal.title}
                                         interviewFeedback={interviewFeedback}
                                         onSubmit={() =>
@@ -572,6 +583,7 @@ const TalentDetail: React.FC = () => {
                       const interviewFeedbackDetail = parseJSON(
                         feedback.feedback_json
                       ) as TInterviewFeedbackDetail;
+
                       return (interviewFeedbackDetail.other_signals ?? []).map(
                         (signal) => {
                           return (
@@ -582,6 +594,7 @@ const TalentDetail: React.FC = () => {
                               <FeedbackCustomizeSignal
                                 jobId={job.id}
                                 interviewerName={
+                                  interviewFeedbackDetail.interviewer_name ??
                                   interviewPlan.rounds[feedback.round - 1]
                                     .interviewer
                                 }
@@ -620,6 +633,7 @@ const TalentDetail: React.FC = () => {
                               <FeedbackCustomizeSignal
                                 jobId={job.id}
                                 interviewerName={
+                                  interviewFeedbackDetail.interviewer_name ??
                                   interviewPlan.rounds[feedback.round - 1]
                                     .interviewer
                                 }
