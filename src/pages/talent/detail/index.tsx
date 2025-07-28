@@ -499,7 +499,7 @@ const TalentDetail: React.FC = () => {
                     待评估信号
                   </Title>
                   <div>
-                    {interviewPlan.signals
+                    {(interviewPlan.signals ?? [])
                       .sort((a, b) =>
                         a.level === "good_to_have" && b.level === "must_have"
                           ? 1
