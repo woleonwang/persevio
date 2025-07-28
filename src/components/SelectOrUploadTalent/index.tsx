@@ -9,12 +9,6 @@ interface IProps {
   onChange?: (val: number) => void;
 }
 
-type TTalent = {
-  id: number;
-  name: string;
-  parsed_content: string;
-};
-
 const SelectOrUploadTalent = (props: IProps) => {
   const { jobId, value, onChange } = props;
 

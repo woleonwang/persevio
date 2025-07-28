@@ -8,11 +8,13 @@ import { initReactI18next } from "react-i18next";
 import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
+import Share from "./layouts/Share";
+
 import Home from "./pages/home";
 import Signin from "./pages/signin";
 import Signup from "./pages/signup";
 import Job from "./pages/job";
-import JobsCreate from "./pages/jobs-create";
+import JobsCreate from "./pages/job/create/index.tsx";
 import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
@@ -52,6 +54,12 @@ import InterviewFeedbacks from "./pages/interview-feedbacks";
 import InterviewFeedbacksCreate from "./pages/interview-feedbacks/interview-feedback-create";
 import InterviewFeedbacksEdit from "./pages/interview-feedbacks/interview-feedbacks-edit";
 import InteviewFeedbacksChat from "./pages/interview-feedbacks/interview-feedbacks-chat";
+import JobChat from "./pages/job/chat";
+import JobDocument from "./pages/job/document";
+import JobBoard from "./pages/job/board";
+import TalentChat from "./pages/talent/chat";
+import TalentSelect from "./pages/talent/select";
+import TalentDetail from "./pages/talent/detail";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -89,9 +97,38 @@ createRoot(document.getElementById("root")!).render(
             path="/jobs/:invitation_token/coworker"
             element={<JobCoworker />}
           />
+          <Route path="/share" element={<Share />}>
+            <Route path="/share/create-job" element={<JobsCreate share />} />
+          </Route>
+
           <Route path="/app" element={<App />}>
             {/* <Route path="/entry" element={<Entry />}></Route> */}
             <Route path="/app/entry/create-job" element={<JobsCreate />} />
+            <Route
+              path="/app/jobs/:jobId/chat/:chatType"
+              element={<JobChat />}
+            />
+            <Route
+              path="/app/jobs/:jobId/document/:chatType"
+              element={<JobDocument />}
+            />
+            <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
+            <Route
+              path="/app/jobs/:jobId/talents/select/:chatType"
+              element={<TalentSelect />}
+              key="talentSelect"
+            />
+            <Route
+              path="/app/jobs/:jobId/talents/:talentId/chat"
+              element={<TalentChat />}
+              key="talentChat"
+            />
+            <Route
+              path="/app/jobs/:jobId/talents/:talentId/detail"
+              element={<TalentDetail />}
+              key="talentDetail"
+            />
+
             <Route path="/app/jobs/:jobId" element={<Job />} />
             <Route
               path="/app/jobs/:jobId/talents/:talentId"

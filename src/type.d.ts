@@ -41,6 +41,7 @@ interface IJob {
   high_level_responsibility_json: string;
   day_to_day_tasks_json: string;
   icp_json: string;
+  interview_plan_json: string;
 
   chatbot_options: {
     allow_salary: string;
@@ -177,6 +178,7 @@ type TMenu = {
   path?: string;
   img: ReactNode;
   requireAdmin?: boolean;
+  key?: string;
   children?: {
     title: string;
     path: string;
@@ -232,6 +234,7 @@ interface TInterviewDesigner {
   resume: string;
   last_feedback: string;
   round: number;
+  interview_game_plan_doc: string;
   created_at: string;
   updated_at: string;
 }
@@ -244,6 +247,62 @@ interface TInterviewFeedback {
   };
   round: number;
   interview_transcript: string;
+  feedback_json: string;
+  evaluate_result: string;
   created_at: string;
   updated_at: string;
 }
+
+type TTalent = {
+  id: number;
+  name: string;
+  status: string;
+  feedback: string;
+  parsed_content: string;
+};
+
+type TTalentChatType = "interview_designer" | "interview_feedback";
+
+type TInterviewPlanDetail = {
+  rounds: {
+    interviewer: string;
+  }[];
+  signals: [
+    {
+      title: string;
+      description: string;
+      level: "must_have" | "good_to_have";
+    }
+  ];
+};
+
+type TPredefinedSignal = {
+  title: string;
+  evaluation:
+    | "exceeds"
+    | "meets"
+    | "likely_meets"
+    | "likely_does_not_meets"
+    | "does_not_meets"
+    | "not_assessed";
+  basis: string;
+  evidences: string;
+};
+
+type TCustomizeSignal = {
+  title: string;
+  basis: string;
+  evidences: string;
+};
+
+type TInterviewFeedbackDetail = {
+  result: "recommend" | "pending" | "reject";
+  feedback: string;
+  next_round_concern: string;
+
+  predefine_signals: TPredefinedSignal[];
+
+  other_signals: TCustomizeSignal[];
+
+  dangers: TCustomizeSignal[];
+};

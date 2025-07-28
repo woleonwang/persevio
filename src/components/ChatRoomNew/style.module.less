@@ -1,0 +1,188 @@
+.container {
+  flex: auto;
+  padding: 20px;
+  background-color: #f3f3f3;
+  display: flex;
+  overflow: hidden;
+
+  :global {
+    .ant-float-btn {
+      bottom: 120px;
+      right: 60px;
+    }
+  }
+}
+
+.left {
+  flex: none;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.leftTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 16px;
+  margin-left: 5px;
+  justify-content: space-between;
+  display: flex;
+  flex: none;
+}
+
+.taskList {
+  flex: auto;
+  overflow: auto;
+}
+
+.taskBlock {
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(238, 238, 238, 1);
+  background-color: rgba(249, 250, 251, 1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  margin-left: 8px;
+  cursor: pointer;
+
+  &.disabled {
+    cursor: not-allowed;
+    &:not(.finished) {
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  &:not(.disabled) {
+    &:hover,
+    &.active {
+      background-color: rgba(243, 252, 248, 1);
+      border-color: rgba(114, 229, 73, 1);
+      color: rgba(31, 172, 106, 1);
+    }
+  }
+}
+
+.right {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.progressWrapper {
+  margin: 20px 40px;
+
+  :global {
+    .ant-steps-item-content {
+      width: 200px !important;
+      position: relative;
+      left: -30px;
+    }
+  }
+}
+
+.listArea {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.timestamp {
+  color: #999999;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.inputArea {
+  margin-top: 16px;
+}
+
+.messageContainer {
+  color: rgb(20, 20, 19);
+  width: fit-content;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: chat-default;
+  padding: 0 16px;
+  border-radius: 16px;
+  background-color: white;
+  border: 1px solid rgb(230, 230, 230);
+  letter-spacing: -0.24px;
+  word-wrap: break-word;
+  position: relative;
+
+  &.user {
+    background-color: rgb(246, 255, 237);
+  }
+
+  &.editing {
+    width: 100%;
+  }
+
+  &.lastMessage {
+    margin-bottom: 100px;
+  }
+
+  .editingContainer {
+    margin: 16px 0;
+  }
+
+  .editingButton {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .operationArea {
+    position: absolute;
+    right: 20px;
+    bottom: -20px;
+  }
+}
+
+.preDefinedQuestionContainer {
+  flex: none;
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 16px;
+  flex-wrap: wrap;
+  .messageCard {
+    padding: 4px 8px;
+    background-color: white;
+    border-radius: 16px;
+    width: fit-content;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .timestamp {
+    display: none;
+  }
+}
+
+.mdEditor {
+  height: 70vh;
+  overflow: auto;
+}
+
+:global {
+  .mdxeditor-popup-container {
+    z-index: 9999;
+  }
+}
