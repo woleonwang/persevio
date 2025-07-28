@@ -79,8 +79,7 @@ const JobChat = () => {
             userRole="staff"
             chatType={chatTypeMappings[chatType] as TChatType}
             viewDoc={(docType: string) => {
-              // TODO
-              navigate(docType);
+              navigate(`/app/jobs/${job.id}/document/${docType}`);
             }}
           />
         </div>
