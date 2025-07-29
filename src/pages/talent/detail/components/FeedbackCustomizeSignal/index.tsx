@@ -137,6 +137,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
               <Tooltip
                 title={currentSignalFeedback.evidences}
                 trigger={"click"}
+                styles={{ body: { whiteSpace: "pre-wrap" } }}
               >
                 <Button shape="round" style={{ marginLeft: 8 }}>
                   证据
