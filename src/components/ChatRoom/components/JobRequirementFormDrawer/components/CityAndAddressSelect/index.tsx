@@ -52,10 +52,10 @@ export interface IMultiProps {
 const MultipleCityAndAddressSelect = (props: IMultiProps) => {
   const { value, isCoworker = false, onChange } = props;
   const [cities, setCities] = useState<TCity[]>([]);
-  const { t: originalT } = useTranslation();
-  const t = (key: string, params?: Record<string, string>): string => {
-    return originalT(`city_and_address_select.${key}`, params);
-  };
+  // const { t: originalT } = useTranslation();
+  // const t = (key: string, params?: Record<string, string>): string => {
+  //   return originalT(`city_and_address_select.${key}`, params);
+  // };
 
   useEffect(() => {
     fetchCityAndAddress();
