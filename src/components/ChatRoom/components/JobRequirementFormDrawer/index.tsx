@@ -195,7 +195,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               },
               {
                 key: "employee_type",
-                type: "select",
+                type: "multiple_select",
                 question: "What is the seniority of this role?",
                 options: [
                   "Internship",
@@ -372,7 +372,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               },
               {
                 key: "employee_type",
-                type: "select",
+                type: "multiple_select",
                 question: "这个职位的级别是什么？",
                 options: [
                   "实习生",
@@ -767,8 +767,20 @@ const JobRequirementFormDrawer = (props: IProps) => {
           }
 
           if (question.type === "city_and_address") {
-            const typedValue = value as TValue;
-            formattedValue = `${typedValue.cityName}. ${typedValue.addressName}`;
+            formattedValue = "";
+            const typedValue = value as TValue[];
+            typedValue.forEach((item) => {
+              if (!item.cityName && !item.addressId) return;
+
+              if (item.cityName) {
+                formattedValue += `${item.cityName} `;
+              }
+              if (item.addressName) {
+                formattedValue += `${item.addressName}. `;
+              }
+
+              formattedValue += "\n\n";
+            });
           }
 
           if (question.type === "manager_detail") {
@@ -941,182 +953,191 @@ const JobRequirementFormDrawer = (props: IProps) => {
     if (!visible) return null;
 
     const { isSubQuestion = false, deleted = false } = options ?? {};
+
     return (
-      <>
-        <Form.Item
-          label={
-            <div
-              className={
-                formType === "salary_structure" && !isSubQuestion
-                  ? styles.groupTitle
-                  : ""
-              }
-            >
-              <span dangerouslySetInnerHTML={{ __html: question.question }} />
-              {question.hint && (
-                <Popover
-                  content={<MarkdownContainer content={question.hint} />}
-                  placement="right"
-                  style={{ width: 600 }}
-                >
-                  <QuestionCircleOutlined
-                    style={{ marginLeft: 5, cursor: "pointer" }}
-                  />
-                </Popover>
-              )}
-              {question.needPriority && (
-                <span className={styles.inlineFormItem}>
-                  {genPriority(question.key, question.key, {
-                    canNoApply: question.canNoApply ?? false,
-                  })}
-                </span>
-              )}
-            </div>
-          }
-          key={
-            field?.key !== undefined
-              ? `${field.key}-${question.key}`
-              : question.key
-          }
-          name={
-            field?.name !== undefined
-              ? [field.name, question.key]
-              : question.key
-          }
-          className={styles.formItem}
-          required={question.required}
-          rules={
-            question.type === "percentage"
-              ? [
-                  {
-                    validator(
-                      _: any,
-                      value: Record<string, number>,
-                      callback: any
+      <Form.Item
+        label={
+          <div
+            className={
+              formType === "salary_structure" && !isSubQuestion
+                ? styles.groupTitle
+                : ""
+            }
+          >
+            <span dangerouslySetInnerHTML={{ __html: question.question }} />
+            {question.hint && (
+              <Popover
+                content={<MarkdownContainer content={question.hint} />}
+                placement="right"
+                style={{ width: 600 }}
+              >
+                <QuestionCircleOutlined
+                  style={{ marginLeft: 5, cursor: "pointer" }}
+                />
+              </Popover>
+            )}
+            {question.needPriority && (
+              <span className={styles.inlineFormItem}>
+                {genPriority(question.key, question.key, {
+                  canNoApply: question.canNoApply ?? false,
+                })}
+              </span>
+            )}
+          </div>
+        }
+        key={
+          field?.key !== undefined
+            ? `${field.key}-${question.key}`
+            : question.key
+        }
+        name={
+          field?.name !== undefined ? [field.name, question.key] : question.key
+        }
+        className={styles.formItem}
+        required={question.required}
+        rules={
+          question.type === "percentage"
+            ? [
+                {
+                  validator(
+                    _: any,
+                    value: Record<string, number>,
+                    callback: any
+                  ) {
+                    const sum = Object.values(value).reduce(
+                      (sum, val) => sum + val,
+                      0
+                    );
+                    if (sum !== 100) {
+                      callback(new Error());
+                    }
+                    callback();
+                  },
+                  message: t("percentage_message"),
+                },
+              ]
+            : question.type === "manager_detail"
+            ? [
+                {
+                  validator(
+                    _: any,
+                    value: Record<string, number>,
+                    callback: any
+                  ) {
+                    const typedValue = value as TManangerDetailValue;
+                    if (!typedValue.jobTitle || !typedValue.name) {
+                      callback(new Error());
+                    }
+                    callback();
+                  },
+                  message: t("manager_message"),
+                },
+              ]
+            : question.type === "city_and_address"
+            ? [
+                {
+                  validator(_: any, value, callback: any) {
+                    const typedValue = value as TValue[];
+                    if (
+                      typedValue.find((item) => item.cityId || item.addressId)
                     ) {
-                      const sum = Object.values(value).reduce(
-                        (sum, val) => sum + val,
-                        0
-                      );
-                      if (sum !== 100) {
-                        callback(new Error());
-                      }
                       callback();
-                    },
-                    message: t("percentage_message"),
+                    } else {
+                      callback(new Error());
+                    }
                   },
-                ]
-              : question.type === "manager_detail"
-              ? [
-                  {
-                    validator(
-                      _: any,
-                      value: Record<string, number>,
-                      callback: any
-                    ) {
-                      const typedValue = value as TManangerDetailValue;
-                      if (!typedValue.jobTitle || !typedValue.name) {
-                        callback(new Error());
-                      }
-                      callback();
-                    },
-                    message: t("manager_message"),
-                  },
-                ]
-              : question.required
-              ? [
-                  {
-                    required: true,
-                    message: t("required_error_message"),
-                  },
-                ]
-              : []
-          }
-        >
-          {question.type === "text" && <Input disabled={deleted} />}
-          {question.type === "textarea" && (
-            <TextAreaWithUploader
-              rows={2}
-              autoSize={{ minRows: 2, maxRows: 8 }}
-              disabled={deleted}
-              allowFile={question.allowFile}
-            />
-          )}
-          {question.type === "number" && <InputNumber disabled={deleted} />}
-          {question.type === "select" && (
-            <Select options={question.options} disabled={deleted} />
-          )}
-          {question.type === "multiple_select" && (
-            <Select
-              options={question.options}
-              mode="multiple"
-              disabled={deleted}
-            />
-          )}
-          {question.type === "date" && <DatePicker disabled={deleted} />}
-          {question.type === "base_salary" && <BaseSalaryInput />}
-          {question.type === "city_and_address" && <CityAndAddressSelect />}
-          {/* {question.type === "internal_employee_level" && (
+                  message: "请选择至少一个城市和地址",
+                },
+              ]
+            : question.required
+            ? [
+                {
+                  required: true,
+                  message: t("required_error_message"),
+                },
+              ]
+            : []
+        }
+      >
+        {question.type === "text" && <Input disabled={deleted} />}
+        {question.type === "textarea" && (
+          <TextAreaWithUploader
+            rows={2}
+            autoSize={{ minRows: 2, maxRows: 8 }}
+            disabled={deleted}
+            allowFile={question.allowFile}
+          />
+        )}
+        {question.type === "number" && <InputNumber disabled={deleted} />}
+        {question.type === "select" && (
+          <Select options={question.options} disabled={deleted} />
+        )}
+        {question.type === "multiple_select" && (
+          <Select
+            options={question.options}
+            mode="multiple"
+            disabled={deleted}
+          />
+        )}
+        {question.type === "date" && <DatePicker disabled={deleted} />}
+        {question.type === "base_salary" && <BaseSalaryInput />}
+        {question.type === "city_and_address" && <CityAndAddressSelect />}
+        {/* {question.type === "internal_employee_level" && (
             <InternalEmployeeLevel />
           )} */}
-          {question.type === "manager_detail" && <ManagerDetail />}
-          {question.type === "percentage" && (
-            <PercentageInput
-              options={
-                (question.options ?? []).map((item) => item.label) as string[]
-              }
-            />
-          )}
-          {question.type === "team" && (
-            <Select
-              options={teams.map((team) => ({
-                value: team.id,
-                label: team.name,
-              }))}
-              dropdownRender={(node) => {
-                return (
-                  <div>
-                    {node}
-                    <div
-                      style={{
-                        padding: "12px 10px",
-                        marginTop: 12,
-                        borderTop: "1px solid #e8e8e8",
+        {question.type === "manager_detail" && <ManagerDetail />}
+        {question.type === "percentage" && (
+          <PercentageInput
+            options={
+              (question.options ?? []).map((item) => item.label) as string[]
+            }
+          />
+        )}
+        {question.type === "team" && (
+          <Select
+            options={teams.map((team) => ({
+              value: team.id,
+              label: team.name,
+            }))}
+            dropdownRender={(node) => {
+              return (
+                <div>
+                  {node}
+                  <div
+                    style={{
+                      padding: "12px 10px",
+                      marginTop: 12,
+                      borderTop: "1px solid #e8e8e8",
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={() => {
+                        setCreateTeamModelOpen(true);
                       }}
                     >
-                      <Button
-                        type="primary"
-                        size="small"
-                        onClick={() => {
-                          setCreateTeamModelOpen(true);
-                        }}
-                      >
-                        {t("create_team")}
-                      </Button>
-                    </div>
+                      {t("create_team")}
+                    </Button>
                   </div>
-                );
-              }}
-              onChange={(value) => {
-                const selectedTeam = teams.find((team) => team.id === value);
+                </div>
+              );
+            }}
+            onChange={(value) => {
+              const selectedTeam = teams.find((team) => team.id === value);
 
-                if (selectedTeam) {
-                  const detailObj = JSON.parse(selectedTeam.detail);
-                  // const allFields = form.getFieldsValue();
-                  // console.log(detailObj);
-                  // Object.keys(allFields).forEach((key) => {
-                  //   console.log(
-                  //     "set field " + key + " value " + detailObj[key]
-                  //   );
-                  //   form.setFieldValue(key, detailObj[key]);
-                  // });
-                  form.setFieldsValue(detailObj);
-                }
-              }}
-            />
-          )}
-        </Form.Item>
-      </>
+              if (selectedTeam) {
+                const detailObj = JSON.parse(selectedTeam.detail);
+                const newValues: Record<string, string | number> = {};
+                TeamQuestions.forEach((question) => {
+                  newValues[question.key] = detailObj[question.key];
+                });
+                form.setFieldsValue(newValues);
+              }
+            }}
+          />
+        )}
+      </Form.Item>
     );
   };
 

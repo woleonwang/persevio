@@ -242,7 +242,7 @@ const SelectOptionsForm = (props: IProps) => {
                   name={`${option.uuid}_content`}
                   style={{ flex: "auto" }}
                 >
-                  <Input.TextArea rows={1} />
+                  <Input.TextArea autoSize={{ minRows: 1, maxRows: 4 }} />
                 </Form.Item>
               </div>
             );

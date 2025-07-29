@@ -1,6 +1,11 @@
 import { Button, Input, message, Select } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { v4 as uuidV4 } from "uuid";
 import { Get, Post } from "../../../../../../utils/request";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
@@ -22,17 +27,103 @@ export type TCity = {
 };
 
 export interface IProps {
+  cities: TCity[];
   isCoworker?: boolean;
   value?: TValue;
+  canDelete?: boolean;
   onChange?: (val: TValue) => void;
+  onCreateRecord: () => void;
+  onDeleteRecord: () => void;
 }
+
+export type TValueWithKey = {
+  key: string;
+  cityId?: number;
+  cityName?: string;
+  addressId?: number;
+  addressName?: string;
+};
+
+export interface IMultiProps {
+  isCoworker?: boolean;
+  value?: TValueWithKey[];
+  onChange?: (val: TValueWithKey[]) => void;
+}
+const MultipleCityAndAddressSelect = (props: IMultiProps) => {
+  const { value, isCoworker = false, onChange } = props;
+  const [cities, setCities] = useState<TCity[]>([]);
+  const { t: originalT } = useTranslation();
+  const t = (key: string, params?: Record<string, string>): string => {
+    return originalT(`city_and_address_select.${key}`, params);
+  };
+
+  useEffect(() => {
+    fetchCityAndAddress();
+  }, []);
+
+  useEffect(() => {
+    if (!(value && value.length > 0)) {
+      onChange?.([{ key: uuidV4() }]);
+    }
+  }, [value]);
+
+  const formatUrl = (url: string) => {
+    return isCoworker ? url.replace("/api", "/api/coworker") : url;
+  };
+
+  const fetchCityAndAddress = async () => {
+    const { code, data } = await Get(formatUrl("/api/city_and_address"));
+    if (code === 0) {
+      setCities(data.cities);
+    }
+  };
+
+  const onSingleChange = (key: string, newValue: TValue) => {
+    onChange?.(
+      (value ?? []).map((item) =>
+        item.key === key ? { ...item, ...newValue } : item
+      )
+    );
+  };
+
+  const deleteRecord = (key: string) => {
+    onChange?.((value ?? []).filter((item) => item.key !== key));
+  };
+
+  if (!value || value.length === 0) return null;
+
+  return (
+    <div>
+      {value.map((item) => {
+        return (
+          <CityAndAddressSelect
+            key={item.key}
+            cities={cities}
+            isCoworker={isCoworker}
+            value={item}
+            canDelete={value.length > 1}
+            onChange={(value) => onSingleChange(item.key, value)}
+            onCreateRecord={() => fetchCityAndAddress()}
+            onDeleteRecord={() => deleteRecord(item.key)}
+          />
+        );
+      })}
+      <Button onClick={() => onChange?.([...value, { key: uuidV4() }])}>
+        添加
+      </Button>
+    </div>
+  );
+};
 const CityAndAddressSelect = (props: IProps) => {
   const {
+    cities,
     value: { cityId, addressId } = {},
     isCoworker = false,
+    canDelete = false,
     onChange,
+    onCreateRecord,
+    onDeleteRecord,
   } = props;
-  const [cities, setCities] = useState<TCity[]>([]);
   const [isCreateCity, setIsCreateCity] = useState(false);
   const [isCreateAddress, setIsCreateAddress] = useState(false);
   const [inputCityName, setInputCityName] = useState("");
@@ -44,10 +135,6 @@ const CityAndAddressSelect = (props: IProps) => {
   const t = (key: string, params?: Record<string, string>): string => {
     return originalT(`city_and_address_select.${key}`, params);
   };
-
-  useEffect(() => {
-    fetchCityAndAddress();
-  }, []);
 
   useEffect(() => {
     if (selectCityRef.current) {
@@ -62,13 +149,6 @@ const CityAndAddressSelect = (props: IProps) => {
 
   const formatUrl = (url: string) => {
     return isCoworker ? url.replace("/api", "/api/coworker") : url;
-  };
-
-  const fetchCityAndAddress = async () => {
-    const { code, data } = await Get(formatUrl("/api/city_and_address"));
-    if (code === 0) {
-      setCities(data.cities);
-    }
   };
 
   const onCityChange = (cityId: number) => {
@@ -105,9 +185,9 @@ const CityAndAddressSelect = (props: IProps) => {
     if (code === 0) {
       message.success(originalT("create_succeed"));
       selectCityRef.current = data.city.id;
-      await fetchCityAndAddress();
       setInputCityName("");
       setIsCreateCity(false);
+      onCreateRecord();
     }
   };
 
@@ -121,10 +201,10 @@ const CityAndAddressSelect = (props: IProps) => {
 
     if (code === 0) {
       message.success(originalT("create_succeed"));
-      await fetchCityAndAddress();
       selectAddressRef.current = data.address.id;
       setInputAddressName("");
       setIsCreateAddress(false);
+      onCreateRecord();
     }
   };
 
@@ -226,8 +306,11 @@ const CityAndAddressSelect = (props: IProps) => {
           );
         }}
       />
+      {canDelete && (
+        <Button icon={<DeleteOutlined />} onClick={() => onDeleteRecord()} />
+      )}
     </div>
   );
 };
 
-export default CityAndAddressSelect;
+export default MultipleCityAndAddressSelect;

@@ -111,7 +111,12 @@ const JobBoard = () => {
           {VionaAvatarDiv}
           <div>{originalT(`您还有${unfinishedCount}项任务要完成`)}</div>
           <div className={styles.buttonContainer}>
-            <Badge dot={!checkJobDotStatus(job.id, "job_requirement_chat")}>
+            <Badge
+              dot={
+                !checkJobDotStatus(job.id, "job_requirement_doc") &&
+                !checkJobDotStatus(job.id, "job_requirement_chat")
+              }
+            >
               <Button
                 onClick={() => {
                   setJobDotStatus(job.id, "job_requirement_chat");
@@ -129,6 +134,7 @@ const JobBoard = () => {
             <Badge
               dot={
                 !!job.requirement_doc_id &&
+                !checkJobDotStatus(job.id, "job_description_doc") &&
                 !checkJobDotStatus(job.id, "job_description_chat")
               }
             >
@@ -150,6 +156,7 @@ const JobBoard = () => {
             <Badge
               dot={
                 !!job.requirement_doc_id &&
+                !checkJobDotStatus(job.id, "job_interview_plan_doc") &&
                 !checkJobDotStatus(job.id, "job_interview_plan_chat")
               }
             >
