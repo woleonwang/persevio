@@ -71,7 +71,9 @@ const JobCreate = (props: IProps) => {
             onClick={async () => {
               const url = `${
                 window.origin
-              }/share/create-job?token=${localStorage.getItem("token")}`;
+              }/app/entry/create-job?token=${localStorage.getItem(
+                "token"
+              )}&share=1`;
               await copy(url);
               message.success("复制成功");
             }}

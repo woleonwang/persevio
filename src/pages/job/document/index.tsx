@@ -186,7 +186,18 @@ const JobDocument = () => {
                     downloadAsType("markdown");
                   }}
                 />
-                <ShareAltOutlined />
+                <ShareAltOutlined
+                  onClick={async () => {
+                    await copy(
+                      `${window.origin}/app/jobs/${
+                        job.id
+                      }/document/${chatType}?token=${localStorage.getItem(
+                        "token"
+                      )}&share=1`
+                    );
+                    message.success("链接已复制");
+                  }}
+                />
                 <CopyOutlined
                   onClick={async () => {
                     await copy(documentContent);

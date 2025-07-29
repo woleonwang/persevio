@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   Spin,
+  message,
 } from "antd";
 import {
   DownloadOutlined,
@@ -175,8 +176,15 @@ const TalentDetail: React.FC = () => {
     }
   };
 
-  const handleShare = () => {
-    message.info("分享功能待实现");
+  const handleShare = async () => {
+    await copy(
+      `${window.origin}/app/jobs/${job?.id}/talents/${
+        talent?.id
+      }/detail?token=${localStorage.getItem(
+        "token"
+      )}&share=1&round=${roundKey}&tab=interview_designer&round=${roundKey}`
+    );
+    message.success("链接已复制");
   };
 
   const handleEdit = () => {
@@ -370,6 +378,18 @@ const TalentDetail: React.FC = () => {
                 <Title level={4} style={{ marginBottom: 24 }}>
                   面试评分卡
                 </Title>
+                <ShareAltOutlined
+                  onClick={async () => {
+                    await copy(
+                      `${window.origin}/app/jobs/${job.id}/talents/${
+                        talent.id
+                      }/detail?tab=interview_feedback&token=${localStorage.getItem(
+                        "token"
+                      )}&share=1`
+                    );
+                    message.success("链接已复制");
+                  }}
+                />
               </div>
 
               <div className={styles.feedbackBody}>

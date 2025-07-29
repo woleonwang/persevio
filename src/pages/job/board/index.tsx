@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ShareAltOutlined } from "@ant-design/icons";
 
-import { checkJobDotStatus, setJobDotStatus } from "@/utils";
+import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
 import { Get, Post, PostFormData } from "@/utils/request";
 
@@ -103,7 +103,16 @@ const JobBoard = () => {
       <div className={styles.header}>
         {job.name}
         <div className={styles.share}>
-          <ShareAltOutlined />
+          <ShareAltOutlined
+            onClick={async () => {
+              await copy(
+                `${window.origin}/app/jobs/${
+                  job.id
+                }/board?token=${localStorage.getItem("token")}&share=1`
+              );
+              message.success("链接已复制");
+            }}
+          />
         </div>
       </div>
       <div>

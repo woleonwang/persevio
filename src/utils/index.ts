@@ -47,3 +47,18 @@ export const setJobDotStatus = (jobId: number, type: string) => {
   dotStatus[jobId][type] = Date.now();
   localStorage.setItem(`job_dot`, JSON.stringify(dotStatus));
 };
+
+export const getQuery = (key: string): string => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(key) ?? "";
+};
+
+export const deleteQuery = (key: string) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.delete(key);
+  window.history.replaceState(
+    {},
+    "",
+    `${window.location.pathname}?${urlParams.toString()}`
+  );
+};

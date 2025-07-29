@@ -20,6 +20,7 @@ import { Input, message, Modal, Popover, Spin } from "antd";
 import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
+import { deleteQuery, getQuery } from "@/utils";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -130,6 +131,18 @@ const AppLayout = () => {
   ];
 
   const init = async () => {
+    const initToken = getQuery("token");
+    if (initToken) {
+      localStorage.setItem("token", initToken);
+      deleteQuery("token");
+    }
+
+    const share = getQuery("share");
+    if (share === "1") {
+      setMenuCollapse(true);
+      deleteQuery("share");
+    }
+
     // 校验 token
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
