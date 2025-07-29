@@ -44,6 +44,7 @@ const TalentChat = () => {
   const totalRound = (interviewPlan.rounds ?? []).length;
 
   const fetchChatInstance = async () => {
+    setIsLoadingInstance(true);
     const { code, data } = await Get(
       `/api/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`
     );
@@ -115,10 +116,7 @@ const TalentChat = () => {
           <Radio.Group
             optionType="button"
             value={chatType}
-            onChange={(e) => {
-              setChatType(e.target.value);
-              setIsLoadingInstance(true);
-            }}
+            onChange={(e) => setChatType(e.target.value)}
             options={[
               {
                 label: "推荐面试问题",
@@ -161,7 +159,7 @@ const TalentChat = () => {
             )
           ) : (
             <ChatRoomNew
-              key={chatType}
+              key={`${chatType}-${round}`}
               jobId={job.id}
               allowEditMessage
               userRole="staff"
