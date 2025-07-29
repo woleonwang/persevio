@@ -27,7 +27,7 @@ const TalentChat = () => {
     TInterviewFeedback | TInterviewDesigner
   >();
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoadingInstance, setIsLoadingInstance] = useState(false);
+  const [isLoadingInstance, setIsLoadingInstance] = useState(true);
 
   const navigate = useNavigate();
 
@@ -95,7 +95,9 @@ const TalentChat = () => {
           )}
           <Button
             onClick={() => {
-              navigate(`/app/jobs/${job.id}/talents/${talent.id}/detail`);
+              navigate(
+                `/app/jobs/${job.id}/talents/${talent.id}/detail?tab=${chatType}&round=${round}`
+              );
             }}
           >
             面试详情

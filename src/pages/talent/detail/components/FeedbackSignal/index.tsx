@@ -4,6 +4,7 @@ import { parseJSON } from "@/utils";
 import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
+import MarkdownContainer from "@/components/MarkdownContainer";
 
 interface IProps {
   jobId: number;
@@ -92,8 +93,6 @@ const FeedbackSignal = (props: IProps) => {
     });
   };
 
-  if (!currentSingleFeedback) return <Empty description="暂无数据" />;
-
   return (
     <div>
       <div>
@@ -103,7 +102,9 @@ const FeedbackSignal = (props: IProps) => {
           </div>
           <div className={styles.name}>{interviewerName}</div>
         </div>
-        {isEditing ? (
+        {!currentSingleFeedback ? (
+          <Empty description="暂无数据" />
+        ) : isEditing ? (
           <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
             <Form.Item
               name="evaluation"
@@ -145,7 +146,7 @@ const FeedbackSignal = (props: IProps) => {
               }
             </div>
             <div style={{ marginTop: 8 }}>
-              {currentSingleFeedback?.basis ?? ""}
+              <MarkdownContainer content={currentSingleFeedback?.basis ?? ""} />
             </div>
             <div style={{ marginTop: 8 }}>
               <Button

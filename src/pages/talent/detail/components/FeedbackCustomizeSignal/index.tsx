@@ -4,6 +4,7 @@ import { parseJSON } from "@/utils";
 import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
+import MarkdownContainer from "@/components/MarkdownContainer";
 
 interface IProps {
   jobId: number;
@@ -118,7 +119,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
           <>
             <div>{currentSignalFeedback.title}</div>
             <div style={{ marginTop: 8 }}>
-              {currentSignalFeedback?.basis ?? ""}
+              <MarkdownContainer content={currentSignalFeedback?.basis ?? ""} />
             </div>
             <div style={{ marginTop: 8 }}>
               <Button

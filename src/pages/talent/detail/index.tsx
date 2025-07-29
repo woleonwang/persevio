@@ -88,15 +88,21 @@ const TalentDetail: React.FC = () => {
   useEffect(() => {
     // 初始化
     if (job && talent) {
-      setTabKey("interview_feedback");
-      setRoundKey("1");
+      const urlParams = new URLSearchParams(window.location.search);
+      const initTab = (urlParams.get("tab") ??
+        "interview_designer") as TTalentChatType;
+      setTabKey(initTab);
+      if (initTab === "interview_designer") {
+        const initRound = urlParams.get("round") ?? "1";
+        setRoundKey(initRound);
+      }
     }
   }, [job, talent]);
 
   useEffect(() => {
     if (tabKey === "interview_designer") {
       fetchInterviewDesignerDetail();
-    } else {
+    } else if (tabKey === "interview_feedback") {
       fetchInterviewFeedbacks();
     }
   }, [tabKey, roundKey]);

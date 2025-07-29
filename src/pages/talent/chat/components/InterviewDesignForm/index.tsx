@@ -118,7 +118,7 @@ const InterviewDesignerForm = (props: IProps) => {
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
           <Form.Item label={t("last_round_feedback")} name="last_feedback">
             <MarkdownEditor
-              style={{ backgroundColor: "white", padding: 12, height: "600px" }}
+              style={{ backgroundColor: "white", padding: 12, height: "400px" }}
             />
           </Form.Item>
           <div style={{ marginTop: 24 }}>
