@@ -600,9 +600,23 @@ const TalentDetail: React.FC = () => {
                 </div>
 
                 <div>
-                  <Title level={4} style={{ marginBottom: 24 }}>
-                    其它观察到的信号
-                  </Title>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                  >
+                    <Title level={4} style={{ marginBottom: 24 }}>
+                      其它观察到的信号
+                    </Title>
+                    <span
+                      style={{
+                        color: "#aaaaaa",
+                        fontSize: 14,
+                        position: "relative",
+                        top: 4,
+                      }}
+                    >
+                      用于记录观察到的、不属于主要评估信号的重要行为
+                    </span>
+                  </div>
                   <div>
                     {interviewFeedbacks.map((feedback) => {
                       const interviewFeedbackDetail = parseJSON(
@@ -637,9 +651,23 @@ const TalentDetail: React.FC = () => {
                 </div>
 
                 <div>
-                  <Title level={4} style={{ marginBottom: 24 }}>
-                    主要顾虑/红线问题
-                  </Title>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                  >
+                    <Title level={4} style={{ marginBottom: 24 }}>
+                      主要顾虑/红线问题
+                    </Title>
+                    <span
+                      style={{
+                        color: "#aaaaaa",
+                        fontSize: 14,
+                        position: "relative",
+                        top: 4,
+                      }}
+                    >
+                      对观察到的最重要风险或负面信号的总结
+                    </span>
+                  </div>
                   <div>
                     {interviewFeedbacks.map((feedback) => {
                       const interviewFeedbackDetail = parseJSON(
