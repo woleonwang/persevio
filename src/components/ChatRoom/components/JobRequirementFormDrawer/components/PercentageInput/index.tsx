@@ -32,12 +32,11 @@ const PercentageInput = (props: IProps) => {
         <Row
           key={option}
           align="middle"
-          style={{ marginBottom: 8, marginLeft: 12 }}
+          style={{ marginBottom: 8, flexWrap: "nowrap" }}
         >
-          <Col span={22}>
-            <Text>{option}</Text>
-          </Col>
-          <Col span={2} style={{ textAlign: "right" }}>
+          <Col
+            style={{ marginRight: 12, display: "flex", alignItems: "center" }}
+          >
             <InputNumber
               min={0}
               max={100}
@@ -49,6 +48,9 @@ const PercentageInput = (props: IProps) => {
               step={1}
             />
             <span style={{ marginLeft: 4 }}>%</span>
+          </Col>
+          <Col>
+            <Text>{option}</Text>
           </Col>
         </Row>
       ))}

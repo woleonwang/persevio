@@ -92,7 +92,12 @@ const JobBoard = () => {
       accept=".docx,.doc,.pdf"
       multiple={false}
     >
-      <Button type="primary" loading={isUploading} disabled={isUploading}>
+      <Button
+        type="primary"
+        loading={isUploading}
+        disabled={isUploading}
+        size="large"
+      >
         {originalT("上传简历")}
       </Button>
     </Upload>
@@ -115,7 +120,7 @@ const JobBoard = () => {
           />
         </div>
       </div>
-      <div>
+      <div className={styles.body}>
         <div className={styles.block}>
           {VionaAvatarDiv}
           <div>{originalT(`您还有${unfinishedCount}项任务要完成`)}</div>
@@ -298,6 +303,7 @@ const JobBoard = () => {
                               `/app/jobs/${job.id}/talents/${talent.id}/chat`
                             );
                           }}
+                          size="large"
                         >
                           {talent.name}
                         </Button>
