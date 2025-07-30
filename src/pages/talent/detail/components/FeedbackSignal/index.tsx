@@ -15,34 +15,45 @@ interface IProps {
   onSubmit: () => void;
 }
 
-const signalEvaluationOptions: { label: string; value: TEvaluation }[] = [
+const signalEvaluationOptions: {
+  label: string;
+  value: TEvaluation;
+  color: string;
+}[] = [
   {
     label: "超出预期",
     value: "exceeds",
+    color: "#1FAC6A",
   },
   {
     label: "达标",
     value: "meets",
+    color: "#1FAC6A",
   },
   {
     label: "大概率达标",
     value: "likely_meets",
+    color: "#1FAC6A",
   },
   {
     label: "大概率不达标",
     value: "likely_does_not_meets",
+    color: "#CC0000",
   },
   {
     label: "不达标",
     value: "does_not_meets",
+    color: "#CC0000",
   },
   {
     label: "不确定",
     value: "uncertain",
+    color: "rgb(33, 53, 71)",
   },
   {
     label: "本次面试未涉及",
     value: "not_assessed",
+    color: "rgb(33, 53, 71)",
   },
 ];
 
@@ -137,7 +148,14 @@ const FeedbackSignal = (props: IProps) => {
           </Form>
         ) : (
           <>
-            <div style={{ marginTop: 8 }}>
+            <div
+              style={{
+                marginTop: 8,
+                color: signalEvaluationOptions.find(
+                  (item) => item.value === currentSingleFeedback.evaluation
+                )?.color,
+              }}
+            >
               评估结果:{" "}
               {
                 signalEvaluationOptions.find(

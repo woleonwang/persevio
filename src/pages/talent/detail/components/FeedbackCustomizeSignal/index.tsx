@@ -117,7 +117,9 @@ const FeedbackCustomizeSignal = (props: IProps) => {
           </Form>
         ) : (
           <>
-            <div>{currentSignalFeedback.title}</div>
+            <div className={styles.signalTitle}>
+              {currentSignalFeedback.title}
+            </div>
             <div style={{ marginTop: 8 }}>
               <MarkdownContainer content={currentSignalFeedback?.basis ?? ""} />
             </div>

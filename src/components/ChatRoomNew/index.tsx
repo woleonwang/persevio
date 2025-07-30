@@ -20,6 +20,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  ReloadOutlined,
   SendOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
@@ -555,6 +556,34 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     }
   };
 
+  const retryMessage = async (retryMessageId: number) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    needScrollToBottom.current = true;
+
+    setMessages([
+      ...messages.slice(0, messages.length - 1),
+      {
+        id: "fake_ai_id",
+        role: "ai",
+        content: "",
+        updated_at: dayjs().format(datetimeFormat),
+      },
+    ]);
+
+    const { code } = await Post(apiMapping[chatType as TChatType].send, {
+      retry_message_id: retryMessageId,
+    });
+
+    if (code === 10011) {
+      setIsLoading(false);
+      setMessages(messages);
+      message.error("Your quota has been exhausted.");
+    }
+  };
+
   const canMessageEdit = (item: TMessage) => {
     return (
       allowEditMessage &&
@@ -565,7 +594,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   };
 
   const deleteMessage = async (messageId: number) => {
-    const { code } = await Post(`/api/jobs/${jobId}/messages`, {
+    const url =
+      chatType === "jobInterviewDesign"
+        ? `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/clear_messages`
+        : chatType === "jobInterviewFeedback"
+        ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
+        : `/api/jobs/${jobId}/messages`;
+
+    const { code } = await Post(url, {
       message_id: messageId,
     });
 
@@ -864,14 +900,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                           const canEditing = canMessageEdit(item);
 
                           const canDelete =
-                            chatType !== "jobInterviewDesign" &&
-                            chatType !== "jobInterviewFeedback" &&
                             !!profile?.is_admin &&
                             item.messageType === "normal" &&
                             !["fake_ai_id", "fake_user_id"].includes(item.id);
                           // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
 
-                          return canEditing || canDelete ? (
+                          const canRetry =
+                            isLast && item.messageSubType === "error";
+
+                          return canEditing || canDelete || canRetry ? (
                             <div className={styles.operationArea}>
                               <Button.Group>
                                 {canEditing && (
@@ -913,6 +950,21 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                       }
                                     }}
                                     icon={<DeleteOutlined />}
+                                  />
+                                )}
+                                {canRetry && (
+                                  <Button
+                                    shape="round"
+                                    onClick={async () => {
+                                      if (
+                                        confirm(
+                                          "Confirm to retry this message?"
+                                        )
+                                      ) {
+                                        retryMessage(parseInt(item.id));
+                                      }
+                                    }}
+                                    icon={<ReloadOutlined />}
                                   />
                                 )}
                               </Button.Group>
