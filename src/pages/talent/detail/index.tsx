@@ -24,7 +24,7 @@ import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import dayjs from "dayjs";
-import { copy, parseJSON } from "@/utils";
+import { backOrDirect, copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 
 import styles from "./style.module.less";
@@ -238,8 +238,11 @@ const TalentDetail: React.FC = () => {
             fontSize: 20,
             cursor: "pointer",
           }}
-          onClick={() => {
-            navigate(-1);
+          onClick={async () => {
+            backOrDirect(
+              navigate,
+              `/app/jobs/${job.id}/talents/${talent.id}/chat`
+            );
           }}
         />
         <div>

@@ -62,3 +62,11 @@ export const deleteQuery = (key: string) => {
     `${window.location.pathname}?${urlParams.toString()}`
   );
 };
+
+export const backOrDirect = (navigate: any, path: string) => {
+  if (window.history.length > 1) {
+    navigate(-1);
+  } else {
+    navigate(path);
+  }
+};
