@@ -1,12 +1,12 @@
 import { InputNumber, Row, Col, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 const { Text } = Typography;
 
 interface IProps {
   value?: Record<string, number>;
   onChange?: (val: Record<string, number>) => void;
-  options: string[];
+  options: { label: ReactNode; value: string }[];
 }
 
 const PercentageInput = (props: IProps) => {
@@ -30,7 +30,7 @@ const PercentageInput = (props: IProps) => {
     <div>
       {options.map((option) => (
         <Row
-          key={option}
+          key={option.value}
           align="middle"
           style={{ marginBottom: 8, flexWrap: "nowrap" }}
         >
@@ -40,8 +40,8 @@ const PercentageInput = (props: IProps) => {
             <InputNumber
               min={0}
               max={100}
-              value={percentages[option] ?? 0}
-              onChange={(val) => handleChange(option, val)}
+              value={percentages[option.value] ?? 0}
+              onChange={(val) => handleChange(option.value, val)}
               formatter={(v) => `${v}`.replace(/[^0-9]/g, "")}
               parser={(v) => parseInt(v ?? "0", 10)}
               style={{ width: 80 }}
@@ -50,7 +50,7 @@ const PercentageInput = (props: IProps) => {
             <span style={{ marginLeft: 4 }}>%</span>
           </Col>
           <Col>
-            <Text>{option}</Text>
+            <Text>{option.label}</Text>
           </Col>
         </Row>
       ))}

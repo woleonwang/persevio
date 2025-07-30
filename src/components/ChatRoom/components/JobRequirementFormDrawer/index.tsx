@@ -391,26 +391,47 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 type: "percentage",
                 question: "这个职位的工作性质和贡献类型是什么？",
                 options: [
-                  <div>
-                    <b>执行层面：</b>
-                    主要负责执行上级明确指派的、具体且定义清晰的任务。
-                  </div>,
-                  <div>
-                    <b>项目/目标管理：</b>
-                    负责独立或协作推动一个完整的项目从启动到交付，或达成一个具体的业务目标，需要跨职能协调与资源整合。
-                  </div>,
-                  <div>
-                    <b>管人/管团队：</b>
-                    对一整个团队的最终工作结果负责。负责团队的日常管理、人才培养、绩效评估、招聘与激励，确保团队协同高效地达成目标。
-                  </div>,
-                  <div>
-                    <b>设计高层战略和工作计划：</b>
-                    负责或深度参与公司或某个业务线中长期发展战略、业务计划的讨论、制定与落地。
-                  </div>,
-                ].map((item) => ({
-                  value: item,
-                  label: item,
-                })),
+                  {
+                    value:
+                      "执行层面：主要负责执行上级明确指派的、具体且定义清晰的任务。",
+                    label: (
+                      <div>
+                        <b>执行层面：</b>
+                        主要负责执行上级明确指派的、具体且定义清晰的任务。
+                      </div>
+                    ),
+                  },
+                  {
+                    value:
+                      "项目/目标管理：负责独立或协作推动一个完整的项目从启动到交付，或达成一个具体的业务目标，需要跨职能协调与资源整合。",
+                    label: (
+                      <div>
+                        <b>项目/目标管理：</b>
+                        负责独立或协作推动一个完整的项目从启动到交付，或达成一个具体的业务目标，需要跨职能协调与资源整合。
+                      </div>
+                    ),
+                  },
+                  {
+                    value:
+                      "管人/管团队：对一整个团队的最终工作结果负责。负责团队的日常管理、人才培养、绩效评估、招聘与激励，确保团队协同高效地达成目标。",
+                    label: (
+                      <div>
+                        <b>管人/管团队：</b>
+                        对一整个团队的最终工作结果负责。负责团队的日常管理、人才培养、绩效评估、招聘与激励，确保团队协同高效地达成目标。
+                      </div>
+                    ),
+                  },
+                  {
+                    value:
+                      "设计高层战略和工作计划：负责或深度参与公司或某个业务线中长期发展战略、业务计划的讨论、制定与落地。",
+                    label: (
+                      <div>
+                        <b>设计高层战略和工作计划：</b>
+                        负责或深度参与公司或某个业务线中长期发展战略、业务计划的讨论、制定与落地。
+                      </div>
+                    ),
+                  },
+                ],
                 required: true,
               },
               {
@@ -806,7 +827,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             const typedValue = value as Record<string, number>;
             formattedValue = Object.keys(typedValue)
               .filter((key) => !!typedValue[key])
-              .map((key) => `${key}: ${typedValue[key]}%`)
+              .map((key) => `${key} - ${typedValue[key]}%`)
               .join("\n\n");
           }
 
@@ -1099,11 +1120,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           )} */}
         {question.type === "manager_detail" && <ManagerDetail />}
         {question.type === "percentage" && (
-          <PercentageInput
-            options={
-              (question.options ?? []).map((item) => item.label) as string[]
-            }
-          />
+          <PercentageInput options={question.options ?? []} />
         )}
         {question.type === "team" && (
           <Select
