@@ -2,7 +2,7 @@ import { Avatar, Badge, Button, message, Spin, Upload } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ShareAltOutlined } from "@ant-design/icons";
+import { EyeOutlined, ShareAltOutlined } from "@ant-design/icons";
 
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -108,6 +108,13 @@ const JobBoard = () => {
       <div className={styles.header}>
         {job.name}
         <div className={styles.share}>
+          <EyeOutlined
+            disabled={!job.jd_doc_id}
+            onClick={async () => {
+              await copy(`${window.origin}/jobs/${job.id}/chat`);
+              message.success("链接已复制");
+            }}
+          />
           <ShareAltOutlined
             onClick={async () => {
               await copy(

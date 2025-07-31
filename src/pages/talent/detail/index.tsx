@@ -37,25 +37,25 @@ const { Title, Text } = Typography;
 const talentStatusOptions = [
   {
     label: "强烈推荐：超出标准。高度自信。",
-    value: "strong_recommend",
+    value: "strong_hire",
   },
   {
     label: "推荐：符合标准。有信心。",
-    value: "recommend",
+    value: "hire",
   },
   {
     label:
       "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
-    value: "pending",
+    value: "hold",
   },
   {
     label: "不予录用（资历不足）：未达到核心技能或经验水平要求。",
-    value: "reject_insufficient_skill",
+    value: "no_hire_underqualified",
   },
   {
     label:
       "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
-    value: "reject_mismatch",
+    value: "no_hire_not_a_fit",
   },
 ];
 
