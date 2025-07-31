@@ -345,7 +345,7 @@ const SelectOptionsForm = (props: IProps) => {
                 const result = (groups[0]?.options ?? [])
                   .map((option) => {
                     return values[`${option.uuid}_type`]
-                      ? `- **${values[`${option.uuid}_content`]}** - ${
+                      ? `- ${values[`${option.uuid}_content`]} - **${
                           values[`${option.uuid}_type`]
                         }**`
                       : "";
@@ -366,7 +366,7 @@ const SelectOptionsForm = (props: IProps) => {
                       `### ${group.title}\n\n ${(group.options ?? [])
                         .map((option) => {
                           return values[`${option.uuid}_checked`]
-                            ? `- **${values[`${option.uuid}_content`]}**`
+                            ? `- ${values[`${option.uuid}_content`]}`
                             : "";
                         })
                         .filter(Boolean)
@@ -381,7 +381,7 @@ const SelectOptionsForm = (props: IProps) => {
 
                 const genResult = (option: TOption): string => {
                   return hasValue(option)
-                    ? `- **${values[`${option.uuid}_content`]} - ${
+                    ? `- ${values[`${option.uuid}_content`]} - **${
                         values[`${option.uuid}_type`]
                       }**`
                     : "";

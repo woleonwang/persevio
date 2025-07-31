@@ -36,6 +36,7 @@ import styles from "./style.module.less";
 import {
   IProps,
   TChatType,
+  TDoneTag,
   TExtraTag,
   TExtraTagName,
   TMessage,
@@ -63,7 +64,6 @@ type TSupportTag = {
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
   block?: boolean;
-  color?: "blue";
 };
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -299,19 +299,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "jrd-done",
       title: t("view_jrd"),
-      color: "blue",
       handler: () => viewDoc?.("job-requirement"),
     },
     {
       key: "jd-done",
       title: t("view_jd"),
-      color: "blue",
       handler: () => viewDoc?.("job-description"),
     },
     {
       key: "interview-plan-done",
       title: t("view_interview_plan"),
-      color: "blue",
       handler: () => viewDoc?.("job-interview-plan"),
     },
 
@@ -467,13 +464,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         item.content.metadata.message_sub_type === "error"
       ) {
         const extraTags = item.content.metadata.extra_tags || [];
-        if (
-          ["jrd-done", "jd-done", "interview-plan-done"].find((tag) =>
-            extraTags.map((item) => item.name).includes(tag as TExtraTagName)
-          )
-        ) {
-          extraTags.push(...getNextStepsExtraTags(job));
-        }
         resultMessages.push({
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
@@ -483,6 +473,27 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           messageType: item.content.metadata.message_type || "normal",
           messageSubType: item.content.metadata.message_sub_type || "normal",
           extraTags: extraTags,
+        });
+
+        // 下一步 按钮
+        (item.content.metadata.extra_tags ?? []).forEach((tag) => {
+          (
+            ["jd-done", "interview-plan-done", "jrd-done"] as TDoneTag[]
+          ).forEach((step) => {
+            if (step === tag.name) {
+              const nextExtraTags = getNextStepsExtraTags(job);
+              if (nextExtraTags.length > 0) {
+                resultMessages.push({
+                  id: `${item.id.toString()}-${step}-btn`,
+                  role: "ai",
+                  content: t("jrd_next_task"),
+                  updated_at: item.updated_at,
+                  messageType: "system",
+                  extraTags: nextExtraTags,
+                });
+              }
+            }
+          });
         });
       }
     });
@@ -815,7 +826,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                       >
                                         <Button
                                           variant="solid"
-                                          color={tag.color ?? "primary"}
+                                          color="primary"
                                           onClick={() => {
                                             const extraTag = (
                                               item.extraTags ?? []
