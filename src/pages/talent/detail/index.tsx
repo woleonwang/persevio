@@ -359,7 +359,7 @@ const TalentDetail: React.FC = () => {
                     style={{ marginTop: 120 }}
                     description={
                       <div>
-                        请先与Viona对话获取推荐面试计划
+                        暂未获取推荐面试计划
                         <Button
                           type="primary"
                           onClick={handleDesignerChat}
@@ -493,7 +493,7 @@ const TalentDetail: React.FC = () => {
                             <Empty
                               description={
                                 <>
-                                  请先与Viona对话填写面试评分卡
+                                  暂未填写面试评分卡
                                   <Button
                                     type="primary"
                                     onClick={() => {

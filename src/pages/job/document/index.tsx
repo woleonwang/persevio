@@ -242,7 +242,7 @@ const JobDocument = () => {
                     <div style={{ marginTop: 20 }}>
                       {!job.requirement_doc_id ? (
                         <>
-                          请先与 Viona 对话获取职位需求表
+                          暂未撰写职位需求表
                           <Button
                             type="primary"
                             onClick={() => {
@@ -257,11 +257,9 @@ const JobDocument = () => {
                         </>
                       ) : (
                         <>
-                          {`请先与Viona对话制定${
-                            chatType === "job-description"
-                              ? "职位描述"
-                              : "面试计划&评分卡"
-                          }`}
+                          {chatType === "job-description"
+                            ? "暂未撰写职位描述(JD)"
+                            : "暂未制定面试计划&评分卡"}
                           <Button
                             type="primary"
                             onClick={() => {
