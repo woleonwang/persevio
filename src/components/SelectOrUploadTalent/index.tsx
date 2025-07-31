@@ -73,17 +73,36 @@ const SelectOrUploadTalent = (props: IProps) => {
               return;
             }
 
-            message.success("Upload succeed");
+            const { talent_name: talentName, resume } = data;
+            const { code: code3, data: data3 } = await Get(
+              `/api/jobs/${jobId}/talents/check_name?name=${talentName}`
+            );
+            if (code3 !== 0) {
+              message.error("Upload failed");
+              setIsUploading(false);
+              return;
+            }
+
+            if (
+              data3.is_exists &&
+              !confirm(`已存在候选人${talentName}，请确认是否继续上传`)
+            ) {
+              setIsUploading(false);
+              return;
+            }
+
             const { code: code2, data: data2 } = await Post(
               `/api/jobs/${jobId}/talents`,
               {
-                resume: data.resume,
+                resume: resume,
+                name: talentName,
               }
             );
             if (code2 === 0) {
               await fetchTalents();
               setInternalValue(data2.talent_id);
               onChange?.(data2.talent_id);
+              message.success("Upload succeed");
             }
 
             setIsUploading(false);

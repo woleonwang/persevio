@@ -190,6 +190,7 @@ export default {
     no_others: "No further modifications needed.",
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
+    confirm: "Confirm",
 
     task: "Tasks",
     next_task: "Your next task is: ",

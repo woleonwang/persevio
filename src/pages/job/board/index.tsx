@@ -2,7 +2,11 @@ import { Avatar, Badge, Button, message, Spin, Upload } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { EyeOutlined, ShareAltOutlined } from "@ant-design/icons";
+import {
+  CloseCircleOutlined,
+  EyeOutlined,
+  ShareAltOutlined,
+} from "@ant-design/icons";
 
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -76,8 +80,27 @@ const JobBoard = () => {
           return;
         }
 
+        const { talent_name: talentName, resume } = data;
+        const { code: code3, data: data3 } = await Get(
+          `/api/jobs/${job.id}/talents/check_name?name=${talentName}`
+        );
+        if (code3 !== 0) {
+          message.error("Upload failed");
+          setIsUploading(false);
+          return;
+        }
+
+        if (
+          data3.is_exists &&
+          !confirm(`已存在候选人${talentName}，请确认是否继续上传`)
+        ) {
+          setIsUploading(false);
+          return;
+        }
+
         const { code: code2 } = await Post(`/api/jobs/${job.id}/talents`, {
-          resume: data.resume,
+          resume: resume,
+          name: talentName,
         });
         if (code2 === 0) {
           message.success(originalT("create_succeed"));
@@ -302,7 +325,7 @@ const JobBoard = () => {
                   {UploadResumeButton}
                   {talents.map((talent) => {
                     return (
-                      <div key={talent.id}>
+                      <div key={talent.id} className={styles.talentButton}>
                         <Button
                           type="default"
                           onClick={() => {
@@ -314,6 +337,27 @@ const JobBoard = () => {
                         >
                           {talent.name}
                         </Button>
+                        <CloseCircleOutlined
+                          className={styles.talentDestroy}
+                          onClick={async () => {
+                            if (
+                              confirm(
+                                `请确认是否删除 ${talent.name} ，删除后原有内容无法恢复?`
+                              )
+                            ) {
+                              const { code } = await Post(
+                                `/api/jobs/${job.id}/talents/${talent.id}/destroy`
+                              );
+
+                              if (code === 0) {
+                                message.success("删除成功");
+                                fetchTalents();
+                              } else {
+                                message.error("删除失败");
+                              }
+                            }
+                          }}
+                        />
                       </div>
                     );
                   })}

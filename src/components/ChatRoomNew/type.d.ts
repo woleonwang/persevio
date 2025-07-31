@@ -17,6 +17,7 @@ export type TExtraTagName =
   | "extract-high-level-responsibility"
   | "extract-day-to-day-tasks"
   | "extract-icp"
+  | "current-round-evaluation"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -32,6 +33,7 @@ export type TExtraTagName =
   | "to-chatbot-btn"
   | "chatbot-config-btn"
   | "post-job-btn"
+  | "interview-feedback-confirm-btn"
   //candiate
   | "interview-done";
 

@@ -63,7 +63,7 @@ type TSupportTag = {
   title: string;
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
-  block?: boolean;
+  style?: "inline-button" | "block-button" | "button-with-text";
 };
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -89,6 +89,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [profile, setProfile] = useState<ISettings>();
+
   // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
     useState(false);
@@ -261,7 +262,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "upload-jd",
       title: t("share_reference"),
       handler: () => {},
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-high-level-responsibility",
@@ -270,7 +271,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("high_level_responsibility");
       },
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-day-to-day-tasks",
@@ -279,7 +280,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("day_to_day_tasks");
       },
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-icp",
@@ -288,7 +289,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
       },
-      block: true,
+      style: "block-button",
     },
     {
       key: "salary-structure-request",
@@ -340,6 +341,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "to-interview-plan-btn",
       title: t("define_interview_plan"),
       handler: () => changeChatType("job-interview-plan"),
+    },
+
+    {
+      key: "interview-feedback-confirm-btn",
+      title: "确认",
+      handler: () => {
+        sendMessage(t("confirm"));
+      },
+      style: "button-with-text",
     },
   ];
 
@@ -455,7 +465,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
 
-    messages.forEach((item) => {
+    messages.forEach((item, index) => {
       // 过滤对该角色隐藏的消息
       if ((item.content.metadata.hide_for_roles ?? []).length && share) return;
 
@@ -464,6 +474,24 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         item.content.metadata.message_sub_type === "error"
       ) {
         const extraTags = item.content.metadata.extra_tags || [];
+        // 确认按钮
+        if (
+          chatType === "jobInterviewFeedback" &&
+          index === messages.length - 1 &&
+          item.content.role === "assistant" &&
+          !messages.find(
+            (item) =>
+              !!item.content.metadata.extra_tags?.find(
+                (item) => item.name === "current-round-evaluation"
+              )
+          )
+        ) {
+          extraTags.push({
+            name: "interview-feedback-confirm-btn",
+            content: "",
+          });
+        }
+
         resultMessages.push({
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
@@ -808,16 +836,13 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                           return (
                             <>
-                              <div
-                                style={{
-                                  marginTop: 16,
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  gap: 8,
-                                }}
-                              >
+                              <div className={styles.inlineButtonWrapper}>
                                 {visibleTags
-                                  .filter((tag) => !tag.block)
+                                  .filter(
+                                    (tag) =>
+                                      !tag.style ||
+                                      tag.style === "inline-button"
+                                  )
                                   .map((tag) => {
                                     return (
                                       <div
@@ -844,7 +869,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   })}
                               </div>
                               {visibleTags
-                                .filter((tag) => tag.block)
+                                .filter((tag) => tag.style === "block-button")
                                 .map((tag) => (
                                   <div style={{ width: "100%" }} key={tag.key}>
                                     {tag.key === "upload-jd" ? (
@@ -901,6 +926,36 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         {tag.title}
                                       </Button>
                                     )}
+                                  </div>
+                                ))}
+                              {visibleTags
+                                .filter(
+                                  (tag) => tag.style === "button-with-text"
+                                )
+                                .map((tag) => (
+                                  <div
+                                    key={tag.key}
+                                    className={styles.tagButtonWithText}
+                                  >
+                                    <div>
+                                      如果您已经审阅好当前的面试评分卡，请确认归档；也可以告诉我对评分、理由或其他分析内容的调整。
+                                    </div>
+                                    <Button
+                                      variant="solid"
+                                      color="primary"
+                                      style={{ marginTop: 8 }}
+                                      onClick={() => {
+                                        const extraTag = (
+                                          item.extraTags ?? []
+                                        ).find(
+                                          (extraTag) =>
+                                            extraTag.name === tag.key
+                                        );
+                                        tag.handler(extraTag);
+                                      }}
+                                    >
+                                      {tag.title}
+                                    </Button>
                                   </div>
                                 ))}
                             </>

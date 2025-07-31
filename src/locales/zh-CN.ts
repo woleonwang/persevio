@@ -183,6 +183,7 @@ export default {
     no_others: "没什么其它的了。",
     make_details: "写得更详细些。",
     make_concise: "写得更简洁些。",
+    confirm: "确认",
 
     task: "任务",
     next_task: "下一个任务: ",
