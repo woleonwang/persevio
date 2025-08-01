@@ -18,12 +18,13 @@ interface JobPosting {
     city: string;
     address: string;
   }[];
-  employee_level:
+  employee_level: (
     | "internship"
     | "no_experience"
     | "junior"
     | "mid_level"
-    | "senior";
+    | "senior"
+  )[];
 }
 
 const roleTypeTranslations = {
@@ -138,12 +139,14 @@ const PublicJobs: React.FC = () => {
             <div className={styles["job-tags"]}>
               {job.location && (
                 <span className={styles["location-tag"]}>
-                  {job.location.map((loc) => loc.city).join("/")}
+                  {job.location.map((loc) => loc.city).join("、")}
                 </span>
               )}
               {job.employee_level && (
                 <span className={styles["experience-tag"]}>
-                  {levelTranslations[job.employee_level]}
+                  {job.employee_level
+                    .map((level) => levelTranslations[level])
+                    .join("、")}
                 </span>
               )}
             </div>
