@@ -1,12 +1,8 @@
-import { Avatar, Badge, Button, message, Spin, Upload } from "antd";
+import { Avatar, Badge, Button, message, Spin, Switch, Upload } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  CloseCircleOutlined,
-  EyeOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
+import { CloseCircleOutlined, ShareAltOutlined } from "@ant-design/icons";
 
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -16,7 +12,7 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
 
 const JobBoard = () => {
-  const { job } = useJob();
+  const { job, fetchJob } = useJob();
 
   const { t: originalT } = useTranslation();
   const navigate = useNavigate();
@@ -131,13 +127,31 @@ const JobBoard = () => {
       <div className={styles.header}>
         {job.name}
         <div className={styles.share}>
-          <EyeOutlined
-            disabled={!job.jd_doc_id}
-            onClick={async () => {
-              await copy(`${window.origin}/jobs/${job.id}/chat`);
-              message.success("链接已复制");
-            }}
-          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: "normal",
+                color: "#333333",
+                marginRight: 8,
+              }}
+            >
+              发布到 Persevio 招聘网站
+            </span>
+            <Switch
+              checked={!!job.posted_at}
+              onChange={async (checked) => {
+                const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+                  open: checked ? "1" : "0",
+                });
+                if (code === 0) {
+                  message.success("操作成功");
+                  fetchJob();
+                }
+              }}
+            />
+          </div>
+
           <ShareAltOutlined
             onClick={async () => {
               await copy(

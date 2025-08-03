@@ -26,7 +26,7 @@ const useJob = () => {
     }
   };
 
-  return { job };
+  return { job, fetchJob };
 };
 
 export default useJob;
