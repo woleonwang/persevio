@@ -4,6 +4,9 @@ import { Get } from "@/utils/request";
 import { parseJSON } from "@/utils";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router";
+import classnames from "classnames";
+
+import logo from "@/assets/logo.png";
 
 interface JobPosting {
   id: string;
@@ -84,74 +87,81 @@ const PublicJobs: React.FC = () => {
   };
 
   return (
-    <div className={styles["job-recommendations"]}>
-      {/* 头部区域 */}
-      <div className={styles["job-recommendations-header"]}>
-        <h2 className={styles["job-recommendations-title"]}>岗位推荐</h2>
+    <div className={classnames(styles.container, styles.v)}>
+      <div>
+        <img src={logo} style={{ width: 220, margin: "21px 28px" }} />
       </div>
-
-      {/* 岗位列表 */}
-      <div className={styles["job-list"]}>
-        {jobs.map((job) => (
-          <div
-            key={job.id}
-            className={styles["job-card"]}
-            onClick={() => handleJobClick(job)}
-          >
-            {/* 左侧：岗位详情 */}
-            <div className={styles["job-details"]}>
-              <div className={styles["job-logo"]}>
-                {job.company_logo ? (
-                  <img
-                    src={
-                      job.company_logo.startsWith("http")
-                        ? job.company_logo
-                        : `/api/logo/${job.company_logo}`
-                    }
-                    alt={job.company_name}
-                  />
-                ) : (
-                  <div className={styles["job-logo-placeholder"]}>
-                    {job.company_name}
-                  </div>
-                )}
-              </div>
-              <div className={styles["job-info"]}>
-                <h3 className={styles["job-title"]}>{job.name}</h3>
-                <div className={styles["job-meta"]}>
-                  <span className={styles["job-department"]}>
-                    {job.team_name}
-                  </span>
-                  <span className={styles["job-language"]}>
-                    团队语言: {job.team_lanugage}
-                  </span>
-                  <span className={styles["job-mode"]}>
-                    {roleTypeTranslations[job.role_type]}
-                  </span>
-                </div>
-                <span className={styles["job-time"]}>
-                  {formatUpdatedAt(job.posted_at)}
-                </span>
-              </div>
-            </div>
-
-            {/* 右侧：地点和经验标签 */}
-            <div className={styles["job-tags"]}>
-              {job.location && (
-                <span className={styles["location-tag"]}>
-                  {job.location.map((loc) => loc.city).join("、")}
-                </span>
-              )}
-              {job.employee_level && (
-                <span className={styles["experience-tag"]}>
-                  {job.employee_level
-                    .map((level) => levelTranslations[level])
-                    .join("、")}
-                </span>
-              )}
-            </div>
+      <div className={styles["job-recommendations"]}>
+        <div>
+          {/* 头部区域 */}
+          <div className={styles["job-recommendations-header"]}>
+            <h2 className={styles["job-recommendations-title"]}>岗位推荐</h2>
           </div>
-        ))}
+
+          {/* 岗位列表 */}
+          <div className={styles["job-list"]}>
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className={styles["job-card"]}
+                onClick={() => handleJobClick(job)}
+              >
+                {/* 左侧：岗位详情 */}
+                <div className={styles["job-details"]}>
+                  <div className={styles["job-logo"]}>
+                    {job.company_logo ? (
+                      <img
+                        src={
+                          job.company_logo.startsWith("http")
+                            ? job.company_logo
+                            : `/api/logo/${job.company_logo}`
+                        }
+                        alt={job.company_name}
+                      />
+                    ) : (
+                      <div className={styles["job-logo-placeholder"]}>
+                        {job.company_name}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles["job-info"]}>
+                    <h3 className={styles["job-title"]}>{job.name}</h3>
+                    <div className={styles["job-meta"]}>
+                      <span className={styles["job-department"]}>
+                        {job.team_name}
+                      </span>
+                      <span className={styles["job-language"]}>
+                        团队语言: {job.team_lanugage}
+                      </span>
+                      <span className={styles["job-mode"]}>
+                        {roleTypeTranslations[job.role_type]}
+                      </span>
+                    </div>
+                    <span className={styles["job-time"]}>
+                      {formatUpdatedAt(job.posted_at)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 右侧：地点和经验标签 */}
+                <div className={styles["job-tags"]}>
+                  {job.location && (
+                    <span className={styles["location-tag"]}>
+                      {job.location.map((loc) => loc.city).join("、")}
+                    </span>
+                  )}
+                  {job.employee_level && (
+                    <span className={styles["experience-tag"]}>
+                      {job.employee_level
+                        .map((level) => levelTranslations[level])
+                        .join("、")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

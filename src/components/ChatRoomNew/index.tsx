@@ -941,7 +941,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                       如果您已经审阅好当前的面试评分卡，请确认归档；也可以告诉我对评分、理由或其他分析内容的调整。
                                     </div>
                                     <Button
-                                      variant="solid"
+                                      variant="outlined"
                                       color="primary"
                                       style={{ marginTop: 8 }}
                                       onClick={() => {
