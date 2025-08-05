@@ -4,17 +4,26 @@ import { Get } from "@/utils/request";
 import { parseJSON } from "@/utils";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router";
-import classnames from "classnames";
 
-import logo from "@/assets/logo.png";
+import HomeHeader from "@/components/HomeHeader";
+import { Button, Input, Pagination } from "antd";
 
 interface JobPosting extends TJobBasicInfo {
-  id: string;
+  id: number;
   name: string;
   company_name: string;
   company_logo: string;
   posted_at: string;
 }
+
+type TCompany = {
+  id: number;
+  logo: string;
+  name: string;
+  round: string;
+  staffCount: string;
+  type: string;
+};
 
 const roleTypeTranslations = {
   onsite: "完全在办公室工作",
@@ -30,9 +39,398 @@ const levelTranslations = {
   senior: "高级/经验非常丰富",
 };
 
+const MockJobs = [
+  {
+    id: 10001,
+    name: "Senior Software Engineer",
+    team_name: "Core Platform",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "San Francisco", address: "123 Main St" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-01T17:27:43.801+08:00",
+  },
+  {
+    id: 10002,
+    name: "Data Scientist",
+    team_name: "Analytics",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "New York", address: "456 Park Ave" }],
+    employee_level: ["junior", "mid_level"],
+    posted_at: "2025-08-02T10:15:22.123+08:00",
+  },
+  {
+    id: 10003,
+    name: "UX Designer",
+    team_name: "Product Design",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "London", address: "789 Oxford St" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-03T09:00:00.000+08:00",
+  },
+  {
+    id: 10004,
+    name: "DevOps Engineer",
+    team_name: "Infrastructure",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Berlin", address: "1010 Krossen Str" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-01T20:30:15.555+08:00",
+  },
+  {
+    id: 10005,
+    name: "Product Manager",
+    team_name: "Growth",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "Sydney", address: "222 George St" }],
+    employee_level: ["senior"],
+    posted_at: "2025-07-31T14:45:01.789+08:00",
+  },
+  {
+    id: 10006,
+    name: "Junior Frontend Developer",
+    team_name: "Web Services",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Francisco", address: "333 Market St" }],
+    employee_level: ["junior"],
+    posted_at: "2025-08-04T11:22:33.444+08:00",
+  },
+  {
+    id: 10007,
+    name: "Backend Developer",
+    team_name: "API Services",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Austin", address: "444 Congress Ave" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-01T15:00:00.000+08:00",
+  },
+  {
+    id: 10008,
+    name: "Quality Assurance Engineer",
+    team_name: "Engineering Support",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "Boston", address: "555 Beacon St" }],
+    employee_level: ["no_experience"],
+    posted_at: "2025-08-05T08:05:10.987+08:00",
+  },
+  {
+    id: 10009,
+    name: "Technical Writer",
+    team_name: "Documentation",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Seattle", address: "666 Pine St" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-02T16:40:55.321+08:00",
+  },
+  {
+    id: 10010,
+    name: "AI Engineer",
+    team_name: "Machine Learning",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Jose", address: "777 First St" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-01T11:00:00.000+08:00",
+  },
+  {
+    id: 10011,
+    name: "Marketing Analyst",
+    team_name: "Marketing",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "New York", address: "888 Broadway" }],
+    employee_level: ["junior", "mid_level"],
+    posted_at: "2025-07-30T10:00:00.000+08:00",
+  },
+  {
+    id: 10012,
+    name: "Cloud Architect",
+    team_name: "Cloud Operations",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Denver", address: "999 Colfax Ave" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-04T13:13:13.131+08:00",
+  },
+  {
+    id: 10013,
+    name: "Security Analyst",
+    team_name: "Security Operations",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Francisco", address: "101 Mission St" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-02T14:50:40.678+08:00",
+  },
+  {
+    id: 10014,
+    name: "Database Administrator",
+    team_name: "Database",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "Boston", address: "202 Congress St" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-03T18:00:00.000+08:00",
+  },
+  {
+    id: 10015,
+    name: "Network Engineer",
+    team_name: "Network",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Chicago", address: "303 Wacker Dr" }],
+    employee_level: ["junior"],
+    posted_at: "2025-07-31T09:30:25.111+08:00",
+  },
+  {
+    id: 10016,
+    name: "Game Developer",
+    team_name: "Gaming Studio",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "Los Angeles", address: "404 Hollywood Blvd" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-01T08:00:00.000+08:00",
+  },
+  {
+    id: 10017,
+    name: "Mobile Developer",
+    team_name: "Mobile Apps",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "San Jose", address: "505 Almaden Blvd" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-03T12:00:00.000+08:00",
+  },
+  {
+    id: 10018,
+    name: "SRE Engineer",
+    team_name: "Site Reliability",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Seattle", address: "606 Pine St" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-05T07:10:05.112+08:00",
+  },
+  {
+    id: 10019,
+    name: "HR Manager",
+    team_name: "Human Resources",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Francisco", address: "707 Union St" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-01T13:30:00.000+08:00",
+  },
+  {
+    id: 10020,
+    name: "Financial Analyst",
+    team_name: "Finance",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "New York", address: "808 Wall St" }],
+    employee_level: ["no_experience"],
+    posted_at: "2025-08-02T19:00:00.000+08:00",
+  },
+  {
+    id: 10021,
+    name: "UI/UX Researcher",
+    team_name: "User Experience",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Austin", address: "909 Lamar Blvd" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-04T09:45:00.000+08:00",
+  },
+  {
+    id: 10022,
+    name: "Data Engineer",
+    team_name: "Data Infrastructure",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "Boston", address: "111 Causeway St" }],
+    employee_level: ["junior"],
+    posted_at: "2025-08-01T14:00:00.000+08:00",
+  },
+  {
+    id: 10023,
+    name: "Cybersecurity Specialist",
+    team_name: "Cybersecurity",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "San Jose", address: "222 W Santa Clara St" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-03T17:00:00.000+08:00",
+  },
+  {
+    id: 10024,
+    name: "Product Designer",
+    team_name: "Product Innovation",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "London", address: "333 Baker St" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-02T12:00:00.000+08:00",
+  },
+  {
+    id: 10025,
+    name: "Sales Manager",
+    team_name: "Sales",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Francisco", address: "444 Montgomery St" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-01T16:00:00.000+08:00",
+  },
+  {
+    id: 10026,
+    name: "Operations Manager",
+    team_name: "Operations",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "Seattle", address: "555 Pine St" }],
+    employee_level: ["mid_level"],
+    posted_at: "2025-08-04T10:30:00.000+08:00",
+  },
+  {
+    id: 10027,
+    name: "Research Scientist",
+    team_name: "Research & Development",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Boston", address: "666 Massachusetts Ave" }],
+    employee_level: ["senior"],
+    posted_at: "2025-08-03T09:15:00.000+08:00",
+  },
+  {
+    id: 10028,
+    name: "Intern - Software Engineer",
+    team_name: "Core Platform",
+    team_lanugage: "English",
+    role_type: "onsite",
+    location: [{ city: "San Francisco", address: "777 Mission St" }],
+    employee_level: ["internship"],
+    posted_at: "2025-08-05T08:30:00.000+08:00",
+  },
+  {
+    id: 10029,
+    name: "Growth Hacker",
+    team_name: "Growth Marketing",
+    team_lanugage: "English",
+    role_type: "hybrid",
+    location: [{ city: "New York", address: "888 Broadway" }],
+    employee_level: ["junior"],
+    posted_at: "2025-07-31T18:00:00.000+08:00",
+  },
+  {
+    id: 10030,
+    name: "Full Stack Developer",
+    team_name: "Web Services",
+    team_lanugage: "English",
+    role_type: "remote",
+    location: [{ city: "Austin", address: "999 Red River St" }],
+    employee_level: ["mid_level", "senior"],
+    posted_at: "2025-08-02T22:00:00.000+08:00",
+  },
+];
+
+const MockCompanies: TCompany[] = [
+  {
+    id: 1,
+    logo: "https://placehold.co/100x100/A0A0A0/FFFFFF?text=Logo1",
+    name: "奇幻世界",
+    round: "B 轮融资",
+    staffCount: "100~500人",
+    type: "游戏公司",
+  },
+  {
+    id: 2,
+    logo: "https://placehold.co/100x100/B0B0B0/FFFFFF?text=Logo2",
+    name: "智慧科技",
+    round: "C 轮融资",
+    staffCount: "500~1000人",
+    type: "人工智能",
+  },
+  {
+    id: 3,
+    logo: "https://placehold.co/100x100/C0C0C0/FFFFFF?text=Logo3",
+    name: "未来教育",
+    round: "A 轮融资",
+    staffCount: "50~100人",
+    type: "在线教育",
+  },
+  {
+    id: 4,
+    logo: "https://placehold.co/100x100/D0D0D0/FFFFFF?text=Logo4",
+    name: "健康生活",
+    round: "天使轮",
+    staffCount: "10~50人",
+    type: "健康医疗",
+  },
+  {
+    id: 5,
+    logo: "https://placehold.co/100x100/E0E0E0/FFFFFF?text=Logo5",
+    name: "数字营销",
+    round: "D 轮融资",
+    staffCount: "1000~5000人",
+    type: "广告传媒",
+  },
+  {
+    id: 6,
+    logo: "https://placehold.co/100x100/F0F0F0/FFFFFF?text=Logo6",
+    name: "云端计算",
+    round: "E 轮融资",
+    staffCount: "5000人以上",
+    type: "云计算",
+  },
+  {
+    id: 7,
+    logo: "https://placehold.co/100x100/909090/FFFFFF?text=Logo7",
+    name: "智能制造",
+    round: "B 轮融资",
+    staffCount: "500~1000人",
+    type: "智能硬件",
+  },
+  {
+    id: 8,
+    logo: "https://placehold.co/100x100/808080/FFFFFF?text=Logo8",
+    name: "新零售",
+    round: "C 轮融资",
+    staffCount: "100~500人",
+    type: "电子商务",
+  },
+  {
+    id: 9,
+    logo: "https://placehold.co/100x100/707070/FFFFFF?text=Logo9",
+    name: "绿色能源",
+    round: "A 轮融资",
+    staffCount: "50~100人",
+    type: "新能源",
+  },
+  {
+    id: 10,
+    logo: "https://placehold.co/100x100/606060/FFFFFF?text=Logo10",
+    name: "金融科技",
+    round: "D 轮融资",
+    staffCount: "1000~5000人",
+    type: "金融服务",
+  },
+];
+
+const pageSize = 10;
 const PublicJobs: React.FC = () => {
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const navigate = useNavigate();
+  const [keyword, setKeyword] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchJobs();
@@ -41,19 +439,22 @@ const PublicJobs: React.FC = () => {
   const fetchJobs = async () => {
     const { code, data } = await Get("/api/public/jobs");
     if (code === 0) {
-      setJobs(
-        data.jobs.map((job: any) => {
+      setJobs([
+        ...data.jobs.map((job: any) => {
           return {
             ...job,
             ...parseJSON(job.basic_info),
           };
-        })
-      );
+        }),
+        ...MockJobs,
+      ]);
     }
   };
 
   const handleJobClick = (job: JobPosting) => {
-    navigate(`/jobs/${job.id}/chat`);
+    if (job.id < 10000) {
+      navigate(`/jobs/${job.id}/chat`);
+    }
   };
 
   const formatUpdatedAt = (updatedAt: string) => {
@@ -67,18 +468,61 @@ const PublicJobs: React.FC = () => {
       return `${Math.max(1, diffMinutes)} 分钟前`;
     } else if (diffHours < 24) {
       return `${diffHours} 小时前`;
-    } else {
+    } else if (diffDays < 7) {
       return `${diffDays} 天前`;
+    } else {
+      return `${updated.format("YYYY-MM-DD")}`;
     }
   };
 
+  const visibleJobs = jobs.filter((item) => {
+    return (
+      !keyword ||
+      item.company_name?.includes(keyword) ||
+      item.name?.includes(keyword) ||
+      !!(item.location ?? []).find(
+        (loc) => loc.city?.includes(keyword) || loc.address?.includes(keyword)
+      )
+    );
+  });
+
+  const companyLogo = (job: JobPosting) => {
+    return job.company_logo.startsWith("http")
+      ? job.company_logo
+      : `/api/logo/${job.company_logo}`;
+  };
+
   return (
-    <div className={classnames(styles.container, styles.v)}>
-      <div>
-        <img src={logo} style={{ width: 220, margin: "21px 28px" }} />
+    <HomeHeader>
+      <div className={styles.banner}>
+        <div className={styles.title}>大标题</div>
+        <div className={styles.subTitle}>副标题</div>
+        <div className={styles.search}>
+          <Input.Search
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            size="large"
+            style={{ width: 800 }}
+            placeholder="搜索职位、公司名称、地点"
+          />
+          <div className={styles.searchTagWrapper}>
+            <span>热门搜索</span>
+            {["AI工程师", "UI设计师", "前端开发", "数据分析师", "测试"].map(
+              (item) => (
+                <div
+                  key={item}
+                  className={styles.searchTag}
+                  onClick={() => setKeyword(item)}
+                >
+                  {item}
+                </div>
+              )
+            )}
+          </div>
+        </div>
       </div>
       <div className={styles["job-recommendations"]}>
-        <div>
+        <div className={styles.left}>
           {/* 头部区域 */}
           <div className={styles["job-recommendations-header"]}>
             <h2 className={styles["job-recommendations-title"]}>岗位推荐</h2>
@@ -86,70 +530,113 @@ const PublicJobs: React.FC = () => {
 
           {/* 岗位列表 */}
           <div className={styles["job-list"]}>
-            {jobs.map((job) => (
-              <div
-                key={job.id}
-                className={styles["job-card"]}
-                onClick={() => handleJobClick(job)}
-              >
-                {/* 左侧：岗位详情 */}
-                <div className={styles["job-details"]}>
-                  <div className={styles["job-logo"]}>
-                    {job.company_logo ? (
-                      <img
-                        src={
-                          job.company_logo.startsWith("http")
-                            ? job.company_logo
-                            : `/api/logo/${job.company_logo}`
-                        }
-                        alt={job.company_name}
-                      />
-                    ) : (
-                      <div className={styles["job-logo-placeholder"]}>
-                        {job.company_name}
+            {visibleJobs
+              .slice(pageSize * (currentPage - 1), pageSize * currentPage)
+              .map((job) => (
+                <div
+                  key={job.id}
+                  className={styles["job-card"]}
+                  onClick={() => handleJobClick(job)}
+                >
+                  {/* 左侧：岗位详情 */}
+                  <div className={styles["job-details"]}>
+                    <div className={styles["job-logo"]}>
+                      {job.company_logo ? (
+                        <img src={companyLogo(job)} alt={job.company_name} />
+                      ) : (
+                        <div className={styles["job-logo-placeholder"]}>
+                          {job.company_name}
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles["job-info"]}>
+                      <h3 className={styles["job-title"]}>{job.name}</h3>
+                      <div className={styles["job-meta"]}>
+                        <span className={styles["job-department"]}>
+                          {job.team_name}
+                        </span>
+                        <span className={styles["job-language"]}>
+                          团队语言: {job.team_lanugage}
+                        </span>
+                        <span className={styles["job-mode"]}>
+                          {roleTypeTranslations[job.role_type]}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                  <div className={styles["job-info"]}>
-                    <h3 className={styles["job-title"]}>{job.name}</h3>
-                    <div className={styles["job-meta"]}>
-                      <span className={styles["job-department"]}>
-                        {job.team_name}
-                      </span>
-                      <span className={styles["job-language"]}>
-                        团队语言: {job.team_lanugage}
-                      </span>
-                      <span className={styles["job-mode"]}>
-                        {roleTypeTranslations[job.role_type]}
+                      <span className={styles["job-time"]}>
+                        {formatUpdatedAt(job.posted_at)}
                       </span>
                     </div>
-                    <span className={styles["job-time"]}>
-                      {formatUpdatedAt(job.posted_at)}
-                    </span>
+                  </div>
+
+                  {/* 右侧：地点和经验标签 */}
+                  <div className={styles["job-tags"]}>
+                    {job.location && (
+                      <span className={styles["location-tag"]}>
+                        {job.location.map((loc) => loc.city).join("、")}
+                      </span>
+                    )}
+                    {job.employee_level && (
+                      <span className={styles["experience-tag"]}>
+                        {job.employee_level
+                          .map((level) => levelTranslations[level])
+                          .join("、")}
+                      </span>
+                    )}
                   </div>
                 </div>
-
-                {/* 右侧：地点和经验标签 */}
-                <div className={styles["job-tags"]}>
-                  {job.location && (
-                    <span className={styles["location-tag"]}>
-                      {job.location.map((loc) => loc.city).join("、")}
-                    </span>
-                  )}
-                  {job.employee_level && (
-                    <span className={styles["experience-tag"]}>
-                      {job.employee_level
-                        .map((level) => levelTranslations[level])
-                        .join("、")}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))}
+          </div>
+          <div
+            style={{
+              marginTop: 20,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Pagination
+              current={currentPage}
+              total={visibleJobs.length}
+              pageSize={pageSize}
+              onChange={(page) => {
+                setCurrentPage(page);
+              }}
+            />
+          </div>
+        </div>
+        <div className={styles.right}>
+          <div className={styles.block}>
+            <div className={styles.title}>登录/注册账号</div>
+            <div className={styles.hint}>聊一聊完善简历，提升求职成功率</div>
+            <Button size="large" block type="primary">
+              登录/注册
+            </Button>
+          </div>
+          <div className={styles.block}>
+            <div className={styles.title}>热门企业排行榜</div>
+            <div>
+              {MockCompanies.map((c) => {
+                return (
+                  <div key={c.id} className={styles.companyBlock}>
+                    <img
+                      src={jobs[0] && companyLogo(jobs[0])}
+                      style={{ width: "60px", height: "60px" }}
+                    />
+                    <div>
+                      <div className={styles.companyName}>{c.name}</div>
+                      <div className={styles.companyInfo}>
+                        <div>{c.round}</div>
+                        <div>{c.staffCount}</div>
+                        <div>{c.type}</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </HomeHeader>
   );
 };
 

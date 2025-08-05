@@ -16,6 +16,7 @@ import interview from "../../assets/videos/interview.mp4";
 import driving from "../../assets/videos/driving.mp4";
 import { CSSProperties } from "react";
 import { useNavigate } from "react-router";
+import HomeHeader from "@/components/HomeHeader";
 
 interface CardProps {
   title: string;
@@ -257,15 +258,7 @@ const Home = () => {
   // }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <img src={logo} style={{ width: 220 }} />
-        <div className={styles.joinBtn} onClick={() => navigate("/apply")}>
-          <span>Join the waitlist</span>
-          <span style={{ marginLeft: 17 }}>→</span>
-        </div>
-      </div>
-
+    <HomeHeader>
       <div className={styles.bannerContainer}>
         <div className={styles.title}>
           <div>
@@ -442,34 +435,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* <div
-        style={{
-          backgroundColor: 'rgba(248, 248, 249, 1)',
-          marginTop: 210,
-          padding: '50px 0',
-        }}
-      >
-        <div className={styles.innerContainer}>
-          <div className={styles.blockTitle}>Work experience</div>
-          <div className={styles.blockDesc}>
-            Viona helps both agencies and companies grow.
-          </div>
-          <div
-            style={{ display: 'flex', marginTop: 60, justifyContent: 'center' }}
-          >
-            {[1, 2, 3, 4, 5, 6].map((index) => {
-              return (
-                <img
-                  src={previewLogo}
-                  style={{ width: 196 }}
-                  key={`${index}-preivew`}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div> */}
-
       <div className={styles.innerContainer} style={{ marginTop: 120 }}>
         <div className={styles.blockTitle}>
           <span className={styles.green}>Viona</span> is
@@ -567,7 +532,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </div>
+    </HomeHeader>
   );
 };
 

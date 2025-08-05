@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
 import { parseJSON } from "@/utils";
-import { useParams, useNavigate } from "react-router";
+import { useParams } from "react-router";
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
 import { Collapse, Typography } from "antd";
