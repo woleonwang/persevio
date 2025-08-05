@@ -12,6 +12,7 @@ interface IProps {
   signalTitle: string;
   interviewFeedback: TInterviewFeedback;
   type: "others" | "dangers";
+  isPreview?: boolean;
   onSubmit: () => void;
 }
 
@@ -27,6 +28,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
     signalTitle,
     type,
     interviewFeedback,
+    isPreview,
     onSubmit,
   } = props;
 
@@ -124,18 +126,20 @@ const FeedbackCustomizeSignal = (props: IProps) => {
               <MarkdownContainer content={currentSignalFeedback?.basis ?? ""} />
             </div>
             <div style={{ marginTop: 8 }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setIsEditing(true);
-                  form.setFieldsValue({
-                    ...currentSignalFeedback,
-                  });
-                }}
-                shape="round"
-              >
-                编辑
-              </Button>
+              {!isPreview && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setIsEditing(true);
+                    form.setFieldsValue({
+                      ...currentSignalFeedback,
+                    });
+                  }}
+                  shape="round"
+                >
+                  编辑
+                </Button>
+              )}
               <Tooltip
                 title={currentSignalFeedback.evidences}
                 trigger={"click"}

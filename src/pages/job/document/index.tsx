@@ -189,11 +189,7 @@ const JobDocument = () => {
                 <ShareAltOutlined
                   onClick={async () => {
                     await copy(
-                      `${window.origin}/app/jobs/${
-                        job.id
-                      }/document/${chatType}?token=${localStorage.getItem(
-                        "token"
-                      )}&share=1`
+                      `${window.origin}/jobs/${job.id}/share?show=${chatTypeMappings[chatType]}`
                     );
                     message.success("链接已复制");
                   }}

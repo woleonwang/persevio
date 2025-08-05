@@ -7,7 +7,12 @@ export const parseJSON = (jsonString?: string) => {
 
   const startIndex = jsonString.indexOf("{");
   const lastIndex = jsonString.lastIndexOf("}");
-  return JSON.parse(jsonString.slice(startIndex, lastIndex + 1));
+  try {
+    return JSON.parse(jsonString.slice(startIndex, lastIndex + 1));
+  } catch (error) {
+    console.log("parse json error:", jsonString);
+    return {};
+  }
 };
 
 export const parseMarkdown = (markdownString?: string) => {

@@ -10,6 +10,11 @@ interface IProps extends Options {
 
 const MarkdownContainer = (props: IProps) => {
   const { content, onClick, ...restProps } = props;
+
+  if (!content) {
+    return null;
+  }
+
   return (
     <div className={classnames(styles.markdownContainer)} onClick={onClick}>
       <Markdown

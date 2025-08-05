@@ -61,6 +61,8 @@ import TalentChat from "./pages/talent/chat";
 import TalentSelect from "./pages/talent/select";
 import TalentDetail from "./pages/talent/detail";
 import PublicJobs from "./pages/public/jobs";
+import PublicJobDetail from "./pages/public/job";
+import PublicTalentDetailPage from "./pages/public/talent/detail";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -89,6 +91,7 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/jobs" element={<PublicJobs />} />
+          <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
           <Route path="/jobs/:id/chat" element={<JobsShow />} />
           <Route path="/jobs/requirement" element={<JobRequirement />} />
           <Route
@@ -98,6 +101,10 @@ createRoot(document.getElementById("root")!).render(
           <Route
             path="/jobs/:invitation_token/coworker"
             element={<JobCoworker />}
+          />
+          <Route
+            path="/jobs/:jobId/talents/:talentId/detail"
+            element={<PublicTalentDetailPage />}
           />
           <Route path="/share" element={<Share />}>
             <Route path="/share/create-job" element={<JobsCreate share />} />

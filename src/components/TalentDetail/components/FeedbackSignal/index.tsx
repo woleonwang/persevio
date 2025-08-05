@@ -12,6 +12,7 @@ interface IProps {
   interviewerName: string;
   signalTitle: string;
   interviewFeedback: TInterviewFeedback;
+  isPreview?: boolean;
   onSubmit: () => void;
 }
 
@@ -63,8 +64,14 @@ type TFormValue = {
 };
 
 const FeedbackSignal = (props: IProps) => {
-  const { jobId, signalTitle, interviewerName, interviewFeedback, onSubmit } =
-    props;
+  const {
+    jobId,
+    signalTitle,
+    interviewerName,
+    interviewFeedback,
+    isPreview,
+    onSubmit,
+  } = props;
 
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<TFormValue>();
@@ -167,18 +174,20 @@ const FeedbackSignal = (props: IProps) => {
               <MarkdownContainer content={currentSingleFeedback?.basis ?? ""} />
             </div>
             <div style={{ marginTop: 8 }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  setIsEditing(true);
-                  form.setFieldsValue({
-                    ...currentSingleFeedback,
-                  });
-                }}
-                shape="round"
-              >
-                编辑
-              </Button>
+              {!isPreview && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setIsEditing(true);
+                    form.setFieldsValue({
+                      ...currentSingleFeedback,
+                    });
+                  }}
+                  shape="round"
+                >
+                  编辑
+                </Button>
+              )}
               <Tooltip
                 title={currentSingleFeedback.evidences}
                 trigger={"click"}

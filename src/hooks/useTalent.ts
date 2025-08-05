@@ -18,7 +18,9 @@ const useTalent = () => {
   }, []);
 
   const fetchTalent = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/talents/${talentId}`);
+    const { code, data } = await Get(
+      `/api/public/jobs/${jobId}/talents/${talentId}`
+    );
 
     if (code === 0) {
       const talent: TTalent = data.talent;

@@ -14,6 +14,7 @@ interface IProps {
   talentId: number;
   interviewPlan: TInterviewPlanDetail;
   interviewFeedback: TInterviewFeedback;
+  isPreview?: boolean;
   onSubmit: () => void;
 }
 
@@ -39,7 +40,14 @@ type TFormValue = {
   next_round_concern: string;
 };
 const FeedbackSummary = (props: IProps) => {
-  const { jobId, talentId, interviewPlan, interviewFeedback, onSubmit } = props;
+  const {
+    jobId,
+    talentId,
+    interviewPlan,
+    interviewFeedback,
+    onSubmit,
+    isPreview,
+  } = props;
 
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<TFormValue>();
@@ -85,47 +93,51 @@ const FeedbackSummary = (props: IProps) => {
         <span className={styles.updatedAt}>
           {dayjs(interviewFeedback.updated_at).format("YYYY-MM-DD HH:mm:ss")}
         </span>
-        <Button
-          icon={<CopyOutlined />}
-          onClick={async () => {
-            await copy(
-              `## 总体推荐\n\n${
-                feedbackStatusOptions.find(
-                  (item) => item.value === interviewFeedbackDetail.result
-                )?.label
-              }\n\n## 本轮小结\n\n${
-                interviewFeedbackDetail.feedback
-              }\n\n## 下一轮可操作性建议\n\n${
-                interviewFeedbackDetail.next_round_concern
-              }`
-            );
-            message.success("已复制");
-          }}
-          style={{ marginLeft: 10 }}
-        />
-        <Button
-          icon={<EditOutlined />}
-          onClick={() => {
-            setIsEditing(true);
-            form.setFieldsValue({
-              ...interviewFeedbackDetail,
-              interviewer_name: mergedInterviewerName,
-            });
-          }}
-          style={{ marginLeft: 10 }}
-        />
+        {!isPreview && (
+          <>
+            <Button
+              icon={<CopyOutlined />}
+              onClick={async () => {
+                await copy(
+                  `## 总体推荐\n\n${
+                    feedbackStatusOptions.find(
+                      (item) => item.value === interviewFeedbackDetail.result
+                    )?.label
+                  }\n\n## 本轮小结\n\n${
+                    interviewFeedbackDetail.feedback
+                  }\n\n## 下一轮可操作性建议\n\n${
+                    interviewFeedbackDetail.next_round_concern
+                  }`
+                );
+                message.success("已复制");
+              }}
+              style={{ marginLeft: 10 }}
+            />
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => {
+                setIsEditing(true);
+                form.setFieldsValue({
+                  ...interviewFeedbackDetail,
+                  interviewer_name: mergedInterviewerName,
+                });
+              }}
+              style={{ marginLeft: 10 }}
+            />
 
-        <Button
-          type="primary"
-          onClick={() =>
-            navigate(
-              `/app/jobs/${jobId}/talents/${talentId}/chat?chatType=interview_feedback&round=${interviewFeedback.round}`
-            )
-          }
-          style={{ marginLeft: "12px" }}
-        >
-          与 Viona 对话
-        </Button>
+            <Button
+              type="primary"
+              onClick={() =>
+                navigate(
+                  `/app/jobs/${jobId}/talents/${talentId}/chat?chatType=interview_feedback&round=${interviewFeedback.round}`
+                )
+              }
+              style={{ marginLeft: "12px" }}
+            >
+              与 Viona 对话
+            </Button>
+          </>
+        )}
       </div>
 
       <div>

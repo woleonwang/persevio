@@ -54,6 +54,12 @@ interface IJob {
   interview_design_for_interview_feedback: string;
 }
 
+type TPublicJob = {
+  id: number;
+  name: string;
+  interview_plan_json: string;
+};
+
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
 
 interface IJobApplyListItem {
@@ -309,4 +315,21 @@ type TInterviewFeedbackDetail = {
   other_signals: TCustomizeSignal[];
 
   dangers: TCustomizeSignal[];
+};
+
+type TJobBasicInfo = {
+  team_name: string;
+  team_lanugage: string;
+  role_type: "onsite" | "hybrid" | "remote";
+  location: {
+    city: string;
+    address: string;
+  }[];
+  employee_level: (
+    | "internship"
+    | "no_experience"
+    | "junior"
+    | "mid_level"
+    | "senior"
+  )[];
 };

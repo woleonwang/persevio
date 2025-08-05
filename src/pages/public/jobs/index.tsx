@@ -8,26 +8,12 @@ import classnames from "classnames";
 
 import logo from "@/assets/logo.png";
 
-interface JobPosting {
+interface JobPosting extends TJobBasicInfo {
   id: string;
   name: string;
   company_name: string;
   company_logo: string;
   posted_at: string;
-  team_name: string;
-  team_lanugage: string;
-  role_type: "onsite" | "hybrid" | "remote";
-  location: {
-    city: string;
-    address: string;
-  }[];
-  employee_level: (
-    | "internship"
-    | "no_experience"
-    | "junior"
-    | "mid_level"
-    | "senior"
-  )[];
 }
 
 const roleTypeTranslations = {
