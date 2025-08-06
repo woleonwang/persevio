@@ -42,7 +42,7 @@ import {
   TMessage,
   TMessageFromApi,
   TRoleOverviewType,
-} from "./type.d";
+} from "./type";
 import { copy } from "../../utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
