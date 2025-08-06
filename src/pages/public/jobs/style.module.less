@@ -59,14 +59,21 @@
 
 .right {
   flex: none;
-  width: 200px;
+  width: 300px;
   padding: 20px;
 
   .block {
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
     padding: 20px;
     margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
   }
 
   .title {
@@ -83,7 +90,7 @@
   }
 
   .companyBlock {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding: 20px;
     display: flex;
     gap: 20px;
@@ -94,11 +101,11 @@
   }
 
   .companyInfo {
-    display: flex;
     font-size: 12px;
     margin-top: 6px;
+    color: rgba(0, 0, 0, 0.5);
+    margin-bottom: 5px;
     & > div:not(:last-child) {
-      border-right: 1px solid rgba(0, 0, 0, 0.6);
       padding-right: 10px;
       margin-right: 10px;
     }
@@ -118,32 +125,6 @@
   font-weight: bold;
   color: @primary-color;
   margin: 0;
-}
-
-.job-recommendations-filters {
-  display: flex;
-  gap: 12px;
-}
-
-.filter-button {
-  padding: 8px 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 20px;
-  background: white;
-  color: #333;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.filter-button.active {
-  background: #4caf50;
-  color: white;
-  border-color: #4caf50;
-}
-
-.filter-button:hover:not(.active) {
-  background: #f5f5f5;
 }
 
 /* 岗位列表 */
