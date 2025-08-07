@@ -506,7 +506,10 @@ const PublicJobs: React.FC = () => {
         <div className={styles.search}>
           <Input.Search
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => {
+              setKeyword(e.target.value);
+              setCurrentPage(1);
+            }}
             size="large"
             style={{ width: 800 }}
             placeholder={t("banner.search.placeholder")}
