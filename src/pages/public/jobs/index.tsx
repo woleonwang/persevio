@@ -4,6 +4,7 @@ import { Get } from "@/utils/request";
 import { parseJSON } from "@/utils";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import HomeHeader from "@/components/HomeHeader";
 import { Button, Input, Pagination } from "antd";
@@ -26,17 +27,17 @@ type TCompany = {
 };
 
 const roleTypeTranslations = {
-  onsite: "完全在办公室工作",
-  hybrid: "混合型",
-  remote: "完全在家工作",
+  onsite: "onsite",
+  hybrid: "hybrid",
+  remote: "remote",
 };
 
 const levelTranslations = {
-  internship: "实习生",
-  no_experience: "应届毕业生/无经验",
-  junior: "初级/少量经验",
-  mid_level: "中级/有一定经验",
-  senior: "高级/经验非常丰富",
+  internship: "internship",
+  no_experience: "no_experience",
+  junior: "junior",
+  mid_level: "mid_level",
+  senior: "senior",
 };
 
 const MockJobs = [
@@ -431,6 +432,11 @@ const PublicJobs: React.FC = () => {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { t: originalT } = useTranslation();
+
+  const t = (key: string) => {
+    return originalT(`public_jobs.${key}`);
+  };
 
   useEffect(() => {
     fetchJobs();
@@ -465,11 +471,11 @@ const PublicJobs: React.FC = () => {
     const diffDays = now.diff(updated, "day");
 
     if (diffMinutes < 60) {
-      return `${Math.max(1, diffMinutes)} 分钟前`;
+      return `${Math.max(1, diffMinutes)} ${t("job_card.time_ago.minute")}`;
     } else if (diffHours < 24) {
-      return `${diffHours} 小时前`;
+      return `${diffHours} ${t("job_card.time_ago.hour")}`;
     } else if (diffDays < 7) {
-      return `${diffDays} 天前`;
+      return `${diffDays} ${t("job_card.time_ago.day")}`;
     } else {
       return `${updated.format("YYYY-MM-DD")}`;
     }
@@ -495,29 +501,31 @@ const PublicJobs: React.FC = () => {
   return (
     <HomeHeader>
       <div className={styles.banner}>
-        <div className={styles.title}>大标题</div>
-        <div className={styles.subTitle}>副标题</div>
+        <div className={styles.title}>{t("banner.title")}</div>
+        <div className={styles.subTitle}>{t("banner.subTitle")}</div>
         <div className={styles.search}>
           <Input.Search
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             size="large"
             style={{ width: 800 }}
-            placeholder="搜索职位、公司名称、地点"
+            placeholder={t("banner.search.placeholder")}
           />
           <div className={styles.searchTagWrapper}>
-            <span>热门搜索</span>
-            {["AI工程师", "UI设计师", "前端开发", "数据分析师", "测试"].map(
-              (item) => (
-                <div
-                  key={item}
-                  className={styles.searchTag}
-                  onClick={() => setKeyword(item)}
-                >
-                  {item}
-                </div>
-              )
-            )}
+            <span>{t("banner.search.hotSearch")}</span>
+            {(
+              originalT("public_jobs.banner.search.hotSearchTags", {
+                returnObjects: true,
+              }) as string[]
+            ).map((item: string) => (
+              <div
+                key={item}
+                className={styles.searchTag}
+                onClick={() => setKeyword(item)}
+              >
+                {item}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -525,7 +533,9 @@ const PublicJobs: React.FC = () => {
         <div className={styles.left}>
           {/* 头部区域 */}
           <div className={styles["job-recommendations-header"]}>
-            <h2 className={styles["job-recommendations-title"]}>岗位推荐</h2>
+            <h2 className={styles["job-recommendations-title"]}>
+              {t("job_recommendations.title")}
+            </h2>
           </div>
 
           {/* 岗位列表 */}
@@ -556,10 +566,14 @@ const PublicJobs: React.FC = () => {
                           {job.team_name}
                         </span>
                         <span className={styles["job-language"]}>
-                          团队语言: {job.team_lanugage}
+                          {t("job_card.team_language")} {job.team_lanugage}
                         </span>
                         <span className={styles["job-mode"]}>
-                          {roleTypeTranslations[job.role_type]}
+                          {t(
+                            `job_card.role_type.${
+                              roleTypeTranslations[job.role_type]
+                            }`
+                          )}
                         </span>
                       </div>
                       <span className={styles["job-time"]}>
@@ -578,7 +592,11 @@ const PublicJobs: React.FC = () => {
                     {job.employee_level && (
                       <span className={styles["experience-tag"]}>
                         {job.employee_level
-                          .map((level) => levelTranslations[level])
+                          .map((level) =>
+                            t(
+                              `job_card.employee_level.${levelTranslations[level]}`
+                            )
+                          )
                           .join("、")}
                       </span>
                     )}
@@ -605,14 +623,20 @@ const PublicJobs: React.FC = () => {
         </div>
         <div className={styles.right}>
           <div className={styles.block}>
-            <div className={styles.title}>登录/注册账号</div>
-            <div className={styles.hint}>聊一聊完善简历，提升求职成功率</div>
+            <div className={styles.title}>
+              {t("sidebar.login_register.title")}
+            </div>
+            <div className={styles.hint}>
+              {t("sidebar.login_register.hint")}
+            </div>
             <Button size="large" block type="primary">
-              登录/注册
+              {t("sidebar.login_register.button")}
             </Button>
           </div>
           <div className={styles.block}>
-            <div className={styles.title}>热门企业排行榜</div>
+            <div className={styles.title}>
+              {t("sidebar.company_ranking.title")}
+            </div>
             <div>
               {MockCompanies.map((c) => {
                 return (

@@ -693,4 +693,55 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   copy: "Copy",
   copied: "Copied",
+
+  public_jobs: {
+    banner: {
+      title: "Find Your Dream Job",
+      subTitle: "Discover opportunities that match your skills and aspirations",
+      search: {
+        placeholder: "Search jobs, companies, locations",
+        hotSearch: "Popular Searches",
+        hotSearchTags: [
+          "AI Engineer",
+          "UI Designer",
+          "Frontend Developer",
+          "Data Analyst",
+          "QA Engineer",
+        ],
+      },
+    },
+    job_recommendations: {
+      title: "Recommended Jobs",
+    },
+    job_card: {
+      team_language: "Team Language:",
+      role_type: {
+        onsite: "On-site",
+        hybrid: "Hybrid",
+        remote: "Remote",
+      },
+      employee_level: {
+        internship: "Internship",
+        no_experience: "Entry Level/No Experience",
+        junior: "Junior",
+        mid_level: "Mid-level",
+        senior: "Senior",
+      },
+      time_ago: {
+        minute: "minutes ago",
+        hour: "hours ago",
+        day: "days ago",
+      },
+    },
+    sidebar: {
+      login_register: {
+        title: "Login/Register",
+        hint: "Chat to improve your resume and increase job success rate",
+        button: "Login/Register",
+      },
+      company_ranking: {
+        title: "Popular Companies",
+      },
+    },
+  },
 };
