@@ -744,4 +744,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       },
     },
   },
+
+  home_header: {
+    home: "Home",
+    jobs: "Jobs",
+  },
 };
