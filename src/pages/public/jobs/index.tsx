@@ -346,83 +346,83 @@ const MockJobs = [
 const MockCompanies: TCompany[] = [
   {
     id: 1,
-    logo: "https://placehold.co/100x100/A0A0A0/FFFFFF?text=Logo1",
-    name: "奇幻世界",
-    round: "B 轮融资",
-    staffCount: "100~500人",
-    type: "游戏公司",
+    logo: "9_bbd4df1d-d105-4957-90b7-11cad97920d1.PNG",
+    name: "MetaApp",
+    round: "C轮融资",
+    staffCount: "100-499人",
+    type: "互联网",
   },
   {
     id: 2,
-    logo: "https://placehold.co/100x100/B0B0B0/FFFFFF?text=Logo2",
-    name: "智慧科技",
-    round: "C 轮融资",
-    staffCount: "500~1000人",
-    type: "人工智能",
+    logo: "9_e313cacf-bca1-4a68-a048-2af512a5d156.PNG",
+    name: "Nexa",
+    round: "未融资",
+    staffCount: "20-99人",
+    type: "游戏",
   },
   {
     id: 3,
-    logo: "https://placehold.co/100x100/C0C0C0/FFFFFF?text=Logo3",
-    name: "未来教育",
-    round: "A 轮融资",
-    staffCount: "50~100人",
-    type: "在线教育",
+    logo: "9_0908616f-6b74-4045-9b1f-f81aabfa1028.PNG",
+    name: "FunPlus",
+    round: "B轮融资",
+    staffCount: "1000-9999人",
+    type: "游戏",
   },
   {
     id: 4,
-    logo: "https://placehold.co/100x100/D0D0D0/FFFFFF?text=Logo4",
-    name: "健康生活",
-    round: "天使轮",
-    staffCount: "10~50人",
-    type: "健康医疗",
-  },
-  {
-    id: 5,
-    logo: "https://placehold.co/100x100/E0E0E0/FFFFFF?text=Logo5",
-    name: "数字营销",
-    round: "D 轮融资",
-    staffCount: "1000~5000人",
-    type: "广告传媒",
-  },
-  {
-    id: 6,
-    logo: "https://placehold.co/100x100/F0F0F0/FFFFFF?text=Logo6",
-    name: "云端计算",
-    round: "E 轮融资",
-    staffCount: "5000人以上",
-    type: "云计算",
-  },
-  {
-    id: 7,
-    logo: "https://placehold.co/100x100/909090/FFFFFF?text=Logo7",
-    name: "智能制造",
-    round: "B 轮融资",
-    staffCount: "500~1000人",
+    logo: "9_8a2db8c1-174e-4b5d-801c-26f928d9f30b.PNG",
+    name: "MAKE1",
+    round: "未融资",
+    staffCount: "20-99人",
     type: "智能硬件",
   },
   {
+    id: 5,
+    logo: "9_831e6535-bf29-4e33-9f26-7c4b5889714b.PNG",
+    name: "深至科技",
+    round: "C轮融资",
+    staffCount: "100-499人",
+    type: "大数据",
+  },
+  {
+    id: 6,
+    logo: "9_41900bb8-e6ce-4c02-b497-8cece00645f6.PNG",
+    name: "众联成业",
+    round: "B轮融资",
+    staffCount: "100-499人",
+    type: "企业服务",
+  },
+  {
+    id: 7,
+    logo: "9_42cca79e-56e0-4c01-b46e-d0318121bb21.PNG",
+    name: "TestBird",
+    round: "未融资",
+    staffCount: "100-499人",
+    type: "互联网",
+  },
+  {
     id: 8,
-    logo: "https://placehold.co/100x100/808080/FFFFFF?text=Logo8",
-    name: "新零售",
-    round: "C 轮融资",
-    staffCount: "100~500人",
+    logo: "9_3c9275fa-9e43-4c64-a7b5-11536357a05d.png",
+    name: "Cupshe",
+    round: "A轮融资",
+    staffCount: "500-999人",
     type: "电子商务",
   },
   {
     id: 9,
-    logo: "https://placehold.co/100x100/707070/FFFFFF?text=Logo9",
-    name: "绿色能源",
-    round: "A 轮融资",
-    staffCount: "50~100人",
-    type: "新能源",
+    logo: "9_f0e3acf3-3f0f-4824-9780-8577b40b8d20.png",
+    name: "探迹",
+    round: "C轮融资",
+    staffCount: "500-999人",
+    type: "互联网",
   },
   {
     id: 10,
-    logo: "https://placehold.co/100x100/606060/FFFFFF?text=Logo10",
-    name: "金融科技",
-    round: "D 轮融资",
-    staffCount: "1000~5000人",
-    type: "金融服务",
+    logo: "9_15620fa9-f433-4e24-96e6-1765280541fb.png",
+    name: "Mathplore",
+    round: "B轮融资",
+    staffCount: "1000-9999人",
+    type: "在线教育",
   },
 ];
 
@@ -551,13 +551,17 @@ const PublicJobs: React.FC = () => {
                   {/* 左侧：岗位详情 */}
                   <div className={styles["job-details"]}>
                     <div className={styles["job-logo"]}>
-                      {job.company_logo ? (
-                        <img src={companyLogo(job)} alt={job.company_name} />
-                      ) : (
-                        <div className={styles["job-logo-placeholder"]}>
-                          {job.company_name}
-                        </div>
-                      )}
+                      <img
+                        src={
+                          job.company_logo
+                            ? companyLogo(job)
+                            : `/api/logo/${
+                                MockCompanies[job.id % MockCompanies.length]
+                                  .logo
+                              }`
+                        }
+                        alt={job.company_name}
+                      />
                     </div>
                     <div className={styles["job-info"]}>
                       <h3 className={styles["job-title"]}>{job.name}</h3>
@@ -649,7 +653,7 @@ const PublicJobs: React.FC = () => {
                 return (
                   <div key={c.id} className={styles.companyBlock}>
                     <img
-                      src={jobs[0] && companyLogo(jobs[0])}
+                      src={`/api/logo/${c.logo}`}
                       style={{ width: "60px", height: "60px" }}
                     />
                     <div>
