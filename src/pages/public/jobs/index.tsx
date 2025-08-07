@@ -629,7 +629,14 @@ const PublicJobs: React.FC = () => {
             <div className={styles.hint}>
               {t("sidebar.login_register.hint")}
             </div>
-            <Button size="large" block type="primary">
+            <Button
+              size="large"
+              block
+              type="primary"
+              onClick={() => {
+                navigate("/signin-candidate");
+              }}
+            >
               {t("sidebar.login_register.button")}
             </Button>
           </div>
