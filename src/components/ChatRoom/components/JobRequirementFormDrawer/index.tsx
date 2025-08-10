@@ -340,6 +340,58 @@ const JobRequirementFormDrawer = (props: IProps) => {
           required: true,
         },
         {
+          key: "role_type",
+          type: "select",
+          question: t("role_type_question"),
+          options: [
+            {
+              value: "new_role",
+              label: t("role_type_options.new_role"),
+            },
+            {
+              value: "backfill",
+              label: t("role_type_options.backfill"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "key_people",
+          type: "multiple_select",
+          question: t("key_people_question"),
+          options: [
+            {
+              value: "working_independently",
+              label: t("key_people_options.working_independently"),
+            },
+            {
+              value: "direct_team",
+              label: t("key_people_options.direct_team"),
+            },
+            {
+              value: "cross_team",
+              label: t("key_people_options.cross_team"),
+            },
+            {
+              value: "company_leadership",
+              label: t("key_people_options.company_leadership"),
+            },
+            {
+              value: "external_customers",
+              label: t("key_people_options.external_customers"),
+            },
+            {
+              value: "external_partners",
+              label: t("key_people_options.external_partners"),
+            },
+            {
+              value: "external_stakeholders",
+              label: t("key_people_options.external_stakeholders"),
+            },
+          ],
+          required: true,
+        },
+        {
           key: "city",
           type: "city_and_address",
           question: t("city_question"),

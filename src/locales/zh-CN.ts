@@ -317,6 +317,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     percentage_question: "这个职位的工作性质和贡献类型是什么？",
     influence_question: "这个职位将产生什么级别的影响？",
     remote_question: "这个职位是<b>完全在办公室工作</b>，还是<b>完全在家工作</b>，还是<b>混合型</b>？",
+    role_type_question: "这是一个新职位还是填补空缺？",
+    key_people_question: "这个职位需要与哪些关键人员合作才能取得成果？",
     city_question: "这个职位的<b>办公地点</b>是?",
     
     // 选项文案
@@ -326,6 +328,21 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       junior: "初级/少量经验",
       mid_level: "中级/有一定经验",
       senior: "高级/经验非常丰富",
+    },
+    
+    role_type_options: {
+      new_role: "新职位",
+      backfill: "填补空缺",
+    },
+    
+    key_people_options: {
+      working_independently: "独立工作：独立完成工作，不需要太多与他人互动。",
+      direct_team: "直接团队：他们的直接同事或直属经理。",
+      cross_team: "跨团队/跨职能/跨部门同事：公司内其他团队、职能、部门的同事。",
+      company_leadership: "公司领导层：团队领导、部门主管、总监、副总裁、C级高管。",
+      external_customers: "外部客户、客户和最终用户：使用或可能使用我们产品或服务的人。",
+      external_partners: "外部合作伙伴和供应商：与我们合作的外部方。",
+      external_stakeholders: "外部利益相关者：如外部投资者。",
     },
     
     percentage_options: {

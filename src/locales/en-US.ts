@@ -328,6 +328,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     percentage_question: "What is the primary nature of work and type of contribution expected from this role?",
     influence_question: "What level of impact is expected from this position?",
     remote_question: "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
+    role_type_question: "Is this a new role or a back-fill?",
+    key_people_question: "Who are the key people this role will be expected to work with to achieve results?",
     city_question: "What is the <b>office address</b> for this role?",
     
     // option texts
@@ -337,6 +339,21 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       junior: "Junior/Some experience required",
       mid_level: "Mid-level/Solid experience required",
       senior: "Senior/Extensive experience and proven expertise required",
+    },
+    
+    role_type_options: {
+      new_role: "New role",
+      backfill: "Backfill",
+    },
+    
+    key_people_options: {
+      working_independently: "Working independently: Work on their own, not much interactions with others needed.",
+      direct_team: "Direct Team: Their immediate teammates or direct manager.",
+      cross_team: "Cross-Team/Cross-Functional/Cross-departmental Colleagues: Their colleagues in other teams, functions, departments within the company.",
+      company_leadership: "Company Leadership: Team Leaders, Department Heads, Directors, VPs, C-Level Executives.",
+      external_customers: "External Customers, Clients and End-users: People who use or potentially use our product or service.",
+      external_partners: "External Partners & Vendors: External parties that we work with.",
+      external_stakeholders: "External Stakeholders: Such as external investors.",
     },
     
     percentage_options: {
