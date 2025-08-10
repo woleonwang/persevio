@@ -46,7 +46,7 @@ const TalentChat = () => {
   const fetchChatInstance = async () => {
     setIsLoadingInstance(true);
     const { code, data } = await Get(
-      `/api/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`
+      `/api/public/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`
     );
     if (code === 0) {
       setChatInstance(data[chatType]);
