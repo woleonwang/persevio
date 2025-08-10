@@ -17,6 +17,7 @@ export type TExtraTagName =
   | "extract-high-level-responsibility"
   | "extract-day-to-day-tasks"
   | "extract-icp"
+  | "success-metric"
   | "current-round-evaluation"
   | TDoneTag
   // 前端生成

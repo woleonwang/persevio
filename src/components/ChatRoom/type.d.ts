@@ -27,6 +27,7 @@ export type TExtraTagName =
   | "extract-high-level-responsibility"
   | "extract-day-to-day-tasks"
   | "extract-icp"
+  | "success-metric"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面

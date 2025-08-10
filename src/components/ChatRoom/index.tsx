@@ -152,7 +152,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [chatbotOptionsModalOpen, setChatbotOptionsModalOpen] = useState(false);
 
   const [selectOptionsType, setSelectOptionsType] = useState<
-    "high_level_responsibility" | "day_to_day_tasks" | "icp"
+    "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
 
@@ -551,6 +551,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
+      },
+      block: true,
+    },
+    {
+      key: "success-metric",
+      title: t("extract_success_metric"),
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("success-metric");
       },
       block: true,
     },

@@ -311,6 +311,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     extract_high_level_responsibility: "Edit Key Responsibilities",
     extract_day_to_day_tasks: "Edit Day-to-Day Tasks",
     extract_icp: "Define Candidate Assessment Criteria",
+    extract_success_metric: "Edit Success Metrics",
 
     high_level_responsibility: "Key Responsibilities",
     day_to_day_tasks: "Day-to-Day Tasks",
@@ -520,8 +521,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please choose or modify the responsibilities to align with your expectations.",
     day_to_day_alert:
       "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
+    success_metric_alert: "Please select or adjust the success metrics to align with your expectations.",
     core_responsibility: "Core Responsibility",
     secondary_responsibility: "Secondary Responsibility",
+    primary_metric: "Primary Metric",
+    secondary_metric: "Secondary Metric",
   },
 
   profile: {

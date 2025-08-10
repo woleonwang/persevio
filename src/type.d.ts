@@ -42,6 +42,7 @@ interface IJob {
   day_to_day_tasks_json: string;
   icp_json: string;
   interview_plan_json: string;
+  success_metrics_json: string;
 
   chatbot_options: {
     allow_salary: string;

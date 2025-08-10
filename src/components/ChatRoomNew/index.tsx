@@ -102,7 +102,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     useState<string>("");
 
   const [selectOptionsType, setSelectOptionsType] = useState<
-    "high_level_responsibility" | "day_to_day_tasks" | "icp"
+    "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
 
@@ -288,6 +288,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       handler: async () => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
+      },
+      style: "block-button",
+    },
+    {
+      key: "success-metric",
+      title: t("extract_success_metric"),
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("success-metric");
       },
       style: "block-button",
     },
@@ -1150,6 +1159,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               high_level_responsibility: t("extract_high_level_responsibility"),
               day_to_day_tasks: t("extract_day_to_day_tasks"),
               icp: t("extract_icp"),
+              "success-metric": t("extract_success_metric"),
             }[selectOptionsType ?? "icp"]
           }
           closable={false}

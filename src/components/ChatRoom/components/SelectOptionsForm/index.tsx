@@ -8,7 +8,11 @@ import { parseJSON } from "../../../../utils";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-  type: "high_level_responsibility" | "day_to_day_tasks" | "icp";
+  type:
+    | "high_level_responsibility"
+    | "day_to_day_tasks"
+    | "icp"
+    | "success-metric";
   job: IJob;
   onClose: () => void;
   onOk: (result: string) => void;
@@ -23,6 +27,7 @@ type TGroup = {
   title: string;
   options?: TOption[];
   subGroups?: TSubGroup[];
+  description?: string;
 };
 
 type TOption = {
@@ -129,6 +134,31 @@ const SelectOptionsForm = (props: IProps) => {
             });
           }
         });
+      } else if (type === "success-metric") {
+        const successMetrics: {
+          outcome: string;
+          observation: string;
+          measurements: string[];
+        }[] = parseJSON(job.success_metrics_json).success_metrics ?? [];
+
+        console.log("a:", successMetrics);
+        successMetrics.forEach((metric) => {
+          const groupOptions: TOption[] = [];
+          metric.measurements.forEach((measurement) => {
+            const uuid = uuidV4();
+            form.setFieldsValue({
+              [`${uuid}_content`]: measurement,
+            });
+            groupOptions.push({
+              uuid,
+            });
+          });
+          groups.push({
+            title: metric.outcome,
+            options: groupOptions,
+            description: metric.observation,
+          });
+        });
       }
 
       setGroups(groups);
@@ -148,7 +178,9 @@ const SelectOptionsForm = (props: IProps) => {
     const checkGroup = (group: TSubGroup): boolean => {
       return group.options.every((option) => {
         return (
-          (type === "icp" || type === "high_level_responsibility"
+          (type === "icp" ||
+          type === "high_level_responsibility" ||
+          type === "success-metric"
             ? !values[`${option.uuid}_type`]
             : !values[`${option.uuid}_checked`]) ||
           !!values[`${option.uuid}_content`]
@@ -166,7 +198,9 @@ const SelectOptionsForm = (props: IProps) => {
 
     const existsSelected = (group: TSubGroup): boolean => {
       return !!group.options.find((option) => {
-        return type === "icp" || type === "high_level_responsibility"
+        return type === "icp" ||
+          type === "high_level_responsibility" ||
+          type === "success-metric"
           ? values[`${option.uuid}_type`]
           : values[`${option.uuid}_checked`];
       });
@@ -227,6 +261,13 @@ const SelectOptionsForm = (props: IProps) => {
                   >
                     <Checkbox style={{ marginRight: 12 }} />
                   </Form.Item>
+                ) : type === "success-metric" ? (
+                  <Form.Item name={`${option.uuid}_type`}>
+                    {genRadioGroup(option, [
+                      t("primary_metric"),
+                      t("secondary_metric"),
+                    ])}
+                  </Form.Item>
                 ) : (
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Form.Item name={`${option.uuid}_type`}>
@@ -285,6 +326,10 @@ const SelectOptionsForm = (props: IProps) => {
             message={
               type === "high_level_responsibility"
                 ? t("high_level_responsibility_alert")
+                : type === "day_to_day_tasks"
+                ? t("day_to_day_alert")
+                : type === "success-metric"
+                ? t("success_metric_alert")
                 : t("day_to_day_alert")
             }
             type="success"
@@ -307,6 +352,20 @@ const SelectOptionsForm = (props: IProps) => {
                   }}
                 >
                   {group.title}
+                </div>
+              )}
+              {group.description && type === "success-metric" && (
+                <div
+                  style={{
+                    fontSize: 14,
+                    color: "#666",
+                    marginBottom: 15,
+                    marginTop: 5,
+                    paddingLeft: 6,
+                    fontStyle: "italic",
+                  }}
+                >
+                  {group.description}
                 </div>
               )}
               {group.options ? (
@@ -372,6 +431,37 @@ const SelectOptionsForm = (props: IProps) => {
                         .filter(Boolean)
                         .join("\n\n")}`
                   )
+                  .join("\n\n");
+                onOk(result);
+              } else if (type === "success-metric") {
+                const result = groups
+                  .filter((group) => {
+                    return !!(group.options ?? []).find(
+                      (option) => values[`${option.uuid}_type`]
+                    );
+                  })
+                  .map((group) => {
+                    const selectedOptions = (group.options ?? [])
+                      .map((option) => {
+                        return values[`${option.uuid}_type`]
+                          ? `- ${values[`${option.uuid}_content`]} - **${
+                              values[`${option.uuid}_type`]
+                            }**`
+                          : "";
+                      })
+                      .filter(Boolean);
+
+                    if (selectedOptions.length > 0) {
+                      let groupResult = `### ${group.title}`;
+                      if (group.description) {
+                        groupResult += `\n\n${group.description}`;
+                      }
+                      groupResult += `\n\n${selectedOptions.join("\n\n")}`;
+                      return groupResult;
+                    }
+                    return "";
+                  })
+                  .filter(Boolean)
                   .join("\n\n");
                 onOk(result);
               } else {
