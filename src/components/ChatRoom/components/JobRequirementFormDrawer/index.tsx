@@ -377,16 +377,23 @@ const JobRequirementFormDrawer = (props: IProps) => {
           question: t("key_people_question"),
           options: [
             {
-              value: "working_independently",
+              value: t("key_people_options.working_independently"),
               label: (
                 <div>
-                  <b>{t("key_people_options.working_independently").split("：")[0]}：</b>
+                  <b>
+                    {
+                      t("key_people_options.working_independently").split(
+                        "："
+                      )[0]
+                    }
+                    ：
+                  </b>
                   {t("key_people_options.working_independently").split("：")[1]}
                 </div>
               ),
             },
             {
-              value: "direct_team",
+              value: t("key_people_options.direct_team"),
               label: (
                 <div>
                   <b>{t("key_people_options.direct_team").split("：")[0]}：</b>
@@ -395,7 +402,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               ),
             },
             {
-              value: "cross_team",
+              value: t("key_people_options.cross_team"),
               label: (
                 <div>
                   <b>{t("key_people_options.cross_team").split("：")[0]}：</b>
@@ -404,37 +411,52 @@ const JobRequirementFormDrawer = (props: IProps) => {
               ),
             },
             {
-              value: "company_leadership",
+              value: t("key_people_options.company_leadership"),
               label: (
                 <div>
-                  <b>{t("key_people_options.company_leadership").split("：")[0]}：</b>
+                  <b>
+                    {t("key_people_options.company_leadership").split("：")[0]}
+                    ：
+                  </b>
                   {t("key_people_options.company_leadership").split("：")[1]}
                 </div>
               ),
             },
             {
-              value: "external_customers",
+              value: t("key_people_options.external_customers"),
               label: (
                 <div>
-                  <b>{t("key_people_options.external_customers").split("：")[0]}：</b>
+                  <b>
+                    {t("key_people_options.external_customers").split("：")[0]}
+                    ：
+                  </b>
                   {t("key_people_options.external_customers").split("：")[1]}
                 </div>
               ),
             },
             {
-              value: "external_partners",
+              value: t("key_people_options.external_partners"),
               label: (
                 <div>
-                  <b>{t("key_people_options.external_partners").split("：")[0]}：</b>
+                  <b>
+                    {t("key_people_options.external_partners").split("：")[0]}：
+                  </b>
                   {t("key_people_options.external_partners").split("：")[1]}
                 </div>
               ),
             },
             {
-              value: "external_stakeholders",
+              value: t("key_people_options.external_stakeholders"),
               label: (
                 <div>
-                  <b>{t("key_people_options.external_stakeholders").split("：")[0]}：</b>
+                  <b>
+                    {
+                      t("key_people_options.external_stakeholders").split(
+                        "："
+                      )[0]
+                    }
+                    ：
+                  </b>
                   {t("key_people_options.external_stakeholders").split("：")[1]}
                 </div>
               ),
