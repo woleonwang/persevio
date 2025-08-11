@@ -1,6 +1,10 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
-export type TDoneTag = "jrd-done" | "jd-done" | "interview-plan-done";
+export type TDoneTag =
+  | "jrd-done"
+  | "intake-done"
+  | "jd-done"
+  | "interview-plan-done";
 
 export type TExtraTagName =
   // 后端生成

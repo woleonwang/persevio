@@ -429,6 +429,15 @@ const ChatRoom: React.FC<IProps> = (props) => {
       },
     },
     {
+      key: "intake-done",
+      title: t("view_jrd"),
+      handler: () => {
+        onNextTask
+          ? onNextTask()
+          : onChangeTab?.("info", { docType: "requirement" });
+      },
+    },
+    {
       key: "talent-evaluate-result",
       title: t("view_talent"),
       handler: (tag) => {
@@ -830,6 +839,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           (
             [
               "jrd-done",
+              "intake-done",
               "jd-done",
               "targets-done",
               "compensation-details-done",

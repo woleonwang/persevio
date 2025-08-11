@@ -113,7 +113,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const [createTeamModelOpen, setCreateTeamModelOpen] = useState(false);
   const [teams, setTeams] = useState<TTeam[]>([]);
 
-  const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
 
   useEffect(() => {
     form.resetFields();
@@ -234,7 +234,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
               value: t("percentage_options.team_management"),
               label: (
                 <div>
-                  <b>{t("percentage_options.team_management").split("：")[0]}：</b>
+                  <b>
+                    {t("percentage_options.team_management").split("：")[0]}：
+                  </b>
                   {t("percentage_options.team_management").split("：")[1]}
                 </div>
               ),
@@ -290,7 +292,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
               value: "influence_4",
               label: (
                 <>
-                  <b>{t("influence_options.cross_functional").split("**")[1]}</b>
+                  <b>
+                    {t("influence_options.cross_functional").split("**")[1]}
+                  </b>
                   {t("influence_options.cross_functional").split("**")[2]}
                 </>
               ),

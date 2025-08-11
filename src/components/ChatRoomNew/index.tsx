@@ -312,6 +312,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       handler: () => viewDoc?.("job-requirement"),
     },
     {
+      key: "intake-done",
+      title: t("view_jrd"),
+      handler: () => viewDoc?.("job-requirement"),
+    },
+    {
       key: "jd-done",
       title: t("view_jd"),
       handler: () => viewDoc?.("job-description"),
@@ -515,7 +520,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         // 下一步 按钮
         (item.content.metadata.extra_tags ?? []).forEach((tag) => {
           (
-            ["jd-done", "interview-plan-done", "jrd-done"] as TDoneTag[]
+            [
+              "jd-done",
+              "interview-plan-done",
+              "jrd-done",
+              "intake-done",
+            ] as TDoneTag[]
           ).forEach((step) => {
             if (step === tag.name) {
               const nextExtraTags = getNextStepsExtraTags(job);
