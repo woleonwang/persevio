@@ -19,6 +19,7 @@ import CompanyKnowledge from "./pages/company";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
 import Talent from "./pages/talent";
+import SnakeGame from "./pages/snake";
 
 import SignUpCandidate from "./pages/candidate/signup";
 import SignInCandidate from "./pages/candidate/signin";
@@ -79,6 +80,8 @@ createRoot(document.getElementById("root")!).render(
         <Routes>
           {/** 首页 */}
           <Route path="/" element={<Home />} />
+          {/** 贪吃蛇游戏 */}
+          <Route path="/snake" element={<SnakeGame />} />
           {/** 职位列表 */}
           <Route path="/jobs" element={<PublicJobs />} />
           {/** 分享职位详情文档 */}
