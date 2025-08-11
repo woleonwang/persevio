@@ -340,38 +340,6 @@ const JobRequirementFormDrawer = (props: IProps) => {
           required: true,
         },
         {
-          key: "remote",
-          type: "select",
-          question: t("remote_question"),
-          options: [
-            {
-              value: "onsite",
-              label: t("on_site"),
-            },
-            {
-              value: "hybrid",
-              label: t("hybrid"),
-            },
-            {
-              value: "remote",
-              label: t("remote"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "city",
-          type: "city_and_address",
-          question: t("city_question"),
-          dependencies: [
-            {
-              questionKey: "remote",
-              valueKey: ["onsite", "hybrid"],
-            },
-          ],
-          required: true,
-        },
-        {
           key: "key_people",
           type: "percentage",
           question: t("key_people_question"),
@@ -460,6 +428,38 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   {t("key_people_options.external_stakeholders").split("：")[1]}
                 </div>
               ),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "remote",
+          type: "select",
+          question: t("remote_question"),
+          options: [
+            {
+              value: "onsite",
+              label: t("on_site"),
+            },
+            {
+              value: "hybrid",
+              label: t("hybrid"),
+            },
+            {
+              value: "remote",
+              label: t("remote"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "city",
+          type: "city_and_address",
+          question: t("city_question"),
+          dependencies: [
+            {
+              questionKey: "remote",
+              valueKey: ["onsite", "hybrid"],
             },
           ],
           required: true,
