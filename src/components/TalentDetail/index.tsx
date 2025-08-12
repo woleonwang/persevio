@@ -31,6 +31,7 @@ import FeedbackSummary from "./components/FeedbackSummary";
 import FeedbackSignal from "./components/FeedbackSignal";
 import FeedbackCustomizeSignal from "./components/FeedbackCustomizeSignal";
 import usePublicJob from "@/hooks/usePublicJob";
+import EvaluateResult from "./components/EvaluateResult";
 
 const { Title, Text } = Typography;
 
@@ -94,8 +95,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     // 初始化
     if (job && talent) {
       const urlParams = new URLSearchParams(window.location.search);
-      const initTab = (urlParams.get("tab") ??
-        "interview_designer") as TTalentChatType;
+      const initTab = (urlParams.get("tab") ?? "resume") as TTalentChatType;
       setTabKey(initTab);
       if (initTab === "interview_designer") {
         const initRound = urlParams.get("round") ?? "1";
@@ -261,6 +261,10 @@ const TalentDetail: React.FC<IProps> = (props) => {
             style={{ height: "100%" }}
             items={[
               {
+                key: "resume",
+                label: "简历详情",
+              },
+              {
                 key: "interview_designer",
                 label: "推荐面试问题",
               },
@@ -273,6 +277,27 @@ const TalentDetail: React.FC<IProps> = (props) => {
         </div>
         {/* 右侧内容区 */}
         <div className={styles.right}>
+          {tabKey === "resume" && (
+            <div className={styles.resumeContainer}>
+              <div
+                style={{
+                  flex: "auto",
+                  overflow: "auto",
+                  padding: "0 24px",
+                }}
+              >
+                <MarkdownContainer content={talent.parsed_content || ""} />
+              </div>
+              {talent.evaluate_result.evaluation_summary && (
+                <div className={styles.evaluateResultContainer}>
+                  <div className={styles.evaluateResultTitle}>
+                    候选人评估报告
+                  </div>
+                  <EvaluateResult result={talent.evaluate_result} />
+                </div>
+              )}
+            </div>
+          )}
           {tabKey === "interview_designer" && (
             <>
               <Title level={4} style={{ marginBottom: 24 }}>

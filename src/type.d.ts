@@ -260,15 +260,65 @@ interface TInterviewFeedback {
   updated_at: string;
 }
 
+type TMatchLevel =
+  | "not_a_match"
+  | "recommend_with_reservations"
+  | "match_pending_verification"
+  | "match"
+  | "strong_match"
+  | "needs_verification";
+
+type TMeetType = "met" | "not_met" | "not_sure";
+
+type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
+
+type TPriority = "minimum" | "big_plus" | "plus";
+
+type TEvaluation = {
+  talent: {
+    name: string;
+  };
+
+  overall_match_level: TMatchLevel;
+  competency_match: TMatchLevel;
+  logistic_other_match: TMatchLevel;
+  suitability_score: number;
+
+  job_requirements_met: {
+    minimum_requirements: string;
+    big_plus_requirements: string;
+    plus_requirements: string;
+  };
+
+  evaluation_summary: {
+    strengths: string[];
+    potential_gaps: string[];
+    career_motivations: string[];
+  };
+
+  evaluation: {
+    criterion: string;
+    judgement: TMeetType;
+    confidence_level: TConfidenceLevel;
+    points_awarded: number;
+    reasons: {
+      reason: string;
+      evidences: string[];
+    }[];
+    priority: TPriority;
+  }[];
+};
+
 type TTalent = {
   id: number;
   name: string;
   status: string;
   feedback: string;
   parsed_content: string;
+  evaluate_result: TEvaluation;
 };
 
-type TTalentChatType = "interview_designer" | "interview_feedback";
+type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
 
 type TInterviewPlanDetail = {
   rounds: {

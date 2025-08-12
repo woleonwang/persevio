@@ -1,3 +1,4 @@
+import { parseJSON } from "@/utils";
 import { Get } from "@/utils/request";
 import { message } from "antd";
 import { useEffect, useState } from "react";
@@ -23,8 +24,11 @@ const useTalent = () => {
     );
 
     if (code === 0) {
-      const talent: TTalent = data.talent;
-      setTalent(talent);
+      const talent = data.talent;
+      setTalent({
+        ...talent,
+        evaluate_result: parseJSON(talent.evaluate_result),
+      });
     } else {
       message.error("Get talent failed");
     }

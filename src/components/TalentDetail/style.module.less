@@ -1,3 +1,5 @@
+@primary-color: #1fac6a;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -33,6 +35,29 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.resumeContainer {
+  overflow: hidden;
+  display: flex;
+}
+
+.evaluateResultContainer {
+  width: 50%;
+  flex: none;
+  margin-left: 20px;
+  background-color: white;
+  border-radius: 16px;
+  border: 1px solid @primary-color;
+  overflow: auto;
+}
+
+.evaluateResultTitle {
+  border-bottom: 1px dashed @primary-color;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: @primary-color;
 }
 
 .designerHeader {
