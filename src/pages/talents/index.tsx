@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 
 const PAGE_SIZE = 10;
 
-const Candidates: React.FC = () => {
+const Talents: React.FC = () => {
   const navigate = useNavigate();
   const [talents, setTalents] = useState<ITalentListItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -208,4 +208,4 @@ const Candidates: React.FC = () => {
   );
 };
 
-export default Candidates;
+export default Talents;

@@ -109,8 +109,8 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
     },
     {
-      title: t("menu.candidates"),
-      path: "/app/candidates",
+      title: t("menu.talents"),
+      path: "/app/talents",
       img: <FileDoneOutlined />,
     },
     {

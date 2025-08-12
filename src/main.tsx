@@ -39,7 +39,7 @@ import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
-import Candidates from "./pages/candidates";
+import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import Interviewer from "./pages/staff/interviewer";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -158,7 +158,7 @@ createRoot(document.getElementById("root")!).render(
               element={<AdminJobApplies />}
             />
             {/* 候选人列表 */}
-            <Route path="/app/candidates" element={<Candidates />} />
+            <Route path="/app/talents" element={<Talents />} />
           </Route>
 
           <Route path="/candidate" element={<CandidateApp />}>

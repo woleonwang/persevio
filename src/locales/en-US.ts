@@ -167,7 +167,7 @@ export default {
     company: "Company Info",
     settings: "Settings",
     interviewer: "Interviewer",
-    candidates: "Candidates",
+    talents: "Talents",
 
     home: "Home",
     profile: "Profile",
@@ -322,18 +322,21 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
-    
+
     // basic_info question texts
     team_question: "Which team will this role join?",
     manager_question: "Who will this role report to?",
     employee_type_question: "What is the seniority of this role?",
-    percentage_question: "What is the primary nature of work and type of contribution expected from this role?",
+    percentage_question:
+      "What is the primary nature of work and type of contribution expected from this role?",
     influence_question: "What level of impact is expected from this position?",
-    remote_question: "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
+    remote_question:
+      "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
     role_type_question: "Is this a new role or a back-fill?",
-    key_people_question: "Who are the key people this role will be expected to work with to achieve results?",
+    key_people_question:
+      "Who are the key people this role will be expected to work with to achieve results?",
     city_question: "What is the <b>office address</b> for this role?",
-    
+
     // option texts
     employee_level: {
       internship: "Internship",
@@ -342,38 +345,54 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       mid_level: "Mid-level/Solid experience required",
       senior: "Senior/Extensive experience and proven expertise required",
     },
-    
+
     role_type_options: {
       new_role: "New role",
       backfill: "Backfill",
     },
-    
+
     key_people_options: {
-      working_independently: "Working independently: Work on their own, not much interactions with others needed.",
+      working_independently:
+        "Working independently: Work on their own, not much interactions with others needed.",
       direct_team: "Direct Team: Their immediate teammates or direct manager.",
-      cross_team: "Cross-Team/Cross-Functional/Cross-departmental Colleagues: Their colleagues in other teams, functions, departments within the company.",
-      company_leadership: "Company Leadership: Team Leaders, Department Heads, Directors, VPs, C-Level Executives.",
-      external_customers: "External Customers, Clients and End-users: People who use or potentially use our product or service.",
-      external_partners: "External Partners & Vendors: External parties that we work with.",
-      external_stakeholders: "External Stakeholders: Such as external investors.",
+      cross_team:
+        "Cross-Team/Cross-Functional/Cross-departmental Colleagues: Their colleagues in other teams, functions, departments within the company.",
+      company_leadership:
+        "Company Leadership: Team Leaders, Department Heads, Directors, VPs, C-Level Executives.",
+      external_customers:
+        "External Customers, Clients and End-users: People who use or potentially use our product or service.",
+      external_partners:
+        "External Partners & Vendors: External parties that we work with.",
+      external_stakeholders:
+        "External Stakeholders: Such as external investors.",
     },
-    
+
     percentage_options: {
-      execution: "Execution Level: Primarily responsible for completing specific, well-defined tasks assigned by a manager.",
-      project: "Project/Objective Ownership: Drives a complete project from initiation to delivery, or achieves a specific business objective, often requiring cross-functional coordination and resource integration.",
-      team_management: "People/Team Management: Accountable for the overall results of an entire team. Responsibilities include daily team management, talent development, performance evaluation, recruitment, and motivation to ensure the team effectively collaborates to meet goals.",
-      strategy: "Strategic Planning & Development: Responsible for, or deeply involved in, the discussion, formulation, and implementation of long-term development strategies and business plans for the company or a specific business line.",
+      execution:
+        "Execution Level: Primarily responsible for completing specific, well-defined tasks assigned by a manager.",
+      project:
+        "Project/Objective Ownership: Drives a complete project from initiation to delivery, or achieves a specific business objective, often requiring cross-functional coordination and resource integration.",
+      team_management:
+        "People/Team Management: Accountable for the overall results of an entire team. Responsibilities include daily team management, talent development, performance evaluation, recruitment, and motivation to ensure the team effectively collaborates to meet goals.",
+      strategy:
+        "Strategic Planning & Development: Responsible for, or deeply involved in, the discussion, formulation, and implementation of long-term development strategies and business plans for the company or a specific business line.",
     },
-    
+
     influence_options: {
-      task_level: "**Task-Level Impact:** This role is confined to efficiently and accurately completing assigned, specific tasks. Success is measured by the quality and efficiency of task completion.",
-      project_level: "**Project-Level Impact:** This role is a key contributor to, or directly responsible for, the success of specific projects. The quality of their work directly determines whether projects are delivered on time, within quality standards, and on budget.",
-      team_level: "**Team-Level Impact:** This role is responsible for, or a primary contributor to, the overall performance and goals of their team. Their output significantly influences the team's ultimate achievements.",
-      cross_functional: "**Cross-Functional/Department-Level Impact:** This role leads or coordinates collaboration across multiple teams or an entire department. Their effectiveness directly impacts the efficiency of cross-functional synergy and the achievement of broader departmental goals.",
-      business_level: "**Business/Product-Line Level Impact:** The decisions and outcomes from this role directly shape the market performance and commercial success of a specific product or business line, directly influencing its revenue, market share, or user growth.",
-      company_level: "**Company-Level Impact:** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
+      task_level:
+        "**Task-Level Impact:** This role is confined to efficiently and accurately completing assigned, specific tasks. Success is measured by the quality and efficiency of task completion.",
+      project_level:
+        "**Project-Level Impact:** This role is a key contributor to, or directly responsible for, the success of specific projects. The quality of their work directly determines whether projects are delivered on time, within quality standards, and on budget.",
+      team_level:
+        "**Team-Level Impact:** This role is responsible for, or a primary contributor to, the overall performance and goals of their team. Their output significantly influences the team's ultimate achievements.",
+      cross_functional:
+        "**Cross-Functional/Department-Level Impact:** This role leads or coordinates collaboration across multiple teams or an entire department. Their effectiveness directly impacts the efficiency of cross-functional synergy and the achievement of broader departmental goals.",
+      business_level:
+        "**Business/Product-Line Level Impact:** The decisions and outcomes from this role directly shape the market performance and commercial success of a specific product or business line, directly influencing its revenue, market share, or user growth.",
+      company_level:
+        "**Company-Level Impact:** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
     },
-    
+
     reason: "Reason for creating this role",
     back_fill: "Back-fill",
     new_role: "New role",
@@ -522,7 +541,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please choose or modify the responsibilities to align with your expectations.",
     day_to_day_alert:
       "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
-    success_metric_alert: "Please select or adjust the success metrics to align with your expectations.",
+    success_metric_alert:
+      "Please select or adjust the success metrics to align with your expectations.",
     core_responsibility: "Core Responsibility",
     secondary_responsibility: "Secondary Responsibility",
     primary_metric: "Primary Metric",

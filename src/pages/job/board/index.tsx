@@ -1,4 +1,13 @@
-import { Avatar, Badge, Button, message, Spin, Switch, Upload } from "antd";
+import {
+  Avatar,
+  Badge,
+  Button,
+  message,
+  Spin,
+  Switch,
+  Tooltip,
+  Upload,
+} from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -138,18 +147,23 @@ const JobBoard = () => {
             >
               发布到 Persevio 招聘网站
             </span>
-            <Switch
-              checked={!!job.posted_at}
-              onChange={async (checked) => {
-                const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
-                  open: checked ? "1" : "0",
-                });
-                if (code === 0) {
-                  message.success("操作成功");
-                  fetchJob();
-                }
-              }}
-            />
+            <Tooltip
+              title={!job.jd_doc_id ? "请先完成职位描述(JD)任务" : undefined}
+            >
+              <Switch
+                checked={!!job.posted_at}
+                onChange={async (checked) => {
+                  const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+                    open: checked ? "1" : "0",
+                  });
+                  if (code === 0) {
+                    message.success("操作成功");
+                    fetchJob();
+                  }
+                }}
+                disabled={!job.jd_doc_id}
+              />
+            </Tooltip>
           </div>
 
           <ShareAltOutlined
