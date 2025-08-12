@@ -316,6 +316,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     team_question: "这个职位将加入哪个团队？",
     manager_question: "这个职位的直属领导是谁?",
     employee_type_question: "这个职位的级别是什么？",
+    experience_years_question: "这个职位需要多少年的工作经验？",
     percentage_question: "这个职位的工作性质和贡献类型是什么？",
     influence_question: "这个职位将产生什么级别的影响？",
     remote_question:
@@ -738,6 +739,13 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   loading: "加载中...",
   uploading: "上传中...",
+
+  year: "年",
+
+  numberRange: {
+    min: "最小值",
+    max: "最大值",
+  },
 
   public_jobs: {
     banner: {

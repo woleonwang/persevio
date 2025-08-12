@@ -30,6 +30,7 @@ import ManagerDetail, {
   TManangerDetailValue,
 } from "./components/ManagerDetail";
 import PercentageInput from "./components/PercentageInput";
+import NumberRange from "./components/NumberRange";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -52,6 +53,7 @@ type TQuestion = {
     | "select"
     | "textarea"
     | "number"
+    | "number_range"
     | "multiple_select"
     | "date"
     | "team"
@@ -221,6 +223,12 @@ const JobRequirementFormDrawer = (props: IProps) => {
             value: item,
             label: item,
           })),
+          required: true,
+        },
+        {
+          key: "experience_years",
+          type: "number_range",
+          question: t("experience_years_question"),
           required: true,
         },
         {
@@ -776,6 +784,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .join(",");
           }
 
+          if (question.type === "number_range") {
+            formattedValue = `${value.min} - ${value.max} ${originalT("year")}`;
+          }
+
           if (question.type === "date") {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
           }
@@ -1005,6 +1017,23 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   message: "请选择至少一个城市和地址",
                 },
               ]
+            : question.type === "number_range"
+            ? [
+                {
+                  validator(
+                    _: any,
+                    value: Record<string, number>,
+                    callback: any
+                  ) {
+                    const typedValue = value as { min?: number; max?: number };
+                    if (!typedValue.min || !typedValue.max) {
+                      callback(new Error());
+                    }
+                    callback();
+                  },
+                  message: t("required_error_message"),
+                },
+              ]
             : question.required
             ? [
                 {
@@ -1034,6 +1063,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
             mode="multiple"
             disabled={deleted}
           />
+        )}
+        {question.type === "number_range" && (
+          <NumberRange suffix={originalT("year")} />
         )}
         {question.type === "date" && <DatePicker disabled={deleted} />}
         {question.type === "base_salary" && <BaseSalaryInput />}

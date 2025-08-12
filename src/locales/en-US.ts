@@ -327,6 +327,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     team_question: "Which team will this role join?",
     manager_question: "Who will this role report to?",
     employee_type_question: "What is the seniority of this role?",
+    experience_years_question:
+      "How many years of work experience in total should this candidate have ideally",
     percentage_question:
       "What is the primary nature of work and type of contribution expected from this role?",
     influence_question: "What level of impact is expected from this position?",
@@ -773,6 +775,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   loading: "Loading...",
   uploading: "Uploading...",
+
+  year: "year(s)",
+
+  numberRange: {
+    min: "Min",
+    max: "Max",
+  },
 
   public_jobs: {
     banner: {
