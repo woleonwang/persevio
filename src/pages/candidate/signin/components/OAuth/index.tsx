@@ -5,12 +5,11 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-  fileId: number;
   jobId?: string;
 }
 
 const OAuth = (props: IProps) => {
-  const { fileId, jobId } = props;
+  const { jobId } = props;
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
@@ -25,7 +24,7 @@ const OAuth = (props: IProps) => {
 
           <div
             onClick={() => {
-              window.location.href = `/api/auth/google/login?role=candidate&file_id=${fileId}&job_id=${
+              window.location.href = `/api/auth/google/login?role=candidate&job_id=${
                 jobId ?? ""
               }`;
             }}
@@ -37,7 +36,7 @@ const OAuth = (props: IProps) => {
 
           <div
             onClick={() => {
-              window.location.href = `/api/auth/linkedin/login?role=candidate&file_id=${fileId}&job_id=${
+              window.location.href = `/api/auth/linkedin/login?role=candidate&job_id=${
                 jobId ?? ""
               }`;
             }}

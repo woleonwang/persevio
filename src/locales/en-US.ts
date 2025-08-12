@@ -771,6 +771,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   copy: "Copy",
   copied: "Copied",
 
+  loading: "Loading...",
+  uploading: "Uploading...",
+
   public_jobs: {
     banner: {
       title: "Find Your Dream Job",

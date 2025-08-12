@@ -736,6 +736,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   copy: "复制",
   copied: "复制成功",
 
+  loading: "加载中...",
+  uploading: "上传中...",
+
   public_jobs: {
     banner: {
       title: "大标题",

@@ -21,7 +21,6 @@ import Settings from "./pages/settings";
 import Talent from "./pages/talent";
 import SnakeGame from "./pages/snake";
 
-import SignUpCandidate from "./pages/candidate/signup";
 import SignInCandidate from "./pages/candidate/signin";
 
 import CandidateResume from "./pages/candidate/candidate-resume";
@@ -204,7 +203,6 @@ createRoot(document.getElementById("root")!).render(
               element={<VoiceChat />}
             />
           </Route>
-          <Route path="/signup-candidate" element={<SignUpCandidate />} />
           <Route path="/signin-candidate" element={<SignInCandidate />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
