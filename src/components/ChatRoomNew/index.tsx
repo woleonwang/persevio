@@ -25,7 +25,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import { ClipLoader, ScaleLoader } from "react-spinners";
+import { ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post, PostFormData } from "../../utils/request";
@@ -1111,30 +1111,26 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 maxRows: 16,
               }}
             />
-            {
-              <>
-                {textInputVisible && (
-                  <SendOutlined
-                    onClick={() => submit()}
-                    style={{ fontSize: 24, color: "#1FAC6A" }}
-                  />
-                )}
-                <EditOutlined
-                  onClick={() => {
-                    if (textInputVisible) {
-                      setTextInputVisible(false);
-                      setInputPlaceholder("");
-                    } else {
-                      setTextInputVisible(true);
-                      setTimeout(() => {
-                        setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                      }, 400);
-                    }
-                  }}
-                  style={{ fontSize: 24, color: "gray" }}
-                />
-              </>
-            }
+            {textInputVisible && (
+              <SendOutlined
+                onClick={() => submit()}
+                style={{ fontSize: 24, color: "#1FAC6A" }}
+              />
+            )}
+            <EditOutlined
+              onClick={() => {
+                if (textInputVisible) {
+                  setTextInputVisible(false);
+                  setInputPlaceholder("");
+                } else {
+                  setTextInputVisible(true);
+                  setTimeout(() => {
+                    setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                  }, 400);
+                }
+              }}
+              style={{ fontSize: 24, color: "gray" }}
+            />
           </div>
         </div>
 
@@ -1285,15 +1281,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               justifyContent: "center",
             }}
           >
-            {isRecording ? (
-              <ScaleLoader
-                color="#1FAC6A"
-                height={75 * Math.min(1, volume * 3) + 5}
-                width={10}
-              />
-            ) : (
-              <ClipLoader color="#1FAC6A" size={32} />
-            )}
+            <ScaleLoader
+              color="#1FAC6A"
+              height={75 * Math.min(1, volume * 3) + 5}
+              width={10}
+            />
           </div>
         </div>,
         document.body
