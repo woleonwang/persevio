@@ -11,7 +11,7 @@ import styles from "./style.module.less";
 import { Empty, Popover } from "antd";
 
 interface IProps {
-  result: TEvaluation;
+  result: TEvaluationResult;
 }
 const EvaluateResult = (props: IProps) => {
   const { result } = props;
@@ -41,7 +41,7 @@ const EvaluateResult = (props: IProps) => {
     },
   ];
 
-  const getReasoning = (result: TEvaluation) => {
+  const getReasoning = (result: TEvaluationResult) => {
     let reasoning = `Minimum Requirements: ${result.job_requirements_met?.minimum_requirements}; 
 Big Plus Requirements: ${result.job_requirements_met?.big_plus_requirements}; 
 Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;

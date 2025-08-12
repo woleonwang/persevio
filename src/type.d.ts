@@ -274,7 +274,7 @@ type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
 
 type TPriority = "minimum" | "big_plus" | "plus";
 
-type TEvaluation = {
+type TEvaluationResult = {
   talent: {
     name: string;
   };
@@ -315,7 +315,7 @@ type TTalent = {
   status: string;
   feedback: string;
   parsed_content: string;
-  evaluate_result: TEvaluation;
+  evaluate_result: TEvaluationResult;
 };
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
