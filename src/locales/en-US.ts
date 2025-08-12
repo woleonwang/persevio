@@ -167,6 +167,7 @@ export default {
     company: "Company Info",
     settings: "Settings",
     interviewer: "Interviewer",
+    candidates: "Candidates",
 
     home: "Home",
     profile: "Profile",

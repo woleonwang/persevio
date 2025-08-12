@@ -159,6 +159,7 @@ export default {
     jobs: "职位",
     company: "公司知识库",
     interviewer: "面试官",
+    candidates: "候选人",
     settings: "设置",
 
     home: "Home",

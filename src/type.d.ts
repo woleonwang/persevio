@@ -334,3 +334,17 @@ type TJobBasicInfo = {
     | "senior"
   )[];
 };
+
+interface ITalentListItem {
+  id: number;
+  name: string;
+  job_id: number;
+  job_name: string;
+  source_channel: "delivery" | "upload";
+  created_at: string;
+  updated_at: string;
+}
+
+interface ITalentListResponse {
+  candidates: ITalentListItem[];
+}
