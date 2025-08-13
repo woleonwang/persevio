@@ -645,7 +645,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   job_board: {
-    publish_to_persevio: "Publish to Persevio Recruitment Website",
+    publish_to_persevio: "Publish",
     complete_jd_first: "Please complete the Job Description (JD) task first",
     operation_success: "Operation successful",
     link_copied: "Link copied",
@@ -773,7 +773,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     feedback: "Feedback",
     accepted: "Accepted",
     rejected: "Rejected",
-    
+
     // 新增的talent页面相关翻译
     arrange_interview: "Arrange Interview",
     interview_name: "Interview Name",
@@ -798,36 +798,40 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     recommended_interview_questions: "Recommended Questions",
     fill_scorecard: "Fill Scorecard",
     round: "Round",
-    upload_resume_or_select_candidate: "You can upload a resume or select a candidate to work with me on developing an interview plan for this candidate.",
-    
+    upload_resume_or_select_candidate:
+      "You can upload a resume or select a candidate to work with me on developing an interview plan for this candidate.",
+
     // 状态相关
     status_evaluate_succeed: "Evaluation Succeeded",
     status_accepted: "Accepted",
     status_rejected: "Rejected",
-    
+
     // 日期格式
     date_format: "YYYY-MM-DD HH:mm",
-    
+
     // 其他通用文案
     loading: "Loading...",
     submit: "Submit",
     cancel: "Cancel",
-    
+
     // SelectOrUploadTalent component related
     select_candidate: "Select Candidate",
     or: "Or",
     upload_resume: "Upload Resume",
     upload_failed: "Upload failed",
     upload_succeed: "Upload succeed",
-    candidate_exists_confirm: "Candidate {{name}} already exists, please confirm if you want to continue uploading",
+    candidate_exists_confirm:
+      "Candidate {{name}} already exists, please confirm if you want to continue uploading",
 
     // TalentDetail component related
     talent_status: {
       strong_hire: "Strong Hire: Exceeds standards. High confidence.",
       hire: "Hire: Meets standards. Confident.",
       hold: "Hold: Excellent candidate, but may have mismatches in timing, level, or specific role requirements. Can be reconsidered for future positions.",
-      no_hire_underqualified: "No Hire (Underqualified): Does not meet core skill or experience level requirements.",
-      no_hire_not_a_fit: "No Hire (Not a Fit): Has required skills, but traits, work style, or motivation don't align with role/company.",
+      no_hire_underqualified:
+        "No Hire (Underqualified): Does not meet core skill or experience level requirements.",
+      no_hire_not_a_fit:
+        "No Hire (Not a Fit): Has required skills, but traits, work style, or motivation don't align with role/company.",
     },
     signal_level: {
       must_have: "Must Have",
@@ -850,16 +854,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     no_interview_plan: "No interview plan available yet",
     interview_scorecard_title: "Interview Scorecard",
     final_decision_and_reason: "Final Decision and Reason",
-    overall_recruitment_committee_recommendation: "Overall Recruitment Committee Recommendation",
+    overall_recruitment_committee_recommendation:
+      "Overall Recruitment Committee Recommendation",
     final_reason: "Final Reason",
     update_success: "Update successful",
     interview_feedback: "Interview Feedback",
     no_scorecard_filled: "No scorecard filled yet",
     pending_evaluation_signals: "Pending Evaluation Signals",
     other_observed_signals: "Other Observed Signals",
-    other_observed_signals_hint: "Used to record important behaviors observed that don't belong to the main evaluation signals",
+    other_observed_signals_hint:
+      "Used to record important behaviors observed that don't belong to the main evaluation signals",
     main_concerns_red_flags: "Main Concerns/Red Flags",
-    main_concerns_red_flags_hint: "Summary of the most important risks or negative signals observed",
+    main_concerns_red_flags_hint:
+      "Summary of the most important risks or negative signals observed",
     round_suffix: "Round",
     update_failed: "Update failed",
 
