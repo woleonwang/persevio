@@ -28,7 +28,6 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
 import enUSReact from "antd/es/locale/en_US"; // 英文
-import zhCNReact from "antd/es/locale/zh_CN"; // 中文
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import DeepAspirationsVoice from "./pages/candidate/deep-aspirations-voice";
