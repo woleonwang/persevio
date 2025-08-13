@@ -617,6 +617,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   create_job: {
     new_role: "Open a new role",
     job_name: "Job Title",
+    viona_title: "Viona, AI recruiter.",
+    ready_message: "Ready to open a new role? Simply tell me the job title.",
+    share_message: "You can share this link to invite your colleagues to this conversation.",
+    share_link: "Share Link",
+    copy_success: "Copied successfully",
+    reply_placeholder: "Reply to Viona",
+    create_success: "Create job succeed"
   },
 
   coworker: {

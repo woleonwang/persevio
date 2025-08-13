@@ -3,6 +3,7 @@ import { Avatar, Button, Input, message } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import classnames from "classnames";
+import { useTranslation } from "react-i18next";
 
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
@@ -24,8 +25,8 @@ const JobCreate = (props: IProps) => {
 
   const navigate = useNavigate();
 
-  // const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`create_job.${key}`);
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`create_job.${key}`);
 
   const createJob = async () => {
     if (jobName !== "") {
@@ -36,7 +37,7 @@ const JobCreate = (props: IProps) => {
         name: jobName,
       });
       if (code === 0) {
-        message.success("Create job succeed");
+        message.success(t("create_success"));
         fetchJobs();
         navigate(`/app/jobs/${data.job_id}/chat/job-requirement`);
       }
@@ -49,7 +50,7 @@ const JobCreate = (props: IProps) => {
       <div className={classnames("flex-center")}>
         <Avatar icon={<img src={VionaAvatar} />} size={64} />
         <div style={{ marginLeft: 12 }}>
-          <b style={{ fontSize: 32 }}>Viona, AI 招聘专员</b>
+          <b style={{ fontSize: 32 }}>{t("viona_title")}</b>
         </div>
       </div>
 
@@ -57,7 +58,7 @@ const JobCreate = (props: IProps) => {
         className={classnames("flex-center", "fs-36-b")}
         style={{ marginTop: 24 }}
       >
-        准备好创建职位了吗？请告诉我职位名称吧！
+        {t("ready_message")}
       </div>
 
       {!share && (
@@ -65,7 +66,7 @@ const JobCreate = (props: IProps) => {
           className={classnames("flex-center", "gap-12")}
           style={{ marginTop: 24, fontSize: 20 }}
         >
-          您也可以分享链接，与小伙伴一起定义职位需求
+          {t("share_message")}
           <Button
             type="primary"
             onClick={async () => {
@@ -75,10 +76,10 @@ const JobCreate = (props: IProps) => {
                 "token"
               )}&share=1`;
               await copy(url);
-              message.success("复制成功");
+              message.success(t("copy_success"));
             }}
           >
-            分享链接
+            {t("share_link")}
           </Button>
         </div>
       )}
@@ -93,7 +94,7 @@ const JobCreate = (props: IProps) => {
             />
           }
           style={{ borderRadius: 32, width: 720, height: 64, paddingLeft: 32 }}
-          placeholder="回复 Viona"
+          placeholder={t("reply_placeholder")}
           onPressEnter={createJob}
           value={jobName}
           onChange={(e) => setJobName(e.target.value)}
