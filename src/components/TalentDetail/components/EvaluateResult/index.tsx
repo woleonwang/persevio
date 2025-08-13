@@ -22,19 +22,19 @@ const EvaluateResult = (props: IProps) => {
 
   const groupedEvaluations = [
     {
-      title: originalT(`ideal_profile.minimum`),
+      title: t("ideal_profile.minimum"),
       items: (result.evaluation ?? []).filter(
         (item) => item.priority === "minimum"
       ),
     },
     {
-      title: originalT(`ideal_profile.big_plus`),
+      title: t("ideal_profile.big_plus"),
       items: (result.evaluation ?? []).filter(
         (item) => item.priority === "big_plus"
       ),
     },
     {
-      title: originalT(`ideal_profile.plus`),
+      title: t("ideal_profile.plus"),
       items: (result.evaluation ?? []).filter(
         (item) => item.priority === "plus"
       ),
@@ -47,21 +47,21 @@ ${t("ideal_profile.big_plus")}: ${result.job_requirements_met?.big_plus_requirem
 ${t("ideal_profile.plus")}: ${result.job_requirements_met?.plus_requirements}`;
 
     if (result.evaluation_summary?.strengths?.length > 0) {
-      reasoning += `\n\n${t("strengths")}:`;
+      reasoning += `\n\n${t("ideal_profile.strengths")}:`;
       result.evaluation_summary.strengths.forEach((strength: string) => {
         reasoning += `\n- ${strength}`;
       });
     }
 
     if (result.evaluation_summary?.potential_gaps?.length > 0) {
-      reasoning += `\n\n${t("potential_gaps")}:`;
+      reasoning += `\n\n${t("ideal_profile.potential_gaps")}:`;
       result.evaluation_summary.potential_gaps.forEach((gap: string) => {
         reasoning += `\n- ${gap}`;
       });
     }
 
     if (result.evaluation_summary?.career_motivations?.length > 0) {
-      reasoning += `\n\n${t("career_motivations")}:`;
+      reasoning += `\n\n${t("ideal_profile.career_motivations")}:`;
       result.evaluation_summary.career_motivations.forEach(
         (motivation: string) => {
           reasoning += `\n- ${motivation}`;
