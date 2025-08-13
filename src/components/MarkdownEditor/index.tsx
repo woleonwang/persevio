@@ -28,7 +28,11 @@ const MarkdownEditor: React.FC<IProps> = (props) => {
   const markdownRef = useRef<MDXEditorMethods>(null);
 
   useEffect(() => {
-    markdownRef.current?.setMarkdown(value.replaceAll("<br>", "<br/>"));
+    markdownRef.current?.setMarkdown(
+      value
+        .replaceAll("<br>", "<br/>")
+        .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())
+    );
   }, [value]);
 
   return (

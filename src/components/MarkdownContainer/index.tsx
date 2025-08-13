@@ -17,11 +17,13 @@ const MarkdownContainer = (props: IProps) => {
         remarkPlugins={[remarkGfm]}
         {...restProps}
       >
-        {content.replaceAll(
-          "|\n|",
-          `|
+        {content
+          .replaceAll(
+            "|\n|",
+            `|
   |`
-        )}
+          )
+          .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())}
       </Markdown>
     </div>
   );
