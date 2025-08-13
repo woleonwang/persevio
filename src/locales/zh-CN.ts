@@ -186,6 +186,23 @@ export default {
     make_concise: "写得更简洁些。",
     confirm: "确认",
 
+    // 新增的国际化键值
+    error_message: "Viona 出现了问题，请重试。",
+    quota_exhausted: "您的配额已耗尽。",
+    get_job_failed: "获取工作信息失败。",
+    send_role_overview_failed: "发送角色概览失败。",
+    delete_message_success: "删除消息成功。",
+    delete_message_failed: "删除消息失败。",
+    upload_failed: "上传失败。",
+    confirm_delete_messages: "确认删除此消息之后的所有消息？",
+    confirm_retry_message: "确认重试此消息？",
+    interview_feedback_confirm_text:
+      "如果您已经审阅好当前的面试评分卡，请确认归档；也可以告诉我对评分、理由或其他分析内容的调整。",
+    recording_tooltip:
+      "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）",
+    you: "您",
+    ok: "确定",
+
     task: "任务",
     next_task: "下一个任务: ",
     jd_next_task:
@@ -591,7 +608,77 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     share_link: "分享链接",
     copy_success: "复制成功",
     reply_placeholder: "回复 Viona",
-    create_success: "创建职位成功"
+    create_success: "创建职位成功",
+  },
+
+  job_board: {
+    publish_to_persevio: "发布到 Persevio 招聘网站",
+    complete_jd_first: "请先完成职位描述(JD)任务",
+    operation_success: "操作成功",
+    link_copied: "链接已复制",
+    unfinished_tasks: "您还有{{count}}项任务要完成",
+    detailed_define_job_requirement: "详细定义职位需求",
+    define_jd: "确定职位描述(JD)",
+    create_interview_plan: "制定面试计划&评分卡",
+    recommend_candidate_questions: "推荐候选人面试问题",
+    fill_candidate_scorecard: "填写候选人评分卡",
+    complete_conversation_tasks:
+      "与 Viona 完成对话任务，以下是为您生成的详细文档：",
+    job_requirement_table: "职位需求表",
+    job_description_jd: "职位描述(JD)",
+    interview_plan_scorecard: "面试计划&评分卡",
+    no_candidates_yet:
+      "您现在还没有候选人，可以告诉我候选人信息，我们一起制定面试计划或者填写评分卡！",
+    upload_resume: "上传简历",
+    parse_resume_failed: "解析简历失败",
+    upload_failed: "上传失败",
+    candidate_exists_confirm: "已存在候选人{{name}}，请确认是否继续上传",
+    create_succeed: "创建成功",
+    submit_failed: "提交失败",
+    candidates_list:
+      "以下是您的候选人，可以制定面试计划或者填写评分卡！也可以与Viona对话新增新的候选人。",
+    delete_confirm: "请确认是否删除 {{name}} ，删除后原有内容无法恢复?",
+    delete_success: "删除成功",
+    delete_failed: "删除失败",
+  },
+
+  job_chat: {
+    detailed_define_job_requirement: "详细定义职位需求",
+    define_jd: "定义 JD",
+    define_interview_plan: "定义面试计划&评分卡",
+  },
+
+  job_talents: {
+    status_init: "初始状态",
+    status_extracting: "提取中",
+    status_extracted: "已提取",
+  },
+
+  job_document: {
+    job_details: "职位详情",
+    updated_at: "更新",
+    link_copied: "链接已复制",
+    copied: "已复制",
+    chat_with_viona: "与 Viona 对话",
+    cancel: "取消",
+    save: "保存",
+    submit_succeed: "提交成功",
+    submit_failed: "提交失败",
+    not_written_job_requirement: "暂未撰写职位需求表",
+    not_written_job_description: "暂未撰写职位描述(JD)",
+    not_created_interview_plan: "暂未制定面试计划&评分卡",
+    job_requirement_table: "职位需求表",
+    job_description_jd: "职位描述(JD)",
+    interview_plan_scorecard: "面试计划&评分卡",
+  },
+
+  jobs_show: {
+    job_at: "职位在",
+    click_for_complete_jd: "点击查看完整职位描述",
+    days_ago: "天前",
+    today: "今天",
+    job_description: "职位描述",
+    powered_by_persevio: "由 Persevio 提供技术支持",
   },
 
   coworker: {
@@ -649,6 +736,143 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     feedback: "反馈",
     accepted: "已通过",
     rejected: "已拒绝",
+    
+    // 新增的talent页面相关翻译
+    arrange_interview: "安排面试",
+    interview_name: "面试名称",
+    interview_type: "面试类型",
+    interview_duration: "面试时长",
+    interviewer: "面试官",
+    interview_time: "面试时间",
+    waiting_candidate_choice: "等待候选人选择",
+    scheduled_interviews: "已安排面试",
+    minutes: "分钟",
+    add_interview: "添加面试",
+    name: "名称",
+    type: "类型",
+    duration_minutes: "时长(分钟)",
+    interviewer_field: "面试官",
+    available_times: "可选时间",
+    online_interview: "线上面试",
+    offline_interview: "线下面试",
+    candidate_details: "候选人详情",
+    edit_context: "编辑上下文",
+    interview_plan_scorecard: "请先指定面试计划&评分卡",
+    recommended_interview_questions: "推荐面试问题",
+    fill_scorecard: "填写评分卡",
+    round: "轮次",
+    upload_resume_or_select_candidate: "您可以上传简历或选择一位候选人，与我一起制定该候选人的面试计划。",
+    
+    // 状态相关
+    status_evaluate_succeed: "评估成功",
+    status_accepted: "已通过",
+    status_rejected: "已拒绝",
+    
+    // 日期格式
+    date_format: "YYYY-MM-DD HH:mm",
+    
+    // 其他通用文案
+    loading: "加载中...",
+    submit: "提交",
+    cancel: "取消",
+    
+    // SelectOrUploadTalent 组件相关
+    select_candidate: "选择候选人",
+    or: "或",
+    upload_resume: "上传简历",
+    upload_failed: "上传失败",
+    upload_succeed: "上传成功",
+    candidate_exists_confirm: "已存在候选人{{name}}，请确认是否继续上传",
+
+    // TalentDetail 组件相关
+    talent_status: {
+      strong_hire: "强烈推荐：超出标准。高度自信。",
+      hire: "推荐：符合标准。有信心。",
+      hold: "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
+      no_hire_underqualified: "不予录用（资历不足）：未达到核心技能或经验水平要求。",
+      no_hire_not_a_fit: "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
+    },
+    signal_level: {
+      must_have: "必须具备",
+      good_to_have: "加分项",
+    },
+    tabs: {
+      resume_detail: "简历详情",
+      recommended_interview_questions: "推荐面试问题",
+      interview_scorecard: "面试评分卡",
+    },
+    candidate_evaluation_report: "候选人评估报告",
+    recommended_interview_questions_title: "推荐面试问题",
+    round_label: "Round {{round}}",
+    update_time: "更新时间：",
+    download_filename: "Round {{round}} - 推荐面试问题.md",
+    copy_success: "已复制到剪贴板",
+    copy_failed: "复制失败",
+    link_copied: "链接已复制",
+    chat_with_viona: "与 Viona 对话",
+    no_interview_plan: "暂未获取推荐面试计划",
+    interview_scorecard_title: "面试评分卡",
+    final_decision_and_reason: "最终决定与理由",
+    overall_recruitment_committee_recommendation: "总体招聘委员会推荐",
+    final_reason: "最终理由",
+    update_success: "更新成功",
+    interview_feedback: "面试反馈",
+    no_scorecard_filled: "暂未填写面试评分卡",
+    pending_evaluation_signals: "待评估信号",
+    other_observed_signals: "其它观察到的信号",
+    other_observed_signals_hint: "用于记录观察到的、不属于主要评估信号的重要行为",
+    main_concerns_red_flags: "主要顾虑/红线问题",
+    main_concerns_red_flags_hint: "对观察到的最重要风险或负面信号的总结",
+    round_suffix: "面",
+    update_failed: "更新失败",
+
+    // 子组件相关翻译
+    ideal_profile: {
+      minimum: "最低要求",
+      big_plus: "重要加分项",
+      plus: "加分项",
+      strengths: "优势",
+      potential_gaps: "潜在差距",
+      career_motivations: "职业动机",
+    },
+    feedback_summary: {
+      recommend_next_stage: "推荐进入下一阶段",
+      keep_watching: "保持观望",
+      not_recommend: "不予推荐",
+      overall_recommendation: "总体推荐",
+      round_summary: "本轮小结",
+      next_round_operational_suggestions: "下一轮可操作性建议",
+      interviewer: "面试官",
+      update_success: "更新成功",
+      copied: "已复制",
+      chat_with_viona: "与 Viona 对话",
+      submit: "提交",
+      cancel: "取消",
+    },
+    feedback_signal: {
+      exceeds_expectations: "超出预期",
+      meets_standards: "达标",
+      likely_meets: "大概率达标",
+      likely_does_not_meet: "大概率不达标",
+      does_not_meet: "不达标",
+      uncertain: "不确定",
+      not_assessed: "本次面试未涉及",
+      evaluation_result: "评估结果",
+      basis: "依据",
+      save: "保存",
+      cancel: "取消",
+      edit: "编辑",
+      evidence: "证据",
+      no_data: "暂无数据",
+    },
+    feedback_customize_signal: {
+      judgment_basis: "判断依据",
+      save: "保存",
+      cancel: "取消",
+      edit: "编辑",
+      evidence: "证据",
+      no_data: "暂无数据",
+    },
   },
 
   city_and_address_select: {
@@ -803,9 +1027,5 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
         title: "热门企业排行榜",
       },
     },
-  },
-  header: {
-    home: "首页",
-    jobs: "职位",
   },
 };

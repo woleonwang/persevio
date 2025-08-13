@@ -24,6 +24,7 @@ const JobBoard = () => {
   const { job, fetchJob } = useJob();
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job_board.${key}`);
   const navigate = useNavigate();
 
   const [talents, setTalents] = useState<TTalent[]>([]);
@@ -80,7 +81,7 @@ const JobBoard = () => {
         );
 
         if (code !== 0) {
-          message.error(originalT("解析简历失败"));
+          message.error(t("parse_resume_failed"));
           setIsUploading(false);
           return;
         }
@@ -90,14 +91,14 @@ const JobBoard = () => {
           `/api/jobs/${job.id}/talents/check_name?name=${talentName}`
         );
         if (code3 !== 0) {
-          message.error("Upload failed");
+          message.error(t("upload_failed"));
           setIsUploading(false);
           return;
         }
 
         if (
           data3.is_exists &&
-          !confirm(`已存在候选人${talentName}，请确认是否继续上传`)
+          !confirm(t("candidate_exists_confirm").replace("{{name}}", talentName))
         ) {
           setIsUploading(false);
           return;
@@ -108,10 +109,10 @@ const JobBoard = () => {
           name: talentName,
         });
         if (code2 === 0) {
-          message.success(originalT("create_succeed"));
+          message.success(t("create_succeed"));
           await fetchTalents();
         } else {
-          message.error(originalT("submit_failed"));
+          message.error(t("submit_failed"));
         }
 
         setIsUploading(false);
@@ -126,7 +127,7 @@ const JobBoard = () => {
         disabled={isUploading}
         size="large"
       >
-        {originalT("上传简历")}
+        {t("upload_resume")}
       </Button>
     </Upload>
   );
@@ -145,10 +146,10 @@ const JobBoard = () => {
                 marginRight: 8,
               }}
             >
-              发布到 Persevio 招聘网站
+              {t("publish_to_persevio")}
             </span>
             <Tooltip
-              title={!job.jd_doc_id ? "请先完成职位描述(JD)任务" : undefined}
+              title={!job.jd_doc_id ? t("complete_jd_first") : undefined}
             >
               <Switch
                 checked={!!job.posted_at}
@@ -157,7 +158,7 @@ const JobBoard = () => {
                     open: checked ? "1" : "0",
                   });
                   if (code === 0) {
-                    message.success("操作成功");
+                    message.success(t("operation_success"));
                     fetchJob();
                   }
                 }}
@@ -173,7 +174,7 @@ const JobBoard = () => {
                   job.id
                 }/board?token=${localStorage.getItem("token")}&share=1`
               );
-              message.success("链接已复制");
+              message.success(t("link_copied"));
             }}
           />
         </div>
@@ -181,7 +182,7 @@ const JobBoard = () => {
       <div className={styles.body}>
         <div className={styles.block}>
           {VionaAvatarDiv}
-          <div>{originalT(`您还有${unfinishedCount}项任务要完成`)}</div>
+          <div>{t("unfinished_tasks").replace("{{count}}", unfinishedCount.toString())}</div>
           <div className={styles.buttonContainer}>
             <Badge
               dot={
@@ -200,7 +201,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                详细定义职位需求
+                {t("detailed_define_job_requirement")}
               </Button>
             </Badge>
             <Badge
@@ -222,7 +223,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                确定职位描述(JD)
+                {t("define_jd")}
               </Button>
             </Badge>
             <Badge
@@ -244,7 +245,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                制定面试计划&评分卡
+                {t("create_interview_plan")}
               </Button>
             </Badge>
             <Button
@@ -256,7 +257,7 @@ const JobBoard = () => {
               }}
               size="large"
             >
-              推荐候选人面试问题
+              {t("recommend_candidate_questions")}
             </Button>
             <Button
               disabled={!job.interview_plan_doc_id}
@@ -267,7 +268,7 @@ const JobBoard = () => {
               }}
               size="large"
             >
-              填写候选人评分卡
+              {t("fill_candidate_scorecard")}
             </Button>
           </div>
         </div>
@@ -275,7 +276,7 @@ const JobBoard = () => {
         <div className={styles.block}>
           {VionaAvatarDiv}
           <div>
-            {originalT(`与 Viona 完成对话任务，以下是为您生成的详细文档：`)}
+            {t("complete_conversation_tasks")}
           </div>
           <div className={styles.buttonContainer}>
             <Badge
@@ -292,7 +293,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                职位需求表
+                {t("job_requirement_table")}
               </Button>
             </Badge>
             <Badge
@@ -309,7 +310,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                职位描述(JD)
+                {t("job_description_jd")}
               </Button>
             </Badge>
             <Badge
@@ -326,7 +327,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                面试计划&评分卡
+                {t("interview_plan_scorecard")}
               </Button>
             </Badge>
           </div>
@@ -337,18 +338,14 @@ const JobBoard = () => {
           {talents.length === 0 ? (
             <div>
               <div>
-                {originalT(
-                  "您现在还没有候选人，可以告诉我候选人信息，我们一起制定面试计划或者填写评分卡！"
-                )}
+                {t("no_candidates_yet")}
               </div>
               <div className={styles.buttonContainer}>{UploadResumeButton}</div>
             </div>
           ) : (
             <div>
               <div>
-                {originalT(
-                  "以下是您的候选人，可以制定面试计划或者填写评分卡！也可以与Viona对话新增新的候选人。"
-                )}
+                {t("candidates_list")}
                 <div className={styles.buttonContainer}>
                   {UploadResumeButton}
                   {talents.map((talent) => {
@@ -370,7 +367,7 @@ const JobBoard = () => {
                           onClick={async () => {
                             if (
                               confirm(
-                                `请确认是否删除 ${talent.name} ，删除后原有内容无法恢复?`
+                                t("delete_confirm").replace("{{name}}", talent.name)
                               )
                             ) {
                               const { code } = await Post(
@@ -378,10 +375,10 @@ const JobBoard = () => {
                               );
 
                               if (code === 0) {
-                                message.success("删除成功");
+                                message.success(t("delete_success"));
                                 fetchTalents();
                               } else {
-                                message.error("删除失败");
+                                message.error(t("delete_failed"));
                               }
                             }
                           }}

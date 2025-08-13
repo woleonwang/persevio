@@ -197,7 +197,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       title: t("edit_message"),
       description: t("edit_message_desc"),
       nextButtonProps: {
-        children: "OK",
+        children: t("ok"),
       },
       target: () => editMessageTourElementRef.current ?? document.body,
     },
@@ -359,7 +359,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
     {
       key: "interview-feedback-confirm-btn",
-      title: "确认",
+      title: t("confirm"),
       handler: () => {
         sendMessage(t("confirm"));
       },
@@ -374,7 +374,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       const job: IJob = data.job ?? data;
       setJob(job);
     } else {
-      message.error("Get job failed");
+      message.error(t("get_job_failed"));
     }
   };
 
@@ -569,7 +569,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 0) {
       sendMessage(JobRequirementFormMessage);
     } else {
-      message.error("Send role overview failed");
+      message.error(t("send_role_overview_failed"));
     }
   };
 
@@ -610,7 +610,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
-      message.error("Your quota has been exhausted.");
+      message.error(t("quota_exhausted"));
     }
   };
 
@@ -638,7 +638,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
-      message.error("Your quota has been exhausted.");
+      message.error(t("quota_exhausted"));
     }
   };
 
@@ -664,10 +664,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     });
 
     if (code === 0) {
-      message.success("Delete message successfully");
+      message.success(t("delete_message_success"));
       fetchMessages();
     } else {
-      message.error("Delete message failed");
+      message.error(t("delete_message_failed"));
     }
   };
 
@@ -714,7 +714,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         }}
         placement="right"
         title={
-          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+          t("recording_tooltip")
         }
         open={audioHintVisible}
       >
@@ -806,7 +806,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                       <div>
                         <span style={{ fontSize: 18 }}>
                           {item.role === "user"
-                            ? "You"
+                            ? t("you")
                             : `Viona, ${t("viona_intro_staff")}`}
                         </span>
                         <span className={styles.timestamp}>
@@ -838,7 +838,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                           <MarkdownContainer
                             content={
                               item.messageSubType === "error"
-                                ? "Something wrong with Viona, please retry."
+                                ? t("error_message")
                                 : item.content
                             }
                           />
@@ -908,7 +908,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           if (code === 0) {
                                             sendMessage(data.resume);
                                           } else {
-                                            message.error("Upload failed");
+                                            message.error(t("upload_failed"));
                                           }
                                         }}
                                         showUploadList={false}
@@ -957,7 +957,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     className={styles.tagButtonWithText}
                                   >
                                     <div>
-                                      如果您已经审阅好当前的面试评分卡，请确认归档；也可以告诉我对评分、理由或其他分析内容的调整。
+                                      {t("interview_feedback_confirm_text")}
                                     </div>
                                     <Button
                                       variant="outlined"
@@ -1028,7 +1028,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     onClick={() => {
                                       if (
                                         confirm(
-                                          "Confirm to delete messages after this message?"
+                                          t("confirm_delete_messages")
                                         )
                                       ) {
                                         deleteMessage(parseInt(item.id));
@@ -1043,7 +1043,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     onClick={async () => {
                                       if (
                                         confirm(
-                                          "Confirm to retry this message?"
+                                          t("confirm_retry_message")
                                         )
                                       ) {
                                         retryMessage(parseInt(item.id));

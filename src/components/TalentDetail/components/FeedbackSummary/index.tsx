@@ -8,6 +8,7 @@ import { Button, Form, Input, message, Radio } from "antd";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { Post } from "@/utils/request";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   jobId: number;
@@ -18,27 +19,6 @@ interface IProps {
   onSubmit: () => void;
 }
 
-const feedbackStatusOptions = [
-  {
-    label: "推荐进入下一阶段",
-    value: "recommend",
-  },
-  {
-    label: "保持观望",
-    value: "pending",
-  },
-  {
-    label: "不予推荐",
-    value: "reject",
-  },
-];
-
-type TFormValue = {
-  interviewer_name: string;
-  result: "recommend" | "pending" | "reject";
-  feedback: string;
-  next_round_concern: string;
-};
 const FeedbackSummary = (props: IProps) => {
   const {
     jobId,
@@ -49,10 +29,36 @@ const FeedbackSummary = (props: IProps) => {
     isPreview,
   } = props;
 
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
+
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<TFormValue>();
 
   const navigate = useNavigate();
+
+  // 动态生成状态选项，使用国际化
+  const feedbackStatusOptions = [
+    {
+      label: t("feedback_summary.recommend_next_stage"),
+      value: "recommend",
+    },
+    {
+      label: t("feedback_summary.keep_watching"),
+      value: "pending",
+    },
+    {
+      label: t("feedback_summary.not_recommend"),
+      value: "reject",
+    },
+  ];
+
+  type TFormValue = {
+    interviewer_name: string;
+    result: "recommend" | "pending" | "reject";
+    feedback: string;
+    next_round_concern: string;
+  };
 
   const interviewFeedbackDetail = parseJSON(
     interviewFeedback.feedback_json
@@ -73,7 +79,7 @@ const FeedbackSummary = (props: IProps) => {
         }
       );
       if (code === 0) {
-        message.success("更新成功");
+        message.success(t("feedback_summary.update_success"));
         onSubmit();
         setIsEditing(false);
       }
@@ -88,7 +94,7 @@ const FeedbackSummary = (props: IProps) => {
   return (
     <div key={interviewFeedback.id} className={styles.feedbackItem}>
       <div className={styles.feedbackTitle}>
-        <span className={styles.primary}>{interviewFeedback.round}面</span>
+        <span className={styles.primary}>{interviewFeedback.round}{t("round_suffix")}</span>
         <span className={styles.interviewer}>{mergedInterviewerName}</span>
         <span className={styles.updatedAt}>
           {dayjs(interviewFeedback.updated_at).format("YYYY-MM-DD HH:mm:ss")}
@@ -99,17 +105,17 @@ const FeedbackSummary = (props: IProps) => {
               icon={<CopyOutlined />}
               onClick={async () => {
                 await copy(
-                  `## 总体推荐\n\n${
+                  `## ${t("feedback_summary.overall_recommendation")}\n\n${
                     feedbackStatusOptions.find(
                       (item) => item.value === interviewFeedbackDetail.result
                     )?.label
-                  }\n\n## 本轮小结\n\n${
+                  }\n\n## ${t("feedback_summary.round_summary")}\n\n${
                     interviewFeedbackDetail.feedback
-                  }\n\n## 下一轮可操作性建议\n\n${
+                  }\n\n## ${t("feedback_summary.next_round_operational_suggestions")}\n\n${
                     interviewFeedbackDetail.next_round_concern
                   }`
                 );
-                message.success("已复制");
+                message.success(t("feedback_summary.copied"));
               }}
               style={{ marginLeft: 10 }}
             />
@@ -134,7 +140,7 @@ const FeedbackSummary = (props: IProps) => {
               }
               style={{ marginLeft: "12px" }}
             >
-              与 Viona 对话
+              {t("feedback_summary.chat_with_viona")}
             </Button>
           </>
         )}
@@ -146,14 +152,14 @@ const FeedbackSummary = (props: IProps) => {
             <div className={styles.feedbackBlock}>
               <Form form={form} layout="vertical">
                 <Form.Item
-                  label="面试官"
+                  label={t("feedback_summary.interviewer")}
                   name="interviewer_name"
                   rules={[{ required: true }]}
                 >
                   <Input />
                 </Form.Item>
                 <Form.Item
-                  label="总体推荐"
+                  label={t("feedback_summary.overall_recommendation")}
                   name="result"
                   rules={[{ required: true }]}
                 >
@@ -168,7 +174,7 @@ const FeedbackSummary = (props: IProps) => {
                 </Form.Item>
                 <Form.Item
                   name="feedback"
-                  label="本轮小结"
+                  label={t("feedback_summary.round_summary")}
                   rules={[{ required: true }]}
                 >
                   <MarkdownEditor
@@ -182,7 +188,7 @@ const FeedbackSummary = (props: IProps) => {
                 </Form.Item>
                 <Form.Item
                   name="next_round_concern"
-                  label="下轮可操作性建议"
+                  label={t("feedback_summary.next_round_operational_suggestions")}
                   rules={[{ required: true }]}
                 >
                   <MarkdownEditor
@@ -198,13 +204,13 @@ const FeedbackSummary = (props: IProps) => {
             </div>
             <div>
               <Button type="primary" onClick={() => submitFeedback()}>
-                提交
+                {t("feedback_summary.submit")}
               </Button>
               <Button
                 onClick={() => setIsEditing(false)}
                 style={{ marginLeft: 12 }}
               >
-                取消
+                {t("feedback_summary.cancel")}
               </Button>
             </div>
           </>
@@ -212,7 +218,7 @@ const FeedbackSummary = (props: IProps) => {
           <>
             <div className={styles.feedbackBlock}>
               <div className={styles.primary} style={{ marginTop: 20 }}>
-                总体推荐
+                {t("feedback_summary.overall_recommendation")}
               </div>
               <div style={{ marginTop: 12 }}>
                 {
@@ -224,7 +230,7 @@ const FeedbackSummary = (props: IProps) => {
             </div>
 
             <div className={styles.primary} style={{ marginTop: 20 }}>
-              本轮小结
+              {t("feedback_summary.round_summary")}
             </div>
 
             <div style={{ marginTop: 12 }}>
@@ -232,7 +238,7 @@ const FeedbackSummary = (props: IProps) => {
             </div>
 
             <div className={styles.primary} style={{ marginTop: 20 }}>
-              下一轮可操作性建议
+              {t("feedback_summary.next_round_operational_suggestions")}
             </div>
 
             <div style={{ marginTop: 12 }}>

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import InterviewDesignerForm from "./components/InterviewDesignForm";
 import InterviewFeedbacksForm from "./components/InterviewFeedbackForm";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 import { parseJSON } from "@/utils";
@@ -15,6 +16,9 @@ import { parseJSON } from "@/utils";
 const TalentChat = () => {
   const { job } = useJob();
   const { talent } = useTalent();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
+  
   const initChatType = (new URLSearchParams(window.location.search).get(
     "chatType"
   ) ?? "interview_designer") as TTalentChatType;
@@ -90,7 +94,7 @@ const TalentChat = () => {
               }}
               style={{ marginRight: 12 }}
             >
-              编辑上下文
+              {t("edit_context")}
             </Button>
           )}
           <Button
@@ -100,7 +104,7 @@ const TalentChat = () => {
               );
             }}
           >
-            候选人详情
+            {t("candidate_details")}
           </Button>
         </div>
       </div>
@@ -111,7 +115,7 @@ const TalentChat = () => {
             paddingTop: 200,
           }}
         >
-          <Empty description="请先指定面试计划&评分卡" />
+          <Empty description={t("interview_plan_scorecard")} />
         </div>
       ) : (
         <>
@@ -122,7 +126,7 @@ const TalentChat = () => {
                 onChange={(value) => setRound(value)}
                 options={new Array(totalRound).fill(0).map((_, index) => ({
                   value: index + 1,
-                  label: `Round ${index + 1}`,
+                  label: `${t("round")} ${index + 1}`,
                 }))}
               />
 
@@ -132,11 +136,11 @@ const TalentChat = () => {
                 onChange={(e) => setChatType(e.target.value)}
                 options={[
                   {
-                    label: "推荐面试问题",
+                    label: t("recommended_interview_questions"),
                     value: "interview_designer",
                   },
                   {
-                    label: "填写评分卡",
+                    label: t("fill_scorecard"),
                     value: "interview_feedback",
                   },
                 ]}

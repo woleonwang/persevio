@@ -112,7 +112,7 @@ const Talent = () => {
   };
 
   if (!talent) {
-    return <div>loading...</div>;
+    return <div>{originalT("loading")}</div>;
   }
 
   const result = talent.evaluate_result;
@@ -155,10 +155,10 @@ const Talent = () => {
                   shape="round"
                   onClick={() => setInterviewModalOpen(true)}
                 >
-                  安排面试
+                  {t("arrange_interview")}
                 </Button>
                 <Popover
-                  title={<span style={{ fontSize: 16 }}>已安排面试</span>}
+                  title={<span style={{ fontSize: 16 }}>{t("scheduled_interviews")}</span>}
                   content={
                     <div style={{ width: 400 }}>
                       {interviews.map((item) => {
@@ -169,19 +169,19 @@ const Talent = () => {
                         return (
                           <div key={item.id} className={styles.interviewPanel}>
                             <div className={styles.interviewItem}>
-                              <div>面试名称:</div>
+                              <div>{t("interview_name")}:</div>
                               <div>{item.name}</div>
                             </div>
                             <div className={styles.interviewItem}>
-                              <div>面试类型:</div>
+                              <div>{t("interview_type")}:</div>
                               <div>{formatInterviewMode(item.mode)}</div>
                             </div>
                             <div className={styles.interviewItem}>
-                              <div>面试时长:</div>
-                              <div>{item.duration} 分钟</div>
+                              <div>{t("interview_duration")}:</div>
+                              <div>{item.duration} {t("minutes")}</div>
                             </div>
                             <div className={styles.interviewItem}>
-                              <div>面试官:</div>
+                              <div>{t("interviewer")}:</div>
                               <div>
                                 {
                                   interviewers.find(
@@ -192,13 +192,13 @@ const Talent = () => {
                               </div>
                             </div>
                             <div className={styles.interviewItem}>
-                              <div>面试时间:</div>
+                              <div>{t("interview_time")}:</div>
                               <div>
                                 {item.scheduled_at
                                   ? dayjs(item.scheduled_at).format(
-                                      "YYYY-MM-DD HH:mm"
+                                      t("date_format")
                                     )
-                                  : "等待候选人选择"}
+                                  : t("waiting_candidate_choice")}
                               </div>
                             </div>
                           </div>
@@ -252,7 +252,7 @@ const Talent = () => {
 
       <Modal
         open={interviewModalOpen}
-        title={"添加面试"}
+        title={t("add_interview")}
         onCancel={() => setInterviewModalOpen(false)}
         onOk={async () => {
           await createInterview();
@@ -262,26 +262,26 @@ const Talent = () => {
         }}
       >
         <Form form={form} labelCol={{ span: 4 }}>
-          <Form.Item label="名称" name="name" rules={[{ required: true }]}>
+          <Form.Item label={t("name")} name="name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="类型" name="mode" rules={[{ required: true }]}>
+          <Form.Item label={t("type")} name="mode" rules={[{ required: true }]}>
             <Select
               options={[
-                { value: "ONLINE", label: "线上面试" },
-                { value: "ONSITE", label: "线下面试" },
+                { value: "ONLINE", label: t("online_interview") },
+                { value: "ONSITE", label: t("offline_interview") },
               ]}
             />
           </Form.Item>
           <Form.Item
-            label="时长(分钟)"
+            label={t("duration_minutes")}
             name="duration"
             rules={[{ required: true }]}
           >
             <InputNumber />
           </Form.Item>
           <Form.Item
-            label="面试官"
+            label={t("interviewer_field")}
             name="interviewer_id"
             rules={[{ required: true }]}
           >
@@ -293,7 +293,7 @@ const Talent = () => {
             />
           </Form.Item>
           <Form.Item
-            label="可选时间"
+            label={t("available_times")}
             name="timeSlots"
             rules={[{ required: true }]}
           >

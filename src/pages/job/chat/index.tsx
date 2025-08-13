@@ -3,6 +3,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router";
 import { observer } from "mobx-react-lite";
 import { Spin } from "antd";
+import { useTranslation } from "react-i18next";
 
 import globalStore from "@/store/global";
 import ChatRoomNew from "@/components/ChatRoomNew";
@@ -28,17 +29,17 @@ const JobChat = () => {
 
   const navigate = useNavigate();
 
-  // const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`job.${key}`);
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job_chat.${key}`);
 
   useEffect(() => {
     setMenuCollapse(true);
   }, []);
 
   const chatTypeTitle = {
-    "job-requirement": "详细定义职位需求",
-    "job-description": "定义 JD",
-    "job-interview-plan": "定义面试计划&评分卡",
+    "job-requirement": t("detailed_define_job_requirement"),
+    "job-description": t("define_jd"),
+    "job-interview-plan": t("define_interview_plan"),
   };
 
   if (!job) {

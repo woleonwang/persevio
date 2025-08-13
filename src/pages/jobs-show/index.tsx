@@ -37,7 +37,9 @@ const JobsShow = () => {
   const [status, setStatus] = useState<TStatus>("loading");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { i18n } = useTranslation();
+  const { i18n, t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`jobs_show.${key}`);
+
   useEffect(() => {
     fetchJob();
   }, []);
@@ -88,12 +90,12 @@ const JobsShow = () => {
             <div className={styles.left}>
               <div className={styles.basicInfo}>
                 <div className={styles.jobName}>{job.name}</div>
-                <div className={styles.companyName}> Job at {company.name}</div>
+                <div className={styles.companyName}> {t("job_at")} {company.name}</div>
                 <div
                   className={styles.more}
                   onClick={() => setDrawerOpen(true)}
                 >
-                  <span>Click for complete JD.</span>
+                  <span>{t("click_for_complete_jd")}</span>
                   <DownOutlined style={{ fontSize: 14 }} />
                 </div>
               </div>
@@ -108,8 +110,8 @@ const JobsShow = () => {
               <div>
                 <div className={classnames(styles.updatedAt, styles.hidden)}>
                   {dayjs().diff(dayjs(job.updated_at), "days")
-                    ? `${dayjs().diff(dayjs(job.updated_at), "days")} days ago`
-                    : "Today"}
+                    ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t("days_ago")}`
+                    : t("today")}
                 </div>
               </div>
             </div>
@@ -122,13 +124,13 @@ const JobsShow = () => {
             </div>
           </div>
           <Link className={styles.footer} to="/">
-            Powered by Persevio.
+            {t("powered_by_persevio")}
           </Link>
 
           <Drawer
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>Job Description</span>
+                <span>{t("job_description")}</span>
                 <CloseOutlined onClick={() => setDrawerOpen(false)} />
               </div>
             }
@@ -145,8 +147,8 @@ const JobsShow = () => {
             <div>
               <div className={classnames(styles.updatedAt)}>
                 {dayjs().diff(dayjs(job.updated_at), "days")
-                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} days ago`
-                  : "Today"}
+                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t("days_ago")}`
+                  : t("today")}
               </div>
             </div>
           </Drawer>

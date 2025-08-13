@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Empty, Form, Input, message, Radio, Tooltip } from "antd";
 import { parseJSON } from "@/utils";
 import { Post } from "@/utils/request";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
@@ -16,53 +17,6 @@ interface IProps {
   onSubmit: () => void;
 }
 
-const signalEvaluationOptions: {
-  label: string;
-  value: TEvaluation;
-  color: string;
-}[] = [
-  {
-    label: "超出预期",
-    value: "exceeds",
-    color: "#1FAC6A",
-  },
-  {
-    label: "达标",
-    value: "meets",
-    color: "#1FAC6A",
-  },
-  {
-    label: "大概率达标",
-    value: "likely_meets",
-    color: "#1FAC6A",
-  },
-  {
-    label: "大概率不达标",
-    value: "likely_does_not_meets",
-    color: "#CC0000",
-  },
-  {
-    label: "不达标",
-    value: "does_not_meets",
-    color: "#CC0000",
-  },
-  {
-    label: "不确定",
-    value: "uncertain",
-    color: "rgb(33, 53, 71)",
-  },
-  {
-    label: "本次面试未涉及",
-    value: "not_assessed",
-    color: "rgb(33, 53, 71)",
-  },
-];
-
-type TFormValue = {
-  evaluation: TEvaluation;
-  basis: string;
-};
-
 const FeedbackSignal = (props: IProps) => {
   const {
     jobId,
@@ -72,6 +26,57 @@ const FeedbackSignal = (props: IProps) => {
     isPreview,
     onSubmit,
   } = props;
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
+
+  // 动态生成信号评估选项，使用国际化
+  const signalEvaluationOptions: {
+    label: string;
+    value: TEvaluation;
+    color: string;
+  }[] = [
+    {
+      label: t("feedback_signal.exceeds_expectations"),
+      value: "exceeds",
+      color: "#1FAC6A",
+    },
+    {
+      label: t("feedback_signal.meets_standards"),
+      value: "meets",
+      color: "#1FAC6A",
+    },
+    {
+      label: t("feedback_signal.likely_meets"),
+      value: "likely_meets",
+      color: "#1FAC6A",
+    },
+    {
+      label: t("feedback_signal.likely_does_not_meet"),
+      value: "likely_does_not_meets",
+      color: "#CC0000",
+    },
+    {
+      label: t("feedback_signal.does_not_meet"),
+      value: "does_not_meets",
+      color: "#CC0000",
+    },
+    {
+      label: t("feedback_signal.uncertain"),
+      value: "uncertain",
+      color: "rgb(33, 53, 71)",
+    },
+    {
+      label: t("feedback_signal.not_assessed"),
+      value: "not_assessed",
+      color: "rgb(33, 53, 71)",
+    },
+  ];
+
+  type TFormValue = {
+    evaluation: TEvaluation;
+    basis: string;
+  };
 
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<TFormValue>();
@@ -104,7 +109,7 @@ const FeedbackSignal = (props: IProps) => {
         }
       );
       if (code === 0) {
-        message.success("更新成功");
+        message.success(t("feedback_summary.update_success"));
         onSubmit();
         setIsEditing(false);
       }
@@ -116,23 +121,23 @@ const FeedbackSignal = (props: IProps) => {
       <div>
         <div>
           <div className={styles.interviewer}>
-            面试官{interviewFeedback.round}
+            {t("feedback_summary.interviewer")}{interviewFeedback.round}
           </div>
           <div className={styles.name}>{interviewerName}</div>
         </div>
         {!currentSingleFeedback ? (
-          <Empty description="暂无数据" />
+          <Empty description={t("feedback_signal.no_data")} />
         ) : isEditing ? (
           <Form form={form} layout="vertical" style={{ marginTop: 12 }}>
             <Form.Item
               name="evaluation"
-              label="评估结果"
+              label={t("feedback_signal.evaluation_result")}
               rules={[{ required: true }]}
             >
               <Radio.Group options={signalEvaluationOptions} size="small" />
             </Form.Item>
 
-            <Form.Item name="basis" label="依据" rules={[{ required: true }]}>
+            <Form.Item name="basis" label={t("feedback_signal.basis")} rules={[{ required: true }]}>
               <Input.TextArea rows={4} />
             </Form.Item>
 
@@ -142,14 +147,14 @@ const FeedbackSignal = (props: IProps) => {
                 onClick={() => submitSignalFeedback()}
                 shape="round"
               >
-                保存
+                {t("feedback_signal.save")}
               </Button>
               <Button
                 shape="round"
                 style={{ marginLeft: 8 }}
                 onClick={() => setIsEditing(false)}
               >
-                取消
+                {t("feedback_signal.cancel")}
               </Button>
             </div>
           </Form>
@@ -163,7 +168,7 @@ const FeedbackSignal = (props: IProps) => {
                 )?.color,
               }}
             >
-              评估结果:{" "}
+              {t("feedback_signal.evaluation_result")}:{" "}
               {
                 signalEvaluationOptions.find(
                   (item) => item.value === currentSingleFeedback.evaluation
@@ -185,7 +190,7 @@ const FeedbackSignal = (props: IProps) => {
                   }}
                   shape="round"
                 >
-                  编辑
+                  {t("feedback_signal.edit")}
                 </Button>
               )}
               <Tooltip
@@ -194,7 +199,7 @@ const FeedbackSignal = (props: IProps) => {
                 styles={{ body: { whiteSpace: "pre-wrap" } }}
               >
                 <Button shape="round" style={{ marginLeft: 8 }}>
-                  证据
+                  {t("feedback_signal.evidence")}
                 </Button>
               </Tooltip>
             </div>

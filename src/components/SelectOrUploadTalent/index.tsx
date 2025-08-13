@@ -2,6 +2,7 @@ import { Get, Post, PostFormData } from "@/utils/request";
 import { Input, message, Select } from "antd";
 import { Button, Upload } from "antd";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   jobId: number;
@@ -11,6 +12,8 @@ interface IProps {
 
 const SelectOrUploadTalent = (props: IProps) => {
   const { jobId, value, onChange } = props;
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
 
   const [talents, setTalents] = useState<TTalent[]>([]);
   const [internalValue, setInternalValue] = useState<number>();
@@ -38,7 +41,7 @@ const SelectOrUploadTalent = (props: IProps) => {
     <div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         <Select
-          placeholder="选择候选人"
+          placeholder={t("select_candidate")}
           options={talents.map((talent) => ({
             value: talent.id,
             label: talent.name,
@@ -51,7 +54,7 @@ const SelectOrUploadTalent = (props: IProps) => {
           style={{ width: 200 }}
         />
 
-        <div>Or</div>
+        <div>{t("or")}</div>
 
         <Upload
           beforeUpload={() => false}
@@ -68,7 +71,7 @@ const SelectOrUploadTalent = (props: IProps) => {
             );
 
             if (code !== 0) {
-              message.error("Upload failed");
+              message.error(t("upload_failed"));
               setIsUploading(false);
               return;
             }
@@ -78,14 +81,14 @@ const SelectOrUploadTalent = (props: IProps) => {
               `/api/jobs/${jobId}/talents/check_name?name=${talentName}`
             );
             if (code3 !== 0) {
-              message.error("Upload failed");
+              message.error(t("upload_failed"));
               setIsUploading(false);
               return;
             }
 
             if (
               data3.is_exists &&
-              !confirm(`已存在候选人${talentName}，请确认是否继续上传`)
+              !confirm(t("candidate_exists_confirm").replace("{{name}}", talentName))
             ) {
               setIsUploading(false);
               return;
@@ -102,7 +105,7 @@ const SelectOrUploadTalent = (props: IProps) => {
               await fetchTalents();
               setInternalValue(data2.talent_id);
               onChange?.(data2.talent_id);
-              message.success("Upload succeed");
+              message.success(t("upload_succeed"));
             }
 
             setIsUploading(false);
@@ -112,7 +115,7 @@ const SelectOrUploadTalent = (props: IProps) => {
           multiple={false}
         >
           <Button type="primary" loading={isUploading} disabled={isUploading}>
-            Upload Resume
+            {t("upload_resume")}
           </Button>
         </Upload>
       </div>

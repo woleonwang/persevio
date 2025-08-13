@@ -42,26 +42,26 @@ const EvaluateResult = (props: IProps) => {
   ];
 
   const getReasoning = (result: TEvaluationResult) => {
-    let reasoning = `Minimum Requirements: ${result.job_requirements_met?.minimum_requirements}; 
-Big Plus Requirements: ${result.job_requirements_met?.big_plus_requirements}; 
-Plus Requirements: ${result.job_requirements_met?.plus_requirements}`;
+    let reasoning = `${t("ideal_profile.minimum")}: ${result.job_requirements_met?.minimum_requirements}; 
+${t("ideal_profile.big_plus")}: ${result.job_requirements_met?.big_plus_requirements}; 
+${t("ideal_profile.plus")}: ${result.job_requirements_met?.plus_requirements}`;
 
     if (result.evaluation_summary?.strengths?.length > 0) {
-      reasoning += "\n\nStrengths:";
+      reasoning += `\n\n${t("strengths")}:`;
       result.evaluation_summary.strengths.forEach((strength: string) => {
         reasoning += `\n- ${strength}`;
       });
     }
 
     if (result.evaluation_summary?.potential_gaps?.length > 0) {
-      reasoning += "\n\nPotential Gaps:";
+      reasoning += `\n\n${t("potential_gaps")}:`;
       result.evaluation_summary.potential_gaps.forEach((gap: string) => {
         reasoning += `\n- ${gap}`;
       });
     }
 
     if (result.evaluation_summary?.career_motivations?.length > 0) {
-      reasoning += "\n\nCareer Motivations:";
+      reasoning += `\n\n${t("career_motivations")}:`;
       result.evaluation_summary.career_motivations.forEach(
         (motivation: string) => {
           reasoning += `\n- ${motivation}`;

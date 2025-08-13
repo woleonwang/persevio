@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Empty, Form, Input, message, Tooltip } from "antd";
 import { parseJSON } from "@/utils";
 import { Post } from "@/utils/request";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
@@ -31,6 +32,9 @@ const FeedbackCustomizeSignal = (props: IProps) => {
     isPreview,
     onSubmit,
   } = props;
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
 
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm<TFormValue>();
@@ -68,21 +72,21 @@ const FeedbackCustomizeSignal = (props: IProps) => {
         }
       );
       if (code === 0) {
-        message.success("更新成功");
+        message.success(t("feedback_summary.update_success"));
         onSubmit();
         setIsEditing(false);
       }
     });
   };
 
-  if (!currentSignalFeedback) return <Empty description="暂无数据" />;
+  if (!currentSignalFeedback) return <Empty description={t("feedback_customize_signal.no_data")} />;
 
   return (
     <div>
       <div>
         <div>
           <div className={styles.interviewer}>
-            面试官{interviewFeedback.round}
+            {t("feedback_summary.interviewer")}{interviewFeedback.round}
           </div>
           <div className={styles.name}>{interviewerName}</div>
         </div>
@@ -94,7 +98,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
 
             <Form.Item
               name="basis"
-              label="判断依据"
+              label={t("feedback_customize_signal.judgment_basis")}
               rules={[{ required: true }]}
             >
               <Input.TextArea />
@@ -106,14 +110,14 @@ const FeedbackCustomizeSignal = (props: IProps) => {
                 onClick={() => submitSignalFeedback()}
                 shape="round"
               >
-                保存
+                {t("feedback_customize_signal.save")}
               </Button>
               <Button
                 shape="round"
                 style={{ marginLeft: 8 }}
                 onClick={() => setIsEditing(false)}
               >
-                取消
+                {t("feedback_customize_signal.cancel")}
               </Button>
             </div>
           </Form>
@@ -137,7 +141,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
                   }}
                   shape="round"
                 >
-                  编辑
+                  {t("feedback_customize_signal.edit")}
                 </Button>
               )}
               <Tooltip
@@ -146,7 +150,7 @@ const FeedbackCustomizeSignal = (props: IProps) => {
                 styles={{ body: { whiteSpace: "pre-wrap" } }}
               >
                 <Button shape="round" style={{ marginLeft: 8 }}>
-                  证据
+                  {t("feedback_customize_signal.evidence")}
                 </Button>
               </Tooltip>
             </div>

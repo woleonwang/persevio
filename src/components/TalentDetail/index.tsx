@@ -25,6 +25,7 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import dayjs from "dayjs";
 import { backOrDirect, copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 import FeedbackSummary from "./components/FeedbackSummary";
@@ -35,42 +36,15 @@ import EvaluateResult from "./components/EvaluateResult";
 
 const { Title, Text } = Typography;
 
-const talentStatusOptions = [
-  {
-    label: "强烈推荐：超出标准。高度自信。",
-    value: "strong_hire",
-  },
-  {
-    label: "推荐：符合标准。有信心。",
-    value: "hire",
-  },
-  {
-    label:
-      "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
-    value: "hold",
-  },
-  {
-    label: "不予录用（资历不足）：未达到核心技能或经验水平要求。",
-    value: "no_hire_underqualified",
-  },
-  {
-    label:
-      "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
-    value: "no_hire_not_a_fit",
-  },
-];
-
-const signalLevelMappings = {
-  must_have: "必须具备",
-  good_to_have: "加分项",
-};
-
 interface IProps {
   isPreview?: boolean;
 }
+
 const TalentDetail: React.FC<IProps> = (props) => {
   const { job } = usePublicJob();
   const { talent, fetchTalent } = useTalent();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
 
   const { isPreview } = props;
 
@@ -90,6 +64,35 @@ const TalentDetail: React.FC<IProps> = (props) => {
   const [form] = Form.useForm<{ status: string; feedback: string }>();
 
   const navigate = useNavigate();
+
+  // 动态生成状态选项，使用国际化
+  const talentStatusOptions = [
+    {
+      label: t("talent_status.strong_hire"),
+      value: "strong_hire",
+    },
+    {
+      label: t("talent_status.hire"),
+      value: "hire",
+    },
+    {
+      label: t("talent_status.hold"),
+      value: "hold",
+    },
+    {
+      label: t("talent_status.no_hire_underqualified"),
+      value: "no_hire_underqualified",
+    },
+    {
+      label: t("talent_status.no_hire_not_a_fit"),
+      value: "no_hire_not_a_fit",
+    },
+  ];
+
+  const signalLevelMappings = {
+    must_have: t("signal_level.must_have"),
+    good_to_have: t("signal_level.good_to_have"),
+  };
 
   useEffect(() => {
     // 初始化
@@ -149,9 +152,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (code === 0) {
       fetchInterviewDesignerDetail();
       setIsEditingInterviewDesigner(false);
-      message.success("Update succeed");
+      message.success(t("update_success"));
     } else {
-      message.success("Update failed");
+      message.error(t("update_failed"));
     }
   };
 
@@ -164,7 +167,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Round ${roundKey} - 推荐面试问题.md`;
+    a.download = t("download_filename").replace("{{round}}", roundKey);
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -174,9 +177,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
     try {
       await copy(interviewDesigner.interview_game_plan_doc || "");
-      message.success("已复制到剪贴板");
+      message.success(t("copy_success"));
     } catch {
-      message.error("复制失败");
+      message.error(t("copy_failed"));
     }
   };
 
@@ -184,7 +187,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     await copy(
       `${window.origin}/jobs/${job?.id}/talents/${talent?.id}/detail?round=${roundKey}&tab=interview_designer&round=${roundKey}`
     );
-    message.success("链接已复制");
+    message.success(t("link_copied"));
   };
 
   const handleEdit = () => {
@@ -214,7 +217,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
       if (code === 0) {
         fetchTalent();
         setIsEditingTalent(false);
-        message.success("更新成功");
+        message.success(t("update_success"));
       }
     });
   };
@@ -262,15 +265,15 @@ const TalentDetail: React.FC<IProps> = (props) => {
             items={[
               {
                 key: "resume",
-                label: "简历详情",
+                label: t("tabs.resume_detail"),
               },
               {
                 key: "interview_designer",
-                label: "推荐面试问题",
+                label: t("tabs.recommended_interview_questions"),
               },
               {
                 key: "interview_feedback",
-                label: "面试评分卡",
+                label: t("tabs.interview_scorecard"),
               },
             ]}
           />
@@ -291,7 +294,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
               {talent.evaluate_result.evaluation_summary && (
                 <div className={styles.evaluateResultContainer}>
                   <div className={styles.evaluateResultTitle}>
-                    候选人评估报告
+                    {t("candidate_evaluation_report")}
                   </div>
                   <EvaluateResult result={talent.evaluate_result} />
                 </div>
@@ -301,7 +304,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
           {tabKey === "interview_designer" && (
             <>
               <Title level={4} style={{ marginBottom: 24 }}>
-                推荐面试问题
+                {t("recommended_interview_questions_title")}
               </Title>
               <div className={styles.designerHeader}>
                 <div className={styles.headerLeft}>
@@ -310,13 +313,16 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     onChange={setRoundKey}
                     items={new Array(totalRound).fill(0).map((_, index) => ({
                       key: `${index + 1}`,
-                      label: `Round ${index + 1}`,
+                      label: t("round_label").replace(
+                        "{{round}}",
+                        `${index + 1}`
+                      ),
                     }))}
                     style={{ flex: "none" }}
                   />
                   {interviewDesignerReady && (
                     <Text type="secondary" className={styles.updatedAt}>
-                      更新时间：
+                      {t("update_time")}
                       {dayjs(interviewDesigner.updated_at).format(
                         "YYYY-MM-DD HH:mm:ss"
                       )}
@@ -336,7 +342,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                           onClick={handleDesignerChat}
                           style={{ marginLeft: "12px" }}
                         >
-                          与 Viona 对话
+                          {t("chat_with_viona")}
                         </Button>
                       </>
                     )}
@@ -363,13 +369,13 @@ const TalentDetail: React.FC<IProps> = (props) => {
                           onClick={() => updateInterviewDesignerDoc()}
                           type="primary"
                         >
-                          保存
+                          {t("save")}
                         </Button>
                         <Button
                           onClick={() => setIsEditingInterviewDesigner(false)}
                           style={{ marginLeft: 12 }}
                         >
-                          取消
+                          {t("cancel")}
                         </Button>
                       </div>
                     </>
@@ -391,14 +397,14 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     style={{ marginTop: 120 }}
                     description={
                       <div>
-                        暂未获取推荐面试计划
+                        {t("no_interview_plan")}
                         {!isPreview && (
                           <Button
                             type="primary"
                             onClick={handleDesignerChat}
                             style={{ marginLeft: "12px" }}
                           >
-                            与 Viona 对话
+                            {t("chat_with_viona")}
                           </Button>
                         )}
                       </div>
@@ -412,7 +418,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
             <>
               <div className={styles.feedbackHeader}>
                 <Title level={4} style={{ marginBottom: 24 }}>
-                  面试评分卡
+                  {t("interview_scorecard_title")}
                 </Title>
                 {!isPreview && (
                   <ShareAltOutlined
@@ -420,7 +426,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                       await copy(
                         `${window.origin}/jobs/${job.id}/talents/${talent.id}/detail?tab=interview_feedback`
                       );
-                      message.success("链接已复制");
+                      message.success(t("link_copied"));
                     }}
                   />
                 )}
@@ -430,7 +436,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 <div>
                   <div>
                     <Title level={5}>
-                      最终决定与理由{" "}
+                      {t("final_decision_and_reason")}{" "}
                       {!isEditingTalent && !isPreview && (
                         <Button
                           icon={<EditOutlined />}
@@ -451,7 +457,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     <Form form={form} layout="vertical">
                       <Form.Item
                         name="status"
-                        label="总体招聘委员会推荐"
+                        label={t(
+                          "overall_recruitment_committee_recommendation"
+                        )}
                         rules={[{ required: true }]}
                       >
                         <Radio.Group
@@ -464,7 +472,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                         />
                       </Form.Item>
                       <Form.Item
-                        label="最终理由"
+                        label={t("final_reason")}
                         name="feedback"
                         rules={[{ required: true }]}
                       >
@@ -472,20 +480,20 @@ const TalentDetail: React.FC<IProps> = (props) => {
                       </Form.Item>
                       <div>
                         <Button type="primary" onClick={() => submitTalent()}>
-                          提交
+                          {t("submit")}
                         </Button>
                         <Button
                           onClick={() => setIsEditingTalent(false)}
                           style={{ marginLeft: 12 }}
                         >
-                          取消
+                          {t("cancel")}
                         </Button>
                       </div>
                     </Form>
                   ) : (
                     <div className={styles.feedbackBlock}>
                       <div className={styles.primary} style={{ marginTop: 12 }}>
-                        总体招聘委员会推荐
+                        {t("overall_recruitment_committee_recommendation")}
                       </div>
                       <div style={{ marginTop: 6 }}>
                         {
@@ -495,7 +503,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                         }
                       </div>
                       <div className={styles.primary} style={{ marginTop: 12 }}>
-                        最终理由
+                        {t("final_reason")}
                       </div>
                       <div style={{ marginTop: 6 }}> {talent?.feedback}</div>
                     </div>
@@ -503,7 +511,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 </div>
 
                 <div>
-                  <Title level={5}>面试反馈</Title>
+                  <Title level={5}>{t("interview_feedback")}</Title>
                   <div>
                     {new Array(totalRound).fill(0).map((_, index) => {
                       const currentRound = index + 1;
@@ -516,7 +524,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                           <div key={index} className={styles.feedbackItem}>
                             <div className={styles.feedbackTitle}>
                               <span className={styles.primary}>
-                                {currentRound}面{" "}
+                                {currentRound} {t("round_suffix")}{" "}
                               </span>
                               <span className={styles.interviewer}>
                                 {interviewPlan.rounds[index].interviewer}
@@ -525,7 +533,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                             <Empty
                               description={
                                 <>
-                                  暂未填写面试评分卡
+                                  {t("no_scorecard_filled")}
                                   {!isPreview && (
                                     <Button
                                       type="primary"
@@ -536,7 +544,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                                       }}
                                       style={{ marginLeft: 12 }}
                                     >
-                                      与Viona对话
+                                      {t("chat_with_viona")}
                                     </Button>
                                   )}
                                 </>
@@ -563,7 +571,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
                 <div>
                   <Title level={4} style={{ marginBottom: 24 }}>
-                    待评估信号
+                    {t("pending_evaluation_signals")}
                   </Title>
                   <div>
                     {(interviewPlan.signals ?? [])
@@ -643,7 +651,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     style={{ display: "flex", alignItems: "center", gap: 12 }}
                   >
                     <Title level={4} style={{ marginBottom: 24 }}>
-                      其它观察到的信号
+                      {t("other_observed_signals")}
                     </Title>
                     <span
                       style={{
@@ -653,7 +661,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                         top: 4,
                       }}
                     >
-                      用于记录观察到的、不属于主要评估信号的重要行为
+                      {t("other_observed_signals_hint")}
                     </span>
                   </div>
                   <div>
@@ -695,7 +703,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     style={{ display: "flex", alignItems: "center", gap: 12 }}
                   >
                     <Title level={4} style={{ marginBottom: 24 }}>
-                      主要顾虑/红线问题
+                      {t("main_concerns_red_flags")}
                     </Title>
                     <span
                       style={{
@@ -705,7 +713,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                         top: 4,
                       }}
                     >
-                      对观察到的最重要风险或负面信号的总结
+                      {t("main_concerns_red_flags_hint")}
                     </span>
                   </div>
                   <div>
