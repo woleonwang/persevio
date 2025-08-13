@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 interface IProps {
   children?: React.ReactNode;
+  style?: React.CSSProperties;
 }
 
 const menusConfigs = {
@@ -13,7 +14,7 @@ const menusConfigs = {
   jobs: "/jobs",
 };
 const HomeHeader = (props: IProps) => {
-  const { children } = props;
+  const { children, style } = props;
   const navigate = useNavigate();
 
   const isActive = (key: "home" | "jobs"): boolean => {
@@ -25,7 +26,7 @@ const HomeHeader = (props: IProps) => {
   const originalT = (key: string) => t(`home_header.${key}`);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={style}>
       <div className={styles.header}>
         <img src={logo} style={{ width: 220 }} />
         <div className={styles.bannderMenuGroup}>

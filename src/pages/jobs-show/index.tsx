@@ -12,7 +12,8 @@ import { Get } from "../../utils/request";
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
-import { parseJd } from "../../utils";
+import { parseJd, parseJSON } from "../../utils";
+import HomeHeader from "@/components/HomeHeader";
 
 type TCompany = {
   logo: string;
@@ -26,6 +27,7 @@ type TJob = {
   updated_at: string;
   job_description: string;
   screening_questions: string;
+  basic_info: TJobBasicInfo;
 };
 
 type TStatus = "loading" | "success" | "error";
@@ -58,8 +60,11 @@ const JobsShow = () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`);
     if (code === 0) {
       setCompany(data.company);
-      data.job.job_description = parseJd(data.job.job_description);
-      setJob(data.job);
+      setJob({
+        ...data.job,
+        basic_info: parseJSON(data.job.basic_info),
+        job_description: parseJd(data.job.job_description),
+      });
       i18n.changeLanguage(data.company.lang ?? "en-US");
       setStatus("success");
     } else {
@@ -67,30 +72,63 @@ const JobsShow = () => {
     }
   };
 
+  if (status === "loading") {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spin spinning />
+      </div>
+    );
+  }
+
   return (
-    <Spin
-      spinning={status === "loading"}
-      style={{ height: "100vh", alignContent: "center" }}
+    <HomeHeader
+      style={{
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       {status === "success" && company && job && (
         <div className={styles.container}>
-          <div className={styles.header}>
-            {!!company.logo && (
-              <img
-                src={
-                  company.logo.startsWith("http")
-                    ? company.logo
-                    : `/api/logo/${company.logo}`
-                }
-                className={styles.logo}
-              />
-            )}
+          <div className={styles.basicInfo}>
+            <div>
+              {!!company.logo && (
+                <img
+                  src={
+                    company.logo.startsWith("http")
+                      ? company.logo
+                      : `/api/logo/${company.logo}`
+                  }
+                  className={styles.logo}
+                />
+              )}
+            </div>
+            <div className={styles.jobName}>{job.name}</div>
+            <div className={styles.companyName}>
+              {t("job_at")} {company.name}
+            </div>
+            <div className={styles.more} onClick={() => setDrawerOpen(true)}>
+              <span>{t("click_for_complete_jd")}</span>
+              <DownOutlined style={{ fontSize: 14 }} />
+            </div>
           </div>
+
           <div className={styles.body}>
             <div className={styles.left}>
               <div className={styles.basicInfo}>
                 <div className={styles.jobName}>{job.name}</div>
-                <div className={styles.companyName}> {t("job_at")} {company.name}</div>
+                <div className={styles.companyName}>
+                  {" "}
+                  {t("job_at")} {company.name}
+                </div>
                 <div
                   className={styles.more}
                   onClick={() => setDrawerOpen(true)}
@@ -110,7 +148,9 @@ const JobsShow = () => {
               <div>
                 <div className={classnames(styles.updatedAt, styles.hidden)}>
                   {dayjs().diff(dayjs(job.updated_at), "days")
-                    ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t("days_ago")}`
+                    ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t(
+                        "days_ago"
+                      )}`
                     : t("today")}
                 </div>
               </div>
@@ -147,14 +187,16 @@ const JobsShow = () => {
             <div>
               <div className={classnames(styles.updatedAt)}>
                 {dayjs().diff(dayjs(job.updated_at), "days")
-                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t("days_ago")}`
+                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t(
+                      "days_ago"
+                    )}`
                   : t("today")}
               </div>
             </div>
           </Drawer>
         </div>
       )}
-    </Spin>
+    </HomeHeader>
   );
 };
 
