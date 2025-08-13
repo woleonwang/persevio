@@ -27,6 +27,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
+import enUSReact from "antd/es/locale/en_US"; // 英文
 import zhCNReact from "antd/es/locale/zh_CN"; // 中文
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
@@ -62,6 +63,7 @@ i18n.use(initReactI18next).init({
       translation: zhCN,
     },
   },
+  lng: "en-US", // 设置初始语言为英文
   fallbackLng: "en-US",
 });
 
@@ -74,7 +76,7 @@ createRoot(document.getElementById("root")!).render(
           colorPrimary: "#1FAC6A",
         },
       }}
-      locale={zhCNReact}
+      locale={enUSReact} // 使用英文 locale
     >
       <BrowserRouter>
         <Routes>

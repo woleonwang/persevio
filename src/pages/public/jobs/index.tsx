@@ -576,11 +576,12 @@ const PublicJobs: React.FC = () => {
                           {t("job_card.team_language")} {job.team_lanugage}
                         </span>
                         <span className={styles["job-mode"]}>
-                          {t(
-                            `job_card.role_type.${
-                              roleTypeTranslations[job.role_type]
-                            }`
-                          )}
+                          {roleTypeTranslations[job.role_type] &&
+                            t(
+                              `job_card.role_type.${
+                                roleTypeTranslations[job.role_type]
+                              }`
+                            )}
                         </span>
                       </div>
                       <span className={styles["job-time"]}>
