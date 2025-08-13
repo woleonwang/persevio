@@ -714,6 +714,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     today: "Today",
     job_description: "Job Description",
     powered_by_persevio: "Powered by Persevio",
+    role_type: {
+      onsite: "Onsite",
+      hybrid: "Hybrid",
+      remote: "Remote",
+    },
   },
 
   coworker: {

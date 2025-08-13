@@ -679,6 +679,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     today: "今天",
     job_description: "职位描述",
     powered_by_persevio: "由 Persevio 提供技术支持",
+    role_type: {
+      onsite: "完全在办公室工作",
+      hybrid: "混合型",
+      remote: "完全在家工作",
+    },
   },
 
   coworker: {
@@ -736,7 +741,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     feedback: "反馈",
     accepted: "已通过",
     rejected: "已拒绝",
-    
+
     // 新增的talent页面相关翻译
     arrange_interview: "安排面试",
     interview_name: "面试名称",
@@ -761,21 +766,22 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     recommended_interview_questions: "推荐面试问题",
     fill_scorecard: "填写评分卡",
     round: "轮次",
-    upload_resume_or_select_candidate: "您可以上传简历或选择一位候选人，与我一起制定该候选人的面试计划。",
-    
+    upload_resume_or_select_candidate:
+      "您可以上传简历或选择一位候选人，与我一起制定该候选人的面试计划。",
+
     // 状态相关
     status_evaluate_succeed: "评估成功",
     status_accepted: "已通过",
     status_rejected: "已拒绝",
-    
+
     // 日期格式
     date_format: "YYYY-MM-DD HH:mm",
-    
+
     // 其他通用文案
     loading: "加载中...",
     submit: "提交",
     cancel: "取消",
-    
+
     // SelectOrUploadTalent 组件相关
     select_candidate: "选择候选人",
     or: "或",
@@ -789,8 +795,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       strong_hire: "强烈推荐：超出标准。高度自信。",
       hire: "推荐：符合标准。有信心。",
       hold: "保留：优秀候选人，但可能在时间、级别或特定职位需求上存在不匹配。未来职位可再次考虑。",
-      no_hire_underqualified: "不予录用（资历不足）：未达到核心技能或经验水平要求。",
-      no_hire_not_a_fit: "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
+      no_hire_underqualified:
+        "不予录用（资历不足）：未达到核心技能或经验水平要求。",
+      no_hire_not_a_fit:
+        "不予录用（不匹配）：具备所需技能，但特质、工作方式或动机与职位/公司不匹配。",
     },
     signal_level: {
       must_have: "必须具备",
@@ -820,7 +828,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     no_scorecard_filled: "暂未填写面试评分卡",
     pending_evaluation_signals: "待评估信号",
     other_observed_signals: "其它观察到的信号",
-    other_observed_signals_hint: "用于记录观察到的、不属于主要评估信号的重要行为",
+    other_observed_signals_hint:
+      "用于记录观察到的、不属于主要评估信号的重要行为",
     main_concerns_red_flags: "主要顾虑/红线问题",
     main_concerns_red_flags_hint: "对观察到的最重要风险或负面信号的总结",
     round_suffix: "面",

@@ -21,11 +21,19 @@ type TCompany = {
   lang: string;
 };
 
+type TJobDescription = {
+  company_introduction: string; // 公司简介，纯文本格式
+  job_description: string; // 职位描述，支持 markdown 格式
+  basic_requirements: string; // 基本要求，支持 markdown 格式
+  bonus_points: string; // 加分项，支持 markdown 格式
+};
+
 type TJob = {
   name: string;
   company_id: number;
   updated_at: string;
   job_description: string;
+  job_description_json: TJobDescription;
   screening_questions: string;
   basic_info: TJobBasicInfo;
 };
@@ -63,7 +71,7 @@ const JobsShow = () => {
       setJob({
         ...data.job,
         basic_info: parseJSON(data.job.basic_info),
-        job_description: parseJd(data.job.job_description),
+        job_description_json: parseJSON(data.job.job_description_json),
       });
       i18n.changeLanguage(data.company.lang ?? "en-US");
       setStatus("success");
@@ -99,51 +107,75 @@ const JobsShow = () => {
       {status === "success" && company && job && (
         <div className={styles.container}>
           <div className={styles.basicInfo}>
-            <div>
-              {!!company.logo && (
-                <img
-                  src={
-                    company.logo.startsWith("http")
-                      ? company.logo
-                      : `/api/logo/${company.logo}`
-                  }
-                  className={styles.logo}
-                />
-              )}
-            </div>
             <div className={styles.jobName}>{job.name}</div>
-            <div className={styles.companyName}>
-              {t("job_at")} {company.name}
+            <div>
+              <div>
+                {job.basic_info.location.map((item) => item.city).join(", ")}
+              </div>
+              <div>{t(`role_type.${job.basic_info.role_type}`)}</div>
+              <div>{job.basic_info.team_name}</div>
+              <div>团队语言: {job.basic_info.team_lanugage}</div>
+              <div>
+                {(job.basic_info.employee_level ?? [])
+                  .map((level) =>
+                    originalT(`public_jobs.job_card.employee_level.${level}`)
+                  )
+                  .join("、")}
+              </div>
             </div>
-            <div className={styles.more} onClick={() => setDrawerOpen(true)}>
-              <span>{t("click_for_complete_jd")}</span>
-              <DownOutlined style={{ fontSize: 14 }} />
+            <div>
+              <div>
+                {!!company.logo && (
+                  <img
+                    src={
+                      company.logo.startsWith("http")
+                        ? company.logo
+                        : `/api/logo/${company.logo}`
+                    }
+                    className={styles.logo}
+                  />
+                )}
+              </div>
+
+              <div className={styles.companyName}>{company.name}</div>
+              <div className={styles.companyName}>
+                {job.job_description_json.company_introduction}
+              </div>
             </div>
           </div>
 
           <div className={styles.body}>
             <div className={styles.left}>
-              <div className={styles.basicInfo}>
-                <div className={styles.jobName}>{job.name}</div>
-                <div className={styles.companyName}>
-                  {" "}
-                  {t("job_at")} {company.name}
-                </div>
-                <div
-                  className={styles.more}
-                  onClick={() => setDrawerOpen(true)}
-                >
-                  <span>{t("click_for_complete_jd")}</span>
-                  <DownOutlined style={{ fontSize: 14 }} />
-                </div>
-              </div>
               <div
                 className={classnames(
                   styles.jobDescriptionContainer,
                   styles.hidden
                 )}
               >
-                <MarkdownContainer content={job.job_description} />
+                <div>
+                  <div>职位描述</div>
+                  <div>
+                    <MarkdownContainer
+                      content={job.job_description_json.job_description}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div>基本要求</div>
+                  <div>
+                    <MarkdownContainer
+                      content={job.job_description_json.basic_requirements}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div>加分项</div>
+                  <div>
+                    <MarkdownContainer
+                      content={job.job_description_json.bonus_points}
+                    />
+                  </div>
+                </div>
               </div>
               <div>
                 <div className={classnames(styles.updatedAt, styles.hidden)}>
@@ -166,34 +198,6 @@ const JobsShow = () => {
           <Link className={styles.footer} to="/">
             {t("powered_by_persevio")}
           </Link>
-
-          <Drawer
-            title={
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{t("job_description")}</span>
-                <CloseOutlined onClick={() => setDrawerOpen(false)} />
-              </div>
-            }
-            placement="bottom"
-            closable={false}
-            onClose={() => setDrawerOpen(false)}
-            open={drawerOpen}
-            height={"80vh"}
-            style={{ borderRadius: "16px 16px 0 0" }}
-          >
-            <div className={styles.jobDescriptionContainer}>
-              <MarkdownContainer content={job.job_description} />
-            </div>
-            <div>
-              <div className={classnames(styles.updatedAt)}>
-                {dayjs().diff(dayjs(job.updated_at), "days")
-                  ? `${dayjs().diff(dayjs(job.updated_at), "days")} ${t(
-                      "days_ago"
-                    )}`
-                  : t("today")}
-              </div>
-            </div>
-          </Drawer>
         </div>
       )}
     </HomeHeader>
