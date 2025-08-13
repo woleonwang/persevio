@@ -111,7 +111,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
     sessionId,
     allowEditMessage = false,
     userRole = "staff",
-    disableApply = false,
     onChangeTab,
     onNextTask,
     jobInterviewDesignerId,
@@ -1506,27 +1505,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
             >
               <div></div>
               <div style={{ display: "flex", gap: 10 }}>
-                {chatType === "candidate" && !disableApply && (
-                  <Button
-                    type="primary"
-                    onClick={async () => {
-                      const { code } = await Post(
-                        "/api/candidate/job_applies",
-                        {
-                          job_id: jobId,
-                        }
-                      );
-                      if (code === 10001) {
-                        navigate(`/signin-candidate?job_id=${jobId}`);
-                      } else {
-                        navigate(`/candidate/job-applies`);
-                      }
-                    }}
-                  >
-                    {t("apply_now")}
-                  </Button>
-                )}
-
                 <Button type="primary" onClick={submit} disabled={!canSubmit()}>
                   {originalT("submit")}
                 </Button>

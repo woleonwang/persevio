@@ -91,7 +91,6 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   userRole?: TUserRole;
-  disableApply?: boolean;
   share?: boolean;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;

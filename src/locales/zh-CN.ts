@@ -280,7 +280,6 @@ export default {
     question_location: "这个职位的工作地点是在哪？",
     question_hours: "这个职位的工作时间要求是怎样的？",
 
-    apply_now: "立即申请",
     copied: "已复制",
     edit_message_hint:
       "我在下方通过添加/删除/修改你的原始回复，已经回答了你的问题、修改了你的提案或提供了我的反馈。改动可能很小，请务必仔细审阅，确保没有遗漏任何内容。",
@@ -684,6 +683,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       hybrid: "混合型",
       remote: "完全在家工作",
     },
+    apply_now: "立即申请",
   },
 
   coworker: {

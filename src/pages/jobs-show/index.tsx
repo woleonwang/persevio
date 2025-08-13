@@ -1,18 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router";
-import { DownOutlined, CloseOutlined } from "@ant-design/icons";
+import { Link, useNavigate, useParams } from "react-router";
 import classnames from "classnames";
-import { Drawer, Spin } from "antd";
+import { Button, Spin } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
 
 import ChatRoom from "../../components/ChatRoom";
-import { Get } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 
 import styles from "./style.module.less";
 import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
-import { parseJd, parseJSON } from "../../utils";
+import { parseJSON } from "../../utils";
 import HomeHeader from "@/components/HomeHeader";
 
 type TCompany = {
@@ -45,7 +44,8 @@ const JobsShow = () => {
   const [company, setCompany] = useState<TCompany>();
   const [job, setJob] = useState<TJob>();
   const [status, setStatus] = useState<TStatus>("loading");
-  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const { i18n, t: originalT } = useTranslation();
   const t = (key: string) => originalT(`jobs_show.${key}`);
@@ -107,20 +107,39 @@ const JobsShow = () => {
       {status === "success" && company && job && (
         <div className={styles.container}>
           <div className={styles.basicInfo}>
-            <div className={styles.jobName}>{job.name}</div>
             <div>
+              <div className={styles.jobName}>{job.name}</div>
               <div>
-                {job.basic_info.location.map((item) => item.city).join(", ")}
+                <div>
+                  {job.basic_info.location.map((item) => item.city).join(", ")}
+                </div>
+                <div>{t(`role_type.${job.basic_info.role_type}`)}</div>
+                <div>{job.basic_info.team_name}</div>
+                <div>团队语言: {job.basic_info.team_lanugage}</div>
+                <div>
+                  {(job.basic_info.employee_level ?? [])
+                    .map((level) =>
+                      originalT(`public_jobs.job_card.employee_level.${level}`)
+                    )
+                    .join("、")}
+                </div>
               </div>
-              <div>{t(`role_type.${job.basic_info.role_type}`)}</div>
-              <div>{job.basic_info.team_name}</div>
-              <div>团队语言: {job.basic_info.team_lanugage}</div>
               <div>
-                {(job.basic_info.employee_level ?? [])
-                  .map((level) =>
-                    originalT(`public_jobs.job_card.employee_level.${level}`)
-                  )
-                  .join("、")}
+                <Button
+                  type="primary"
+                  onClick={async () => {
+                    const { code } = await Post("/api/candidate/job_applies", {
+                      job_id: id,
+                    });
+                    if (code === 10001) {
+                      navigate(`/signin-candidate?job_id=${id}`);
+                    } else {
+                      navigate(`/candidate/job-applies`);
+                    }
+                  }}
+                >
+                  {t("apply_now")}
+                </Button>
               </div>
             </div>
             <div>
