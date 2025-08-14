@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { Button, Spin } from "antd";
+import { Button, Modal, Spin } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
+import classnames from "classnames";
 
 import ChatRoom from "../../components/ChatRoom";
 import { Get, Post } from "../../utils/request";
@@ -12,6 +13,7 @@ import MarkdownContainer from "../../components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
 import { parseJSON } from "../../utils";
 import HomeHeader from "@/components/HomeHeader";
+import VionaAvatar from "@/assets/viona-avatar.png";
 
 type TCompany = {
   logo: string;
@@ -45,6 +47,7 @@ const JobsShow = () => {
   const [status, setStatus] = useState<TStatus>("loading");
   const [isCompanyDescriptionExpanded, setIsCompanyDescriptionExpanded] =
     useState(false);
+  const [chatModalVisible, setChatModalVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -114,6 +117,14 @@ const JobsShow = () => {
     >
       {t("apply_now")}
     </Button>
+  );
+
+  const ChatRoomArea = (
+    <ChatRoom
+      userRole="candidate"
+      jobId={parseInt(id ?? "0")}
+      sessionId={sessionId}
+    />
   );
 
   return (
@@ -226,7 +237,7 @@ const JobsShow = () => {
                 </div>
               </div>
 
-              <div className={styles.mobileApplyButton}>{ApplyButton}</div>
+              <div className={styles.mobileVisible}>{ApplyButton}</div>
             </div>
           </div>
 
@@ -270,13 +281,39 @@ const JobsShow = () => {
               </div>
             </div>
 
-            <div className={styles.right}>
-              <ChatRoom
-                userRole="candidate"
-                jobId={parseInt(id ?? "0")}
-                sessionId={sessionId}
-              />
+            <div className={classnames(styles.right, styles.desktopVisible)}>
+              {ChatRoomArea}
             </div>
+          </div>
+
+          <div className={classnames(styles.mobileVisible, styles.vionaAvatar)}>
+            <img
+              src={VionaAvatar}
+              style={{ width: 50, height: 50 }}
+              onClick={() => setChatModalVisible(true)}
+            />
+          </div>
+
+          <div className={styles.mobileVisible}>
+            <Modal
+              title={false}
+              footer={false}
+              open={chatModalVisible}
+              onCancel={() => setChatModalVisible(false)}
+              styles={{
+                content: {
+                  height: "80vh",
+                  overflow: "hidden",
+                  padding: 0,
+                  display: "flex",
+                },
+                body: { display: "flex", height: "100%" },
+              }}
+              style={{ top: "5vh" }}
+              closeIcon={false}
+            >
+              {ChatRoomArea}
+            </Modal>
           </div>
 
           <Link className={styles.footer} to="/">
