@@ -13,6 +13,7 @@ import { IProps, TMessage, TMessageFromApi } from "./type";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import UserAvatar from "@/assets/user-avatar.png";
 import styles from "./style.module.less";
+import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -23,6 +24,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  const [preDefinedQuestionsVisible, setPreDefinedQuestionsVisible] =
+    useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -198,98 +201,103 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.right}>
-        <div
-          className={styles.listArea}
-          ref={(e) => (listContainerRef.current = e)}
-        >
-          <List
-            dataSource={messages}
-            split={false}
-            renderItem={(item, index) => {
-              const isLast = index === messages.length - 1;
-              return (
-                <List.Item
-                  style={
-                    isLast
-                      ? {
-                          minHeight:
-                            (listContainerRef.current?.clientHeight ?? 80) - 8,
-                          alignItems: "flex-start",
-                        }
-                      : {}
-                  }
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        icon={
-                          item.role === "user" ? (
-                            <img src={UserAvatar} />
-                          ) : (
-                            <img src={VionaAvatar} />
-                          )
-                        }
-                      />
-                    }
-                    title={
-                      <div>
-                        <span style={{ fontSize: 18 }}>
-                          {item.role === "user"
-                            ? "You"
-                            : `Viona, ${t("viona_intro_candidate")}`}
-                        </span>
-                        <span className={styles.timestamp}>
-                          {dayjs(item.updated_at).format(datetimeFormat)}
-                        </span>
-                      </div>
-                    }
-                    description={
-                      <div
-                        className={classnames(
-                          styles.messageContainer,
-                          item.role === "user" ? styles.user : "",
-                          {
-                            [styles.lastMessage]: index === messages.length - 1,
-                          }
-                        )}
-                      >
-                        {item.id === "fake_ai_id" ? (
-                          <p>
-                            {loadingText}
-                            {dayjs().diff(
-                              loadingStartedAtRef.current ?? dayjs(),
-                              "second"
-                            ) > 30
-                              ? `(${t("viona_is_thinking")})`
-                              : ""}
-                          </p>
+      <div
+        className={styles.listArea}
+        ref={(e) => (listContainerRef.current = e)}
+      >
+        <List
+          dataSource={messages}
+          split={false}
+          renderItem={(item, index) => {
+            const isLast = index === messages.length - 1;
+            return (
+              <List.Item
+                style={
+                  isLast
+                    ? {
+                        minHeight:
+                          (listContainerRef.current?.clientHeight ?? 80) - 8,
+                        alignItems: "flex-start",
+                      }
+                    : {}
+                }
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      icon={
+                        item.role === "user" ? (
+                          <img src={UserAvatar} />
                         ) : (
-                          <MarkdownContainer
-                            content={
-                              item.messageSubType === "error"
-                                ? "Something wrong with Viona, please retry."
-                                : item.content
-                            }
-                          />
-                        )}
-                      </div>
-                    }
-                  />
-                </List.Item>
-              );
-            }}
-          />
-          <div ref={messagesEndRef} />
-        </div>
+                          <img src={VionaAvatar} />
+                        )
+                      }
+                    />
+                  }
+                  title={
+                    <div>
+                      <span style={{ fontSize: 18 }}>
+                        {item.role === "user"
+                          ? "You"
+                          : `Viona, ${t("viona_intro_candidate")}`}
+                      </span>
+                      <span className={styles.timestamp}>
+                        {dayjs(item.updated_at).format(datetimeFormat)}
+                      </span>
+                    </div>
+                  }
+                  description={
+                    <div
+                      className={classnames(
+                        styles.messageContainer,
+                        item.role === "user" ? styles.user : "",
+                        {
+                          [styles.lastMessage]: index === messages.length - 1,
+                        }
+                      )}
+                    >
+                      {item.id === "fake_ai_id" ? (
+                        <p>
+                          {loadingText}
+                          {dayjs().diff(
+                            loadingStartedAtRef.current ?? dayjs(),
+                            "second"
+                          ) > 30
+                            ? `(${t("viona_is_thinking")})`
+                            : ""}
+                        </p>
+                      ) : (
+                        <MarkdownContainer
+                          content={
+                            item.messageSubType === "error"
+                              ? "Something wrong with Viona, please retry."
+                              : item.content
+                          }
+                        />
+                      )}
+                    </div>
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
+        <div ref={messagesEndRef} />
+      </div>
 
-        <div className={styles.preDefinedQuestionContainer}>
-          {PreDefinedMessages.map((message) => {
+      <div className={styles.preDefinedQuestionContainer}>
+        <div
+          className={classnames(styles.questionsContainer, {
+            [styles.show]: preDefinedQuestionsVisible,
+          })}
+        >
+          {PreDefinedMessages.slice(1).map((message) => {
             return (
               <div
                 className={styles.messageCard}
                 onClick={() => {
                   sendMessage(message);
+                  setPreDefinedQuestionsVisible(false);
                 }}
                 key={message}
               >
@@ -298,8 +306,36 @@ const ChatRoom: React.FC<IProps> = (props) => {
             );
           })}
         </div>
+        <div
+          className={styles.messageCard}
+          onClick={() => {
+            sendMessage(PreDefinedMessages[0]);
+            setPreDefinedQuestionsVisible(false);
+          }}
+        >
+          <div>{PreDefinedMessages[0]}</div>
+        </div>
+        <div
+          onClick={() =>
+            setPreDefinedQuestionsVisible(!preDefinedQuestionsVisible)
+          }
+        >
+          <Button
+            size="large"
+            variant="outlined"
+            color="primary"
+            icon={<BarsOutlined />}
+          />
+        </div>
+      </div>
 
-        <div className={styles.inputArea}>
+      <div className={styles.inputArea}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Input.TextArea
             value={inputValue}
             onChange={(e) => {
@@ -324,19 +360,11 @@ const ChatRoom: React.FC<IProps> = (props) => {
               maxRows: 16,
             }}
           />
-          <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <div></div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                {originalT("submit")}
-              </Button>
-            </div>
+
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button type="primary" onClick={submit} disabled={!canSubmit()}>
+              {originalT("submit")}
+            </Button>
           </div>
         </div>
       </div>

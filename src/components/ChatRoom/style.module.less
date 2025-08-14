@@ -1,16 +1,14 @@
+@primary-color: #1fac6a;
+
 .container {
   flex: auto;
   padding: 20px;
   background-color: #f3f3f3;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
-
-  :global {
-    .ant-float-btn {
-      bottom: 120px;
-      right: 60px;
-    }
-  }
+  position: relative;
+  width: 100%;
 }
 
 .right {
@@ -62,23 +60,45 @@
 }
 
 .preDefinedQuestionContainer {
-  flex: none;
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
+  position: relative;
+  margin-top: 10px;
   padding: 0 16px;
-  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+
   .messageCard {
     padding: 4px 8px;
-    background-color: white;
+    background-color: #f6ffed; // 浅绿色
     border-radius: 16px;
     width: fit-content;
-    flex: none;
-    display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
     font-size: 14px;
+    color: @primary-color;
+    border: 1px solid @primary-color;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: 5px;
+  }
+
+  .questionsContainer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+
+    &.show {
+      max-height: 500px;
+      opacity: 1;
+      transform: translateY(0);
+      overflow: auto;
+    }
   }
 }
 

@@ -307,7 +307,7 @@ const JobsShow = () => {
                   padding: 0,
                   display: "flex",
                 },
-                body: { display: "flex", height: "100%" },
+                body: { display: "flex", height: "100%", width: "100%" },
               }}
               style={{ top: "5vh" }}
               closeIcon={false}
