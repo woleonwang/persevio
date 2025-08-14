@@ -296,7 +296,6 @@ const JobsShow = () => {
 
           <div className={styles.mobileVisible}>
             <Modal
-              title={false}
               footer={false}
               open={chatModalVisible}
               onCancel={() => setChatModalVisible(false)}
@@ -310,7 +309,6 @@ const JobsShow = () => {
                 body: { display: "flex", height: "100%", width: "100%" },
               }}
               style={{ top: "5vh" }}
-              closeIcon={false}
             >
               {ChatRoomArea}
             </Modal>

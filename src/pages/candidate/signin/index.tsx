@@ -75,7 +75,11 @@ const CandidateSignIn: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classnames(styles.container, {
+        [styles.mobile]: pageState === "signin",
+      })}
+    >
       {pageState !== "signin" && (
         <>
           <div className={styles.header}>

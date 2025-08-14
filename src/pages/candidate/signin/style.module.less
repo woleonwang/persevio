@@ -2,9 +2,14 @@
 
 .container {
   height: 100vh;
+  min-width: 1300px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  &.mobile {
+    min-width: 0;
+  }
 }
 
 .header {
