@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { Button, Modal, Spin } from "antd";
+import { Button, message, Modal, Spin } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
 import classnames from "classnames";
+import { ShareAltOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
-import ChatRoom from "../../components/ChatRoom";
-import { Get, Post } from "../../utils/request";
+import ChatRoom from "@/components/ChatRoom";
+import { Get, Post } from "@/utils/request";
+import MarkdownContainer from "@/components/MarkdownContainer";
+import { copy, parseJSON } from "@/utils";
+import HomeHeader from "@/components/HomeHeader";
 
 import styles from "./style.module.less";
-import MarkdownContainer from "../../components/MarkdownContainer";
-import { useTranslation } from "react-i18next";
-import { parseJSON } from "../../utils";
-import HomeHeader from "@/components/HomeHeader";
+
 import VionaAvatar from "@/assets/viona-avatar.png";
 
 type TCompany = {
@@ -147,6 +149,13 @@ const JobsShow = () => {
                             "days_ago_posted"
                           )}`}
                     </span>
+                    <ShareAltOutlined
+                      onClick={async () => {
+                        await copy(window.location.href);
+                        message.success(originalT("copied"));
+                      }}
+                      style={{ color: "#1fac6a" }}
+                    />
                   </div>
 
                   <div className={styles.jobAttributes}>
