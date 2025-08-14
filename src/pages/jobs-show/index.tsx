@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Button, message, Modal, Spin } from "antd";
 import { v4 as uuidV4 } from "uuid";
@@ -50,6 +50,7 @@ const JobsShow = () => {
   const [isCompanyDescriptionExpanded, setIsCompanyDescriptionExpanded] =
     useState(false);
   const [chatModalVisible, setChatModalVisible] = useState(false);
+  const originalI18nRef = useRef<string>();
 
   const navigate = useNavigate();
 
@@ -58,6 +59,12 @@ const JobsShow = () => {
 
   useEffect(() => {
     fetchJob();
+
+    return () => {
+      if (originalI18nRef.current) {
+        i18n.changeLanguage(originalI18nRef.current);
+      }
+    };
   }, []);
 
   const sessionId = useMemo(() => {
@@ -79,6 +86,7 @@ const JobsShow = () => {
         basic_info: parseJSON(data.job.basic_info),
         job_description_json: parseJSON(data.job.job_description_json),
       });
+      originalI18nRef.current = i18n.language;
       i18n.changeLanguage(data.company.lang ?? "en-US");
       setStatus("success");
     } else {
