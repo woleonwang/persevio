@@ -36,7 +36,7 @@ const Settings = () => {
   }, [profile]);
 
   const fetchSettings = async () => {
-    const { code, data } = await Get("/api/settings");
+    const { code, data } = await Get("/api/settings?with_prompts=1");
     if (code === 0) {
       setProfile(data);
       const formValues: Record<string, string> = {};

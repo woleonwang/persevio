@@ -193,6 +193,32 @@
   font-size: 15px;
 }
 
+.mobileApplyButton {
+  display: none;
+}
+
+.expandLink {
+  color: #1fac6a;
+  cursor: pointer;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.expandLink::after {
+  content: "▼";
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+@media (min-width: 769px) {
+  .headerContainer {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     height: auto;
@@ -213,8 +239,7 @@
   }
 
   .bannerRight {
-    padding-top: 0;
-    align-self: stretch;
+    display: none;
   }
 
   .jobTitle {
@@ -279,5 +304,9 @@
 
   .sectionTitle span {
     font-size: 18px;
+  }
+
+  .mobileApplyButton {
+    display: block;
   }
 }

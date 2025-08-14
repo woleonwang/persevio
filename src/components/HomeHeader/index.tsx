@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 interface IProps {
   children?: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 const menusConfigs = {
@@ -14,7 +15,7 @@ const menusConfigs = {
   jobs: "/jobs",
 };
 const HomeHeader = (props: IProps) => {
-  const { children, style } = props;
+  const { children, style, className } = props;
   const navigate = useNavigate();
 
   const isActive = (key: "home" | "jobs"): boolean => {
@@ -26,9 +27,9 @@ const HomeHeader = (props: IProps) => {
   const originalT = (key: string) => t(`home_header.${key}`);
 
   return (
-    <div className={styles.container} style={style}>
+    <div className={classnames(styles.container, className)} style={style}>
       <div className={styles.header}>
-        <img src={logo} style={{ width: 220 }} />
+        <img src={logo} className={styles.logo} />
         <div className={styles.bannderMenuGroup}>
           <div
             className={classnames({ [styles.active]: isActive("home") })}
@@ -45,7 +46,7 @@ const HomeHeader = (props: IProps) => {
         </div>
         <div className={styles.joinBtn} onClick={() => navigate("/apply")}>
           <span>Join the waitlist</span>
-          <span style={{ marginLeft: 17 }}>→</span>
+          <span>→</span>
         </div>
       </div>
 

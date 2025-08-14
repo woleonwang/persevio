@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import classnames from "classnames";
 import { Button, Spin } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
@@ -44,6 +43,8 @@ const JobsShow = () => {
   const [company, setCompany] = useState<TCompany>();
   const [job, setJob] = useState<TJob>();
   const [status, setStatus] = useState<TStatus>("loading");
+  const [isCompanyDescriptionExpanded, setIsCompanyDescriptionExpanded] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -95,15 +96,28 @@ const JobsShow = () => {
     );
   }
 
-  return (
-    <HomeHeader
-      style={{
-        height: "100vh",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
+  const ApplyButton = (
+    <Button
+      type="primary"
+      size="large"
+      className={styles.applyButton}
+      onClick={async () => {
+        const { code } = await Post("/api/candidate/job_applies", {
+          job_id: id,
+        });
+        if (code === 10001) {
+          navigate(`/signin-candidate?job_id=${id}`);
+        } else {
+          navigate(`/candidate/job-applies`);
+        }
       }}
     >
+      {t("apply_now")}
+    </Button>
+  );
+
+  return (
+    <HomeHeader className={styles.headerContainer}>
       {status === "success" && company && job && (
         <div className={styles.container}>
           {/* Banner 区域 */}
@@ -115,14 +129,12 @@ const JobsShow = () => {
                     <h1 className={styles.jobTitle}>{job.name}</h1>
                     <span className={styles.postedTime}>
                       {dayjs().diff(dayjs(job.updated_at), "hours") < 24
-                        ? `${dayjs().diff(
-                            dayjs(job.updated_at),
-                            "hours"
-                          )}${t("hours_ago")}`
-                        : `${dayjs().diff(
-                            dayjs(job.updated_at),
-                            "days"
-                          )}${t("days_ago_posted")}`}
+                        ? `${dayjs().diff(dayjs(job.updated_at), "hours")}${t(
+                            "hours_ago"
+                          )}`
+                        : `${dayjs().diff(dayjs(job.updated_at), "days")}${t(
+                            "days_ago_posted"
+                          )}`}
                     </span>
                   </div>
 
@@ -149,7 +161,9 @@ const JobsShow = () => {
                     </div>
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
-                      <span>{t("team_language")}: {job.basic_info.team_lanugage}</span>
+                      <span>
+                        {t("team_language")}: {job.basic_info.team_lanugage}
+                      </span>
                     </div>
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
@@ -166,28 +180,7 @@ const JobsShow = () => {
                   </div>
                 </div>
 
-                <div className={styles.bannerRight}>
-                  <Button
-                    type="primary"
-                    size="large"
-                    className={styles.applyButton}
-                    onClick={async () => {
-                      const { code } = await Post(
-                        "/api/candidate/job_applies",
-                        {
-                          job_id: id,
-                        }
-                      );
-                      if (code === 10001) {
-                        navigate(`/signin-candidate?job_id=${id}`);
-                      } else {
-                        navigate(`/candidate/job-applies`);
-                      }
-                    }}
-                  >
-                    {t("apply_now")}
-                  </Button>
-                </div>
+                <div className={styles.bannerRight}>{ApplyButton}</div>
               </div>
               <div className={styles.companySection}>
                 <div className={styles.companyLeft}>
@@ -206,10 +199,34 @@ const JobsShow = () => {
                 <div className={styles.companyRight}>
                   <div className={styles.companyName}>{company.name}</div>
                   <div className={styles.companyDescription}>
-                    {job.job_description_json.company_introduction}
+                    {isCompanyDescriptionExpanded
+                      ? job.job_description_json.company_introduction
+                      : `${job.job_description_json.company_introduction.slice(
+                          0,
+                          100
+                        )}${
+                          job.job_description_json.company_introduction.length >
+                          100
+                            ? "..."
+                            : ""
+                        }`}
+                    {!isCompanyDescriptionExpanded && (
+                      <span
+                        className={styles.expandLink}
+                        onClick={() =>
+                          setIsCompanyDescriptionExpanded(
+                            !isCompanyDescriptionExpanded
+                          )
+                        }
+                      >
+                        展开
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
+
+              <div className={styles.mobileApplyButton}>{ApplyButton}</div>
             </div>
           </div>
 

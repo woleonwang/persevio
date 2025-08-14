@@ -391,6 +391,7 @@ interface ITalentListItem {
   job_id: number;
   job_name: string;
   source_channel: "delivery" | "upload";
+  evaluate_result: TEvaluationResult;
   created_at: string;
   updated_at: string;
 }
