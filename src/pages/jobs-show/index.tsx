@@ -162,7 +162,7 @@ const JobsShow = () => {
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
                       <span>
-                        {job.basic_info.location
+                        {(job.basic_info.location ?? [])
                           .map((item) => item.city)
                           .join(", ")}
                       </span>
@@ -218,31 +218,33 @@ const JobsShow = () => {
                 </div>
                 <div className={styles.companyRight}>
                   <div className={styles.companyName}>{company.name}</div>
-                  <div className={styles.companyDescription}>
-                    {isCompanyDescriptionExpanded
-                      ? job.job_description_json.company_introduction
-                      : `${job.job_description_json.company_introduction.slice(
-                          0,
-                          100
-                        )}${
-                          job.job_description_json.company_introduction.length >
-                          100
-                            ? "..."
-                            : ""
-                        }`}
-                    {!isCompanyDescriptionExpanded && (
-                      <span
-                        className={styles.expandLink}
-                        onClick={() =>
-                          setIsCompanyDescriptionExpanded(
-                            !isCompanyDescriptionExpanded
-                          )
-                        }
-                      >
-                        展开
-                      </span>
-                    )}
-                  </div>
+                  {!!job.job_description_json.company_introduction && (
+                    <div className={styles.companyDescription}>
+                      {isCompanyDescriptionExpanded
+                        ? job.job_description_json.company_introduction
+                        : `${job.job_description_json.company_introduction.slice(
+                            0,
+                            100
+                          )}${
+                            job.job_description_json.company_introduction
+                              .length > 100
+                              ? "..."
+                              : ""
+                          }`}
+                      {!isCompanyDescriptionExpanded && (
+                        <span
+                          className={styles.expandLink}
+                          onClick={() =>
+                            setIsCompanyDescriptionExpanded(
+                              !isCompanyDescriptionExpanded
+                            )
+                          }
+                        >
+                          展开
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -253,41 +255,49 @@ const JobsShow = () => {
           {/* 主要内容区域：JD和聊天框水平布局 */}
           <div className={styles.mainContent}>
             <div className={styles.left}>
-              <div className={styles.jobDescriptionSection}>
-                <div className={styles.sectionTitle}>
-                  <div className={styles.greenBar}></div>
-                  <span>{t("job_description_section")}</span>
-                </div>
-                <div className={styles.sectionContent}>
-                  <MarkdownContainer
-                    content={job.job_description_json.job_description}
-                  />
-                </div>
-              </div>
+              {!!job.job_description_json.job_description ? (
+                <>
+                  <div className={styles.jobDescriptionSection}>
+                    <div className={styles.sectionTitle}>
+                      <div className={styles.greenBar}></div>
+                      <span>{t("job_description_section")}</span>
+                    </div>
+                    <div className={styles.sectionContent}>
+                      <MarkdownContainer
+                        content={job.job_description_json.job_description}
+                      />
+                    </div>
+                  </div>
 
-              <div className={styles.jobDescriptionSection}>
-                <div className={styles.sectionTitle}>
-                  <div className={styles.greenBar}></div>
-                  <span>{t("basic_requirements")}</span>
-                </div>
-                <div className={styles.sectionContent}>
-                  <MarkdownContainer
-                    content={job.job_description_json.basic_requirements}
-                  />
-                </div>
-              </div>
+                  <div className={styles.jobDescriptionSection}>
+                    <div className={styles.sectionTitle}>
+                      <div className={styles.greenBar}></div>
+                      <span>{t("basic_requirements")}</span>
+                    </div>
+                    <div className={styles.sectionContent}>
+                      <MarkdownContainer
+                        content={job.job_description_json.basic_requirements}
+                      />
+                    </div>
+                  </div>
 
-              <div className={styles.jobDescriptionSection}>
-                <div className={styles.sectionTitle}>
-                  <div className={styles.greenBar}></div>
-                  <span>{t("bonus_points")}</span>
+                  <div className={styles.jobDescriptionSection}>
+                    <div className={styles.sectionTitle}>
+                      <div className={styles.greenBar}></div>
+                      <span>{t("bonus_points")}</span>
+                    </div>
+                    <div className={styles.sectionContent}>
+                      <MarkdownContainer
+                        content={job.job_description_json.bonus_points}
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <MarkdownContainer content={job.job_description} />
                 </div>
-                <div className={styles.sectionContent}>
-                  <MarkdownContainer
-                    content={job.job_description_json.bonus_points}
-                  />
-                </div>
-              </div>
+              )}
             </div>
 
             <div className={classnames(styles.right, styles.desktopVisible)}>
