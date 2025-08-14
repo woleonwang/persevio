@@ -611,7 +611,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   },
 
   job_board: {
-    publish_to_persevio: "发布到 Persevio 招聘网站",
+    publish_to_persevio: "发布",
     complete_jd_first: "请先完成职位描述(JD)任务",
     operation_success: "操作成功",
     link_copied: "链接已复制",
@@ -639,6 +639,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     delete_confirm: "请确认是否删除 {{name}} ，删除后原有内容无法恢复?",
     delete_success: "删除成功",
     delete_failed: "删除失败",
+    publish_to_persevio_recruitment: "发布到Persevio招聘网站",
+    recruitment_chatbot: "招聘chatbot",
+    copy_job_requirement_link:
+      "复制【职位需求】链接，用于HR、用人经理、面试官等定义职位需求、生成面试反馈",
   },
 
   job_chat: {
@@ -684,6 +688,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       remote: "完全在家工作",
     },
     apply_now: "立即申请",
+    hours_ago: "小时前发布",
+    days_ago_posted: "天前发布",
+    team_language: "团队语言",
+    job_description_section: "职位描述",
+    basic_requirements: "基本要求",
+    bonus_points: "加分项",
   },
 
   coworker: {

@@ -118,11 +118,11 @@ const JobsShow = () => {
                         ? `${dayjs().diff(
                             dayjs(job.updated_at),
                             "hours"
-                          )}小时前发布`
+                          )}${t("hours_ago")}`
                         : `${dayjs().diff(
                             dayjs(job.updated_at),
                             "days"
-                          )}天前发布`}
+                          )}${t("days_ago_posted")}`}
                     </span>
                   </div>
 
@@ -149,7 +149,7 @@ const JobsShow = () => {
                     </div>
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
-                      <span>团队语言: {job.basic_info.team_lanugage}</span>
+                      <span>{t("team_language")}: {job.basic_info.team_lanugage}</span>
                     </div>
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
@@ -185,7 +185,7 @@ const JobsShow = () => {
                       }
                     }}
                   >
-                    立即申请
+                    {t("apply_now")}
                   </Button>
                 </div>
               </div>
@@ -219,7 +219,7 @@ const JobsShow = () => {
               <div className={styles.jobDescriptionSection}>
                 <div className={styles.sectionTitle}>
                   <div className={styles.greenBar}></div>
-                  <span>职位描述</span>
+                  <span>{t("job_description_section")}</span>
                 </div>
                 <div className={styles.sectionContent}>
                   <MarkdownContainer
@@ -231,7 +231,7 @@ const JobsShow = () => {
               <div className={styles.jobDescriptionSection}>
                 <div className={styles.sectionTitle}>
                   <div className={styles.greenBar}></div>
-                  <span>基本要求</span>
+                  <span>{t("basic_requirements")}</span>
                 </div>
                 <div className={styles.sectionContent}>
                   <MarkdownContainer
@@ -243,7 +243,7 @@ const JobsShow = () => {
               <div className={styles.jobDescriptionSection}>
                 <div className={styles.sectionTitle}>
                   <div className={styles.greenBar}></div>
-                  <span>加分项</span>
+                  <span>{t("bonus_points")}</span>
                 </div>
                 <div className={styles.sectionContent}>
                   <MarkdownContainer

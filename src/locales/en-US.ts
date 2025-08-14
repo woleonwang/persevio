@@ -674,6 +674,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please confirm if you want to delete {{name}}. Content cannot be recovered after deletion?",
     delete_success: "Deleted successfully",
     delete_failed: "Delete failed",
+    publish_to_persevio_recruitment: "Publish to Persevio Recruitment Website",
+    recruitment_chatbot: "Recruitment Chatbot",
+    copy_job_requirement_link:
+      "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
   },
 
   job_chat: {
@@ -719,6 +723,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       remote: "Remote",
     },
     apply_now: "Apply Now",
+    hours_ago: "hours ago",
+    days_ago_posted: "days ago",
+    team_language: "Team Language",
+    job_description_section: "Job Description",
+    basic_requirements: "Basic Requirements",
+    bonus_points: "Bonus Points",
   },
 
   coworker: {
