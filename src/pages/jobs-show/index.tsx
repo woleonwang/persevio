@@ -115,58 +115,53 @@ const JobsShow = () => {
                     <h1 className={styles.jobTitle}>{job.name}</h1>
                     <span className={styles.postedTime}>
                       {dayjs().diff(dayjs(job.updated_at), "hours") < 24
-                        ? `${dayjs().diff(dayjs(job.updated_at), "hours")}小时前发布`
-                        : `${dayjs().diff(dayjs(job.updated_at), "days")}天前发布`}
+                        ? `${dayjs().diff(
+                            dayjs(job.updated_at),
+                            "hours"
+                          )}小时前发布`
+                        : `${dayjs().diff(
+                            dayjs(job.updated_at),
+                            "days"
+                          )}天前发布`}
                     </span>
                   </div>
 
                   <div className={styles.jobAttributes}>
                     <div className={styles.attributeItem}>
                       <span className={styles.attributeIcon}>◎</span>
-                      <span>{job.basic_info.location.map((item) => item.city).join(", ")}</span>
+                      <span>
+                        {job.basic_info.location
+                          .map((item) => item.city)
+                          .join(", ")}
+                      </span>
                     </div>
                     <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>●</span>
-                      <span>完全在办公室工作</span>
+                      <span className={styles.attributeIcon}>◎</span>
+                      <span>
+                        {originalT(
+                          `public_jobs.job_card.role_type.${job.basic_info.role_type}`
+                        )}
+                      </span>
                     </div>
                     <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>●</span>
+                      <span className={styles.attributeIcon}>◎</span>
                       <span>{job.basic_info.team_name}</span>
                     </div>
                     <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>④</span>
+                      <span className={styles.attributeIcon}>◎</span>
                       <span>团队语言: {job.basic_info.team_lanugage}</span>
                     </div>
                     <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>●</span>
+                      <span className={styles.attributeIcon}>◎</span>
                       <span>
                         {(job.basic_info.employee_level ?? [])
                           .map((level) =>
-                            originalT(`public_jobs.job_card.employee_level.${level}`)
+                            originalT(
+                              `public_jobs.job_card.employee_level.${level}`
+                            )
                           )
                           .join("、")}
                       </span>
-                    </div>
-                  </div>
-
-                  <div className={styles.companySection}>
-                    <div className={styles.companyHeader}>
-                      {!!company.logo && (
-                        <img
-                          src={
-                            company.logo.startsWith("http")
-                              ? company.logo
-                              : `/api/logo/${company.logo}`
-                          }
-                          className={styles.logo}
-                          alt={company.name}
-                        />
-                      )}
-                      <span className={styles.companyName}>{company.name}</span>
-                    </div>
-                    <div className={styles.companyDescription}>
-                      {job.job_description_json.company_introduction}
-                      <span className={styles.expandLink}>展开</span>
                     </div>
                   </div>
                 </div>
@@ -177,9 +172,12 @@ const JobsShow = () => {
                     size="large"
                     className={styles.applyButton}
                     onClick={async () => {
-                      const { code } = await Post("/api/candidate/job_applies", {
-                        job_id: id,
-                      });
+                      const { code } = await Post(
+                        "/api/candidate/job_applies",
+                        {
+                          job_id: id,
+                        }
+                      );
                       if (code === 10001) {
                         navigate(`/signin-candidate?job_id=${id}`);
                       } else {
@@ -189,6 +187,27 @@ const JobsShow = () => {
                   >
                     立即申请
                   </Button>
+                </div>
+              </div>
+              <div className={styles.companySection}>
+                <div className={styles.companyLeft}>
+                  {!!company.logo && (
+                    <img
+                      src={
+                        company.logo.startsWith("http")
+                          ? company.logo
+                          : `/api/logo/${company.logo}`
+                      }
+                      className={styles.logo}
+                      alt={company.name}
+                    />
+                  )}
+                </div>
+                <div className={styles.companyRight}>
+                  <div className={styles.companyName}>{company.name}</div>
+                  <div className={styles.companyDescription}>
+                    {job.job_description_json.company_introduction}
+                  </div>
                 </div>
               </div>
             </div>
@@ -235,9 +254,6 @@ const JobsShow = () => {
             </div>
 
             <div className={styles.right}>
-              <div className={styles.chatHeader}>
-                <div className={styles.chatTitle}>Viona, your application copilot</div>
-              </div>
               <ChatRoom
                 userRole="candidate"
                 jobId={parseInt(id ?? "0")}
@@ -245,7 +261,7 @@ const JobsShow = () => {
               />
             </div>
           </div>
-          
+
           <Link className={styles.footer} to="/">
             {t("powered_by_persevio")}
           </Link>
