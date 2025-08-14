@@ -8,6 +8,10 @@
     justify-content: space-between;
     align-items: center;
 
+    .logo {
+      width: 220px;
+    }
+
     .bannderMenuGroup {
       display: flex;
       gap: 60px;
@@ -40,7 +44,27 @@
       border-radius: 8px;
       font-weight: bold;
       display: flex;
+      gap: 12px;
       cursor: pointer;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .header {
+      padding: 8px 16px;
+      .logo {
+        width: 100px;
+      }
+
+      .bannderMenuGroup {
+        display: none;
+      }
+    }
+
+    .joinBtn {
+      font-size: 12px;
     }
   }
 }

@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import styles from "./style.module.less";
 import globalStore from "@/store/global";
 import { useNavigate } from "react-router";
+import { parseJSON } from "@/utils";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 10;
 
@@ -19,6 +21,9 @@ const Talents: React.FC = () => {
   const [selectedJob, setSelectedJob] = useState<string>();
   const { jobs } = globalStore;
 
+  const { t: originalT } = useTranslation();
+  // const t = (key: string) => originalT(`company_talents.${key}`);
+
   useEffect(() => {
     fetchTalents();
   }, []);
@@ -30,10 +35,13 @@ const Talents: React.FC = () => {
 
     if (code === 0) {
       setTalents(
-        data.talents.map((talent: ITalentListItem) => ({
-          ...talent,
-          source_channel: talent.source_channel || "upload",
-        }))
+        data.talents.map(
+          (talent: any): ITalentListItem => ({
+            ...talent,
+            source_channel: talent.source_channel || "upload",
+            evaluate_result: parseJSON(talent.evaluate_result),
+          })
+        )
       );
     }
 
@@ -125,6 +133,18 @@ const Talents: React.FC = () => {
       width: 180,
       render: (_, record) => {
         return dayjs(record.created_at).format("YYYY-MM-DD HH:mm:ss");
+      },
+    },
+    {
+      title: "匹配度",
+      dataIndex: "match_level",
+      key: "match_level",
+      width: 180,
+      render: (_, record) => {
+        return (
+          !!record.evaluate_result.overall_match_level &&
+          originalT(`talent.${record.evaluate_result.overall_match_level}`)
+        );
       },
     },
     {

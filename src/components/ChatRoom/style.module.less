@@ -1,69 +1,14 @@
+@primary-color: #1fac6a;
+
 .container {
   flex: auto;
   padding: 20px;
   background-color: #f3f3f3;
   display: flex;
-  overflow: hidden;
-
-  :global {
-    .ant-float-btn {
-      bottom: 120px;
-      right: 60px;
-    }
-  }
-}
-
-.left {
-  flex: none;
-  overflow: hidden;
   flex-direction: column;
-}
-
-.leftTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-bottom: 16px;
-  margin-left: 5px;
-  justify-content: space-between;
-  display: flex;
-  flex: none;
-}
-
-.taskList {
-  flex: auto;
-  overflow: auto;
-}
-
-.taskBlock {
-  font-size: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(238, 238, 238, 1);
-  background-color: rgba(249, 250, 251, 1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-  padding: 0 16px;
-  margin-bottom: 8px;
-  margin-left: 8px;
-  cursor: pointer;
-
-  &.disabled {
-    cursor: not-allowed;
-    &:not(.finished) {
-      color: rgba(0, 0, 0, 0.45);
-    }
-  }
-
-  &:not(.disabled) {
-    &:hover,
-    &.active {
-      background-color: rgba(243, 252, 248, 1);
-      border-color: rgba(114, 229, 73, 1);
-      color: rgba(31, 172, 106, 1);
-    }
-  }
+  overflow: hidden;
+  position: relative;
+  width: 100%;
 }
 
 .right {
@@ -71,18 +16,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.progressWrapper {
-  margin: 20px 40px;
-
-  :global {
-    .ant-steps-item-content {
-      width: 200px !important;
-      position: relative;
-      left: -30px;
-    }
-  }
 }
 
 .listArea {
@@ -121,49 +54,51 @@
     background-color: rgb(246, 255, 237);
   }
 
-  &.editing {
-    width: 100%;
-  }
-
   &.lastMessage {
     margin-bottom: 100px;
-  }
-
-  .editingContainer {
-    margin: 16px 0;
-  }
-
-  .editingButton {
-    margin-top: 8px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .operationArea {
-    position: absolute;
-    right: 20px;
-    bottom: -20px;
   }
 }
 
 .preDefinedQuestionContainer {
-  flex: none;
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
+  position: relative;
+  margin-top: 10px;
   padding: 0 16px;
-  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   .messageCard {
     padding: 4px 8px;
-    background-color: white;
+    background-color: #f6ffed; // 浅绿色
     border-radius: 16px;
     width: fit-content;
-    flex: none;
-    display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
     font-size: 14px;
+    color: @primary-color;
+    border: 1px solid @primary-color;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: 5px;
+  }
+
+  .questionsContainer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+
+    &.show {
+      max-height: 500px;
+      opacity: 1;
+      transform: translateY(0);
+      overflow: auto;
+    }
   }
 }
 
@@ -174,16 +109,5 @@
 
   .timestamp {
     display: none;
-  }
-}
-
-.mdEditor {
-  height: 70vh;
-  overflow: auto;
-}
-
-:global {
-  .mdxeditor-popup-container {
-    z-index: 9999;
   }
 }

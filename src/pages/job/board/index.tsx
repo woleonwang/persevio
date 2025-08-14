@@ -11,7 +11,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { CloseCircleOutlined, ShareAltOutlined } from "@ant-design/icons";
+import {
+  CloseCircleOutlined,
+  ExportOutlined,
+  ShareAltOutlined,
+} from "@ant-design/icons";
 
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -98,7 +102,9 @@ const JobBoard = () => {
 
         if (
           data3.is_exists &&
-          !confirm(t("candidate_exists_confirm").replace("{{name}}", talentName))
+          !confirm(
+            t("candidate_exists_confirm").replace("{{name}}", talentName)
+          )
         ) {
           setIsUploading(false);
           return;
@@ -149,7 +155,11 @@ const JobBoard = () => {
               {t("publish_to_persevio")}
             </span>
             <Tooltip
-              title={!job.jd_doc_id ? t("complete_jd_first") : undefined}
+              title={
+                !job.jd_doc_id
+                  ? t("complete_jd_first")
+                  : t("publish_to_persevio_recruitment")
+              }
             >
               <Switch
                 checked={!!job.posted_at}
@@ -167,22 +177,41 @@ const JobBoard = () => {
             </Tooltip>
           </div>
 
-          <ShareAltOutlined
-            onClick={async () => {
-              await copy(
-                `${window.origin}/app/jobs/${
-                  job.id
-                }/board?token=${localStorage.getItem("token")}&share=1`
-              );
-              message.success(t("link_copied"));
-            }}
-          />
+          {!!job.posted_at && (
+            <Tooltip title={t("recruitment_chatbot")}>
+              <ExportOutlined
+                onClick={async () => {
+                  window.open(`${window.origin}/jobs/${job.id}/chat`);
+                }}
+              />
+            </Tooltip>
+          )}
+
+          <Tooltip
+            title={t("copy_job_requirement_link")}
+          >
+            <ShareAltOutlined
+              onClick={async () => {
+                await copy(
+                  `${window.origin}/app/jobs/${
+                    job.id
+                  }/board?token=${localStorage.getItem("token")}&share=1`
+                );
+                message.success(t("link_copied"));
+              }}
+            />
+          </Tooltip>
         </div>
       </div>
       <div className={styles.body}>
         <div className={styles.block}>
           {VionaAvatarDiv}
-          <div>{t("unfinished_tasks").replace("{{count}}", unfinishedCount.toString())}</div>
+          <div>
+            {t("unfinished_tasks").replace(
+              "{{count}}",
+              unfinishedCount.toString()
+            )}
+          </div>
           <div className={styles.buttonContainer}>
             <Badge
               dot={
@@ -275,9 +304,7 @@ const JobBoard = () => {
 
         <div className={styles.block}>
           {VionaAvatarDiv}
-          <div>
-            {t("complete_conversation_tasks")}
-          </div>
+          <div>{t("complete_conversation_tasks")}</div>
           <div className={styles.buttonContainer}>
             <Badge
               dot={
@@ -337,9 +364,7 @@ const JobBoard = () => {
           {VionaAvatarDiv}
           {talents.length === 0 ? (
             <div>
-              <div>
-                {t("no_candidates_yet")}
-              </div>
+              <div>{t("no_candidates_yet")}</div>
               <div className={styles.buttonContainer}>{UploadResumeButton}</div>
             </div>
           ) : (
@@ -367,7 +392,10 @@ const JobBoard = () => {
                           onClick={async () => {
                             if (
                               confirm(
-                                t("delete_confirm").replace("{{name}}", talent.name)
+                                t("delete_confirm").replace(
+                                  "{{name}}",
+                                  talent.name
+                                )
                               )
                             ) {
                               const { code } = await Post(

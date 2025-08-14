@@ -291,7 +291,6 @@ You can share Viona using this chat page link, either by including it in your jo
     question_location: "What is the working location of this role?",
     question_hours: "What is the working hours of this role?",
 
-    apply_now: "Apply Now",
     copied: "Copied",
     edit_message_hint:
       "I have answered your questions, or modified your proposal, or giving my feedback below by adding/deleting/modifying your original response. I might have only made minor changes, please review thoroughly and make sure you do not omit anything.",
@@ -675,6 +674,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please confirm if you want to delete {{name}}. Content cannot be recovered after deletion?",
     delete_success: "Deleted successfully",
     delete_failed: "Delete failed",
+    publish_to_persevio_recruitment: "Publish to Persevio Recruitment Website",
+    recruitment_chatbot: "Recruitment Chatbot",
+    copy_job_requirement_link:
+      "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
   },
 
   job_chat: {
@@ -714,6 +717,18 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     today: "Today",
     job_description: "Job Description",
     powered_by_persevio: "Powered by Persevio",
+    role_type: {
+      onsite: "Onsite",
+      hybrid: "Hybrid",
+      remote: "Remote",
+    },
+    apply_now: "Apply Now",
+    hours_ago: "hours ago",
+    days_ago_posted: "days ago",
+    team_language: "Team Language",
+    job_description_section: "Job Description",
+    basic_requirements: "Basic Requirements",
+    bonus_points: "Bonus Points",
   },
 
   coworker: {

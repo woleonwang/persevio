@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { message } from "antd";
+import { Alert, message } from "antd";
 import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 
@@ -75,7 +75,18 @@ const CandidateSignIn: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classnames(styles.container, {
+        [styles.mobile]: pageState === "signin",
+      })}
+    >
+      <Alert
+        message={"可以在PC端进行下一步操作，体验更加流畅的职位申请流程。"}
+        type="warning"
+        showIcon
+        closable
+        className={styles.mobileVisible}
+      />
       {pageState !== "signin" && (
         <>
           <div className={styles.header}>
@@ -93,7 +104,6 @@ const CandidateSignIn: React.FC = () => {
           </div>
         </>
       )}
-
       <div className={styles.main}>
         {pageState !== "signin" && (
           <div className={styles.stepWrapper}>
