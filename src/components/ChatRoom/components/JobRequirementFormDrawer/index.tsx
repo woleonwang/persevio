@@ -1026,7 +1026,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     callback: any
                   ) {
                     const typedValue = value as { min?: number; max?: number };
-                    if (!typedValue.min || !typedValue.max) {
+                    if (
+                      (!typedValue.min && typedValue.min !== 0) ||
+                      (!typedValue.max && typedValue.max !== 0)
+                    ) {
                       callback(new Error());
                     }
                     callback();

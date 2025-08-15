@@ -59,6 +59,7 @@ type TPublicJob = {
   id: number;
   name: string;
   interview_plan_json: string;
+  language: string;
 };
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
