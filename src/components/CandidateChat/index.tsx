@@ -1,27 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, message } from "antd";
+import { Avatar, List, Input, Button, message, Tooltip } from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
-  LoadingOutlined,
+  EditOutlined,
+  SendOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import "@mdxeditor/editor/style.css";
-
-import type { TextAreaRef } from "antd/es/input/TextArea";
 
 import { Get, Post } from "../../utils/request";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
-import { TExtraTagName, TMessage, TMessageFromApi } from "../ChatRoom/type";
+import { TExtraTagName, TMessage, TMessageFromApi } from "../ChatRoomNew/type";
 
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import MarkdownContainer from "../MarkdownContainer";
-import useAssembly from "@/hooks/useAssembly";
+import useAssemblyOffline from "@/hooks/useAssemblyOffline";
+import ReactDOM from "react-dom";
+import { ScaleLoader } from "react-spinners";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -55,45 +56,42 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isRecordingZh, setIsRecordingZh] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  const [textInputVisible, setTextInputVisible] = useState(false);
+  const [inputPlaceholder, setInputPlaceholder] = useState("");
+  const [audioHintVisible, setAudioHintVisible] = useState(true);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
-  const recognitionRef = useRef<any>();
-  const originalInputRef = useRef<string>("");
-  const isRecordingRef = useRef(false);
-  isRecordingRef.current = isRecordingZh;
-  const textInstanceRef = useRef<TextAreaRef | null>();
 
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
 
-  const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`chat.${key}`);
 
   const {
-    isConnecting,
-    isRecording: isRecordingEn,
     startTranscription,
     endTranscription,
-  } = useAssembly({
-    onPartialTextChange: (result) => {
-      setInputValue(originalInputRef.current + result);
-    },
+    isRecording,
+    volume,
+    isTranscribing,
+    isStartRecordingOutside,
+  } = useAssemblyOffline({
     onFinish: (result) => {
-      originalInputRef.current = originalInputRef.current + result;
-      setInputValue(originalInputRef.current);
+      // console.log("handle result:", result);
+      sendMessage(result);
     },
+    disabled: isLoading,
   });
-
-  const isRecording = i18n.language === "zh-CN" ? isRecordingZh : isRecordingEn;
 
   useEffect(() => {
     needScrollToBottom.current = true;
     fetchMessages();
+
+    setTimeout(() => setAudioHintVisible(false), 5000);
   }, []);
 
   useEffect(() => {
@@ -235,8 +233,6 @@ Shall we start now?`,
   const submit = async () => {
     if (!canSubmit()) return;
 
-    stopRecord();
-
     setInputValue("");
 
     await sendMessage(inputValue.trim().replaceAll("\n", "\n\n"));
@@ -281,65 +277,50 @@ Shall we start now?`,
     );
   };
 
-  const startRecord = async () => {
-    if (i18n.language === "en-US") {
-      startTranscription();
-    } else {
-      if (!recognitionRef.current) {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-
-        //@ts-ignore
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = i18n.language;
-
-        recognition.onresult = (event: any) => {
-          if (!isRecordingRef.current) return;
-
-          let result = "";
-          let isFinal = false;
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            result += event.results[i][0].transcript ?? "";
-            if (event.results[i].isFinal) {
-              isFinal = true;
-            }
-          }
-          console.log("result: ", result, " length:", result.length);
-          if (!result) {
-            console.log("events:", event.results);
-          }
-          setInputValue(originalInputRef.current + result);
-          if (isFinal) {
-            originalInputRef.current += result;
-          }
-        };
-        recognition.onend = () => {
-          console.log("end");
-          setIsRecordingZh(false);
-        };
-        recognition.onerror = () => {
-          console.log("error");
-        };
-        recognitionRef.current = recognition;
-      }
-
-      setIsRecordingZh(true);
-      recognitionRef.current?.start();
-    }
-    originalInputRef.current = inputValue;
-    textInstanceRef.current?.focus();
-  };
-
-  const stopRecord = () => {
-    if (i18n.language === "en-US") {
-      endTranscription();
-    } else {
-      recognitionRef.current?.stop();
-      setIsRecordingZh(false);
-    }
-    originalInputRef.current = "";
+  const genRecordButton = () => {
+    return (
+      <Tooltip
+        styles={{
+          body: {
+            width: 400,
+          },
+        }}
+        placement="right"
+        title={
+          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+        }
+        open={audioHintVisible}
+      >
+        {!isRecording && !isTranscribing ? (
+          <Button
+            style={{
+              width: 64,
+              height: 64,
+            }}
+            shape="circle"
+            type="primary"
+            onClick={() => startTranscription()}
+            icon={<AudioOutlined style={{ fontSize: 36 }} />}
+            iconPosition="start"
+          />
+        ) : (
+          <Button
+            style={{
+              width: 64,
+              height: 64,
+              backgroundColor: "rgba(224, 46, 42, 0.1)",
+              color: "rgb(224, 46, 42)",
+            }}
+            shape="circle"
+            type="primary"
+            disabled={isTranscribing || !isStartRecordingOutside}
+            onClick={() => endTranscription()}
+            icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
+            iconPosition="start"
+          />
+        )}
+      </Tooltip>
+    );
   };
 
   return (
@@ -451,69 +432,104 @@ Shall we start now?`,
         <div ref={messagesEndRef} />
       </div>
 
-      {
-        <div className={styles.inputArea}>
+      <div className={styles.inputArea}>
+        <div
+          className={classnames("flex-center", "gap-12")}
+          style={{ marginTop: 12 }}
+        >
+          {genRecordButton()}
           <Input.TextArea
-            ref={(element) => (textInstanceRef.current = element)}
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              if (isRecording) {
-                originalInputRef.current = e.target.value;
-              }
             }}
-            placeholder={t("reply_viona")}
-            style={{
-              width: "100%",
-              marginRight: "8px",
-              resize: "none",
-            }}
+            placeholder={textInputVisible ? inputPlaceholder : ""}
+            style={
+              textInputVisible
+                ? {
+                    width: 600,
+                    marginRight: "8px",
+                    resize: "none",
+                    overflow: "hidden",
+                  }
+                : {
+                    width: 0,
+                    height: 0,
+                    padding: 0,
+                    border: "none",
+                  }
+            }
             onCompositionStartCapture={() => (isCompositingRef.current = true)}
             onCompositionEndCapture={() => (isCompositingRef.current = false)}
             onPressEnter={(e) => {
-              if (!e.shiftKey && !isCompositingRef.current) {
+              if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
                 e.preventDefault();
                 submit();
               }
             }}
             autoSize={{
-              minRows: 1,
+              minRows: 2,
               maxRows: 16,
             }}
           />
+          {textInputVisible && (
+            <SendOutlined
+              onClick={() => submit()}
+              style={{ fontSize: 24, color: "#1FAC6A" }}
+            />
+          )}
+          <EditOutlined
+            onClick={() => {
+              if (textInputVisible) {
+                setTextInputVisible(false);
+                setInputPlaceholder("");
+              } else {
+                setTextInputVisible(true);
+                setTimeout(() => {
+                  setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                }, 400);
+              }
+            }}
+            style={{ fontSize: 24, color: "gray" }}
+          />
+        </div>
+      </div>
+
+      {ReactDOM.createPortal(
+        <div
+          style={{
+            position: "fixed",
+            zIndex: 999999,
+            width: "100vw",
+            height: "100vh",
+            left: 0,
+            top: 0,
+            display: isRecording || isTranscribing ? "flex" : "none",
+            alignItems: "center",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
           <div
             style={{
-              marginTop: 10,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              width: 100,
+              height: 100,
+              borderRadius: 20,
               display: "flex",
-              justifyContent: "space-between",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <div></div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-                {originalT("submit")}
-              </Button>
-
-              <Button
-                type="primary"
-                danger={isRecording}
-                shape="circle"
-                disabled={isRecording && isConnecting}
-                icon={
-                  isRecording && isConnecting ? (
-                    <LoadingOutlined spin />
-                  ) : isRecording ? (
-                    <AudioMutedOutlined />
-                  ) : (
-                    <AudioOutlined />
-                  )
-                }
-                onClick={isRecording ? stopRecord : startRecord}
-              />
-            </div>
+            <ScaleLoader
+              color="#1FAC6A"
+              height={75 * Math.min(1, volume * 3) + 5}
+              width={10}
+            />
           </div>
-        </div>
-      }
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

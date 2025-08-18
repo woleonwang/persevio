@@ -10,7 +10,7 @@ import { Get, Post } from "../../utils/request";
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
-import { TMessage, TMessageFromApi } from "../ChatRoom/type";
+import { TMessage, TMessageFromApi } from "../ChatRoomNew/type";
 
 import { observer } from "mobx-react-lite";
 import MarkdownContainer from "../MarkdownContainer";
@@ -194,27 +194,25 @@ const CandidateChatVoice: React.FC<IProps> = (props) => {
         />
       </div>
 
-      {
-        <div className={styles.inputArea}>
-          <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <div></div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button
-                type="primary"
-                danger={isRecording}
-                shape="circle"
-                icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
-              />
-            </div>
+      <div className={styles.inputArea}>
+        <div
+          style={{
+            marginTop: 10,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <div></div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button
+              type="primary"
+              danger={isRecording}
+              shape="circle"
+              icon={isRecording ? <AudioMutedOutlined /> : <AudioOutlined />}
+            />
           </div>
         </div>
-      }
+      </div>
     </div>
   );
 };

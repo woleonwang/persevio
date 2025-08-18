@@ -1,8 +1,21 @@
-import { Avatar, Badge, Button, message, Spin, Upload } from "antd";
+import {
+  Avatar,
+  Badge,
+  Button,
+  message,
+  Spin,
+  Switch,
+  Tooltip,
+  Upload,
+} from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { EyeOutlined, ShareAltOutlined } from "@ant-design/icons";
+import {
+  CloseCircleOutlined,
+  ExportOutlined,
+  ShareAltOutlined,
+} from "@ant-design/icons";
 
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -12,9 +25,10 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
 
 const JobBoard = () => {
-  const { job } = useJob();
+  const { job, fetchJob } = useJob();
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job_board.${key}`);
   const navigate = useNavigate();
 
   const [talents, setTalents] = useState<TTalent[]>([]);
@@ -71,19 +85,40 @@ const JobBoard = () => {
         );
 
         if (code !== 0) {
-          message.error(originalT("解析简历失败"));
+          message.error(t("parse_resume_failed"));
+          setIsUploading(false);
+          return;
+        }
+
+        const { talent_name: talentName, resume } = data;
+        const { code: code3, data: data3 } = await Get(
+          `/api/jobs/${job.id}/talents/check_name?name=${talentName}`
+        );
+        if (code3 !== 0) {
+          message.error(t("upload_failed"));
+          setIsUploading(false);
+          return;
+        }
+
+        if (
+          data3.is_exists &&
+          !confirm(
+            t("candidate_exists_confirm").replace("{{name}}", talentName)
+          )
+        ) {
           setIsUploading(false);
           return;
         }
 
         const { code: code2 } = await Post(`/api/jobs/${job.id}/talents`, {
-          resume: data.resume,
+          resume: resume,
+          name: talentName,
         });
         if (code2 === 0) {
-          message.success(originalT("create_succeed"));
+          message.success(t("create_succeed"));
           await fetchTalents();
         } else {
-          message.error(originalT("submit_failed"));
+          message.error(t("submit_failed"));
         }
 
         setIsUploading(false);
@@ -98,7 +133,7 @@ const JobBoard = () => {
         disabled={isUploading}
         size="large"
       >
-        {originalT("上传简历")}
+        {t("upload_resume")}
       </Button>
     </Upload>
   );
@@ -108,29 +143,75 @@ const JobBoard = () => {
       <div className={styles.header}>
         {job.name}
         <div className={styles.share}>
-          <EyeOutlined
-            disabled={!job.jd_doc_id}
-            onClick={async () => {
-              await copy(`${window.origin}/jobs/${job.id}/chat`);
-              message.success("链接已复制");
-            }}
-          />
-          <ShareAltOutlined
-            onClick={async () => {
-              await copy(
-                `${window.origin}/app/jobs/${
-                  job.id
-                }/board?token=${localStorage.getItem("token")}&share=1`
-              );
-              message.success("链接已复制");
-            }}
-          />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: "normal",
+                color: "#333333",
+                marginRight: 8,
+              }}
+            >
+              {t("publish_to_persevio")}
+            </span>
+            <Tooltip
+              title={
+                !job.jd_doc_id
+                  ? t("complete_jd_first")
+                  : t("publish_to_persevio_recruitment")
+              }
+            >
+              <Switch
+                checked={!!job.posted_at}
+                onChange={async (checked) => {
+                  const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+                    open: checked ? "1" : "0",
+                  });
+                  if (code === 0) {
+                    message.success(t("operation_success"));
+                    fetchJob();
+                  }
+                }}
+                disabled={!job.jd_doc_id}
+              />
+            </Tooltip>
+          </div>
+
+          {!!job.posted_at && (
+            <Tooltip title={t("recruitment_chatbot")}>
+              <ExportOutlined
+                onClick={async () => {
+                  window.open(`${window.origin}/jobs/${job.id}/chat`);
+                }}
+              />
+            </Tooltip>
+          )}
+
+          <Tooltip
+            title={t("copy_job_requirement_link")}
+          >
+            <ShareAltOutlined
+              onClick={async () => {
+                await copy(
+                  `${window.origin}/app/jobs/${
+                    job.id
+                  }/board?token=${localStorage.getItem("token")}&share=1`
+                );
+                message.success(t("link_copied"));
+              }}
+            />
+          </Tooltip>
         </div>
       </div>
       <div className={styles.body}>
         <div className={styles.block}>
           {VionaAvatarDiv}
-          <div>{originalT(`您还有${unfinishedCount}项任务要完成`)}</div>
+          <div>
+            {t("unfinished_tasks").replace(
+              "{{count}}",
+              unfinishedCount.toString()
+            )}
+          </div>
           <div className={styles.buttonContainer}>
             <Badge
               dot={
@@ -149,7 +230,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                详细定义职位需求
+                {t("detailed_define_job_requirement")}
               </Button>
             </Badge>
             <Badge
@@ -171,7 +252,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                确定职位描述(JD)
+                {t("define_jd")}
               </Button>
             </Badge>
             <Badge
@@ -193,7 +274,7 @@ const JobBoard = () => {
                   variant: "outlined",
                 })}
               >
-                制定面试计划&评分卡
+                {t("create_interview_plan")}
               </Button>
             </Badge>
             <Button
@@ -205,7 +286,7 @@ const JobBoard = () => {
               }}
               size="large"
             >
-              推荐候选人面试问题
+              {t("recommend_candidate_questions")}
             </Button>
             <Button
               disabled={!job.interview_plan_doc_id}
@@ -216,16 +297,14 @@ const JobBoard = () => {
               }}
               size="large"
             >
-              填写候选人评分卡
+              {t("fill_candidate_scorecard")}
             </Button>
           </div>
         </div>
 
         <div className={styles.block}>
           {VionaAvatarDiv}
-          <div>
-            {originalT(`与 Viona 完成对话任务，以下是为您生成的详细文档：`)}
-          </div>
+          <div>{t("complete_conversation_tasks")}</div>
           <div className={styles.buttonContainer}>
             <Badge
               dot={
@@ -241,7 +320,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                职位需求表
+                {t("job_requirement_table")}
               </Button>
             </Badge>
             <Badge
@@ -258,7 +337,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                职位描述(JD)
+                {t("job_description_jd")}
               </Button>
             </Badge>
             <Badge
@@ -275,7 +354,7 @@ const JobBoard = () => {
                 }}
                 size="large"
               >
-                面试计划&评分卡
+                {t("interview_plan_scorecard")}
               </Button>
             </Badge>
           </div>
@@ -285,24 +364,18 @@ const JobBoard = () => {
           {VionaAvatarDiv}
           {talents.length === 0 ? (
             <div>
-              <div>
-                {originalT(
-                  "您现在还没有候选人，可以告诉我候选人信息，我们一起制定面试计划或者填写评分卡！"
-                )}
-              </div>
+              <div>{t("no_candidates_yet")}</div>
               <div className={styles.buttonContainer}>{UploadResumeButton}</div>
             </div>
           ) : (
             <div>
               <div>
-                {originalT(
-                  "以下是您的候选人，可以制定面试计划或者填写评分卡！也可以与Viona对话新增新的候选人。"
-                )}
+                {t("candidates_list")}
                 <div className={styles.buttonContainer}>
                   {UploadResumeButton}
                   {talents.map((talent) => {
                     return (
-                      <div key={talent.id}>
+                      <div key={talent.id} className={styles.talentButton}>
                         <Button
                           type="default"
                           onClick={() => {
@@ -314,6 +387,30 @@ const JobBoard = () => {
                         >
                           {talent.name}
                         </Button>
+                        <CloseCircleOutlined
+                          className={styles.talentDestroy}
+                          onClick={async () => {
+                            if (
+                              confirm(
+                                t("delete_confirm").replace(
+                                  "{{name}}",
+                                  talent.name
+                                )
+                              )
+                            ) {
+                              const { code } = await Post(
+                                `/api/jobs/${job.id}/talents/${talent.id}/destroy`
+                              );
+
+                              if (code === 0) {
+                                message.success(t("delete_success"));
+                                fetchTalents();
+                              } else {
+                                message.error(t("delete_failed"));
+                              }
+                            }
+                          }}
+                        />
                       </div>
                     );
                   })}

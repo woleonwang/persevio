@@ -30,6 +30,7 @@ import ManagerDetail, {
   TManangerDetailValue,
 } from "./components/ManagerDetail";
 import PercentageInput from "./components/PercentageInput";
+import NumberRange from "./components/NumberRange";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -52,6 +53,7 @@ type TQuestion = {
     | "select"
     | "textarea"
     | "number"
+    | "number_range"
     | "multiple_select"
     | "date"
     | "team"
@@ -113,7 +115,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const [createTeamModelOpen, setCreateTeamModelOpen] = useState(false);
   const [teams, setTeams] = useState<TTeam[]>([]);
 
-  const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
 
   useEffect(() => {
     form.resetFields();
@@ -168,380 +170,309 @@ const JobRequirementFormDrawer = (props: IProps) => {
     {
       key: "basic_info",
       title: t("basic_information"),
-      questions:
-        i18n.language === "en-US"
-          ? [
-              {
-                key: "team",
-                type: "team",
-                question: "Which team will this role join?",
-                required: true,
-              },
-              {
-                group: t("team_details"),
-                key: "team_details",
-                dependencies: [{ questionKey: "team", exists: true }],
-                collapse: true,
-                questions: TeamQuestions.map((item) => ({
-                  ...item,
-                  dependencies: [{ questionKey: "team", exists: true }],
-                })),
-              },
-              {
-                key: "manager_detail",
-                type: "manager_detail",
-                question: "Who will this role report to?",
-                required: true,
-              },
-              {
-                key: "employee_type",
-                type: "multiple_select",
-                question: "What is the seniority of this role?",
-                options: [
-                  "Internship",
-                  "Fresh Graduate/Entry-Level/No prior experience required",
-                  "Junior/Some experience required",
-                  "Mid-level/Solid experience required",
-                  "Senior/Extensive experience and proven expertise required",
-                ].map((item) => ({
-                  value: item,
-                  label: item,
-                })),
-                required: true,
-              },
-              {
-                key: "percentage",
-                type: "percentage",
-                question:
-                  "What is the primary nature of work and type of contribution expected from this role?",
-                options: [
-                  "Execution Level: Primarily responsible for completing specific, well-defined tasks assigned by a manager.",
-                  "Project/Objective Ownership: Drives a complete project from initiation to delivery, or achieves a specific business objective, often requiring cross-functional coordination and resource integration.",
-                  "People/Team Management: Accountable for the overall results of an entire team. Responsibilities include daily team management, talent development, performance evaluation, recruitment, and motivation to ensure the team effectively collaborates to meet goals.",
-                  "Strategic Planning & Development: Responsible for, or deeply involved in, the discussion, formulation, and implementation of long-term development strategies and business plans for the company or a specific business line.",
-                ].map((item) => ({
-                  value: item,
-                  label: item,
-                })),
-                required: true,
-              },
-              {
-                key: "influence",
-                type: "select",
-                question:
-                  "What level of impact is expected from this position?",
-                options: [
-                  {
-                    value: "influence_1",
-                    label: (
-                      <>
-                        <b>Task-Level Impact:</b>
-                        This role is confined to efficiently and accurately
-                        completing assigned, specific tasks. Success is measured
-                        by the quality and efficiency of task completion.
-                      </>
-                    ),
-                    text: "**Task-Level Impact:** This role is confined to efficiently and accurately completing assigned, specific tasks. Success is measured by the quality and efficiency of task completion.",
-                  },
-                  {
-                    value: "influence_2",
-                    label: (
-                      <>
-                        <b>Project-Level Impact:</b>
-                        This role is a key contributor to, or directly
-                        responsible for, the success of specific projects. The
-                        quality of their work directly determines whether
-                        projects are delivered on time, within quality
-                        standards, and on budget.
-                      </>
-                    ),
-                    text: "**Project-Level Impact:** This role is a key contributor to, or directly responsible for, the success of specific projects. The quality of their work directly determines whether projects are delivered on time, within quality standards, and on budget.",
-                  },
-                  {
-                    value: "influence_3",
-                    label: (
-                      <>
-                        <b>Team-Level Impact:</b>
-                        This role is responsible for, or a primary contributor
-                        to, the overall performance and goals of their team.
-                        Their output significantly influences the team's
-                        ultimate achievements.
-                      </>
-                    ),
-                    text: "**Team-Level Impact:** This role is responsible for, or a primary contributor to, the overall performance and goals of their team. Their output significantly influences the team's ultimate achievements.",
-                  },
-                  {
-                    value: "influence_4",
-                    label: (
-                      <>
-                        <b>Cross-Functional/Department-Level Impact:</b>
-                        This role leads or coordinates collaboration across
-                        multiple teams or an entire department. Their
-                        effectiveness directly impacts the efficiency of
-                        cross-functional synergy and the achievement of broader
-                        departmental goals.
-                      </>
-                    ),
-                    text: "**Cross-Functional/Department-Level Impact:** This role leads or coordinates collaboration across multiple teams or an entire department. Their effectiveness directly impacts the efficiency of cross-functional synergy and the achievement of broader departmental goals.",
-                  },
-                  {
-                    value: "influence_5",
-                    label: (
-                      <>
-                        <b>Business/Product-Line Level Impact:</b>
-                        The decisions and outcomes from this role directly shape
-                        the market performance and commercial success of a
-                        specific product or business line, directly influencing
-                        its revenue, market share, or user growth.
-                      </>
-                    ),
-                    text: "**Business/Product-Line Level Impact: ** The decisions and outcomes from this role directly shape the market performance and commercial success of a specific product or business line, directly influencing its revenue, market share, or user growth.",
-                  },
-                  {
-                    value: "influence_6",
-                    label: (
-                      <>
-                        <b>Company-Level Impact:</b>
-                        This role's work will decisively influence the company's
-                        overall strategy, financial health, or market
-                        reputation. Its success or failure is crucial to the
-                        company's long-term development and core
-                        competitiveness.
-                      </>
-                    ),
-                    text: "**Company-Level Impact: ** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
-                  },
-                ],
-                required: true,
-              },
-              {
-                key: "remote",
-                type: "select",
-                question: t("remote_type"),
-                options: [
-                  {
-                    value: "onsite",
-                    label: t("on_site"),
-                  },
-                  {
-                    value: "hybrid",
-                    label: t("hybrid"),
-                  },
-                  {
-                    value: "remote",
-                    label: t("remote"),
-                  },
-                ],
-                required: true,
-              },
-              {
-                key: "city",
-                type: "city_and_address",
-                question: t("city"),
-                dependencies: [
-                  {
-                    questionKey: "remote",
-                    valueKey: ["onsite", "hybrid"],
-                  },
-                ],
-                required: true,
-              },
-            ]
-          : [
-              {
-                key: "team",
-                type: "team",
-                question: "这个职位将加入哪个团队？",
-                required: true,
-              },
-              {
-                group: t("team_details"),
-                key: "team_details",
-                dependencies: [{ questionKey: "team", exists: true }],
-                collapse: true,
-                questions: TeamQuestions.map((item) => ({
-                  ...item,
-                  dependencies: [{ questionKey: "team", exists: true }],
-                })),
-              },
-              {
-                key: "manager_detail",
-                type: "manager_detail",
-                question: "这个职位的直属领导是谁?",
-                required: true,
-              },
-              {
-                key: "employee_type",
-                type: "multiple_select",
-                question: "这个职位的级别是什么？",
-                options: [
-                  "实习生",
-                  "应届毕业生/无经验",
-                  "初级/少量经验",
-                  "中级/有一定经验",
-                  "高级/经验非常丰富",
-                ].map((item) => ({
-                  value: item,
-                  label: item,
-                })),
-                required: true,
-              },
-              {
-                key: "percentage",
-                type: "percentage",
-                question: "这个职位的工作性质和贡献类型是什么？",
-                options: [
-                  {
-                    value:
-                      "执行层面：主要负责执行上级明确指派的、具体且定义清晰的任务。",
-                    label: (
-                      <div>
-                        <b>执行层面：</b>
-                        主要负责执行上级明确指派的、具体且定义清晰的任务。
-                      </div>
-                    ),
-                  },
-                  {
-                    value:
-                      "项目/目标管理：负责独立或协作推动一个完整的项目从启动到交付，或达成一个具体的业务目标，需要跨职能协调与资源整合。",
-                    label: (
-                      <div>
-                        <b>项目/目标管理：</b>
-                        负责独立或协作推动一个完整的项目从启动到交付，或达成一个具体的业务目标，需要跨职能协调与资源整合。
-                      </div>
-                    ),
-                  },
-                  {
-                    value:
-                      "管人/管团队：对一整个团队的最终工作结果负责。负责团队的日常管理、人才培养、绩效评估、招聘与激励，确保团队协同高效地达成目标。",
-                    label: (
-                      <div>
-                        <b>管人/管团队：</b>
-                        对一整个团队的最终工作结果负责。负责团队的日常管理、人才培养、绩效评估、招聘与激励，确保团队协同高效地达成目标。
-                      </div>
-                    ),
-                  },
-                  {
-                    value:
-                      "设计高层战略和工作计划：负责或深度参与公司或某个业务线中长期发展战略、业务计划的讨论、制定与落地。",
-                    label: (
-                      <div>
-                        <b>设计高层战略和工作计划：</b>
-                        负责或深度参与公司或某个业务线中长期发展战略、业务计划的讨论、制定与落地。
-                      </div>
-                    ),
-                  },
-                ],
-                required: true,
-              },
-              {
-                key: "influence",
-                type: "select",
-                question: "这个职位将产生什么级别的影响？",
-                options: [
-                  {
-                    value: "influence_1",
-                    label: (
-                      <>
-                        <b>任务执行层面影响：</b>
-                        这个职位的影响仅限于分配给他们任务，其成功标准是
-                        <b>任务的完成质量和效率</b>。
-                      </>
-                    ),
-                    text: "**任务执行层面影响：** 这个职位的影响仅限于分配给他们任务，其成功标准是**任务的完成质量和效率** 。",
-                  },
-                  {
-                    value: "influence_2",
-                    label: (
-                      <>
-                        <b>项目层面影响：</b>
-                        此职位是特定项目成功的关键贡献者或负责人，其工作质量直接决定
-                        <b>项目能否按时、按质、按预算交付</b>。
-                      </>
-                    ),
-                    text: "**项目层面影响：** 此职位是特定项目成功的关键贡献者或负责人，其工作质量直接决定**项目能否按时、按质、按预算交付** 。",
-                  },
-                  {
-                    value: "influence_3",
-                    label: (
-                      <>
-                        <b>团队级影响：</b>
-                        此职位是其所在团队的整体业绩和目标的负责人或核心贡献者，其产出将显著影响
-                        <b>团队是否能达成其工作目标</b>。
-                      </>
-                    ),
-                    text: "**团队级影响：** 此职位是其所在团队的整体业绩和目标的负责人或核心贡献者，其产出将显著影响**团队是否能达成其工作目标** 。",
-                  },
-                  {
-                    value: "influence_4",
-                    label: (
-                      <>
-                        <b>跨团队/部门协同级影响：</b>
-                        此职位需要主导或协调多个团队/整个部门的合作，其工作成效直接关系到
-                        <b>跨团队协同的效率和部门整体目标的实现</b>。
-                      </>
-                    ),
-                    text: "**跨团队/部门协同级影响：** 此职位需要主导或协调多个团队/整个部门的合作，其工作成效直接关系到**跨团队协同的效率和部门整体目标的实现** 。",
-                  },
-                  {
-                    value: "influence_5",
-                    label: (
-                      <>
-                        <b>业务线/产品线级别：</b>
-                        此职位的决策和成果将直接塑造某一产品线或业务线的市场表现和商业成功，直接影响
-                        <b>该业务的收入、市场份额或用户增长</b>。
-                      </>
-                    ),
-                    text: "**业务线/产品线级别：** 此职位的决策和成果将直接塑造某一产品线或业务线的市场表现和商业成功，直接影响**该业务的收入、市场份额或用户增长** 。",
-                  },
-                  {
-                    value: "influence_6",
-                    label: (
-                      <>
-                        <b>公司级别影响：</b>
-                        此职位的工作将对
-                        <b>公司的整体战略、财务状况或市场声誉产生重要影响</b>
-                        ，其成败关系到公司的长期发展和核心竞争力。
-                      </>
-                    ),
-                    text: "**公司级别影响：** 此职位的工作将对**公司的整体战略、财务状况或市场声誉产生重要影响**，其成败关系到公司的长期发展和核心竞争力** 。",
-                  },
-                ],
-                required: true,
-              },
-              {
-                key: "remote",
-                type: "select",
-                question: t("remote_type"),
-                options: [
-                  {
-                    value: "onsite",
-                    label: t("on_site"),
-                  },
-                  {
-                    value: "hybrid",
-                    label: t("hybrid"),
-                  },
-                  {
-                    value: "remote",
-                    label: t("remote"),
-                  },
-                ],
-                required: true,
-              },
-              {
-                key: "city",
-                type: "city_and_address",
-                question: t("city"),
-                dependencies: [
-                  {
-                    questionKey: "remote",
-                    valueKey: ["onsite", "hybrid"],
-                  },
-                ],
-                required: true,
-              },
-            ],
+      questions: [
+        {
+          key: "role_type",
+          type: "select",
+          question: t("role_type_question"),
+          options: [
+            {
+              value: "new_role",
+              label: t("role_type_options.new_role"),
+            },
+            {
+              value: "backfill",
+              label: t("role_type_options.backfill"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "team",
+          type: "team",
+          question: t("team_question"),
+          required: true,
+        },
+        {
+          group: t("team_details"),
+          key: "team_details",
+          dependencies: [{ questionKey: "team", exists: true }],
+          collapse: true,
+          questions: TeamQuestions.map((item) => ({
+            ...item,
+            dependencies: [{ questionKey: "team", exists: true }],
+          })),
+        },
+        {
+          key: "manager_detail",
+          type: "manager_detail",
+          question: t("manager_question"),
+          required: true,
+        },
+        {
+          key: "employee_type",
+          type: "multiple_select",
+          question: t("employee_type_question"),
+          options: [
+            t("employee_level.internship"),
+            t("employee_level.no_experience"),
+            t("employee_level.junior"),
+            t("employee_level.mid_level"),
+            t("employee_level.senior"),
+          ].map((item) => ({
+            value: item,
+            label: item,
+          })),
+          required: true,
+        },
+        {
+          key: "experience_years",
+          type: "number_range",
+          question: t("experience_years_question"),
+          required: true,
+        },
+        {
+          key: "percentage",
+          type: "percentage",
+          question: t("percentage_question"),
+          options: [
+            {
+              value: t("percentage_options.execution"),
+              label: (
+                <div>
+                  <b>{t("percentage_options.execution").split("：")[0]}：</b>
+                  {t("percentage_options.execution").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("percentage_options.project"),
+              label: (
+                <div>
+                  <b>{t("percentage_options.project").split("：")[0]}：</b>
+                  {t("percentage_options.project").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("percentage_options.team_management"),
+              label: (
+                <div>
+                  <b>
+                    {t("percentage_options.team_management").split("：")[0]}：
+                  </b>
+                  {t("percentage_options.team_management").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("percentage_options.strategy"),
+              label: (
+                <div>
+                  <b>{t("percentage_options.strategy").split("：")[0]}：</b>
+                  {t("percentage_options.strategy").split("：")[1]}
+                </div>
+              ),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "influence",
+          type: "select",
+          question: t("influence_question"),
+          options: [
+            {
+              value: "influence_1",
+              label: (
+                <>
+                  <b>{t("influence_options.task_level").split("**")[1]}</b>
+                  {t("influence_options.task_level").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.task_level"),
+            },
+            {
+              value: "influence_2",
+              label: (
+                <>
+                  <b>{t("influence_options.project_level").split("**")[1]}</b>
+                  {t("influence_options.project_level").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.project_level"),
+            },
+            {
+              value: "influence_3",
+              label: (
+                <>
+                  <b>{t("influence_options.team_level").split("**")[1]}</b>
+                  {t("influence_options.team_level").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.team_level"),
+            },
+            {
+              value: "influence_4",
+              label: (
+                <>
+                  <b>
+                    {t("influence_options.cross_functional").split("**")[1]}
+                  </b>
+                  {t("influence_options.cross_functional").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.cross_functional"),
+            },
+            {
+              value: "influence_5",
+              label: (
+                <>
+                  <b>{t("influence_options.business_level").split("**")[1]}</b>
+                  {t("influence_options.business_level").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.business_level"),
+            },
+            {
+              value: "influence_6",
+              label: (
+                <>
+                  <b>{t("influence_options.company_level").split("**")[1]}</b>
+                  {t("influence_options.company_level").split("**")[2]}
+                </>
+              ),
+              text: t("influence_options.company_level"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "key_people",
+          type: "percentage",
+          question: t("key_people_question"),
+          options: [
+            {
+              value: t("key_people_options.working_independently"),
+              label: (
+                <div>
+                  <b>
+                    {
+                      t("key_people_options.working_independently").split(
+                        "："
+                      )[0]
+                    }
+                    ：
+                  </b>
+                  {t("key_people_options.working_independently").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.direct_team"),
+              label: (
+                <div>
+                  <b>{t("key_people_options.direct_team").split("：")[0]}：</b>
+                  {t("key_people_options.direct_team").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.cross_team"),
+              label: (
+                <div>
+                  <b>{t("key_people_options.cross_team").split("：")[0]}：</b>
+                  {t("key_people_options.cross_team").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.company_leadership"),
+              label: (
+                <div>
+                  <b>
+                    {t("key_people_options.company_leadership").split("：")[0]}
+                    ：
+                  </b>
+                  {t("key_people_options.company_leadership").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.external_customers"),
+              label: (
+                <div>
+                  <b>
+                    {t("key_people_options.external_customers").split("：")[0]}
+                    ：
+                  </b>
+                  {t("key_people_options.external_customers").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.external_partners"),
+              label: (
+                <div>
+                  <b>
+                    {t("key_people_options.external_partners").split("：")[0]}：
+                  </b>
+                  {t("key_people_options.external_partners").split("：")[1]}
+                </div>
+              ),
+            },
+            {
+              value: t("key_people_options.external_stakeholders"),
+              label: (
+                <div>
+                  <b>
+                    {
+                      t("key_people_options.external_stakeholders").split(
+                        "："
+                      )[0]
+                    }
+                    ：
+                  </b>
+                  {t("key_people_options.external_stakeholders").split("：")[1]}
+                </div>
+              ),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "remote",
+          type: "select",
+          question: t("remote_question"),
+          options: [
+            {
+              value: "onsite",
+              label: t("on_site"),
+            },
+            {
+              value: "hybrid",
+              label: t("hybrid"),
+            },
+            {
+              value: "remote",
+              label: t("remote"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "city",
+          type: "city_and_address",
+          question: t("city_question"),
+          dependencies: [
+            {
+              questionKey: "remote",
+              valueKey: ["onsite", "hybrid"],
+            },
+          ],
+          required: true,
+        },
+      ],
     },
 
     {
@@ -853,6 +784,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .join(",");
           }
 
+          if (question.type === "number_range") {
+            formattedValue = `${value.min} - ${value.max} ${originalT("year")}`;
+          }
+
           if (question.type === "date") {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
           }
@@ -1082,6 +1017,26 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   message: "请选择至少一个城市和地址",
                 },
               ]
+            : question.type === "number_range"
+            ? [
+                {
+                  validator(
+                    _: any,
+                    value: Record<string, number>,
+                    callback: any
+                  ) {
+                    const typedValue = value as { min?: number; max?: number };
+                    if (
+                      (!typedValue.min && typedValue.min !== 0) ||
+                      (!typedValue.max && typedValue.max !== 0)
+                    ) {
+                      callback(new Error());
+                    }
+                    callback();
+                  },
+                  message: t("required_error_message"),
+                },
+              ]
             : question.required
             ? [
                 {
@@ -1111,6 +1066,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
             mode="multiple"
             disabled={deleted}
           />
+        )}
+        {question.type === "number_range" && (
+          <NumberRange suffix={originalT("year")} />
         )}
         {question.type === "date" && <DatePicker disabled={deleted} />}
         {question.type === "base_salary" && <BaseSalaryInput />}

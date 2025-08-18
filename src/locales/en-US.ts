@@ -167,6 +167,7 @@ export default {
     company: "Company Info",
     settings: "Settings",
     interviewer: "Interviewer",
+    talents: "Talents",
 
     home: "Home",
     profile: "Profile",
@@ -190,6 +191,24 @@ export default {
     no_others: "No further modifications needed.",
     make_details: "Make it more detailed",
     make_concise: "Make it more concise",
+    confirm: "Confirm",
+
+    // 新增的国际化键值
+    error_message: "Something wrong with Viona, please retry.",
+    quota_exhausted: "Your quota has been exhausted.",
+    get_job_failed: "Get job failed",
+    send_role_overview_failed: "Send role overview failed",
+    delete_message_success: "Delete message successfully",
+    delete_message_failed: "Delete message failed",
+    upload_failed: "Upload failed",
+    confirm_delete_messages: "Confirm to delete messages after this message?",
+    confirm_retry_message: "Confirm to retry this message?",
+    interview_feedback_confirm_text:
+      "If you have reviewed the current interview scorecard, please confirm the archive; you can also tell me about adjustments to scores, reasons, or other analysis content.",
+    recording_tooltip:
+      "Long press the [Ctrl] key to directly chat with Viona (Note: Press Ctrl twice to quickly start recording, then press once to end recording)",
+    you: "You",
+    ok: "OK",
 
     task: "Tasks",
     next_task: "Your next task is: ",
@@ -272,7 +291,6 @@ You can share Viona using this chat page link, either by including it in your jo
     question_location: "What is the working location of this role?",
     question_hours: "What is the working hours of this role?",
 
-    apply_now: "Apply Now",
     copied: "Copied",
     edit_message_hint:
       "I have answered your questions, or modified your proposal, or giving my feedback below by adding/deleting/modifying your original response. I might have only made minor changes, please review thoroughly and make sure you do not omit anything.",
@@ -310,6 +328,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     extract_high_level_responsibility: "Edit Key Responsibilities",
     extract_day_to_day_tasks: "Edit Day-to-Day Tasks",
     extract_icp: "Define Candidate Assessment Criteria",
+    extract_success_metric: "Edit Success Metrics",
 
     high_level_responsibility: "Key Responsibilities",
     day_to_day_tasks: "Day-to-Day Tasks",
@@ -319,6 +338,79 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
+
+    // basic_info question texts
+    team_question: "Which team will this role join?",
+    manager_question: "Who will this role report to?",
+    employee_type_question: "What is the seniority of this role?",
+    experience_years_question:
+      "How many years of work experience in total should this candidate have ideally",
+    percentage_question:
+      "What is the primary nature of work and type of contribution expected from this role?",
+    influence_question: "What level of impact is expected from this position?",
+    remote_question:
+      "Is this role <b>fully onsite</b>, <b>fully remote</b>, or <b>hybrid</b>?",
+    role_type_question: "Is this a new role or a back-fill?",
+    key_people_question:
+      "Who are the key people this role will be expected to work with to achieve results?",
+    city_question: "What is the <b>office address</b> for this role?",
+
+    // option texts
+    employee_level: {
+      internship: "Internship",
+      no_experience: "Fresh Graduate/Entry-Level/No prior experience required",
+      junior: "Junior/Some experience required",
+      mid_level: "Mid-level/Solid experience required",
+      senior: "Senior/Extensive experience and proven expertise required",
+    },
+
+    role_type_options: {
+      new_role: "New role",
+      backfill: "Backfill",
+    },
+
+    key_people_options: {
+      working_independently:
+        "Working independently: Work on their own, not much interactions with others needed.",
+      direct_team: "Direct Team: Their immediate teammates or direct manager.",
+      cross_team:
+        "Cross-Team/Cross-Functional/Cross-departmental Colleagues: Their colleagues in other teams, functions, departments within the company.",
+      company_leadership:
+        "Company Leadership: Team Leaders, Department Heads, Directors, VPs, C-Level Executives.",
+      external_customers:
+        "External Customers, Clients and End-users: People who use or potentially use our product or service.",
+      external_partners:
+        "External Partners & Vendors: External parties that we work with.",
+      external_stakeholders:
+        "External Stakeholders: Such as external investors.",
+    },
+
+    percentage_options: {
+      execution:
+        "Execution Level: Primarily responsible for completing specific, well-defined tasks assigned by a manager.",
+      project:
+        "Project/Objective Ownership: Drives a complete project from initiation to delivery, or achieves a specific business objective, often requiring cross-functional coordination and resource integration.",
+      team_management:
+        "People/Team Management: Accountable for the overall results of an entire team. Responsibilities include daily team management, talent development, performance evaluation, recruitment, and motivation to ensure the team effectively collaborates to meet goals.",
+      strategy:
+        "Strategic Planning & Development: Responsible for, or deeply involved in, the discussion, formulation, and implementation of long-term development strategies and business plans for the company or a specific business line.",
+    },
+
+    influence_options: {
+      task_level:
+        "**Task-Level Impact:** This role is confined to efficiently and accurately completing assigned, specific tasks. Success is measured by the quality and efficiency of task completion.",
+      project_level:
+        "**Project-Level Impact:** This role is a key contributor to, or directly responsible for, the success of specific projects. The quality of their work directly determines whether projects are delivered on time, within quality standards, and on budget.",
+      team_level:
+        "**Team-Level Impact:** This role is responsible for, or a primary contributor to, the overall performance and goals of their team. Their output significantly influences the team's ultimate achievements.",
+      cross_functional:
+        "**Cross-Functional/Department-Level Impact:** This role leads or coordinates collaboration across multiple teams or an entire department. Their effectiveness directly impacts the efficiency of cross-functional synergy and the achievement of broader departmental goals.",
+      business_level:
+        "**Business/Product-Line Level Impact:** The decisions and outcomes from this role directly shape the market performance and commercial success of a specific product or business line, directly influencing its revenue, market share, or user growth.",
+      company_level:
+        "**Company-Level Impact:** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
+    },
+
     reason: "Reason for creating this role",
     back_fill: "Back-fill",
     new_role: "New role",
@@ -467,8 +559,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please choose or modify the responsibilities to align with your expectations.",
     day_to_day_alert:
       "Please select or adjust the most important and representative tasks within your current responsibilities to meet your expectations.",
+    success_metric_alert:
+      "Please select or adjust the success metrics to align with your expectations.",
     core_responsibility: "Core Responsibility",
     secondary_responsibility: "Secondary Responsibility",
+    primary_metric: "Primary Metric",
+    secondary_metric: "Secondary Metric",
   },
 
   profile: {
@@ -537,6 +633,103 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   create_job: {
     new_role: "Open a new role",
     job_name: "Job Title",
+    viona_title: "Viona, AI recruiter.",
+    ready_message: "Ready to open a new role? Simply tell me the job title.",
+    share_message:
+      "You can share this link to invite your colleagues to this conversation.",
+    share_link: "Share Link",
+    copy_success: "Copied successfully",
+    reply_placeholder: "Reply to Viona",
+    create_success: "Create job succeed",
+  },
+
+  job_board: {
+    publish_to_persevio: "Publish",
+    complete_jd_first: "Please complete the Job Description (JD) task first",
+    operation_success: "Operation successful",
+    link_copied: "Link copied",
+    unfinished_tasks: "You still have {{count}} tasks to complete",
+    detailed_define_job_requirement: "Detailed Define Job Requirements",
+    define_jd: "Define Job Description (JD)",
+    create_interview_plan: "Create Interview Plan & Scorecard",
+    recommend_candidate_questions: "Recommend Candidate Interview Questions",
+    fill_candidate_scorecard: "Fill Candidate Scorecard",
+    complete_conversation_tasks:
+      "Complete conversation tasks with Viona, here are the detailed documents generated for you:",
+    job_requirement_table: "Job Requirement Table",
+    job_description_jd: "Job Description (JD)",
+    interview_plan_scorecard: "Interview Plan & Scorecard",
+    no_candidates_yet:
+      "You don't have any candidates yet. You can tell me candidate information, and we can work together to create interview plans or fill out scorecards!",
+    upload_resume: "Upload Resume",
+    parse_resume_failed: "Failed to parse resume",
+    upload_failed: "Upload failed",
+    candidate_exists_confirm:
+      "Candidate {{name}} already exists, please confirm if you want to continue uploading",
+    create_succeed: "Created successfully",
+    submit_failed: "Submit failed",
+    candidates_list:
+      "Here are your candidates. You can create interview plans or fill out scorecards! You can also chat with Viona to add new candidates.",
+    delete_confirm:
+      "Please confirm if you want to delete {{name}}. Content cannot be recovered after deletion?",
+    delete_success: "Deleted successfully",
+    delete_failed: "Delete failed",
+    publish_to_persevio_recruitment: "Publish to Persevio Recruitment Website",
+    recruitment_chatbot: "Recruitment Chatbot",
+    copy_job_requirement_link:
+      "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
+  },
+
+  job_chat: {
+    detailed_define_job_requirement: "Detailed Define Job Requirements",
+    define_jd: "Define JD",
+    define_interview_plan: "Define Interview Plan & Scorecard",
+  },
+
+  job_talents: {
+    status_init: "Initial Status",
+    status_extracting: "Extracting",
+    status_extracted: "Extracted",
+  },
+
+  job_document: {
+    job_details: "Job Details",
+    updated_at: "Updated",
+    link_copied: "Link copied",
+    copied: "Copied",
+    chat_with_viona: "Chat with Viona",
+    cancel: "Cancel",
+    save: "Save",
+    submit_succeed: "Submit successful",
+    submit_failed: "Submit failed",
+    not_written_job_requirement: "Job requirement table not written yet",
+    not_written_job_description: "Job description (JD) not written yet",
+    not_created_interview_plan: "Interview plan & scorecard not created yet",
+    job_requirement_table: "Job Requirement Table",
+    job_description_jd: "Job Description (JD)",
+    interview_plan_scorecard: "Interview Plan & Scorecard",
+  },
+
+  jobs_show: {
+    job_at: "Job at",
+    click_for_complete_jd: "Click for complete JD",
+    days_ago: "days ago",
+    today: "Today",
+    job_description: "Job Description",
+    powered_by_persevio: "Powered by Persevio",
+    role_type: {
+      onsite: "Onsite",
+      hybrid: "Hybrid",
+      remote: "Remote",
+    },
+    apply_now: "Apply Now",
+    hours_ago: "hours ago",
+    days_ago_posted: "days ago",
+    team_language: "Team Language",
+    job_description_section: "Job Description",
+    basic_requirements: "Basic Requirements",
+    bonus_points: "Bonus Points",
+    ask_me_anything: "Ask me anything",
   },
 
   coworker: {
@@ -596,6 +789,150 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     feedback: "Feedback",
     accepted: "Accepted",
     rejected: "Rejected",
+
+    // 新增的talent页面相关翻译
+    arrange_interview: "Arrange Interview",
+    interview_name: "Interview Name",
+    interview_type: "Interview Type",
+    interview_duration: "Interview Duration",
+    interviewer: "Interviewer",
+    interview_time: "Interview Time",
+    waiting_candidate_choice: "Waiting for candidate to choose",
+    scheduled_interviews: "Scheduled Interviews",
+    minutes: "minutes",
+    add_interview: "Add Interview",
+    name: "Name",
+    type: "Type",
+    duration_minutes: "Duration (minutes)",
+    interviewer_field: "Interviewer",
+    available_times: "Available Times",
+    online_interview: "Online Interview",
+    offline_interview: "Offline Interview",
+    candidate_details: "Candidate Details",
+    edit_context: "Edit Context",
+    interview_plan_scorecard: "Please specify interview plan & scorecard first",
+    recommended_interview_questions: "Recommended Questions",
+    fill_scorecard: "Fill Scorecard",
+    round: "Round",
+    upload_resume_or_select_candidate:
+      "You can upload a resume or select a candidate to work with me on developing an interview plan for this candidate.",
+
+    // 状态相关
+    status_evaluate_succeed: "Evaluation Succeeded",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
+
+    // 日期格式
+    date_format: "YYYY-MM-DD HH:mm",
+
+    // 其他通用文案
+    loading: "Loading...",
+    submit: "Submit",
+    cancel: "Cancel",
+
+    // SelectOrUploadTalent component related
+    select_candidate: "Select Candidate",
+    or: "Or",
+    upload_resume: "Upload Resume",
+    upload_failed: "Upload failed",
+    upload_succeed: "Upload succeed",
+    candidate_exists_confirm:
+      "Candidate {{name}} already exists, please confirm if you want to continue uploading",
+
+    // TalentDetail component related
+    talent_status: {
+      strong_hire: "Strong Hire: Exceeds standards. High confidence.",
+      hire: "Hire: Meets standards. Confident.",
+      hold: "Hold: Excellent candidate, but may have mismatches in timing, level, or specific role requirements. Can be reconsidered for future positions.",
+      no_hire_underqualified:
+        "No Hire (Underqualified): Does not meet core skill or experience level requirements.",
+      no_hire_not_a_fit:
+        "No Hire (Not a Fit): Has required skills, but traits, work style, or motivation don't align with role/company.",
+    },
+    signal_level: {
+      must_have: "Must Have",
+      good_to_have: "Good to Have",
+    },
+    tabs: {
+      resume_detail: "Resume Details",
+      recommended_interview_questions: "Recommended Questions",
+      interview_scorecard: "Interview Scorecard",
+    },
+    candidate_evaluation_report: "Candidate Evaluation Report",
+    recommended_interview_questions_title: "Recommended Questions",
+    round_label: "Round {{round}}",
+    update_time: "Updated at: ",
+    download_filename: "Round {{round}} - Recommended Questions.md",
+    copy_success: "Copied to clipboard",
+    copy_failed: "Copy failed",
+    link_copied: "Link copied",
+    chat_with_viona: "Chat with Viona",
+    no_interview_plan: "No interview plan available yet",
+    interview_scorecard_title: "Interview Scorecard",
+    final_decision_and_reason: "Final Decision and Reason",
+    overall_recruitment_committee_recommendation:
+      "Overall Recruitment Committee Recommendation",
+    final_reason: "Final Reason",
+    update_success: "Update successful",
+    interview_feedback: "Interview Feedback",
+    no_scorecard_filled: "No scorecard filled yet",
+    pending_evaluation_signals: "Pending Evaluation Signals",
+    other_observed_signals: "Other Observed Signals",
+    other_observed_signals_hint:
+      "Used to record important behaviors observed that don't belong to the main evaluation signals",
+    main_concerns_red_flags: "Main Concerns/Red Flags",
+    main_concerns_red_flags_hint:
+      "Summary of the most important risks or negative signals observed",
+    round_suffix: "Round",
+    update_failed: "Update failed",
+
+    // Sub-components related translations
+    ideal_profile: {
+      minimum: "Minimum Requirements",
+      big_plus: "Big Plus Requirements",
+      plus: "Plus Requirements",
+      strengths: "Strengths",
+      potential_gaps: "Potential Gaps",
+      career_motivations: "Career Motivations",
+    },
+    feedback_summary: {
+      recommend_next_stage: "Recommend to next stage",
+      keep_watching: "Keep watching",
+      not_recommend: "Not recommend",
+      overall_recommendation: "Overall Recommendation",
+      round_summary: "Round Summary",
+      next_round_operational_suggestions: "Next Round Operational Suggestions",
+      interviewer: "Interviewer",
+      update_success: "Update successful",
+      copied: "Copied",
+      chat_with_viona: "Chat with Viona",
+      submit: "Submit",
+      cancel: "Cancel",
+    },
+    feedback_signal: {
+      exceeds_expectations: "Exceeds expectations",
+      meets_standards: "Meets standards",
+      likely_meets: "Likely meets",
+      likely_does_not_meet: "Likely does not meet",
+      does_not_meet: "Does not meet",
+      uncertain: "Uncertain",
+      not_assessed: "Not assessed in this interview",
+      evaluation_result: "Evaluation Result",
+      basis: "Basis",
+      save: "Save",
+      cancel: "Cancel",
+      edit: "Edit",
+      evidence: "Evidence",
+      no_data: "No data available",
+    },
+    feedback_customize_signal: {
+      judgment_basis: "Judgment Basis",
+      save: "Save",
+      cancel: "Cancel",
+      edit: "Edit",
+      evidence: "Evidence",
+      no_data: "No data available",
+    },
   },
 
   city_and_address_select: {
@@ -692,4 +1029,70 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   copy: "Copy",
   copied: "Copied",
+
+  loading: "Loading...",
+  uploading: "Uploading...",
+
+  year: "year(s)",
+
+  numberRange: {
+    min: "Min",
+    max: "Max",
+  },
+
+  public_jobs: {
+    banner: {
+      title: "Find Your Dream Job",
+      subTitle: "Discover opportunities that match your skills and aspirations",
+      search: {
+        placeholder: "Search jobs, companies, locations",
+        hotSearch: "Popular Searches",
+        hotSearchTags: [
+          "AI Engineer",
+          "UI Designer",
+          "Frontend Developer",
+          "Data Analyst",
+          "QA Engineer",
+        ],
+      },
+    },
+    job_recommendations: {
+      title: "Recommended Jobs",
+    },
+    job_card: {
+      team_language: "Team Language:",
+      role_type: {
+        onsite: "On-site",
+        hybrid: "Hybrid",
+        remote: "Remote",
+      },
+      employee_level: {
+        internship: "Internship",
+        no_experience: "Entry Level/No Experience",
+        junior: "Junior",
+        mid_level: "Mid-level",
+        senior: "Senior",
+      },
+      time_ago: {
+        minute: "minutes ago",
+        hour: "hours ago",
+        day: "days ago",
+      },
+    },
+    sidebar: {
+      login_register: {
+        title: "Login/Register",
+        hint: "Chat to improve your resume and increase job success rate",
+        button: "Login/Register",
+      },
+      company_ranking: {
+        title: "Popular Companies",
+      },
+    },
+  },
+
+  home_header: {
+    home: "Home",
+    jobs: "Jobs",
+  },
 };

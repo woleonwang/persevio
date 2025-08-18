@@ -36,7 +36,7 @@ const Settings = () => {
   }, [profile]);
 
   const fetchSettings = async () => {
-    const { code, data } = await Get("/api/settings");
+    const { code, data } = await Get("/api/settings?with_prompts=1");
     if (code === 0) {
       setProfile(data);
       const formValues: Record<string, string> = {};
@@ -156,6 +156,7 @@ const Settings = () => {
     CANDIDATE_RECOMMEND_FOR_JOB_CHAT: "生成推荐报告",
     CANDIDATE_JOB_INTERVIEW_CHAT: "职位内的面试",
     UTILS_MERGE_INTERVIEW_FEEDBACKS: "合并面试反馈",
+    UTILS_GENERATE_JRD: "生成 JRD",
   };
 
   return (

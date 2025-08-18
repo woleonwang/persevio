@@ -43,7 +43,6 @@ const PercentageInput = (props: IProps) => {
               value={percentages[option.value] ?? 0}
               onChange={(val) => handleChange(option.value, val)}
               formatter={(v) => `${v}`.replace(/[^0-9]/g, "")}
-              parser={(v) => parseInt(v ?? "0", 10)}
               style={{ width: 80 }}
               step={1}
             />

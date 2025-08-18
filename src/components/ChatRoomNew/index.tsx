@@ -25,7 +25,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import { ClipLoader, ScaleLoader } from "react-spinners";
+import { ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post, PostFormData } from "../../utils/request";
@@ -42,7 +42,7 @@ import {
   TMessage,
   TMessageFromApi,
   TRoleOverviewType,
-} from "./type.d";
+} from "./type";
 import { copy } from "../../utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ type TSupportTag = {
   title: string;
   handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
-  block?: boolean;
+  style?: "inline-button" | "block-button" | "button-with-text";
 };
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -89,6 +89,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [profile, setProfile] = useState<ISettings>();
+
   // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
     useState(false);
@@ -101,7 +102,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     useState<string>("");
 
   const [selectOptionsType, setSelectOptionsType] = useState<
-    "high_level_responsibility" | "day_to_day_tasks" | "icp"
+    "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
 
@@ -196,7 +197,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       title: t("edit_message"),
       description: t("edit_message_desc"),
       nextButtonProps: {
-        children: "OK",
+        children: t("ok"),
       },
       target: () => editMessageTourElementRef.current ?? document.body,
     },
@@ -261,7 +262,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "upload-jd",
       title: t("share_reference"),
       handler: () => {},
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-high-level-responsibility",
@@ -270,7 +271,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("high_level_responsibility");
       },
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-day-to-day-tasks",
@@ -279,7 +280,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("day_to_day_tasks");
       },
-      block: true,
+      style: "block-button",
     },
     {
       key: "extract-icp",
@@ -288,7 +289,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         setSelectOptionsModalOpen(true);
         setSelectOptionsType("icp");
       },
-      block: true,
+      style: "block-button",
+    },
+    {
+      key: "success-metric",
+      title: t("extract_success_metric"),
+      handler: async () => {
+        setSelectOptionsModalOpen(true);
+        setSelectOptionsType("success-metric");
+      },
+      style: "block-button",
     },
     {
       key: "salary-structure-request",
@@ -298,6 +308,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     },
     {
       key: "jrd-done",
+      title: t("view_jrd"),
+      handler: () => viewDoc?.("job-requirement"),
+    },
+    {
+      key: "intake-done",
       title: t("view_jrd"),
       handler: () => viewDoc?.("job-requirement"),
     },
@@ -341,6 +356,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       title: t("define_interview_plan"),
       handler: () => changeChatType("job-interview-plan"),
     },
+
+    {
+      key: "interview-feedback-confirm-btn",
+      title: t("confirm"),
+      handler: () => {
+        sendMessage(t("confirm"));
+      },
+      style: "button-with-text",
+    },
   ];
 
   const fetchJob = async () => {
@@ -350,7 +374,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       const job: IJob = data.job ?? data;
       setJob(job);
     } else {
-      message.error("Get job failed");
+      message.error(t("get_job_failed"));
     }
   };
 
@@ -455,7 +479,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
 
-    messages.forEach((item) => {
+    messages.forEach((item, index) => {
       // 过滤对该角色隐藏的消息
       if ((item.content.metadata.hide_for_roles ?? []).length && share) return;
 
@@ -464,6 +488,24 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         item.content.metadata.message_sub_type === "error"
       ) {
         const extraTags = item.content.metadata.extra_tags || [];
+        // 确认按钮
+        if (
+          chatType === "jobInterviewFeedback" &&
+          index === messages.length - 1 &&
+          item.content.role === "assistant" &&
+          !messages.find(
+            (item) =>
+              !!item.content.metadata.extra_tags?.find(
+                (item) => item.name === "current-round-evaluation"
+              )
+          )
+        ) {
+          extraTags.push({
+            name: "interview-feedback-confirm-btn",
+            content: "",
+          });
+        }
+
         resultMessages.push({
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
@@ -478,7 +520,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         // 下一步 按钮
         (item.content.metadata.extra_tags ?? []).forEach((tag) => {
           (
-            ["jd-done", "interview-plan-done", "jrd-done"] as TDoneTag[]
+            [
+              "jd-done",
+              "interview-plan-done",
+              "jrd-done",
+              "intake-done",
+            ] as TDoneTag[]
           ).forEach((step) => {
             if (step === tag.name) {
               const nextExtraTags = getNextStepsExtraTags(job);
@@ -522,7 +569,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 0) {
       sendMessage(JobRequirementFormMessage);
     } else {
-      message.error("Send role overview failed");
+      message.error(t("send_role_overview_failed"));
     }
   };
 
@@ -563,7 +610,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
-      message.error("Your quota has been exhausted.");
+      message.error(t("quota_exhausted"));
     }
   };
 
@@ -591,7 +638,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
-      message.error("Your quota has been exhausted.");
+      message.error(t("quota_exhausted"));
     }
   };
 
@@ -617,10 +664,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     });
 
     if (code === 0) {
-      message.success("Delete message successfully");
+      message.success(t("delete_message_success"));
       fetchMessages();
     } else {
-      message.error("Delete message failed");
+      message.error(t("delete_message_failed"));
     }
   };
 
@@ -667,7 +714,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         }}
         placement="right"
         title={
-          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+          t("recording_tooltip")
         }
         open={audioHintVisible}
       >
@@ -759,7 +806,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                       <div>
                         <span style={{ fontSize: 18 }}>
                           {item.role === "user"
-                            ? "You"
+                            ? t("you")
                             : `Viona, ${t("viona_intro_staff")}`}
                         </span>
                         <span className={styles.timestamp}>
@@ -791,7 +838,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                           <MarkdownContainer
                             content={
                               item.messageSubType === "error"
-                                ? "Something wrong with Viona, please retry."
+                                ? t("error_message")
                                 : item.content
                             }
                           />
@@ -808,16 +855,13 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                           return (
                             <>
-                              <div
-                                style={{
-                                  marginTop: 16,
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  gap: 8,
-                                }}
-                              >
+                              <div className={styles.inlineButtonWrapper}>
                                 {visibleTags
-                                  .filter((tag) => !tag.block)
+                                  .filter(
+                                    (tag) =>
+                                      !tag.style ||
+                                      tag.style === "inline-button"
+                                  )
                                   .map((tag) => {
                                     return (
                                       <div
@@ -844,7 +888,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   })}
                               </div>
                               {visibleTags
-                                .filter((tag) => tag.block)
+                                .filter((tag) => tag.style === "block-button")
                                 .map((tag) => (
                                   <div style={{ width: "100%" }} key={tag.key}>
                                     {tag.key === "upload-jd" ? (
@@ -864,7 +908,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           if (code === 0) {
                                             sendMessage(data.resume);
                                           } else {
-                                            message.error("Upload failed");
+                                            message.error(t("upload_failed"));
                                           }
                                         }}
                                         showUploadList={false}
@@ -901,6 +945,36 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         {tag.title}
                                       </Button>
                                     )}
+                                  </div>
+                                ))}
+                              {visibleTags
+                                .filter(
+                                  (tag) => tag.style === "button-with-text"
+                                )
+                                .map((tag) => (
+                                  <div
+                                    key={tag.key}
+                                    className={styles.tagButtonWithText}
+                                  >
+                                    <div>
+                                      {t("interview_feedback_confirm_text")}
+                                    </div>
+                                    <Button
+                                      variant="outlined"
+                                      color="primary"
+                                      style={{ marginTop: 8 }}
+                                      onClick={() => {
+                                        const extraTag = (
+                                          item.extraTags ?? []
+                                        ).find(
+                                          (extraTag) =>
+                                            extraTag.name === tag.key
+                                        );
+                                        tag.handler(extraTag);
+                                      }}
+                                    >
+                                      {tag.title}
+                                    </Button>
                                   </div>
                                 ))}
                             </>
@@ -954,7 +1028,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     onClick={() => {
                                       if (
                                         confirm(
-                                          "Confirm to delete messages after this message?"
+                                          t("confirm_delete_messages")
                                         )
                                       ) {
                                         deleteMessage(parseInt(item.id));
@@ -969,7 +1043,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     onClick={async () => {
                                       if (
                                         confirm(
-                                          "Confirm to retry this message?"
+                                          t("confirm_retry_message")
                                         )
                                       ) {
                                         retryMessage(parseInt(item.id));
@@ -1037,30 +1111,26 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 maxRows: 16,
               }}
             />
-            {
-              <>
-                {textInputVisible && (
-                  <SendOutlined
-                    onClick={() => submit()}
-                    style={{ fontSize: 24, color: "#1FAC6A" }}
-                  />
-                )}
-                <EditOutlined
-                  onClick={() => {
-                    if (textInputVisible) {
-                      setTextInputVisible(false);
-                      setInputPlaceholder("");
-                    } else {
-                      setTextInputVisible(true);
-                      setTimeout(() => {
-                        setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                      }, 400);
-                    }
-                  }}
-                  style={{ fontSize: 24, color: "gray" }}
-                />
-              </>
-            }
+            {textInputVisible && (
+              <SendOutlined
+                onClick={() => submit()}
+                style={{ fontSize: 24, color: "#1FAC6A" }}
+              />
+            )}
+            <EditOutlined
+              onClick={() => {
+                if (textInputVisible) {
+                  setTextInputVisible(false);
+                  setInputPlaceholder("");
+                } else {
+                  setTextInputVisible(true);
+                  setTimeout(() => {
+                    setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                  }, 400);
+                }
+              }}
+              style={{ fontSize: 24, color: "gray" }}
+            />
           </div>
         </div>
 
@@ -1095,6 +1165,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               high_level_responsibility: t("extract_high_level_responsibility"),
               day_to_day_tasks: t("extract_day_to_day_tasks"),
               icp: t("extract_icp"),
+              "success-metric": t("extract_success_metric"),
             }[selectOptionsType ?? "icp"]
           }
           closable={false}
@@ -1210,15 +1281,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               justifyContent: "center",
             }}
           >
-            {isRecording ? (
-              <ScaleLoader
-                color="#1FAC6A"
-                height={75 * Math.min(1, volume * 3) + 5}
-                width={10}
-              />
-            ) : (
-              <ClipLoader color="#1FAC6A" size={32} />
-            )}
+            <ScaleLoader
+              color="#1FAC6A"
+              height={75 * Math.min(1, volume * 3) + 5}
+              width={10}
+            />
           </div>
         </div>,
         document.body

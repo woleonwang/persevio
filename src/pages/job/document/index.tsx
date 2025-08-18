@@ -11,7 +11,7 @@ import useJob from "@/hooks/useJob";
 import { Badge, Button, Empty, message, Spin } from "antd";
 import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Get, Post } from "@/utils/request";
 import dayjs from "dayjs";
 import MarkdownEditor from "@/components/MarkdownEditor";
@@ -23,18 +23,6 @@ const chatTypeMappings: Record<TChatType, string> = {
   "job-requirement": "requirement",
   "job-description": "jd",
   "job-interview-plan": "interview_plan",
-};
-
-const chatTypeTitle: Record<TChatType, string> = {
-  "job-requirement": "职位需求表",
-  "job-description": "职位描述(JD)",
-  "job-interview-plan": "面试计划&评分卡",
-};
-
-const chatTypeField: Record<TChatType, string> = {
-  "job-requirement": "requirement_doc_id",
-  "job-description": "jd_doc_id",
-  "job-interview-plan": "interview_plan_doc_id",
 };
 
 const JobDocument = () => {
@@ -51,7 +39,19 @@ const JobDocument = () => {
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`job.${key}`);
+  const t = (key: string) => originalT(`job_document.${key}`);
+
+  const chatTypeTitle = useMemo(() => ({
+    "job-requirement": t("job_requirement_table"),
+    "job-description": t("job_description_jd"),
+    "job-interview-plan": t("interview_plan_scorecard"),
+  }), [t]);
+
+  const chatTypeField: Record<TChatType, string> = {
+    "job-requirement": "requirement_doc_id",
+    "job-description": "jd_doc_id",
+    "job-interview-plan": "interview_plan_doc_id",
+  };
 
   useEffect(() => {
     if (job) {
@@ -82,11 +82,11 @@ const JobDocument = () => {
       }
     );
     if (code === 0) {
-      message.success(originalT("submit_succeed"));
+      message.success(t("submit_succeed"));
       setIsEditing(false);
       fetchDoc();
     } else {
-      message.success(originalT("submit_failed"));
+      message.success(t("submit_failed"));
     }
   };
 
@@ -136,7 +136,7 @@ const JobDocument = () => {
           }}
         />
         <span style={{ fontSize: 20, fontWeight: "bold" }}>{job.name}</span> -
-        {" 职位详情"}
+        {t("job_details")}
       </div>
       <div className={styles.body}>
         <div className={styles.left}>
@@ -176,7 +176,7 @@ const JobDocument = () => {
               {chatTypeTitle[chatType]}
               <span className={styles.timestamp}>
                 {updatedAt &&
-                  `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}更新`}
+                  `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}${t("updated_at")}`}
               </span>
             </div>
             {!!documentContent && (
@@ -189,19 +189,15 @@ const JobDocument = () => {
                 <ShareAltOutlined
                   onClick={async () => {
                     await copy(
-                      `${window.origin}/app/jobs/${
-                        job.id
-                      }/document/${chatType}?token=${localStorage.getItem(
-                        "token"
-                      )}&share=1`
+                      `${window.origin}/jobs/${job.id}/share?show=${chatTypeMappings[chatType]}`
                     );
-                    message.success("链接已复制");
+                    message.success(t("link_copied"));
                   }}
                 />
                 <CopyOutlined
                   onClick={async () => {
                     await copy(documentContent);
-                    message.success("Copied");
+                    message.success(t("copied"));
                   }}
                 />
                 <EditOutlined
@@ -218,7 +214,7 @@ const JobDocument = () => {
                   }}
                   style={{ marginLeft: "12px" }}
                 >
-                  与 Viona 对话
+                  {t("chat_with_viona")}
                 </Button>
               </div>
             )}
@@ -242,7 +238,7 @@ const JobDocument = () => {
                     <div style={{ marginTop: 20 }}>
                       {!job.requirement_doc_id ? (
                         <>
-                          暂未撰写职位需求表
+                          {t("not_written_job_requirement")}
                           <Button
                             type="primary"
                             onClick={() => {
@@ -252,14 +248,14 @@ const JobDocument = () => {
                             }}
                             style={{ marginLeft: "12px" }}
                           >
-                            与 Viona 对话
+                            {t("chat_with_viona")}
                           </Button>
                         </>
                       ) : (
                         <>
                           {chatType === "job-description"
-                            ? "暂未撰写职位描述(JD)"
-                            : "暂未制定面试计划&评分卡"}
+                            ? t("not_written_job_description")
+                            : t("not_created_interview_plan")}
                           <Button
                             type="primary"
                             onClick={() => {
@@ -267,7 +263,7 @@ const JobDocument = () => {
                             }}
                             style={{ marginLeft: "12px" }}
                           >
-                            与 Viona 对话
+                            {t("chat_with_viona")}
                           </Button>
                         </>
                       )}
@@ -279,13 +275,13 @@ const JobDocument = () => {
           </div>
           {isEditing && (
             <div>
-              <Button onClick={() => setIsEditing(false)}>取消</Button>
+              <Button onClick={() => setIsEditing(false)}>{t("cancel")}</Button>
               <Button
                 onClick={() => updateDoc()}
                 type="primary"
                 style={{ marginLeft: 12 }}
               >
-                保存
+                {t("save")}
               </Button>
             </div>
           )}

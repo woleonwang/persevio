@@ -151,7 +151,6 @@ const RecommendedJobShow = () => {
             userRole="candidate"
             jobId={recommendedJob.job_id}
             sessionId={`${recommendedJob.candidate_id}`}
-            disableApply
           />
         </div>
       </Drawer>

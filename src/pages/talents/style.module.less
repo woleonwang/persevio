@@ -1,0 +1,75 @@
+.candidatesContainer {
+  width: 100%;
+  padding: 20px;
+  font-family: sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.pageHeader {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex: none;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  flex: none;
+}
+
+.filterSection {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pageBody {
+  overflow: auto;
+  flex: auto;
+}
+
+.candidateNameWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.unreadDot {
+  position: absolute;
+  top: 0px;
+  right: -6px;
+  width: 6px;
+  height: 6px;
+  background-color: #ff4d4f;
+  border-radius: 50%;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .candidatesContainer {
+    padding: 12px;
+  }
+
+  .filterSection {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filterItem {
+    width: 100%;
+
+    .ant-input,
+    .ant-select {
+      width: 100% !important;
+    }
+  }
+}

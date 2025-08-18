@@ -2,6 +2,7 @@ import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
   | "jrd-done"
+  | "intake-done"
   | "compensation-details-done"
   | "jd-done"
   | "post-job-done"
@@ -27,6 +28,7 @@ export type TExtraTagName =
   | "extract-high-level-responsibility"
   | "extract-day-to-day-tasks"
   | "extract-icp"
+  | "success-metric"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -105,7 +107,6 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   userRole?: TUserRole;
-  disableApply?: boolean;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;
   jobInterviewDesignerId?: number;

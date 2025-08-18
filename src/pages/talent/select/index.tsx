@@ -1,6 +1,7 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Avatar, Spin } from "antd";
 import { useNavigate, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 import useJob from "@/hooks/useJob";
 import VionaAvatar from "@/assets/viona-avatar.png";
@@ -10,6 +11,8 @@ import styles from "./style.module.less";
 
 const TalentSelect = () => {
   const { job } = useJob();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent.${key}`);
 
   const { chatType } = useParams<{ chatType: TTalentChatType }>();
 
@@ -50,7 +53,7 @@ const TalentSelect = () => {
             <div>Viona</div>
           </div>
           <div>
-            您可以上传简历或选择一位候选人，与我一起制定该候选人的面试计划。
+            {t("upload_resume_or_select_candidate")}
           </div>
           <div style={{ marginTop: 20 }}>
             <SelectOrUploadTalent

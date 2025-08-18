@@ -2,7 +2,6 @@ import { Get } from "@/utils/request";
 import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-
 const useJob = () => {
   const { jobId: jobIdStr } = useParams<{
     jobId: string;
@@ -26,7 +25,7 @@ const useJob = () => {
     }
   };
 
-  return { job };
+  return { job, fetchJob };
 };
 
 export default useJob;

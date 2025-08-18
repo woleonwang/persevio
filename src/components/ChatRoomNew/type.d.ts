@@ -1,6 +1,10 @@
 import { onChangeTabFunction } from "../../pages/job/index";
 
-export type TDoneTag = "jrd-done" | "jd-done" | "interview-plan-done";
+export type TDoneTag =
+  | "jrd-done"
+  | "intake-done"
+  | "jd-done"
+  | "interview-plan-done";
 
 export type TExtraTagName =
   // 后端生成
@@ -17,6 +21,8 @@ export type TExtraTagName =
   | "extract-high-level-responsibility"
   | "extract-day-to-day-tasks"
   | "extract-icp"
+  | "success-metric"
+  | "current-round-evaluation"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
@@ -32,6 +38,7 @@ export type TExtraTagName =
   | "to-chatbot-btn"
   | "chatbot-config-btn"
   | "post-job-btn"
+  | "interview-feedback-confirm-btn"
   //candiate
   | "interview-done";
 
@@ -84,7 +91,6 @@ export interface IProps {
   sessionId?: string;
   allowEditMessage?: boolean;
   userRole?: TUserRole;
-  disableApply?: boolean;
   share?: boolean;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;

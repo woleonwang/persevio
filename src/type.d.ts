@@ -42,6 +42,7 @@ interface IJob {
   day_to_day_tasks_json: string;
   icp_json: string;
   interview_plan_json: string;
+  success_metrics_json: string;
 
   chatbot_options: {
     allow_salary: string;
@@ -53,6 +54,13 @@ interface IJob {
   interview_transcript_for_interview_feedback: string;
   interview_design_for_interview_feedback: string;
 }
+
+type TPublicJob = {
+  id: number;
+  name: string;
+  interview_plan_json: string;
+  language: string;
+};
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
 
@@ -179,11 +187,13 @@ type TMenu = {
   img: ReactNode;
   requireAdmin?: boolean;
   key?: string;
+  badge?: number;
   children?: {
     title: string;
     path: string;
     active: boolean;
     onRemove?: () => void;
+    badge?: number;
   }[];
 };
 
@@ -253,15 +263,65 @@ interface TInterviewFeedback {
   updated_at: string;
 }
 
+type TMatchLevel =
+  | "not_a_match"
+  | "recommend_with_reservations"
+  | "match_pending_verification"
+  | "match"
+  | "strong_match"
+  | "needs_verification";
+
+type TMeetType = "met" | "not_met" | "not_sure";
+
+type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
+
+type TPriority = "minimum" | "big_plus" | "plus";
+
+type TEvaluationResult = {
+  talent: {
+    name: string;
+  };
+
+  overall_match_level: TMatchLevel;
+  competency_match: TMatchLevel;
+  logistic_other_match: TMatchLevel;
+  suitability_score: number;
+
+  job_requirements_met: {
+    minimum_requirements: string;
+    big_plus_requirements: string;
+    plus_requirements: string;
+  };
+
+  evaluation_summary: {
+    strengths: string[];
+    potential_gaps: string[];
+    career_motivations: string[];
+  };
+
+  evaluation: {
+    criterion: string;
+    judgement: TMeetType;
+    confidence_level: TConfidenceLevel;
+    points_awarded: number;
+    reasons: {
+      reason: string;
+      evidences: string[];
+    }[];
+    priority: TPriority;
+  }[];
+};
+
 type TTalent = {
   id: number;
   name: string;
   status: string;
   feedback: string;
   parsed_content: string;
+  evaluate_result: TEvaluationResult;
 };
 
-type TTalentChatType = "interview_designer" | "interview_feedback";
+type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
 
 type TInterviewPlanDetail = {
   rounds: {
@@ -310,3 +370,36 @@ type TInterviewFeedbackDetail = {
 
   dangers: TCustomizeSignal[];
 };
+
+type TJobBasicInfo = {
+  team_name: string;
+  team_lanugage: string;
+  role_type: "onsite" | "hybrid" | "remote";
+  location: {
+    city: string;
+    address: string;
+  }[];
+  employee_level: (
+    | "internship"
+    | "no_experience"
+    | "junior"
+    | "mid_level"
+    | "senior"
+  )[];
+};
+
+interface ITalentListItem {
+  id: number;
+  name: string;
+  job_id: number;
+  job_name: string;
+  source_channel: "delivery" | "upload";
+  evaluate_result: TEvaluationResult;
+  viewed_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ITalentListResponse {
+  candidates: ITalentListItem[];
+}

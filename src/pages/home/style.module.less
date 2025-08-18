@@ -1,213 +1,195 @@
-.container {
-  .header {
-    border-bottom: 1px solid rgba(238, 238, 238, 1);
-    padding: 24px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+@primary-color: #1fac6a;
 
-    .joinBtn {
-      padding: 7px 12px;
-      background-color: rgba(31, 172, 106, 1);
-      color: white;
-      border-radius: 8px;
-      font-weight: bold;
-      display: flex;
-      cursor: pointer;
-    }
-  }
+.bannerContainer {
+  margin: auto;
+  padding-left: 20px;
+  width: 1300px;
+  height: 650px;
+  background-image: url("/banner-bg.png");
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: relative;
 
-  .bannerContainer {
-    margin: auto;
-    padding-left: 20px;
-    width: 1300px;
-    height: 650px;
-    background-image: url('/banner-bg.png');
-    background-position-x: right;
-    background-repeat: no-repeat;
-    background-size: contain;
-    position: relative;
-
-    .title {
-      font-size: 56px;
-      line-height: 67px;
-      color: #333333;
-      font-weight: 600;
-      padding-top: 130px;
-    }
-
-    .bannerHint {
-      margin-top: 68px;
-      font-size: 20px;
-      line-height: 36px;
-      width: 531px;
-    }
-
-    .bannerGreenBtn {
-      margin-top: 80px;
-    }
-
-    .talk {
-      position: absolute;
-      border-radius: 32px;
-      color: white;
-      padding: 24px;
-      font-size: 20px;
-      line-height: 30px;
-      font-weight: bold;
-    }
-
-    .talk_1 {
-      background-color: rgba(236, 112, 71, 0.8);
-      border: 1px solid rgba(248, 206, 184, 1);
-      top: 140px;
-      right: 394px;
-    }
-
-    .talk_2 {
-      background-color: rgba(59, 185, 131, 0.8);
-      border: 1px solid rgba(194, 241, 199, 1);
-      top: 417px;
-      right: 53px;
-    }
-
-    .talk_3 {
-      background-color: rgba(59, 98, 216, 0.82);
-      border: 1px solid rgba(168, 186, 240, 1);
-      top: 550px;
-      right: 511px;
-    }
-  }
-
-  .innerContainer {
-    width: 1300px;
-    margin: auto;
-  }
-
-  .bgContainer {
-    background-color: rgba(248, 248, 248, 1);
-    position: relative;
-  }
-
-  .blockTitle {
-    text-align: center;
-    font-size: 40px;
-    line-height: 60px;
+  .title {
+    font-size: 56px;
+    line-height: 67px;
     color: #333333;
-    font-weight: bold;
+    font-weight: 600;
+    padding-top: 130px;
   }
 
-  .blockSubTitle {
-    font-weight: bold;
-    line-height: 48px;
-    font-size: 32px;
+  .bannerHint {
+    margin-top: 68px;
+    font-size: 20px;
+    line-height: 36px;
+    width: 531px;
   }
 
-  .blockDesc {
-    margin: auto;
-    text-align: center;
-    width: 800px;
-  }
-
-  .blockSubDesc {
-    font-size: 18px;
-    line-height: 27px;
-    margin-top: 24px;
-  }
-
-  .block1 {
+  .bannerGreenBtn {
     margin-top: 80px;
-    padding-bottom: 74px;
-    background: linear-gradient(
-      to bottom,
-      white 270px,
-      rgba(248, 248, 248, 1) 100px
-    );
   }
 
-  .cardContainer {
-    display: flex;
-    gap: 21px;
-    & > div {
-      flex: 1;
-    }
-  }
-
-  .block1GreenBtn {
-    text-align: center;
-    margin-top: 64px;
-  }
-
-  .block2 {
-    margin-top: 100px;
-  }
-
-  // 公共
-  .flexContainerLeftImage {
-    display: flex;
-    align-items: flex-start;
-  }
-
-  .flexContainerRightImage {
-    background-color: rgba(248, 248, 249, 1);
-    display: flex;
-    padding: 70px 40px;
-    align-items: flex-start;
-  }
-
-  .green {
-    color: #1fac6a;
-  }
-
-  .greenBtn {
-    padding: 13px 72px 13px 26px;
-    background-color: rgba(31, 172, 106, 1);
+  .talk {
+    position: absolute;
+    border-radius: 32px;
     color: white;
-    border-radius: 43px;
-    font-weight: bold;
-    display: inline-block;
-    cursor: pointer;
-    position: relative;
-
-    .icon {
-      position: absolute;
-      right: 2px;
-      top: 2px;
-      bottom: 2px;
-      width: 46px;
-      border-radius: 50%;
-      color: white;
-      background-color: rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-  }
-
-  .footer {
-    padding: 78px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .footerLinksContainer {
-    display: flex;
-    gap: 110px;
-    align-items: flex-start;
-  }
-
-  .footerTitle {
-    font-size: 16px;
-    line-height: 24px;
+    padding: 24px;
+    font-size: 20px;
+    line-height: 30px;
     font-weight: bold;
   }
 
-  .footerLink {
-    font-size: 14px;
-    line-height: 21px;
-    color: rgba(153, 153, 153, 1);
-    margin-top: 24px;
+  .talk_1 {
+    background-color: rgba(236, 112, 71, 0.8);
+    border: 1px solid rgba(248, 206, 184, 1);
+    top: 140px;
+    right: 394px;
   }
+
+  .talk_2 {
+    background-color: rgba(59, 185, 131, 0.8);
+    border: 1px solid rgba(194, 241, 199, 1);
+    top: 417px;
+    right: 53px;
+  }
+
+  .talk_3 {
+    background-color: rgba(59, 98, 216, 0.82);
+    border: 1px solid rgba(168, 186, 240, 1);
+    top: 550px;
+    right: 511px;
+  }
+}
+
+.innerContainer {
+  width: 1300px;
+  margin: auto;
+}
+
+.bgContainer {
+  background-color: rgba(248, 248, 248, 1);
+  position: relative;
+}
+
+.blockTitle {
+  text-align: center;
+  font-size: 40px;
+  line-height: 60px;
+  color: #333333;
+  font-weight: bold;
+}
+
+.blockSubTitle {
+  font-weight: bold;
+  line-height: 48px;
+  font-size: 32px;
+}
+
+.blockDesc {
+  margin: auto;
+  text-align: center;
+  width: 800px;
+}
+
+.blockSubDesc {
+  font-size: 18px;
+  line-height: 27px;
+  margin-top: 24px;
+}
+
+.block1 {
+  margin-top: 80px;
+  padding-bottom: 74px;
+  background: linear-gradient(
+    to bottom,
+    white 270px,
+    rgba(248, 248, 248, 1) 100px
+  );
+}
+
+.cardContainer {
+  display: flex;
+  gap: 21px;
+  & > div {
+    flex: 1;
+  }
+}
+
+.block1GreenBtn {
+  text-align: center;
+  margin-top: 64px;
+}
+
+.block2 {
+  margin-top: 100px;
+}
+
+// 公共
+.flexContainerLeftImage {
+  display: flex;
+  align-items: flex-start;
+}
+
+.flexContainerRightImage {
+  background-color: rgba(248, 248, 249, 1);
+  display: flex;
+  padding: 70px 40px;
+  align-items: flex-start;
+}
+
+.green {
+  color: #1fac6a;
+}
+
+.greenBtn {
+  padding: 13px 72px 13px 26px;
+  background-color: rgba(31, 172, 106, 1);
+  color: white;
+  border-radius: 43px;
+  font-weight: bold;
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+
+  .icon {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    bottom: 2px;
+    width: 46px;
+    border-radius: 50%;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+}
+
+.footer {
+  padding: 78px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.footerLinksContainer {
+  display: flex;
+  gap: 110px;
+  align-items: flex-start;
+}
+
+.footerTitle {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: bold;
+}
+
+.footerLink {
+  font-size: 14px;
+  line-height: 21px;
+  color: rgba(153, 153, 153, 1);
+  margin-top: 24px;
 }

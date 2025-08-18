@@ -1,17 +1,26 @@
-import React, { useEffect } from "react";
-import { message } from "antd";
-import { useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import { Alert, message } from "antd";
+import classnames from "classnames";
+import { Get, Post } from "@/utils/request";
 
-import Logo from "@/assets/logo.png";
-import { Get } from "@/utils/request";
-import Google from "@/assets/google.png";
-import Linkedin from "@/assets/linkedin.png";
-import styles from "../signup/components/OAuth/style.module.less";
+import CandidateChat from "@/components/CandidateChat";
+import logo from "@/assets/logo.png";
+import styles from "./style.module.less";
+import UploadResume from "./components/UploadResume";
+import OAuth from "./components/OAuth";
+import { useNavigate } from "react-router";
+import ConfirmPhone from "./components/ConfirmPhone";
 import { useTranslation } from "react-i18next";
 
 const CandidateSignIn: React.FC = () => {
-  const navigate = useNavigate();
+  const [pageState, setPageState] = useState<
+    "signin" | "upload" | "phone" | "conversation"
+  >();
 
+  const [jobId, setJobId] = useState<string>();
+  const [candidate, setCandidate] = useState<ICandidateSettings>();
+
+  const navigate = useNavigate();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
 
@@ -20,7 +29,7 @@ const CandidateSignIn: React.FC = () => {
     const error = urlParams.get("error");
     const code = urlParams.get("code");
     if (error === "google_login_failed" && code === "10001") {
-      message.error("Email not found");
+      message.error(t("email_exists"));
     }
 
     const tokenFromUrl = urlParams.get("token");
@@ -37,70 +46,115 @@ const CandidateSignIn: React.FC = () => {
       localStorage.setItem("candidate_token", tokenFromUrl);
     }
 
-    if (localStorage.getItem("candidate_token")) {
-      fetchProfile();
+    fetchProfile();
+
+    const jobId = urlParams.get("job_id");
+    if (jobId) {
+      setJobId(jobId);
     }
   }, []);
 
   const fetchProfile = async () => {
-    const { code } = await Get(`/api/candidate/settings`);
+    const { code, data } = await Get(`/api/candidate/settings`);
     if (code === 0) {
-      navigate("/candidate/profile");
+      const candidate: ICandidateSettings = data.candidate;
+      setCandidate(candidate);
+
+      if (candidate.status !== "extracted") {
+        setPageState("upload");
+      } else if (!candidate.phone_confirmed_at) {
+        setPageState("phone");
+      } else if (!candidate.interview_finished_at) {
+        setPageState("conversation");
+      } else {
+        navigate("/candidate/job-applies");
+      }
+    } else {
+      setPageState("signin");
     }
   };
 
   return (
     <div
-      className={styles.container}
-      style={{ height: "100vh", backgroundColor: "#f7f8fa" }}
+      className={classnames(styles.container, {
+        [styles.mobile]: pageState === "signin",
+      })}
     >
-      <div className={styles.left}>
-        <div className={styles.panel}>
-          <div className={styles.logoWrapper}>
-            <img src={Logo} style={{ width: 190 }} />
+      <Alert
+        message={"可以在PC端进行下一步操作，体验更加流畅的职位申请流程。"}
+        type="warning"
+        showIcon
+        closable
+        className={styles.mobileVisible}
+      />
+      {pageState !== "signin" && (
+        <>
+          <div className={styles.header}>
+            <img
+              src={logo}
+              className={styles.banner}
+              onClick={async () => {
+                const { code } = await Post("/api/candidate/clear");
+                if (code === 0) {
+                  localStorage.removeItem("candidate_token");
+                  window.location.reload();
+                }
+              }}
+            />
           </div>
+        </>
+      )}
+      <div className={styles.main}>
+        {pageState !== "signin" && (
+          <div className={styles.stepWrapper}>
+            <div className={classnames(styles.step, styles.active)}>
+              {t("upload_resume")}
+            </div>
+            <div
+              className={classnames(styles.step, {
+                [styles.active]: pageState === "conversation",
+              })}
+            >
+              {t("career_dive")}
+            </div>
+          </div>
+        )}
+        {(() => {
+          if (pageState === "signin") {
+            return <OAuth jobId={jobId} />;
+          }
 
-          <div
-            onClick={() => {
-              window.location.href = `/api/auth/google/login?role=candidate&auth_type=signin`;
-            }}
-            className={styles.button}
-          >
-            <img src={Google} className={styles.brand} />
-            {t("connect_google")}
-          </div>
+          if (pageState === "upload") {
+            return (
+              <UploadResume
+                onFinish={() => {
+                  setPageState("phone");
+                }}
+              />
+            );
+          }
 
-          <div
-            onClick={() => {
-              window.location.href = `/api/auth/linkedin/login?role=candidate&auth_type=signin`;
-            }}
-            className={styles.button}
-          >
-            <img src={Linkedin} className={styles.brand} />
-            {t("connect_linkedin")}
-          </div>
-        </div>
-      </div>
+          if (pageState === "phone") {
+            return (
+              <ConfirmPhone
+                phone={candidate?.phone}
+                name={candidate?.name}
+                onFinish={() => setPageState("conversation")}
+              />
+            );
+          }
 
-      <div className={styles.right}>
-        <div className={styles.textWrapper}>
-          <div className={styles.title}>
-            {t("connect_title")}
-            <span className={styles.primary}>{t("singapore")}</span>.
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_1")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_1")}</div>
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_2")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_2")}</div>
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_3")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_3")}</div>
-          </div>
-        </div>
+          if (pageState === "conversation") {
+            return (
+              <div className={styles.chatWrapper}>
+                <CandidateChat
+                  chatType="profile"
+                  onFinish={() => navigate("/candidate/job-applies?open=1")}
+                />
+              </div>
+            );
+          }
+        })()}
       </div>
     </div>
   );

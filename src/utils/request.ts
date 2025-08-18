@@ -63,7 +63,7 @@ export const PostFormData = async <T = any>(url: string, data: FormData) => {
   try {
     response = await instance.post<{ code: number; data?: T }>(url, data, {
       headers: {
-        Authorization: localStorage.getItem("token"),
+        Authorization: localStorage.getItem(getTokenKey(url)),
       },
     });
     return response.data;
