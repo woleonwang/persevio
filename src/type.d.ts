@@ -277,40 +277,35 @@ type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
 
 type TPriority = "minimum" | "big_plus" | "plus";
 
-type TEvaluationResult = {
-  talent: {
-    name: string;
-  };
-
-  overall_match_level: TMatchLevel;
-  competency_match: TMatchLevel;
-  logistic_other_match: TMatchLevel;
-  suitability_score: number;
-
-  job_requirements_met: {
-    minimum_requirements: string;
-    big_plus_requirements: string;
-    plus_requirements: string;
-  };
-
-  evaluation_summary: {
-    strengths: string[];
-    potential_gaps: string[];
-    career_motivations: string[];
-  };
-
-  evaluation: {
-    criterion: string;
-    judgement: TMeetType;
-    confidence_level: TConfidenceLevel;
-    points_awarded: number;
-    reasons: {
-      reason: string;
-      evidences: string[];
-    }[];
-    priority: TPriority;
-  }[];
-};
+type TEvaluation =
+  // part 2-5
+  | "exceeds"
+  | "meets"
+  | "likely_meets"
+  // --- 兼容老数据
+  | "likely_does_not_meets"
+  | "does_not_meets"
+  // --- end
+  | "likely_does_not_meet"
+  | "does_not_meet"
+  | "uncertain"
+  | "not_assessed"
+  // part 1.1 经验背景适配性评估选项.
+  | "over_qualified"
+  | "more_senior"
+  | "meets_seniority_bar"
+  | "slightly_junior"
+  | "too_junior"
+  | "uncertain_not_assessed"
+  // part 1.2 关键职责评估选项
+  | "directly_relevant"
+  | "highly_transferable"
+  | "partially_transferable"
+  | "no_relevant"
+  // part 1.3 工作环境评估选项
+  | "identical_environment"
+  | "similar_environment"
+  | "different_environment";
 
 type TTalent = {
   id: number;
@@ -323,6 +318,16 @@ type TTalent = {
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
 
+type TSignalGroupKey =
+  | "experience_contextual_fit"
+  | "key_responsibilities"
+  | "working_environment"
+  | "skills"
+  | "domain_knowledges"
+  | "personal_traits"
+  | "educations_and_certifications"
+  | "others";
+
 type TInterviewPlanDetail = {
   rounds: {
     interviewer: string;
@@ -330,26 +335,20 @@ type TInterviewPlanDetail = {
   signals: [
     {
       title: string;
-      description: string;
       level: "must_have" | "good_to_have";
+      description?: string;
+      groupKey?: TSignalGroupKey;
+      key?: string;
     }
   ];
 };
-
-type TEvaluation =
-  | "exceeds"
-  | "meets"
-  | "likely_meets"
-  | "likely_does_not_meets"
-  | "does_not_meets"
-  | "uncertain"
-  | "not_assessed";
 
 type TPredefinedSignal = {
   title: string;
   evaluation: TEvaluation;
   basis: string;
   evidences: string;
+  key?: string;
 };
 
 type TCustomizeSignal = {
