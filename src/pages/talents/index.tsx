@@ -203,6 +203,11 @@ const Talents: React.FC = () => {
               label: job.name,
               value: job.id,
             }))}
+            showSearch
+            autoClearSearchValue
+            filterOption={(input, option) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
           />
         </div>
       </div>
