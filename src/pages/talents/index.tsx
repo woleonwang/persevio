@@ -26,6 +26,8 @@ const Talents: React.FC = () => {
 
   useEffect(() => {
     fetchTalents();
+    // 刷新未读候选人状态
+    globalStore.refreshUnreadTalentsCount();
   }, []);
 
   const fetchTalents = async () => {
@@ -110,6 +112,14 @@ const Talents: React.FC = () => {
       dataIndex: "name",
       key: "name",
       width: 120,
+      render: (_, record) => (
+        <div className={styles.candidateNameWrapper}>
+          <span>{record.name}</span>
+          {!record.viewed_at && record.source_channel === "delivery" && (
+            <span className={styles.unreadDot}></span>
+          )}
+        </div>
+      ),
     },
     {
       title: "职位名称",

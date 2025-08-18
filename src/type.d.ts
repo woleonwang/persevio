@@ -187,11 +187,13 @@ type TMenu = {
   img: ReactNode;
   requireAdmin?: boolean;
   key?: string;
+  badge?: number;
   children?: {
     title: string;
     path: string;
     active: boolean;
     onRemove?: () => void;
+    badge?: number;
   }[];
 };
 
@@ -393,6 +395,7 @@ interface ITalentListItem {
   job_name: string;
   source_channel: "delivery" | "upload";
   evaluate_result: TEvaluationResult;
+  viewed_at: string;
   created_at: string;
   updated_at: string;
 }

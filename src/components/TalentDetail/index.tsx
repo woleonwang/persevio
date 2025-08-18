@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import { backOrDirect, copy, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import globalStore from "@/store/global";
 
 import styles from "./style.module.less";
 import FeedbackSummary from "./components/FeedbackSummary";
@@ -108,6 +109,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
       if (isPreview) {
         i18n.changeLanguage(job.language);
       }
+
+      // 刷新未读候选人状态
+      globalStore.refreshUnreadTalentsCount();
     }
   }, [job, talent]);
 

@@ -16,7 +16,7 @@ import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Input, message, Modal, Popover, Spin } from "antd";
+import { Input, message, Modal, Popover, Spin, Badge } from "antd";
 import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
@@ -51,12 +51,17 @@ const AppLayout = () => {
 
   const { t, i18n } = useTranslation();
 
-  const { jobs, fetchJobs } = globalStore;
+  const { jobs, fetchJobs, unreadTalentsCount, fetchUnreadTalentsCount } = globalStore;
 
   const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
 
   useEffect(() => {
     init();
+  }, []);
+
+  useEffect(() => {
+    // 获取未读候选人数量
+    fetchUnreadTalentsCount();
   }, []);
 
   const MENU: TMenu[] = [
@@ -112,6 +117,7 @@ const AppLayout = () => {
       title: t("menu.talents"),
       path: "/app/talents",
       img: <FileDoneOutlined />,
+      badge: unreadTalentsCount > 0 ? unreadTalentsCount : undefined,
     },
     {
       title: t("职位管理"),
@@ -225,6 +231,17 @@ const AppLayout = () => {
                         color: isActive ? "#1FAC6A" : "#949DAC",
                       }}
                     />
+                    {item.badge && (
+                      <Badge
+                        count={item.badge}
+                        style={{ 
+                          position: "absolute",
+                          top: -8,
+                          right: -8,
+                          fontSize: "12px"
+                        }}
+                      />
+                    )}
                   </div>
                 );
 
@@ -248,6 +265,12 @@ const AppLayout = () => {
                               onClick={() => navigate(child.path)}
                             >
                               {child.title}
+                              {child.badge && (
+                                <Badge
+                                  count={child.badge}
+                                  style={{ marginLeft: 8 }}
+                                />
+                              )}
                             </div>
                           );
                         })}
@@ -315,6 +338,12 @@ const AppLayout = () => {
                         }}
                       />
                       <span style={{ marginLeft: 16 }}>{item.title}</span>
+                      {item.badge && (
+                        <Badge
+                          count={item.badge}
+                          style={{ marginLeft: 8 }}
+                        />
+                      )}
                       {item.key === "jobs" && (
                         <div style={{ position: "absolute", right: 20 }}>
                           <SearchOutlined
@@ -361,6 +390,12 @@ const AppLayout = () => {
                                 >
                                   <DeleteOutlined />
                                 </div>
+                              )}
+                              {child.badge && (
+                                <Badge
+                                  count={child.badge}
+                                  style={{ marginLeft: 8 }}
+                                />
                               )}
                             </div>
                           );

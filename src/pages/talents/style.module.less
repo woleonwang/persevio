@@ -38,23 +38,38 @@
   flex: auto;
 }
 
+.candidateNameWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.unreadDot {
+  position: absolute;
+  top: 0px;
+  right: -6px;
+  width: 6px;
+  height: 6px;
+  background-color: #ff4d4f;
+  border-radius: 50%;
+}
+
 // 响应式设计
 @media (max-width: 768px) {
   .candidatesContainer {
     padding: 12px;
   }
-  
+
   .filterSection {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .filterItem {
     width: 100%;
-    
+
     .ant-input,
     .ant-select {
       width: 100% !important;
     }
   }
-} 
+}

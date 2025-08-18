@@ -7,6 +7,9 @@ class GlobalStore {
   menuCollapse = false;
 
   jobs: IJob[] = [];
+
+  unreadTalentsCount = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -24,6 +27,17 @@ class GlobalStore {
     if (code == 0) {
       this.jobs = data.jobs;
     }
+  };
+
+  fetchUnreadTalentsCount = async () => {
+    const { code, data } = await Get("/api/talents/status");
+    if (code == 0) {
+      this.unreadTalentsCount = data.count;
+    }
+  };
+
+  refreshUnreadTalentsCount = () => {
+    this.fetchUnreadTalentsCount();
   };
 }
 
