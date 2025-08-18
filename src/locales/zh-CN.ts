@@ -694,6 +694,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     job_description_section: "职位描述",
     basic_requirements: "基本要求",
     bonus_points: "加分项",
+    ask_me_anything: "有任何问题都可以问我",
   },
 
   coworker: {

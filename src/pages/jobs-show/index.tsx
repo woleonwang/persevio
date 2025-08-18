@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { Button, message, Modal, Spin } from "antd";
+import { Button, message, Modal, Spin, Tooltip } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import dayjs from "dayjs";
 import classnames from "classnames";
@@ -50,6 +50,8 @@ const JobsShow = () => {
   const [isCompanyDescriptionExpanded, setIsCompanyDescriptionExpanded] =
     useState(false);
   const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(true);
+
   const originalI18nRef = useRef<string>();
 
   const navigate = useNavigate();
@@ -59,6 +61,9 @@ const JobsShow = () => {
 
   useEffect(() => {
     fetchJob();
+    setTimeout(() => {
+      setTooltipVisible(false);
+    }, 5000);
 
     return () => {
       if (originalI18nRef.current) {
@@ -314,11 +319,17 @@ const JobsShow = () => {
           </div>
 
           <div className={classnames(styles.mobileVisible, styles.vionaAvatar)}>
-            <img
-              src={VionaAvatar}
-              style={{ width: 50, height: 50 }}
-              onClick={() => setChatModalVisible(true)}
-            />
+            <Tooltip
+              title={t("ask_me_anything")}
+              placement="left"
+              open={tooltipVisible}
+            >
+              <img
+                src={VionaAvatar}
+                style={{ width: 50, height: 50 }}
+                onClick={() => setChatModalVisible(true)}
+              />
+            </Tooltip>
           </div>
 
           <div className={styles.mobileVisible}>

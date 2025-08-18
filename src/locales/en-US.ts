@@ -729,6 +729,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_description_section: "Job Description",
     basic_requirements: "Basic Requirements",
     bonus_points: "Bonus Points",
+    ask_me_anything: "Ask me anything",
   },
 
   coworker: {
