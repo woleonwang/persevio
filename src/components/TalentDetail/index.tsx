@@ -34,6 +34,7 @@ import FeedbackSignal from "./components/FeedbackSignal";
 import FeedbackCustomizeSignal from "./components/FeedbackCustomizeSignal";
 import usePublicJob from "@/hooks/usePublicJob";
 import EvaluateResult from "./components/EvaluateResult";
+import FeedbackSignalNew from "./components/FeedbackSignalNew";
 
 const { Title, Text } = Typography;
 
@@ -57,6 +58,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     useState(false);
   const [editingInterviewDesignerValue, setEditingInterviewDesignerValue] =
     useState("");
+  const [scoreCardVersion, setScoreCardVersion] = useState("");
 
   const [interviewFeedbacks, setInterviewFeedbacks] = useState<
     TInterviewFeedback[]
@@ -109,6 +111,8 @@ const TalentDetail: React.FC<IProps> = (props) => {
       if (isPreview) {
         i18n.changeLanguage(job.language);
       }
+
+      setScoreCardVersion(interviewPlan.signals[0]?.groupKey ? "2" : "1");
 
       // 刷新未读候选人状态
       globalStore.refreshUnreadTalentsCount();
@@ -241,6 +245,207 @@ const TalentDetail: React.FC<IProps> = (props) => {
   if (!job || !talent) {
     return <Spin />;
   }
+
+  const version1PredefinedSignals = () => {
+    return (
+      <div>
+        {[
+          ...(interviewPlan.signals ?? []).filter(
+            (item) => item.level === "must_have"
+          ),
+          ...(interviewPlan.signals ?? []).filter(
+            (item) => item.level === "good_to_have"
+          ),
+        ].map((signal) => {
+          return (
+            <div key={signal.title} className={styles.signalContainer}>
+              <div className={styles.signalHeader}>
+                <div
+                  className={classnames(
+                    styles.signalLevel,
+                    styles[signal.level]
+                  )}
+                >
+                  {signalLevelMappings[signal.level]}
+                </div>
+                <div className={styles.signalTitle}>{signal.title}</div>
+              </div>
+              <div style={{ marginTop: 8 }}>{signal.description}</div>
+              <div className={styles.interviewPanelContainer}>
+                {(interviewPlan.rounds ?? []).map((round, index) => {
+                  const interviewFeedback = interviewFeedbacks?.find(
+                    (feedback) => feedback.round === index + 1
+                  );
+
+                  if (!interviewFeedback) return <></>;
+
+                  const interviewFeedbackDetail = parseJSON(
+                    interviewFeedback.feedback_json
+                  ) as TInterviewFeedbackDetail;
+
+                  return (
+                    <div className={styles.card} key={interviewFeedback.id}>
+                      <FeedbackSignal
+                        jobId={job.id}
+                        talentId={talent.id}
+                        interviewerName={
+                          interviewFeedbackDetail.interviewer_name ??
+                          round.interviewer
+                        }
+                        signalTitle={signal.title}
+                        interviewFeedback={interviewFeedback}
+                        onSubmit={() => fetchInterviewFeedbacks()}
+                        isPreview={isPreview}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const version2PredefinedSignals = () => {
+    const groupMapping: {
+      title: string;
+      children?: {
+        title: string;
+        groupKey: TSignalGroupKey;
+      }[];
+      groupKey?: TSignalGroupKey;
+    }[] = [
+      {
+        title: t("group_mapping.part1.title"),
+        children: [
+          {
+            title: t("group_mapping.part1.experience_contextual_fit"),
+            groupKey: "experience_contextual_fit",
+          },
+          {
+            title: t("group_mapping.part1.key_responsibilities"),
+            groupKey: "key_responsibilities",
+          },
+          {
+            title: t("group_mapping.part1.working_environment"),
+            groupKey: "working_environment",
+          },
+        ],
+      },
+      {
+        title: t("group_mapping.part2.title"),
+        children: [
+          {
+            title: t("group_mapping.part2.skills"),
+            groupKey: "skills",
+          },
+          {
+            title: t("group_mapping.part2.domain_knowledges"),
+            groupKey: "domain_knowledges",
+          },
+        ],
+      },
+
+      {
+        title: t("group_mapping.part3.title"),
+        groupKey: "personal_traits",
+      },
+      {
+        title: t("group_mapping.part4.title"),
+        groupKey: "educations_and_certifications",
+      },
+      {
+        title: t("group_mapping.part5.title"),
+        groupKey: "others",
+      },
+    ];
+
+    const findSignalsByGroupKey = (groupKey: string) => {
+      return (interviewPlan.signals ?? []).filter(
+        (item) => item.groupKey === groupKey
+      );
+    };
+
+    const renderGroup = (groupKey: TSignalGroupKey) => {
+      return (
+        <div>
+          {findSignalsByGroupKey(groupKey).map((signal) => {
+            return (
+              <div key={signal.title} className={styles.signalContainer}>
+                <div className={styles.signalHeader}>
+                  <div
+                    className={classnames(
+                      styles.signalLevel,
+                      styles[signal.level]
+                    )}
+                  >
+                    {signalLevelMappings[signal.level]}
+                  </div>
+                  <div className={styles.signalTitle}>{signal.title}</div>
+                </div>
+                <div className={styles.interviewPanelContainer}>
+                  {(interviewPlan.rounds ?? []).map((round, index) => {
+                    const interviewFeedback = interviewFeedbacks?.find(
+                      (feedback) => feedback.round === index + 1
+                    );
+
+                    if (!interviewFeedback) return <></>;
+
+                    const interviewFeedbackDetail = parseJSON(
+                      interviewFeedback.feedback_json
+                    ) as TInterviewFeedbackDetail;
+
+                    return (
+                      <div className={styles.card} key={interviewFeedback.id}>
+                        <FeedbackSignalNew
+                          jobId={job.id}
+                          interviewerName={
+                            interviewFeedbackDetail.interviewer_name ??
+                            round.interviewer
+                          }
+                          groupKey={groupKey}
+                          signalKey={signal.key as string}
+                          interviewFeedback={interviewFeedback}
+                          onSubmit={() => fetchInterviewFeedbacks()}
+                          isPreview={isPreview}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    return (
+      <div>
+        {groupMapping.map((group) => {
+          return (
+            <div key={group.groupKey} style={{ marginTop: 36 }}>
+              <div className={styles.groupTitle}>{group.title}</div>
+              {group.groupKey
+                ? renderGroup(group.groupKey)
+                : group.children?.map((child) => {
+                    return (
+                      <div key={child.groupKey} className={styles.subGroup}>
+                        <div className={styles.subGroupTitle}>
+                          {child.title}
+                        </div>
+                        {renderGroup(child.groupKey)}
+                      </div>
+                    );
+                  })}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -581,76 +786,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <Title level={4} style={{ marginBottom: 24 }}>
                     {t("pending_evaluation_signals")}
                   </Title>
-                  <div>
-                    {[
-                      ...(interviewPlan.signals ?? []).filter(
-                        (item) => item.level === "must_have"
-                      ),
-                      ...(interviewPlan.signals ?? []).filter(
-                        (item) => item.level === "good_to_have"
-                      ),
-                    ].map((signal) => {
-                      return (
-                        <div
-                          key={signal.title}
-                          className={styles.signalContainer}
-                        >
-                          <div className={styles.signalHeader}>
-                            <div
-                              className={classnames(
-                                styles.signalLevel,
-                                styles[signal.level]
-                              )}
-                            >
-                              {signalLevelMappings[signal.level]}
-                            </div>
-                            <div className={styles.signalTitle}>
-                              {signal.title}
-                            </div>
-                          </div>
-                          <div style={{ marginTop: 8 }}>
-                            {signal.description}
-                          </div>
-                          <div className={styles.interviewPanelContainer}>
-                            {(interviewPlan.rounds ?? []).map(
-                              (round, index) => {
-                                const interviewFeedback =
-                                  interviewFeedbacks?.find(
-                                    (feedback) => feedback.round === index + 1
-                                  );
-
-                                if (!interviewFeedback) return <></>;
-
-                                const interviewFeedbackDetail = parseJSON(
-                                  interviewFeedback.feedback_json
-                                ) as TInterviewFeedbackDetail;
-
-                                return (
-                                  <div
-                                    className={styles.card}
-                                    key={interviewFeedback.id}
-                                  >
-                                    <FeedbackSignal
-                                      jobId={job.id}
-                                      talentId={talent.id}
-                                      interviewerName={
-                                        interviewFeedbackDetail.interviewer_name ??
-                                        round.interviewer
-                                      }
-                                      signalTitle={signal.title}
-                                      interviewFeedback={interviewFeedback}
-                                      onSubmit={() => fetchInterviewFeedbacks()}
-                                      isPreview={isPreview}
-                                    />
-                                  </div>
-                                );
-                              }
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {scoreCardVersion === "1"
+                    ? version1PredefinedSignals()
+                    : version2PredefinedSignals()}
                 </div>
 
                 <div>
