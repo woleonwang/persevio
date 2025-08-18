@@ -277,6 +277,41 @@ type TConfidenceLevel = "VH" | "H" | "N" | "L" | "VL";
 
 type TPriority = "minimum" | "big_plus" | "plus";
 
+type TEvaluationResult = {
+  talent: {
+    name: string;
+  };
+
+  overall_match_level: TMatchLevel;
+  competency_match: TMatchLevel;
+  logistic_other_match: TMatchLevel;
+  suitability_score: number;
+
+  job_requirements_met: {
+    minimum_requirements: string;
+    big_plus_requirements: string;
+    plus_requirements: string;
+  };
+
+  evaluation_summary: {
+    strengths: string[];
+    potential_gaps: string[];
+    career_motivations: string[];
+  };
+
+  evaluation: {
+    criterion: string;
+    judgement: TMeetType;
+    confidence_level: TConfidenceLevel;
+    points_awarded: number;
+    reasons: {
+      reason: string;
+      evidences: string[];
+    }[];
+    priority: TPriority;
+  }[];
+};
+
 type TEvaluation =
   // part 2-5
   | "exceeds"
