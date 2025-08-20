@@ -3,7 +3,7 @@ import logo from "../../assets/logo.png";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Button, Menu } from "antd";
+import { Button } from "antd";
 import { Dropdown } from "antd";
 
 interface IProps {
