@@ -3,6 +3,8 @@ import logo from "../../assets/logo.png";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import { Button, Menu } from "antd";
+import { Dropdown } from "antd";
 
 interface IProps {
   children?: React.ReactNode;
@@ -44,10 +46,29 @@ const HomeHeader = (props: IProps) => {
             {originalT("jobs")}
           </div>
         </div>
-        <div className={styles.joinBtn} onClick={() => navigate("/apply")}>
-          <span>Join the waitlist</span>
-          <span>→</span>
-        </div>
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "recruit",
+                label: "我要招聘",
+                onClick: () => navigate("/signin"),
+              },
+              {
+                key: "jobseeker",
+                label: "我要找工作",
+                onClick: () => navigate("/signin-candidate"),
+              },
+            ],
+          }}
+          placement="bottomRight"
+          trigger={["hover"]}
+        >
+          <Button type="primary" className={styles.joinBtn}>
+            <span>登录/注册</span>
+            <span>→</span>
+          </Button>
+        </Dropdown>
       </div>
 
       {children}
