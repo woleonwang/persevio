@@ -236,6 +236,7 @@ const JobApplyShow = () => {
         width={1200}
         onClose={() => setInterviewChatDrawerOpen(false)}
         title={t("interview")}
+        destroyOnClose
       >
         <div style={{ height: "100%", display: "flex" }}>
           <CandidateChat

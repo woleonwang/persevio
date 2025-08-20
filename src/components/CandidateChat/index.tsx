@@ -3,6 +3,7 @@ import { Avatar, List, Input, Button, message, Tooltip } from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
+  DeleteOutlined,
   EditOutlined,
   SendOutlined,
 } from "@ant-design/icons";
@@ -59,7 +60,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [loadingText, setLoadingText] = useState(".");
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputPlaceholder, setInputPlaceholder] = useState("");
-  const [audioHintVisible, setAudioHintVisible] = useState(true);
+  const [audioHintVisible, setAudioHintVisible] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -91,6 +92,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
     needScrollToBottom.current = true;
     fetchMessages();
 
+    setTimeout(() => setAudioHintVisible(true), 300);
     setTimeout(() => setAudioHintVisible(false), 5000);
   }, []);
 
@@ -277,6 +279,24 @@ Shall we start now?`,
     );
   };
 
+  const deleteMessage = async (messageId: number) => {
+    const { code } = await Post(
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
+      }/clear_messages`,
+      {
+        message_id: messageId,
+      }
+    );
+
+    if (code === 0) {
+      message.success("消息删除成功");
+      fetchMessages();
+    } else {
+      message.error("消息删除失败");
+    }
+  };
+
   const genRecordButton = () => {
     return (
       <Tooltip
@@ -382,6 +402,25 @@ Shall we start now?`,
                         }
                       />
                     )}
+
+                    {/* 删除按钮 - 只有非 fake 消息且为 AI 消息时才显示 */}
+                    {item.id !== "fake_ai_id" &&
+                      item.id !== "fake_user_id" &&
+                      chatType === "job_interview" && (
+                        <div className={styles.operationArea}>
+                          <Button.Group>
+                            <Button
+                              shape="round"
+                              onClick={() => {
+                                if (confirm("确定要删除这条消息吗？")) {
+                                  deleteMessage(parseInt(item.id));
+                                }
+                              }}
+                              icon={<DeleteOutlined />}
+                            />
+                          </Button.Group>
+                        </div>
+                      )}
 
                     {(() => {
                       const visibleTags = (item.extraTags ?? [])
