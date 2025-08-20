@@ -31,7 +31,7 @@ const AppLayout = () => {
   const currentUrl = encodeURIComponent(location.pathname + location.search);
 
   const LayoutMapping = {
-    blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/],
+    blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/, /^\/app\/company\/status$/],
   };
 
   const layout =
@@ -51,7 +51,8 @@ const AppLayout = () => {
 
   const { t, i18n } = useTranslation();
 
-  const { jobs, fetchJobs, unreadTalentsCount, fetchUnreadTalentsCount } = globalStore;
+  const { jobs, fetchJobs, unreadTalentsCount, fetchUnreadTalentsCount } =
+    globalStore;
 
   const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
 
@@ -159,9 +160,14 @@ const AppLayout = () => {
     if (code === 0) {
       i18n.changeLanguage(data.lang ?? "en-US");
       setInited(true);
-      // 获取职位
-      fetchJobs();
-      setIsAdmin(data.is_admin);
+
+      if (data.company_status !== "approved") {
+        navigate("/app/company/status");
+      } else {
+        // 获取职位
+        fetchJobs();
+        setIsAdmin(data.is_admin);
+      }
     } else {
       navigate(`/signin?redirect=${currentUrl}`);
     }
@@ -187,7 +193,11 @@ const AppLayout = () => {
     return (
       <div className={classnames(styles.container, styles.v)}>
         <div>
-          <img src={logo} style={{ width: 220, margin: "21px 28px" }} />
+          <img
+            src={logo}
+            style={{ width: 220, margin: "21px 28px", cursor: "pointer" }}
+            onClick={() => navigate("/")}
+          />
         </div>
         <div
           className={styles.main}
@@ -234,11 +244,11 @@ const AppLayout = () => {
                     {item.badge && (
                       <Badge
                         count={item.badge}
-                        style={{ 
+                        style={{
                           position: "absolute",
                           top: -8,
                           right: -8,
-                          fontSize: "12px"
+                          fontSize: "12px",
                         }}
                       />
                     )}
@@ -339,10 +349,7 @@ const AppLayout = () => {
                       />
                       <span style={{ marginLeft: 16 }}>{item.title}</span>
                       {item.badge && (
-                        <Badge
-                          count={item.badge}
-                          style={{ marginLeft: 8 }}
-                        />
+                        <Badge count={item.badge} style={{ marginLeft: 8 }} />
                       )}
                       {item.key === "jobs" && (
                         <div style={{ position: "absolute", right: 20 }}>

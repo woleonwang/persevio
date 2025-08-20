@@ -1,0 +1,36 @@
+.container {
+  flex: auto;
+  margin-top: 200px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+}
+
+.approving {
+  color: #1fac6a;
+  &::before {
+    background: #1fac6a;
+  }
+}
+
+.rejected {
+  color: #ff4d4f;
+  &::before {
+    background: #ff4d4f;
+  }
+}
