@@ -12,6 +12,11 @@ interface Window {
 interface ICompany {
   id: number;
   name: string;
+  status: "approving" | "rejected" | "approved";
+  website: string;
+  register_info: string;
+  created_at: string;
+  updated_at: string;
 }
 interface IJob {
   id: number;

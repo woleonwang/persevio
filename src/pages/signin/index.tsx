@@ -101,8 +101,8 @@ const SignIn: React.FC = () => {
 
         <div>
           Don't have an account yet?
-          <Link to="/apply" style={{ marginLeft: 8, color: "#1FAC6A" }}>
-            Join the waitlist
+          <Link to="/signup" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+            Sign up
           </Link>
         </div>
       </Form>

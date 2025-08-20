@@ -1,0 +1,107 @@
+.companiesPage {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  flex: none;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .backIcon {
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+  }
+
+  .pageTitle {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #262626;
+  }
+}
+
+.filterSection {
+  flex: none;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 0 24px;
+  border-radius: 8px;
+
+  .searchInput {
+    width: 300px;
+  }
+}
+
+.tableWrapper {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0 24px;
+  flex: auto;
+  overflow: auto;
+}
+
+.companiesTable {
+  :global {
+    .ant-table-thead > tr > th {
+      white-space: nowrap;
+      word-break: keep-all;
+    }
+    
+    .ant-table-tbody > tr > td {
+      white-space: normal;
+      word-break: break-word;
+      vertical-align: top;
+    }
+    
+    .ant-table-cell {
+      padding: 12px 8px;
+    }
+  }
+}
+
+.statusPending {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #fff7e6;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusRejected {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #fff2f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusApproved {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}

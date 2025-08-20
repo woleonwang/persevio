@@ -127,8 +127,8 @@ const AppLayout = () => {
       requireAdmin: true,
     },
     {
-      title: t("申请管理"),
-      path: "/app/admin/job-applies",
+      title: t("公司列表"),
+      path: "/app/admin/companies",
       img: <FileDoneOutlined />,
       requireAdmin: true,
     },

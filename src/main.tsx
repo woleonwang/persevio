@@ -53,6 +53,7 @@ import PublicJobs from "./pages/public/jobs";
 import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
 import CompanyStatus from "./pages/company/status";
+import AdminCompanies from "./pages/admin/companies";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -160,6 +161,7 @@ createRoot(document.getElementById("root")!).render(
               path="/app/admin/job-applies"
               element={<AdminJobApplies />}
             />
+            <Route path="/app/admin/companies" element={<AdminCompanies />} />
             {/* 候选人列表 */}
             <Route path="/app/talents" element={<Talents />} />
           </Route>
