@@ -40,7 +40,6 @@ import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
-import Interviewer from "./pages/staff/interviewer";
 import WorkExperience from "./pages/candidate/work-experience";
 import VoiceChat from "./pages/candidate/voice-chat";
 import JobChat from "./pages/job/chat";
@@ -54,6 +53,7 @@ import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
 import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
+import Staffs from "./pages/staffs";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -150,7 +150,7 @@ createRoot(document.getElementById("root")!).render(
             {/* 公司知识库 */}
             <Route path="/app/company" element={<CompanyKnowledge />} />
             {/* 面试官管理 */}
-            <Route path="/app/interviewer" element={<Interviewer />} />
+            <Route path="/app/staffs" element={<Staffs />} />
             {/* HR端设置 */}
             <Route path="/app/settings" element={<Settings />} />
 

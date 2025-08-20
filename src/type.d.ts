@@ -191,6 +191,7 @@ type TMenu = {
   path?: string;
   img: ReactNode;
   requireAdmin?: boolean;
+  requireStaffAdmin?: boolean;
   key?: string;
   badge?: number;
   children?: {
@@ -441,4 +442,34 @@ interface ITalentListItem {
 
 interface ITalentListResponse {
   candidates: ITalentListItem[];
+}
+
+// Staff 相关类型定义
+interface IAccount {
+  id: number;
+  username: string;
+  is_admin: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface IStaff {
+  id: number;
+  name: string;
+  position: string;
+  phone: string;
+  role: string;
+  account_id: number;
+  company_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface IStaffWithAccount extends IStaff {
+  account: IAccount;
+}
+
+interface IStaffListResponse {
+  code: number;
+  data: IStaffWithAccount[];
 }

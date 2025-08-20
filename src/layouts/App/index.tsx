@@ -25,6 +25,7 @@ import { deleteQuery, getQuery } from "@/utils";
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaffAdmin, setIsStaffAdmin] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
@@ -121,6 +122,12 @@ const AppLayout = () => {
       badge: unreadTalentsCount > 0 ? unreadTalentsCount : undefined,
     },
     {
+      title: t("账号管理"),
+      path: "/app/staffs",
+      img: <FileDoneOutlined />,
+      requireStaffAdmin: true,
+    },
+    {
       title: t("职位管理"),
       path: "/app/admin/jobs",
       img: <FileDoneOutlined />,
@@ -132,7 +139,11 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
       requireAdmin: true,
     },
-  ].filter((item) => !item.requireAdmin || isAdmin);
+  ].filter(
+    (item) =>
+      (!item.requireAdmin || isAdmin) &&
+      (!item.requireStaffAdmin || isStaffAdmin)
+  );
 
   const FOOTER = [
     {
@@ -167,6 +178,7 @@ const AppLayout = () => {
         // 获取职位
         fetchJobs();
         setIsAdmin(data.is_admin);
+        setIsStaffAdmin(data.role === "admin");
       }
     } else {
       navigate(`/signin?redirect=${currentUrl}`);
@@ -213,11 +225,11 @@ const AppLayout = () => {
     <div className={styles.container}>
       {menuCollapse || collapseForDrawer ? (
         <div className={classnames(styles.menu, styles.collapse)}>
-          <div style={{ position: "relative" }}>
-            <RightCircleFilled
-              className={styles.collapseIcon}
-              onClick={() => setMenuCollapse(false)}
-            />
+          <RightCircleFilled
+            className={styles.collapseIcon}
+            onClick={() => setMenuCollapse(false)}
+          />
+          <div className={styles.menuContent}>
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
                 const isActive = item.path && currentPath.startsWith(item.path);
@@ -293,37 +305,37 @@ const AppLayout = () => {
                 );
               })}
             </div>
-          </div>
-          <div>
-            {FOOTER.map((item) => {
-              const isActive = currentPath.startsWith(item.path);
-              return (
-                <div
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon
-                    icon={item.img}
-                    style={{
-                      fontSize: 20,
-                      color: isActive ? "#1FAC6A" : "#949DAC",
-                    }}
-                  />
-                </div>
-              );
-            })}
+            <div>
+              {FOOTER.map((item) => {
+                const isActive = currentPath.startsWith(item.path);
+                return (
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon
+                      icon={item.img}
+                      style={{
+                        fontSize: 20,
+                        color: isActive ? "#1FAC6A" : "#949DAC",
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : (
         <div className={styles.menu}>
-          <div style={{ position: "relative" }}>
-            <LeftCircleFilled
-              className={styles.collapseIcon}
-              onClick={() => setMenuCollapse(true)}
-            />
+          <LeftCircleFilled
+            className={styles.collapseIcon}
+            onClick={() => setMenuCollapse(true)}
+          />
+          <div className={styles.menuContent}>
             <img src={logo} style={{ width: "80%" }} />
             <div className={styles.menuItemWrapper}>
               {MENU.map((item) => {
@@ -413,29 +425,29 @@ const AppLayout = () => {
                 );
               })}
             </div>
-          </div>
-          <div>
-            {FOOTER.map((item) => {
-              const isActive = currentPath.startsWith(item.path);
-              return (
-                <div
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon
-                    icon={item.img}
-                    style={{
-                      fontSize: 20,
-                      color: isActive ? "#1FAC6A" : "#949DAC",
-                    }}
-                  />
-                  <span style={{ marginLeft: 16 }}>{item.title}</span>
-                </div>
-              );
-            })}
+            <div>
+              {FOOTER.map((item) => {
+                const isActive = currentPath.startsWith(item.path);
+                return (
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon
+                      icon={item.img}
+                      style={{
+                        fontSize: 20,
+                        color: isActive ? "#1FAC6A" : "#949DAC",
+                      }}
+                    />
+                    <span style={{ marginLeft: 16 }}>{item.title}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
