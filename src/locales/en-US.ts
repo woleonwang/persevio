@@ -601,6 +601,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   company: {
     name: "Company Name",
     knowledge_base: "Knowledge Base",
+    website: "Company Website",
+    language: "Language",
     hint: {
       title:
         "Viona, your AI Recruiter, relies on the information in this database to perform key tasks:",
@@ -627,7 +629,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     update_password_error: "Failed to update password",
     update_lang_success: "Language updated successfully",
     update_lang_error: "Failed to update language",
-    language: "Language",
   },
 
   create_job: {
@@ -924,7 +925,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       edit: "Edit",
       evidence: "Evidence",
       no_data: "No data available",
-      
+
       // Experience Contextual Fit evaluation options
       over_qualified: "Over-qualified / Too Senior",
       more_senior: "More Senior than Required",
@@ -932,13 +933,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       slightly_junior: "Slightly Junior",
       too_junior: "Too Junior",
       uncertain_not_assessed: "Uncertain / Not Assessed",
-      
+
       // Key Responsibilities evaluation options
       directly_relevant: "Directly Relevant Experience",
       highly_transferable: "Highly Transferable Experience",
       partially_transferable: "Partially Transferable Experience",
       no_relevant: "No Relevant Experience",
-      
+
       // Working Environment evaluation options
       identical_environment: "Identical Environment",
       similar_environment: "Similar Environment",
@@ -952,14 +953,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       evidence: "Evidence",
       no_data: "No data available",
     },
-    
+
     // Signal group mapping related translations
     group_mapping: {
       part1: {
         title: "Part 1: Experience and Contextual Fit",
         experience_contextual_fit: "1.1 Overall Seniority Requirements",
-        key_responsibilities: "1.2 Does the candidate have a proven track record of fulfilling our key responsibilities?",
-        working_environment: "1.3 Does the candidate have a proven track record of thriving in work environments similar to ours?",
+        key_responsibilities:
+          "1.2 Does the candidate have a proven track record of fulfilling our key responsibilities?",
+        working_environment:
+          "1.3 Does the candidate have a proven track record of thriving in work environments similar to ours?",
       },
       part2: {
         title: "Part 2: Skills, Domain Knowledge and Professional Assets",

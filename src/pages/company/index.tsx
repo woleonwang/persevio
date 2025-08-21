@@ -1,18 +1,19 @@
-import { Button, Form, Input, message, Upload } from "antd";
+import { Button, Form, Input, message, Upload, Select } from "antd";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import TextAreaWithHint from "./components/TextAreaWithHint";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
+
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [logo, setLogo] = useState("");
 
   useEffect(() => {
     fetchCompany();
-  });
+  }, []);
 
   const fetchCompany = async () => {
     const { code, data } = await Get("/api/companies");
@@ -20,6 +21,8 @@ const CompanyKnowledge = () => {
       form.setFieldsValue({
         content: data.content,
         name: data.name,
+        lang: data.lang || "en-US",
+        website: data.website,
       });
       setLogo(data.logo);
     }
@@ -27,13 +30,17 @@ const CompanyKnowledge = () => {
 
   const updateCompany = () => {
     form.validateFields().then(async (values) => {
-      const { content, name } = values;
+      const { content, name, lang, website } = values;
       const { code } = await Post("/api/companies", {
         content,
         name,
+        lang,
+        website,
       });
       if (code === 0) {
         message.success("Update company succeed");
+        // 更新本地语言设置
+        i18n.changeLanguage(lang);
       } else {
         message.error("Update company failed");
       }
@@ -84,6 +91,34 @@ const CompanyKnowledge = () => {
             rules={[{ required: true }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            label={t("company.website")}
+            name="website"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label={t("company.language")}
+            name="lang"
+            rules={[{ required: true }]}
+          >
+            <Select
+              style={{ width: "100%" }}
+              options={[
+                {
+                  value: "en-US",
+                  label: "English",
+                },
+                {
+                  value: "zh-CN",
+                  label: "中文",
+                },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item

@@ -157,7 +157,7 @@ export default {
   menu: {
     newRole: "创建职位",
     jobs: "职位",
-    company: "公司知识库",
+    company: "公司基本信息",
     interviewer: "面试官",
     talents: "候选人",
     settings: "设置",
@@ -569,6 +569,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   company: {
     name: "公司名称",
     knowledge_base: "信息库",
+    website: "公司官网",
+    language: "语言",
     hint: {
       title:
         "您的人工智能招聘顾问Viona，需要依靠本数据库中的信息来执行以下关键任务：",
@@ -595,7 +597,6 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     update_password_error: "密码更新失败",
     update_lang_success: "语言更新成功",
     update_lang_error: "语言更新失败",
-    language: "语言",
   },
 
   create_job: {
@@ -884,7 +885,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       edit: "编辑",
       evidence: "证据",
       no_data: "暂无数据",
-      
+
       // 经验背景适配性评估选项
       over_qualified: "资历过高/过于资深",
       more_senior: "比要求更资深",
@@ -892,13 +893,13 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       slightly_junior: "略微初级",
       too_junior: "过于初级",
       uncertain_not_assessed: "不确定/未评估",
-      
+
       // 关键职责评估选项
       directly_relevant: "直接相关经验",
       highly_transferable: "高度可迁移经验",
       partially_transferable: "部分可迁移经验",
       no_relevant: "无相关经验",
-      
+
       // 工作环境评估选项
       identical_environment: "相同环境",
       similar_environment: "相似环境",
@@ -912,14 +913,15 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       evidence: "证据",
       no_data: "暂无数据",
     },
-    
+
     // 信号分组映射相关翻译
     group_mapping: {
       part1: {
         title: "第一部分：经验与情境匹配度",
         experience_contextual_fit: "1.1 综合资深程度要求",
         key_responsibilities: "1.2 候选人是否具备履行我们关键职责的成功记录？",
-        working_environment: "1.3 候选人是否具备在类似我们这样的工作环境中茁壮成长的成功记录？",
+        working_environment:
+          "1.3 候选人是否具备在类似我们这样的工作环境中茁壮成长的成功记录？",
       },
       part2: {
         title: "第二部分：技能、领域知识与专业资产",
