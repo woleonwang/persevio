@@ -14,11 +14,13 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import UserAvatar from "@/assets/user-avatar.png";
 import styles from "./style.module.less";
 import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
+import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
+import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
 const ChatRoom: React.FC<IProps> = (props) => {
-  const { jobId, sessionId } = props;
+  const { jobId, sessionId, enableFullscreen = false } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -26,6 +28,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [loadingText, setLoadingText] = useState(".");
   const [preDefinedQuestionsVisible, setPreDefinedQuestionsVisible] =
     useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
@@ -199,8 +202,16 @@ const ChatRoom: React.FC<IProps> = (props) => {
     }
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   return (
-    <div className={styles.container}>
+    <div
+      className={classnames(styles.container, {
+        [styles.fullscreen]: isFullscreen,
+      })}
+    >
       <div
         className={styles.listArea}
         ref={(e) => (listContainerRef.current = e)}
@@ -365,6 +376,13 @@ const ChatRoom: React.FC<IProps> = (props) => {
             <Button type="primary" onClick={submit} disabled={!canSubmit()}>
               {originalT("submit")}
             </Button>
+            {enableFullscreen && (
+              <Button
+                type="default"
+                onClick={toggleFullscreen}
+                icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
+              />
+            )}
           </div>
         </div>
       </div>

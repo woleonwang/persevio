@@ -459,7 +459,7 @@ const PublicJobs: React.FC = () => {
 
   const handleJobClick = (job: JobPosting) => {
     if (job.id < 10000) {
-      navigate(`/jobs/${job.id}/chat`);
+      window.open(`/jobs/${job.id}/chat`);
     }
   };
 

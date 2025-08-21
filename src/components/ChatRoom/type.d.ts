@@ -112,6 +112,7 @@ export interface IProps {
   jobInterviewDesignerId?: number;
   jobInterviewFeedbackId?: number;
   hideSidebar?: boolean;
+  enableFullscreen?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

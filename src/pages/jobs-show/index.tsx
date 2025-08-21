@@ -139,6 +139,7 @@ const JobsShow = () => {
       userRole="candidate"
       jobId={parseInt(id ?? "0")}
       sessionId={sessionId}
+      enableFullscreen
     />
   );
 
