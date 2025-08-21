@@ -39,8 +39,12 @@ const CompanyKnowledge = () => {
       });
       if (code === 0) {
         message.success("Update company succeed");
-        // 更新本地语言设置
-        i18n.changeLanguage(lang);
+
+        const { code, data } = await Get("/api/settings");
+        if (code === 0) {
+          // 更新本地语言设置
+          i18n.changeLanguage(data.lang);
+        }
       } else {
         message.error("Update company failed");
       }

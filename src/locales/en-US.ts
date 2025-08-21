@@ -629,6 +629,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     update_password_error: "Failed to update password",
     update_lang_success: "Language updated successfully",
     update_lang_error: "Failed to update language",
+    language: "Language",
   },
 
   create_job: {

@@ -569,8 +569,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   company: {
     name: "公司名称",
     knowledge_base: "信息库",
-    website: "公司官网",
-    language: "语言",
+    website: "公司链接",
+    language: "公司系统语言",
     hint: {
       title:
         "您的人工智能招聘顾问Viona，需要依靠本数据库中的信息来执行以下关键任务：",
@@ -597,6 +597,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     update_password_error: "密码更新失败",
     update_lang_success: "语言更新成功",
     update_lang_error: "语言更新失败",
+    language: "显示语言",
   },
 
   create_job: {

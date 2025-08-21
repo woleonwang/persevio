@@ -98,6 +98,24 @@ const Settings = () => {
     }
   };
 
+  const updateLang = async (lang: string) => {
+    const { code } = await Post("/api/update_settings", {
+      lang,
+    });
+    if (code === 0) {
+      message.success(t("update_lang_success"));
+      if (profile) {
+        setProfile({
+          ...profile,
+          lang,
+        });
+      }
+      i18n.changeLanguage(lang);
+    } else {
+      message.error(t("update_lang_success"));
+    }
+  };
+
   const loginToStaff = async (staffId: string) => {
     const { code, data } = await Post("/api/login_to_staff", {
       staff_id: parseInt(staffId),
@@ -182,6 +200,26 @@ const Settings = () => {
             {originalT("save")}
           </Button>
         </Form>
+      </div>
+
+      <div className={styles.block}>
+        <div className={styles.title}>{t("language")}</div>
+
+        <Select
+          style={{ width: 300 }}
+          options={[
+            {
+              value: "en-US",
+              label: "English",
+            },
+            {
+              value: "zh-CN",
+              label: "中文",
+            },
+          ]}
+          value={profile?.lang}
+          onChange={(lang) => updateLang(lang)}
+        />
       </div>
 
       {!!profile?.is_admin && (
