@@ -162,7 +162,9 @@ const Signup: React.FC = () => {
             <Form.Item
               label={t("signup.email")}
               name="username"
-              rules={[{ required: true, message: t("signup.please_enter_email") }]}
+              rules={[
+                { required: true, message: t("signup.please_enter_email") },
+              ]}
               preserve
             >
               <Input placeholder={t("signup.email_placeholder")} size="large" />
@@ -172,7 +174,6 @@ const Signup: React.FC = () => {
               label={t("signup.password")}
               name="password"
               rules={[
-                { required: true, message: t("signup.please_enter_password") },
                 {
                   validator(_, value, callback) {
                     if (process.env.NODE_ENV === "development") {
@@ -207,14 +208,20 @@ const Signup: React.FC = () => {
               ]}
               preserve
             >
-              <Input.Password placeholder={t("signup.password_placeholder")} size="large" />
+              <Input.Password
+                placeholder={t("signup.password_placeholder")}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item
               label={t("signup.confirm_password")}
               name="confirm_password"
               rules={[
-                { required: true, message: t("signup.please_confirm_password") },
+                {
+                  required: true,
+                  message: t("signup.please_confirm_password"),
+                },
                 {
                   validator(_, value, callback) {
                     if (!value || form.getFieldValue("password") === value) {
@@ -227,14 +234,20 @@ const Signup: React.FC = () => {
               ]}
               preserve
             >
-              <Input.Password placeholder={t("signup.confirm_password_placeholder")} size="large" />
+              <Input.Password
+                placeholder={t("signup.confirm_password_placeholder")}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item
               label={t("signup.verification_code")}
               name="verify_code"
               rules={[
-                { required: true, message: t("signup.please_enter_verification_code") },
+                {
+                  required: true,
+                  message: t("signup.please_enter_verification_code"),
+                },
               ]}
               preserve
             >
@@ -286,7 +299,9 @@ const Signup: React.FC = () => {
             <Form.Item
               label={t("signup.your_name")}
               name="staff_name"
-              rules={[{ required: true, message: t("signup.please_enter_name") }]}
+              rules={[
+                { required: true, message: t("signup.please_enter_name") },
+              ]}
             >
               <Input placeholder={t("signup.name_placeholder")} size="large" />
             </Form.Item>
@@ -298,7 +313,10 @@ const Signup: React.FC = () => {
                 { required: true, message: t("signup.please_enter_position") },
               ]}
             >
-              <Input placeholder={t("signup.position_placeholder")} size="large" />
+              <Input
+                placeholder={t("signup.position_placeholder")}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item
@@ -328,15 +346,23 @@ const Signup: React.FC = () => {
                 { required: true, message: t("signup.please_enter_company") },
               ]}
             >
-              <Input placeholder={t("signup.company_placeholder")} size="large" />
+              <Input
+                placeholder={t("signup.company_placeholder")}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item
               label={t("signup.website")}
               name="website"
-              rules={[{ required: true, message: t("signup.please_enter_website") }]}
+              rules={[
+                { required: true, message: t("signup.please_enter_website") },
+              ]}
             >
-              <Input placeholder={t("signup.website_placeholder")} size="large" />
+              <Input
+                placeholder={t("signup.website_placeholder")}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item>
