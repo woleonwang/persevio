@@ -88,8 +88,8 @@ const AppLayout = () => {
             active: isActive,
             onRemove: () => {
               Modal.confirm({
-                title: "Delete Job",
-                content: `Are you sure you want to delete【${job.name}】?`,
+                title: t("app_layout.delete_job"),
+                content: t("app_layout.delete_job_confirm", { jobName: job.name }),
                 onOk: async () => {
                   const { code } = await Post(`/api/jobs/${job.id}/destroy`);
                   if (code === 0) {
@@ -110,11 +110,7 @@ const AppLayout = () => {
       path: "/app/company",
       img: <FileDoneOutlined />,
     },
-    {
-      title: t("menu.interviewer"),
-      path: "/app/interviewer",
-      img: <FileDoneOutlined />,
-    },
+
     {
       title: t("menu.talents"),
       path: "/app/talents",
@@ -122,19 +118,19 @@ const AppLayout = () => {
       badge: unreadTalentsCount > 0 ? unreadTalentsCount : undefined,
     },
     {
-      title: t("账号管理"),
+      title: t("menu.account_management"),
       path: "/app/staffs",
       img: <FileDoneOutlined />,
       requireStaffAdmin: true,
     },
     {
-      title: t("职位管理"),
+      title: t("menu.job_management"),
       path: "/app/admin/jobs",
       img: <FileDoneOutlined />,
       requireAdmin: true,
     },
     {
-      title: t("公司列表"),
+      title: t("menu.company_list"),
       path: "/app/admin/companies",
       img: <FileDoneOutlined />,
       requireAdmin: true,
@@ -380,7 +376,7 @@ const AppLayout = () => {
                         {showSearch && (
                           <div style={{ padding: "0 16px" }}>
                             <Input
-                              placeholder="请输入"
+                              placeholder={t("app_layout.search_placeholder")}
                               onChange={(e) => {
                                 setSearchKeyword(e.target.value);
                               }}

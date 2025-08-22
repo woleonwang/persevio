@@ -161,6 +161,9 @@ export default {
     interviewer: "面试官",
     talents: "候选人",
     settings: "设置",
+    account_management: "账号管理",
+    job_management: "职位管理",
+    company_list: "公司列表",
 
     home: "Home",
     profile: "简历",
@@ -1164,5 +1167,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     password_placeholder: "请输入密码",
     signin_succeed: "登录成功",
     username_or_password_incorrect: "用户名或密码不正确",
+  },
+
+  app_layout: {
+    delete_job: "删除职位",
+    delete_job_confirm: "确定要删除【{{jobName}}】吗？",
+    search_placeholder: "请输入",
+    loading: "加载中...",
   },
 };

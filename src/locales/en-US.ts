@@ -168,6 +168,9 @@ export default {
     settings: "Settings",
     interviewer: "Interviewer",
     talents: "Talents",
+    account_management: "Account Management",
+    job_management: "Job Management",
+    company_list: "Company List",
 
     home: "Home",
     profile: "Profile",
@@ -602,7 +605,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     name: "Company Name",
     knowledge_base: "Knowledge Base",
     website: "Company Website",
-    language: "Language",
+    language: "System Language",
     hint: {
       title:
         "Viona, your AI Recruiter, relies on the information in this database to perform key tasks:",
@@ -629,7 +632,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     update_password_error: "Failed to update password",
     update_lang_success: "Language updated successfully",
     update_lang_error: "Failed to update language",
-    language: "Language",
+    language: "Display Language",
   },
 
   create_job: {
@@ -1185,7 +1188,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     password_number_error: "Password must contain numbers",
     password_special_error: "Password must contain special characters",
     confirm_password_error: "Confirm password is incorrect",
-    phone_format_error: "Please enter a valid phone number (supports international numbers)",
+    phone_format_error:
+      "Please enter a valid phone number (supports international numbers)",
     verification_code_sent: "Verification code sent",
     verification_code_failed: "Failed to send verification code",
     verification_code_incorrect: "Verification code is incorrect",
@@ -1207,5 +1211,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     password_placeholder: "Password",
     signin_succeed: "Sign in succeed",
     username_or_password_incorrect: "Username or password is incorrect",
+  },
+
+  app_layout: {
+    delete_job: "Delete Job",
+    delete_job_confirm: "Are you sure you want to delete【{{jobName}}】?",
+    search_placeholder: "Please enter",
+    loading: "Loading...",
   },
 };
