@@ -4,6 +4,7 @@ import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
+import { useTranslation } from "react-i18next";
 
 interface SignupFormValues {
   username: string;
@@ -34,6 +35,7 @@ const Signup: React.FC = () => {
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   const [form] = Form.useForm();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -73,7 +75,7 @@ const Signup: React.FC = () => {
     try {
       const email = form.getFieldValue("username");
       if (!email) {
-        message.error("请先输入邮箱地址");
+        message.error(t("signup.please_enter_email"));
         return;
       }
 
@@ -83,13 +85,13 @@ const Signup: React.FC = () => {
       });
 
       if (code === 0) {
-        message.success("验证码已发送");
+        message.success(t("signup.verification_code_sent"));
         setCountdown(60); // 开始60秒倒计时
       } else {
-        message.error("验证码发送失败");
+        message.error(t("signup.verification_code_failed"));
       }
     } catch (error) {
-      message.error("验证码发送失败");
+      message.error(t("signup.verification_code_failed"));
     } finally {
       setIsSendingCode(false);
     }
@@ -105,7 +107,7 @@ const Signup: React.FC = () => {
         setStep1Fields(values);
         setStep(2);
       } else {
-        message.error("Verification code is incorrect");
+        message.error(t("signup.verification_code_incorrect"));
       }
     });
   };
@@ -133,18 +135,18 @@ const Signup: React.FC = () => {
         });
 
         if (code === 0 && data) {
-          message.success("Sign up succeed");
+          message.success(t("signup.signup_succeed"));
           localStorage.setItem("token", data.token);
           navigate("/app/entry/create-job");
         }
       } else {
         const errMeesageMapping = {
-          10002: "验证码不正确",
-          10003: "邮箱已存在",
+          10002: t("signup.verification_code_incorrect"),
+          10003: t("signup.email_exists"),
         };
         message.error(
           errMeesageMapping[signupCode as keyof typeof errMeesageMapping] ||
-            "Sign up failed"
+            t("signup.signup_failed")
         );
       }
     });
@@ -153,24 +155,24 @@ const Signup: React.FC = () => {
   return (
     <SignContainer>
       <img src={logo} style={{ width: 188 }} />
-      <h2 style={{ fontSize: 36 }}>Sign up for an account</h2>
+      <h2 style={{ fontSize: 36 }}>{t("signup.title")}</h2>
       <Form form={form} name="login" autoComplete="off" layout="vertical">
         {step === 1 ? (
           <>
             <Form.Item
-              label="Email"
+              label={t("signup.email")}
               name="username"
-              rules={[{ required: true, message: "Please enter email" }]}
+              rules={[{ required: true, message: t("signup.please_enter_email") }]}
               preserve
             >
-              <Input placeholder="Email" size="large" />
+              <Input placeholder={t("signup.email_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label={t("signup.password")}
               name="password"
               rules={[
-                { required: true, message: "Please enter password" },
+                { required: true, message: t("signup.please_enter_password") },
                 {
                   validator(_, value, callback) {
                     if (process.env.NODE_ENV === "development") {
@@ -178,26 +180,26 @@ const Signup: React.FC = () => {
                     }
                     // 校验密码格式，8位以上，必须包含大小写字母，数字，特殊字符
                     if (!value) {
-                      return callback("请输入密码");
+                      return callback(t("signup.please_enter_password"));
                     }
                     if (value.length < 8) {
-                      return callback("密码长度需不少于8位");
+                      return callback(t("signup.password_length_error"));
                     }
                     if (!/[A-Z]/.test(value)) {
-                      return callback("密码需包含大写字母");
+                      return callback(t("signup.password_uppercase_error"));
                     }
                     if (!/[a-z]/.test(value)) {
-                      return callback("密码需包含小写字母");
+                      return callback(t("signup.password_lowercase_error"));
                     }
                     if (!/[0-9]/.test(value)) {
-                      return callback("密码需包含数字");
+                      return callback(t("signup.password_number_error"));
                     }
                     if (
                       !/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·！#￥（——）：；“”‘、，|《。》？、【】]/.test(
                         value
                       )
                     ) {
-                      return callback("密码需包含特殊字符");
+                      return callback(t("signup.password_special_error"));
                     }
                     return callback();
                   },
@@ -205,39 +207,39 @@ const Signup: React.FC = () => {
               ]}
               preserve
             >
-              <Input.Password placeholder="Password" size="large" />
+              <Input.Password placeholder={t("signup.password_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Confirm Password"
+              label={t("signup.confirm_password")}
               name="confirm_password"
               rules={[
-                { required: true, message: "Please confirm password" },
+                { required: true, message: t("signup.please_confirm_password") },
                 {
                   validator(_, value, callback) {
                     if (!value || form.getFieldValue("password") === value) {
                       return callback();
                     }
-                    callback("Confirm password is incorrect");
+                    callback(t("signup.confirm_password_error"));
                   },
-                  message: "Confirm password is incorrect",
+                  message: t("signup.confirm_password_error"),
                 },
               ]}
               preserve
             >
-              <Input.Password placeholder="Confirm Password" size="large" />
+              <Input.Password placeholder={t("signup.confirm_password_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Verification Code"
+              label={t("signup.verification_code")}
               name="verify_code"
               rules={[
-                { required: true, message: "Please enter verification code" },
+                { required: true, message: t("signup.please_enter_verification_code") },
               ]}
               preserve
             >
               <Input
-                placeholder="Verification Code"
+                placeholder={t("signup.verification_code_placeholder")}
                 size="large"
                 suffix={
                   <Button
@@ -250,10 +252,10 @@ const Signup: React.FC = () => {
                     }}
                   >
                     {countdown > 0
-                      ? `${countdown}s`
+                      ? `${countdown}${t("signup.countdown")}`
                       : isSendingCode
-                      ? "发送中..."
-                      : "发送验证码"}
+                      ? t("signup.sending")
+                      : t("signup.send_code")}
                   </Button>
                 }
               />
@@ -267,14 +269,14 @@ const Signup: React.FC = () => {
                 size="large"
                 onClick={checkEmail}
               >
-                Next Step
+                {t("signup.next_step")}
               </Button>
             </Form.Item>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
-                Already have an account?
+                {t("signup.already_have_account")}
                 <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
-                  Sign In
+                  {t("signup.sign_in")}
                 </Link>
               </div>
             </div>
@@ -282,59 +284,59 @@ const Signup: React.FC = () => {
         ) : (
           <>
             <Form.Item
-              label="Your Name"
+              label={t("signup.your_name")}
               name="staff_name"
-              rules={[{ required: true, message: "Please enter your name" }]}
+              rules={[{ required: true, message: t("signup.please_enter_name") }]}
             >
-              <Input placeholder="Your Name" size="large" />
+              <Input placeholder={t("signup.name_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Position"
+              label={t("signup.position")}
               name="position"
               rules={[
-                { required: true, message: "Please enter your position" },
+                { required: true, message: t("signup.please_enter_position") },
               ]}
             >
-              <Input placeholder="Position" size="large" />
+              <Input placeholder={t("signup.position_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Phone"
+              label={t("signup.phone")}
               name="phone"
               rules={[
-                { required: true, message: "Please enter your phone number" },
+                { required: true, message: t("signup.please_enter_phone") },
                 {
                   validator: (_, value, callback) => {
                     // 国际手机号正则，支持+86、+1等国家码，也支持本地手机号
                     const phoneRegex = /^(\+?\d{1,4}[-\s]?)?(\d{6,20})$/;
                     if (!phoneRegex.test(value)) {
-                      callback("请输入有效的手机号（支持国际号码）");
+                      callback(t("signup.phone_format_error"));
                     }
                     callback();
                   },
                 },
               ]}
             >
-              <Input placeholder="Phone Number" size="large" />
+              <Input placeholder={t("signup.phone_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Company Name"
+              label={t("signup.company_name")}
               name="company_name"
               rules={[
-                { required: true, message: "Please enter your company name" },
+                { required: true, message: t("signup.please_enter_company") },
               ]}
             >
-              <Input placeholder="Company Name" size="large" />
+              <Input placeholder={t("signup.company_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item
-              label="Website"
+              label={t("signup.website")}
               name="website"
-              rules={[{ required: true, message: "Please enter your website" }]}
+              rules={[{ required: true, message: t("signup.please_enter_website") }]}
             >
-              <Input placeholder="Website" size="large" />
+              <Input placeholder={t("signup.website_placeholder")} size="large" />
             </Form.Item>
 
             <Form.Item>
@@ -345,7 +347,7 @@ const Signup: React.FC = () => {
                 size="large"
                 onClick={handleSignup}
               >
-                Sign Up
+                {t("signup.sign_up")}
               </Button>
             </Form.Item>
           </>

@@ -4,6 +4,7 @@ import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
+import { useTranslation } from "react-i18next";
 
 interface SigninFormValues {
   username: string;
@@ -23,6 +24,7 @@ interface SigninResponse {
 const SignIn: React.FC = () => {
   const [form] = Form.useForm();
   const loadingRef = useRef<boolean>(false);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
@@ -51,10 +53,10 @@ const SignIn: React.FC = () => {
       });
 
       if (code === 0 && data) {
-        message.success("Sign in succeed");
+        message.success(t("signin.signin_succeed"));
         signInSucceed(data.token);
       } else {
-        message.error("Username or password is incorrect");
+        message.error(t("signin.username_or_password_incorrect"));
       }
 
       loadingRef.current = false;
@@ -69,7 +71,7 @@ const SignIn: React.FC = () => {
   return (
     <SignContainer>
       <img src={logo} style={{ width: 188 }} />
-      <h2 style={{ fontSize: 36 }}>Sign in</h2>
+      <h2 style={{ fontSize: 36 }}>{t("signin.title")}</h2>
       <Form
         form={form}
         name="login"
@@ -78,31 +80,31 @@ const SignIn: React.FC = () => {
         layout="vertical"
       >
         <Form.Item
-          label="Email"
+          label={t("signin.email")}
           name="username"
-          rules={[{ required: true, message: "Please enter email" }]}
+          rules={[{ required: true, message: t("signin.please_enter_email") }]}
         >
-          <Input placeholder="Email" size="large" />
+          <Input placeholder={t("signin.email_placeholder")} size="large" />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label={t("signin.password")}
           name="password"
-          rules={[{ required: true, message: "Please enter password" }]}
+          rules={[{ required: true, message: t("signin.please_enter_password") }]}
         >
-          <Input.Password placeholder="Password" size="large" />
+          <Input.Password placeholder={t("signin.password_placeholder")} size="large" />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block size="large">
-            Sign In
+            {t("signin.sign_in")}
           </Button>
         </Form.Item>
 
         <div>
-          Don't have an account yet?
+          {t("signin.dont_have_account")}
           <Link to="/signup" style={{ marginLeft: 8, color: "#1FAC6A" }}>
-            Sign up
+            {t("signin.sign_up")}
           </Link>
         </div>
       </Form>
