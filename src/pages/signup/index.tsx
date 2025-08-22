@@ -138,7 +138,14 @@ const Signup: React.FC = () => {
           navigate("/app/entry/create-job");
         }
       } else {
-        message.error("Sign up failed");
+        const errMeesageMapping = {
+          10002: "验证码不正确",
+          10003: "邮箱已存在",
+        };
+        message.error(
+          errMeesageMapping[signupCode as keyof typeof errMeesageMapping] ||
+            "Sign up failed"
+        );
       }
     });
   };
