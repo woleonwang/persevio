@@ -170,6 +170,7 @@ export default {
     talents: "Talents",
     account_management: "Account Management",
     job_management: "Job Management",
+    job_apply_management: "Job Apply Management",
     company_list: "Company List",
 
     home: "Home",

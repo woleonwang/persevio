@@ -89,7 +89,9 @@ const AppLayout = () => {
             onRemove: () => {
               Modal.confirm({
                 title: t("app_layout.delete_job"),
-                content: t("app_layout.delete_job_confirm", { jobName: job.name }),
+                content: t("app_layout.delete_job_confirm", {
+                  jobName: job.name,
+                }),
                 onOk: async () => {
                   const { code } = await Post(`/api/jobs/${job.id}/destroy`);
                   if (code === 0) {
@@ -126,6 +128,12 @@ const AppLayout = () => {
     {
       title: t("menu.job_management"),
       path: "/app/admin/jobs",
+      img: <FileDoneOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: t("menu.job_apply_management"),
+      path: "/app/admin/job-applies",
       img: <FileDoneOutlined />,
       requireAdmin: true,
     },

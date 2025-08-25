@@ -163,6 +163,7 @@ export default {
     settings: "设置",
     account_management: "账号管理",
     job_management: "职位管理",
+    job_apply_management: "申请管理",
     company_list: "公司列表",
 
     home: "Home",
