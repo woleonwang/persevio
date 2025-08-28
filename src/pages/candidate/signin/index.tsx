@@ -14,20 +14,14 @@ import CandidateChat from "@/components/CandidateChat";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
-    | "signin"
-    | "basic"
-    | "interests"
-    | "targets"
-    | "personalities"
-    | "conversation"
-    | "approve"
+    "signin" | "basic" | "interests" | "targets" | "conversation" | "approve"
   >();
 
   const [basicInfo, setBasicInfo] = useState<TBaiscInfo>();
   const [interests, setInterests] = useState<string>();
   const [targets, setTargets] = useState<string>();
-  const [personalities, setPersonalities] = useState<string>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -78,18 +72,22 @@ const CandidateSignIn: React.FC = () => {
   };
 
   const onSubmitBasicInfo = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     const params = {
       ...basicInfo,
       interests,
       targets,
-      personalities,
     };
     const { code } = await Post(`/api/candidate/network/basic_info`, params);
     if (code === 0) {
       message.success("保存成功");
+      setPageState("conversation");
     } else {
       message.error("保存失败");
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -142,7 +140,10 @@ const CandidateSignIn: React.FC = () => {
                   目前正在探索的领域，或者感兴趣的主题
                 </div>
                 <Input.TextArea
-                  placeholder="请输入"
+                  placeholder={`• 我正在学习如何为AI智能体构建和扩展评估体系的最佳实践。
+• 我正在研究新一代的生息稳定币，想搞懂它们底层的运行机制和潜在风险。
+• 我最近在琢磨，要不要开一个自己的Newsletter，聊聊‘面向普通消费者的金融科技’这个话题。很想和已经‘下场’玩过的人聊聊，看看起步时会踩哪些坑。
+• AI时代什么样的人才或者能力才是有持久价值的。`}
                   value={interests}
                   onChange={(e) => setInterests(e.target.value)}
                   rows={10}
@@ -169,51 +170,21 @@ const CandidateSignIn: React.FC = () => {
                 </div>
                 <Input.TextArea
                   rows={10}
-                  placeholder={`您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
-• 我想要找人学习怎么构建AI Agent的Eval系统
-• 我需要为我的初创企业寻找另外的5个pilot user
-• 融资
-• 没有具体目标，认识AI行业里的新朋友
-• 正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
-• 招人
-• 寻找投资标的`}
+                  placeholder={`• 我正在为我的开发者工具创业公司进行种子轮融资，希望能认识在这个领域有成功投资经验的风险投资人。
+• 我最近刚搬到新加坡，希望能认识一些在fintech行业的朋友，拓展一些专业人脉。
+• 我正在为我的团队招聘一名资深全栈工程师，要求有TypeScript和AWS的实战经验。
+• 我正在为我的B2B SaaS新产品寻找3-5名种子用户。理想的用户是在50-200人规模的科技公司担任销售总监。
+• 我刚来新加坡工作，想找喜欢打网球的朋友业余一起打网球。`}
                   value={targets}
                   onChange={(e) => setTargets(e.target.value)}
                   style={{ padding: 16 }}
                 />
                 <Button
                   type="primary"
-                  onClick={() => setPageState("personalities")}
+                  onClick={() => onSubmitBasicInfo()}
                   style={{ width: "100%", marginTop: 16 }}
                   size="large"
-                >
-                  下一步
-                </Button>
-              </div>
-            );
-          }
-
-          if (pageState === "personalities") {
-            return (
-              <div className={styles.form}>
-                <div className={styles.title}>
-                  更希望与哪一类明确的对象进行交流？
-                </div>
-                <Input.TextArea
-                  placeholder="请输入"
-                  value={personalities}
-                  onChange={(e) => setPersonalities(e.target.value)}
-                  rows={10}
-                  style={{ padding: 16 }}
-                />
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    onSubmitBasicInfo();
-                    setPageState("conversation");
-                  }}
-                  size="large"
-                  style={{ width: "100%", marginTop: 16 }}
+                  loading={isSubmitting}
                 >
                   下一步
                 </Button>

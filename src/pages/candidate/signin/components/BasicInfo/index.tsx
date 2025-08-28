@@ -128,6 +128,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
               rules={[
                 {
                   validator: () => {
+                    console.log("resume path:", resumePath);
                     if (!resumePath) {
                       return Promise.reject(new Error("请上传简历/个人资料"));
                     }
@@ -136,6 +137,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                 },
               ]}
             >
+              <div></div>
               <Upload.Dragger
                 beforeUpload={() => false}
                 onChange={async (fileInfo) => {
@@ -148,6 +150,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   if (code === 0) {
                     message.success("上传成功");
                     setResumePath(data.resume);
+                    console.log("resume:", data.resume);
                     setResumeFileName(fileInfo.file.name);
                   } else {
                     message.error("上传失败");
