@@ -153,18 +153,16 @@ interface ICandidateSettings {
   id: number;
   email: string;
   name: string;
-  status: "init" | "extracting" | "extracted";
-  phone: string;
-  phone_confirmed_at: string;
-  resume_confirmed_at: string;
-  interview_finished_at: string;
-
-  llm_resume_doc_id: number;
-  career_aspiration_doc_id: number;
-  internal_evaluate_doc_id: number;
-  career_aspiration_json_doc_id: number;
-
+  avatar: string;
+  linkedin_profile_url: string;
+  resume_path: string;
+  work_experience: string;
+  net_working_requests: string;
+  interests: string;
+  approve_status: "pending" | "approved" | "rejected";
   lang: string;
+
+  network_profile_finished_at?: string;
 }
 
 interface IRecommendedJob {

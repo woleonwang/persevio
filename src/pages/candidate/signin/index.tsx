@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Alert, message } from "antd";
+import { Alert, Button, Input, message } from "antd";
 import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 
-import CandidateChat from "@/components/CandidateChat";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
-import UploadResume from "./components/UploadResume";
 import OAuth from "./components/OAuth";
 import { useNavigate } from "react-router";
-import ConfirmPhone from "./components/ConfirmPhone";
 import { useTranslation } from "react-i18next";
+
+import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
+import CandidateChat from "@/components/CandidateChat";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
-    "signin" | "upload" | "phone" | "conversation"
+    | "signin"
+    | "basic"
+    | "interests"
+    | "targets"
+    | "personalities"
+    | "conversation"
   >();
-
-  const [jobId, setJobId] = useState<string>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
+
+  const [basicInfo, setBasicInfo] = useState<TBaiscInfo>();
+  const [interests, setInterests] = useState<string>();
+  const [targets, setTargets] = useState<string>();
+  const [personalities, setPersonalities] = useState<string>();
 
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -47,11 +55,6 @@ const CandidateSignIn: React.FC = () => {
     }
 
     fetchProfile();
-
-    const jobId = urlParams.get("job_id");
-    if (jobId) {
-      setJobId(jobId);
-    }
   }, []);
 
   const fetchProfile = async () => {
@@ -60,17 +63,30 @@ const CandidateSignIn: React.FC = () => {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
 
-      if (candidate.status !== "extracted") {
-        setPageState("upload");
-      } else if (!candidate.phone_confirmed_at) {
-        setPageState("phone");
-      } else if (!candidate.interview_finished_at) {
+      if (!candidate.name) {
+        setPageState("basic");
+      } else if (!candidate.network_profile_finished_at) {
         setPageState("conversation");
       } else {
-        navigate("/candidate/job-applies");
+        navigate("/candidate/home");
       }
     } else {
       setPageState("signin");
+    }
+  };
+
+  const onSubmitBasicInfo = async () => {
+    const params = {
+      ...basicInfo,
+      interests,
+      targets,
+      personalities,
+    };
+    const { code } = await Post(`/api/candidate/network/basic_info`, params);
+    if (code === 0) {
+      message.success("保存成功");
+    } else {
+      message.error("保存失败");
     }
   };
 
@@ -90,67 +106,102 @@ const CandidateSignIn: React.FC = () => {
       {pageState !== "signin" && (
         <>
           <div className={styles.header}>
-            <img
-              src={logo}
-              className={styles.banner}
-              onClick={async () => {
-                const { code } = await Post("/api/candidate/clear");
-                if (code === 0) {
-                  localStorage.removeItem("candidate_token");
-                  window.location.reload();
-                }
-              }}
-            />
+            <img src={logo} className={styles.banner} />
           </div>
         </>
       )}
       <div className={styles.main}>
-        {pageState !== "signin" && (
-          <div className={styles.stepWrapper}>
-            <div className={classnames(styles.step, styles.active)}>
-              {t("upload_resume")}
-            </div>
-            <div
-              className={classnames(styles.step, {
-                [styles.active]: pageState === "conversation",
-              })}
-            >
-              {t("career_dive")}
-            </div>
-          </div>
-        )}
         {(() => {
           if (pageState === "signin") {
-            return <OAuth jobId={jobId} />;
+            return <OAuth />;
           }
 
-          if (pageState === "upload") {
+          if (pageState === "basic") {
             return (
-              <UploadResume
-                onFinish={() => {
-                  setPageState("phone");
+              <BasicInfo
+                onFinish={(params) => {
+                  setBasicInfo(params);
+                  setPageState("interests");
                 }}
               />
             );
           }
 
-          if (pageState === "phone") {
+          if (pageState === "interests") {
             return (
-              <ConfirmPhone
-                phone={candidate?.phone}
-                name={candidate?.name}
-                onFinish={() => setPageState("conversation")}
-              />
+              <div>
+                <div className={styles.required}>
+                  目前正在探索的领域，或者感兴趣的主题
+                </div>
+                <Input.TextArea
+                  placeholder="请输入"
+                  value={interests}
+                  onChange={(e) => setInterests(e.target.value)}
+                />
+                <Button
+                  disabled={!interests}
+                  type="primary"
+                  onClick={() => setPageState("targets")}
+                >
+                  下一步
+                </Button>
+              </div>
+            );
+          }
+
+          if (pageState === "targets") {
+            return (
+              <div>
+                <div>想通过networking来达成什么目标？</div>
+                <Input.TextArea
+                  placeholder={`
+                    您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
+                    我想要找人学习怎么构建AI Agent的Eval系统
+                    我需要为我的初创企业寻找另外的5个pilot user
+                    融资
+                    没有具体目标，认识AI行业里的新朋友
+                    正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
+                    招人
+                    寻找投资标的`}
+                  value={targets}
+                  onChange={(e) => setTargets(e.target.value)}
+                />
+                <Button
+                  type="primary"
+                  onClick={() => setPageState("personalities")}
+                >
+                  下一步
+                </Button>
+              </div>
+            );
+          }
+
+          if (pageState === "personalities") {
+            return (
+              <div>
+                <div>更希望与哪一类明确的对象进行交流？</div>
+                <Input.TextArea
+                  placeholder="请输入"
+                  value={personalities}
+                  onChange={(e) => setPersonalities(e.target.value)}
+                />
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    onSubmitBasicInfo();
+                    setPageState("conversation");
+                  }}
+                >
+                  下一步
+                </Button>
+              </div>
             );
           }
 
           if (pageState === "conversation") {
             return (
-              <div className={styles.chatWrapper}>
-                <CandidateChat
-                  chatType="profile"
-                  onFinish={() => navigate("/candidate/job-applies?open=1")}
-                />
+              <div>
+                <CandidateChat chatType="network_profile" />
               </div>
             );
           }

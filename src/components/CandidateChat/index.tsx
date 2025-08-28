@@ -39,7 +39,8 @@ interface IProps {
     | "profile"
     | "deep_aspirations"
     | "job_interview"
-    | "work_experience";
+    | "work_experience"
+    | "network_profile";
   jobApplyId?: number;
   onFinish?: () => void;
   workExperienceCompanyName?: string;
@@ -50,6 +51,7 @@ const ChatTypeMappings = {
   deep_aspirations: "CANDIDATE_DEEP_CAREER_ASPIRATION_CHAT",
   job_interview: "CANDIDATE_JOB_INTERVIEW_CHAT",
   work_experience: "CANDIDATE_WORK_EXPERIENCE_CHAT",
+  network_profile: "CANDIDATE_NETWORK_PROFILE_CHAT",
 };
 
 const CandidateChat: React.FC<IProps> = (props) => {
