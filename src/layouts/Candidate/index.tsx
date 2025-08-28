@@ -84,7 +84,7 @@ const CandidateLayout = () => {
     if (code === 0) {
       setInited(true);
       i18n.changeLanguage(data.candidate.lang ?? "zh-CN");
-      if (!(data.candidate as ICandidateSettings).interview_finished_at) {
+      if (!(data.candidate as ICandidateSettings).network_profile_finished_at) {
         navigate("/signin-candidate");
       }
     } else {

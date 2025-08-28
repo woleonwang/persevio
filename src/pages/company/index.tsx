@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Upload, Select } from "antd";
-import { Get, Post } from "../../utils/request";
+import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import TextAreaWithHint from "./components/TextAreaWithHint";

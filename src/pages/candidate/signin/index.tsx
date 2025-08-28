@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Input, message } from "antd";
+import { Alert, Button, Input, message, Empty } from "antd";
 import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 
@@ -20,13 +20,14 @@ const CandidateSignIn: React.FC = () => {
     | "targets"
     | "personalities"
     | "conversation"
+    | "approve"
   >();
-  const [candidate, setCandidate] = useState<ICandidateSettings>();
 
   const [basicInfo, setBasicInfo] = useState<TBaiscInfo>();
   const [interests, setInterests] = useState<string>();
   const [targets, setTargets] = useState<string>();
   const [personalities, setPersonalities] = useState<string>();
+  const [candidate, setCandidate] = useState<ICandidateSettings>();
 
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -62,11 +63,12 @@ const CandidateSignIn: React.FC = () => {
     if (code === 0) {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
-
       if (!candidate.name) {
         setPageState("basic");
       } else if (!candidate.network_profile_finished_at) {
         setPageState("conversation");
+      } else if (candidate.approve_status !== "approved") {
+        setPageState("approve");
       } else {
         navigate("/candidate/home");
       }
@@ -106,7 +108,11 @@ const CandidateSignIn: React.FC = () => {
       {pageState !== "signin" && (
         <>
           <div className={styles.header}>
-            <img src={logo} className={styles.banner} />
+            <img
+              src={logo}
+              className={styles.banner}
+              onClick={() => navigate("/")}
+            />
           </div>
         </>
       )}
@@ -118,30 +124,35 @@ const CandidateSignIn: React.FC = () => {
 
           if (pageState === "basic") {
             return (
-              <BasicInfo
-                onFinish={(params) => {
-                  setBasicInfo(params);
-                  setPageState("interests");
-                }}
-              />
+              <div className={styles.body}>
+                <BasicInfo
+                  onFinish={(params) => {
+                    setBasicInfo(params);
+                    setPageState("interests");
+                  }}
+                />
+              </div>
             );
           }
 
           if (pageState === "interests") {
             return (
-              <div>
-                <div className={styles.required}>
+              <div className={styles.form}>
+                <div className={classnames(styles.required, styles.title)}>
                   目前正在探索的领域，或者感兴趣的主题
                 </div>
                 <Input.TextArea
                   placeholder="请输入"
                   value={interests}
                   onChange={(e) => setInterests(e.target.value)}
+                  rows={10}
                 />
                 <Button
                   disabled={!interests}
                   type="primary"
                   onClick={() => setPageState("targets")}
+                  style={{ width: "100%", marginTop: 16 }}
+                  size="large"
                 >
                   下一步
                 </Button>
@@ -151,24 +162,28 @@ const CandidateSignIn: React.FC = () => {
 
           if (pageState === "targets") {
             return (
-              <div>
-                <div>想通过networking来达成什么目标？</div>
+              <div className={styles.form}>
+                <div className={styles.title}>
+                  想通过networking来达成什么目标？
+                </div>
                 <Input.TextArea
-                  placeholder={`
-                    您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
-                    我想要找人学习怎么构建AI Agent的Eval系统
-                    我需要为我的初创企业寻找另外的5个pilot user
-                    融资
-                    没有具体目标，认识AI行业里的新朋友
-                    正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
-                    招人
-                    寻找投资标的`}
+                  rows={10}
+                  placeholder={`您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
+我想要找人学习怎么构建AI Agent的Eval系统
+我需要为我的初创企业寻找另外的5个pilot user
+融资
+没有具体目标，认识AI行业里的新朋友
+正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
+招人
+寻找投资标的`}
                   value={targets}
                   onChange={(e) => setTargets(e.target.value)}
                 />
                 <Button
                   type="primary"
                   onClick={() => setPageState("personalities")}
+                  style={{ width: "100%", marginTop: 16 }}
+                  size="large"
                 >
                   下一步
                 </Button>
@@ -178,12 +193,15 @@ const CandidateSignIn: React.FC = () => {
 
           if (pageState === "personalities") {
             return (
-              <div>
-                <div>更希望与哪一类明确的对象进行交流？</div>
+              <div className={styles.form}>
+                <div className={styles.title}>
+                  更希望与哪一类明确的对象进行交流？
+                </div>
                 <Input.TextArea
                   placeholder="请输入"
                   value={personalities}
                   onChange={(e) => setPersonalities(e.target.value)}
+                  rows={10}
                 />
                 <Button
                   type="primary"
@@ -191,6 +209,8 @@ const CandidateSignIn: React.FC = () => {
                     onSubmitBasicInfo();
                     setPageState("conversation");
                   }}
+                  size="large"
+                  style={{ width: "100%", marginTop: 16 }}
                 >
                   下一步
                 </Button>
@@ -200,9 +220,22 @@ const CandidateSignIn: React.FC = () => {
 
           if (pageState === "conversation") {
             return (
-              <div>
+              <div className={styles.conversation}>
                 <CandidateChat chatType="network_profile" />
               </div>
+            );
+          }
+
+          if (pageState === "approve") {
+            return (
+              <Empty
+                style={{ marginTop: 100 }}
+                description={
+                  candidate?.approve_status === "rejected"
+                    ? "您的申请已拒绝"
+                    : "Viona正在帮您做匹配的准备，请耐心等待"
+                }
+              />
             );
           }
         })()}

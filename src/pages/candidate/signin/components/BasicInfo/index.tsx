@@ -44,11 +44,11 @@ const BasicInfo: React.FC<IProps> = (props) => {
   >("linkedin");
 
   return (
-    <div>
-      <div>基本信息</div>
-      <div>
-        <Form form={form}>
-          <Form.Item label="姓名" name="name">
+    <div className={styles.container}>
+      <div className={styles.title}>基本信息</div>
+      <div className={styles.container}>
+        <Form form={form} layout="vertical">
+          <Form.Item label="姓名" name="name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item label="头像">
@@ -73,19 +73,28 @@ const BasicInfo: React.FC<IProps> = (props) => {
                 <img
                   src={`/api/avatar/${avatar}`}
                   alt="avatar"
-                  style={{ width: "100%" }}
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    width: "auto",
+                    height: "auto",
+                    display: "block",
+                    margin: "0 auto",
+                  }}
                 />
               ) : (
                 <button style={{ border: 0, background: "none" }} type="button">
                   <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                  <div style={{ marginTop: 8 }}>上传</div>
                 </button>
               )}
             </Upload>
           </Form.Item>
+
           <Radio.Group
             value={resumeFormat}
             onChange={(e) => setResumeFormat(e.target.value)}
+            style={{ marginBottom: 16 }}
           >
             <Radio value="linkedin">LinkedIn Profile</Radio>
             <Radio value="upload">上传简历/个人资料</Radio>
@@ -93,13 +102,25 @@ const BasicInfo: React.FC<IProps> = (props) => {
           </Radio.Group>
 
           {resumeFormat === "linkedin" && (
-            <Form.Item name="linkedin_profile_url">
-              <Input />
+            <Form.Item name="linkedin_profile_url" rules={[{ required: true }]}>
+              <Input placeholder="例如: https://www.linkedin.com/in/tiangengxinjacky" />
             </Form.Item>
           )}
           {resumeFormat === "upload" && (
-            <div className={styles.uploadWrapper}>
-              <Upload
+            <Form.Item
+              name="resume_path"
+              rules={[
+                {
+                  validator: () => {
+                    if (!resumePath) {
+                      return Promise.reject(new Error("请上传简历/个人资料"));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Upload.Dragger
                 beforeUpload={() => false}
                 onChange={async (fileInfo) => {
                   const formData = new FormData();
@@ -123,30 +144,51 @@ const BasicInfo: React.FC<IProps> = (props) => {
                 {resumeFileName ? (
                   <div>{resumeFileName}</div>
                 ) : (
-                  <UploadOutlined className={styles.uploadIcon} />
+                  <div>
+                    <UploadOutlined className={styles.uploadIcon} />
+                    <div>支持上传.doc,.docx,.pdf格式文件</div>
+                  </div>
                 )}
-              </Upload>
-            </div>
+              </Upload.Dragger>
+            </Form.Item>
           )}
           {resumeFormat === "form" && (
             <div className={styles.formWrapper}>
-              <Form.Item label="公司名称" name="company_name">
+              <Form.Item
+                label="公司名称"
+                name="company_name"
+                rules={[{ required: true }]}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item label="职位名称" name="position">
+              <Form.Item
+                label="职位名称"
+                name="position"
+                rules={[{ required: true }]}
+              >
                 <Input />
               </Form.Item>
-              <Form.Item label="在职时间" name="work_period">
+              <Form.Item
+                label="在职时间"
+                name="work_period"
+                rules={[{ required: true }]}
+              >
                 <DatePicker.RangePicker style={{ width: "100%" }} />
               </Form.Item>
-              <Form.Item label="工作内容" name="description">
-                <Input />
+              <Form.Item
+                label="工作内容"
+                name="description"
+                rules={[{ required: true }]}
+              >
+                <Input.TextArea rows={4} placeholder="请简要概述工作内容" />
               </Form.Item>
             </div>
           )}
         </Form>
-        <div style={{ marginTop: 16 }}>
+        <div style={{ marginTop: 16, textAlign: "center" }}>
           <Button
+            size="large"
+            style={{ width: "100%" }}
             type="primary"
             onClick={() => {
               form.validateFields().then(async (values) => {
