@@ -368,7 +368,7 @@ Shall we start now?`,
                 title={
                   <div>
                     <span style={{ fontSize: 18 }}>
-                      {item.role === "user" ? "You" : `Viona, AI Recruiter`}
+                      {item.role === "user" ? "You" : `Viona`}
                     </span>
                     <span className={styles.timestamp}>
                       {dayjs(item.updated_at).format(datetimeFormat)}

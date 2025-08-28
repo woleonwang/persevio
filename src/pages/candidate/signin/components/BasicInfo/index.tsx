@@ -1,19 +1,35 @@
-import { Button, DatePicker, Form, Input, message, Radio, Upload } from "antd";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Radio,
+  Upload,
+  Card,
+} from "antd";
+import {
+  PlusOutlined,
+  UploadOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import React, { useState } from "react";
 
 import styles from "./style.module.less";
 import { PostFormData } from "@/utils/request";
 import type { Dayjs } from "dayjs";
 
-export interface TBasicInfoFormValues {
-  name: string;
-  linkedin_profile_url: string;
-
+export interface TWorkExperience {
   company_name: string;
   position: string;
   work_period: [Dayjs, Dayjs];
   description: string;
+}
+
+export interface TBasicInfoFormValues {
+  name: string;
+  linkedin_profile_url: string;
+  work_experience: TWorkExperience[];
 }
 
 export interface TBaiscInfo {
@@ -27,7 +43,7 @@ export interface TBaiscInfo {
     start_date: string;
     end_date: string;
     description: string;
-  };
+  }[];
 }
 
 interface IProps {
@@ -154,34 +170,96 @@ const BasicInfo: React.FC<IProps> = (props) => {
           )}
           {resumeFormat === "form" && (
             <div className={styles.formWrapper}>
-              <Form.Item
-                label="公司名称"
-                name="company_name"
-                rules={[{ required: true }]}
+              <Form.List
+                name="work_experience"
+                initialValue={[
+                  {
+                    company_name: "",
+                    position: "",
+                    work_period: undefined,
+                    description: "",
+                  },
+                ]}
               >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="职位名称"
-                name="position"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="在职时间"
-                name="work_period"
-                rules={[{ required: true }]}
-              >
-                <DatePicker.RangePicker style={{ width: "100%" }} />
-              </Form.Item>
-              <Form.Item
-                label="工作内容"
-                name="description"
-                rules={[{ required: true }]}
-              >
-                <Input.TextArea rows={4} placeholder="请简要概述工作内容" />
-              </Form.Item>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <Card key={key} size="small" style={{ marginBottom: 16 }}>
+                        <div
+                          style={{
+                            marginBottom: 16,
+                            fontWeight: "bold",
+                            color: "#1890ff",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <span>工作经历 {name + 1}</span>
+                          {fields.length > 1 && (
+                            <DeleteOutlined
+                              onClick={() => remove(name)}
+                              style={{ color: "#ff4d4f", cursor: "pointer" }}
+                            />
+                          )}
+                        </div>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "company_name"]}
+                          label="公司名称"
+                          rules={[
+                            { required: true, message: "请输入公司名称" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "position"]}
+                          label="职位名称"
+                          rules={[
+                            { required: true, message: "请输入职位名称" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "work_period"]}
+                          label="在职时间"
+                          rules={[
+                            { required: true, message: "请选择在职时间" },
+                          ]}
+                        >
+                          <DatePicker.RangePicker style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "description"]}
+                          label="工作内容"
+                          rules={[
+                            { required: true, message: "请输入工作内容" },
+                          ]}
+                        >
+                          <Input.TextArea
+                            rows={4}
+                            placeholder="请简要概述工作内容"
+                          />
+                        </Form.Item>
+                      </Card>
+                    ))}
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                      style={{ marginBottom: 16 }}
+                    >
+                      添加工作经历
+                    </Button>
+                  </>
+                )}
+              </Form.List>
             </div>
           )}
         </Form>
@@ -192,14 +270,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
             type="primary"
             onClick={() => {
               form.validateFields().then(async (values) => {
-                const {
-                  name,
-                  linkedin_profile_url,
-                  company_name,
-                  position,
-                  work_period,
-                  description,
-                } = values;
+                const { name, linkedin_profile_url, work_experience } = values;
                 const params = {
                   name,
                   avatar,
@@ -208,13 +279,13 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   resume_path: resumeFormat === "upload" ? resumePath : "",
                   work_experience:
                     resumeFormat === "form"
-                      ? {
-                          company_name,
-                          position,
-                          start_date: work_period[0].format("YYYY-MM-DD"),
-                          end_date: work_period[1].format("YYYY-MM-DD"),
-                          description,
-                        }
+                      ? work_experience.map((exp: TWorkExperience) => ({
+                          company_name: exp.company_name,
+                          position: exp.position,
+                          start_date: exp.work_period[0].format("YYYY-MM-DD"),
+                          end_date: exp.work_period[1].format("YYYY-MM-DD"),
+                          description: exp.description,
+                        }))
                       : undefined,
                 };
 

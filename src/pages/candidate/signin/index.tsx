@@ -146,6 +146,7 @@ const CandidateSignIn: React.FC = () => {
                   value={interests}
                   onChange={(e) => setInterests(e.target.value)}
                   rows={10}
+                  style={{ padding: 16 }}
                 />
                 <Button
                   disabled={!interests}
@@ -169,15 +170,16 @@ const CandidateSignIn: React.FC = () => {
                 <Input.TextArea
                   rows={10}
                   placeholder={`您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
-我想要找人学习怎么构建AI Agent的Eval系统
-我需要为我的初创企业寻找另外的5个pilot user
-融资
-没有具体目标，认识AI行业里的新朋友
-正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
-招人
-寻找投资标的`}
+• 我想要找人学习怎么构建AI Agent的Eval系统
+• 我需要为我的初创企业寻找另外的5个pilot user
+• 融资
+• 没有具体目标，认识AI行业里的新朋友
+• 正在考虑下一步的职业规划，想跟相关的朋友沟通沟通。
+• 招人
+• 寻找投资标的`}
                   value={targets}
                   onChange={(e) => setTargets(e.target.value)}
+                  style={{ padding: 16 }}
                 />
                 <Button
                   type="primary"
@@ -202,6 +204,7 @@ const CandidateSignIn: React.FC = () => {
                   value={personalities}
                   onChange={(e) => setPersonalities(e.target.value)}
                   rows={10}
+                  style={{ padding: 16 }}
                 />
                 <Button
                   type="primary"
