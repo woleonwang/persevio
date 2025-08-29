@@ -258,6 +258,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                                   { required: true, message: "请选择开始时间" },
                                 ]}
                                 style={{ flex: "auto" }}
+                                key={`${name}-work_period_start`}
                               >
                                 <DatePicker
                                   style={{ width: "100%" }}
@@ -273,6 +274,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                                   { required: true, message: "请选择在职时间" },
                                 ]}
                                 style={{ flex: "auto" }}
+                                key={`${name}-work_period`}
                               >
                                 <DatePicker.RangePicker
                                   style={{ width: "100%" }}
