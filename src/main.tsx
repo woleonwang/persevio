@@ -38,6 +38,7 @@ import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
+import AdminCandidates from "./pages/admin/candidates";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -54,6 +55,7 @@ import PublicTalentDetailPage from "./pages/public/talent/detail";
 import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
+import SignIn from "./pages/signin";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -94,6 +96,10 @@ createRoot(document.getElementById("root")!).render(
           <Route
             path="/jobs/:id/:companyName/:jobName"
             element={<JobsShow />}
+          />
+          <Route
+            path="/product/business-growth/marvin_test"
+            element={<SignIn />}
           />
           {/** 分享候选人面试设计 & 面试反馈文档 */}
           <Route
@@ -160,6 +166,11 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/app/admin/job-applies"
               element={<AdminJobApplies />}
+            />
+            {/* 管理员候选人列表：用于审核候选人 */}
+            <Route
+              path="/app/admin/candidates"
+              element={<AdminCandidates />}
             />
             <Route path="/app/admin/companies" element={<AdminCompanies />} />
             {/* 候选人列表 */}

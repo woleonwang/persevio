@@ -171,6 +171,7 @@ export default {
     account_management: "Account Management",
     job_management: "Job Management",
     job_apply_management: "Job Apply Management",
+    candidate_list: "Candidate List",
     company_list: "Company List",
 
     home: "Home",
