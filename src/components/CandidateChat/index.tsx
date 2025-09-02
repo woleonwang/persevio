@@ -24,6 +24,7 @@ import MarkdownContainer from "../MarkdownContainer";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
 import { ScaleLoader } from "react-spinners";
+import VoiceChatModal from "../VoiceChatModal";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -63,6 +64,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [audioHintVisible, setAudioHintVisible] = useState(false);
+  const [isAudioMode, setIsAudioMode] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -88,6 +90,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
       sendMessage(result);
     },
     disabled: isLoading,
+    mode: "text",
   });
 
   useEffect(() => {
@@ -531,6 +534,40 @@ Shall we start now?`,
             }}
             style={{ fontSize: 24, color: "gray" }}
           />
+          <Button
+            type="primary"
+            onClick={() => setIsAudioMode(true)}
+            style={{
+              width: 64,
+              height: 64,
+              backgroundColor: "#f1f1f1",
+              border: "3px solid #1FAC6A",
+              color: "#1FAC6A",
+              marginLeft: 30,
+            }}
+            shape="circle"
+            icon={
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon"
+              >
+                <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
+              </svg>
+            }
+          />
+
+          {isAudioMode && (
+            <VoiceChatModal
+              onClose={() => {
+                setIsAudioMode(false);
+                fetchMessages();
+              }}
+            />
+          )}
         </div>
       </div>
 

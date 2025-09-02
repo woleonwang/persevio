@@ -5,9 +5,11 @@ import { message } from "antd";
 const useAssemblyOffline = ({
   onFinish,
   disabled,
+  mode = "text",
 }: {
   onFinish: (text: string) => void;
   disabled?: boolean;
+  mode?: "text" | "audio";
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -38,12 +40,16 @@ const useAssemblyOffline = ({
     timeoutId: 0,
     isHotKeyPressed: false,
     isPersistRecording: false,
-    isStartRecordingOutside: false,
+    isStartRecordingOutside: false, // 外部开启录音，不监听热键
   });
 
   useEffect(() => {
     return () => {
-      mediaRecorderRef.current?.stop();
+      if (mediaRecorderRef.current) {
+        mediaRecorderRef.current.onstop = null;
+        mediaRecorderRef.current.stop();
+        clear();
+      }
     };
   }, []);
 
@@ -201,17 +207,19 @@ const useAssemblyOffline = ({
           message.error("No voice recorded.");
           return;
         }
-        setIsTranscribing(true);
-        const { code, data } = await Post("/api/stt/send", {
-          payload: base64String,
-        });
-        if (code === 0 && data.result) {
-          console.log("end transcribe:", new Date().toISOString());
-          console.log("finished, result is: ");
-          console.log(data.result);
-          onFinish(data.result ?? "");
+
+        if (mode === "text") {
+          setIsTranscribing(true);
+          const { code, data } = await Post("/api/stt/send", {
+            payload: base64String,
+          });
+          if (code === 0 && data.result) {
+            onFinish(data.result ?? "");
+          }
+          setIsTranscribing(false);
+        } else {
+          onFinish(base64String);
         }
-        setIsTranscribing(false);
       }
     };
 
