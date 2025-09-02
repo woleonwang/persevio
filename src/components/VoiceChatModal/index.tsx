@@ -139,7 +139,11 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     };
     audioQueueRef.current.push(source);
     if (audioQueueRef.current.length === 2) {
-      audioQueueRef.current[0].start();
+      try {
+        audioQueueRef.current[0].start();
+      } catch (e) {
+        // 忽略已停止的 source
+      }
     }
   };
 

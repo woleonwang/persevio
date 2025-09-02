@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, message, Tooltip } from "antd";
+import { Avatar, List, Input, Button, message, Tooltip, Spin } from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -597,11 +597,15 @@ Shall we start now?`,
               justifyContent: "center",
             }}
           >
-            <ScaleLoader
-              color="#1FAC6A"
-              height={75 * Math.min(1, volume * 3) + 5}
-              width={10}
-            />
+            {isRecording ? (
+              <ScaleLoader
+                color="#1FAC6A"
+                height={75 * Math.min(1, volume * 3) + 5}
+                width={10}
+              />
+            ) : (
+              <Spin size="large" />
+            )}
           </div>
         </div>,
         document.body
