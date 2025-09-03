@@ -1,4 +1,4 @@
-import useAssemblyOffline from "@/hooks/useAssemblyOffline";
+import useVoice from "@/hooks/useVoiceChat";
 import { Post } from "@/utils/request";
 import { Button, message, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -21,25 +21,29 @@ interface IProps {
 
 const VoiceChatModal: React.FC<IProps> = (props) => {
   const { onClose } = props;
-  const [status, setStatus] = useState<
-    "init" | "idle" | "recording" | "speaking"
-  >("init");
+  const [status, setStatus] = useState<"init" | "idle" | "speaking">("init");
   const [currentTime, setCurrentTime] = useState<number>(Date.now());
+  const [disabled, setDisabled] = useState<boolean>(false);
+
   const startTimeRef = useRef<number>(Date.now());
 
   const lastAudioDataLengthRef = useRef<number>(0);
   const audioQueueRef = useRef<AudioBufferSourceNode[]>([]);
   const isAudioResponseDoneRef = useRef(true);
   const isInitintgConnectionRef = useRef(false);
+  const isDestroyedRef = useRef(false);
 
   useEffect(() => {
+    isDestroyedRef.current = false;
     initConnection();
 
     return () => {
+      isDestroyedRef.current = true;
       // 停止所有正在播放的音频
       if (audioQueueRef.current.length > 0) {
         audioQueueRef.current.forEach((source) => {
           try {
+            source.onended = null;
             source.stop();
           } catch (e) {
             // 忽略已停止的 source
@@ -50,14 +54,13 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     };
   }, []);
 
-  const { startTranscription, endTranscription, isRecording } =
-    useAssemblyOffline({
-      onFinish: (result) => {
-        sendMessageAudio(result);
-      },
-      disabled: status !== "idle",
-      mode: "audio",
-    });
+  const { isSpeaking } = useVoice({
+    onFinish: (result) => {
+      setStatus("speaking");
+      sendMessageAudio(result);
+    },
+    disabled: disabled || status !== "idle",
+  });
 
   const initConnection = async () => {
     if (isInitintgConnectionRef.current) return;
@@ -87,6 +90,8 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
         offset: lastAudioDataLengthRef.current,
       }
     );
+    if (isDestroyedRef.current) return;
+
     if (code === 0) {
       const audioData = (data.audio_data as string) ?? "";
       lastAudioDataLengthRef.current =
@@ -132,6 +137,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
       audioQueueRef.current = audioQueueRef.current.slice(1);
       const nextNode = audioQueueRef.current[0];
       if (nextNode) {
+        console.log("nextNode start");
         nextNode.start();
       } else if (isAudioResponseDoneRef.current) {
         setStatus("idle");
@@ -165,7 +171,6 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     });
 
     if (code === 0) {
-      setStatus("speaking");
       isAudioResponseDoneRef.current = false;
       lastAudioDataLengthRef.current = 0;
       pollAudio();
@@ -176,7 +181,22 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
   };
 
   const genRecordButtonAudio = () => {
-    return !isRecording && status !== "recording" ? (
+    return disabled ? (
+      <Button
+        style={{
+          width: 64,
+          height: 64,
+          backgroundColor: "#f1f1f1",
+          border: "none",
+          color: "rgb(224, 46, 42)",
+        }}
+        shape="circle"
+        type="default"
+        onClick={() => setDisabled(false)}
+        icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
+        iconPosition="start"
+      />
+    ) : (
       <Button
         style={{
           width: 64,
@@ -188,27 +208,9 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
         shape="circle"
         type="default"
         onClick={() => {
-          setStatus("recording");
-          startTranscription();
+          setDisabled(true);
         }}
-        disabled={status === "speaking"}
         icon={<AudioOutlined style={{ fontSize: 36 }} />}
-        iconPosition="start"
-      />
-    ) : (
-      <Button
-        style={{
-          width: 64,
-          height: 64,
-          backgroundColor: "#f1f1f1",
-          border: "none",
-          color: "rgb(224, 46, 42)",
-        }}
-        shape="circle"
-        type="default"
-        onClick={() => endTranscription()}
-        disabled={status === "speaking"}
-        icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
         iconPosition="start"
       />
     );
@@ -265,8 +267,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
           }}
         >
           {status === "init" && <div>创建会话中...</div>}
-          {status === "idle" && <div>请打开麦克风，与 Viona 对话</div>}
-          {status === "recording" && <div>Viona 正在听...</div>}
+          {status === "idle" && <div>{isSpeaking ? "录音中" : "空闲中"}</div>}
           {status === "speaking" && <div>Viona 正在说话中...</div>}
         </div>
         {status !== "init" && (

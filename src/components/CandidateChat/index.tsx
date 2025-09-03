@@ -90,7 +90,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
       sendMessage(result);
     },
     disabled: isLoading,
-    mode: "text",
   });
 
   useEffect(() => {

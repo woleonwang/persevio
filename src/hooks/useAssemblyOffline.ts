@@ -5,11 +5,9 @@ import { message } from "antd";
 const useAssemblyOffline = ({
   onFinish,
   disabled,
-  mode = "text",
 }: {
   onFinish: (text: string) => void;
   disabled?: boolean;
-  mode?: "text" | "audio";
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -208,18 +206,14 @@ const useAssemblyOffline = ({
           return;
         }
 
-        if (mode === "text") {
-          setIsTranscribing(true);
-          const { code, data } = await Post("/api/stt/send", {
-            payload: base64String,
-          });
-          if (code === 0 && data.result) {
-            onFinish(data.result ?? "");
-          }
-          setIsTranscribing(false);
-        } else {
-          onFinish(base64String);
+        setIsTranscribing(true);
+        const { code, data } = await Post("/api/stt/send", {
+          payload: base64String,
+        });
+        if (code === 0 && data.result) {
+          onFinish(data.result ?? "");
         }
+        setIsTranscribing(false);
       }
     };
 

@@ -26,22 +26,28 @@ const Candidates = () => {
       const { code, data } = await Get("/api/admin/candidates");
       if (code === 0) {
         let filteredCandidates = data.candidates || [];
-        
+
         // 按搜索关键词过滤
         if (searchKeyword) {
-          filteredCandidates = filteredCandidates.filter((candidate: ICandidateSettings) =>
-            candidate.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            candidate.email.toLowerCase().includes(searchKeyword.toLowerCase())
+          filteredCandidates = filteredCandidates.filter(
+            (candidate: ICandidateSettings) =>
+              candidate.name
+                .toLowerCase()
+                .includes(searchKeyword.toLowerCase()) ||
+              candidate.email
+                .toLowerCase()
+                .includes(searchKeyword.toLowerCase())
           );
         }
-        
+
         // 按状态过滤
         if (statusFilter !== "all") {
-          filteredCandidates = filteredCandidates.filter((candidate: ICandidateSettings) =>
-            candidate.approve_status === statusFilter
+          filteredCandidates = filteredCandidates.filter(
+            (candidate: ICandidateSettings) =>
+              candidate.approve_status === statusFilter
           );
         }
-        
+
         setCandidates(filteredCandidates);
         setTotal(filteredCandidates.length);
       }
@@ -52,9 +58,14 @@ const Candidates = () => {
     }
   };
 
-  const handleAudit = async (candidateId: number, action: "approve" | "reject") => {
+  const handleAudit = async (
+    candidateId: number,
+    action: "approve" | "reject"
+  ) => {
     try {
-      const { code } = await Post(`/api/candidates/${candidateId}/audit/${action}`);
+      const { code } = await Post(
+        `/api/candidates/${candidateId}/audit/${action}`
+      );
       if (code === 0) {
         message.success(action === "approve" ? "审核通过成功" : "审核拒绝成功");
         fetchCandidates();
@@ -79,18 +90,18 @@ const Candidates = () => {
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "审核中";
-      case "approved":
-        return "已通过";
-      case "rejected":
-        return "未通过";
-      default:
-        return "未知";
-    }
-  };
+  // const getStatusText = (status: string) => {
+  //   switch (status) {
+  //     case "pending":
+  //       return "审核中";
+  //     case "approved":
+  //       return "已通过";
+  //     case "rejected":
+  //       return "未通过";
+  //     default:
+  //       return "未知";
+  //   }
+  // };
 
   const columns: ColumnsType<ICandidateSettings> = [
     {
@@ -128,7 +139,9 @@ const Candidates = () => {
           const parsed = JSON.parse(experience);
           return parsed.company || experience;
         } catch {
-          return experience.length > 30 ? experience.substring(0, 30) + "..." : experience;
+          return experience.length > 30
+            ? experience.substring(0, 30) + "..."
+            : experience;
         }
       },
     },
