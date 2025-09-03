@@ -21,7 +21,9 @@ interface IProps {
 
 const VoiceChatModal: React.FC<IProps> = (props) => {
   const { onClose } = props;
-  const [status, setStatus] = useState<"init" | "idle" | "speaking">("init");
+  const [status, setStatus] = useState<
+    "init" | "listening" | "waiting" | "speaking"
+  >("init");
   const [currentTime, setCurrentTime] = useState<number>(Date.now());
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -54,12 +56,11 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     };
   }, []);
 
-  const { isSpeaking } = useVoice({
+  useVoice({
     onFinish: (result) => {
-      setStatus("speaking");
       sendMessageAudio(result);
     },
-    disabled: disabled || status !== "idle",
+    disabled: disabled || status !== "listening",
   });
 
   const initConnection = async () => {
@@ -67,10 +68,10 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     isInitintgConnectionRef.current = true;
 
     const { code } = await Post("/api/candidate/voice_chat/session/start", {
-      placeholder: "123",
+      voice: "shimmer",
     });
     if (code === 0) {
-      setStatus("idle");
+      setStatus("listening");
       setCurrentTime(Date.now());
       startTimeRef.current = Date.now();
       setInterval(() => {
@@ -140,12 +141,13 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
         console.log("nextNode start");
         nextNode.start();
       } else if (isAudioResponseDoneRef.current) {
-        setStatus("idle");
+        setStatus("listening");
       }
     };
     audioQueueRef.current.push(source);
     if (audioQueueRef.current.length === 2) {
       try {
+        setStatus("speaking");
         audioQueueRef.current[0].start();
       } catch (e) {
         // 忽略已停止的 source
@@ -166,6 +168,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
   }
 
   const sendMessageAudio = async (audioData: string) => {
+    setStatus("waiting");
     const { code } = await Post("/api/candidate/voice_chat/session/audio", {
       audio_data: audioData,
     });
@@ -175,7 +178,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
       lastAudioDataLengthRef.current = 0;
       pollAudio();
     } else {
-      setStatus("idle");
+      setStatus("listening");
       message.error("Message Send Failed");
     }
   };
@@ -267,7 +270,8 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
           }}
         >
           {status === "init" && <div>创建会话中...</div>}
-          {status === "idle" && <div>{isSpeaking ? "录音中" : "空闲中"}</div>}
+          {status === "listening" && <div>Viona 正在听...</div>}
+          {status === "waiting" && <div>等待 Viona 说话...</div>}
           {status === "speaking" && <div>Viona 正在说话中...</div>}
         </div>
         {status !== "init" && (
