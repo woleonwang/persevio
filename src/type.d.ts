@@ -159,8 +159,9 @@ interface ICandidateSettings {
   work_experience: string;
   net_working_requests: string;
   interests: string;
-  approve_status: "pending" | "approved" | "rejected";
+  approve_status: "pending" | "approved" | "rejected" | "init";
   lang: string;
+  resume_content: string;
 
   network_profile_finished_at?: string;
 }

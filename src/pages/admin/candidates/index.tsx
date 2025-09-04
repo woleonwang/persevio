@@ -1,10 +1,11 @@
 import { Get, Post } from "@/utils/request";
-import { Button, Input, message, Select, Table, Tag } from "antd";
+import { Button, Drawer, Input, message, Select, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 
 import styles from "../style.module.less";
+import CandidateDrawerContent from "./components/CandidateDrawerContent";
 
 const PAGE_SIZE = 10;
 
@@ -12,44 +13,26 @@ const Candidates = () => {
   const [candidates, setCandidates] = useState<ICandidateSettings[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [candidateDrawerOpen, setCandidateDrawerOpen] = useState(false);
+  const [candidate, setCandidate] = useState<ICandidateSettings>();
 
   useEffect(() => {
     fetchCandidates();
-  }, [page, searchKeyword, statusFilter]);
+  }, []);
 
   const fetchCandidates = async () => {
     setLoading(true);
     try {
       const { code, data } = await Get("/api/admin/candidates");
       if (code === 0) {
-        let filteredCandidates = data.candidates || [];
-
-        // 按搜索关键词过滤
-        if (searchKeyword) {
-          filteredCandidates = filteredCandidates.filter(
+        setCandidates(
+          data.candidates.filter(
             (candidate: ICandidateSettings) =>
-              candidate.name
-                .toLowerCase()
-                .includes(searchKeyword.toLowerCase()) ||
-              candidate.email
-                .toLowerCase()
-                .includes(searchKeyword.toLowerCase())
-          );
-        }
-
-        // 按状态过滤
-        if (statusFilter !== "all") {
-          filteredCandidates = filteredCandidates.filter(
-            (candidate: ICandidateSettings) =>
-              candidate.approve_status === statusFilter
-          );
-        }
-
-        setCandidates(filteredCandidates);
-        setTotal(filteredCandidates.length);
+              candidate.approve_status && candidate.approve_status !== "init"
+          )
+        );
       }
     } catch (error) {
       message.error("获取候选人列表失败");
@@ -62,9 +45,11 @@ const Candidates = () => {
     candidateId: number,
     action: "approve" | "reject"
   ) => {
-    try {
+    if (
+      confirm(`确定要${action === "approve" ? "通过" : "拒绝"}该候选人吗？`)
+    ) {
       const { code } = await Post(
-        `/api/candidates/${candidateId}/audit/${action}`
+        `/api/admin/candidates/${candidateId}/audit/${action}`
       );
       if (code === 0) {
         message.success(action === "approve" ? "审核通过成功" : "审核拒绝成功");
@@ -72,8 +57,6 @@ const Candidates = () => {
       } else {
         message.error("审核操作失败");
       }
-    } catch (error) {
-      message.error("审核操作失败");
     }
   };
 
@@ -90,18 +73,23 @@ const Candidates = () => {
     }
   };
 
-  // const getStatusText = (status: string) => {
-  //   switch (status) {
-  //     case "pending":
-  //       return "审核中";
-  //     case "approved":
-  //       return "已通过";
-  //     case "rejected":
-  //       return "未通过";
-  //     default:
-  //       return "未知";
-  //   }
-  // };
+  const visibleCandidates = candidates
+    .filter((candidate) => {
+      if (!searchKeyword) return true;
+      return (
+        candidate.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        candidate.email.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+    })
+    .filter((candidate) => {
+      if (statusFilter === "all") return true;
+      return candidate.approve_status === statusFilter;
+    });
+
+  const currentPageCandidates = visibleCandidates.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
 
   const columns: ColumnsType<ICandidateSettings> = [
     {
@@ -125,25 +113,26 @@ const Candidates = () => {
       width: 150,
       render: (url: string) => (
         <a href={url} target="_blank" rel="noopener noreferrer">
-          {url ? "查看" : "-"}
+          {url ?? "-"}
         </a>
       ),
     },
     {
-      title: "工作经验",
-      dataIndex: "work_experience",
-      width: 200,
-      render: (experience: string) => {
-        if (!experience) return "-";
-        try {
-          const parsed = JSON.parse(experience);
-          return parsed.company || experience;
-        } catch {
-          return experience.length > 30
-            ? experience.substring(0, 30) + "..."
-            : experience;
-        }
-      },
+      title: "简历详情",
+      dataIndex: "resume_path",
+      width: 150,
+      render: (_, record: ICandidateSettings) => (
+        <Button
+          type="link"
+          size="small"
+          onClick={() => {
+            setCandidate(record);
+            setCandidateDrawerOpen(true);
+          }}
+        >
+          查看
+        </Button>
+      ),
     },
     {
       title: "审核状态",
@@ -175,12 +164,6 @@ const Candidates = () => {
                 通过
               </Button>
             </div>
-          );
-        } else if (record.approve_status === "approved") {
-          return (
-            <Button type="link" size="small">
-              简历详情
-            </Button>
           );
         }
         return null;
@@ -222,18 +205,28 @@ const Candidates = () => {
           loading={loading}
           style={{ height: "100%", overflow: "auto" }}
           rowKey="id"
-          dataSource={candidates}
+          dataSource={currentPageCandidates}
           columns={columns}
           pagination={{
             pageSize: PAGE_SIZE,
             current: page,
-            total,
+            total: visibleCandidates.length,
             onChange: (page) => setPage(page),
             showSizeChanger: false,
           }}
           scroll={{ x: 1000, y: "100%" }}
         />
       </div>
+
+      <Drawer
+        open={candidateDrawerOpen}
+        onClose={() => setCandidateDrawerOpen(false)}
+        title={candidate?.name ?? ""}
+        destroyOnClose
+        width={1200}
+      >
+        {candidate && <CandidateDrawerContent candidate={candidate} />}
+      </Drawer>
     </div>
   );
 };
