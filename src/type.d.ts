@@ -472,3 +472,15 @@ interface IStaffListResponse {
   code: number;
   data: IStaffWithAccount[];
 }
+
+interface ICandidateConnection {
+  id: number;
+  source_candidate_id: number;
+  target_candidate_id: number;
+  source_status: "pending" | "accepted" | "rejected";
+  target_status: "pending" | "accepted" | "rejected";
+  reason: string;
+  interview_info: string;
+  created_at: string;
+  updated_at: string;
+}
