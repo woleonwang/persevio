@@ -172,6 +172,7 @@ export default {
     job_management: "Job Management",
     job_apply_management: "Job Apply Management",
     candidate_list: "Candidate List",
+    candidate_connection_list: "Candidate Connection List",
     company_list: "Company List",
 
     home: "Home",

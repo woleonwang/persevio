@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 
 import styles from "../style.module.less";
-import CandidateDrawerContent from "./components/CandidateDrawerContent";
+import CandidateDrawerContent from "@/components/CandidateDrawerContent";
 
 const PAGE_SIZE = 10;
 

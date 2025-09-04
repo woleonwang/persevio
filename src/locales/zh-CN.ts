@@ -165,6 +165,7 @@ export default {
     job_management: "职位管理",
     job_apply_management: "申请管理",
     candidate_list: "候选人审核",
+    candidate_connection_list: "匹配列表",
     company_list: "公司列表",
 
     home: "Home",

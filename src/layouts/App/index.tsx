@@ -144,6 +144,12 @@ const AppLayout = () => {
       requireAdmin: true,
     },
     {
+      title: t("menu.candidate_connection_list"),
+      path: "/app/admin/candidate-connections",
+      img: <FileDoneOutlined />,
+      requireAdmin: true,
+    },
+    {
       title: t("menu.company_list"),
       path: "/app/admin/companies",
       img: <FileDoneOutlined />,

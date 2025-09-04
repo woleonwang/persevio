@@ -39,6 +39,7 @@ import CandidateHome from "./pages/candidate/candidate-home";
 import AdminJobs from "./pages/admin/jobs";
 import AdminJobApplies from "./pages/admin/job-applies";
 import AdminCandidates from "./pages/admin/candidates";
+import AdminCandidateConnections from "./pages/admin/candidate-connections";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -168,9 +169,11 @@ createRoot(document.getElementById("root")!).render(
               element={<AdminJobApplies />}
             />
             {/* 管理员候选人列表：用于审核候选人 */}
+            <Route path="/app/admin/candidates" element={<AdminCandidates />} />
+            {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
             <Route
-              path="/app/admin/candidates"
-              element={<AdminCandidates />}
+              path="/app/admin/candidate-connections"
+              element={<AdminCandidateConnections />}
             />
             <Route path="/app/admin/companies" element={<AdminCompanies />} />
             {/* 候选人列表 */}
