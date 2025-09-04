@@ -164,7 +164,7 @@ export default {
     account_management: "账号管理",
     job_management: "职位管理",
     job_apply_management: "申请管理",
-    candidate_list: "管理员候选人列表",
+    candidate_list: "C端用户列表",
     candidate_connection_list: "匹配列表",
     company_list: "公司列表",
 
