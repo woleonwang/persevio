@@ -17,10 +17,11 @@ gain.connect(audioContext.destination);
 
 interface IProps {
   onClose: () => void;
+  model: "chatgpt" | "gemini";
 }
 
 const VoiceChatModal: React.FC<IProps> = (props) => {
-  const { onClose } = props;
+  const { onClose, model } = props;
   const [status, setStatus] = useState<
     "init" | "listening" | "waiting" | "speaking"
   >("init");
@@ -69,6 +70,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
 
     const { code } = await Post("/api/candidate/voice_chat/session/start", {
       voice: "shimmer",
+      model: model,
     });
     if (code === 0) {
       setStatus("listening");
@@ -171,6 +173,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     setStatus("waiting");
     const { code } = await Post("/api/candidate/voice_chat/session/audio", {
       audio_data: audioData,
+      model: model,
     });
 
     if (code === 0) {

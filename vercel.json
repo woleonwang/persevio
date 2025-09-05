@@ -21,6 +21,16 @@
       ]
     },
     {
+      "source": "/static/:path*",
+      "destination": "http://47.236.233.206:13579/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.persevio.ai"
+        }
+      ]
+    },
+    {
       "source": "/:path*",
       "destination": "/"
     }

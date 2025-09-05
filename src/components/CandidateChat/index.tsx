@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, message, Tooltip, Spin } from "antd";
+import {
+  Avatar,
+  List,
+  Input,
+  Button,
+  message,
+  Tooltip,
+  Spin,
+  Select,
+} from "antd";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -65,6 +74,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [audioHintVisible, setAudioHintVisible] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
+  const [model, setModel] = useState<"chatgpt" | "gemini">("chatgpt");
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -558,9 +568,19 @@ Shall we start now?`,
               </svg>
             }
           />
+          <Select
+            value={model}
+            onChange={(value: "chatgpt" | "gemini") => setModel(value)}
+            options={[
+              { label: "ChatGPT", value: "chatgpt" },
+              { label: "Gemini", value: "gemini" },
+            ]}
+            popupMatchSelectWidth={false}
+          />
 
           {isAudioMode && (
             <VoiceChatModal
+              model={model}
               onClose={() => {
                 setIsAudioMode(false);
                 fetchMessages();
