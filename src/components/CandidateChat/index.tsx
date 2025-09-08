@@ -64,6 +64,8 @@ const ChatTypeMappings = {
   network_profile: "CANDIDATE_NETWORK_PROFILE_CHAT",
 };
 
+const ENABLE_MODEL_SELECT = false;
+
 const CandidateChat: React.FC<IProps> = (props) => {
   const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -319,7 +321,7 @@ Shall we start now?`,
             width: 400,
           },
         }}
-        placement="right"
+        placement="top"
         title={
           "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
         }
@@ -489,6 +491,32 @@ Shall we start now?`,
           style={{ marginTop: 12 }}
         >
           {genRecordButton()}
+
+          <Button
+            type="primary"
+            onClick={() => setIsAudioMode(true)}
+            style={{
+              width: 64,
+              height: 64,
+              backgroundColor: "#f1f1f1",
+              border: "3px solid #1FAC6A",
+              color: "#1FAC6A",
+            }}
+            shape="circle"
+            icon={
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                className="icon"
+              >
+                <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
+              </svg>
+            }
+          />
+
           <Input.TextArea
             value={inputValue}
             onChange={(e) => {
@@ -522,14 +550,29 @@ Shall we start now?`,
               minRows: 2,
               maxRows: 16,
             }}
+            id="message-textarea"
           />
+
           {textInputVisible && (
             <SendOutlined
               onClick={() => submit()}
               style={{ fontSize: 24, color: "#1FAC6A" }}
             />
           )}
-          <EditOutlined
+
+          <Button
+            style={{
+              width: 64,
+              height: 64,
+              backgroundColor: "#f1f1f1",
+              border: "3px solid #1FAC6A",
+              color: "#1FAC6A",
+            }}
+            shape="circle"
+            variant="outlined"
+            color="primary"
+            iconPosition="start"
+            icon={<EditOutlined style={{ fontSize: 36 }} />}
             onClick={() => {
               if (textInputVisible) {
                 setTextInputVisible(false);
@@ -541,42 +584,19 @@ Shall we start now?`,
                 }, 400);
               }
             }}
-            style={{ fontSize: 24, color: "gray" }}
           />
-          <Button
-            type="primary"
-            onClick={() => setIsAudioMode(true)}
-            style={{
-              width: 64,
-              height: 64,
-              backgroundColor: "#f1f1f1",
-              border: "3px solid #1FAC6A",
-              color: "#1FAC6A",
-              marginLeft: 30,
-            }}
-            shape="circle"
-            icon={
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon"
-              >
-                <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
-              </svg>
-            }
-          />
-          <Select
-            value={model}
-            onChange={(value: "chatgpt" | "gemini") => setModel(value)}
-            options={[
-              { label: "ChatGPT", value: "chatgpt" },
-              { label: "Gemini", value: "gemini" },
-            ]}
-            popupMatchSelectWidth={false}
-          />
+
+          {ENABLE_MODEL_SELECT && (
+            <Select
+              value={model}
+              onChange={(value: "chatgpt" | "gemini") => setModel(value)}
+              options={[
+                { label: "ChatGPT", value: "chatgpt" },
+                { label: "Gemini", value: "gemini" },
+              ]}
+              popupMatchSelectWidth={false}
+            />
+          )}
 
           {isAudioMode && (
             <VoiceChatModal

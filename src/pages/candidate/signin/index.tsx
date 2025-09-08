@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Button, Input, message, Empty } from "antd";
+import React, { Fragment, useEffect, useState } from "react";
+import { Alert, Button, Input, message, Empty, Spin } from "antd";
 import classnames from "classnames";
+import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
+import { CheckCircleFilled, DoubleRightOutlined } from "@ant-design/icons";
+
 import { Get, Post } from "@/utils/request";
+import CandidateChat from "@/components/CandidateChat";
+import OAuth from "./components/OAuth";
+import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
 
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
-import OAuth from "./components/OAuth";
-import { useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
-
-import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
-import CandidateChat from "@/components/CandidateChat";
+import VionaAvatar from "@/assets/viona-avatar.png";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -118,89 +120,7 @@ const CandidateSignIn: React.FC = () => {
         {(() => {
           if (pageState === "signin") {
             return <OAuth />;
-          }
-
-          if (pageState === "basic") {
-            return (
-              <div className={styles.body}>
-                <BasicInfo
-                  onFinish={(params) => {
-                    setBasicInfo(params);
-                    setPageState("interests");
-                  }}
-                />
-              </div>
-            );
-          }
-
-          if (pageState === "interests") {
-            return (
-              <div className={styles.form}>
-                <div className={classnames(styles.required, styles.title)}>
-                  目前正在探索的领域，或者感兴趣的主题
-                </div>
-                <Input.TextArea
-                  placeholder={`• 我正在学习如何为AI智能体构建和扩展评估体系的最佳实践。
-• 我正在研究新一代的生息稳定币，想搞懂它们底层的运行机制和潜在风险。
-• 我最近在琢磨，要不要开一个自己的Newsletter，聊聊‘面向普通消费者的金融科技’这个话题。很想和已经‘下场’玩过的人聊聊，看看起步时会踩哪些坑。
-• AI时代什么样的人才或者能力才是有持久价值的。`}
-                  value={interests}
-                  onChange={(e) => setInterests(e.target.value)}
-                  rows={10}
-                  style={{ padding: 16 }}
-                />
-                <Button
-                  disabled={!interests}
-                  type="primary"
-                  onClick={() => setPageState("targets")}
-                  style={{ width: "100%", marginTop: 16 }}
-                  size="large"
-                >
-                  下一步
-                </Button>
-              </div>
-            );
-          }
-
-          if (pageState === "targets") {
-            return (
-              <div className={styles.form}>
-                <div className={styles.title}>
-                  想通过networking来达成什么目标？
-                </div>
-                <Input.TextArea
-                  rows={10}
-                  placeholder={`• 我正在为我的开发者工具创业公司进行种子轮融资，希望能认识在这个领域有成功投资经验的风险投资人。
-• 我最近刚搬到新加坡，希望能认识一些在fintech行业的朋友，拓展一些专业人脉。
-• 我正在为我的团队招聘一名资深全栈工程师，要求有TypeScript和AWS的实战经验。
-• 我正在为我的B2B SaaS新产品寻找3-5名种子用户。理想的用户是在50-200人规模的科技公司担任销售总监。
-• 我刚来新加坡工作，想找喜欢打网球的朋友业余一起打网球。`}
-                  value={targets}
-                  onChange={(e) => setTargets(e.target.value)}
-                  style={{ padding: 16 }}
-                />
-                <Button
-                  type="primary"
-                  onClick={() => onSubmitBasicInfo()}
-                  style={{ width: "100%", marginTop: 16 }}
-                  size="large"
-                  loading={isSubmitting}
-                >
-                  下一步
-                </Button>
-              </div>
-            );
-          }
-
-          if (pageState === "conversation") {
-            return (
-              <div className={styles.conversation}>
-                <CandidateChat chatType="network_profile" />
-              </div>
-            );
-          }
-
-          if (pageState === "approve") {
+          } else if (pageState === "approve") {
             return (
               <Empty
                 style={{ marginTop: 100 }}
@@ -211,9 +131,220 @@ const CandidateSignIn: React.FC = () => {
                 }
               />
             );
+          } else {
+            const stepConfigs = [
+              {
+                key: "basic",
+                title: "基本信息",
+              },
+              {
+                key: "interests",
+                title: "感兴趣的主题/领域",
+              },
+              {
+                key: "targets",
+                title: "链接目标",
+              },
+              {
+                key: "conversation",
+                title: "确认感兴趣的人物画像",
+              },
+            ];
+
+            const currentStepIndex = stepConfigs.findIndex(
+              (step) => step.key === pageState
+            );
+
+            return (
+              <>
+                <div className={styles.stepContainer}>
+                  {stepConfigs.map((step, index) => {
+                    const status =
+                      index === currentStepIndex
+                        ? "active"
+                        : index < currentStepIndex
+                        ? "completed"
+                        : "pending";
+                    return (
+                      <Fragment key={step.key}>
+                        {index > 0 && (
+                          <div
+                            className={classnames(
+                              styles.symbol,
+                              styles[status]
+                            )}
+                          >
+                            <DoubleRightOutlined />
+                          </div>
+                        )}
+                        <div className={styles.stepWrapper}>
+                          {status === "completed" ? (
+                            <CheckCircleFilled
+                              className={classnames(
+                                styles.index,
+                                styles[status]
+                              )}
+                            />
+                          ) : (
+                            <div
+                              className={classnames(
+                                styles.index,
+                                styles.number,
+                                styles[status]
+                              )}
+                            >
+                              {index + 1}
+                            </div>
+                          )}
+                          <div
+                            className={classnames(styles.step, styles[status])}
+                          >
+                            {step.title}
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+                {(() => {
+                  if (pageState === "basic") {
+                    return (
+                      <div className={styles.body}>
+                        <BasicInfo
+                          onFinish={(params) => {
+                            setBasicInfo(params);
+                            setPageState("interests");
+                          }}
+                        />
+                      </div>
+                    );
+                  }
+
+                  if (pageState === "interests") {
+                    return (
+                      <div className={styles.form}>
+                        <div
+                          className={classnames(styles.required, styles.title)}
+                        >
+                          目前正在探索的领域，或者感兴趣的主题
+                        </div>
+                        <div className={styles.formBg}>
+                          <div className={styles.hint}>
+                            <div>
+                              您可以添加多个感兴趣的领域，以帮助Viona了解您的需求。示例：
+                            </div>
+                            <ol>
+                              <li>
+                                我正在学习如何为AI智能体构建和扩展评估体系的最佳实践。
+                              </li>
+                              <li>
+                                我正在研究新一代的生息稳定币，想搞懂它们底层的运行机制和潜在风险。
+                              </li>
+                              <li>
+                                我最近在琢磨，要不要开一个自己的Newsletter，聊聊‘面向普通消费者的金融科技’这个话题。很想和已经‘下场’玩过的人聊聊，看看起步时会踩哪些坑。
+                              </li>
+                              <li>
+                                AI时代什么样的人才或者能力才是有持久价值的。
+                              </li>
+                            </ol>
+                          </div>
+                          <Input.TextArea
+                            value={interests}
+                            onChange={(e) => setInterests(e.target.value)}
+                            rows={10}
+                            style={{ padding: 16 }}
+                          />
+                        </div>
+                        <Button
+                          disabled={!interests}
+                          type="primary"
+                          onClick={() => setPageState("targets")}
+                          style={{ width: "100%", marginTop: 16 }}
+                          size="large"
+                        >
+                          下一步
+                        </Button>
+                      </div>
+                    );
+                  }
+
+                  if (pageState === "targets") {
+                    return (
+                      <div className={styles.form}>
+                        <div className={styles.title}>
+                          想通过networking来达成什么目标？
+                        </div>
+                        <div className={styles.formBg}>
+                          <div className={styles.hint}>
+                            <div>
+                              您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
+                            </div>
+                            <ol>
+                              <li>
+                                我正在为我的开发者工具创业公司进行种子轮融资，希望能认识在这个领域有成功投资经验的风险投资人。
+                              </li>
+                              <li>
+                                我最近刚搬到新加坡，希望能认识一些在fintech行业的朋友，拓展一些专业人脉。
+                              </li>
+                              <li>
+                                我正在为我的团队招聘一名资深全栈工程师，要求有TypeScript和AWS的实战经验。
+                              </li>
+                              <li>
+                                我正在为我的B2B
+                                SaaS新产品寻找3-5名种子用户。理想的用户是在50-200人规模的科技公司担任销售总监。
+                              </li>
+                            </ol>
+                          </div>
+                          <Input.TextArea
+                            rows={10}
+                            value={targets}
+                            onChange={(e) => setTargets(e.target.value)}
+                            style={{ padding: 16 }}
+                          />
+                        </div>
+
+                        <Button
+                          type="primary"
+                          onClick={() => onSubmitBasicInfo()}
+                          style={{ width: "100%", marginTop: 16 }}
+                          size="large"
+                          loading={isSubmitting}
+                        >
+                          下一步
+                        </Button>
+                      </div>
+                    );
+                  }
+
+                  if (pageState === "conversation") {
+                    return (
+                      <div className={styles.conversation}>
+                        <CandidateChat chatType="network_profile" />
+                      </div>
+                    );
+                  }
+                })()}
+              </>
+            );
           }
         })()}
       </div>
+      {isSubmitting && !basicInfo?.work_experience && (
+        <Spin
+          fullscreen
+          indicator={<></>}
+          tip={
+            <div className={styles.loadingTip}>
+              <img src={VionaAvatar} />
+              <div>
+                Viona 正在努力了解您的基本情况，大概需要
+                {!!basicInfo?.linkedin_profile_url ? "1~2分钟" : "30秒"}
+                。请稍后...
+              </div>
+            </div>
+          }
+        />
+      )}
     </div>
   );
 };
