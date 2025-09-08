@@ -330,20 +330,20 @@ Shall we start now?`,
         {!isRecording && !isTranscribing ? (
           <Button
             style={{
-              width: 64,
-              height: 64,
+              width: 48,
+              height: 48,
             }}
             shape="circle"
             type="primary"
             onClick={() => startTranscription()}
-            icon={<AudioOutlined style={{ fontSize: 36 }} />}
+            icon={<AudioOutlined style={{ fontSize: 24 }} />}
             iconPosition="start"
           />
         ) : (
           <Button
             style={{
-              width: 64,
-              height: 64,
+              width: 48,
+              height: 48,
               backgroundColor: "rgba(224, 46, 42, 0.1)",
               color: "rgb(224, 46, 42)",
             }}
@@ -351,7 +351,7 @@ Shall we start now?`,
             type="primary"
             disabled={isTranscribing || !isStartRecordingOutside}
             onClick={() => endTranscription()}
-            icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
+            icon={<AudioMutedOutlined style={{ fontSize: 24 }} />}
             iconPosition="start"
           />
         )}
@@ -486,27 +486,25 @@ Shall we start now?`,
       </div>
 
       <div className={styles.inputArea}>
-        <div
-          className={classnames("flex-center", "gap-12")}
-          style={{ marginTop: 12 }}
-        >
+        <div className={classnames("flex-center")} style={{ marginTop: 12 }}>
           {genRecordButton()}
 
           <Button
             type="primary"
             onClick={() => setIsAudioMode(true)}
             style={{
-              width: 64,
-              height: 64,
+              width: 48,
+              height: 48,
               backgroundColor: "#f1f1f1",
               border: "3px solid #1FAC6A",
               color: "#1FAC6A",
+              marginLeft: 12,
             }}
             shape="circle"
             icon={
               <svg
-                width="40"
-                height="40"
+                width="24"
+                height="24"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg"
@@ -527,7 +525,8 @@ Shall we start now?`,
               textInputVisible
                 ? {
                     width: 600,
-                    marginRight: "8px",
+                    marginRight: 8,
+                    marginLeft: 12,
                     resize: "none",
                     overflow: "hidden",
                   }
@@ -562,17 +561,18 @@ Shall we start now?`,
 
           <Button
             style={{
-              width: 64,
-              height: 64,
+              width: 48,
+              height: 48,
               backgroundColor: "#f1f1f1",
               border: "3px solid #1FAC6A",
               color: "#1FAC6A",
+              marginLeft: 12,
             }}
             shape="circle"
             variant="outlined"
             color="primary"
             iconPosition="start"
-            icon={<EditOutlined style={{ fontSize: 36 }} />}
+            icon={<EditOutlined style={{ fontSize: 24 }} />}
             onClick={() => {
               if (textInputVisible) {
                 setTextInputVisible(false);

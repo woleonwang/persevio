@@ -13,6 +13,7 @@ import {
   PlusOutlined,
   UploadOutlined,
   DeleteOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import React, { useReducer, useState } from "react";
 
@@ -62,6 +63,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
   const [resumeFormat, setResumeFormat] = useState<
     "linkedin" | "upload" | "form"
   >("linkedin");
+  const [isUploadingResume, setIsUploadingResume] = useState(false);
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
   return (
@@ -146,6 +148,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
               <Upload.Dragger
                 beforeUpload={() => false}
                 onChange={async (fileInfo) => {
+                  setIsUploadingResume(true);
                   const formData = new FormData();
                   formData.append("file", fileInfo.file as any);
                   const { code, data } = await PostFormData(
@@ -160,6 +163,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   } else {
                     message.error("上传失败");
                   }
+                  setIsUploadingResume(false);
                 }}
                 showUploadList={false}
                 accept=".doc,.docx,.pdf"
@@ -167,6 +171,11 @@ const BasicInfo: React.FC<IProps> = (props) => {
               >
                 {resumeFileName ? (
                   <div>{resumeFileName}</div>
+                ) : isUploadingResume ? (
+                  <div>
+                    <LoadingOutlined className={styles.uploadingIcon} />
+                    上传简历中...
+                  </div>
                 ) : (
                   <div>
                     <UploadOutlined className={styles.uploadIcon} />
