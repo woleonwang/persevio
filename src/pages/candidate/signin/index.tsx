@@ -113,6 +113,27 @@ const CandidateSignIn: React.FC = () => {
               className={styles.banner}
               onClick={() => navigate("/")}
             />
+            {pageState === "conversation" && (
+              <Button
+                type="primary"
+                onClick={async () => {
+                  if (confirm("确定要重置到基本信息页面么？")) {
+                    const { code } = await Post(
+                      "/api/candidate/network/reset_name"
+                    );
+                    if (code === 0) {
+                      message.success("重置成功");
+                      location.reload();
+                    } else {
+                      message.error("重置失败");
+                    }
+                  }
+                }}
+                style={{ position: "absolute", right: 20 }}
+              >
+                重置注册
+              </Button>
+            )}
           </div>
         </>
       )}
