@@ -272,7 +272,7 @@ const CandidateSignIn: React.FC = () => {
                           <Input.TextArea
                             value={interests}
                             onChange={(e) => setInterests(e.target.value)}
-                            rows={10}
+                            rows={8}
                             style={{ padding: 16 }}
                           />
                         </div>
@@ -317,7 +317,7 @@ const CandidateSignIn: React.FC = () => {
                             </ol>
                           </div>
                           <Input.TextArea
-                            rows={10}
+                            rows={8}
                             value={targets}
                             onChange={(e) => setTargets(e.target.value)}
                             style={{ padding: 16 }}
