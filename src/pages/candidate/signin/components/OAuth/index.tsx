@@ -2,7 +2,7 @@ import Logo from "@/assets/logo.png";
 import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import styles from "./style.module.less";
-import { useTranslation } from "react-i18next";
+import classnames from "classnames";
 
 interface IProps {
   jobId?: string;
@@ -11,27 +11,37 @@ interface IProps {
 const OAuth = (props: IProps) => {
   const { jobId } = props;
 
-  const { t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`candidate_sign.${key}`);
-
   return (
     <div className={styles.container}>
-      <div className={styles.left}>
-        <div className={styles.panel}>
-          <div className={styles.logoWrapper}>
-            <img src={Logo} style={{ width: 190 }} />
-          </div>
+      <div className={styles.body}>
+        <div className={styles.logoWrapper}>
+          <img src={Logo} style={{ width: 250 }} />
+        </div>
 
+        <div style={{ width: "50%" }}>
+          <div>
+            <div className={styles.title}>
+              <div>
+                Hi, 我是 <span className={styles.primary}>Viona</span>。
+              </div>
+              <div>
+                是一名 <span className={styles.primary}>“超级连接者”</span>。
+              </div>
+            </div>
+            <div className={styles.hint}>
+              我的工作就是把我人脉圈里像你一样优秀的人才介绍给彼此，创造互惠共赢的机会：比如融资、招聘、专家咨询，或者只是拓展一下职业人脉。
+            </div>
+          </div>
           <div
             onClick={() => {
               window.location.href = `/api/auth/google/login?role=candidate&job_id=${
                 jobId ?? ""
               }`;
             }}
-            className={styles.button}
+            className={classnames(styles.button, styles.google)}
           >
             <img src={Google} className={styles.brand} />
-            {t("connect_google")}
+            使用 Google 登录
           </div>
 
           <div
@@ -40,31 +50,10 @@ const OAuth = (props: IProps) => {
                 jobId ?? ""
               }`;
             }}
-            className={styles.button}
+            className={classnames(styles.button, styles.linkedin)}
           >
             <img src={Linkedin} className={styles.brand} />
-            {t("connect_linkedin")}
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.right}>
-        <div className={styles.textWrapper}>
-          <div className={styles.title}>
-            {t("connect_title")}
-            <span className={styles.primary}>{t("singapore")}</span>.
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_1")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_1")}</div>
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_2")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_2")}</div>
-          </div>
-          <div className={styles.itemBlock}>
-            <div className={styles.subTitle}>{t("connect_intro_title_3")}</div>
-            <div className={styles.subText}>{t("connect_intro_content_3")}</div>
+            使用 LinkedIn 登录
           </div>
         </div>
       </div>
