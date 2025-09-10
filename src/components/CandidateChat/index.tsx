@@ -34,7 +34,6 @@ import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
 import { ScaleLoader } from "react-spinners";
 import VoiceChatModal from "../VoiceChatModal";
-import { useNavigate } from "react-router";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -78,7 +77,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [audioHintVisible, setAudioHintVisible] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
   const [model, setModel] = useState<"chatgpt" | "gemini">("chatgpt");
-  const navigate = useNavigate();
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
