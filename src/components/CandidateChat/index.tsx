@@ -34,6 +34,7 @@ import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
 import { ScaleLoader } from "react-spinners";
 import VoiceChatModal from "../VoiceChatModal";
+import { useNavigate } from "react-router";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -77,7 +78,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [audioHintVisible, setAudioHintVisible] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
   const [model, setModel] = useState<"chatgpt" | "gemini">("chatgpt");
-
+  const navigate = useNavigate();
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -585,6 +586,26 @@ Shall we start now?`,
               }
             }}
           />
+
+          {chatType === "network_profile" && (
+            <Button
+              type="primary"
+              onClick={async () => {
+                if (!confirm("确定要完成对话吗？")) return;
+
+                const { code } = await Post(
+                  `/api/candidate/network/finish_profile_conversation`
+                );
+
+                if (code === 0) {
+                  navigate("/candidate/profile");
+                }
+              }}
+              style={{ marginLeft: 12 }}
+            >
+              完成对话
+            </Button>
+          )}
 
           {ENABLE_MODEL_SELECT && (
             <Select

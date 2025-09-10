@@ -92,6 +92,10 @@ const CandidateSignIn: React.FC = () => {
     setIsSubmitting(false);
   };
 
+  if (!pageState) {
+    return <></>;
+  }
+
   return (
     <div
       className={classnames(styles.container, {
