@@ -590,17 +590,7 @@ Shall we start now?`,
           {chatType === "network_profile" && (
             <Button
               type="primary"
-              onClick={async () => {
-                if (!confirm("确定要完成对话吗？")) return;
-
-                const { code } = await Post(
-                  `/api/candidate/network/finish_profile_conversation`
-                );
-
-                if (code === 0) {
-                  navigate("/candidate/profile");
-                }
-              }}
+              onClick={() => onFinish?.()}
               style={{ marginLeft: 12 }}
             >
               完成对话

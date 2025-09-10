@@ -344,7 +344,22 @@ const CandidateSignIn: React.FC = () => {
                   if (pageState === "conversation") {
                     return (
                       <div className={styles.conversation}>
-                        <CandidateChat chatType="network_profile" />
+                        <CandidateChat
+                          chatType="network_profile"
+                          onFinish={async () => {
+                            if (!confirm("确定要完成对话吗？")) return;
+
+                            const { code } = await Post(
+                              `/api/candidate/network/finish_profile_conversation`
+                            );
+
+                            if (code === 0) {
+                              setPageState("approve");
+                            } else {
+                              message.error("完成对话失败");
+                            }
+                          }}
+                        />
                       </div>
                     );
                   }
