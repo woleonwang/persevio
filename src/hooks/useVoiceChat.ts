@@ -121,7 +121,7 @@ const useVoiceChat = ({
             silenceTimeoutRef.current = null;
             isRecordingRef.current = false;
             mediaRecorderRef.current?.stop();
-          }, 2000);
+          }, 4000);
         }
       } else {
         if (!isRecordingRef.current) {
