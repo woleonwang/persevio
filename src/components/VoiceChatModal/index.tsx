@@ -69,7 +69,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
     isInitintgConnectionRef.current = true;
 
     const { code } = await Post("/api/candidate/voice_chat/session/start", {
-      voice: "shimmer",
+      voice: "marin",
       model: model,
     });
     if (code === 0) {
