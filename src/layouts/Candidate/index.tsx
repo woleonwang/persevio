@@ -68,6 +68,11 @@ const CandidateLayout = () => {
       path: "/candidate/job-applies",
       img: <ProfileOutlined />,
     },
+    {
+      title: t("menu.connections"),
+      path: "/candidate/connections",
+      img: <ProfileOutlined />,
+    },
   ];
 
   const FOOTER = [
@@ -84,7 +89,9 @@ const CandidateLayout = () => {
     if (code === 0) {
       setInited(true);
       i18n.changeLanguage(data.candidate.lang ?? "zh-CN");
-      if (!(data.candidate as ICandidateSettings).network_profile_finished_at) {
+      if (
+        (data.candidate as ICandidateSettings).approve_status !== "approved"
+      ) {
         navigate("/signin-candidate");
       }
     } else {

@@ -1,0 +1,51 @@
+@primary-color: #1fac6a;
+@text-color: #333;
+@text-color-secondary: #666;
+@border-color: #e6e6e6;
+
+.container {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  padding: 32px 20px;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(234, 234, 234, 1);
+  flex: none;
+}
+
+.navBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+  margin-top: 20px;
+}
+
+.tabs {
+  flex: 1;
+}
+
+.searchInput {
+  min-width: 200px;
+}
+
+.content {
+  flex: auto;
+  padding: 20px;
+  overflow: auto;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 16px;
+  color: @text-color-secondary;
+}

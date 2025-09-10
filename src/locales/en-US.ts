@@ -180,6 +180,7 @@ export default {
     aspirations: "Career Aspiration",
     deep_aspirations: "Deep Aspirations",
     job_applies: "Your jobs",
+    connections: "Matches/Meetings",
   },
 
   job: {

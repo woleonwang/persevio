@@ -57,6 +57,7 @@ import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
 import SignIn from "./pages/signin";
+import CandidateConnections from "./pages/candidate/connections";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -221,6 +222,10 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/candidate/voice-chat/:model"
               element={<VoiceChat />}
+            />
+            <Route
+              path="/candidate/connections"
+              element={<CandidateConnections />}
             />
           </Route>
           <Route path="/signin-candidate" element={<SignInCandidate />} />

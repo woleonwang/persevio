@@ -173,6 +173,7 @@ export default {
     aspirations: "职业规划",
     deep_aspirations: "深度职业规划",
     job_applies: "职位申请",
+    connections: "匹配/会面",
   },
 
   job: {
