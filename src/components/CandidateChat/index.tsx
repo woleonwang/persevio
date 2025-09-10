@@ -64,7 +64,7 @@ const ChatTypeMappings = {
   network_profile: "CANDIDATE_NETWORK_PROFILE_CHAT",
 };
 
-const ENABLE_MODEL_SELECT = false;
+const ENABLE_MODEL_SELECT = true;
 
 const CandidateChat: React.FC<IProps> = (props) => {
   const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;

@@ -55,19 +55,19 @@ const CandidateLayout = () => {
     },
     {
       title: t("menu.profile"),
-      path: "/candidate/profile",
+      path: "/candidate/network-profile",
       img: <ProfileOutlined />,
     },
-    {
-      title: t("menu.aspirations"),
-      path: "/candidate/aspirations",
-      img: <ProfileOutlined />,
-    },
-    {
-      title: t("menu.job_applies"),
-      path: "/candidate/job-applies",
-      img: <ProfileOutlined />,
-    },
+    // {
+    //   title: t("menu.aspirations"),
+    //   path: "/candidate/aspirations",
+    //   img: <ProfileOutlined />,
+    // },
+    // {
+    //   title: t("menu.job_applies"),
+    //   path: "/candidate/job-applies",
+    //   img: <ProfileOutlined />,
+    // },
     {
       title: t("menu.connections"),
       path: "/candidate/connections",

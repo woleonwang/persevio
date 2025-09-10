@@ -58,6 +58,7 @@ import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
 import SignIn from "./pages/signin";
 import CandidateConnections from "./pages/candidate/connections";
+import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -186,6 +187,11 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/candidate/home" element={<CandidateHome />} />
             {/* 候选人简历 */}
             <Route path="/candidate/profile" element={<CandidateResume />} />
+            {/* connector 简历 */}
+            <Route
+              path="/candidate/network-profile"
+              element={<NetworkProfile />}
+            />
             {/* 候选人职业规划 */}
             <Route
               path="/candidate/aspirations"

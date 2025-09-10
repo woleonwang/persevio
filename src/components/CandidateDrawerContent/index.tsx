@@ -169,7 +169,7 @@ const CandidateDrawerContent = (props: { candidate: ICandidateSettings }) => {
         </div>
         <div className={styles.right}>
           <div className={styles.title}>连接需求</div>
-          <MarkdownContainer content={candidate.net_working_requests} />
+          <MarkdownContainer content={candidate.targets} />
         </div>
       </div>
     </div>

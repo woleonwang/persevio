@@ -157,11 +157,14 @@ interface ICandidateSettings {
   linkedin_profile_url: string;
   resume_path: string;
   work_experience: string;
-  net_working_requests: string;
   interests: string;
+  targets: string;
   approve_status: "pending" | "approved" | "rejected" | "init";
   lang: string;
   resume_content: string;
+
+  profile_doc: string;
+  goals_doc: string;
 
   network_profile_finished_at?: string;
 }
