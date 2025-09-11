@@ -40,7 +40,8 @@ export type TExtraTagName =
   | "post-job-btn"
   | "interview-feedback-confirm-btn"
   //candiate
-  | "interview-done";
+  | "interview-done"
+  | "network-profile-done";
 
 export type TMessageFromApi = {
   id: number;

@@ -13,6 +13,7 @@ import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import VionaAvatar from "@/assets/viona-avatar.png";
+import { checkIsAdmin } from "@/utils";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -86,11 +87,15 @@ const CandidateSignIn: React.FC = () => {
     if (code === 0) {
       message.success("保存成功");
       setPageState("conversation");
+    } else if (code === 10005) {
+      message.error("大模型调用失败，请重新提交");
     } else {
       message.error("保存失败");
     }
     setIsSubmitting(false);
   };
+
+  const isAdmin = checkIsAdmin(candidate);
 
   if (!pageState) {
     return <></>;
@@ -117,7 +122,7 @@ const CandidateSignIn: React.FC = () => {
               className={styles.banner}
               onClick={() => navigate("/")}
             />
-            {pageState === "conversation" && (
+            {pageState === "conversation" && isAdmin && (
               <Button
                 type="primary"
                 onClick={async () => {
@@ -168,7 +173,7 @@ const CandidateSignIn: React.FC = () => {
               },
               {
                 key: "targets",
-                title: "链接目标",
+                title: "人脉拓展目标",
               },
               {
                 key: "conversation",
@@ -252,6 +257,15 @@ const CandidateSignIn: React.FC = () => {
                           className={classnames(styles.required, styles.title)}
                         >
                           目前正在探索的领域，或者感兴趣的主题
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 14,
+                            color: "#666",
+                            marginBottom: 8,
+                          }}
+                        >
+                          为了更好地为您推荐志同道合的伙伴，或是能助您深入探索的引路人，请告诉我您近期感兴趣或正在探索的任何领域。这不必是您的本职工作，任何您真诚感兴趣的方向都可以告诉我。
                         </div>
                         <div className={styles.formBg}>
                           <div className={styles.hint}>
@@ -359,6 +373,7 @@ const CandidateSignIn: React.FC = () => {
                               message.error("完成对话失败");
                             }
                           }}
+                          candidate={candidate}
                         />
                       </div>
                     );

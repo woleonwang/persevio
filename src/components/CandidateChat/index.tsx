@@ -34,6 +34,7 @@ import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import ReactDOM from "react-dom";
 import { ScaleLoader } from "react-spinners";
 import VoiceChatModal from "../VoiceChatModal";
+import { checkIsAdmin } from "@/utils";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -54,6 +55,7 @@ interface IProps {
   jobApplyId?: number;
   onFinish?: () => void;
   workExperienceCompanyName?: string;
+  candidate?: ICandidateSettings;
 }
 
 const ChatTypeMappings = {
@@ -64,10 +66,14 @@ const ChatTypeMappings = {
   network_profile: "CANDIDATE_NETWORK_PROFILE_CHAT",
 };
 
-const ENABLE_MODEL_SELECT = true;
-
 const CandidateChat: React.FC<IProps> = (props) => {
-  const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;
+  const {
+    chatType,
+    onFinish,
+    jobApplyId,
+    workExperienceCompanyName,
+    candidate,
+  } = props;
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -140,6 +146,8 @@ const CandidateChat: React.FC<IProps> = (props) => {
     }
   }, [messages]);
 
+  const isAdmin = checkIsAdmin(candidate);
+
   const supportTags: TSupportTag[] = [
     {
       key: "interview-done",
@@ -152,6 +160,12 @@ const CandidateChat: React.FC<IProps> = (props) => {
         );
       },
       autoTrigger: true,
+    },
+
+    {
+      key: "network-profile-done",
+      title: "完成对话",
+      handler: () => onFinish?.(),
     },
   ];
 
@@ -488,31 +502,33 @@ Shall we start now?`,
         <div className={classnames("flex-center")} style={{ marginTop: 12 }}>
           {genRecordButton()}
 
-          <Button
-            type="primary"
-            onClick={() => setIsAudioMode(true)}
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#f1f1f1",
-              border: "3px solid #1FAC6A",
-              color: "#1FAC6A",
-              marginLeft: 12,
-            }}
-            shape="circle"
-            icon={
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon"
-              >
-                <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
-              </svg>
-            }
-          />
+          {isAdmin && (
+            <Button
+              type="primary"
+              onClick={() => setIsAudioMode(true)}
+              style={{
+                width: 48,
+                height: 48,
+                backgroundColor: "#f1f1f1",
+                border: "3px solid #1FAC6A",
+                color: "#1FAC6A",
+                marginLeft: 12,
+              }}
+              shape="circle"
+              icon={
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="icon"
+                >
+                  <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
+                </svg>
+              }
+            />
+          )}
 
           <Input.TextArea
             value={inputValue}
@@ -585,7 +601,7 @@ Shall we start now?`,
             }}
           />
 
-          {chatType === "network_profile" && (
+          {isAdmin && chatType === "network_profile" && (
             <Button
               type="primary"
               onClick={() => onFinish?.()}
@@ -595,7 +611,7 @@ Shall we start now?`,
             </Button>
           )}
 
-          {ENABLE_MODEL_SELECT && (
+          {isAdmin && (
             <Select
               value={model}
               onChange={(value: "chatgpt" | "gemini") => setModel(value)}

@@ -75,3 +75,14 @@ export const backOrDirect = (navigate: any, path: string) => {
     navigate(path);
   }
 };
+
+export const checkIsAdmin = (candidate?: ICandidateSettings) => {
+  return (
+    candidate &&
+    [
+      "marvinwang001@gmail.com",
+      "laihuan15620@gmail.com",
+      "jackytgx@gmail.com",
+    ].includes(candidate.email)
+  );
+};
