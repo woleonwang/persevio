@@ -163,7 +163,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "network-profile-done",
+      key: "conversation-done",
       title: "完成对话",
       handler: () => onFinish?.(),
     },
