@@ -114,7 +114,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
     fetchMessages();
 
     setTimeout(() => setAudioHintVisible(true), 300);
-    setTimeout(() => setAudioHintVisible(false), 5000);
   }, []);
 
   useEffect(() => {
@@ -348,7 +347,10 @@ Shall we start now?`,
             }}
             shape="circle"
             type="primary"
-            onClick={() => startTranscription()}
+            onClick={() => {
+              startTranscription();
+              setAudioHintVisible(false);
+            }}
             icon={<AudioOutlined style={{ fontSize: 24 }} />}
             iconPosition="start"
           />
@@ -593,6 +595,7 @@ Shall we start now?`,
                 setTextInputVisible(false);
                 setInputPlaceholder("");
               } else {
+                setAudioHintVisible(false);
                 setTextInputVisible(true);
                 setTimeout(() => {
                   setInputPlaceholder(t("reply_viona_directly_or_edit"));

@@ -4,7 +4,6 @@ import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Button } from "antd";
-import { Dropdown } from "antd";
 
 interface IProps {
   children?: React.ReactNode;
@@ -46,7 +45,7 @@ const HomeHeader = (props: IProps) => {
             {originalT("jobs")}
           </div>
         </div>
-        <Dropdown
+        {/* <Dropdown
           menu={{
             items: [
               {
@@ -63,12 +62,16 @@ const HomeHeader = (props: IProps) => {
           }}
           placement="bottomRight"
           trigger={["hover"]}
+        > */}
+        <Button
+          type="primary"
+          className={styles.joinBtn}
+          onClick={() => navigate("/signin-candidate")}
         >
-          <Button type="primary" className={styles.joinBtn}>
-            <span>登录/注册</span>
-            <span>→</span>
-          </Button>
-        </Dropdown>
+          <span>登录/注册</span>
+          <span>→</span>
+        </Button>
+        {/* </Dropdown> */}
       </div>
 
       {children}
