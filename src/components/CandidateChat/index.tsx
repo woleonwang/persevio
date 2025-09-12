@@ -82,7 +82,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [audioHintVisible, setAudioHintVisible] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
-  const [model, setModel] = useState<"chatgpt" | "gemini">("chatgpt");
+  const [model, setModel] = useState<"qwen" | "chatgpt" | "gemini">("qwen");
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -617,8 +617,11 @@ Shall we start now?`,
           {isAdmin && (
             <Select
               value={model}
-              onChange={(value: "chatgpt" | "gemini") => setModel(value)}
+              onChange={(value: "qwen" | "chatgpt" | "gemini") =>
+                setModel(value)
+              }
               options={[
+                { label: "Qwen", value: "qwen" },
                 { label: "ChatGPT", value: "chatgpt" },
                 { label: "Gemini", value: "gemini" },
               ]}

@@ -3,7 +3,7 @@ import { Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
-import { Empty, message, Tabs, Upload } from "antd";
+import { Empty, message, Tabs, Upload, Input, Button } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
@@ -11,6 +11,10 @@ type TTabKey = "profile" | "goals";
 const NetworkProfile = () => {
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [status, setStatus] = useState<TTabKey>("profile");
+  const [editInterests, setEditInterests] = useState(false);
+  const [editGoals, setEditGoals] = useState(false);
+  const [interests, setInterests] = useState("");
+  const [goals, setGoals] = useState("");
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
@@ -23,6 +27,8 @@ const NetworkProfile = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setCandidate(data.candidate);
+      setInterests(data.candidate.interests);
+      setGoals(data.candidate.targets);
     }
   };
 
@@ -124,18 +130,56 @@ const NetworkProfile = () => {
               <div className={styles.title}>兴趣意向</div>
               <div className={styles.subTitle}>
                 目前正在探索的领域，或者感兴趣的主题？
-                <EditOutlined style={{ marginLeft: 10 }} />
+                {!editInterests && (
+                  <EditOutlined
+                    style={{ marginLeft: 10 }}
+                    onClick={() => setEditInterests(!editInterests)}
+                  />
+                )}
               </div>
-              <div>{candidate.interests}</div>
+              {editInterests ? (
+                <>
+                  <Input.TextArea
+                    value={interests}
+                    onChange={(e) => setInterests(e.target.value)}
+                    rows={8}
+                  />
+                  <Button
+                    type="primary"
+                    onClick={() => setEditInterests(false)}
+                  >
+                    保存
+                  </Button>
+                </>
+              ) : (
+                <div className={styles.content}>{interests}</div>
+              )}
 
               <div className={styles.subTitle}>
                 想通过networking来解决什么问题？{" "}
-                <EditOutlined style={{ marginLeft: 10 }} />
+                {!editGoals && (
+                  <EditOutlined
+                    style={{ marginLeft: 10 }}
+                    onClick={() => setEditGoals(!editGoals)}
+                  />
+                )}
               </div>
-              <div>{candidate.targets}</div>
+              {editGoals ? (
+                <Input.TextArea
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  rows={8}
+                />
+              ) : (
+                <div className={styles.content}>{goals}</div>
+              )}
             </div>
-            <div className={styles.resumeWrapper}>
-              <MarkdownContainer content={candidate.goals_doc} />
+
+            <div style={{ marginTop: 20 }}>
+              <div className={styles.title}>具体感兴趣的人物画像</div>
+              <div className={styles.resumeWrapper}>
+                <MarkdownContainer content={candidate.goals_doc} />
+              </div>
             </div>
           </div>
         ) : (
