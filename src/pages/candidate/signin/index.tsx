@@ -14,6 +14,7 @@ import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import { checkIsAdmin } from "@/utils";
+import Approve from "./components/Approve";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -107,14 +108,14 @@ const CandidateSignIn: React.FC = () => {
         [styles.mobile]: pageState === "signin",
       })}
     >
-      <Alert
+      {/* <Alert
         message={"可以在PC端进行下一步操作，体验更加流畅的职位申请流程。"}
         type="warning"
         showIcon
         closable
         className={styles.mobileVisible}
-      />
-      {pageState !== "signin" && (
+      /> */}
+      {pageState !== "signin" && pageState !== "approve" && (
         <>
           <div className={styles.header}>
             <img
@@ -151,16 +152,7 @@ const CandidateSignIn: React.FC = () => {
           if (pageState === "signin") {
             return <OAuth />;
           } else if (pageState === "approve") {
-            return (
-              <Empty
-                style={{ marginTop: 100 }}
-                description={
-                  candidate?.approve_status === "rejected"
-                    ? "您的申请已拒绝"
-                    : "Viona正在帮您做匹配的准备，请耐心等待"
-                }
-              />
-            );
+            return <Approve status={candidate?.approve_status ?? ""} />;
           } else {
             const stepConfigs = [
               {

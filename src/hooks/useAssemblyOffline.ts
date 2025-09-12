@@ -5,9 +5,11 @@ import { message } from "antd";
 const useAssemblyOffline = ({
   onFinish,
   disabled,
+  onStartTranscription,
 }: {
   onFinish: (text: string) => void;
   disabled?: boolean;
+  onStartTranscription?: () => void;
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -130,6 +132,7 @@ const useAssemblyOffline = ({
     await initConnection();
     audioChunksRef.current = [];
     mediaRecorderRef.current?.start();
+    onStartTranscription?.();
   };
 
   const endTranscription = async () => {
