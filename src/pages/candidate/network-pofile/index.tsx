@@ -3,18 +3,15 @@ import { Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
-import { Empty, message, Tabs, Upload, Input, Button } from "antd";
+import { Empty, message, Tabs, Upload } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
+import EditableText from "./components/EditableText";
 
 type TTabKey = "profile" | "goals";
 const NetworkProfile = () => {
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [status, setStatus] = useState<TTabKey>("profile");
-  const [editInterests, setEditInterests] = useState(false);
-  const [editGoals, setEditGoals] = useState(false);
-  const [interests, setInterests] = useState("");
-  const [goals, setGoals] = useState("");
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
@@ -27,8 +24,20 @@ const NetworkProfile = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setCandidate(data.candidate);
-      setInterests(data.candidate.interests);
-      setGoals(data.candidate.targets);
+    }
+  };
+
+  const updateProfile = async (
+    values: Partial<Record<"interests" | "targets" | "avatar", string>>
+  ) => {
+    const { code } = await Post("/api/candidate/network/profile", values);
+    if (code === 0) {
+      fetchCandidate();
+      message.success("更新成功");
+      return true;
+    } else {
+      message.error("更新失败");
+      return false;
     }
   };
 
@@ -70,17 +79,9 @@ const NetworkProfile = () => {
                   }}
                   onChange={async (info) => {
                     if (info.file.status === "done") {
-                      const { code } = await Post(
-                        "/api/candidate/network/profile",
-                        {
-                          avatar: info.file.response.data.avatar,
-                        }
-                      );
-                      if (code === 0) {
-                        fetchCandidate();
-                      } else {
-                        message.error("上传失败");
-                      }
+                      await updateProfile({
+                        avatar: info.file.response.data.avatar,
+                      });
                     } else if (info.file.status === "error") {
                       message.error("上传失败");
                     }
@@ -128,51 +129,17 @@ const NetworkProfile = () => {
           <div style={{ margin: 20, overflow: "auto" }}>
             <div>
               <div className={styles.title}>兴趣意向</div>
-              <div className={styles.subTitle}>
-                目前正在探索的领域，或者感兴趣的主题？
-                {!editInterests && (
-                  <EditOutlined
-                    style={{ marginLeft: 10 }}
-                    onClick={() => setEditInterests(!editInterests)}
-                  />
-                )}
-              </div>
-              {editInterests ? (
-                <>
-                  <Input.TextArea
-                    value={interests}
-                    onChange={(e) => setInterests(e.target.value)}
-                    rows={8}
-                  />
-                  <Button
-                    type="primary"
-                    onClick={() => setEditInterests(false)}
-                  >
-                    保存
-                  </Button>
-                </>
-              ) : (
-                <div className={styles.content}>{interests}</div>
-              )}
+              <EditableText
+                title="目前正在探索的领域，或者感兴趣的主题？"
+                value={candidate.interests}
+                onChange={(doc) => updateProfile({ interests: doc })}
+              />
 
-              <div className={styles.subTitle}>
-                想通过networking来解决什么问题？{" "}
-                {!editGoals && (
-                  <EditOutlined
-                    style={{ marginLeft: 10 }}
-                    onClick={() => setEditGoals(!editGoals)}
-                  />
-                )}
-              </div>
-              {editGoals ? (
-                <Input.TextArea
-                  value={goals}
-                  onChange={(e) => setGoals(e.target.value)}
-                  rows={8}
-                />
-              ) : (
-                <div className={styles.content}>{goals}</div>
-              )}
+              <EditableText
+                title="想通过networking来解决什么问题"
+                value={candidate.targets}
+                onChange={(doc) => updateProfile({ targets: doc })}
+              />
             </div>
 
             <div style={{ marginTop: 20 }}>

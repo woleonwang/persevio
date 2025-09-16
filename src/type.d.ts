@@ -487,3 +487,13 @@ interface ICandidateConnection {
   created_at: string;
   updated_at: string;
 }
+
+interface ICandidateTask {
+  id: number;
+  candidate_id: number;
+  task_type: "connection_approved";
+  task_params: string;
+  finished_at?: string;
+  created_at: string;
+  updated_at: string;
+}

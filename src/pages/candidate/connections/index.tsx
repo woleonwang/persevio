@@ -32,7 +32,7 @@ const CandidateConnections = () => {
     setLoading(true);
     const response = await Get<{
       candidate_connections: TCandidateConnectionForCandidate[];
-    }>("/api/candidate/candidate_connections");
+    }>("/api/candidate/network/candidate_connections");
     if (response.code === 0) {
       setConnections(response.data.candidate_connections);
     }
