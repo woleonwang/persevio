@@ -1,0 +1,38 @@
+@primary-color: #1fac6a;
+@error-color: #ff4d4f;
+
+.container {
+  flex: auto;
+  display: flex;
+  width: 100%;
+  overflow: auto;
+}
+
+.body {
+  width: 1300px;
+  background-image: url("/banner-bg.png");
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: 50px auto;
+}
+
+.logoWrapper {
+  padding-bottom: 32px;
+  padding-left: 60px;
+}
+
+.textWrapper {
+  width: 390px;
+  padding: 20px 60px;
+  border-radius: 80px;
+  border: 1px solid @primary-color;
+  color: @primary-color;
+  background-color: #f6ffed; // 更浅的绿色背景
+
+  &.rejected {
+    border: 1px solid @error-color;
+    color: @error-color;
+    background-color: #fff1f0;
+  }
+}

@@ -3,7 +3,7 @@ import logo from "../../assets/logo.png";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Button } from "antd";
+import { Button, Dropdown } from "antd";
 
 interface IProps {
   children?: React.ReactNode;
@@ -45,7 +45,7 @@ const HomeHeader = (props: IProps) => {
             {originalT("jobs")}
           </div>
         </div>
-        {/* <Dropdown
+        <Dropdown
           menu={{
             items: [
               {
@@ -55,23 +55,19 @@ const HomeHeader = (props: IProps) => {
               },
               {
                 key: "jobseeker",
-                label: "我要找工作",
+                label: "我要找人",
                 onClick: () => navigate("/signin-candidate"),
               },
             ],
           }}
           placement="bottomRight"
           trigger={["hover"]}
-        > */}
-        <Button
-          type="primary"
-          className={styles.joinBtn}
-          onClick={() => navigate("/signin-candidate")}
         >
-          <span>登录/注册</span>
-          <span>→</span>
-        </Button>
-        {/* </Dropdown> */}
+          <Button type="primary" className={styles.joinBtn}>
+            <span>登录/注册</span>
+            <span>→</span>
+          </Button>
+        </Dropdown>
       </div>
 
       {children}

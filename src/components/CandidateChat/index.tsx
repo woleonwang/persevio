@@ -107,6 +107,9 @@ const CandidateChat: React.FC<IProps> = (props) => {
       sendMessage(result);
     },
     disabled: isLoading,
+    onStartTranscription: () => {
+      setAudioHintVisible(false);
+    },
   });
 
   useEffect(() => {
@@ -347,10 +350,7 @@ Shall we start now?`,
             }}
             shape="circle"
             type="primary"
-            onClick={() => {
-              startTranscription();
-              setAudioHintVisible(false);
-            }}
+            onClick={() => startTranscription()}
             icon={<AudioOutlined style={{ fontSize: 24 }} />}
             iconPosition="start"
           />
