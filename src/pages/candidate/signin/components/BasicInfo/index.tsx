@@ -20,12 +20,13 @@ import React, { useReducer, useState } from "react";
 import styles from "./style.module.less";
 import { PostFormData } from "@/utils/request";
 import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 export interface TWorkExperience {
   company_name: string;
   position: string;
-  work_period: [Dayjs, Dayjs];
   work_period_start: Dayjs;
+  work_period_end?: Dayjs;
   is_current: boolean;
   description: string;
 }
@@ -193,7 +194,8 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   {
                     company_name: "",
                     position: "",
-                    work_period: undefined,
+                    work_period_start: undefined,
+                    work_period_end: undefined,
                     is_current: false,
                     description: "",
                   },
@@ -258,45 +260,96 @@ const BasicInfo: React.FC<IProps> = (props) => {
                               alignItems: "flex-end",
                             }}
                           >
-                            {isCurrent ? (
-                              <Form.Item
-                                {...restField}
-                                name={[name, "work_period_start"]}
-                                label="在职时间"
-                                rules={[
-                                  { required: true, message: "请选择开始时间" },
-                                ]}
-                                style={{ flex: "auto" }}
-                                key={`${name}-work_period_start`}
-                              >
-                                <DatePicker
-                                  style={{ width: "100%" }}
-                                  picker="month"
-                                />
-                              </Form.Item>
-                            ) : (
-                              <Form.Item
-                                {...restField}
-                                name={[name, "work_period"]}
-                                label="在职时间"
-                                rules={[
-                                  { required: true, message: "请选择在职时间" },
-                                ]}
-                                style={{ flex: "auto" }}
-                                key={`${name}-work_period`}
-                              >
-                                <DatePicker.RangePicker
-                                  style={{ width: "100%" }}
-                                  picker="month"
-                                />
-                              </Form.Item>
-                            )}
+                            <Form.Item
+                              {...restField}
+                              name={[name, "work_period_start"]}
+                              label="在职时间"
+                              rules={[
+                                { required: true, message: "请选择开始时间" },
+                              ]}
+                              style={{ flex: "1" }}
+                            >
+                              <DatePicker
+                                style={{ width: "100%" }}
+                                picker="month"
+                                disabledDate={(current) => {
+                                  if (current && current > dayjs()) {
+                                    return true;
+                                  }
+                                  const endDate = form.getFieldValue([
+                                    "work_experience",
+                                    name,
+                                    "work_period_end",
+                                  ]);
+                                  if (endDate && current && current > endDate) {
+                                    return true;
+                                  }
+                                  return false;
+                                }}
+                                placeholder="开始时间"
+                              />
+                            </Form.Item>
+                            <span>-</span>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "work_period_end"]}
+                              label={" "}
+                              rules={[
+                                {
+                                  validator: (_, value) => {
+                                    if (!isCurrent && !value) {
+                                      return Promise.reject(
+                                        new Error("请选择结束时间")
+                                      );
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                              ]}
+                              style={{ flex: "1" }}
+                            >
+                              <DatePicker
+                                style={{ width: "100%" }}
+                                picker="month"
+                                disabledDate={(current) => {
+                                  if (current && current > dayjs()) {
+                                    return true;
+                                  }
+                                  const startDate = form.getFieldValue([
+                                    "work_experience",
+                                    name,
+                                    "work_period_start",
+                                  ]);
+                                  if (startDate && current && current < startDate) {
+                                    return true;
+                                  }
+                                  return false;
+                                }}
+                                placeholder="结束时间"
+                                disabled={isCurrent}
+                              />
+                            </Form.Item>
                             <Form.Item
                               {...restField}
                               name={[name, "is_current"]}
                               valuePropName="checked"
+                              style={{ marginBottom: 0 }}
                             >
-                              <Checkbox onChange={() => forceUpdate()}>
+                              <Checkbox
+                                onChange={(checked) => {
+                                  if (checked) {
+                                    form.setFieldValue(
+                                      [
+                                        "work_experience",
+                                        name,
+                                        "work_period_end",
+                                      ],
+                                      undefined
+                                    );
+                                  }
+                                  forceUpdate();
+                                }}
+                              >
                                 至今
                               </Checkbox>
                             </Form.Item>
@@ -323,7 +376,8 @@ const BasicInfo: React.FC<IProps> = (props) => {
                         add({
                           company_name: "",
                           position: "",
-                          work_period: undefined,
+                          work_period_start: undefined,
+                          work_period_end: undefined,
                           is_current: false,
                           description: "",
                         })
@@ -356,16 +410,14 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   resume_path: resumeFormat === "upload" ? resumePath : "",
                   work_experience:
                     resumeFormat === "form"
-                      ? work_experience.map((exp: TWorkExperience) => ({
+                      ? work_experience.map((exp: any) => ({
                           company_name: exp.company_name,
                           position: exp.position,
-                          start_date: (exp.is_current
-                            ? exp.work_period_start
-                            : exp.work_period[0]
-                          ).format("YYYY-MM-DD"),
+                          start_date:
+                            exp.work_period_start.format("YYYY-MM-DD"),
                           end_date:
-                            !exp.is_current && exp.work_period[1]
-                              ? exp.work_period[1].format("YYYY-MM-DD")
+                            !exp.is_current && exp.work_period_end
+                              ? exp.work_period_end.format("YYYY-MM-DD")
                               : undefined,
                           is_current: exp.is_current,
                           description: exp.description,

@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { ConfigProvider } from "antd";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import dayjs from "dayjs";
+
+import "dayjs/locale/zh-cn";
 
 import "./index.css";
 import App from "./layouts/App";
@@ -72,6 +75,8 @@ i18n.use(initReactI18next).init({
   lng: "en-US", // 设置初始语言为英文
   fallbackLng: "en-US",
 });
+
+dayjs.locale("zh-cn");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
