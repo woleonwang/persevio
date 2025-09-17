@@ -58,25 +58,22 @@ export const getFinalStatus = (
     return "stored";
   }
 
-  if (
-    status === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED ||
-    targetStatus === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED
-  ) {
+  if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED) {
     return "rejected";
   }
 
-  if (
-    status === CANDIDATE_CONNECTION_APPROVE_STATUS_APPROVED &&
-    targetStatus === CANDIDATE_CONNECTION_APPROVE_STATUS_APPROVED
-  ) {
-    return "approved";
+  if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_PENDING) {
+    return "pending";
   }
 
-  if (
-    status === CANDIDATE_CONNECTION_APPROVE_STATUS_PENDING &&
-    targetStatus !== CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED
-  ) {
-    return "pending";
+  if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_APPROVED) {
+    if (targetStatus === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED) {
+      return "rejected";
+    } else if (targetStatus === CANDIDATE_CONNECTION_APPROVE_STATUS_APPROVED) {
+      return "approved";
+    } else {
+      return "matching";
+    }
   }
 
   return "matching";
