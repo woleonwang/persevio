@@ -34,7 +34,7 @@ const CandidateConnections = () => {
       candidate_connections: TCandidateConnectionForCandidate[];
     }>("/api/candidate/network/candidate_connections");
     if (response.code === 0) {
-      setConnections(response.data.candidate_connections);
+      setConnections(response.data.candidate_connections ?? []);
     }
     setLoading(false);
   };
