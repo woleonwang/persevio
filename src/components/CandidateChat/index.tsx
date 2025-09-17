@@ -441,7 +441,11 @@ Shall we start now?`,
                           <Button
                             shape="round"
                             onClick={() => {
-                              if (confirm("确定要删除这条消息吗？")) {
+                              if (
+                                confirm(
+                                  "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。"
+                                )
+                              ) {
                                 deleteMessage(parseInt(item.id));
                               }
                             }}

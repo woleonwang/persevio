@@ -115,284 +115,319 @@ const BasicInfo: React.FC<IProps> = (props) => {
             </Upload>
           </Form.Item>
 
-          <Radio.Group
-            value={resumeFormat}
-            onChange={(e) => setResumeFormat(e.target.value)}
-            style={{ marginBottom: 16 }}
-          >
-            <Radio value="linkedin">LinkedIn Profile</Radio>
-            <Radio value="upload">上传简历/个人资料</Radio>
-            <Radio value="form">简要概述工作内容</Radio>
-          </Radio.Group>
-
-          {resumeFormat === "linkedin" && (
-            <Form.Item name="linkedin_profile_url" rules={[{ required: true }]}>
-              <Input placeholder="例如: https://www.linkedin.com/in/tiangengxinjacky" />
-            </Form.Item>
-          )}
-          {resumeFormat === "upload" && (
-            <Form.Item
-              name="resume_path"
-              rules={[
-                {
-                  validator: () => {
-                    console.log("resume path:", resumePath);
-                    if (!resumePath) {
-                      return Promise.reject(new Error("请上传简历/个人资料"));
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
+          <Form.Item label="个人信息" required>
+            <Radio.Group
+              value={resumeFormat}
+              onChange={(e) => setResumeFormat(e.target.value)}
+              style={{ marginBottom: 16 }}
             >
-              <div></div>
-              <Upload.Dragger
-                beforeUpload={() => false}
-                onChange={async (fileInfo) => {
-                  setIsUploadingResume(true);
-                  const formData = new FormData();
-                  formData.append("file", fileInfo.file as any);
-                  const { code, data } = await PostFormData(
-                    `/api/candidate/network/resume`,
-                    formData
-                  );
-                  if (code === 0) {
-                    message.success("上传成功");
-                    setResumePath(data.resume);
-                    console.log("resume:", data.resume);
-                    setResumeFileName(fileInfo.file.name);
-                  } else {
-                    message.error("上传失败");
-                  }
-                  setIsUploadingResume(false);
-                }}
-                showUploadList={false}
-                accept=".doc,.docx,.pdf"
-                multiple={false}
-              >
-                {resumeFileName ? (
-                  <div>{resumeFileName}</div>
-                ) : isUploadingResume ? (
-                  <div>
-                    <LoadingOutlined className={styles.uploadingIcon} />
-                    上传简历中...
-                  </div>
-                ) : (
-                  <div>
-                    <UploadOutlined className={styles.uploadIcon} />
-                    <div>支持上传.doc,.docx,.pdf格式文件</div>
-                  </div>
-                )}
-              </Upload.Dragger>
-            </Form.Item>
-          )}
-          {resumeFormat === "form" && (
-            <div className={styles.formWrapper}>
-              <Form.List
-                name="work_experience"
-                initialValue={[
+              <Radio value="linkedin">LinkedIn Profile</Radio>
+              <Radio value="upload">上传简历/个人资料</Radio>
+              <Radio value="form">简要概述工作内容</Radio>
+            </Radio.Group>
+
+            {resumeFormat === "linkedin" && (
+              <Form.Item
+                name="linkedin_profile_url"
+                rules={[
                   {
-                    company_name: "",
-                    position: "",
-                    work_period_start: undefined,
-                    work_period_end: undefined,
-                    is_current: false,
-                    description: "",
+                    validator: (_, value) => {
+                      if (!value) {
+                        return Promise.reject(
+                          new Error("请输入LinkedIn个人主页链接")
+                        );
+                      }
+                      // 简单校验 LinkedIn 个人主页链接格式
+                      const regex =
+                        /^https:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9\-_%]+\/?$/;
+                      if (!regex.test(value.trim())) {
+                        return Promise.reject(
+                          new Error("请输入有效的LinkedIn个人主页链接")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
                   },
                 ]}
               >
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => {
-                      const isCurrent = form.getFieldValue([
-                        "work_experience",
-                        name,
-                        "is_current",
-                      ]);
-                      return (
-                        <Card
-                          key={key}
-                          size="small"
-                          style={{ marginBottom: 16 }}
-                        >
-                          <div
-                            style={{
-                              marginBottom: 16,
-                              fontWeight: "bold",
-                              color: "#1890ff",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                            }}
+                <Input placeholder="例如: https://www.linkedin.com/in/tiangengxinjacky" />
+              </Form.Item>
+            )}
+            {resumeFormat === "upload" && (
+              <Form.Item
+                name="resume_path"
+                rules={[
+                  {
+                    validator: () => {
+                      console.log("resume path:", resumePath);
+                      if (!resumePath) {
+                        return Promise.reject(new Error("请上传简历/个人资料"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <div></div>
+                <Upload.Dragger
+                  beforeUpload={() => false}
+                  onChange={async (fileInfo) => {
+                    setIsUploadingResume(true);
+                    const formData = new FormData();
+                    formData.append("file", fileInfo.file as any);
+                    const { code, data } = await PostFormData(
+                      `/api/candidate/network/resume`,
+                      formData
+                    );
+                    if (code === 0) {
+                      message.success("上传成功");
+                      setResumePath(data.resume);
+                      console.log("resume:", data.resume);
+                      setResumeFileName(fileInfo.file.name);
+                    } else {
+                      message.error("上传失败");
+                    }
+                    setIsUploadingResume(false);
+                  }}
+                  showUploadList={false}
+                  accept=".doc,.docx,.pdf"
+                  multiple={false}
+                >
+                  {resumeFileName ? (
+                    <div>{resumeFileName}</div>
+                  ) : isUploadingResume ? (
+                    <div>
+                      <LoadingOutlined className={styles.uploadingIcon} />
+                      上传简历中...
+                    </div>
+                  ) : (
+                    <div>
+                      <UploadOutlined className={styles.uploadIcon} />
+                      <div>支持上传.doc,.docx,.pdf格式文件</div>
+                    </div>
+                  )}
+                </Upload.Dragger>
+              </Form.Item>
+            )}
+            {resumeFormat === "form" && (
+              <div className={styles.formWrapper}>
+                <Form.List
+                  name="work_experience"
+                  initialValue={[
+                    {
+                      company_name: "",
+                      position: "",
+                      work_period_start: undefined,
+                      work_period_end: undefined,
+                      is_current: false,
+                      description: "",
+                    },
+                  ]}
+                >
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => {
+                        const isCurrent = form.getFieldValue([
+                          "work_experience",
+                          name,
+                          "is_current",
+                        ]);
+                        return (
+                          <Card
+                            key={key}
+                            size="small"
+                            style={{ marginBottom: 16 }}
                           >
-                            <span>工作经历 {name + 1}</span>
-                            {fields.length > 1 && (
-                              <DeleteOutlined
-                                onClick={() => remove(name)}
-                                style={{ color: "#ff4d4f", cursor: "pointer" }}
-                              />
-                            )}
-                          </div>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "company_name"]}
-                            label="公司名称"
-                            rules={[
-                              { required: true, message: "请输入公司名称" },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "position"]}
-                            label="职位名称"
-                            rules={[
-                              { required: true, message: "请输入职位名称" },
-                            ]}
-                          >
-                            <Input />
-                          </Form.Item>
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "8px",
-                              alignItems: "flex-end",
-                            }}
-                          >
-                            <Form.Item
-                              {...restField}
-                              name={[name, "work_period_start"]}
-                              label="在职时间"
-                              rules={[
-                                { required: true, message: "请选择开始时间" },
-                              ]}
-                              style={{ flex: "1" }}
+                            <div
+                              style={{
+                                marginBottom: 16,
+                                fontWeight: "bold",
+                                color: "#1890ff",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
                             >
-                              <DatePicker
-                                style={{ width: "100%" }}
-                                picker="month"
-                                disabledDate={(current) => {
-                                  if (current && current > dayjs()) {
-                                    return true;
-                                  }
-                                  const endDate = form.getFieldValue([
-                                    "work_experience",
-                                    name,
-                                    "work_period_end",
-                                  ]);
-                                  if (endDate && current && current > endDate) {
-                                    return true;
-                                  }
-                                  return false;
-                                }}
-                                placeholder="开始时间"
-                              />
-                            </Form.Item>
-                            <span>-</span>
+                              <span>工作经历 {name + 1}</span>
+                              {fields.length > 1 && (
+                                <DeleteOutlined
+                                  onClick={() => remove(name)}
+                                  style={{
+                                    color: "#ff4d4f",
+                                    cursor: "pointer",
+                                  }}
+                                />
+                              )}
+                            </div>
                             <Form.Item
                               {...restField}
-                              name={[name, "work_period_end"]}
-                              label={" "}
+                              name={[name, "company_name"]}
+                              label="公司名称"
                               rules={[
-                                {
-                                  validator: (_, value) => {
-                                    if (!isCurrent && !value) {
-                                      return Promise.reject(
-                                        new Error("请选择结束时间")
+                                { required: true, message: "请输入公司名称" },
+                              ]}
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "position"]}
+                              label="职位名称"
+                              rules={[
+                                { required: true, message: "请输入职位名称" },
+                              ]}
+                            >
+                              <Input />
+                            </Form.Item>
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: "8px",
+                                alignItems: "flex-end",
+                              }}
+                            >
+                              <Form.Item
+                                {...restField}
+                                name={[name, "work_period_start"]}
+                                label="在职时间"
+                                rules={[
+                                  { required: true, message: "请选择开始时间" },
+                                ]}
+                                style={{ flex: "1" }}
+                              >
+                                <DatePicker
+                                  style={{ width: "100%" }}
+                                  picker="month"
+                                  disabledDate={(current) => {
+                                    if (current && current > dayjs()) {
+                                      return true;
+                                    }
+                                    const endDate = form.getFieldValue([
+                                      "work_experience",
+                                      name,
+                                      "work_period_end",
+                                    ]);
+                                    if (
+                                      endDate &&
+                                      current &&
+                                      current > endDate
+                                    ) {
+                                      return true;
+                                    }
+                                    return false;
+                                  }}
+                                  placeholder="开始时间"
+                                />
+                              </Form.Item>
+                              <span>-</span>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "work_period_end"]}
+                                label={" "}
+                                rules={[
+                                  {
+                                    validator: (_, value) => {
+                                      if (!isCurrent && !value) {
+                                        return Promise.reject(
+                                          new Error("请选择结束时间")
+                                        );
+                                      }
+                                      return Promise.resolve();
+                                    },
+                                  },
+                                ]}
+                                style={{ flex: "1" }}
+                              >
+                                <DatePicker
+                                  style={{ width: "100%" }}
+                                  picker="month"
+                                  disabledDate={(current) => {
+                                    if (current && current > dayjs()) {
+                                      return true;
+                                    }
+                                    const startDate = form.getFieldValue([
+                                      "work_experience",
+                                      name,
+                                      "work_period_start",
+                                    ]);
+                                    if (
+                                      startDate &&
+                                      current &&
+                                      current < startDate
+                                    ) {
+                                      return true;
+                                    }
+                                    return false;
+                                  }}
+                                  placeholder="结束时间"
+                                  disabled={isCurrent}
+                                />
+                              </Form.Item>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "is_current"]}
+                                valuePropName="checked"
+                                style={{ marginBottom: 0 }}
+                              >
+                                <Checkbox
+                                  onChange={(checked) => {
+                                    if (checked) {
+                                      form.setFieldValue(
+                                        [
+                                          "work_experience",
+                                          name,
+                                          "work_period_end",
+                                        ],
+                                        undefined
                                       );
                                     }
-                                    return Promise.resolve();
-                                  },
-                                },
-                              ]}
-                              style={{ flex: "1" }}
-                            >
-                              <DatePicker
-                                style={{ width: "100%" }}
-                                picker="month"
-                                disabledDate={(current) => {
-                                  if (current && current > dayjs()) {
-                                    return true;
-                                  }
-                                  const startDate = form.getFieldValue([
-                                    "work_experience",
-                                    name,
-                                    "work_period_start",
-                                  ]);
-                                  if (startDate && current && current < startDate) {
-                                    return true;
-                                  }
-                                  return false;
-                                }}
-                                placeholder="结束时间"
-                                disabled={isCurrent}
-                              />
-                            </Form.Item>
+                                    forceUpdate();
+                                  }}
+                                >
+                                  至今
+                                </Checkbox>
+                              </Form.Item>
+                            </div>
                             <Form.Item
                               {...restField}
-                              name={[name, "is_current"]}
-                              valuePropName="checked"
-                              style={{ marginBottom: 0 }}
+                              name={[name, "description"]}
+                              label="工作内容"
+                              rules={[
+                                { required: true, message: "请输入工作内容" },
+                              ]}
                             >
-                              <Checkbox
-                                onChange={(checked) => {
-                                  if (checked) {
-                                    form.setFieldValue(
-                                      [
-                                        "work_experience",
-                                        name,
-                                        "work_period_end",
-                                      ],
-                                      undefined
-                                    );
-                                  }
-                                  forceUpdate();
-                                }}
-                              >
-                                至今
-                              </Checkbox>
+                              <Input.TextArea
+                                rows={4}
+                                placeholder="请简要概述工作内容"
+                              />
                             </Form.Item>
-                          </div>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "description"]}
-                            label="工作内容"
-                            rules={[
-                              { required: true, message: "请输入工作内容" },
-                            ]}
-                          >
-                            <Input.TextArea
-                              rows={4}
-                              placeholder="请简要概述工作内容"
-                            />
-                          </Form.Item>
-                        </Card>
-                      );
-                    })}
-                    <Button
-                      type="dashed"
-                      onClick={() =>
-                        add({
-                          company_name: "",
-                          position: "",
-                          work_period_start: undefined,
-                          work_period_end: undefined,
-                          is_current: false,
-                          description: "",
-                        })
-                      }
-                      block
-                      icon={<PlusOutlined />}
-                      style={{ marginBottom: 16 }}
-                    >
-                      添加工作经历
-                    </Button>
-                  </>
-                )}
-              </Form.List>
-            </div>
-          )}
+                          </Card>
+                        );
+                      })}
+                      <Button
+                        type="dashed"
+                        onClick={() =>
+                          add({
+                            company_name: "",
+                            position: "",
+                            work_period_start: undefined,
+                            work_period_end: undefined,
+                            is_current: false,
+                            description: "",
+                          })
+                        }
+                        block
+                        icon={<PlusOutlined />}
+                        style={{ marginBottom: 16 }}
+                      >
+                        添加工作经历
+                      </Button>
+                    </>
+                  )}
+                </Form.List>
+              </div>
+            )}
+          </Form.Item>
         </Form>
         <div style={{ marginTop: 16, textAlign: "center" }}>
           <Button
