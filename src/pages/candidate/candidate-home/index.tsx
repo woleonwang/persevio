@@ -30,7 +30,7 @@ const CandidateHome = () => {
       tasks: ICandidateTask[];
     }>("/api/candidate/network/tasks");
     if (code === 0) {
-      setCandidateTasks(data.tasks);
+      setCandidateTasks(data.tasks ?? []);
     }
   };
 
@@ -39,7 +39,7 @@ const CandidateHome = () => {
       candidate_connections: TCandidateConnectionForCandidate[];
     }>("/api/candidate/network/candidate_connections");
     if (response.code === 0) {
-      setConnections(response.data.candidate_connections);
+      setConnections(response.data.candidate_connections ?? []);
     }
   };
 
