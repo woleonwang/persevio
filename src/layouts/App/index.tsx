@@ -29,7 +29,8 @@ const AppLayout = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
-  const currentUrl = encodeURIComponent(location.pathname + location.search);
+  const getCurrentUrl = () =>
+    encodeURIComponent(location.pathname + location.search);
 
   const LayoutMapping = {
     blank: [/^\/app\/jobs\/\d+\/talents\/\d+$/, /^\/app\/company\/status$/],
@@ -197,7 +198,7 @@ const AppLayout = () => {
         setIsStaffAdmin(data.role === "admin");
       }
     } else {
-      navigate(`/signin?redirect=${currentUrl}`);
+      navigate(`/signin?redirect=${getCurrentUrl()}`);
     }
   };
 
