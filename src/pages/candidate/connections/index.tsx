@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Tabs, Input } from "antd";
+import { Empty, Input } from "antd";
 import { Get } from "@/utils/request";
 import styles from "./style.module.less";
 import ConnectionsList, { getFinalStatus } from "../components/ConnectionsList";
 import type { TCandidateConnectionForCandidate } from "../components/ConnectionsList";
 
 // 过滤状态类型
-type FilterStatus =
-  | "all"
-  | "pending"
-  | "matching"
-  | "approved"
-  | "rejected"
-  | "stored";
+// type FilterStatus =
+//   | "all"
+//   | "pending"
+//   | "matching"
+//   | "approved"
+//   | "rejected"
+//   | "stored";
 
 const CandidateConnections = () => {
   const [connections, setConnections] = useState<
     TCandidateConnectionForCandidate[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
+  // const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
   const [searchName, setSearchName] = useState("");
 
   useEffect(() => {
@@ -44,12 +44,10 @@ const CandidateConnections = () => {
     let filtered = connections;
 
     // 按状态过滤
-    if (activeFilter !== "all") {
-      filtered = connections.filter((conn) => {
-        const finalStatus = getFinalStatus(conn.status, conn.target_status);
-        return finalStatus === activeFilter;
-      });
-    }
+    filtered = connections.filter((conn) => {
+      const finalStatus = getFinalStatus(conn.status, conn.target_status);
+      return finalStatus === "approved";
+    });
 
     // 按姓名搜索
     if (searchName.trim()) {
@@ -63,26 +61,33 @@ const CandidateConnections = () => {
     return filtered;
   };
 
-  const filterTabs = [
-    { key: "all", label: "所有匹配状态" },
-    { key: "pending", label: "未处理" },
-    { key: "matching", label: "匹配中" },
-    { key: "approved", label: "匹配成功" },
-    { key: "rejected", label: "匹配失败" },
-    { key: "stored", label: "已暂存" },
-  ];
+  // const filterTabs = [
+  //   { key: "all", label: "所有匹配状态" },
+  //   { key: "pending", label: "未处理" },
+  //   { key: "matching", label: "匹配中" },
+  //   { key: "approved", label: "匹配成功" },
+  //   { key: "rejected", label: "匹配失败" },
+  //   { key: "stored", label: "已暂存" },
+  // ];
 
-  const tabItems = filterTabs.map((tab) => ({
-    key: tab.key,
-    label: tab.label,
-  }));
+  // const tabItems = filterTabs.map((tab) => ({
+  //   key: tab.key,
+  //   label: tab.label,
+  // }));
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>Matches/Meetings</div>
 
       <div className={styles.navBar}>
-        <Tabs
+        <Input
+          placeholder="匹配人姓名"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          prefix={<SearchOutlined />}
+          className={styles.searchInput}
+        />
+        {/* <Tabs
           activeKey={activeFilter}
           onChange={(key) => setActiveFilter(key as FilterStatus)}
           items={tabItems}
@@ -97,17 +102,19 @@ const CandidateConnections = () => {
               className={styles.searchInput}
             />
           }
-        />
+        /> */}
       </div>
 
       <div className={styles.content}>
         {loading ? (
           <div className={styles.loading}>加载中...</div>
-        ) : (
+        ) : getFilteredConnections().length > 0 ? (
           <ConnectionsList
             connections={getFilteredConnections()}
             onRefresh={fetchConnections}
           />
+        ) : (
+          <Empty description="暂无匹配" style={{ marginTop: 50 }} />
         )}
       </div>
     </div>

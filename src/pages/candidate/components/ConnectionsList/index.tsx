@@ -122,12 +122,12 @@ const ConnectionsList = (props: {
       onRefresh();
       if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_APPROVED) {
         Modal.success({
-          title: "匹配成功",
+          title: "反馈成功",
           content:
-            "如果对方也接受匹配，我们会第一时间通知您并协助安排会议日程。",
+            "如果对方也对你感兴趣，我们会第一时间通知您并协助安排会议日程。",
         });
       } else if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED) {
-        message.success("拒绝成功");
+        message.success("反馈成功");
       } else if (status === CANDIDATE_CONNECTION_APPROVE_STATUS_STORED) {
         const connection = connections.find((conn) => conn.id === id);
         if (connection) {
@@ -214,9 +214,9 @@ const ConnectionsList = (props: {
                           setRejectReasonOther("");
                         }}
                       >
-                        拒绝
+                        不感兴趣
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="outlined"
                         color="blue"
                         shape="round"
@@ -228,7 +228,7 @@ const ConnectionsList = (props: {
                         }
                       >
                         暂存
-                      </Button>
+                      </Button> */}
                       <Button
                         variant="outlined"
                         color="primary"
@@ -240,7 +240,7 @@ const ConnectionsList = (props: {
                           )
                         }
                       >
-                        接受
+                        感兴趣
                       </Button>
                     </div>
                   )}
@@ -322,7 +322,7 @@ const ConnectionsList = (props: {
                 setRejectReasonOther("");
               }}
             >
-              拒绝
+              不感兴趣
             </Button>
             <Button
               variant="outlined"
@@ -336,7 +336,7 @@ const ConnectionsList = (props: {
                 );
               }}
             >
-              接受
+              感兴趣
             </Button>
           </div>
         </div>
@@ -355,7 +355,7 @@ const ConnectionsList = (props: {
           });
 
           if (finalRejectReasons.length === 0) {
-            message.error("请选择拒绝理由");
+            message.error("请选择不感兴趣的理由");
             return;
           } else if (finalRejectReasons.includes("")) {
             message.error("请填写其它理由");
@@ -370,7 +370,7 @@ const ConnectionsList = (props: {
           );
         }}
       >
-        <div style={{ marginTop: 16 }}>请问为什么拒绝 TA？</div>
+        <div style={{ marginTop: 16 }}>请问为什么对 TA 不感兴趣？</div>
         <Checkbox.Group
           options={REJECT_REASON_OPTIONS}
           value={rejectReason}
@@ -381,7 +381,7 @@ const ConnectionsList = (props: {
           <Input.TextArea
             value={rejectReasonOther}
             onChange={(e) => setRejectReasonOther(e.target.value)}
-            placeholder="请输入拒绝理由"
+            placeholder="请输入不感兴趣的理由"
             style={{ marginTop: 8 }}
           />
         )}
