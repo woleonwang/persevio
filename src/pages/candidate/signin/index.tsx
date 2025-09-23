@@ -190,7 +190,7 @@ const CandidateSignIn: React.FC = () => {
           if (pageState === "signin") {
             return <OAuth />;
           } else if (pageState === "approve") {
-            return <Approve status={candidate?.approve_status ?? ""} />;
+            return <Approve />;
           } else {
             const currentIndex =
               pageState === "basic" ? 0 : pageState === "targets" ? 1 : 2;
