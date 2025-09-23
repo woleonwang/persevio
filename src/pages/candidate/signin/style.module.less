@@ -31,61 +31,20 @@
   display: flex;
   padding: 20px 0;
   width: 100%;
-  gap: 40px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
   background-color: #fff;
   border-top: 1px solid rgba(234, 234, 234, 1);
   border-bottom: 1px solid rgba(234, 234, 234, 1);
 
-  .stepWrapper {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .index {
-    font-size: 24px;
-
-    &.number {
-      font-size: 16px;
-      border: 1px solid rgba(153, 153, 153, 1);
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    &.active {
-      color: @primary-color;
-      border-color: @primary-color;
-      border-width: 2px;
-    }
-    &.completed {
-      color: @primary-color;
-      border-color: @primary-color;
-    }
-    &.pending {
-      color: rgba(153, 153, 153, 1);
-      border-color: rgba(153, 153, 153, 1);
-    }
-  }
-
   .step {
+    width: 120px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: rgba(234, 234, 234, 1);
     &.active {
-      color: @primary-color;
-      font-weight: bold;
-    }
-    &.pending {
-      color: rgba(153, 153, 153, 1);
-    }
-  }
-
-  .symbol {
-    &.pending {
-      color: rgba(153, 153, 153, 1);
+      background-color: @primary-color;
     }
   }
 }

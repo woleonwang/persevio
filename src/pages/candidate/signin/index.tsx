@@ -1,9 +1,8 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, message, Spin } from "antd";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { CheckCircleFilled, DoubleRightOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
@@ -18,14 +17,15 @@ import Approve from "./components/Approve";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
-    "signin" | "basic" | "interests" | "targets" | "conversation" | "approve"
+    "signin" | "basic" | "targets" | "conversation" | "approve"
   >();
 
   const [basicInfo, setBasicInfo] = useState<TBaiscInfo>();
-  const [interests, setInterests] = useState<string>();
-  const [targets, setTargets] = useState<string>();
+  const [targets, setTargets] = useState<string[]>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOtherTargetShow, setIsOtherTargetShow] = useState(false);
+  const [otherTarget, setOtherTarget] = useState<string>();
 
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -73,6 +73,8 @@ const CandidateSignIn: React.FC = () => {
     } else {
       setPageState("signin");
     }
+
+    setPageState("targets");
   };
 
   const onSubmitBasicInfo = async () => {
@@ -101,6 +103,44 @@ const CandidateSignIn: React.FC = () => {
   if (!pageState) {
     return <></>;
   }
+
+  const targetsOptions = [
+    {
+      key: "explore_new_job_opportunities",
+      title: "探索新的职业机会",
+      description:
+        "我可以帮您链接到您感兴趣的公司的人选或者直接给您推荐合适的工作机会。",
+    },
+
+    {
+      key: "i_am_hiring",
+      title: "我正在招聘",
+      description: "我可以给您推荐潜在合适的候选人。",
+    },
+
+    {
+      key: "consult_with_others",
+      title: "向他人发起咨询/学习",
+      description: "我可以把您链接到相关的专家。",
+    },
+    {
+      key: "seek_funding",
+      title: "寻求融资",
+      description: "我可以把您链接到潜在的投资人或者相关的人员。",
+    },
+    {
+      key: "seek_investment_target",
+      title: "寻求投资标",
+      description: "我可以根据您的要求把您链接到合适的投资标。",
+    },
+    {
+      key: "become_expert_network_expert",
+      title: "成为专家网络的专家",
+      description: "您可以加入我们的专家网络，向别人提供付费的或者免费的咨询。",
+    },
+  ];
+
+  const canSubmitTargets = (targets ?? []).length > 0 || !!otherTarget;
 
   return (
     <div
@@ -154,77 +194,20 @@ const CandidateSignIn: React.FC = () => {
           } else if (pageState === "approve") {
             return <Approve status={candidate?.approve_status ?? ""} />;
           } else {
-            const stepConfigs = [
-              {
-                key: "basic",
-                title: "基本信息",
-              },
-              {
-                key: "interests",
-                title: "感兴趣的主题/领域",
-              },
-              {
-                key: "targets",
-                title: "人脉拓展目标",
-              },
-              {
-                key: "conversation",
-                title: "确认感兴趣的人物画像",
-              },
-            ];
-
-            const currentStepIndex = stepConfigs.findIndex(
-              (step) => step.key === pageState
-            );
+            const currentIndex =
+              pageState === "basic" ? 0 : pageState === "targets" ? 1 : 2;
 
             return (
               <>
                 <div className={styles.stepContainer}>
-                  {stepConfigs.map((step, index) => {
-                    const status =
-                      index === currentStepIndex
-                        ? "active"
-                        : index < currentStepIndex
-                        ? "completed"
-                        : "pending";
+                  {new Array(3).fill(0).map((_, index) => {
                     return (
-                      <Fragment key={step.key}>
-                        {index > 0 && (
-                          <div
-                            className={classnames(
-                              styles.symbol,
-                              styles[status]
-                            )}
-                          >
-                            <DoubleRightOutlined />
-                          </div>
-                        )}
-                        <div className={styles.stepWrapper}>
-                          {status === "completed" ? (
-                            <CheckCircleFilled
-                              className={classnames(
-                                styles.index,
-                                styles[status]
-                              )}
-                            />
-                          ) : (
-                            <div
-                              className={classnames(
-                                styles.index,
-                                styles.number,
-                                styles[status]
-                              )}
-                            >
-                              {index + 1}
-                            </div>
-                          )}
-                          <div
-                            className={classnames(styles.step, styles[status])}
-                          >
-                            {step.title}
-                          </div>
-                        </div>
-                      </Fragment>
+                      <div
+                        key={index}
+                        className={classnames(styles.step, {
+                          [styles.active]: index <= currentIndex,
+                        })}
+                      />
                     );
                   })}
                 </div>
@@ -235,66 +218,9 @@ const CandidateSignIn: React.FC = () => {
                         <BasicInfo
                           onFinish={(params) => {
                             setBasicInfo(params);
-                            setPageState("interests");
+                            setPageState("targets");
                           }}
                         />
-                      </div>
-                    );
-                  }
-
-                  if (pageState === "interests") {
-                    return (
-                      <div className={styles.form}>
-                        <div
-                          className={classnames(styles.required, styles.title)}
-                        >
-                          目前正在探索的领域，或者感兴趣的主题
-                        </div>
-                        <div
-                          style={{
-                            fontSize: 14,
-                            color: "#666",
-                            marginBottom: 8,
-                          }}
-                        >
-                          为了更好地为您推荐志同道合的伙伴，或是能助您深入探索的引路人，请告诉我您近期感兴趣或正在探索的任何领域。这不必是您的本职工作，任何您真诚感兴趣的方向都可以告诉我。
-                        </div>
-                        <div className={styles.formBg}>
-                          <div className={styles.hint}>
-                            <div>
-                              您可以添加多个感兴趣的领域，以帮助Viona了解您的需求。示例：
-                            </div>
-                            <ol>
-                              <li>
-                                我正在学习如何为AI智能体构建和扩展评估体系的最佳实践。
-                              </li>
-                              <li>
-                                我正在研究新一代的生息稳定币，想搞懂它们底层的运行机制和潜在风险。
-                              </li>
-                              <li>
-                                我最近在琢磨，要不要开一个自己的Newsletter，聊聊‘面向普通消费者的金融科技’这个话题。很想和已经‘下场’玩过的人聊聊，看看起步时会踩哪些坑。
-                              </li>
-                              <li>
-                                AI时代什么样的人才或者能力才是有持久价值的。
-                              </li>
-                            </ol>
-                          </div>
-                          <Input.TextArea
-                            value={interests}
-                            onChange={(e) => setInterests(e.target.value)}
-                            rows={8}
-                            style={{ padding: 16 }}
-                          />
-                        </div>
-                        <Button
-                          disabled={!interests}
-                          type="primary"
-                          onClick={() => setPageState("targets")}
-                          style={{ width: "100%", marginTop: 16 }}
-                          size="large"
-                        >
-                          下一步
-                        </Button>
                       </div>
                     );
                   }
@@ -302,36 +228,50 @@ const CandidateSignIn: React.FC = () => {
                   if (pageState === "targets") {
                     return (
                       <div className={styles.form}>
-                        <div className={styles.title}>
+                        <div
+                          className={classnames(styles.required, styles.title)}
+                        >
                           想通过networking来达成什么目标？
                         </div>
                         <div className={styles.formBg}>
-                          <div className={styles.hint}>
-                            <div>
-                              您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例：
+                          {targetsOptions.map((option) => (
+                            <div
+                              key={option.key}
+                              className={classnames(styles.targetOption, {
+                                [styles.active]: targets?.includes(option.key),
+                              })}
+                              onClick={() =>
+                                setTargets(
+                                  targets?.includes(option.key)
+                                    ? targets?.filter(
+                                        (key) => key !== option.key
+                                      )
+                                    : [...(targets ?? []), option.key]
+                                )
+                              }
+                            >
+                              <div>{option.title}</div>
+                              <div>{option.description}</div>
                             </div>
-                            <ol>
-                              <li>
-                                我正在为我的开发者工具创业公司进行种子轮融资，希望能认识在这个领域有成功投资经验的风险投资人。
-                              </li>
-                              <li>
-                                我最近刚搬到新加坡，希望能认识一些在fintech行业的朋友，拓展一些专业人脉。
-                              </li>
-                              <li>
-                                我正在为我的团队招聘一名资深全栈工程师，要求有TypeScript和AWS的实战经验。
-                              </li>
-                              <li>
-                                我正在为我的B2B
-                                SaaS新产品寻找3-5名种子用户。理想的用户是在50-200人规模的科技公司担任销售总监。
-                              </li>
-                            </ol>
-                          </div>
-                          <Input.TextArea
-                            rows={8}
-                            value={targets}
-                            onChange={(e) => setTargets(e.target.value)}
-                            style={{ padding: 16 }}
-                          />
+                          ))}
+                          {isOtherTargetShow ? (
+                            <div>
+                              <Input.TextArea
+                                placeholder={`您可以添加多个意向目标，以帮助Viona了解您的需求。目标示例:
+1.我正在为我的开发者工具创业公司进行种子轮融资，希望能认识在这个领域有成功投资经验的风险投资人。
+2.我最近刚搬到新加坡，希望能认识一些在fintech行业的朋友，拓展一些专业人脉。
+3.我正在为我的团队招聘一名资深全栈工程师，要求有TypeScript和AWS的实战经验。
+4.我正在为我的B2B SaaS新产品寻找3-5名种子用户。理想的用户是在50-200人规模的科技公司担任销售总监。
+5.我刚来新加坡工作，想找喜欢打网球的朋友业余一起打网球。`}
+                                value={otherTarget}
+                                onChange={(e) => setOtherTarget(e.target.value)}
+                              />
+                            </div>
+                          ) : (
+                            <div onClick={() => setIsOtherTargetShow(true)}>
+                              + 添加其它目标
+                            </div>
+                          )}
                         </div>
 
                         <Button
@@ -340,6 +280,7 @@ const CandidateSignIn: React.FC = () => {
                           style={{ width: "100%", marginTop: 16 }}
                           size="large"
                           loading={isSubmitting}
+                          disabled={!canSubmitTargets}
                         >
                           下一步
                         </Button>
