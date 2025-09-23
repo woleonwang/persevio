@@ -15,7 +15,7 @@ export const targetsOptions = [
     key: "explore_new_job_opportunities",
     title: "探索新的职业机会",
     description:
-      "我可以帮您链接到您感兴趣的公司的人选或者直接给您推荐合适的工作机会。",
+      "我可以给您介绍您感兴趣的公司或行业的人进行交流或者直接给您推荐合适的工作机会。",
   },
 
   {
@@ -27,17 +27,17 @@ export const targetsOptions = [
   {
     key: "consult_with_others",
     title: "向他人发起咨询/学习",
-    description: "我可以把您链接到相关的专家。",
+    description: "我可以给您介绍相关领域的专家。",
   },
   {
     key: "seek_funding",
     title: "寻求融资",
-    description: "我可以把您链接到潜在的投资人或者相关的人员。",
+    description: "我可以给您介绍可能对您项目感兴趣的投资人",
   },
   {
     key: "seek_investment_target",
-    title: "寻求投资标",
-    description: "我可以根据您的要求把您链接到合适的投资标。",
+    title: "寻求投资标的",
+    description: "我可以给您介绍潜在的投资标的。",
   },
   {
     key: "become_expert_network_expert",

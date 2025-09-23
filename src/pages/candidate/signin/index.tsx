@@ -91,8 +91,10 @@ const CandidateSignIn: React.FC = () => {
       message.success("保存成功");
     } else if (code === 10005) {
       message.error("大模型调用失败，请重新提交");
+      setIsSubmittingModalShow(false);
     } else {
       message.error("保存失败");
+      setIsSubmittingModalShow(false);
     }
     setIsSubmitting(false);
   };
@@ -330,19 +332,18 @@ const CandidateSignIn: React.FC = () => {
                 </p>
                 <p>在接下来的对话过程中，您可以随时开始，暂停，重新开始。</p>
               </div>
-              {!isSubmitting && (
-                <div style={{ textAlign: "right" }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setIsSubmittingModalShow(false);
-                      setPageState("conversation");
-                    }}
-                  >
-                    确认
-                  </Button>
-                </div>
-              )}
+              <div style={{ textAlign: "center" }}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setIsSubmittingModalShow(false);
+                    setPageState("conversation");
+                  }}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "处理中..." : "开始对话"}
+                </Button>
+              </div>
             </div>
           }
         />

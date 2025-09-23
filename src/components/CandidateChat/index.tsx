@@ -444,25 +444,27 @@ Shall we start now?`,
                     )}
 
                     {/* 删除按钮 - 只有非 fake 消息且为 AI 消息时才显示 */}
-                    {item.id !== "fake_ai_id" && item.id !== "fake_user_id" && (
-                      <div className={styles.operationArea}>
-                        <Button.Group>
-                          <Button
-                            shape="round"
-                            onClick={() => {
-                              if (
-                                confirm(
-                                  "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。"
-                                )
-                              ) {
-                                deleteMessage(parseInt(item.id));
-                              }
-                            }}
-                            icon={<DeleteOutlined />}
-                          />
-                        </Button.Group>
-                      </div>
-                    )}
+                    {item.id !== "fake_ai_id" &&
+                      item.id !== "fake_user_id" &&
+                      item.role === "user" && (
+                        <div className={styles.operationArea}>
+                          <Button.Group>
+                            <Button
+                              shape="round"
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。"
+                                  )
+                                ) {
+                                  deleteMessage(parseInt(item.id));
+                                }
+                              }}
+                              icon={<DeleteOutlined />}
+                            />
+                          </Button.Group>
+                        </div>
+                      )}
 
                     {(() => {
                       const visibleTags = (item.extraTags ?? [])
