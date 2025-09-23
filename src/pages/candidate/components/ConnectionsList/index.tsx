@@ -3,6 +3,7 @@ import { Input, Tag, Button, message, Modal, Checkbox, Drawer } from "antd";
 import { Post } from "@/utils/request";
 import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import DefaultAvatar from "@/components/DefaultAvatar";
 
 // 类型定义
 export type TTargetCandidate = {
@@ -97,18 +98,18 @@ const ConnectionsList = (props: {
     status: string,
     rejectReasons?: string[]
   ): Promise<boolean> => {
-    if (
-      !confirm(
-        `确定要${
-          status === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED
-            ? "拒绝"
-            : status === CANDIDATE_CONNECTION_APPROVE_STATUS_STORED
-            ? "暂存"
-            : "接受"
-        }该匹配吗？`
-      )
-    )
-      return false;
+    // if (
+    //   !confirm(
+    //     `确定要${
+    //       status === CANDIDATE_CONNECTION_APPROVE_STATUS_REJECTED
+    //         ? "拒绝"
+    //         : status === CANDIDATE_CONNECTION_APPROVE_STATUS_STORED
+    //         ? "暂存"
+    //         : "接受"
+    //     }该匹配吗？`
+    //   )
+    // )
+    //   return false;
 
     const { code } = await Post(
       `/api/candidate/network/candidate_connections/${id}/feedback`,
@@ -177,10 +178,14 @@ const ConnectionsList = (props: {
 
               <div className={styles.candidateInfo}>
                 <div className={styles.avatar}>
-                  <img
-                    src={`/api/avatar/${connection.target_candidate.avatar}`}
-                    alt={connection.target_candidate.name}
-                  />
+                  {connection.target_candidate.avatar ? (
+                    <img
+                      src={`/api/avatar/${connection.target_candidate.avatar}`}
+                      alt={connection.target_candidate.name}
+                    />
+                  ) : (
+                    <DefaultAvatar />
+                  )}
                 </div>
 
                 <div className={styles.candidateDetails}>
