@@ -92,6 +92,8 @@ const CandidateSignIn: React.FC = () => {
           setLoadingText("Viona 正在汇总信息...");
         }, 10000);
       }, 10000);
+    } else if (basicInfo?.resume_path) {
+      setLoadingText("Viona 正在汇总信息...");
     }
 
     const params = {
