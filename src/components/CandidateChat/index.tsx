@@ -5,12 +5,13 @@ import {
   Input,
   Button,
   message,
-  Tooltip,
   Spin,
   Select,
+  Popover,
 } from "antd";
 import {
   AudioOutlined,
+  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
   SendOutlined,
@@ -107,9 +108,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
       sendMessage(result);
     },
     disabled: isLoading,
-    onStartTranscription: () => {
-      setAudioHintVisible(false);
-    },
   });
 
   useEffect(() => {
@@ -330,16 +328,24 @@ Shall we start now?`,
 
   const genRecordButton = () => {
     return (
-      <Tooltip
-        styles={{
-          body: {
-            width: 400,
-          },
-        }}
-        placement="top"
-        title={
-          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+      <Popover
+        content={
+          <div>
+            <div className={styles.hintHeader}>
+              <div className={styles.hintTitle}>语音输入</div>
+              <CloseOutlined
+                onClick={() => setAudioHintVisible(false)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+            <div>您可以通过一下方式快速启用语音输入功能:</div>
+            <ul className={styles.hintList}>
+              <li>长按【Ctrl】键进行持续语音输入</li>
+              <li>连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音入</li>
+            </ul>
+          </div>
         }
+        placement="top"
         open={audioHintVisible}
       >
         <div className={styles.buttonContainer}>
@@ -379,7 +385,7 @@ Shall we start now?`,
             {!isRecording && !isTranscribing ? "语音输入" : "停止语音输入"}
           </div>
         </div>
-      </Tooltip>
+      </Popover>
     );
   };
 
@@ -621,7 +627,6 @@ Shall we start now?`,
                   setTextInputVisible(false);
                   setInputPlaceholder("");
                 } else {
-                  setAudioHintVisible(false);
                   setTextInputVisible(true);
                   setTimeout(() => {
                     setInputPlaceholder(t("reply_viona_directly_or_edit"));
