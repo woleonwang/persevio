@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, message, Spin } from "antd";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
@@ -28,6 +28,8 @@ const CandidateSignIn: React.FC = () => {
   const [isSubmittingModalShow, setIsSubmittingModalShow] = useState(false);
   const [isOtherTargetShow, setIsOtherTargetShow] = useState(false);
   const [otherTarget, setOtherTarget] = useState<string>();
+  const [loadingText, setLoadingText] = useState<string>();
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -82,11 +84,25 @@ const CandidateSignIn: React.FC = () => {
     setIsSubmitting(true);
     setIsSubmittingModalShow(true);
 
+    if (basicInfo?.linkedin_profile_url) {
+      setLoadingText("Viona 正在获取基本信息...");
+      timeoutRef.current = setTimeout(() => {
+        setLoadingText("Viona 正在获取工作经历...");
+        timeoutRef.current = setTimeout(() => {
+          setLoadingText("Viona 正在汇总信息...");
+        }, 10000);
+      }, 10000);
+    }
+
     const params = {
       ...basicInfo,
       targets: [...(targets ?? []), otherTarget].filter(Boolean),
     };
     const { code } = await Post(`/api/candidate/network/basic_info`, params);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     if (code === 0) {
       message.success("保存成功");
     } else if (code === 10005) {
@@ -341,7 +357,7 @@ const CandidateSignIn: React.FC = () => {
                   }}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "处理中..." : "开始对话"}
+                  {isSubmitting ? loadingText : "开始对话"}
                 </Button>
               </div>
             </div>
