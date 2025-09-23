@@ -67,11 +67,51 @@ const BasicInfo: React.FC<IProps> = (props) => {
   const [isUploadingResume, setIsUploadingResume] = useState(false);
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
+  const isLinkedinUrlValid = (value: string): boolean => {
+    const regex = /^https:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9\-_%]+\/?$/;
+    if (!regex.test(value.trim())) return false;
+    return true;
+  };
+
+  const canSubmit = () => {
+    const { name, linkedin_profile_url, work_experience } =
+      form.getFieldsValue();
+
+    if (!name) return false;
+    if (
+      resumeFormat === "linkedin" &&
+      (!linkedin_profile_url || !isLinkedinUrlValid(linkedin_profile_url))
+    )
+      return false;
+    if (resumeFormat === "upload" && !resumePath) return false;
+
+    if (resumeFormat === "form") {
+      if (!work_experience) return false;
+
+      for (const exp of work_experience) {
+        if (
+          !exp.company_name ||
+          !exp.position ||
+          !exp.work_period_start ||
+          (!exp.is_current && !exp.work_period_end) ||
+          !exp.description
+        )
+          return false;
+      }
+    }
+
+    return true;
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>基本信息</div>
       <div className={styles.container}>
-        <Form form={form} layout="vertical">
+        <Form
+          form={form}
+          layout="vertical"
+          onFieldsChange={() => forceUpdate()}
+        >
           <Form.Item label="姓名" name="name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -137,10 +177,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                           new Error("请输入LinkedIn个人主页链接")
                         );
                       }
-                      // 简单校验 LinkedIn 个人主页链接格式
-                      const regex =
-                        /^https:\/\/(www\.)?linkedin\.com\/in\/[A-Za-z0-9\-_%]+\/?$/;
-                      if (!regex.test(value.trim())) {
+                      if (!isLinkedinUrlValid(value)) {
                         return Promise.reject(
                           new Error("请输入有效的LinkedIn个人主页链接")
                         );
@@ -159,7 +196,6 @@ const BasicInfo: React.FC<IProps> = (props) => {
                 rules={[
                   {
                     validator: () => {
-                      console.log("resume path:", resumePath);
                       if (!resumePath) {
                         return Promise.reject(new Error("请上传简历/个人资料"));
                       }
@@ -319,7 +355,9 @@ const BasicInfo: React.FC<IProps> = (props) => {
                                   placeholder="开始时间"
                                 />
                               </Form.Item>
-                              <span>-</span>
+                              <span style={{ position: "relative", top: -30 }}>
+                                -
+                              </span>
                               <Form.Item
                                 {...restField}
                                 name={[name, "work_period_end"]}
@@ -367,7 +405,11 @@ const BasicInfo: React.FC<IProps> = (props) => {
                                 {...restField}
                                 name={[name, "is_current"]}
                                 valuePropName="checked"
-                                style={{ marginBottom: 0 }}
+                                style={{
+                                  marginBottom: 0,
+                                  position: "relative",
+                                  top: -25,
+                                }}
                               >
                                 <Checkbox
                                   onChange={(checked) => {
@@ -381,7 +423,6 @@ const BasicInfo: React.FC<IProps> = (props) => {
                                         undefined
                                       );
                                     }
-                                    forceUpdate();
                                   }}
                                 >
                                   至今
@@ -434,6 +475,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
             size="large"
             style={{ width: "100%" }}
             type="primary"
+            disabled={!canSubmit()}
             onClick={() => {
               form.validateFields().then(async (values) => {
                 const { name, linkedin_profile_url, work_experience } = values;
@@ -459,8 +501,6 @@ const BasicInfo: React.FC<IProps> = (props) => {
                         }))
                       : undefined,
                 };
-
-                console.log("params:", params);
                 props.onFinish(params);
               });
             }}
