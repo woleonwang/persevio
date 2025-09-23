@@ -167,16 +167,23 @@
 .loadingTip {
   padding: 20px 40px;
   background-color: white;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  color: @primary-color;
   border-radius: 16px;
+  color: #333;
+  text-align: left;
+  width: 700px;
 
-  img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+  .waiting {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: @primary-color;
+    margin-bottom: 20px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
   }
 }
 

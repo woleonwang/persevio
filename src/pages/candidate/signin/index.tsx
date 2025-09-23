@@ -24,6 +24,7 @@ const CandidateSignIn: React.FC = () => {
   const [targets, setTargets] = useState<string[]>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingModalShow, setIsSubmittingModalShow] = useState(false);
   const [isOtherTargetShow, setIsOtherTargetShow] = useState(false);
   const [otherTarget, setOtherTarget] = useState<string>();
 
@@ -78,6 +79,7 @@ const CandidateSignIn: React.FC = () => {
   const onSubmitBasicInfo = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+    setIsSubmittingModalShow(true);
 
     const params = {
       ...basicInfo,
@@ -86,7 +88,6 @@ const CandidateSignIn: React.FC = () => {
     const { code } = await Post(`/api/candidate/network/basic_info`, params);
     if (code === 0) {
       message.success("保存成功");
-      setPageState("conversation");
     } else if (code === 10005) {
       message.error("大模型调用失败，请重新提交");
     } else {
@@ -334,18 +335,49 @@ const CandidateSignIn: React.FC = () => {
           }
         })()}
       </div>
-      {isSubmitting && !basicInfo?.work_experience && (
+      {isSubmittingModalShow && (
         <Spin
           fullscreen
           indicator={<></>}
           tip={
             <div className={styles.loadingTip}>
-              <img src={VionaAvatar} />
-              <div>
-                Viona 正在努力了解您的基本情况，大概需要
-                {!!basicInfo?.linkedin_profile_url ? "1~2分钟" : "30秒"}
-                。请稍后...
+              <div className={styles.waiting}>
+                <img src={VionaAvatar} />
+                <div>
+                  非常感谢您的分享。
+                  {!basicInfo?.work_experience
+                    ? `Viona 正在努力了解您的基本情况，大概需要${
+                        !!basicInfo?.linkedin_profile_url ? "1~2分钟" : "30秒"
+                      }
+                  。请稍后...`
+                    : ""}
+                </div>
               </div>
+              <div>
+                <p>
+                  我已经有一些初步的连接思路，为了确保我100%理解您的需求，并能将您以最佳方式介绍给对方，
+                  <b>接下来我希望能与您进行一次约15分钟的简短沟通</b>。
+                </p>
+                <p>
+                  <b>这能让我更深入地了解您的独特背景和期望</b>
+                  ，同时也是对我人脉圈朋友们的负责，
+                  <b>确保每一次推荐对双方都是高质量且相关的</b>。
+                </p>
+                <p>在接下来的对话过程中，您可以随时开始，暂停，重新开始。</p>
+              </div>
+              {!isSubmitting && (
+                <div style={{ textAlign: "right" }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsSubmittingModalShow(false);
+                      setPageState("conversation");
+                    }}
+                  >
+                    确认
+                  </Button>
+                </div>
+              )}
             </div>
           }
         />

@@ -10,11 +10,11 @@ import {
   Select,
 } from "antd";
 import {
-  AudioMutedOutlined,
   AudioOutlined,
   DeleteOutlined,
   EditOutlined,
   SendOutlined,
+  XFilled,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -342,34 +342,43 @@ Shall we start now?`,
         }
         open={audioHintVisible}
       >
-        {!isRecording && !isTranscribing ? (
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-            }}
-            shape="circle"
-            type="primary"
-            onClick={() => startTranscription()}
-            icon={<AudioOutlined style={{ fontSize: 24 }} />}
-            iconPosition="start"
-          />
-        ) : (
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "rgba(224, 46, 42, 0.1)",
-              color: "rgb(224, 46, 42)",
-            }}
-            shape="circle"
-            type="primary"
-            disabled={isTranscribing || !isStartRecordingOutside}
-            onClick={() => endTranscription()}
-            icon={<AudioMutedOutlined style={{ fontSize: 24 }} />}
-            iconPosition="start"
-          />
-        )}
+        <div className={styles.buttonContainer}>
+          {!isRecording && !isTranscribing ? (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid gray",
+                color: "gray",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              variant="outlined"
+              color="default"
+              onClick={() => startTranscription()}
+              icon={<AudioOutlined style={{ fontSize: 24 }} />}
+              iconPosition="start"
+            />
+          ) : (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid #1FAC6A",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              type="primary"
+              disabled={isTranscribing || !isStartRecordingOutside}
+              onClick={() => endTranscription()}
+              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
+              iconPosition="start"
+            />
+          )}
+          <div className={styles.buttonHint}>
+            {!isRecording && !isTranscribing ? "语音输入" : "停止语音输入"}
+          </div>
+        </div>
       </Tooltip>
     );
   };
@@ -505,108 +514,121 @@ Shall we start now?`,
       </div>
 
       <div className={styles.inputArea}>
-        <div className={classnames("flex-center")} style={{ marginTop: 12 }}>
+        <div
+          className={classnames("flex-center")}
+          style={{ marginTop: 12, alignItems: "flex-start" }}
+        >
           {genRecordButton()}
 
           {isAdmin && (
+            <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
+              <Button
+                type="primary"
+                onClick={() => setIsAudioMode(true)}
+                style={{
+                  width: 48,
+                  height: 48,
+                  backgroundColor: "#f1f1f1",
+                  border: "4px solid gray",
+                  color: "gray",
+                }}
+                shape="circle"
+                variant="outlined"
+                color="default"
+                icon={
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon"
+                  >
+                    <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
+                  </svg>
+                }
+              />
+              <div className={styles.buttonHint}>语音对话</div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", alignContent: "center" }}>
+            <Input.TextArea
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              placeholder={textInputVisible ? inputPlaceholder : ""}
+              style={
+                textInputVisible
+                  ? {
+                      width: 600,
+                      marginRight: 8,
+                      marginLeft: 12,
+                      resize: "none",
+                      overflow: "hidden",
+                    }
+                  : {
+                      width: 0,
+                      height: 0,
+                      padding: 0,
+                      border: "none",
+                    }
+              }
+              onCompositionStartCapture={() =>
+                (isCompositingRef.current = true)
+              }
+              onCompositionEndCapture={() => (isCompositingRef.current = false)}
+              onPressEnter={(e) => {
+                if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              autoSize={{
+                minRows: 2,
+                maxRows: 16,
+              }}
+              id="message-textarea"
+            />
+
+            {textInputVisible && (
+              <SendOutlined
+                onClick={() => submit()}
+                style={{ fontSize: 24, color: "#1FAC6A" }}
+              />
+            )}
+          </div>
+
+          <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
             <Button
-              type="primary"
-              onClick={() => setIsAudioMode(true)}
               style={{
                 width: 48,
                 height: 48,
+                border: "4px solid gray",
+                color: "gray",
                 backgroundColor: "#f1f1f1",
-                border: "3px solid #1FAC6A",
-                color: "#1FAC6A",
-                marginLeft: 12,
               }}
               shape="circle"
-              icon={
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon"
-                >
-                  <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
-                </svg>
-              }
+              variant="outlined"
+              color="primary"
+              iconPosition="start"
+              icon={<EditOutlined style={{ fontSize: 24 }} />}
+              onClick={() => {
+                if (textInputVisible) {
+                  setTextInputVisible(false);
+                  setInputPlaceholder("");
+                } else {
+                  setAudioHintVisible(false);
+                  setTextInputVisible(true);
+                  setTimeout(() => {
+                    setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                  }, 400);
+                }
+              }}
             />
-          )}
-
-          <Input.TextArea
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={textInputVisible ? inputPlaceholder : ""}
-            style={
-              textInputVisible
-                ? {
-                    width: 600,
-                    marginRight: 8,
-                    marginLeft: 12,
-                    resize: "none",
-                    overflow: "hidden",
-                  }
-                : {
-                    width: 0,
-                    height: 0,
-                    padding: 0,
-                    border: "none",
-                  }
-            }
-            onCompositionStartCapture={() => (isCompositingRef.current = true)}
-            onCompositionEndCapture={() => (isCompositingRef.current = false)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
-                e.preventDefault();
-                submit();
-              }
-            }}
-            autoSize={{
-              minRows: 2,
-              maxRows: 16,
-            }}
-            id="message-textarea"
-          />
-
-          {textInputVisible && (
-            <SendOutlined
-              onClick={() => submit()}
-              style={{ fontSize: 24, color: "#1FAC6A" }}
-            />
-          )}
-
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#f1f1f1",
-              border: "3px solid #1FAC6A",
-              color: "#1FAC6A",
-              marginLeft: 12,
-            }}
-            shape="circle"
-            variant="outlined"
-            color="primary"
-            iconPosition="start"
-            icon={<EditOutlined style={{ fontSize: 24 }} />}
-            onClick={() => {
-              if (textInputVisible) {
-                setTextInputVisible(false);
-                setInputPlaceholder("");
-              } else {
-                setAudioHintVisible(false);
-                setTextInputVisible(true);
-                setTimeout(() => {
-                  setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                }, 400);
-              }
-            }}
-          />
+            <div className={styles.buttonHint}>文字编辑</div>
+          </div>
 
           {isAdmin && chatType === "network_profile" && (
             <Button
