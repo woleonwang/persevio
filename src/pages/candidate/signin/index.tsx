@@ -73,8 +73,6 @@ const CandidateSignIn: React.FC = () => {
     } else {
       setPageState("signin");
     }
-
-    setPageState("targets");
   };
 
   const onSubmitBasicInfo = async () => {
@@ -83,8 +81,7 @@ const CandidateSignIn: React.FC = () => {
 
     const params = {
       ...basicInfo,
-      interests,
-      targets,
+      targets: [...(targets ?? []), otherTarget],
     };
     const { code } = await Post(`/api/candidate/network/basic_info`, params);
     if (code === 0) {
@@ -211,20 +208,20 @@ const CandidateSignIn: React.FC = () => {
                     );
                   })}
                 </div>
-                {(() => {
-                  if (pageState === "basic") {
-                    return (
-                      <div className={styles.body}>
-                        <BasicInfo
-                          onFinish={(params) => {
-                            setBasicInfo(params);
-                            setPageState("targets");
-                          }}
-                        />
-                      </div>
-                    );
-                  }
 
+                <div
+                  className={styles.body}
+                  style={{ display: pageState === "basic" ? "block" : "none" }}
+                >
+                  <BasicInfo
+                    onFinish={(params) => {
+                      setBasicInfo(params);
+                      setPageState("targets");
+                    }}
+                  />
+                </div>
+
+                {(() => {
                   if (pageState === "targets") {
                     return (
                       <div className={styles.form}>
@@ -233,7 +230,7 @@ const CandidateSignIn: React.FC = () => {
                         >
                           想通过networking来达成什么目标？
                         </div>
-                        <div className={styles.formBg}>
+                        <div>
                           {targetsOptions.map((option) => (
                             <div
                               key={option.key}
@@ -250,8 +247,16 @@ const CandidateSignIn: React.FC = () => {
                                 )
                               }
                             >
-                              <div>{option.title}</div>
-                              <div>{option.description}</div>
+                              <div className={styles.targetTitle}>
+                                {option.title}
+                              </div>
+                              <div className={styles.description}>
+                                <img
+                                  src={VionaAvatar}
+                                  className={styles.avatar}
+                                />
+                                {option.description}
+                              </div>
                             </div>
                           ))}
                           {isOtherTargetShow ? (
@@ -265,25 +270,37 @@ const CandidateSignIn: React.FC = () => {
 5.我刚来新加坡工作，想找喜欢打网球的朋友业余一起打网球。`}
                                 value={otherTarget}
                                 onChange={(e) => setOtherTarget(e.target.value)}
+                                rows={10}
                               />
                             </div>
                           ) : (
-                            <div onClick={() => setIsOtherTargetShow(true)}>
+                            <div
+                              className={styles.addOtherTarget}
+                              onClick={() => setIsOtherTargetShow(true)}
+                            >
                               + 添加其它目标
                             </div>
                           )}
                         </div>
 
-                        <Button
-                          type="primary"
-                          onClick={() => onSubmitBasicInfo()}
-                          style={{ width: "100%", marginTop: 16 }}
-                          size="large"
-                          loading={isSubmitting}
-                          disabled={!canSubmitTargets}
-                        >
-                          下一步
-                        </Button>
+                        <div className={styles.footer}>
+                          <div
+                            className={styles.back}
+                            onClick={() => setPageState("basic")}
+                          >
+                            {"< 上一步"}
+                          </div>
+                          <Button
+                            type="primary"
+                            onClick={() => onSubmitBasicInfo()}
+                            size="large"
+                            style={{ width: "200px" }}
+                            loading={isSubmitting}
+                            disabled={!canSubmitTargets}
+                          >
+                            下一步
+                          </Button>
+                        </div>
                       </div>
                     );
                   }

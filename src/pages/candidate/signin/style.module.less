@@ -53,6 +53,7 @@
   width: 800px;
   margin: 0 auto;
   overflow: auto;
+  padding: 20px;
 }
 
 .title {
@@ -74,6 +75,56 @@
   background-color: rgba(250, 251, 252, 1);
   padding: 16px;
   border-radius: 8px;
+}
+
+.targetOption {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-color: @primary-color;
+    background-color: rgba(240, 249, 246, 1);
+  }
+
+  .targetTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .description {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(153, 153, 153, 1);
+    font-size: 14px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+}
+
+.addOtherTarget {
+  color: @primary-color;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+
+  .back {
+    cursor: pointer;
+  }
 }
 
 .hint {
