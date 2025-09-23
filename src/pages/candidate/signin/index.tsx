@@ -14,6 +14,7 @@ import styles from "./style.module.less";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import { checkIsAdmin } from "@/utils";
 import Approve from "./components/Approve";
+import { targetsOptions } from "../network-pofile/components/EditableTargets";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -83,7 +84,7 @@ const CandidateSignIn: React.FC = () => {
 
     const params = {
       ...basicInfo,
-      targets: [...(targets ?? []), otherTarget],
+      targets: [...(targets ?? []), otherTarget].filter(Boolean),
     };
     const { code } = await Post(`/api/candidate/network/basic_info`, params);
     if (code === 0) {
@@ -101,42 +102,6 @@ const CandidateSignIn: React.FC = () => {
   if (!pageState) {
     return <></>;
   }
-
-  const targetsOptions = [
-    {
-      key: "explore_new_job_opportunities",
-      title: "探索新的职业机会",
-      description:
-        "我可以帮您链接到您感兴趣的公司的人选或者直接给您推荐合适的工作机会。",
-    },
-
-    {
-      key: "i_am_hiring",
-      title: "我正在招聘",
-      description: "我可以给您推荐潜在合适的候选人。",
-    },
-
-    {
-      key: "consult_with_others",
-      title: "向他人发起咨询/学习",
-      description: "我可以把您链接到相关的专家。",
-    },
-    {
-      key: "seek_funding",
-      title: "寻求融资",
-      description: "我可以把您链接到潜在的投资人或者相关的人员。",
-    },
-    {
-      key: "seek_investment_target",
-      title: "寻求投资标",
-      description: "我可以根据您的要求把您链接到合适的投资标。",
-    },
-    {
-      key: "become_expert_network_expert",
-      title: "成为专家网络的专家",
-      description: "您可以加入我们的专家网络，向别人提供付费的或者免费的咨询。",
-    },
-  ];
 
   const canSubmitTargets = (targets ?? []).length > 0 || !!otherTarget;
 

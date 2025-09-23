@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Empty, message, Tabs, Upload } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { PlusOutlined } from "@ant-design/icons";
-import EditableText from "./components/EditableText";
+import EditableTargets from "./components/EditableTargets";
 
 type TTabKey = "profile" | "goals";
 const NetworkProfile = () => {
@@ -28,7 +28,7 @@ const NetworkProfile = () => {
   };
 
   const updateProfile = async (
-    values: Partial<Record<"interests" | "targets" | "avatar", string>>
+    values: Partial<Record<"targets" | "avatar", string | string[]>>
   ) => {
     const { code } = await Post("/api/candidate/network/profile", values);
     if (code === 0) {
@@ -128,15 +128,7 @@ const NetworkProfile = () => {
         (candidate?.goals_doc ? (
           <div style={{ margin: 20, overflow: "auto" }}>
             <div>
-              <div className={styles.title}>兴趣意向</div>
-              <EditableText
-                title="目前正在探索的领域，或者感兴趣的主题？"
-                value={candidate.interests}
-                onChange={(doc) => updateProfile({ interests: doc })}
-              />
-
-              <EditableText
-                title="想通过networking来解决什么问题"
+              <EditableTargets
                 value={candidate.targets}
                 onChange={(doc) => updateProfile({ targets: doc })}
               />
