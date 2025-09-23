@@ -26,7 +26,7 @@ export const targetsOptions = [
 
   {
     key: "consult_with_others",
-    title: "向他人发起咨询/学习",
+    title: "向他人就某个主题发起咨询/学习/讨论",
     description: "我可以给您介绍相关领域的专家。",
   },
   {
