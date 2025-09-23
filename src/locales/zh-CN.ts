@@ -168,7 +168,7 @@ export default {
     candidate_connection_list: "匹配列表",
     company_list: "公司列表",
 
-    home: "Home",
+    home: "首页",
     profile: "简历",
     aspirations: "职业规划",
     deep_aspirations: "深度职业规划",

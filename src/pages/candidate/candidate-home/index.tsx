@@ -70,7 +70,7 @@ const CandidateHome = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>{t("home")}</div>
-      <div className={styles.homeTitle}>Welcome back</div>
+      <div className={styles.homeTitle}>欢迎回来！</div>
       <div className={classnames(styles.homePanel, styles.tasks)}>
         <div className={styles.title}>{t("important_tasks")}</div>
         <div className={styles.taskCardWrapper}>
