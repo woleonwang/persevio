@@ -338,10 +338,10 @@ Shall we start now?`,
                 style={{ cursor: "pointer" }}
               />
             </div>
-            <div>您可以通过一下方式快速启用语音输入功能:</div>
+            <div>您可以通过以下方式快速启用语音输入功能:</div>
             <ul className={styles.hintList}>
               <li>长按【Ctrl】键进行持续语音输入</li>
-              <li>连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音入</li>
+              <li>连按两次【Ctrl】 键即可快速启动录音，再单次按下则结束录音入</li>
             </ul>
           </div>
         }
