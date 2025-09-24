@@ -1,18 +1,18 @@
 import MarkdownContainer from "@/components/MarkdownContainer";
 import styles from "./style.module.less";
-import classnames from "classnames";
+// import classnames from "classnames";
 import { useEffect, useState } from "react";
 import { Get, Post } from "@/utils/request";
 import { Button, message, Select, Table } from "antd";
 import dayjs from "dayjs";
 
-type TWorkExperience = {
-  company_name: string;
-  position: string;
-  start_date: string;
-  end_date: string;
-  description: string;
-};
+// type TWorkExperience = {
+//   company_name: string;
+//   position: string;
+//   start_date: string;
+//   end_date: string;
+//   description: string;
+// };
 const CandidateDrawerContent = (props: { candidate: ICandidateSettings }) => {
   const { candidate } = props;
 
