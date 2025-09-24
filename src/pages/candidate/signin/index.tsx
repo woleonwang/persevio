@@ -357,7 +357,9 @@ const CandidateSignIn: React.FC = () => {
                     setIsSubmittingModalShow(false);
                     setPageState("conversation");
                   }}
+                  style={{ width: "300px" }}
                   disabled={isSubmitting}
+                  size="large"
                 >
                   {isSubmitting ? loadingText : "开始对话"}
                 </Button>
