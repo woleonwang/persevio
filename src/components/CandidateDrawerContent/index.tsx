@@ -49,44 +49,45 @@ const CandidateDrawerContent = (props: { candidate: ICandidateSettings }) => {
   };
 
   const resumeContent = () => {
-    if (candidate.work_experience) {
-      const workExperiences = JSON.parse(
-        candidate.work_experience
-      ) as TWorkExperience[];
+    return <MarkdownContainer content={candidate.profile_doc} />;
+    // if (candidate.work_experience) {
+    //   const workExperiences = JSON.parse(
+    //     candidate.work_experience
+    //   ) as TWorkExperience[];
 
-      return workExperiences.map((workExperience) => (
-        <div
-          key={workExperience.company_name}
-          className={styles.workExperienceItemWrapper}
-        >
-          <div className={styles.workExperienceItem}>
-            <div className={styles.workExperienceItemLabel}>公司:</div>
-            <div>{workExperience.company_name}</div>
-          </div>
-          <div className={styles.workExperienceItem}>
-            <div className={styles.workExperienceItemLabel}>职位:</div>
-            <div>{workExperience.position}</div>
-          </div>
-          <div className={styles.workExperienceItem}>
-            <div className={styles.workExperienceItemLabel}>工作时间:</div>
-            <div>
-              {workExperience.start_date} - {workExperience.end_date ?? "至今"}
-            </div>
-          </div>
-          <div
-            className={classnames(
-              styles.workExperienceItem,
-              styles.description
-            )}
-          >
-            <div className={styles.workExperienceItemLabel}>描述:</div>
-            <div>{workExperience.description}</div>
-          </div>
-        </div>
-      ));
-    } else {
-      return <MarkdownContainer content={candidate.resume_content} />;
-    }
+    //   return workExperiences.map((workExperience) => (
+    //     <div
+    //       key={workExperience.company_name}
+    //       className={styles.workExperienceItemWrapper}
+    //     >
+    //       <div className={styles.workExperienceItem}>
+    //         <div className={styles.workExperienceItemLabel}>公司:</div>
+    //         <div>{workExperience.company_name}</div>
+    //       </div>
+    //       <div className={styles.workExperienceItem}>
+    //         <div className={styles.workExperienceItemLabel}>职位:</div>
+    //         <div>{workExperience.position}</div>
+    //       </div>
+    //       <div className={styles.workExperienceItem}>
+    //         <div className={styles.workExperienceItemLabel}>工作时间:</div>
+    //         <div>
+    //           {workExperience.start_date} - {workExperience.end_date ?? "至今"}
+    //         </div>
+    //       </div>
+    //       <div
+    //         className={classnames(
+    //           styles.workExperienceItem,
+    //           styles.description
+    //         )}
+    //       >
+    //         <div className={styles.workExperienceItemLabel}>描述:</div>
+    //         <div>{workExperience.description}</div>
+    //       </div>
+    //     </div>
+    //   ));
+    // } else {
+    //   return <MarkdownContainer content={candidate.resume_content} />;
+    // }
   };
 
   const createCandidateConnection = async () => {
@@ -169,7 +170,7 @@ const CandidateDrawerContent = (props: { candidate: ICandidateSettings }) => {
         </div>
         <div className={styles.right}>
           <div className={styles.title}>连接需求</div>
-          <MarkdownContainer content={candidate.targets} />
+          <MarkdownContainer content={candidate.goals_doc} />
         </div>
       </div>
     </div>
