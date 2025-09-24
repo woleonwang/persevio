@@ -11,7 +11,7 @@ const CommunicationLanguage = (props: IProps) => {
   const options = [
     {
       value: "en",
-      label: "English",
+      label: "英文",
     },
     {
       value: "zh",
