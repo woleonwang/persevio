@@ -1,0 +1,29 @@
+@primary-color: #1fac6a;
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.option {
+  padding: 8px 12px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  flex: 0 0 calc(50% - 10px);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-color: @primary-color;
+    color: @primary-color;
+    background-color: rgba(240, 249, 246, 1);
+  }
+
+  &:hover {
+    border-color: @primary-color;
+    color: @primary-color;
+  }
+}

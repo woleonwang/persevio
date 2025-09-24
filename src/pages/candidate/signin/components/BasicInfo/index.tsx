@@ -21,6 +21,7 @@ import styles from "./style.module.less";
 import { PostFormData } from "@/utils/request";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import CommunicationLanguage from "../CommunicationLanguage";
 
 export interface TWorkExperience {
   company_name: string;
@@ -35,6 +36,7 @@ export interface TBasicInfoFormValues {
   name: string;
   linkedin_profile_url: string;
   work_experience: TWorkExperience[];
+  communication_languages: string[];
 }
 
 export interface TBaiscInfo {
@@ -74,8 +76,12 @@ const BasicInfo: React.FC<IProps> = (props) => {
   };
 
   const canSubmit = () => {
-    const { name, linkedin_profile_url, work_experience } =
-      form.getFieldsValue();
+    const {
+      name,
+      linkedin_profile_url,
+      work_experience,
+      communication_languages,
+    } = form.getFieldsValue();
 
     if (!name) return false;
     if (
@@ -99,6 +105,9 @@ const BasicInfo: React.FC<IProps> = (props) => {
           return false;
       }
     }
+
+    if (!communication_languages || communication_languages.length === 0)
+      return false;
 
     return true;
   };
@@ -469,8 +478,17 @@ const BasicInfo: React.FC<IProps> = (props) => {
               </div>
             )}
           </Form.Item>
+
+          <Form.Item
+            label="期望后续线上/线下的交流语言"
+            name="communication_languages"
+            rules={[{ required: true }]}
+            style={{ marginTop: -24 }}
+          >
+            <CommunicationLanguage />
+          </Form.Item>
         </Form>
-        <div style={{ marginTop: 16, textAlign: "center" }}>
+        <div style={{ marginTop: 40, textAlign: "center" }}>
           <Button
             size="large"
             style={{ width: "100%" }}
@@ -478,7 +496,12 @@ const BasicInfo: React.FC<IProps> = (props) => {
             disabled={!canSubmit()}
             onClick={() => {
               form.validateFields().then(async (values) => {
-                const { name, linkedin_profile_url, work_experience } = values;
+                const {
+                  name,
+                  linkedin_profile_url,
+                  work_experience,
+                  communication_languages,
+                } = values;
                 const params = {
                   name,
                   avatar,
@@ -500,6 +523,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                           description: exp.description,
                         }))
                       : undefined,
+                  communication_languages,
                 };
                 props.onFinish(params);
               });
