@@ -4,7 +4,6 @@ import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { Empty, message, Tabs, Upload } from "antd";
-import MarkdownContainer from "@/components/MarkdownContainer";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import EditableTargets from "./components/EditableTargets";
 import EditableMarkdown from "@/components/EditableMarkdown";
