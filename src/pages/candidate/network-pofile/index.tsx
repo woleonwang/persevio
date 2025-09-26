@@ -5,13 +5,16 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { Empty, message, Tabs, Upload } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import EditableTargets from "./components/EditableTargets";
+import EditableMarkdown from "@/components/EditableMarkdown";
 
 type TTabKey = "profile" | "goals";
 const NetworkProfile = () => {
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [status, setStatus] = useState<TTabKey>("profile");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditingGoals, setIsEditingGoals] = useState(false);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
@@ -28,11 +31,18 @@ const NetworkProfile = () => {
   };
 
   const updateProfile = async (
-    values: Partial<Record<"targets" | "avatar", string | string[]>>
+    values: Partial<
+      Record<
+        "targets" | "avatar" | "profile_doc" | "goals_doc",
+        string | string[]
+      >
+    >
   ) => {
     const { code } = await Post("/api/candidate/network/profile", values);
     if (code === 0) {
       fetchCandidate();
+      setIsEditingProfile(false);
+      setIsEditingGoals(false);
       message.success("更新成功");
       return true;
     } else {
@@ -113,9 +123,22 @@ const NetworkProfile = () => {
               </div>
 
               <div style={{ marginTop: 20 }}>
-                <div className={styles.title}>基本职业生涯</div>
+                <div className={styles.title}>
+                  基本职业生涯
+                  {!isEditingProfile && (
+                    <EditOutlined
+                      style={{ marginLeft: 10 }}
+                      onClick={() => setIsEditingProfile(!isEditingProfile)}
+                    />
+                  )}
+                </div>
                 <div className={styles.resumeWrapper}>
-                  <MarkdownContainer content={candidate.profile_doc} />
+                  <EditableMarkdown
+                    value={candidate.profile_doc}
+                    isEditing={isEditingProfile}
+                    onSubmit={(doc) => updateProfile({ profile_doc: doc })}
+                    onCancel={() => setIsEditingProfile(false)}
+                  />
                 </div>
               </div>
             </>
@@ -135,9 +158,22 @@ const NetworkProfile = () => {
             </div>
 
             <div style={{ marginTop: 20 }}>
-              <div className={styles.title}>具体感兴趣的人物画像</div>
+              <div className={styles.title}>
+                具体感兴趣的人物画像
+                {!isEditingGoals && (
+                  <EditOutlined
+                    style={{ marginLeft: 10 }}
+                    onClick={() => setIsEditingGoals(!isEditingGoals)}
+                  />
+                )}
+              </div>
               <div className={styles.resumeWrapper}>
-                <MarkdownContainer content={candidate.goals_doc} />
+                <EditableMarkdown
+                  value={candidate.goals_doc}
+                  isEditing={isEditingGoals}
+                  onSubmit={(doc) => updateProfile({ goals_doc: doc })}
+                  onCancel={() => setIsEditingGoals(false)}
+                />
               </div>
             </div>
           </div>

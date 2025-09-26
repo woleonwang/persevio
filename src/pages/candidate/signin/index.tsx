@@ -32,7 +32,7 @@ const CandidateSignIn: React.FC = () => {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   const navigate = useNavigate();
-  const { t: originalT } = useTranslation();
+  const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
 
   useEffect(() => {
@@ -65,6 +65,7 @@ const CandidateSignIn: React.FC = () => {
     if (code === 0) {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
+      i18n.changeLanguage(candidate.lang ?? "zh-CN");
       if (!candidate.name) {
         setPageState("basic");
       } else if (!candidate.network_profile_finished_at) {
