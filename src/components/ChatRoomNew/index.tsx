@@ -326,13 +326,18 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       title: t("view_interview_plan"),
       handler: () => viewDoc?.("job-interview-plan"),
     },
-
     {
       key: "copy-link",
       title: t("copy_link"),
       handler: async (tag) => {
         if (tag) {
-          await copy(tag.content);
+          await copy(
+            `${
+              window.origin
+            }/app/jobs/${jobId}/board?token=${localStorage.getItem(
+              "token"
+            )}&share=1`
+          );
           message.success(t("copied"));
         }
       },
@@ -713,9 +718,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           },
         }}
         placement="right"
-        title={
-          t("recording_tooltip")
-        }
+        title={t("recording_tooltip")}
         open={audioHintVisible}
       >
         {!isRecording && !isTranscribing ? (
@@ -1027,9 +1030,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     shape="round"
                                     onClick={() => {
                                       if (
-                                        confirm(
-                                          t("confirm_delete_messages")
-                                        )
+                                        confirm(t("confirm_delete_messages"))
                                       ) {
                                         deleteMessage(parseInt(item.id));
                                       }
@@ -1041,11 +1042,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   <Button
                                     shape="round"
                                     onClick={async () => {
-                                      if (
-                                        confirm(
-                                          t("confirm_retry_message")
-                                        )
-                                      ) {
+                                      if (confirm(t("confirm_retry_message"))) {
                                         retryMessage(parseInt(item.id));
                                       }
                                     }}
