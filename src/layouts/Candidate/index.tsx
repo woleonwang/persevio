@@ -22,7 +22,7 @@ const CandidateLayout = () => {
   const navigate = useNavigate();
 
   const LayoutMapping = {
-    blank: [],
+    blank: [/\/apply-job/],
   };
 
   const layout =
