@@ -156,10 +156,11 @@ const JobsShow = () => {
                     <h1 className={styles.jobTitle}>{job.name}</h1>
                     <span className={styles.postedTime}>
                       {dayjs().diff(dayjs(job.updated_at), "hours") < 24
-                        ? `${dayjs().diff(dayjs(job.updated_at), "hours")}${t(
-                            "hours_ago"
-                          )}`
-                        : `${dayjs().diff(dayjs(job.updated_at), "days")}${t(
+                        ? `${Math.max(
+                            1,
+                            dayjs().diff(dayjs(job.updated_at), "hours")
+                          )} ${t("hours_ago")}`
+                        : `${dayjs().diff(dayjs(job.updated_at), "days")} ${t(
                             "days_ago_posted"
                           )}`}
                     </span>
