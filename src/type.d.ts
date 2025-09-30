@@ -149,6 +149,15 @@ interface ISettings {
   lang: string;
 }
 
+interface IPreRegisterInfo {
+  email: string;
+  name: string;
+  phone: string;
+  resume_path: string;
+  mode: "ai" | "human";
+  job_id: number;
+}
+
 interface ICandidateSettings {
   id: number;
   email: string;
@@ -167,6 +176,7 @@ interface ICandidateSettings {
   goals_doc: string;
 
   network_profile_finished_at?: string;
+  pre_register_info?: string;
 }
 
 interface IRecommendedJob {

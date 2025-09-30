@@ -120,14 +120,15 @@ const JobsShow = () => {
       size="large"
       className={styles.applyButton}
       onClick={async () => {
-        const { code } = await Post("/api/candidate/job_applies", {
-          job_id: id,
-        });
-        if (code === 10001) {
-          navigate(`/signin-candidate?job_id=${id}`);
-        } else {
-          navigate(`/candidate/job-applies`);
-        }
+        // const { code } = await Post("/api/candidate/job_applies", {
+        //   job_id: id,
+        // });
+        // if (code === 10001) {
+        //   navigate(`/signin-candidate?job_id=${id}`);
+        // } else {
+        //   navigate(`/candidate/job-applies`);
+        // }
+        navigate(`/apply-job/${id}`);
       }}
     >
       {t("apply_now")}
@@ -144,126 +145,143 @@ const JobsShow = () => {
   );
 
   return (
-    <HomeHeader className={styles.headerContainer}>
+    <HomeHeader className={styles.headerContainer} onlyLogo>
       {status === "success" && company && job && (
         <div className={styles.container}>
           {/* Banner 区域 */}
           <div className={styles.banner}>
-            <div className={styles.bannerContent}>
-              <div className={styles.bannerHeader}>
-                <div className={styles.bannerLeft}>
-                  <div className={styles.jobTitleSection}>
-                    <h1 className={styles.jobTitle}>{job.name}</h1>
-                    <span className={styles.postedTime}>
-                      {dayjs().diff(dayjs(job.updated_at), "hours") < 24
-                        ? `${Math.max(
-                            1,
-                            dayjs().diff(dayjs(job.updated_at), "hours")
-                          )} ${t("hours_ago")}`
-                        : `${dayjs().diff(dayjs(job.updated_at), "days")} ${t(
-                            "days_ago_posted"
-                          )}`}
-                    </span>
-                    <ShareAltOutlined
-                      onClick={async () => {
-                        await copy(window.location.href);
-                        message.success(originalT("copied"));
-                      }}
-                      style={{ color: "#1fac6a" }}
-                    />
-                  </div>
-
-                  <div className={styles.jobAttributes}>
-                    <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>◎</span>
-                      <span>
-                        {(job.basic_info.location ?? [])
-                          .map((item) => item.city)
-                          .join(", ")}
-                      </span>
-                    </div>
-                    <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>◎</span>
-                      <span>
-                        {originalT(
-                          `public_jobs.job_card.role_type.${job.basic_info.role_type}`
-                        )}
-                      </span>
-                    </div>
-                    <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>◎</span>
-                      <span>{job.basic_info.team_name}</span>
-                    </div>
-                    <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>◎</span>
-                      <span>
-                        {t("team_language")}: {job.basic_info.team_lanugage}
-                      </span>
-                    </div>
-                    <div className={styles.attributeItem}>
-                      <span className={styles.attributeIcon}>◎</span>
-                      <span>
-                        {(job.basic_info.employee_level ?? [])
-                          .map((level) =>
-                            originalT(
-                              `public_jobs.job_card.employee_level.${level}`
-                            )
-                          )
-                          .join("、")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.bannerRight}>{ApplyButton}</div>
+            <div className={styles.bannerInnerContainer}>
+              <div
+                className={classnames(
+                  styles.companyLeft,
+                  styles.desktopVisible
+                )}
+              >
+                {!!company.logo && (
+                  <img
+                    src={
+                      company.logo.startsWith("http")
+                        ? company.logo
+                        : `/api/logo/${company.logo}`
+                    }
+                    className={styles.logo}
+                    alt={company.name}
+                  />
+                )}
               </div>
-              <div className={styles.companySection}>
-                <div className={styles.companyLeft}>
-                  {!!company.logo && (
-                    <img
-                      src={
-                        company.logo.startsWith("http")
-                          ? company.logo
-                          : `/api/logo/${company.logo}`
-                      }
-                      className={styles.logo}
-                      alt={company.name}
-                    />
-                  )}
-                </div>
-                <div className={styles.companyRight}>
-                  <div className={styles.companyName}>{company.name}</div>
-                  {!!job.job_description_json.company_introduction && (
-                    <div className={styles.companyDescription}>
-                      {isCompanyDescriptionExpanded
-                        ? job.job_description_json.company_introduction
-                        : `${job.job_description_json.company_introduction.slice(
-                            0,
-                            100
-                          )}${
-                            job.job_description_json.company_introduction
-                              .length > 100
-                              ? "..."
-                              : ""
-                          }`}
-                      {!isCompanyDescriptionExpanded && (
-                        <span
-                          className={styles.expandLink}
-                          onClick={() =>
-                            setIsCompanyDescriptionExpanded(
-                              !isCompanyDescriptionExpanded
-                            )
+              <div className={styles.companyRight}>
+                <div className={styles.bannerContent}>
+                  <div className={styles.bannerHeader}>
+                    <div className={styles.bannerLeft}>
+                      <div className={styles.jobTitleSection}>
+                        <h1 className={styles.jobTitle}>{job.name}</h1>
+                        <ShareAltOutlined
+                          onClick={async () => {
+                            await copy(window.location.href);
+                            message.success(originalT("copied"));
+                          }}
+                          style={{ color: "#1fac6a" }}
+                        />
+                      </div>
+
+                      <div className={styles.jobAttributes}>
+                        <div className={styles.attributeItem}>
+                          <span className={styles.attributeIcon}>◎</span>
+                          <span>
+                            {(job.basic_info.location ?? [])
+                              .map((item) => item.city)
+                              .join(", ")}
+                          </span>
+                        </div>
+                        <div className={styles.attributeItem}>
+                          <span className={styles.attributeIcon}>◎</span>
+                          <span>
+                            {originalT(
+                              `public_jobs.job_card.role_type.${job.basic_info.role_type}`
+                            )}
+                          </span>
+                        </div>
+                        <div className={styles.attributeItem}>
+                          <span className={styles.attributeIcon}>◎</span>
+                          <span>{job.basic_info.team_name}</span>
+                        </div>
+                        <div className={styles.attributeItem}>
+                          <span className={styles.attributeIcon}>◎</span>
+                          <span>
+                            {t("team_language")}: {job.basic_info.team_lanugage}
+                          </span>
+                        </div>
+                        <div className={styles.attributeItem}>
+                          <span className={styles.attributeIcon}>◎</span>
+                          <span>
+                            {(job.basic_info.employee_level ?? [])
+                              .map((level) =>
+                                originalT(
+                                  `public_jobs.job_card.employee_level.${level}`
+                                )
+                              )
+                              .join("、")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.bannerRight}>{ApplyButton}</div>
+                  </div>
+                  <div className={styles.companySection}>
+                    <div
+                      className={classnames(
+                        styles.companyLeft,
+                        styles.mobileVisible
+                      )}
+                    >
+                      {!!company.logo && (
+                        <img
+                          src={
+                            company.logo.startsWith("http")
+                              ? company.logo
+                              : `/api/logo/${company.logo}`
                           }
-                        >
-                          展开
-                        </span>
+                          className={styles.logo}
+                          alt={company.name}
+                        />
                       )}
                     </div>
-                  )}
+                    <div className={styles.companyRight}>
+                      <div className={styles.companyName}>{company.name}</div>
+                      {!!job.job_description_json.company_introduction && (
+                        <div className={styles.companyDescription}>
+                          {isCompanyDescriptionExpanded
+                            ? job.job_description_json.company_introduction
+                            : `${job.job_description_json.company_introduction.slice(
+                                0,
+                                100
+                              )}${
+                                job.job_description_json.company_introduction
+                                  .length > 100
+                                  ? "..."
+                                  : ""
+                              }`}
+                          {!isCompanyDescriptionExpanded && (
+                            <span
+                              className={styles.expandLink}
+                              onClick={() =>
+                                setIsCompanyDescriptionExpanded(
+                                  !isCompanyDescriptionExpanded
+                                )
+                              }
+                            >
+                              展开
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles.mobileVisible}>{ApplyButton}</div>
+                <div className={styles.mobileVisible}>{ApplyButton}</div>
+              </div>
             </div>
           </div>
 

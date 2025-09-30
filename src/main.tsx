@@ -63,6 +63,7 @@ import SignIn from "./pages/signin";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
+import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -243,6 +244,7 @@ createRoot(document.getElementById("root")!).render(
           </Route>
 
           <Route path="/signin-candidate" element={<SignInCandidate />} />
+          <Route path="/apply-job/:jobId" element={<ApplyJob />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />

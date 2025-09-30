@@ -18,6 +18,7 @@ interface IJobApplyListItemForAdmin extends IJobApplyListItem {
   };
   candidate: {
     name: string;
+    pre_register_info: string;
   };
 }
 const JobApplies = () => {
@@ -30,8 +31,11 @@ const JobApplies = () => {
     useState<IJobApplyListItemForAdmin>();
   const [jobApplyDetailDrawerOpen, setJobApplyDetailDrawerOpen] =
     useState(false);
+  const [jobApplyResumeDrawerOpen, setJobApplyResumeDrawerOpen] =
+    useState(false);
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
+  const [recommendReport, setRecommendReport] = useState("");
 
   useEffect(() => {
     fetchJobApplies();
@@ -62,6 +66,7 @@ const JobApplies = () => {
     if (code === 0) {
       setJd(data.jd);
       setResume(data.resume);
+      setRecommendReport(data.job_apply.evaluate_result);
     }
   };
 
@@ -100,8 +105,17 @@ const JobApplies = () => {
     {
       title: "候选人",
       dataIndex: "candidate",
-      render: (candidate: { name: string }) => {
-        return <div>{candidate.name}</div>;
+      render: (candidate: { name: string; pre_register_info: string }) => {
+        if (candidate.name) {
+          return <div>{candidate.name}</div>;
+        } else {
+          try {
+            const info = JSON.parse(candidate.pre_register_info);
+            return <div>{info.name}</div>;
+          } catch {
+            return <div>N.A.</div>;
+          }
+        }
       },
     },
     {
@@ -206,10 +220,26 @@ const JobApplies = () => {
                 className={styles.jobApplyPanel}
                 style={{ borderLeft: "1px solid #f2f2f2" }}
               >
-                <div className={styles.jobApplyPanelTitle}>简历</div>
-                <MarkdownContainer content={resume} />
+                <div className={styles.jobApplyPanelTitle}>
+                  推荐报告
+                  <Button
+                    type="primary"
+                    onClick={() => setJobApplyResumeDrawerOpen(true)}
+                  >
+                    查看简历
+                  </Button>
+                </div>
+                <MarkdownContainer content={recommendReport || "暂无报告"} />
               </div>
             </div>
+            <Drawer
+              title="简历"
+              open={jobApplyResumeDrawerOpen}
+              onClose={() => setJobApplyResumeDrawerOpen(false)}
+              width={800}
+            >
+              <MarkdownContainer content={resume} />
+            </Drawer>
           </div>
         )}
       </Drawer>
