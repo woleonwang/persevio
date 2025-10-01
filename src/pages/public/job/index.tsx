@@ -45,7 +45,16 @@ const PublicJobDetail = () => {
       // 默认展示 show 参数对应的 tab
       const params = new URLSearchParams(search);
       const show = params.get("show");
-      if (show && ["requirement", "jd", "interview_plan"].includes(show)) {
+      if (
+        show &&
+        [
+          "requirement",
+          "jd",
+          "compensation_details",
+          "outreach_message",
+          "interview_plan",
+        ].includes(show)
+      ) {
         setActiveTab([show]);
       }
     }
