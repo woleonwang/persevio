@@ -259,7 +259,7 @@ const JobBoard = () => {
                 disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_compensation_details_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-composation-details`);
+                  navigate(`/app/jobs/${job.id}/chat/job-compensation-details`);
                 }}
                 size="large"
                 {...(!!job.compensation_details_doc_id && {
