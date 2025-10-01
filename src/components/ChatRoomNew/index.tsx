@@ -332,6 +332,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       handler: () => viewDoc?.("job-description"),
     },
     {
+      key: "compensation-details-done",
+      title: t("view_compensation_details"),
+      handler: () => viewDoc?.("job-compensation-details"),
+    },
+    {
+      key: "outreach-done",
+      title: t("view_outreach_message"),
+      handler: () => viewDoc?.("job-outreach-message"),
+    },
+    {
       key: "interview-plan-done",
       title: t("view_interview_plan"),
       handler: () => viewDoc?.("job-interview-plan"),

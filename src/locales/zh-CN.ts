@@ -244,6 +244,8 @@ export default {
     screening_questions: "点击编辑筛选问题",
     view_jrd: "查看详细职位需求文档",
     view_jd: "查看职位描述文档",
+    view_compensation_details: "查看薪资结构文档",
+    view_outreach_message: "查看邮件内容文档",
     view_interview_plan: "查看面试计划文档",
     view_talent: "查看候选人",
     no_edits: "没有要修改的",

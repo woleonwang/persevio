@@ -2,6 +2,8 @@ import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
   | "jrd-done"
+  | "compensation-details-done"
+  | "outreach-done"
   | "intake-done"
   | "jd-done"
   | "interview-plan-done";

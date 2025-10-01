@@ -251,6 +251,8 @@ export default {
     screening_questions: "Click here to edit screening questions",
     view_jrd: "View complete job requirement document",
     view_jd: "View JD",
+    view_compensation_details: "View compensation details",
+    view_outreach_message: "View outreach message",
     view_interview_plan: "View interview plan",
     view_talent: "View talent",
     no_edits: "Draft is good, no edits",
