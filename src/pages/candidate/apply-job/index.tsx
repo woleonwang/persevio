@@ -212,6 +212,9 @@ const ApplyJob: React.FC = () => {
                 <CandidateChat
                   chatType="job_interview"
                   jobApplyId={jobApplyId}
+                  onFinish={() => {
+                    setPageState("waiting");
+                  }}
                 />
               </div>
             );

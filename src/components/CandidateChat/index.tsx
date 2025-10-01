@@ -161,7 +161,18 @@ const CandidateChat: React.FC<IProps> = (props) => {
       },
       autoTrigger: true,
     },
-
+    {
+      key: "job-interview-done",
+      title: "",
+      handler: () => {
+        message.success(
+          "This conversation has been finished, redirect to dashboard in 5 seconds",
+          5,
+          () => onFinish?.()
+        );
+      },
+      autoTrigger: true,
+    },
     {
       key: "conversation-done",
       title: "完成对话",

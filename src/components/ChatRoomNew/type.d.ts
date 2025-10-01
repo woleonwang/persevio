@@ -43,7 +43,8 @@ export type TExtraTagName =
   | "interview-feedback-confirm-btn"
   //candiate
   | "interview-done"
-  | "conversation-done";
+  | "conversation-done"
+  | "job-interview-done";
 
 export type TMessageFromApi = {
   id: number;
