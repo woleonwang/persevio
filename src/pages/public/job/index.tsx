@@ -137,12 +137,12 @@ const PublicJobDetail = () => {
               {
                 key: "compensation_details",
                 label: "薪资结构",
-                children: <MarkdownContainer content={interview_plan} />,
+                children: <MarkdownContainer content={compensation_details} />,
               },
               {
                 key: "interview_plan",
                 label: "邮件内容",
-                children: <MarkdownContainer content={interview_plan} />,
+                children: <MarkdownContainer content={outreach_message} />,
               },
               {
                 key: "interview_plan",
