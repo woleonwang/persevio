@@ -660,6 +660,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     unfinished_tasks: "You still have {{count}} tasks to complete",
     detailed_define_job_requirement: "Detailed Define Job Requirements",
     define_jd: "Define Job Description (JD)",
+    define_compensation_details: "Define compensation details",
+    define_outreach_message: "Define outreach message",
     create_interview_plan: "Create Interview Plan & Scorecard",
     recommend_candidate_questions: "Recommend Candidate Interview Questions",
     fill_candidate_scorecard: "Fill Candidate Scorecard",
@@ -667,6 +669,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Complete conversation tasks with Viona, here are the detailed documents generated for you:",
     job_requirement_table: "Job Requirement Table",
     job_description_jd: "Job Description (JD)",
+    job_compensation_details: "Job compensation details",
+    job_outreach_message: "Job outreach message",
     interview_plan_scorecard: "Interview Plan & Scorecard",
     no_candidates_yet:
       "You don't have any candidates yet. You can tell me candidate information, and we can work together to create interview plans or fill out scorecards!",
@@ -692,6 +696,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_chat: {
     detailed_define_job_requirement: "Detailed Define Job Requirements",
     define_jd: "Define JD",
+    define_compensation_details: "Define compensation details",
+    define_outreach_message: "Define outreach message",
     define_interview_plan: "Define Interview Plan & Scorecard",
   },
 
@@ -716,6 +722,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     not_created_interview_plan: "Interview plan & scorecard not created yet",
     job_requirement_table: "Job Requirement Table",
     job_description_jd: "Job Description (JD)",
+    job_compensation_details: "Job compensation details",
+    job_outreach_message: "Job outreach message",
     interview_plan_scorecard: "Interview Plan & Scorecard",
   },
 

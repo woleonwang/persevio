@@ -15,12 +15,19 @@ import styles from "./style.module.less";
 const chatTypeMappings = {
   "job-requirement": "jobRequirementDoc",
   "job-description": "jobDescription",
+  "job-composation-details": "jobCompensationDetails",
+  "job-outreach-message": "jobOutreachMessage",
   "job-interview-plan": "jobInterviewPlan",
 };
 
 const JobChat = () => {
   const { chatType = "job-requirement" } = useParams<{
-    chatType: "job-requirement" | "job-description" | "job-interview-plan";
+    chatType:
+      | "job-requirement"
+      | "job-description"
+      | "job-composation-details"
+      | "job-outreach-message"
+      | "job-interview-plan";
   }>();
 
   const { job } = useJob();
@@ -39,6 +46,8 @@ const JobChat = () => {
   const chatTypeTitle = {
     "job-requirement": t("detailed_define_job_requirement"),
     "job-description": t("define_jd"),
+    "job-composation-details": t("define_compensation_details"),
+    "job-outreach-message": t("define_outreach_message"),
     "job-interview-plan": t("define_interview_plan"),
   };
 

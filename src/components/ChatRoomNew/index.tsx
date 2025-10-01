@@ -220,6 +220,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
     },
+    jobCompensationDetails: {
+      get: formatUrl(
+        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`
+      ),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
+    },
+    jobOutreachMessage: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/send`),
+    },
     jobInterviewPlan: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),

@@ -634,6 +634,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       "与 Viona 完成对话任务，以下是为您生成的详细文档：",
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
+    job_compensation_details: "薪资结构",
+    job_outreach_message: "邮件内容",
+    define_compensation_details: "确定薪资",
+    define_outreach_message: "确定邮件内容",
     interview_plan_scorecard: "面试计划&评分卡",
     no_candidates_yet:
       "您现在还没有候选人，可以告诉我候选人信息，我们一起制定面试计划或者填写评分卡！",
@@ -657,6 +661,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   job_chat: {
     detailed_define_job_requirement: "详细定义职位需求",
     define_jd: "定义 JD",
+    define_compensation_details: "确定薪资",
+    define_outreach_message: "确定邮件内容",
     define_interview_plan: "定义面试计划&评分卡",
   },
 
@@ -681,6 +687,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     not_created_interview_plan: "暂未制定面试计划&评分卡",
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
+    job_compensation_details: "薪资结构",
+    job_outreach_message: "邮件内容",
     interview_plan_scorecard: "面试计划&评分卡",
   },
 

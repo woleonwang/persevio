@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, message, Spin } from "antd";
+import { Button, message } from "antd";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router";
 
 import CandidateChat from "@/components/CandidateChat";
 import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
+import Waiting from "./components/Waiting";
 
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
-import VionaAvatar from "@/assets/viona-avatar.png";
-import { targetsOptions } from "../network-pofile/components/EditableTargets";
 import { Get, Post } from "@/utils/request";
 
 const ApplyJob: React.FC = () => {
@@ -19,7 +18,6 @@ const ApplyJob: React.FC = () => {
 
   const [basicInfo, setBasicInfo] = useState<TBaiscInfo>();
   const [jobApplyId, setJobApplyId] = useState<number>();
-  const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [mode, setMode] = useState<"ai" | "human">("ai");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { jobId: jobIdStr } = useParams();
@@ -35,19 +33,34 @@ const ApplyJob: React.FC = () => {
   }, []);
 
   const init = async () => {
-    const { code } = await Get(`/api/candidate/settings`);
-    if (code === 0) {
-      const { code, data } = await Get(
-        `/api/candidate/jobs/${jobId}/job_apply`
-      );
+    try {
+      const { code, data: data1 } = await Get(`/api/candidate/settings`);
       if (code === 0) {
-        setJobApplyId(data.job_apply_id);
-        setPageState("conversation");
+        const preRegisterInfo: IPreRegisterInfo = JSON.parse(
+          data1.candidate.pre_register_info ?? "{}"
+        );
+        const { code, data } = await Get(
+          `/api/candidate/jobs/${jobId}/job_apply`
+        );
+        if (code === 0) {
+          const jobApply: IJobApply = data.job_apply;
+          setJobApplyId(jobApply.id);
+          if (
+            preRegisterInfo.mode === "human" ||
+            !!jobApply.interview_finished_at
+          ) {
+            setPageState("waiting");
+          } else {
+            setPageState("conversation");
+          }
+        } else {
+          localStorage.removeItem("candidate_token");
+          setPageState("basic");
+        }
       } else {
-        localStorage.removeItem("candidate_token");
         setPageState("basic");
       }
-    } else {
+    } catch {
       setPageState("basic");
     }
   };
@@ -132,12 +145,17 @@ const ApplyJob: React.FC = () => {
                   <div className={styles.hint}>
                     95%的职位申请可通过AI面试快速完成初步沟通，建议您优先尝试。
                   </div>
-                  <div>
-                    <div>
-                      <div>
+                  <div className={styles.modeContainer}>
+                    <div
+                      className={classnames(styles.modeItem, {
+                        [styles.active]: mode === "ai",
+                      })}
+                      onClick={() => setMode("ai")}
+                    >
+                      <div className={styles.modeItemTitle}>
                         AI 轻松聊 <span>强烈推荐</span>
                       </div>
-                      <ul>
+                      <ul className={styles.modeItemList}>
                         <li>
                           <b>高效直达</b>
                           ：无需协调时间，现在就能开始，沟通后，将优先推送给猎头和企业HR，
@@ -149,9 +167,14 @@ const ApplyJob: React.FC = () => {
                         </li>
                       </ul>
                     </div>
-                    <div>
-                      <div>真人沟通</div>
-                      <ul>
+                    <div
+                      className={classnames(styles.modeItem, {
+                        [styles.active]: mode === "human",
+                      })}
+                      onClick={() => setMode("human")}
+                    >
+                      <div className={styles.modeItemTitle}>真人沟通</div>
+                      <ul className={styles.modeItemList}>
                         <li>
                           <b>需要预约</b>
                           ： 我们的顾问将在 1-2个工作日内 与您联系安排时间（此流程可能会延长您的申请反馈周期）。
@@ -189,16 +212,11 @@ const ApplyJob: React.FC = () => {
                 <CandidateChat
                   chatType="job_interview"
                   jobApplyId={jobApplyId}
-                  candidate={candidate}
                 />
               </div>
             );
           } else if (pageState === "waiting") {
-            return (
-              <div className={styles.waiting}>
-                <Spin size="large" />
-              </div>
-            );
+            return <Waiting />;
           }
         })()}
       </div>

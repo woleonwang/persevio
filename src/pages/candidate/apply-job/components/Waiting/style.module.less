@@ -4,22 +4,21 @@
 .container {
   flex: auto;
   display: flex;
+  flex-direction: column;
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .body {
+  display: flex;
+  flex: auto;
   width: 1300px;
   background-image: url("/banner-bg.png");
-  background-position-x: right;
+  background-position-x: center;
   background-repeat: no-repeat;
   background-size: contain;
   margin: 50px auto;
   position: relative;
-}
-
-.logoWrapper {
-  padding-bottom: 32px;
 }
 
 .textWrapper {
@@ -31,7 +30,7 @@
 
   position: absolute;
   top: 150px;
-  right: 0;
+  right: 150px;
   width: 300px;
 
   &.rejected {

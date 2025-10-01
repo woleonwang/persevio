@@ -17,11 +17,18 @@ import dayjs from "dayjs";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { useTranslation } from "react-i18next";
 
-type TChatType = "job-requirement" | "job-description" | "job-interview-plan";
+type TChatType =
+  | "job-requirement"
+  | "job-description"
+  | "job-compensation-details"
+  | "job-outreach-message"
+  | "job-interview-plan";
 
 const chatTypeMappings: Record<TChatType, string> = {
   "job-requirement": "requirement",
   "job-description": "jd",
+  "job-compensation-details": "compensation_details",
+  "job-outreach-message": "outreach_message",
   "job-interview-plan": "interview_plan",
 };
 
@@ -41,15 +48,22 @@ const JobDocument = () => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_document.${key}`);
 
-  const chatTypeTitle = useMemo(() => ({
-    "job-requirement": t("job_requirement_table"),
-    "job-description": t("job_description_jd"),
-    "job-interview-plan": t("interview_plan_scorecard"),
-  }), [t]);
+  const chatTypeTitle = useMemo(
+    () => ({
+      "job-requirement": t("job_requirement_table"),
+      "job-description": t("job_description_jd"),
+      "job-compensation-details": t("job_compensation_details"),
+      "job-outreach-message": t("job_outreach_message"),
+      "job-interview-plan": t("interview_plan_scorecard"),
+    }),
+    [t]
+  );
 
   const chatTypeField: Record<TChatType, string> = {
     "job-requirement": "requirement_doc_id",
     "job-description": "jd_doc_id",
+    "job-compensation-details": "compensation_details_doc_id",
+    "job-outreach-message": "outreach_message_doc_id",
     "job-interview-plan": "interview_plan_doc_id",
   };
 
@@ -176,7 +190,9 @@ const JobDocument = () => {
               {chatTypeTitle[chatType]}
               <span className={styles.timestamp}>
                 {updatedAt &&
-                  `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}${t("updated_at")}`}
+                  `${dayjs(updatedAt).format("YYYY/MM/DD HH:mm:ss")}${t(
+                    "updated_at"
+                  )}`}
               </span>
             </div>
             {!!documentContent && (

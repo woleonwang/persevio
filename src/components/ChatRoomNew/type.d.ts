@@ -81,6 +81,8 @@ export type TMessage = {
 export type TChatType =
   | "jobRequirementDoc"
   | "jobDescription"
+  | "jobCompensationDetails"
+  | "jobOutreachMessage"
   | "jobInterviewPlan"
   | "jobInterviewDesign"
   | "jobInterviewFeedback";

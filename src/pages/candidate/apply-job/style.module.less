@@ -50,10 +50,41 @@
 }
 
 .form {
-  width: 800px;
+  max-width: 800px;
   margin: 0 auto;
   overflow: auto;
   padding: 20px;
+}
+
+.modeContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modeItem {
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  cursor: pointer;
+
+  .modeItemTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .modeItemList {
+    list-style: disc;
+    padding-left: 20px;
+  }
+
+  &.active {
+    border-color: @primary-color;
+    .modeItemTitle {
+      color: @primary-color;
+    }
+  }
 }
 
 .title {
@@ -61,59 +92,6 @@
   font-weight: bold;
   margin: 20px 0;
   text-align: center;
-}
-
-.required {
-  &::before {
-    content: "*";
-    color: red;
-    margin-right: 4px;
-  }
-}
-
-.formBg {
-  background-color: rgba(250, 251, 252, 1);
-  padding: 16px;
-  border-radius: 8px;
-}
-
-.targetOption {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: 1px solid rgba(234, 234, 234, 1);
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-
-  &.active {
-    border-color: @primary-color;
-    background-color: rgba(240, 249, 246, 1);
-  }
-
-  .targetTitle {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  .description {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: rgba(153, 153, 153, 1);
-    font-size: 14px;
-  }
-
-  .avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-  }
-}
-
-.addOtherTarget {
-  color: @primary-color;
-  cursor: pointer;
 }
 
 .footer {
@@ -130,7 +108,7 @@
 .hint {
   color: rgba(153, 153, 153, 1);
   font-size: 14px;
-  padding: 20px 40px;
+  padding: 20px 0;
 }
 
 .conversation {
@@ -162,33 +140,4 @@
   display: flex;
   overflow: hidden;
   margin-top: 30px;
-}
-
-.loadingTip {
-  padding: 20px 40px;
-  background-color: white;
-  border-radius: 16px;
-  color: #333;
-  text-align: left;
-  width: 700px;
-
-  .waiting {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: @primary-color;
-    margin-bottom: 20px;
-
-    img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-    }
-  }
-}
-
-@media (min-width: 768px) {
-  .mobileVisible {
-    display: none;
-  }
 }

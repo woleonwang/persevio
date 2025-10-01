@@ -2,13 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Button, message, Modal, Spin, Tooltip } from "antd";
 import { v4 as uuidV4 } from "uuid";
-import dayjs from "dayjs";
 import classnames from "classnames";
 import { ShareAltOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import ChatRoom from "@/components/ChatRoom";
-import { Get, Post } from "@/utils/request";
+import { Get } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
