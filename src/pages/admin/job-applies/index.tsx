@@ -56,7 +56,9 @@ const JobApplies = () => {
     );
 
     if (code === 0) {
-      setJobApplies(data.job_applies);
+      setJobApplies(
+        data.job_applies.filter((item: IJobApplyListItem) => item.deliveried_at)
+      );
       setTotal(data.total);
     }
   };
@@ -132,7 +134,7 @@ const JobApplies = () => {
 
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminPageHeader}>职位列表</div>
+      <div className={styles.adminPageHeader}>候选人申请列表</div>
       <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
           <div>状态: </div>
