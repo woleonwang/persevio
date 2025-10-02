@@ -516,7 +516,9 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <div className={styles.evaluateResultTitle}>
                     {t("candidate_evaluation_report")}
                   </div>
-                  <MarkdownContainer content={talent.raw_evaluate_result} />
+                  <div style={{ padding: "0 20px" }}>
+                    <MarkdownContainer content={talent.raw_evaluate_result} />
+                  </div>
                 </div>
               ) : null}
             </div>
