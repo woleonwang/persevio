@@ -224,22 +224,22 @@ const JobApplies = () => {
                 style={{ borderLeft: "1px solid #f2f2f2" }}
               >
                 <div className={styles.jobApplyPanelTitle}>
-                  <div>
-                    推荐报告
+                  <div>推荐报告</div>
+
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <Button
+                      type="primary"
+                      onClick={() => setIsEditingRecommendReport(true)}
+                    >
+                      编辑报告
+                    </Button>
                     <Button
                       type="primary"
                       onClick={() => setJobApplyResumeDrawerOpen(true)}
                     >
-                      编辑报告
+                      查看简历
                     </Button>
                   </div>
-
-                  <Button
-                    type="primary"
-                    onClick={() => setJobApplyResumeDrawerOpen(true)}
-                  >
-                    查看简历
-                  </Button>
                 </div>
                 {recommendReport ? (
                   <EditableMarkdown
