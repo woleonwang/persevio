@@ -241,7 +241,7 @@ const JobApplies = () => {
                     </Button>
                   </div>
                 </div>
-                {recommendReport ? (
+                {recommendReport || isEditingRecommendReport ? (
                   <EditableMarkdown
                     value={recommendReport}
                     isEditing={isEditingRecommendReport}
