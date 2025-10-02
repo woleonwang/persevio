@@ -6,6 +6,7 @@ import classnames from "classnames";
 import styles from "../style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import dayjs from "dayjs";
+import EditableMarkdown from "@/components/EditableMarkdown";
 
 const PAGE_SIZE = 10;
 
@@ -36,6 +37,8 @@ const JobApplies = () => {
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
   const [recommendReport, setRecommendReport] = useState("");
+  const [isEditingRecommendReport, setIsEditingRecommendReport] =
+    useState(false);
 
   useEffect(() => {
     fetchJobApplies();
@@ -221,7 +224,16 @@ const JobApplies = () => {
                 style={{ borderLeft: "1px solid #f2f2f2" }}
               >
                 <div className={styles.jobApplyPanelTitle}>
-                  推荐报告
+                  <div>
+                    推荐报告
+                    <Button
+                      type="primary"
+                      onClick={() => setJobApplyResumeDrawerOpen(true)}
+                    >
+                      编辑报告
+                    </Button>
+                  </div>
+
                   <Button
                     type="primary"
                     onClick={() => setJobApplyResumeDrawerOpen(true)}
@@ -229,7 +241,31 @@ const JobApplies = () => {
                     查看简历
                   </Button>
                 </div>
-                <MarkdownContainer content={recommendReport || "暂无报告"} />
+                {recommendReport ? (
+                  <EditableMarkdown
+                    value={recommendReport}
+                    isEditing={isEditingRecommendReport}
+                    onSubmit={async (value) => {
+                      const { code } = await Post(
+                        `/api/admin/job_applies/${selectedJobApply?.id}`,
+                        {
+                          evaluate_result: value,
+                        }
+                      );
+
+                      if (code === 0) {
+                        message.success("操作成功");
+                        fetchJobApply();
+                        setIsEditingRecommendReport(false);
+                      } else {
+                        message.error("操作失败");
+                      }
+                    }}
+                    onCancel={() => setIsEditingRecommendReport(false)}
+                  />
+                ) : (
+                  <div>暂无报告</div>
+                )}
               </div>
             </div>
             <Drawer

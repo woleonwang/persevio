@@ -504,14 +504,21 @@ const TalentDetail: React.FC<IProps> = (props) => {
               >
                 <MarkdownContainer content={talent.parsed_content || ""} />
               </div>
-              {talent.evaluate_result.evaluation_summary && (
+              {talent.evaluate_result.evaluation_summary ? (
                 <div className={styles.evaluateResultContainer}>
                   <div className={styles.evaluateResultTitle}>
                     {t("candidate_evaluation_report")}
                   </div>
                   <EvaluateResult result={talent.evaluate_result} />
                 </div>
-              )}
+              ) : talent.raw_evaluate_result ? (
+                <div className={styles.evaluateResultContainer}>
+                  <div className={styles.evaluateResultTitle}>
+                    {t("candidate_evaluation_report")}
+                  </div>
+                  <MarkdownContainer content={talent.raw_evaluate_result} />
+                </div>
+              ) : null}
             </div>
           )}
           {tabKey === "interview_designer" && (

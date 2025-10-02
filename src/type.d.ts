@@ -367,6 +367,7 @@ type TTalent = {
   feedback: string;
   parsed_content: string;
   evaluate_result: TEvaluationResult;
+  raw_evaluate_result: string;
 };
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
