@@ -30,7 +30,7 @@ const Candidates = () => {
         setCandidates(
           data.candidates.filter(
             (candidate: ICandidateSettings) =>
-              candidate.approve_status && candidate.approve_status !== "init"
+              !!candidate.network_profile_finished_at
           )
         );
       }

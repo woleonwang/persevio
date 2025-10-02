@@ -5,16 +5,17 @@ import {
   Input,
   Button,
   message,
-  Tooltip,
   Spin,
   Select,
+  Popover,
 } from "antd";
 import {
-  AudioMutedOutlined,
   AudioOutlined,
+  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
   SendOutlined,
+  XFilled,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -82,7 +83,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [audioHintVisible, setAudioHintVisible] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
-  const [model, setModel] = useState<"chatgpt" | "gemini">("chatgpt");
+  const [model, setModel] = useState<"qwen" | "chatgpt" | "gemini">("qwen");
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -107,9 +108,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
       sendMessage(result);
     },
     disabled: isLoading,
-    onStartTranscription: () => {
-      setAudioHintVisible(false);
-    },
   });
 
   useEffect(() => {
@@ -163,7 +161,18 @@ const CandidateChat: React.FC<IProps> = (props) => {
       },
       autoTrigger: true,
     },
-
+    {
+      key: "job-interview-done",
+      title: "",
+      handler: () => {
+        message.success(
+          "This conversation has been finished, redirect to dashboard in 5 seconds",
+          5,
+          () => onFinish?.()
+        );
+      },
+      autoTrigger: true,
+    },
     {
       key: "conversation-done",
       title: "完成对话",
@@ -330,47 +339,64 @@ Shall we start now?`,
 
   const genRecordButton = () => {
     return (
-      <Tooltip
-        styles={{
-          body: {
-            width: 400,
-          },
-        }}
-        placement="top"
-        title={
-          "长按【Ctrl】键可直接与Viona对话（备注：连按两次 Ctrl 键即可快速启动录音，再单次按下则结束录音）"
+      <Popover
+        content={
+          <div>
+            <div className={styles.hintHeader}>
+              <div className={styles.hintTitle}>语音输入</div>
+              <CloseOutlined
+                onClick={() => setAudioHintVisible(false)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+            <div>您可以通过以下方式快速启用语音输入功能:</div>
+            <ul className={styles.hintList}>
+              <li>长按【Ctrl】键进行持续语音输入</li>
+              <li>连按两次【Ctrl】键快速启动录音，再次按下结束录音</li>
+            </ul>
+          </div>
         }
+        placement="top"
         open={audioHintVisible}
       >
-        {!isRecording && !isTranscribing ? (
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-            }}
-            shape="circle"
-            type="primary"
-            onClick={() => startTranscription()}
-            icon={<AudioOutlined style={{ fontSize: 24 }} />}
-            iconPosition="start"
-          />
-        ) : (
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "rgba(224, 46, 42, 0.1)",
-              color: "rgb(224, 46, 42)",
-            }}
-            shape="circle"
-            type="primary"
-            disabled={isTranscribing || !isStartRecordingOutside}
-            onClick={() => endTranscription()}
-            icon={<AudioMutedOutlined style={{ fontSize: 24 }} />}
-            iconPosition="start"
-          />
-        )}
-      </Tooltip>
+        <div className={styles.buttonContainer}>
+          {!isRecording && !isTranscribing ? (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid gray",
+                color: "gray",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              variant="outlined"
+              color="default"
+              onClick={() => startTranscription()}
+              icon={<AudioOutlined style={{ fontSize: 24 }} />}
+              iconPosition="start"
+            />
+          ) : (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid #1FAC6A",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              type="primary"
+              disabled={isTranscribing || !isStartRecordingOutside}
+              onClick={() => endTranscription()}
+              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
+              iconPosition="start"
+            />
+          )}
+          <div className={styles.buttonHint}>
+            {!isRecording && !isTranscribing ? "语音输入" : "停止语音输入"}
+          </div>
+        </div>
+      </Popover>
     );
   };
 
@@ -435,21 +461,27 @@ Shall we start now?`,
                     )}
 
                     {/* 删除按钮 - 只有非 fake 消息且为 AI 消息时才显示 */}
-                    {item.id !== "fake_ai_id" && item.id !== "fake_user_id" && (
-                      <div className={styles.operationArea}>
-                        <Button.Group>
-                          <Button
-                            shape="round"
-                            onClick={() => {
-                              if (confirm("确定要删除这条消息吗？")) {
-                                deleteMessage(parseInt(item.id));
-                              }
-                            }}
-                            icon={<DeleteOutlined />}
-                          />
-                        </Button.Group>
-                      </div>
-                    )}
+                    {item.id !== "fake_ai_id" &&
+                      item.id !== "fake_user_id" &&
+                      item.role === "user" && (
+                        <div className={styles.operationArea}>
+                          <Button.Group>
+                            <Button
+                              shape="round"
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。"
+                                  )
+                                ) {
+                                  deleteMessage(parseInt(item.id));
+                                }
+                              }}
+                              icon={<DeleteOutlined />}
+                            />
+                          </Button.Group>
+                        </div>
+                      )}
 
                     {(() => {
                       const visibleTags = (item.extraTags ?? [])
@@ -501,108 +533,120 @@ Shall we start now?`,
       </div>
 
       <div className={styles.inputArea}>
-        <div className={classnames("flex-center")} style={{ marginTop: 12 }}>
+        <div
+          className={classnames("flex-center")}
+          style={{ marginTop: 12, alignItems: "flex-start" }}
+        >
           {genRecordButton()}
 
           {isAdmin && (
+            <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
+              <Button
+                type="primary"
+                onClick={() => setIsAudioMode(true)}
+                style={{
+                  width: 48,
+                  height: 48,
+                  backgroundColor: "#f1f1f1",
+                  border: "4px solid gray",
+                  color: "gray",
+                }}
+                shape="circle"
+                variant="outlined"
+                color="default"
+                icon={
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon"
+                  >
+                    <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
+                  </svg>
+                }
+              />
+              <div className={styles.buttonHint}>语音对话</div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", alignContent: "center" }}>
+            <Input.TextArea
+              value={inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              placeholder={textInputVisible ? inputPlaceholder : ""}
+              style={
+                textInputVisible
+                  ? {
+                      width: 600,
+                      marginRight: 8,
+                      marginLeft: 12,
+                      resize: "none",
+                      overflow: "hidden",
+                    }
+                  : {
+                      width: 0,
+                      height: 0,
+                      padding: 0,
+                      border: "none",
+                    }
+              }
+              onCompositionStartCapture={() =>
+                (isCompositingRef.current = true)
+              }
+              onCompositionEndCapture={() => (isCompositingRef.current = false)}
+              onPressEnter={(e) => {
+                if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
+                  e.preventDefault();
+                  submit();
+                }
+              }}
+              autoSize={{
+                minRows: 2,
+                maxRows: 16,
+              }}
+              id="message-textarea"
+            />
+
+            {textInputVisible && (
+              <SendOutlined
+                onClick={() => submit()}
+                style={{ fontSize: 24, color: "#1FAC6A" }}
+              />
+            )}
+          </div>
+
+          <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
             <Button
-              type="primary"
-              onClick={() => setIsAudioMode(true)}
               style={{
                 width: 48,
                 height: 48,
+                border: "4px solid gray",
+                color: "gray",
                 backgroundColor: "#f1f1f1",
-                border: "3px solid #1FAC6A",
-                color: "#1FAC6A",
-                marginLeft: 12,
               }}
               shape="circle"
-              icon={
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon"
-                >
-                  <path d="M7.167 15.416V4.583a.75.75 0 0 1 1.5 0v10.833a.75.75 0 0 1-1.5 0Zm4.166-2.5V7.083a.75.75 0 0 1 1.5 0v5.833a.75.75 0 0 1-1.5 0ZM3 11.25V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Zm12.5 0V8.75a.75.75 0 0 1 1.5 0v2.5a.75.75 0 0 1-1.5 0Z"></path>
-                </svg>
-              }
+              variant="outlined"
+              color="primary"
+              iconPosition="start"
+              icon={<EditOutlined style={{ fontSize: 24 }} />}
+              onClick={() => {
+                if (textInputVisible) {
+                  setTextInputVisible(false);
+                  setInputPlaceholder("");
+                } else {
+                  setTextInputVisible(true);
+                  setTimeout(() => {
+                    setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                  }, 400);
+                }
+              }}
             />
-          )}
-
-          <Input.TextArea
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value);
-            }}
-            placeholder={textInputVisible ? inputPlaceholder : ""}
-            style={
-              textInputVisible
-                ? {
-                    width: 600,
-                    marginRight: 8,
-                    marginLeft: 12,
-                    resize: "none",
-                    overflow: "hidden",
-                  }
-                : {
-                    width: 0,
-                    height: 0,
-                    padding: 0,
-                    border: "none",
-                  }
-            }
-            onCompositionStartCapture={() => (isCompositingRef.current = true)}
-            onCompositionEndCapture={() => (isCompositingRef.current = false)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
-                e.preventDefault();
-                submit();
-              }
-            }}
-            autoSize={{
-              minRows: 2,
-              maxRows: 16,
-            }}
-            id="message-textarea"
-          />
-
-          {textInputVisible && (
-            <SendOutlined
-              onClick={() => submit()}
-              style={{ fontSize: 24, color: "#1FAC6A" }}
-            />
-          )}
-
-          <Button
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#f1f1f1",
-              border: "3px solid #1FAC6A",
-              color: "#1FAC6A",
-              marginLeft: 12,
-            }}
-            shape="circle"
-            variant="outlined"
-            color="primary"
-            iconPosition="start"
-            icon={<EditOutlined style={{ fontSize: 24 }} />}
-            onClick={() => {
-              if (textInputVisible) {
-                setTextInputVisible(false);
-                setInputPlaceholder("");
-              } else {
-                setAudioHintVisible(false);
-                setTextInputVisible(true);
-                setTimeout(() => {
-                  setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                }, 400);
-              }
-            }}
-          />
+            <div className={styles.buttonHint}>文字编辑</div>
+          </div>
 
           {isAdmin && chatType === "network_profile" && (
             <Button
@@ -617,8 +661,11 @@ Shall we start now?`,
           {isAdmin && (
             <Select
               value={model}
-              onChange={(value: "chatgpt" | "gemini") => setModel(value)}
+              onChange={(value: "qwen" | "chatgpt" | "gemini") =>
+                setModel(value)
+              }
               options={[
+                { label: "Qwen", value: "qwen" },
                 { label: "ChatGPT", value: "chatgpt" },
                 { label: "Gemini", value: "gemini" },
               ]}

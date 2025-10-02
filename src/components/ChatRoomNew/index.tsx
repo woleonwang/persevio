@@ -220,6 +220,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
     },
+    jobCompensationDetails: {
+      get: formatUrl(
+        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`
+      ),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
+    },
+    jobOutreachMessage: {
+      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/send`),
+    },
     jobInterviewPlan: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
@@ -320,6 +330,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "jd-done",
       title: t("view_jd"),
       handler: () => viewDoc?.("job-description"),
+    },
+    {
+      key: "compensation-details-done",
+      title: t("view_compensation_details"),
+      handler: () => viewDoc?.("job-compensation-details"),
+    },
+    {
+      key: "outreach-done",
+      title: t("view_outreach_message"),
+      handler: () => viewDoc?.("job-outreach-message"),
     },
     {
       key: "interview-plan-done",

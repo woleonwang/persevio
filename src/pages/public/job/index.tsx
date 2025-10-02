@@ -22,6 +22,8 @@ type TPublicJob = {
   basic_info: TJobBasicInfo;
   jrd: string;
   job_description: string;
+  compensation_details: string;
+  outreach_message: string;
   interview_plan: string;
 };
 const PublicJobDetail = () => {
@@ -43,7 +45,16 @@ const PublicJobDetail = () => {
       // 默认展示 show 参数对应的 tab
       const params = new URLSearchParams(search);
       const show = params.get("show");
-      if (show && ["requirement", "jd", "interview_plan"].includes(show)) {
+      if (
+        show &&
+        [
+          "requirement",
+          "jd",
+          "compensation_details",
+          "outreach_message",
+          "interview_plan",
+        ].includes(show)
+      ) {
         setActiveTab([show]);
       }
     }
@@ -57,7 +68,15 @@ const PublicJobDetail = () => {
     return <div className={styles.container}>未找到该职位</div>;
   }
 
-  const { name, basic_info, jrd, job_description, interview_plan } = job;
+  const {
+    name,
+    basic_info,
+    jrd,
+    job_description,
+    interview_plan,
+    compensation_details,
+    outreach_message,
+  } = job;
 
   return (
     <div className={classnames(styles.container, styles.v)}>
@@ -123,6 +142,16 @@ const PublicJobDetail = () => {
                 key: "jd",
                 label: "职位描述",
                 children: <MarkdownContainer content={job_description} />,
+              },
+              {
+                key: "compensation_details",
+                label: "薪资结构",
+                children: <MarkdownContainer content={compensation_details} />,
+              },
+              {
+                key: "interview_plan",
+                label: "邮件内容",
+                children: <MarkdownContainer content={outreach_message} />,
               },
               {
                 key: "interview_plan",

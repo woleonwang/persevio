@@ -59,6 +59,8 @@ const JobBoard = () => {
     [
       !job.requirement_doc_id,
       !job.jd_doc_id,
+      !job.compensation_details_doc_id,
+      !job.outreach_message_doc_id,
       !job.interview_plan_doc_id,
     ].filter(Boolean).length + 2;
 
@@ -187,9 +189,7 @@ const JobBoard = () => {
             </Tooltip>
           )}
 
-          <Tooltip
-            title={t("copy_job_requirement_link")}
-          >
+          <Tooltip title={t("copy_job_requirement_link")}>
             <ShareAltOutlined
               onClick={async () => {
                 await copy(
@@ -213,12 +213,7 @@ const JobBoard = () => {
             )}
           </div>
           <div className={styles.buttonContainer}>
-            <Badge
-              dot={
-                !checkJobDotStatus(job.id, "job_requirement_doc") &&
-                !checkJobDotStatus(job.id, "job_requirement_chat")
-              }
-            >
+            <Badge dot={!checkJobDotStatus(job.id, "job_requirement_chat")}>
               <Button
                 onClick={() => {
                   setJobDotStatus(job.id, "job_requirement_chat");
@@ -236,7 +231,6 @@ const JobBoard = () => {
             <Badge
               dot={
                 !!job.requirement_doc_id &&
-                !checkJobDotStatus(job.id, "job_description_doc") &&
                 !checkJobDotStatus(job.id, "job_description_chat")
               }
             >
@@ -258,25 +252,59 @@ const JobBoard = () => {
             <Badge
               dot={
                 !!job.requirement_doc_id &&
-                !checkJobDotStatus(job.id, "job_interview_plan_doc") &&
-                !checkJobDotStatus(job.id, "job_interview_plan_chat")
+                !checkJobDotStatus(job.id, "job_compensation_details_chat")
               }
             >
               <Button
                 disabled={!job.requirement_doc_id}
                 onClick={() => {
-                  setJobDotStatus(job.id, "job_interview_plan_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-interview-plan`);
+                  setJobDotStatus(job.id, "job_compensation_details_chat");
+                  navigate(`/app/jobs/${job.id}/chat/job-compensation-details`);
                 }}
                 size="large"
-                {...(!!job.interview_plan_doc_id && {
+                {...(!!job.compensation_details_doc_id && {
                   color: "primary",
                   variant: "outlined",
                 })}
               >
-                {t("create_interview_plan")}
+                {t("define_compensation_details")}
               </Button>
             </Badge>
+            <Badge
+              dot={
+                !!job.requirement_doc_id &&
+                !checkJobDotStatus(job.id, "job_outreach_message_chat")
+              }
+            >
+              <Button
+                disabled={!job.requirement_doc_id}
+                onClick={() => {
+                  setJobDotStatus(job.id, "job_outreach_message_chat");
+                  navigate(`/app/jobs/${job.id}/chat/job-outreach-message`);
+                }}
+                size="large"
+                {...(!!job.outreach_message_doc_id && {
+                  color: "primary",
+                  variant: "outlined",
+                })}
+              >
+                {t("define_outreach_message")}
+              </Button>
+            </Badge>
+            <Button
+              disabled={!job.requirement_doc_id}
+              onClick={() => {
+                setJobDotStatus(job.id, "job_interview_plan_chat");
+                navigate(`/app/jobs/${job.id}/chat/job-interview-plan`);
+              }}
+              size="large"
+              {...(!!job.interview_plan_doc_id && {
+                color: "primary",
+                variant: "outlined",
+              })}
+            >
+              {t("create_interview_plan")}
+            </Button>
             <Button
               disabled={!job.interview_plan_doc_id}
               onClick={() => {
@@ -338,6 +366,42 @@ const JobBoard = () => {
                 size="large"
               >
                 {t("job_description_jd")}
+              </Button>
+            </Badge>
+            <Badge
+              dot={
+                !!job.compensation_details_doc_id &&
+                !checkJobDotStatus(job.id, "job_compensation_details_doc")
+              }
+            >
+              <Button
+                // disabled={!job.jd_doc_id}
+                onClick={() => {
+                  setJobDotStatus(job.id, "job_compensation_details_doc");
+                  navigate(
+                    `/app/jobs/${job.id}/document/job-compensation-details`
+                  );
+                }}
+                size="large"
+              >
+                {t("job_compensation_details")}
+              </Button>
+            </Badge>
+            <Badge
+              dot={
+                !!job.compensation_details_doc_id &&
+                !checkJobDotStatus(job.id, "job_outreach_message_doc")
+              }
+            >
+              <Button
+                // disabled={!job.jd_doc_id}
+                onClick={() => {
+                  setJobDotStatus(job.id, "job_outreach_message_doc");
+                  navigate(`/app/jobs/${job.id}/document/job-outreach-message`);
+                }}
+                size="large"
+              >
+                {t("job_outreach_message")}
               </Button>
             </Badge>
             <Badge

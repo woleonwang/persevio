@@ -27,6 +27,7 @@ const useTalent = () => {
       const talent = data.talent;
       setTalent({
         ...talent,
+        raw_evaluate_result: talent.evaluate_result,
         evaluate_result: parseJSON(talent.evaluate_result),
       });
     } else {

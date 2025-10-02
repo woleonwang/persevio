@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import { ConfigProvider } from "antd";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import dayjs from "dayjs";
+
+import "dayjs/locale/zh-cn";
 
 import "./index.css";
 import App from "./layouts/App";
@@ -59,6 +62,8 @@ import Staffs from "./pages/staffs";
 import SignIn from "./pages/signin";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
+import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
+import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -72,6 +77,8 @@ i18n.use(initReactI18next).init({
   lng: "en-US", // 设置初始语言为英文
   fallbackLng: "en-US",
 });
+
+dayjs.locale("zh-cn");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -233,8 +240,11 @@ createRoot(document.getElementById("root")!).render(
               path="/candidate/connections"
               element={<CandidateConnections />}
             />
+            <Route path="/candidate/apply-job" element={<ApplyJobTest />} />
           </Route>
+
           <Route path="/signin-candidate" element={<SignInCandidate />} />
+          <Route path="/apply-job/:jobId" element={<ApplyJob />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />

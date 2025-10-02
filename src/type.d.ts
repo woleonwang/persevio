@@ -149,6 +149,15 @@ interface ISettings {
   lang: string;
 }
 
+interface IPreRegisterInfo {
+  email: string;
+  name: string;
+  phone: string;
+  resume_path: string;
+  mode: "ai" | "human";
+  job_id: number;
+}
+
 interface ICandidateSettings {
   id: number;
   email: string;
@@ -167,6 +176,7 @@ interface ICandidateSettings {
   goals_doc: string;
 
   network_profile_finished_at?: string;
+  pre_register_info?: string;
 }
 
 interface IRecommendedJob {
@@ -357,6 +367,7 @@ type TTalent = {
   feedback: string;
   parsed_content: string;
   evaluate_result: TEvaluationResult;
+  raw_evaluate_result: string;
 };
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
@@ -484,6 +495,16 @@ interface ICandidateConnection {
   target_status: "pending" | "approved" | "rejected";
   reason: string;
   interview_info: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ICandidateTask {
+  id: number;
+  candidate_id: number;
+  task_type: "connection_approved";
+  task_params: string;
+  finished_at?: string;
   created_at: string;
   updated_at: string;
 }

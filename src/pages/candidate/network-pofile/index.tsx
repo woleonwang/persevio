@@ -4,13 +4,16 @@ import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { Empty, message, Tabs, Upload } from "antd";
-import MarkdownContainer from "@/components/MarkdownContainer";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import EditableTargets from "./components/EditableTargets";
+import EditableMarkdown from "@/components/EditableMarkdown";
 
 type TTabKey = "profile" | "goals";
 const NetworkProfile = () => {
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [status, setStatus] = useState<TTabKey>("profile");
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditingGoals, setIsEditingGoals] = useState(false);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
@@ -23,6 +26,27 @@ const NetworkProfile = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setCandidate(data.candidate);
+    }
+  };
+
+  const updateProfile = async (
+    values: Partial<
+      Record<
+        "targets" | "avatar" | "profile_doc" | "goals_doc",
+        string | string[]
+      >
+    >
+  ) => {
+    const { code } = await Post("/api/candidate/network/profile", values);
+    if (code === 0) {
+      fetchCandidate();
+      setIsEditingProfile(false);
+      setIsEditingGoals(false);
+      message.success("更新成功");
+      return true;
+    } else {
+      message.error("更新失败");
+      return false;
     }
   };
 
@@ -64,17 +88,9 @@ const NetworkProfile = () => {
                   }}
                   onChange={async (info) => {
                     if (info.file.status === "done") {
-                      const { code } = await Post(
-                        "/api/candidate/network/profile",
-                        {
-                          avatar: info.file.response.data.avatar,
-                        }
-                      );
-                      if (code === 0) {
-                        fetchCandidate();
-                      } else {
-                        message.error("上传失败");
-                      }
+                      await updateProfile({
+                        avatar: info.file.response.data.avatar,
+                      });
                     } else if (info.file.status === "error") {
                       message.error("上传失败");
                     }
@@ -106,9 +122,22 @@ const NetworkProfile = () => {
               </div>
 
               <div style={{ marginTop: 20 }}>
-                <div className={styles.title}>基本职业生涯</div>
+                <div className={styles.title}>
+                  基本职业生涯
+                  {!isEditingProfile && (
+                    <EditOutlined
+                      style={{ marginLeft: 10 }}
+                      onClick={() => setIsEditingProfile(!isEditingProfile)}
+                    />
+                  )}
+                </div>
                 <div className={styles.resumeWrapper}>
-                  <MarkdownContainer content={candidate.profile_doc} />
+                  <EditableMarkdown
+                    value={candidate.profile_doc}
+                    isEditing={isEditingProfile}
+                    onSubmit={(doc) => updateProfile({ profile_doc: doc })}
+                    onCancel={() => setIsEditingProfile(false)}
+                  />
                 </div>
               </div>
             </>
@@ -121,21 +150,30 @@ const NetworkProfile = () => {
         (candidate?.goals_doc ? (
           <div style={{ margin: 20, overflow: "auto" }}>
             <div>
-              <div className={styles.title}>兴趣意向</div>
-              <div className={styles.subTitle}>
-                目前正在探索的领域，或者感兴趣的主题？
-                <EditOutlined style={{ marginLeft: 10 }} />
-              </div>
-              <div>{candidate.interests}</div>
-
-              <div className={styles.subTitle}>
-                想通过networking来解决什么问题？{" "}
-                <EditOutlined style={{ marginLeft: 10 }} />
-              </div>
-              <div>{candidate.targets}</div>
+              <EditableTargets
+                value={candidate.targets}
+                onChange={(doc) => updateProfile({ targets: doc })}
+              />
             </div>
-            <div className={styles.resumeWrapper}>
-              <MarkdownContainer content={candidate.goals_doc} />
+
+            <div style={{ marginTop: 20 }}>
+              <div className={styles.title}>
+                具体感兴趣的人物画像
+                {!isEditingGoals && (
+                  <EditOutlined
+                    style={{ marginLeft: 10 }}
+                    onClick={() => setIsEditingGoals(!isEditingGoals)}
+                  />
+                )}
+              </div>
+              <div className={styles.resumeWrapper}>
+                <EditableMarkdown
+                  value={candidate.goals_doc}
+                  isEditing={isEditingGoals}
+                  onSubmit={(doc) => updateProfile({ goals_doc: doc })}
+                  onCancel={() => setIsEditingGoals(false)}
+                />
+              </div>
             </div>
           </div>
         ) : (

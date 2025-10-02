@@ -17,7 +17,7 @@ gain.connect(audioContext.destination);
 
 interface IProps {
   onClose: () => void;
-  model: "chatgpt" | "gemini";
+  model: "qwen" | "chatgpt" | "gemini";
 }
 
 const VoiceChatModal: React.FC<IProps> = (props) => {
@@ -65,6 +65,16 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
   });
 
   const initConnection = async () => {
+    if (model === "qwen") {
+      setStatus("listening");
+      setCurrentTime(Date.now());
+      startTimeRef.current = Date.now();
+      setInterval(() => {
+        setCurrentTime(Date.now());
+      }, 1000);
+      return;
+    }
+
     if (isInitintgConnectionRef.current) return;
     isInitintgConnectionRef.current = true;
 

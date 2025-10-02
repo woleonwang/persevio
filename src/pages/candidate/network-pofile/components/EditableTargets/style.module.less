@@ -1,0 +1,60 @@
+@primary-color: #1fac6a;
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+
+  &:before {
+    content: "";
+    display: block;
+    border-left: 4px solid @primary-color;
+    height: 24px;
+    margin-right: 12px;
+  }
+}
+
+.content {
+  white-space: pre-wrap;
+}
+
+.targetOption {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-color: @primary-color;
+    background-color: rgba(240, 249, 246, 1);
+  }
+
+  .targetTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .description {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(153, 153, 153, 1);
+    font-size: 14px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+}
+
+.addOtherTarget {
+  color: @primary-color;
+  cursor: pointer;
+}

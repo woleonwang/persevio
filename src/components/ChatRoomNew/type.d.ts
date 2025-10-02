@@ -2,6 +2,8 @@ import { onChangeTabFunction } from "../../pages/job/index";
 
 export type TDoneTag =
   | "jrd-done"
+  | "compensation-details-done"
+  | "outreach-done"
   | "intake-done"
   | "jd-done"
   | "interview-plan-done";
@@ -41,7 +43,8 @@ export type TExtraTagName =
   | "interview-feedback-confirm-btn"
   //candiate
   | "interview-done"
-  | "conversation-done";
+  | "conversation-done"
+  | "job-interview-done";
 
 export type TMessageFromApi = {
   id: number;
@@ -81,6 +84,8 @@ export type TMessage = {
 export type TChatType =
   | "jobRequirementDoc"
   | "jobDescription"
+  | "jobCompensationDetails"
+  | "jobOutreachMessage"
   | "jobInterviewPlan"
   | "jobInterviewDesign"
   | "jobInterviewFeedback";

@@ -20,10 +20,25 @@
   flex: none;
 }
 
-.bannerContent {
+.bannerInnerContainer {
   max-width: 1400px;
-  margin: 0 auto;
+  display: flex;
   padding: 0 32px;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 32px;
+}
+
+.companyLeft {
+  margin-top: 20px;
+}
+
+.companyRight {
+  flex: auto;
+}
+
+.bannerContent {
+  margin: 0 auto;
 }
 
 .bannerHeader {
@@ -84,14 +99,9 @@
   font-weight: bold;
 }
 
-.companySection {
-  display: flex;
-  gap: 12px;
-}
-
 .logo {
-  height: 80px;
-  width: 80px;
+  height: 140px;
+  width: 140px;
   object-fit: contain;
   border-radius: 12px;
 }
@@ -263,6 +273,7 @@
 
   .companyLeft {
     flex: none;
+    margin-top: 0;
   }
 
   .logo {
