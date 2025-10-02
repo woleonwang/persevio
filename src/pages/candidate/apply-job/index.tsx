@@ -39,6 +39,7 @@ const ApplyJob: React.FC = () => {
         const preRegisterInfo: IPreRegisterInfo = JSON.parse(
           data1.candidate.pre_register_info ?? "{}"
         );
+        setMode(preRegisterInfo.mode);
         const { code, data } = await Get(
           `/api/candidate/jobs/${jobId}/job_apply`
         );
@@ -78,7 +79,7 @@ const ApplyJob: React.FC = () => {
 
     if (code === 0) {
       const { job_apply_id, token } = data;
-      message.success("保存成功");
+      message.success("Save successful");
       localStorage.setItem("candidate_token", token);
       if (mode === "ai") {
         setJobApplyId(job_apply_id);
@@ -87,13 +88,13 @@ const ApplyJob: React.FC = () => {
         setPageState("waiting");
       }
     } else {
-      message.error("保存失败");
+      message.error("Save failed");
     }
     setIsSubmitting(false);
   };
 
   if (!jobId) {
-    return <div>申请职位不存在</div>;
+    return <div>Apply job does not exist</div>;
   }
 
   return (
@@ -141,9 +142,14 @@ const ApplyJob: React.FC = () => {
                   className={styles.form}
                   style={{ display: pageState === "mode" ? "block" : "none" }}
                 >
-                  <div className={styles.title}>沟通偏好</div>
+                  <div className={styles.title}>
+                    Step 2: Let's Chat and Prepare Your Application
+                  </div>
                   <div className={styles.hint}>
-                    95%的职位申请可通过AI面试快速完成初步沟通，建议您优先尝试。
+                    Before we can submit your application, our consultant needs
+                    to have a quick chat to learn more about your experience and
+                    ensure we represent you in the best possible light to the
+                    employer.
                   </div>
                   <div className={styles.modeContainer}>
                     <div
@@ -153,17 +159,22 @@ const ApplyJob: React.FC = () => {
                       onClick={() => setMode("ai")}
                     >
                       <div className={styles.modeItemTitle}>
-                        AI 轻松聊 <span>强烈推荐</span>
+                        Instant chat with AI Recruiter
                       </div>
                       <ul className={styles.modeItemList}>
                         <li>
-                          <b>高效直达</b>
-                          ：无需协调时间，现在就能开始，沟通后，将优先推送给猎头和企业HR，
-                          <b>最快24小时内获得反馈</b>，快人一步。
+                          <b>Chat On Your Terms</b>:Complete your chat anytime,
+                          anywhere. It's text-based, instant, and requires no
+                          scheduling.。
                         </li>
                         <li>
-                          <b>公平公正</b>
-                          ： AI将专注于您的技能和经验，确保不错过任何亮点，尽可能规避各类偏见。
+                          <b>Get Noticed Faster</b>: Your application gets
+                          fast-tracked directly to the hiring team. We aim to
+                          get you feedback in just 24 hours.
+                        </li>
+                        <li>
+                          <b>Stay Informed</b>: Easily check your application's
+                          progress 24/7 on your candidate dashboard.
                         </li>
                       </ul>
                     </div>
@@ -173,15 +184,11 @@ const ApplyJob: React.FC = () => {
                       })}
                       onClick={() => setMode("human")}
                     >
-                      <div className={styles.modeItemTitle}>真人沟通</div>
+                      <div className={styles.modeItemTitle}>
+                        Schedule a call with human recruiter
+                      </div>
                       <ul className={styles.modeItemList}>
-                        <li>
-                          <b>需要预约</b>
-                          ： 我们的顾问将在 1-2个工作日内 与您联系安排时间（此流程可能会延长您的申请反馈周期）。
-                        </li>
-                        <li>
-                          如果您有特别复杂的问题需要与猎头深入探讨，可以选择此方式。
-                        </li>
+                        <li>Our human recruiter will get in touch with you.</li>
                       </ul>
                     </div>
                   </div>
@@ -191,7 +198,7 @@ const ApplyJob: React.FC = () => {
                       className={styles.back}
                       onClick={() => setPageState("basic")}
                     >
-                      {"< 上一步"}
+                      {"< Back"}
                     </div>
                     <Button
                       type="primary"
@@ -200,7 +207,7 @@ const ApplyJob: React.FC = () => {
                       style={{ width: "200px" }}
                       loading={isSubmitting}
                     >
-                      下一步
+                      Next
                     </Button>
                   </div>
                 </div>
@@ -219,7 +226,7 @@ const ApplyJob: React.FC = () => {
               </div>
             );
           } else if (pageState === "waiting") {
-            return <Waiting />;
+            return <Waiting mode={mode} />;
           }
         })()}
       </div>

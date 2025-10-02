@@ -30,31 +30,37 @@ const BasicInfo: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>基本信息</div>
+      <div className={styles.title}>Step 1: Provide Your Basic Information</div>
+      <div className={styles.hint}>
+        We need this information to create your application and keep you updated
+        on its progress.
+      </div>
       <div className={styles.container}>
         <Form
           form={form}
           layout="vertical"
           onFieldsChange={() => forceUpdate()}
         >
-          <Form.Item label="姓名" name="name" rules={[{ required: true }]}>
+          <Form.Item label="Name" name="name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="手机号码" name="phone" rules={[{ required: true }]}>
+          <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="邮箱" name="email" rules={[{ required: true }]}>
+          <Form.Item label="Email" name="email" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="个人简历"
+            label="Resume"
             required
             rules={[
               {
                 validator: () => {
                   if (!resumePath) {
-                    return Promise.reject(new Error("请上传简历/个人资料"));
+                    return Promise.reject(
+                      new Error("Please upload resume/personal information")
+                    );
                   }
                   return Promise.resolve();
                 },
@@ -73,12 +79,12 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   formData
                 );
                 if (code === 0) {
-                  message.success("上传成功");
+                  message.success("Upload successful");
                   setResumePath(data.resume);
                   console.log("resume:", data.resume);
                   setResumeFileName(fileInfo.file.name);
                 } else {
-                  message.error("上传失败");
+                  message.error("Upload failed");
                 }
                 setIsUploadingResume(false);
               }}
@@ -91,12 +97,12 @@ const BasicInfo: React.FC<IProps> = (props) => {
               ) : isUploadingResume ? (
                 <div>
                   <LoadingOutlined className={styles.uploadingIcon} />
-                  上传简历中...
+                  Uploading resume...
                 </div>
               ) : (
                 <div>
                   <UploadOutlined className={styles.uploadIcon} />
-                  <div>支持上传.doc,.docx,.pdf格式文件</div>
+                  <div>Support uploading .doc,.docx,.pdf format files</div>
                 </div>
               )}
             </Upload.Dragger>
@@ -122,7 +128,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
               });
             }}
           >
-            下一步
+            Next
           </Button>
         </div>
       </div>
