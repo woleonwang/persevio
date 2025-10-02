@@ -32,7 +32,9 @@ const Staffs: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editingStaff, setEditingStaff] = useState<IStaffWithAccount | null>(null);
+  const [editingStaff, setEditingStaff] = useState<IStaffWithAccount | null>(
+    null
+  );
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const [createdStaffInfo, setCreatedStaffInfo] = useState<{
@@ -105,8 +107,8 @@ const Staffs: React.FC = () => {
     setIsEditMode(false);
     setEditingStaff(null);
     setIsModalVisible(true);
-    generatePassword();
     form.resetFields();
+    generatePassword();
     form.setFieldsValue({ role: "normal" });
   };
 
@@ -119,7 +121,7 @@ const Staffs: React.FC = () => {
       name: staff.name,
       email: staff.account.username,
       role: staff.role,
-      password: "******" // 编辑模式下不显示真实密码
+      password: "******", // 编辑模式下不显示真实密码
     });
   };
 
@@ -201,7 +203,7 @@ const Staffs: React.FC = () => {
         setIsEditMode(false);
         setEditingStaff(null);
         form.resetFields();
-        
+
         // 刷新员工列表
         fetchStaffs();
       } else {
@@ -253,8 +255,8 @@ const Staffs: React.FC = () => {
       width: 120,
       render: (_: any, record: IStaffWithAccount) => (
         <Space size="small">
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             size="small"
             onClick={() => showEditModal(record)}
           >
@@ -270,8 +272,8 @@ const Staffs: React.FC = () => {
       {/* 头部区域 */}
       <div className={styles.headerSection}>
         <div className={styles.titleSection}>
-          <ArrowLeftOutlined 
-            className={styles.backArrow} 
+          <ArrowLeftOutlined
+            className={styles.backArrow}
             onClick={handleBack}
           />
           <h1 className={styles.pageTitle}>员工列表</h1>
@@ -293,10 +295,10 @@ const Staffs: React.FC = () => {
             allowClear
           />
         </div>
-        
+
         <div className={styles.actionSection}>
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             icon={<PlusOutlined />}
             onClick={showCreateModal}
           >
@@ -354,10 +356,7 @@ const Staffs: React.FC = () => {
               { type: "email", message: "请输入有效的邮箱格式" },
             ]}
           >
-            <Input 
-              placeholder="请输入员工邮箱" 
-              disabled={isEditMode}
-            />
+            <Input placeholder="请输入员工邮箱" disabled={isEditMode} />
           </Form.Item>
 
           <Form.Item
@@ -404,10 +403,10 @@ const Staffs: React.FC = () => {
         closable={false}
       >
         <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
-          <CheckCircleOutlined 
-            style={{ 
-              fontSize: "24px", 
-              color: "#52c41a", 
+          <CheckCircleOutlined
+            style={{
+              fontSize: "24px",
+              color: "#52c41a",
               marginTop: "2px",
             }}
           />
