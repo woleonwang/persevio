@@ -1258,5 +1258,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     delete_success: "Deleted successfully",
     delete_failed: "Delete failed",
     refresh_unread_comment: "Refresh unread candidate status",
+    empty_text: "No data",
   },
 };

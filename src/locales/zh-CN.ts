@@ -1213,5 +1213,6 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     delete_success: "删除成功",
     delete_failed: "删除失败",
     refresh_unread_comment: "刷新未读候选人状态",
+    empty_text: "暂无数据",
   },
 };

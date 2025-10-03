@@ -133,7 +133,9 @@ const Talents: React.FC = () => {
       key: "source_channel",
       width: 120,
       render: (_, record) => {
-        return record.source_channel === "delivery" ? t("active_delivery") : t("system_upload");
+        return record.source_channel === "delivery"
+          ? t("active_delivery")
+          : t("system_upload");
       },
     },
     {
@@ -228,6 +230,9 @@ const Talents: React.FC = () => {
           dataSource={currentPageTalents}
           rowKey="id"
           loading={loading}
+          locale={{
+            emptyText: t("empty_text"),
+          }}
           pagination={{
             current: currentPage,
             pageSize: PAGE_SIZE,
