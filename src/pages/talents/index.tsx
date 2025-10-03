@@ -22,7 +22,7 @@ const Talents: React.FC = () => {
   const { jobs } = globalStore;
 
   const { t: originalT } = useTranslation();
-  // const t = (key: string) => originalT(`company_talents.${key}`);
+  const t = (key: string) => originalT(`company_talents.${key}`);
 
   useEffect(() => {
     fetchTalents();
@@ -74,10 +74,10 @@ const Talents: React.FC = () => {
 
   const handleDelete = (talent: ITalentListItem) => {
     Modal.confirm({
-      title: "提示",
-      content: `请确认是否删除${talent.name},删除后原有内容无法恢复。`,
-      okText: "确认",
-      cancelText: "取消",
+      title: t("delete_confirm_title"),
+      content: t("delete_confirm_content").replace("{{name}}", talent.name),
+      okText: t("confirm_button"),
+      cancelText: t("cancel_button"),
       okType: "primary",
       onOk: async () => {
         const { code } = await Post(
@@ -85,10 +85,10 @@ const Talents: React.FC = () => {
         );
 
         if (code === 0) {
-          message.success("删除成功");
+          message.success(t("delete_success"));
           fetchTalents();
         } else {
-          message.error("删除失败");
+          message.error(t("delete_failed"));
         }
       },
     });
@@ -102,13 +102,13 @@ const Talents: React.FC = () => {
 
   const columns: ColumnsType<ITalentListItem> = [
     {
-      title: "ID",
+      title: t("id_column"),
       dataIndex: "id",
       key: "id",
       width: 80,
     },
     {
-      title: "候选人",
+      title: t("candidate_column"),
       dataIndex: "name",
       key: "name",
       width: 120,
@@ -122,22 +122,22 @@ const Talents: React.FC = () => {
       ),
     },
     {
-      title: "职位名称",
+      title: t("job_name_column"),
       dataIndex: "job_name",
       key: "job_name",
       width: 150,
     },
     {
-      title: "获取渠道",
+      title: t("source_channel_column"),
       dataIndex: "source_channel",
       key: "source_channel",
       width: 120,
       render: (_, record) => {
-        return record.source_channel === "delivery" ? "主动投递" : "系统上传";
+        return record.source_channel === "delivery" ? t("active_delivery") : t("system_upload");
       },
     },
     {
-      title: "简历申请/上传时间",
+      title: t("apply_time_column"),
       dataIndex: "created_at",
       key: "created_at",
       width: 180,
@@ -146,7 +146,7 @@ const Talents: React.FC = () => {
       },
     },
     {
-      title: "匹配度",
+      title: t("match_level_column"),
       dataIndex: "match_level",
       key: "match_level",
       width: 180,
@@ -158,7 +158,7 @@ const Talents: React.FC = () => {
       },
     },
     {
-      title: "操作",
+      title: t("action_column"),
       key: "action",
       width: 150,
       render: (_, record) => (
@@ -168,7 +168,7 @@ const Talents: React.FC = () => {
             size="small"
             onClick={() => handleViewDetails(record)}
           >
-            详情
+            {t("details_button")}
           </Button>
           {record.source_channel === "upload" && (
             <Button
@@ -177,7 +177,7 @@ const Talents: React.FC = () => {
               danger
               onClick={() => handleDelete(record)}
             >
-              删除
+              {t("delete_button")}
             </Button>
           )}
         </Space>
@@ -188,13 +188,13 @@ const Talents: React.FC = () => {
   return (
     <div className={styles.candidatesContainer}>
       <div className={styles.pageHeader}>
-        <div className={styles.title}>候选人列表</div>
+        <div className={styles.title}>{t("title")}</div>
       </div>
 
       <div className={styles.filterSection}>
         <div className={styles.filterItem}>
           <Input
-            placeholder="请输入候选人姓名进行搜索"
+            placeholder={t("search_placeholder")}
             prefix={<SearchOutlined />}
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
@@ -204,7 +204,7 @@ const Talents: React.FC = () => {
         </div>
         <div className={styles.filterItem}>
           <Select
-            placeholder="请选择职位进行筛选"
+            placeholder={t("filter_placeholder")}
             value={selectedJob}
             onChange={setSelectedJob}
             style={{ width: 200 }}
@@ -236,7 +236,10 @@ const Talents: React.FC = () => {
             showSizeChanger: false,
             showQuickJumper: true,
             showTotal: (total, range) =>
-              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+              t("pagination_total")
+                .replace("{{rangeStart}}", String(range[0]))
+                .replace("{{rangeEnd}}", String(range[1]))
+                .replace("{{total}}", String(total)),
           }}
           scroll={{ x: 1000 }}
         />

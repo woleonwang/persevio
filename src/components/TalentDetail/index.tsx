@@ -112,7 +112,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
         i18n.changeLanguage(job.language);
       }
 
-      setScoreCardVersion(interviewPlan.signals[0]?.groupKey ? "2" : "1");
+      setScoreCardVersion(interviewPlan.signals?.[0]?.groupKey ? "2" : "1");
 
       // 刷新未读候选人状态
       globalStore.refreshUnreadTalentsCount();
