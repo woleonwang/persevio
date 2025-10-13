@@ -31,6 +31,8 @@ import ManagerDetail, {
 } from "./components/ManagerDetail";
 import PercentageInput from "./components/PercentageInput";
 import NumberRange from "./components/NumberRange";
+import globalStore from "@/store/global";
+import { observer } from "mobx-react-lite";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -116,6 +118,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const [teams, setTeams] = useState<TTeam[]>([]);
 
   const { t: originalT } = useTranslation();
+  const { mode } = globalStore;
 
   useEffect(() => {
     form.resetFields();
@@ -166,313 +169,516 @@ const JobRequirementFormDrawer = (props: IProps) => {
     },
   ];
 
+  const getOptions = (key: string, text: string) => {
+    return {
+      value: key,
+      label: (
+        <>
+          <b>{text.split("**")[1]}</b>
+          {text.split("**")[2]}
+        </>
+      ),
+      text,
+    };
+  };
+
   const RoleOverviewFormQuestionsGroups: TQuestionGroup[] = [
     {
       key: "basic_info",
       title: t("basic_information"),
-      questions: [
-        {
-          key: "role_type",
-          type: "select",
-          question: t("role_type_question"),
-          options: [
-            {
-              value: "new_role",
-              label: t("role_type_options.new_role"),
-            },
-            {
-              value: "backfill",
-              label: t("role_type_options.backfill"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "team",
-          type: "team",
-          question: t("team_question"),
-          required: true,
-        },
-        {
-          group: t("team_details"),
-          key: "team_details",
-          dependencies: [{ questionKey: "team", exists: true }],
-          collapse: true,
-          questions: TeamQuestions.map((item) => ({
-            ...item,
-            dependencies: [{ questionKey: "team", exists: true }],
-          })),
-        },
-        {
-          key: "manager_detail",
-          type: "manager_detail",
-          question: t("manager_question"),
-          required: true,
-        },
-        {
-          key: "employee_type",
-          type: "multiple_select",
-          question: t("employee_type_question"),
-          options: [
-            t("employee_level.internship"),
-            t("employee_level.no_experience"),
-            t("employee_level.junior"),
-            t("employee_level.mid_level"),
-            t("employee_level.senior"),
-          ].map((item) => ({
-            value: item,
-            label: item,
-          })),
-          required: true,
-        },
-        {
-          key: "experience_years",
-          type: "number_range",
-          question: t("experience_years_question"),
-          required: true,
-        },
-        {
-          key: "percentage",
-          type: "percentage",
-          question: t("percentage_question"),
-          options: [
-            {
-              value: t("percentage_options.execution"),
-              label: (
-                <div>
-                  <b>{t("percentage_options.execution").split("：")[0]}：</b>
-                  {t("percentage_options.execution").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("percentage_options.project"),
-              label: (
-                <div>
-                  <b>{t("percentage_options.project").split("：")[0]}：</b>
-                  {t("percentage_options.project").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("percentage_options.team_management"),
-              label: (
-                <div>
-                  <b>
-                    {t("percentage_options.team_management").split("：")[0]}：
-                  </b>
-                  {t("percentage_options.team_management").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("percentage_options.strategy"),
-              label: (
-                <div>
-                  <b>{t("percentage_options.strategy").split("：")[0]}：</b>
-                  {t("percentage_options.strategy").split("：")[1]}
-                </div>
-              ),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "influence",
-          type: "select",
-          question: t("influence_question"),
-          options: [
-            {
-              value: "influence_1",
-              label: (
-                <>
-                  <b>{t("influence_options.task_level").split("**")[1]}</b>
-                  {t("influence_options.task_level").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.task_level"),
-            },
-            {
-              value: "influence_2",
-              label: (
-                <>
-                  <b>{t("influence_options.project_level").split("**")[1]}</b>
-                  {t("influence_options.project_level").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.project_level"),
-            },
-            {
-              value: "influence_3",
-              label: (
-                <>
-                  <b>{t("influence_options.team_level").split("**")[1]}</b>
-                  {t("influence_options.team_level").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.team_level"),
-            },
-            {
-              value: "influence_4",
-              label: (
-                <>
-                  <b>
-                    {t("influence_options.cross_functional").split("**")[1]}
-                  </b>
-                  {t("influence_options.cross_functional").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.cross_functional"),
-            },
-            {
-              value: "influence_5",
-              label: (
-                <>
-                  <b>{t("influence_options.business_level").split("**")[1]}</b>
-                  {t("influence_options.business_level").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.business_level"),
-            },
-            {
-              value: "influence_6",
-              label: (
-                <>
-                  <b>{t("influence_options.company_level").split("**")[1]}</b>
-                  {t("influence_options.company_level").split("**")[2]}
-                </>
-              ),
-              text: t("influence_options.company_level"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "key_people",
-          type: "percentage",
-          question: t("key_people_question"),
-          options: [
-            {
-              value: t("key_people_options.working_independently"),
-              label: (
-                <div>
-                  <b>
-                    {
-                      t("key_people_options.working_independently").split(
-                        "："
-                      )[0]
-                    }
-                    ：
-                  </b>
-                  {t("key_people_options.working_independently").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.direct_team"),
-              label: (
-                <div>
-                  <b>{t("key_people_options.direct_team").split("：")[0]}：</b>
-                  {t("key_people_options.direct_team").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.cross_team"),
-              label: (
-                <div>
-                  <b>{t("key_people_options.cross_team").split("：")[0]}：</b>
-                  {t("key_people_options.cross_team").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.company_leadership"),
-              label: (
-                <div>
-                  <b>
-                    {t("key_people_options.company_leadership").split("：")[0]}
-                    ：
-                  </b>
-                  {t("key_people_options.company_leadership").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.external_customers"),
-              label: (
-                <div>
-                  <b>
-                    {t("key_people_options.external_customers").split("：")[0]}
-                    ：
-                  </b>
-                  {t("key_people_options.external_customers").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.external_partners"),
-              label: (
-                <div>
-                  <b>
-                    {t("key_people_options.external_partners").split("：")[0]}：
-                  </b>
-                  {t("key_people_options.external_partners").split("：")[1]}
-                </div>
-              ),
-            },
-            {
-              value: t("key_people_options.external_stakeholders"),
-              label: (
-                <div>
-                  <b>
-                    {
-                      t("key_people_options.external_stakeholders").split(
-                        "："
-                      )[0]
-                    }
-                    ：
-                  </b>
-                  {t("key_people_options.external_stakeholders").split("：")[1]}
-                </div>
-              ),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "remote",
-          type: "select",
-          question: t("remote_question"),
-          options: [
-            {
-              value: "onsite",
-              label: t("on_site"),
-            },
-            {
-              value: "hybrid",
-              label: t("hybrid"),
-            },
-            {
-              value: "remote",
-              label: t("remote"),
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "city",
-          type: "city_and_address",
-          question: t("city_question"),
-          dependencies: [
-            {
-              questionKey: "remote",
-              valueKey: ["onsite", "hybrid"],
-            },
-          ],
-          required: true,
-        },
-      ],
+      questions:
+        mode === "standard"
+          ? [
+              {
+                key: "primary_driver",
+                type: "select",
+                question: t("primary_driver_question"),
+                options: [
+                  "backfill",
+                  "team_growth",
+                  "new_initiative",
+                  "capability_gap",
+                  "leadership",
+                ].map((item) =>
+                  getOptions(item, t(`primary_driver_options.${item}`))
+                ),
+                required: true,
+              },
+              {
+                key: "manager_detail",
+                type: "manager_detail",
+                question: t("manager_question"),
+                required: true,
+              },
+              {
+                key: "employee_type",
+                type: "multiple_select",
+                question: t("employee_type_question"),
+                options: [
+                  t("employee_level.internship"),
+                  t("employee_level.no_experience"),
+                  t("employee_level.junior"),
+                  t("employee_level.mid_level"),
+                  t("employee_level.senior"),
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+                required: true,
+              },
+              {
+                key: "experience_years",
+                type: "number_range",
+                question: t("experience_years_question"),
+                required: true,
+              },
+              {
+                key: "archetypes",
+                type: "select",
+                question: t("archetypes_question"),
+                options: [
+                  "individual_contributor",
+                  "people_manager",
+                  "business_function_owner",
+                ].map((item) =>
+                  getOptions(item, t(`archetypes_options.${item}`))
+                ),
+                required: true,
+              },
+              {
+                key: "language",
+                type: "text",
+                question: t("language_question"),
+                required: true,
+              },
+              {
+                key: "visa_type_singapore",
+                type: "multiple_select",
+                question: t("visa_type"),
+                options: [
+                  "singapore_citizen",
+                  "singapore_pr",
+                  "ep",
+                  "sp",
+                  "wp",
+                  "dp",
+                  "other_singapore_visa",
+                ].map((item) => ({
+                  value: item,
+                  label: t(`${item}`),
+                })),
+                required: true,
+              },
+              {
+                key: "visa_type_singapore_other",
+                type: "text",
+                question: t("visa_type_singapore_other"),
+                dependencies: [
+                  {
+                    questionKey: "visa_type_singapore",
+                    valueKey: "other_singapore_visa",
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "remote",
+                type: "select",
+                question: t("remote_question"),
+                options: [
+                  {
+                    value: "onsite",
+                    label: t("on_site"),
+                  },
+                  {
+                    value: "hybrid",
+                    label: t("hybrid"),
+                  },
+                  {
+                    value: "remote",
+                    label: t("remote"),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "city",
+                type: "city_and_address",
+                question: t("city_question"),
+                dependencies: [
+                  {
+                    questionKey: "remote",
+                    valueKey: ["onsite", "hybrid"],
+                  },
+                ],
+                required: true,
+              },
+            ]
+          : [
+              {
+                key: "role_type",
+                type: "select",
+                question: t("role_type_question"),
+                options: [
+                  {
+                    value: "new_role",
+                    label: t("role_type_options.new_role"),
+                  },
+                  {
+                    value: "backfill",
+                    label: t("role_type_options.backfill"),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "team",
+                type: "team",
+                question: t("team_question"),
+                required: true,
+              },
+              {
+                group: t("team_details"),
+                key: "team_details",
+                dependencies: [{ questionKey: "team", exists: true }],
+                collapse: true,
+                questions: TeamQuestions.map((item) => ({
+                  ...item,
+                  dependencies: [{ questionKey: "team", exists: true }],
+                })),
+              },
+              {
+                key: "manager_detail",
+                type: "manager_detail",
+                question: t("manager_question"),
+                required: true,
+              },
+              {
+                key: "employee_type",
+                type: "multiple_select",
+                question: t("employee_type_question"),
+                options: [
+                  t("employee_level.internship"),
+                  t("employee_level.no_experience"),
+                  t("employee_level.junior"),
+                  t("employee_level.mid_level"),
+                  t("employee_level.senior"),
+                ].map((item) => ({
+                  value: item,
+                  label: item,
+                })),
+                required: true,
+              },
+              {
+                key: "experience_years",
+                type: "number_range",
+                question: t("experience_years_question"),
+                required: true,
+              },
+              {
+                key: "percentage",
+                type: "percentage",
+                question: t("percentage_question"),
+                options: [
+                  {
+                    value: t("percentage_options.execution"),
+                    label: (
+                      <div>
+                        <b>
+                          {t("percentage_options.execution").split("：")[0]}：
+                        </b>
+                        {t("percentage_options.execution").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("percentage_options.project"),
+                    label: (
+                      <div>
+                        <b>
+                          {t("percentage_options.project").split("：")[0]}：
+                        </b>
+                        {t("percentage_options.project").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("percentage_options.team_management"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("percentage_options.team_management").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {t("percentage_options.team_management").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("percentage_options.strategy"),
+                    label: (
+                      <div>
+                        <b>
+                          {t("percentage_options.strategy").split("：")[0]}：
+                        </b>
+                        {t("percentage_options.strategy").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "influence",
+                type: "select",
+                question: t("influence_question"),
+                options: [
+                  {
+                    value: "influence_1",
+                    label: (
+                      <>
+                        <b>
+                          {t("influence_options.task_level").split("**")[1]}
+                        </b>
+                        {t("influence_options.task_level").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.task_level"),
+                  },
+                  {
+                    value: "influence_2",
+                    label: (
+                      <>
+                        <b>
+                          {t("influence_options.project_level").split("**")[1]}
+                        </b>
+                        {t("influence_options.project_level").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.project_level"),
+                  },
+                  {
+                    value: "influence_3",
+                    label: (
+                      <>
+                        <b>
+                          {t("influence_options.team_level").split("**")[1]}
+                        </b>
+                        {t("influence_options.team_level").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.team_level"),
+                  },
+                  {
+                    value: "influence_4",
+                    label: (
+                      <>
+                        <b>
+                          {
+                            t("influence_options.cross_functional").split(
+                              "**"
+                            )[1]
+                          }
+                        </b>
+                        {t("influence_options.cross_functional").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.cross_functional"),
+                  },
+                  {
+                    value: "influence_5",
+                    label: (
+                      <>
+                        <b>
+                          {t("influence_options.business_level").split("**")[1]}
+                        </b>
+                        {t("influence_options.business_level").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.business_level"),
+                  },
+                  {
+                    value: "influence_6",
+                    label: (
+                      <>
+                        <b>
+                          {t("influence_options.company_level").split("**")[1]}
+                        </b>
+                        {t("influence_options.company_level").split("**")[2]}
+                      </>
+                    ),
+                    text: t("influence_options.company_level"),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "key_people",
+                type: "percentage",
+                question: t("key_people_question"),
+                options: [
+                  {
+                    value: t("key_people_options.working_independently"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("key_people_options.working_independently").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {
+                          t("key_people_options.working_independently").split(
+                            "："
+                          )[1]
+                        }
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.direct_team"),
+                    label: (
+                      <div>
+                        <b>
+                          {t("key_people_options.direct_team").split("：")[0]}：
+                        </b>
+                        {t("key_people_options.direct_team").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.cross_team"),
+                    label: (
+                      <div>
+                        <b>
+                          {t("key_people_options.cross_team").split("：")[0]}：
+                        </b>
+                        {t("key_people_options.cross_team").split("：")[1]}
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.company_leadership"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("key_people_options.company_leadership").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {
+                          t("key_people_options.company_leadership").split(
+                            "："
+                          )[1]
+                        }
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.external_customers"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("key_people_options.external_customers").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {
+                          t("key_people_options.external_customers").split(
+                            "："
+                          )[1]
+                        }
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.external_partners"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("key_people_options.external_partners").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {
+                          t("key_people_options.external_partners").split(
+                            "："
+                          )[1]
+                        }
+                      </div>
+                    ),
+                  },
+                  {
+                    value: t("key_people_options.external_stakeholders"),
+                    label: (
+                      <div>
+                        <b>
+                          {
+                            t("key_people_options.external_stakeholders").split(
+                              "："
+                            )[0]
+                          }
+                          ：
+                        </b>
+                        {
+                          t("key_people_options.external_stakeholders").split(
+                            "："
+                          )[1]
+                        }
+                      </div>
+                    ),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "remote",
+                type: "select",
+                question: t("remote_question"),
+                options: [
+                  {
+                    value: "onsite",
+                    label: t("on_site"),
+                  },
+                  {
+                    value: "hybrid",
+                    label: t("hybrid"),
+                  },
+                  {
+                    value: "remote",
+                    label: t("remote"),
+                  },
+                ],
+                required: true,
+              },
+              {
+                key: "city",
+                type: "city_and_address",
+                question: t("city_question"),
+                dependencies: [
+                  {
+                    questionKey: "remote",
+                    valueKey: ["onsite", "hybrid"],
+                  },
+                ],
+                required: true,
+              },
+            ],
     },
 
     {
@@ -993,7 +1199,10 @@ const JobRequirementFormDrawer = (props: IProps) => {
                     callback: any
                   ) {
                     const typedValue = value as TManangerDetailValue;
-                    if (!typedValue.jobTitle || !typedValue.name) {
+                    if (
+                      !typedValue.jobTitle ||
+                      (mode === "utils" && !typedValue.name)
+                    ) {
                       callback(new Error());
                     }
                     callback();
@@ -1014,7 +1223,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                       callback(new Error());
                     }
                   },
-                  message: "请选择至少一个城市和地址",
+                  message: t("city_and_address_message"),
                 },
               ]
             : question.type === "number_range"
@@ -1076,7 +1285,9 @@ const JobRequirementFormDrawer = (props: IProps) => {
         {/* {question.type === "internal_employee_level" && (
             <InternalEmployeeLevel />
           )} */}
-        {question.type === "manager_detail" && <ManagerDetail />}
+        {question.type === "manager_detail" && (
+          <ManagerDetail onlyJobTitle={mode === "standard"} />
+        )}
         {question.type === "percentage" && (
           <PercentageInput options={question.options ?? []} />
         )}
@@ -1297,4 +1508,4 @@ const JobRequirementFormDrawer = (props: IProps) => {
   );
 };
 
-export default JobRequirementFormDrawer;
+export default observer(JobRequirementFormDrawer);

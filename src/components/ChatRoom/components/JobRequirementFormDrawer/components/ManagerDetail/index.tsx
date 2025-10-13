@@ -8,11 +8,16 @@ export type TManangerDetailValue = {
 };
 
 export interface IProps {
+  onlyJobTitle?: boolean;
   value?: TManangerDetailValue;
   onChange?: (val: TManangerDetailValue) => void;
 }
 const ManagerDetail = (props: IProps) => {
-  const { value: { jobTitle, name } = {}, onChange } = props;
+  const {
+    onlyJobTitle = false,
+    value: { jobTitle, name } = {},
+    onChange,
+  } = props;
 
   const { t: originalT } = useTranslation();
   const t = (key: string, params?: Record<string, string>): string => {
@@ -35,12 +40,15 @@ const ManagerDetail = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <Input
-        value={name}
-        style={{ flex: 1 }}
-        onChange={(e) => onNameChange(e.target.value)}
-        placeholder={t("name")}
-      />
+      {!onlyJobTitle && (
+        <Input
+          value={name}
+          style={{ flex: 1 }}
+          onChange={(e) => onNameChange(e.target.value)}
+          placeholder={t("name")}
+        />
+      )}
+
       <Input
         value={jobTitle}
         style={{ flex: 1 }}

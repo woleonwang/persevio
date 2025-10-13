@@ -349,6 +349,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     basic_information: "Basic information",
 
     // basic_info question texts
+    primary_driver_question:
+      "What is the primary driver for opening this position?",
+    archetypes_question:
+      "Which of these three archetypes best describes the primary focus of this role?",
+    language_question:
+      "What will be the primary languages this role will use? ",
+    visa_question: "What are the supported work visa types of this role? ",
     team_question: "Which team will this role join?",
     manager_question: "Who will this role report to?",
     employee_type_question: "What is the seniority of this role?",
@@ -420,6 +427,26 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
         "**Company-Level Impact:** This role's work will decisively influence the company's overall strategy, financial health, or market reputation. Its success or failure is crucial to the company's long-term development and core competitiveness.",
     },
 
+    primary_driver_options: {
+      backfill: "**Backfill**: Replacing an employee who has left.",
+      team_growth:
+        "**Team Growth / Scaling**: Adding capacity to an existing, successful team to handle more volume.",
+      new_initiative:
+        "**New Initiative / Project**: This person will be foundational to a new product, service, or business area.",
+      capability_gap:
+        "**Capability Gap**: We need a specific skill or expertise that the current team is missing.",
+      leadership:
+        "**Leadership / Succession**: We need to bring in a new leader for an existing team or function.",
+    },
+
+    archetypes_options: {
+      individual_contributor:
+        "**Individual contributor**: The primary responsibility is the hands-on creation, building, or delivery of work. Success is measured by individual output and craft excellence.",
+      people_manager:
+        "**People Manager**: The primary responsibility is managing, coaching, and developing a team of direct reports. Success is measured by the team's overall performance, health, and output.",
+      business_function_owner:
+        "**Business/Function Owner**: The primary responsibility is owning a broad business outcome, P&L, product, or strategic initiative.Success is measured by business impact and achieving strategic goals.",
+    },
     reason: "Reason for creating this role",
     back_fill: "Back-fill",
     new_role: "New role",
@@ -490,7 +517,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     no_need_visa: "No Need to Sponsor Work Visa",
     need_visa: "Need Visa Sponsorship",
     other_visa: "Other",
-    visa_type_singapore_other: "Other",
+    visa_type_singapore_other: "Other Visa types",
 
     language_group: "Language proficiency",
     language: "Language",
@@ -558,6 +585,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     percentage_message:
       "Please fill in the percentages; their sum must equal 100%.",
     manager_message: "Please fill in the manager's job title and name.",
+    city_and_address_message: "Please select at least one city and address.",
   },
 
   select_options: {

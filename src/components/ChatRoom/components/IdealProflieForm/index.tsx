@@ -24,7 +24,9 @@ const IdealProfileForm = (props: IProps) => {
   const [form] = Form.useForm();
   const [requirements, setRequirements] = useState<TRequirement[]>([]);
   const { t: originalT } = useTranslation();
+
   const [_, forceUpdate] = useReducer(() => ({}), {});
+  // useTranslation("zh-CN");
 
   const t = (key: string) => {
     return originalT(`ideal_profile.${key}`);

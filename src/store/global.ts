@@ -10,6 +10,8 @@ class GlobalStore {
 
   unreadTalentsCount = 0;
 
+  mode = "";
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -38,6 +40,10 @@ class GlobalStore {
 
   refreshUnreadTalentsCount = () => {
     this.fetchUnreadTalentsCount();
+  };
+
+  setMode = (mode: "standard" | "utils") => {
+    this.mode = mode;
   };
 }
 

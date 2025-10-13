@@ -52,7 +52,7 @@ export interface IMultiProps {
 const MultipleCityAndAddressSelect = (props: IMultiProps) => {
   const { value, isCoworker = false, onChange } = props;
   const [cities, setCities] = useState<TCity[]>([]);
-  // const { t: originalT } = useTranslation();
+  const { t: originalT } = useTranslation();
   // const t = (key: string, params?: Record<string, string>): string => {
   //   return originalT(`city_and_address_select.${key}`, params);
   // };
@@ -109,7 +109,7 @@ const MultipleCityAndAddressSelect = (props: IMultiProps) => {
         );
       })}
       <Button onClick={() => onChange?.([...value, { key: uuidV4() }])}>
-        添加
+        {originalT("add")}
       </Button>
     </div>
   );

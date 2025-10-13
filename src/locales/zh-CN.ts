@@ -338,6 +338,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     basic_information: "基本信息",
 
     // basic_info 题目文案
+    primary_driver_question: "开设这个职位的主要驱动力是什么？",
+    archetypes_question:
+      "以下三种角色类型中，哪种最能描述这个职位的主要关注点？",
+    language_question: "这个职位将主要使用哪些语言？",
+    visa_question: "这个职位支持哪些工作签证类型？",
     team_question: "这个职位将加入哪个团队？",
     manager_question: "这个职位的直属领导是谁?",
     employee_type_question: "这个职位的级别是什么？",
@@ -351,6 +356,26 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     city_question: "这个职位的<b>办公地点</b>是?",
 
     // 选项文案
+    primary_driver_options: {
+      backfill: "**填补空缺**：替换已离职的员工。",
+      team_growth:
+        "**团队增长/扩展**：为现有成功团队增加容量以处理更多工作量。",
+      new_initiative:
+        "**新项目/计划**：此人将成为新产品、服务或业务领域的基础。",
+      capability_gap:
+        "**能力缺口**：我们需要当前团队缺少的特定技能或专业知识。",
+      leadership: "**领导力/继任**：我们需要为现有团队或职能引入新领导。",
+    },
+
+    archetypes_options: {
+      individual_contributor:
+        "**个人贡献者**：主要职责是亲自动手创建、构建或交付工作。成功以个人产出和工艺卓越来衡量。",
+      people_manager:
+        "**人员管理者**：主要职责是管理、指导和培养直接下属团队。成功以团队的整体表现、健康度和产出衡量。",
+      business_function_owner:
+        "**业务/职能负责人**：主要职责是拥有广泛的业务成果、损益、产品或战略计划。成功以业务影响和实现战略目标衡量。",
+    },
+
     employee_level: {
       internship: "实习生",
       no_experience: "应届毕业生/无经验",
@@ -464,7 +489,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     no_need_visa: "无需重新申请工作签证",
     need_visa: "需要重新申请工作签证",
     other_visa: "其它",
-    visa_type_singapore_other: "其它",
+    visa_type_singapore_other: "其它签证类型",
 
     language_group: "语言要求",
     language: "语言",
@@ -528,6 +553,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     year: "年",
     percentage_message: "请填写百分比，且百分比之和必须等于100",
     manager_message: "请填写职位和姓名",
+    city_and_address_message: "请至少选择一个城市和地址。",
   },
 
   select_options: {

@@ -53,8 +53,13 @@ const AppLayout = () => {
 
   const { t, i18n } = useTranslation();
 
-  const { jobs, fetchJobs, unreadTalentsCount, fetchUnreadTalentsCount } =
-    globalStore;
+  const {
+    jobs,
+    unreadTalentsCount,
+    fetchJobs,
+    fetchUnreadTalentsCount,
+    setMode,
+  } = globalStore;
 
   const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
 
@@ -196,6 +201,7 @@ const AppLayout = () => {
         fetchJobs();
         setIsAdmin(data.is_admin);
         setIsStaffAdmin(data.role === "admin");
+        setMode(data.company_mode);
       }
     } else {
       navigate(`/signin?redirect=${getCurrentUrl()}`);
