@@ -134,7 +134,10 @@ const Settings = () => {
   };
 
   const promptTypeLabelMap: Record<string, string> = {
-    JOB_REQUIREMENT: "聊职位需求",
+    JOB_REQUIREMENT: "聊职位需求（旧）",
+    JOB_REQUIREMENT_ASK_FOR_JD: "询问是否有JD",
+    JOB_REQUIREMENT_WITH_JD: "聊职位需求（有JD）",
+    JOB_REQUIREMENT_WITHOUT_JD: "聊职位需求（无JD）",
     JOB_DESCRIPTION: "聊职位JD",
     JOB_TARGET_COMPANIES: "聊目标公司",
     JOB_COMPENSATION_DETAILS: "聊薪资待遇",
