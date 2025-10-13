@@ -249,7 +249,7 @@ export default {
     view_interview_plan: "查看面试计划文档",
     view_talent: "查看候选人",
     no_edits: "没有要修改的",
-    copy_link: "复制链接",
+    copy_link: "邀请同事加入对话",
     open: "打开聊天机器人",
     jd_done: "创建给候选人介绍职位的聊天机器人",
     draft_job_description_btn: "写职位描述（JD）",

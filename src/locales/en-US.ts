@@ -256,7 +256,7 @@ export default {
     view_interview_plan: "View interview plan",
     view_talent: "View talent",
     no_edits: "Draft is good, no edits",
-    copy_link: "Copy Link",
+    copy_link: "Invite co-workers to join the conversation",
     open: "Open",
     jd_done: "Viona for candidates",
     draft_job_description_btn: "Draft job description",
