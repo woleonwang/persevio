@@ -514,7 +514,9 @@ const SelectOptionsForm = (props: IProps) => {
                   .filter((group) => !!values[`${group.uuid}_type`])
                   .map(
                     (group) =>
-                      `### ${group.title}\n\n ${(group.options ?? [])
+                      `### ${group.title} - **${
+                        values[`${group.uuid}_type`]
+                      }**\n\n ${(group.options ?? [])
                         .map((option) => {
                           return values[`${option.uuid}_checked`]
                             ? `- ${values[`${option.uuid}_content`]}`
