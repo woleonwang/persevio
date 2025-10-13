@@ -6,6 +6,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { parseJSON } from "../../../../utils";
 import { useTranslation } from "react-i18next";
+import globalStore from "@/store/global";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
   type:
@@ -26,6 +28,7 @@ type TSubGroup = {
 };
 
 type TGroup = {
+  uuid?: string;
   title: string;
   key?: string;
   editable?: boolean;
@@ -42,7 +45,7 @@ const SelectOptionsForm = (props: IProps) => {
   const [form] = Form.useForm();
   const [groups, setGroups] = useState<TGroup[]>([]);
   const [_, forceUpdate] = useReducer(() => ({}), {});
-
+  const { mode } = globalStore;
   const { t: originalT } = useTranslation();
 
   const t = (key: string) => {
@@ -75,22 +78,46 @@ const SelectOptionsForm = (props: IProps) => {
         const taskGroups: { title: string; tasks: string[] }[] =
           parseJSON(job.day_to_day_tasks_json).hlrs ?? [];
 
-        taskGroups.forEach((taskGroup) => {
-          const groupOptions: TOption[] = [];
-          taskGroup.tasks.forEach((task) => {
+        if (mode === "standard") {
+          taskGroups.forEach((taskGroup) => {
+            const groupOptions: TOption[] = [];
             const uuid = uuidV4();
             form.setFieldsValue({
-              [`${uuid}_content`]: task,
+              [`${uuid}_group`]: taskGroup.title,
             });
-            groupOptions.push({
+            taskGroup.tasks.forEach((task) => {
+              const uuid = uuidV4();
+              form.setFieldsValue({
+                [`${uuid}_content`]: task,
+              });
+              groupOptions.push({
+                uuid,
+              });
+            });
+            groups.push({
               uuid,
+              title: taskGroup.title,
+              options: groupOptions,
             });
           });
-          groups.push({
-            title: taskGroup.title,
-            options: groupOptions,
+        } else {
+          taskGroups.forEach((taskGroup) => {
+            const groupOptions: TOption[] = [];
+            taskGroup.tasks.forEach((task) => {
+              const uuid = uuidV4();
+              form.setFieldsValue({
+                [`${uuid}_content`]: task,
+              });
+              groupOptions.push({
+                uuid,
+              });
+            });
+            groups.push({
+              title: taskGroup.title,
+              options: groupOptions,
+            });
           });
-        });
+        }
       } else if (type === "icp") {
         const icpGroups: (
           | { title: string; skills: string[] }
@@ -324,6 +351,191 @@ const SelectOptionsForm = (props: IProps) => {
     );
   };
 
+  const canSubmitStandardDayToDay = () => {
+    const values = form.getFieldsValue();
+    // 1. 至少选中一个核心职责
+    // 2. 选中的核心职责必须有值
+    // 3. 选中的核心职责里至少选中一个项
+    // 4. 选中的项必须有值；
+
+    const selectedGroups = groups.filter(
+      (group) => !!values[`${group.uuid}_type`]
+    );
+    if (selectedGroups.length === 0) {
+      return false;
+    }
+
+    const hasEmptyGroupTitle = selectedGroups.find((group) => {
+      return !values[`${group.uuid}_group`];
+    });
+    if (hasEmptyGroupTitle) {
+      return false;
+    }
+
+    const checkGroup = (group: TGroup): boolean => {
+      const selectedOptions = (group.options ?? []).filter((option) => {
+        return values[`${option.uuid}_checked`];
+      });
+      if (selectedOptions.length === 0) {
+        return false;
+      }
+
+      return selectedOptions.every((option) => {
+        return !!values[`${option.uuid}_content`];
+      });
+    };
+
+    const noEmptyOption = selectedGroups.every((group) => {
+      return checkGroup(group);
+    });
+    return noEmptyOption;
+  };
+
+  if (mode === "standard" && type === "day_to_day_tasks") {
+    return (
+      <>
+        <Form
+          form={form}
+          onFieldsChange={() => forceUpdate()}
+          style={{ padding: "20px 150px" }}
+        >
+          <Alert
+            message={t("day_to_day_alert")}
+            type="success"
+            style={{ marginBottom: 20 }}
+          />
+          {(groups ?? []).map((group) => {
+            const selected = !!form.getFieldValue(`${group.uuid}_type`);
+
+            return (
+              <div key={group.uuid}>
+                <div
+                  style={{
+                    fontSize: 16,
+                    marginBottom: 10,
+                    marginTop: 30,
+                    color: "#1FAC6A",
+                    display: "flex",
+                    gap: 12,
+                  }}
+                >
+                  <Form.Item name={`${group.uuid}_type`}>
+                    <Radio.Group>
+                      {[
+                        t("core_responsibility"),
+                        t("secondary_responsibility"),
+                      ].map((label) => (
+                        <Radio
+                          key={label}
+                          value={label}
+                          onClick={(e) => {
+                            // @ts-ignore
+                            if (e.target.checked) {
+                              form.setFieldsValue({
+                                [`${group.uuid}_type`]: "",
+                              });
+                              forceUpdate();
+                            }
+                          }}
+                        >
+                          {label}
+                        </Radio>
+                      ))}
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item
+                    name={`${group.uuid}_group`}
+                    style={{ flex: "auto" }}
+                  >
+                    <Input.TextArea autoSize={{ minRows: 1, maxRows: 4 }} />
+                  </Form.Item>
+                </div>
+
+                <div>
+                  <div>
+                    {(group.options ?? []).map((option) => {
+                      return (
+                        <div key={option.uuid} className={styles.skillRow}>
+                          <Form.Item
+                            name={`${option.uuid}_checked`}
+                            valuePropName="checked"
+                          >
+                            <Checkbox
+                              disabled={!selected}
+                              style={{ marginRight: 12 }}
+                            />
+                          </Form.Item>
+
+                          <Form.Item
+                            name={`${option.uuid}_content`}
+                            style={{ flex: "auto" }}
+                          >
+                            <Input.TextArea
+                              autoSize={{ minRows: 1, maxRows: 4 }}
+                              disabled={!selected}
+                            />
+                          </Form.Item>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div>
+                    <Button
+                      color="primary"
+                      variant="outlined"
+                      icon={<PlusOutlined />}
+                      onClick={() => {
+                        const uuid = uuidV4();
+                        const newOption: TOption = {
+                          uuid,
+                        };
+
+                        (group.options ?? []).push(newOption);
+                        setGroups([...groups]);
+                      }}
+                      style={{ width: "100%" }}
+                      size="large"
+                      disabled={!selected}
+                    >
+                      {originalT("add")}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </Form>
+        <div className={styles.footer}>
+          <Button
+            type="primary"
+            onClick={() => {
+              form.validateFields().then((values) => {
+                const result = groups
+                  .filter((group) => !!values[`${group.uuid}_type`])
+                  .map(
+                    (group) =>
+                      `### ${group.title}\n\n ${(group.options ?? [])
+                        .map((option) => {
+                          return values[`${option.uuid}_checked`]
+                            ? `- ${values[`${option.uuid}_content`]}`
+                            : "";
+                        })
+                        .filter(Boolean)
+                        .join("\n\n")}`
+                  )
+                  .join("\n\n");
+                onOk(result);
+              });
+            }}
+            disabled={!canSubmitStandardDayToDay()}
+          >
+            {originalT("submit")}
+          </Button>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Form
@@ -553,4 +765,4 @@ const SelectOptionsForm = (props: IProps) => {
   );
 };
 
-export default SelectOptionsForm;
+export default observer(SelectOptionsForm);
