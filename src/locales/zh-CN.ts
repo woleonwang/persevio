@@ -210,6 +210,20 @@ export default {
     you: "您",
     ok: "确定",
 
+    // CandidateChat 组件相关文案
+    finish_conversation: "完成对话",
+    message_delete_success: "消息删除成功",
+    message_delete_failed: "消息删除失败",
+    voice_input: "语音输入",
+    stop_voice_input: "停止语音输入",
+    voice_input_hint_title: "语音输入",
+    voice_input_hint_content: "您可以通过以下方式快速启用语音输入功能:",
+    voice_input_hint_method1: "长按【Ctrl】键进行持续语音输入",
+    voice_input_hint_method2: "连按两次【Ctrl】键快速启动录音，再次按下结束录音",
+    confirm_delete_message: "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。",
+    voice_chat: "语音对话",
+    text_edit: "文字编辑",
+
     task: "任务",
     next_task: "下一个任务: ",
     jd_next_task:

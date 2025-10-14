@@ -217,6 +217,20 @@ export default {
     you: "You",
     ok: "OK",
 
+    // CandidateChat component related texts
+    finish_conversation: "Finish Conversation",
+    message_delete_success: "Message deleted successfully",
+    message_delete_failed: "Failed to delete message",
+    voice_input: "Voice Input",
+    stop_voice_input: "Stop Voice Input",
+    voice_input_hint_title: "Voice Input",
+    voice_input_hint_content: "You can quickly enable voice input in the following ways:",
+    voice_input_hint_method1: "Hold down the [Ctrl] key for continuous voice input",
+    voice_input_hint_method2: "Press [Ctrl] twice to quickly start recording, then press once to end recording",
+    confirm_delete_message: "Are you sure you want to delete this message? Chat history after this message cannot be recovered.",
+    voice_chat: "Voice Chat",
+    text_edit: "Text Edit",
+
     task: "Tasks",
     next_task: "Your next task is: ",
     jd_next_task:
