@@ -175,7 +175,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
     },
     {
       key: "conversation-done",
-      title: "完成对话",
+      title: t("finish_conversation"),
       handler: () => onFinish?.(),
     },
   ];
@@ -330,10 +330,10 @@ Shall we start now?`,
     );
 
     if (code === 0) {
-      message.success("消息删除成功");
+      message.success(t("message_delete_success"));
       fetchMessages();
     } else {
-      message.error("消息删除失败");
+      message.error(t("message_delete_failed"));
     }
   };
 
@@ -343,16 +343,16 @@ Shall we start now?`,
         content={
           <div>
             <div className={styles.hintHeader}>
-              <div className={styles.hintTitle}>语音输入</div>
+              <div className={styles.hintTitle}>{t("voice_input_hint_title")}</div>
               <CloseOutlined
                 onClick={() => setAudioHintVisible(false)}
                 style={{ cursor: "pointer" }}
               />
             </div>
-            <div>您可以通过以下方式快速启用语音输入功能:</div>
+            <div>{t("voice_input_hint_content")}</div>
             <ul className={styles.hintList}>
-              <li>长按【Ctrl】键进行持续语音输入</li>
-              <li>连按两次【Ctrl】键快速启动录音，再次按下结束录音</li>
+              <li>{t("voice_input_hint_method1")}</li>
+              <li>{t("voice_input_hint_method2")}</li>
             </ul>
           </div>
         }
@@ -393,7 +393,7 @@ Shall we start now?`,
             />
           )}
           <div className={styles.buttonHint}>
-            {!isRecording && !isTranscribing ? "语音输入" : "停止语音输入"}
+            {!isRecording && !isTranscribing ? t("voice_input") : t("stop_voice_input")}
           </div>
         </div>
       </Popover>
@@ -471,7 +471,7 @@ Shall we start now?`,
                               onClick={() => {
                                 if (
                                   confirm(
-                                    "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。"
+                                    t("confirm_delete_message")
                                   )
                                 ) {
                                   deleteMessage(parseInt(item.id));
@@ -567,7 +567,7 @@ Shall we start now?`,
                   </svg>
                 }
               />
-              <div className={styles.buttonHint}>语音对话</div>
+              <div className={styles.buttonHint}>{t("voice_chat")}</div>
             </div>
           )}
 
@@ -645,7 +645,7 @@ Shall we start now?`,
                 }
               }}
             />
-            <div className={styles.buttonHint}>文字编辑</div>
+            <div className={styles.buttonHint}>{t("text_edit")}</div>
           </div>
 
           {isAdmin && chatType === "network_profile" && (
@@ -654,7 +654,7 @@ Shall we start now?`,
               onClick={() => onFinish?.()}
               style={{ marginLeft: 12 }}
             >
-              完成对话
+              {t("finish_conversation")}
             </Button>
           )}
 

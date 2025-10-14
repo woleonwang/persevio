@@ -184,44 +184,55 @@ const JobsShow = () => {
                       </div>
 
                       <div className={styles.jobAttributes}>
-                        <div className={styles.attributeItem}>
-                          <span className={styles.attributeIcon}>◎</span>
-                          <span>
-                            {(job.basic_info.location ?? [])
-                              .map((item) => item.city)
-                              .join(", ")}
-                          </span>
-                        </div>
-                        <div className={styles.attributeItem}>
-                          <span className={styles.attributeIcon}>◎</span>
-                          <span>
-                            {originalT(
-                              `public_jobs.job_card.role_type.${job.basic_info.role_type}`
-                            )}
-                          </span>
-                        </div>
-                        <div className={styles.attributeItem}>
-                          <span className={styles.attributeIcon}>◎</span>
-                          <span>{job.basic_info.team_name}</span>
-                        </div>
-                        <div className={styles.attributeItem}>
-                          <span className={styles.attributeIcon}>◎</span>
-                          <span>
-                            {t("team_language")}: {job.basic_info.team_lanugage}
-                          </span>
-                        </div>
-                        <div className={styles.attributeItem}>
-                          <span className={styles.attributeIcon}>◎</span>
-                          <span>
-                            {(job.basic_info.employee_level ?? [])
-                              .map((level) =>
-                                originalT(
-                                  `public_jobs.job_card.employee_level.${level}`
+                        {!!job.basic_info.location && (
+                          <div className={styles.attributeItem}>
+                            <span className={styles.attributeIcon}>◎</span>
+                            <span>
+                              {job.basic_info.location
+                                .map((item) => item.city)
+                                .join(", ")}
+                            </span>
+                          </div>
+                        )}
+                        {!!job.basic_info.role_type && (
+                          <div className={styles.attributeItem}>
+                            <span className={styles.attributeIcon}>◎</span>
+                            <span>
+                              {originalT(
+                                `public_jobs.job_card.role_type.${job.basic_info.role_type}`
+                              )}
+                            </span>
+                          </div>
+                        )}
+                        {!!job.basic_info.team_name && (
+                          <div className={styles.attributeItem}>
+                            <span className={styles.attributeIcon}>◎</span>
+                            <span>{job.basic_info.team_name}</span>
+                          </div>
+                        )}
+                        {!!job.basic_info.team_lanugage && (
+                          <div className={styles.attributeItem}>
+                            <span className={styles.attributeIcon}>◎</span>
+                            <span>
+                              {t("team_language")}:{" "}
+                              {job.basic_info.team_lanugage}
+                            </span>
+                          </div>
+                        )}
+                        {!!job.basic_info.employee_level && (
+                          <div className={styles.attributeItem}>
+                            <span className={styles.attributeIcon}>◎</span>
+                            <span>
+                              {(job.basic_info.employee_level ?? [])
+                                .map((level) =>
+                                  originalT(
+                                    `public_jobs.job_card.employee_level.${level}`
+                                  )
                                 )
-                              )
-                              .join("、")}
-                          </span>
-                        </div>
+                                .join("、")}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
