@@ -709,6 +709,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   },
 
   jobs_show: {
+    expand: "展开",
     job_at: "职位在",
     click_for_complete_jd: "点击查看完整职位描述",
     days_ago: "天前",
