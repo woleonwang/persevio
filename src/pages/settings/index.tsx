@@ -1,4 +1,5 @@
-import { Button, Form, Input, message, Select } from "antd";
+import { Button, Form, Input, message, Select, Tooltip } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
@@ -207,7 +208,19 @@ const Settings = () => {
       </div>
 
       <div className={styles.block}>
-        <div className={styles.title}>{t("language")}</div>
+        <div className={styles.title}>
+          {t("language")}
+          <Tooltip title={t("language_tooltip")}>
+            <InfoCircleOutlined
+              style={{
+                marginLeft: 5,
+                fontSize: 16,
+                position: "relative",
+                top: -2,
+              }}
+            />
+          </Tooltip>
+        </div>
 
         <Select
           style={{ width: 300 }}

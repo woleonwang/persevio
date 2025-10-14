@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Upload, Select } from "antd";
+import { Button, Form, Input, message, Upload } from "antd";
 import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
@@ -21,7 +21,6 @@ const CompanyKnowledge = () => {
       form.setFieldsValue({
         content: data.content,
         name: data.name,
-        lang: data.lang || "en-US",
         website: data.website,
       });
       setLogo(data.logo);
@@ -30,11 +29,10 @@ const CompanyKnowledge = () => {
 
   const updateCompany = () => {
     form.validateFields().then(async (values) => {
-      const { content, name, lang, website } = values;
+      const { content, name, website } = values;
       const { code } = await Post("/api/companies", {
         content,
         name,
-        lang,
         website,
       });
       if (code === 0) {
@@ -105,7 +103,7 @@ const CompanyKnowledge = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             label={t("company.language")}
             name="lang"
             rules={[{ required: true }]}
@@ -123,7 +121,7 @@ const CompanyKnowledge = () => {
                 },
               ]}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             label={t("company.knowledge_base")}
