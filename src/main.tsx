@@ -50,6 +50,7 @@ import VoiceChat from "./pages/candidate/voice-chat";
 import JobChat from "./pages/job/chat";
 import JobDocument from "./pages/job/document";
 import JobBoard from "./pages/job/board";
+import JobStandardBoard from "./pages/job/standard-board";
 import TalentChat from "./pages/talent/chat";
 import TalentSelect from "./pages/talent/select";
 import TalentDetail from "./pages/talent/detail";
@@ -128,6 +129,11 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/app/entry/create-job" element={<JobCreate />} />
             {/* 职位入口页 */}
             <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
+            {/* 标准版职位入口页 */}
+            <Route
+              path="/app/jobs/:jobId/standard-board"
+              element={<JobStandardBoard />}
+            />
             {/* 职位文档对话 */}
             <Route
               path="/app/jobs/:jobId/chat/:chatType"

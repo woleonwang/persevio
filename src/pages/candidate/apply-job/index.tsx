@@ -10,6 +10,7 @@ import Waiting from "./components/Waiting";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
+import Step from "@/components/Step";
 
 const ApplyJob: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -113,18 +114,11 @@ const ApplyJob: React.FC = () => {
 
             return (
               <>
-                <div className={styles.stepContainer}>
-                  {new Array(2).fill(0).map((_, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className={classnames(styles.step, {
-                          [styles.active]: index <= currentIndex,
-                        })}
-                      />
-                    );
-                  })}
-                </div>
+                <Step
+                  stepCount={2}
+                  currentIndex={currentIndex}
+                  className={styles.stepContainer}
+                />
 
                 <div
                   className={styles.body}

@@ -56,6 +56,7 @@ const AppLayout = () => {
   const {
     jobs,
     unreadTalentsCount,
+    mode,
     fetchJobs,
     fetchUnreadTalentsCount,
     setMode,
@@ -86,7 +87,10 @@ const AppLayout = () => {
       children: jobs
         .filter((job) => !searchKeyword || job.name.includes(searchKeyword))
         .map((job) => {
-          const path = `/app/jobs/${job.id}/board`;
+          const path =
+            mode === "standard"
+              ? `/app/jobs/${job.id}/standard-board`
+              : `/app/jobs/${job.id}/board`;
           const isActive = currentPath.startsWith(path);
           return {
             title: job.name,

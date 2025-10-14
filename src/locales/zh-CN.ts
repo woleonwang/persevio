@@ -219,8 +219,10 @@ export default {
     voice_input_hint_title: "语音输入",
     voice_input_hint_content: "您可以通过以下方式快速启用语音输入功能:",
     voice_input_hint_method1: "长按【Ctrl】键进行持续语音输入",
-    voice_input_hint_method2: "连按两次【Ctrl】键快速启动录音，再次按下结束录音",
-    confirm_delete_message: "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。",
+    voice_input_hint_method2:
+      "连按两次【Ctrl】键快速启动录音，再次按下结束录音",
+    confirm_delete_message:
+      "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。",
     voice_chat: "语音对话",
     text_edit: "文字编辑",
 
@@ -698,6 +700,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     recruitment_chatbot: "招聘chatbot",
     copy_job_requirement_link:
       "复制【职位需求】链接，用于HR、用人经理、面试官等定义职位需求、生成面试反馈",
+    post_job: "发布职位",
   },
 
   job_chat: {

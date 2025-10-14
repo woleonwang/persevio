@@ -27,28 +27,6 @@
   cursor: pointer;
 }
 
-.stepContainer {
-  display: flex;
-  padding: 20px 0;
-  width: 100%;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  border-top: 1px solid rgba(234, 234, 234, 1);
-  border-bottom: 1px solid rgba(234, 234, 234, 1);
-
-  .step {
-    width: 120px;
-    height: 12px;
-    border-radius: 6px;
-    background-color: rgba(234, 234, 234, 1);
-    &.active {
-      background-color: @primary-color;
-    }
-  }
-}
-
 .form {
   max-width: 800px;
   margin: 0 auto;
@@ -140,4 +118,9 @@
   display: flex;
   overflow: hidden;
   margin-top: 30px;
+}
+
+.stepContainer {
+  border-top: 1px solid rgba(234, 234, 234, 1);
+  border-bottom: 1px solid rgba(234, 234, 234, 1);
 }

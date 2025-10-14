@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import ChatRoom from "@/components/ChatRoom";
 import { Get } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { copy, parseJSON } from "@/utils";
+import { copy, getQuery, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
 
 import styles from "./style.module.less";
@@ -54,6 +54,8 @@ const JobsShow = () => {
   const originalI18nRef = useRef<string>();
 
   const navigate = useNavigate();
+
+  const isPreview = getQuery("preview") === "1";
 
   const { i18n, t: originalT } = useTranslation();
   const t = (key: string) => originalT(`jobs_show.${key}`);
@@ -144,7 +146,11 @@ const JobsShow = () => {
   );
 
   return (
-    <HomeHeader className={styles.headerContainer} onlyLogo>
+    <HomeHeader
+      className={styles.headerContainer}
+      onlyLogo
+      isPreview={isPreview}
+    >
       {status === "success" && company && job && (
         <div className={styles.container}>
           {/* Banner 区域 */}
@@ -236,7 +242,9 @@ const JobsShow = () => {
                       </div>
                     </div>
 
-                    <div className={styles.bannerRight}>{ApplyButton}</div>
+                    {!isPreview && (
+                      <div className={styles.bannerRight}>{ApplyButton}</div>
+                    )}
                   </div>
                   <div className={styles.companySection}>
                     <div
@@ -290,7 +298,9 @@ const JobsShow = () => {
                   </div>
                 </div>
 
-                <div className={styles.mobileVisible}>{ApplyButton}</div>
+                {!isPreview && (
+                  <div className={styles.mobileVisible}>{ApplyButton}</div>
+                )}
               </div>
             </div>
           </div>

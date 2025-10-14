@@ -55,6 +55,7 @@ import ReactDOM from "react-dom";
 
 import SelectOptionsForm from "../ChatRoom/components/SelectOptionsForm";
 import JobRequirementFormDrawer from "../ChatRoom/components/JobRequirementFormDrawer";
+import globalStore from "@/store/global";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -76,6 +77,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     jobInterviewDesignerId,
     jobInterviewFeedbackId,
     viewDoc,
+    onNextTask,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -120,6 +122,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  const { mode } = globalStore;
 
   const {
     startTranscription,
@@ -320,12 +324,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "jrd-done",
       title: t("view_jrd"),
-      handler: () => viewDoc?.("job-requirement"),
+      ...(onNextTask
+        ? { autoTrigger: true, handler: () => onNextTask?.() }
+        : { handler: () => viewDoc?.("job-requirement") }),
     },
     {
       key: "intake-done",
       title: t("view_jrd"),
-      handler: () => viewDoc?.("job-requirement"),
+      ...(onNextTask
+        ? { autoTrigger: true, handler: () => onNextTask?.() }
+        : { handler: () => viewDoc?.("job-requirement") }),
     },
     {
       key: "jd-done",
@@ -543,31 +551,33 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           extraTags: extraTags,
         });
 
-        // 下一步 按钮
-        (item.content.metadata.extra_tags ?? []).forEach((tag) => {
-          (
-            [
-              "jd-done",
-              "interview-plan-done",
-              "jrd-done",
-              "intake-done",
-            ] as TDoneTag[]
-          ).forEach((step) => {
-            if (step === tag.name) {
-              const nextExtraTags = getNextStepsExtraTags(job);
-              if (nextExtraTags.length > 0) {
-                resultMessages.push({
-                  id: `${item.id.toString()}-${step}-btn`,
-                  role: "ai",
-                  content: t("jrd_next_task"),
-                  updated_at: item.updated_at,
-                  messageType: "system",
-                  extraTags: nextExtraTags,
-                });
+        if (mode === "utils") {
+          // 下一步 按钮
+          (item.content.metadata.extra_tags ?? []).forEach((tag) => {
+            (
+              [
+                "jd-done",
+                "interview-plan-done",
+                "jrd-done",
+                "intake-done",
+              ] as TDoneTag[]
+            ).forEach((step) => {
+              if (step === tag.name) {
+                const nextExtraTags = getNextStepsExtraTags(job);
+                if (nextExtraTags.length > 0) {
+                  resultMessages.push({
+                    id: `${item.id.toString()}-${step}-btn`,
+                    role: "ai",
+                    content: t("jrd_next_task"),
+                    updated_at: item.updated_at,
+                    messageType: "system",
+                    extraTags: nextExtraTags,
+                  });
+                }
               }
-            }
+            });
           });
-        });
+        }
       }
     });
 

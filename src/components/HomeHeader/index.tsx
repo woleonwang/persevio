@@ -10,6 +10,7 @@ interface IProps {
   style?: React.CSSProperties;
   className?: string;
   onlyLogo?: boolean;
+  isPreview?: boolean;
 }
 
 const menusConfigs = {
@@ -17,7 +18,7 @@ const menusConfigs = {
   jobs: "/jobs",
 };
 const HomeHeader = (props: IProps) => {
-  const { children, style, className, onlyLogo } = props;
+  const { children, style, className, onlyLogo, isPreview } = props;
   const navigate = useNavigate();
 
   const isActive = (key: "home" | "jobs"): boolean => {
@@ -30,51 +31,52 @@ const HomeHeader = (props: IProps) => {
 
   return (
     <div className={classnames(styles.container, className)} style={style}>
-      <div className={styles.header}>
-        <img src={logo} className={styles.logo} />
-        {!onlyLogo && (
-          <>
-            <div className={styles.bannderMenuGroup}>
-              <div
-                className={classnames({ [styles.active]: isActive("home") })}
-                onClick={() => navigate(menusConfigs["home"])}
-              >
-                {originalT("home")}
+      {!isPreview && (
+        <div className={styles.header}>
+          <img src={logo} className={styles.logo} />
+          {!onlyLogo && (
+            <>
+              <div className={styles.bannderMenuGroup}>
+                <div
+                  className={classnames({ [styles.active]: isActive("home") })}
+                  onClick={() => navigate(menusConfigs["home"])}
+                >
+                  {originalT("home")}
+                </div>
+                <div
+                  className={classnames({ [styles.active]: isActive("jobs") })}
+                  onClick={() => navigate(menusConfigs["jobs"])}
+                >
+                  {originalT("jobs")}
+                </div>
               </div>
-              <div
-                className={classnames({ [styles.active]: isActive("jobs") })}
-                onClick={() => navigate(menusConfigs["jobs"])}
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "recruit",
+                      label: "我要招聘",
+                      onClick: () => navigate("/signin"),
+                    },
+                    {
+                      key: "jobseeker",
+                      label: "我要找人",
+                      onClick: () => navigate("/signin-candidate"),
+                    },
+                  ],
+                }}
+                placement="bottomRight"
+                trigger={["hover"]}
               >
-                {originalT("jobs")}
-              </div>
-            </div>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: "recruit",
-                    label: "我要招聘",
-                    onClick: () => navigate("/signin"),
-                  },
-                  {
-                    key: "jobseeker",
-                    label: "我要找人",
-                    onClick: () => navigate("/signin-candidate"),
-                  },
-                ],
-              }}
-              placement="bottomRight"
-              trigger={["hover"]}
-            >
-              <Button type="primary" className={styles.joinBtn}>
-                <span>登录/注册</span>
-                <span>→</span>
-              </Button>
-            </Dropdown>
-          </>
-        )}
-      </div>
-
+                <Button type="primary" className={styles.joinBtn}>
+                  <span>登录/注册</span>
+                  <span>→</span>
+                </Button>
+              </Dropdown>
+            </>
+          )}
+        </div>
+      )}
       {children}
     </div>
   );
