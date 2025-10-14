@@ -739,7 +739,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     recruitment_chatbot: "Recruitment Chatbot",
     copy_job_requirement_link:
       "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
-    post_job: "Post Job",
+    post_job: "Confirm Publish",
   },
 
   job_chat: {

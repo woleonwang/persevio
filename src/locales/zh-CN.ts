@@ -700,7 +700,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     recruitment_chatbot: "招聘chatbot",
     copy_job_requirement_link:
       "复制【职位需求】链接，用于HR、用人经理、面试官等定义职位需求、生成面试反馈",
-    post_job: "发布职位",
+    post_job: "确认发布",
   },
 
   job_chat: {

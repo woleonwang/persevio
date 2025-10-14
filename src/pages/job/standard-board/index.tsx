@@ -1,30 +1,18 @@
-import {
-  Avatar,
-  Badge,
-  Button,
-  message,
-  Spin,
-  Switch,
-  Tooltip,
-  Upload,
-} from "antd";
+import { Avatar, Badge, Button, message, Spin, Table, Tag } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  CloseCircleOutlined,
-  ExportOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
+import { ExportOutlined } from "@ant-design/icons";
 
-import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
+import { checkJobDotStatus, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
-import { Get, Post, PostFormData } from "@/utils/request";
+import { Get, Post } from "@/utils/request";
 
 import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
 import Step from "@/components/Step";
 import ChatRoomNew from "@/components/ChatRoomNew";
+import { ColumnsType } from "antd/es/table";
 
 type TJobState = "jrd" | "jd" | "preview" | "board";
 
@@ -73,6 +61,49 @@ const JobBoard = () => {
     </div>
   );
 
+  const columns: ColumnsType<TTalent> = [
+    {
+      title: "候选人姓名",
+      dataIndex: "name",
+    },
+    // {
+    //   title: "邮箱地址",
+    //   dataIndex: "email",
+    // },
+    // {
+    //   title: "手机号码",
+    //   dataIndex: "phone",
+    // },
+    {
+      title: "筛选状态",
+      dataIndex: "status",
+      render: (status: string) => {
+        if (status === "accepted") {
+          return <Tag color="green">已通过</Tag>;
+        }
+        if (status === "rejected") {
+          return <Tag color="red">未通过</Tag>;
+        }
+        return <Tag color="blue">未筛选</Tag>;
+      },
+    },
+    {
+      title: "操作",
+      dataIndex: "action",
+      render: (_, record) => {
+        return (
+          <Button
+            type="link"
+            onClick={() => {
+              navigate(`/app/jobs/${job.id}/talents/${record.id}/detail`);
+            }}
+          >
+            查看
+          </Button>
+        );
+      },
+    },
+  ];
   const stateText = () => {
     if (jobState === "jrd") {
       return "详细定义职位需求";
@@ -104,15 +135,23 @@ const JobBoard = () => {
       <div className={styles.header}>
         {jobState === "board" ? (
           <>
-            {job.name}
-            <div className={styles.right}>
-              <Tooltip title={t("recruitment_chatbot")}>
-                <ExportOutlined
-                  onClick={async () => {
-                    window.open(`${window.origin}/jobs/${job.id}/chat`);
-                  }}
-                />
-              </Tooltip>
+            <div className={styles.title}>{job.name}</div>
+            <div className={styles.right} style={{ top: 24 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  color: "#1fac6a",
+                  cursor: "pointer",
+                }}
+                onClick={async () => {
+                  window.open(`${window.origin}/jobs/${job.id}/chat`);
+                }}
+              >
+                <ExportOutlined />
+                <div>{t("recruitment_chatbot")}</div>
+              </div>
             </div>
           </>
         ) : (
@@ -161,11 +200,40 @@ const JobBoard = () => {
                 width: "100%",
               }}
             />
-            <div>{t("post_job")}</div>
+            <div
+              style={{
+                padding: 12,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                type="primary"
+                onClick={async () => {
+                  const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+                    open: "1",
+                  });
+                  if (code === 0) {
+                    message.success(t("operation_success"));
+                    fetchJob();
+                  }
+                }}
+              >
+                {t("post_job")}
+              </Button>
+            </div>
           </div>
         )}
-        {/* {jobState === "board" && (
-          <>
+        {jobState === "board" && (
+          <div
+            style={{
+              padding: "0 120px",
+              flex: "auto",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "auto",
+            }}
+          >
             <div className={styles.block}>
               {VionaAvatarDiv}
               <div>{t("complete_conversation_tasks")}</div>
@@ -204,69 +272,21 @@ const JobBoard = () => {
                     {t("job_description_jd")}
                   </Button>
                 </Badge>
-                <Badge
-                  dot={
-                    !!job.compensation_details_doc_id &&
-                    !checkJobDotStatus(job.id, "job_compensation_details_doc")
-                  }
-                >
-                  <Button
-                    // disabled={!job.jd_doc_id}
-                    onClick={() => {
-                      setJobDotStatus(job.id, "job_compensation_details_doc");
-                      navigate(
-                        `/app/jobs/${job.id}/document/job-compensation-details`
-                      );
-                    }}
-                    size="large"
-                  >
-                    {t("job_compensation_details")}
-                  </Button>
-                </Badge>
-                <Badge
-                  dot={
-                    !!job.compensation_details_doc_id &&
-                    !checkJobDotStatus(job.id, "job_outreach_message_doc")
-                  }
-                >
-                  <Button
-                    // disabled={!job.jd_doc_id}
-                    onClick={() => {
-                      setJobDotStatus(job.id, "job_outreach_message_doc");
-                      navigate(
-                        `/app/jobs/${job.id}/document/job-outreach-message`
-                      );
-                    }}
-                    size="large"
-                  >
-                    {t("job_outreach_message")}
-                  </Button>
-                </Badge>
-                <Badge
-                  dot={
-                    !!job.interview_plan_doc_id &&
-                    !checkJobDotStatus(job.id, "job_interview_plan_doc")
-                  }
-                >
-                  <Button
-                    // disabled={!job.interview_plan_doc_id}
-                    onClick={() => {
-                      setJobDotStatus(job.id, "job_interview_plan_doc");
-                      navigate(
-                        `/app/jobs/${job.id}/document/job-interview-plan`
-                      );
-                    }}
-                    size="large"
-                  >
-                    {t("interview_plan_scorecard")}
-                  </Button>
-                </Badge>
               </div>
             </div>
 
-            <div className={styles.block}></div>
-          </>
-        )} */}
+            <div className={styles.block}>
+              <h3>候选人列表</h3>
+              <Table
+                columns={columns}
+                dataSource={talents}
+                pagination={{
+                  pageSize: 10,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,8 @@ import {
   Form,
   Input,
   Spin,
+  Tag,
+  Drawer,
 } from "antd";
 import {
   DownloadOutlined,
@@ -35,6 +37,8 @@ import FeedbackCustomizeSignal from "./components/FeedbackCustomizeSignal";
 import usePublicJob from "@/hooks/usePublicJob";
 import EvaluateResult from "./components/EvaluateResult";
 import FeedbackSignalNew from "./components/FeedbackSignalNew";
+import { observer } from "mobx-react-lite";
+import ChatMessagePreview from "../ChatMessagePreview";
 
 const { Title, Text } = Typography;
 
@@ -64,9 +68,17 @@ const TalentDetail: React.FC<IProps> = (props) => {
     TInterviewFeedback[]
   >([]);
   const [isEditingTalent, setIsEditingTalent] = useState(false);
+  const [isAIInterviewRecordDrawerOpen, setIsAIInterviewRecordDrawerOpen] =
+    useState(false);
+  const [talentChatMessages, setTalentChatMessages] = useState<
+    TMessageFromApi[]
+  >([]);
+
   const [form] = Form.useForm<{ status: string; feedback: string }>();
 
   const navigate = useNavigate();
+
+  const { mode } = globalStore;
 
   // 动态生成状态选项，使用国际化
   const talentStatusOptions = [
@@ -116,6 +128,8 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
       // 刷新未读候选人状态
       globalStore.refreshUnreadTalentsCount();
+
+      fetchTalentChatMessages();
     }
   }, [job, talent]);
 
@@ -126,6 +140,17 @@ const TalentDetail: React.FC<IProps> = (props) => {
       fetchInterviewFeedbacks();
     }
   }, [tabKey, roundKey]);
+
+  const fetchTalentChatMessages = async () => {
+    if (!job || !talent) return;
+
+    const { code, data } = await Get(
+      `/api/jobs/${job.id}/talents/${talent.id}/messages`
+    );
+    if (code === 0) {
+      setTalentChatMessages(data.messages);
+    }
+  };
 
   const fetchInterviewDesignerDetail = async () => {
     if (!job || !talent) return;
@@ -232,6 +257,26 @@ const TalentDetail: React.FC<IProps> = (props) => {
         message.success(t("update_success"));
       }
     });
+  };
+
+  const updateTalentStatus = async (action: "accept" | "reject") => {
+    if (
+      confirm(
+        "确定要" + (action === "accept" ? "通过" : "拒绝") + "该候选人吗？"
+      )
+    ) {
+      const { code } = await Post(
+        `/api/jobs/${job?.id}/talents/${talent?.id}`,
+        {
+          status: action === "accept" ? "accepted" : "rejected",
+        }
+      );
+
+      if (code === 0) {
+        fetchTalent();
+        message.success(t("update_success"));
+      }
+    }
   };
 
   const interviewPlan = parseJSON(
@@ -469,28 +514,30 @@ const TalentDetail: React.FC<IProps> = (props) => {
         </div>
       </div>
       <div className={styles.main}>
-        <div className={styles.left}>
-          <Tabs
-            tabPosition="left"
-            activeKey={tabKey}
-            onChange={(type) => setTabKey(type as TTalentChatType)}
-            style={{ height: "100%" }}
-            items={[
-              {
-                key: "resume",
-                label: t("tabs.resume_detail"),
-              },
-              {
-                key: "interview_designer",
-                label: t("tabs.recommended_interview_questions"),
-              },
-              {
-                key: "interview_feedback",
-                label: t("tabs.interview_scorecard"),
-              },
-            ]}
-          />
-        </div>
+        {mode === "utils" && (
+          <div className={styles.left}>
+            <Tabs
+              tabPosition="left"
+              activeKey={tabKey}
+              onChange={(type) => setTabKey(type as TTalentChatType)}
+              style={{ height: "100%" }}
+              items={[
+                {
+                  key: "resume",
+                  label: t("tabs.resume_detail"),
+                },
+                {
+                  key: "interview_designer",
+                  label: t("tabs.recommended_interview_questions"),
+                },
+                {
+                  key: "interview_feedback",
+                  label: t("tabs.interview_scorecard"),
+                },
+              ]}
+            />
+          </div>
+        )}
         {/* 右侧内容区 */}
         <div className={styles.right}>
           {tabKey === "resume" && (
@@ -502,6 +549,31 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   padding: "0 24px",
                 }}
               >
+                {mode === "standard" && (
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    {talent?.status === "accepted" ? (
+                      <Tag color="green">已通过</Tag>
+                    ) : talent?.status === "rejected" ? (
+                      <Tag color="red">未通过</Tag>
+                    ) : (
+                      <div style={{ display: "flex", gap: 12 }}>
+                        <Button
+                          type="primary"
+                          onClick={() => updateTalentStatus("accept")}
+                        >
+                          通过
+                        </Button>
+                        <Button
+                          type="primary"
+                          danger
+                          onClick={() => updateTalentStatus("reject")}
+                        >
+                          拒绝
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <MarkdownContainer content={talent.parsed_content || ""} />
               </div>
               {talent.evaluate_result.evaluation_summary ? (
@@ -513,8 +585,23 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 </div>
               ) : talent.raw_evaluate_result ? (
                 <div className={styles.evaluateResultContainer}>
-                  <div className={styles.evaluateResultTitle}>
+                  <div
+                    className={styles.evaluateResultTitle}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
                     {t("candidate_evaluation_report")}
+                    {mode === "standard" && (
+                      <Button
+                        type="primary"
+                        onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
+                      >
+                        AI 面试记录
+                      </Button>
+                    )}
                   </div>
                   <div style={{ padding: "0 20px" }}>
                     <MarkdownContainer content={talent.raw_evaluate_result} />
@@ -910,8 +997,17 @@ const TalentDetail: React.FC<IProps> = (props) => {
           )}
         </div>
       </div>
+      <Drawer
+        open={isAIInterviewRecordDrawerOpen}
+        onClose={() => setIsAIInterviewRecordDrawerOpen(false)}
+        width={1000}
+      >
+        <div>
+          <ChatMessagePreview messages={talentChatMessages ?? []} />
+        </div>
+      </Drawer>
     </div>
   );
 };
 
-export default TalentDetail;
+export default observer(TalentDetail);

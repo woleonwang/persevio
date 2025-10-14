@@ -508,3 +508,33 @@ interface ICandidateTask {
   created_at: string;
   updated_at: string;
 }
+
+type TMessageFromApi = {
+  id: number;
+  content: {
+    content: string;
+    thinking?: string;
+    role: "user" | "assistant";
+    metadata: {
+      message_type: "" | "system" | "normal";
+      message_sub_type: "" | "error" | "normal";
+      extra_tags: {
+        name: TExtraTagName;
+        content: string;
+      }[];
+      hide_for_roles?: ("staff" | "coworker" | "candidate" | "trial_user")[];
+    };
+  };
+  updated_at: string;
+};
+
+type TMessage = {
+  id: string;
+  role: "ai" | "user";
+  content: string;
+  thinking?: string;
+  updated_at: string;
+  messageType?: "normal" | "system";
+  messageSubType?: "normal" | "error";
+  extraTags?: TExtraTag[];
+};
