@@ -12,16 +12,17 @@ import {
   FloatButton,
   Steps,
   Upload,
-  Tooltip,
+  Popover,
 } from "antd";
 import {
-  AudioMutedOutlined,
   AudioOutlined,
+  CloseOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   ReloadOutlined,
   SendOutlined,
+  XFilled,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -715,7 +716,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         ].map((text) => {
           return (
             <Button
-              type="primary"
+              variant="outlined"
+              style={{ backgroundColor: "transparent" }}
+              color="primary"
               key={text}
               shape="round"
               onClick={() => sendMessage(text)}
@@ -731,45 +734,68 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const genRecordButton = () => {
     return (
-      <Tooltip
-        styles={{
-          body: {
-            width: 400,
-          },
-        }}
-        placement="right"
-        title={t("recording_tooltip")}
+      <Popover
+        content={
+          <div>
+            <div className={styles.hintHeader}>
+              <div className={styles.hintTitle}>
+                {t("voice_input_hint_title")}
+              </div>
+              <CloseOutlined
+                onClick={() => setAudioHintVisible(false)}
+                style={{ cursor: "pointer" }}
+              />
+            </div>
+            <div>{t("voice_input_hint_content")}</div>
+            <ul className={styles.hintList}>
+              <li>{t("voice_input_hint_method1")}</li>
+              <li>{t("voice_input_hint_method2")}</li>
+            </ul>
+          </div>
+        }
+        placement="top"
         open={audioHintVisible}
       >
-        {!isRecording && !isTranscribing ? (
-          <Button
-            style={{
-              width: 64,
-              height: 64,
-            }}
-            shape="circle"
-            type="primary"
-            onClick={() => startTranscription()}
-            icon={<AudioOutlined style={{ fontSize: 36 }} />}
-            iconPosition="start"
-          />
-        ) : (
-          <Button
-            style={{
-              width: 64,
-              height: 64,
-              backgroundColor: "rgba(224, 46, 42, 0.1)",
-              color: "rgb(224, 46, 42)",
-            }}
-            shape="circle"
-            type="primary"
-            disabled={isTranscribing || !isStartRecordingOutside}
-            onClick={() => endTranscription()}
-            icon={<AudioMutedOutlined style={{ fontSize: 36 }} />}
-            iconPosition="start"
-          />
-        )}
-      </Tooltip>
+        <div className={styles.buttonContainer}>
+          {!isRecording && !isTranscribing ? (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid gray",
+                color: "gray",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              variant="outlined"
+              color="default"
+              onClick={() => startTranscription()}
+              icon={<AudioOutlined style={{ fontSize: 24 }} />}
+              iconPosition="start"
+            />
+          ) : (
+            <Button
+              style={{
+                width: 48,
+                height: 48,
+                border: "4px solid #1FAC6A",
+                backgroundColor: "#f1f1f1",
+              }}
+              shape="circle"
+              type="primary"
+              disabled={isTranscribing || !isStartRecordingOutside}
+              onClick={() => endTranscription()}
+              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
+              iconPosition="start"
+            />
+          )}
+          <div className={styles.buttonHint}>
+            {!isRecording && !isTranscribing
+              ? t("voice_input")
+              : t("stop_voice_input")}
+          </div>
+        </div>
+      </Popover>
     );
   };
 
@@ -1134,20 +1160,34 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 style={{ fontSize: 24, color: "#1FAC6A" }}
               />
             )}
-            <EditOutlined
-              onClick={() => {
-                if (textInputVisible) {
-                  setTextInputVisible(false);
-                  setInputPlaceholder("");
-                } else {
-                  setTextInputVisible(true);
-                  setTimeout(() => {
-                    setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                  }, 400);
-                }
-              }}
-              style={{ fontSize: 24, color: "gray" }}
-            />
+            <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
+              <Button
+                style={{
+                  width: 48,
+                  height: 48,
+                  border: "4px solid gray",
+                  color: "gray",
+                  backgroundColor: "#f1f1f1",
+                }}
+                shape="circle"
+                variant="outlined"
+                color="primary"
+                iconPosition="start"
+                icon={<EditOutlined style={{ fontSize: 24 }} />}
+                onClick={() => {
+                  if (textInputVisible) {
+                    setTextInputVisible(false);
+                    setInputPlaceholder("");
+                  } else {
+                    setTextInputVisible(true);
+                    setTimeout(() => {
+                      setInputPlaceholder(t("reply_viona_directly_or_edit"));
+                    }, 400);
+                  }
+                }}
+              />
+              <div className={styles.buttonHint}>{t("text_edit")}</div>
+            </div>
           </div>
         </div>
 

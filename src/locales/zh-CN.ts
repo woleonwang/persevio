@@ -653,7 +653,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     new_role: "创建职位",
     job_name: "职位名称",
     viona_title: "Viona, AI 招聘专员",
-    ready_message: "准备好创建职位了吗？请告诉我职位名称吧！",
+    ready_message: "准备好发布职位了吗？请告诉我职位名称吧！",
     share_message: "您也可以分享链接，与小伙伴一起定义职位需求",
     share_link: "分享链接",
     copy_success: "复制成功",
