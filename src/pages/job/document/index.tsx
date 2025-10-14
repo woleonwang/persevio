@@ -16,6 +16,7 @@ import { Get, Post } from "@/utils/request";
 import dayjs from "dayjs";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { useTranslation } from "react-i18next";
+import globalStore from "@/store/global";
 
 type TChatType =
   | "job-requirement"
@@ -48,14 +49,22 @@ const JobDocument = () => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_document.${key}`);
 
+  const { mode } = globalStore;
+
   const chatTypeTitle = useMemo(
-    () => ({
-      "job-requirement": t("job_requirement_table"),
-      "job-description": t("job_description_jd"),
-      "job-compensation-details": t("job_compensation_details"),
-      "job-outreach-message": t("job_outreach_message"),
-      "job-interview-plan": t("interview_plan_scorecard"),
-    }),
+    () =>
+      mode === "standard"
+        ? {
+            "job-requirement": t("job_requirement_table"),
+            "job-description": t("job_description_jd"),
+          }
+        : {
+            "job-requirement": t("detailed_define_job_requirement"),
+            "job-description": t("define_jd"),
+            "job-compensation-details": t("define_compensation_details"),
+            "job-outreach-message": t("define_outreach_message"),
+            "job-interview-plan": t("define_interview_plan"),
+          },
     [t]
   );
 
@@ -146,7 +155,11 @@ const JobDocument = () => {
             margin: "0 20px",
           }}
           onClick={() => {
-            navigate(`/app/jobs/${job.id}/board`);
+            navigate(
+              mode === "standard"
+                ? `/app/jobs/${job.id}/standard-board`
+                : `/app/jobs/${job.id}/board`
+            );
           }}
         />
         <span style={{ fontSize: 20, fontWeight: "bold" }}>{job.name}</span> -
@@ -223,15 +236,17 @@ const JobDocument = () => {
                   }}
                 />
 
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    navigate(`/app/jobs/${job.id}/chat/${chatType}`);
-                  }}
-                  style={{ marginLeft: "12px" }}
-                >
-                  {t("chat_with_viona")}
-                </Button>
+                {mode === "utils" && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                    }}
+                    style={{ marginLeft: "12px" }}
+                  >
+                    {t("chat_with_viona")}
+                  </Button>
+                )}
               </div>
             )}
           </div>
