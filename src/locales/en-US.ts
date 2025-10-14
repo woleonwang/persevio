@@ -777,6 +777,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   jobs_show: {
+    expand: "Expand",
     job_at: "Job at",
     click_for_complete_jd: "Click for complete JD",
     days_ago: "days ago",
