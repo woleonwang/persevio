@@ -289,7 +289,7 @@ const JobsShow = () => {
                                 )
                               }
                             >
-                              展开
+                              {t("expand")}
                             </span>
                           )}
                         </div>
