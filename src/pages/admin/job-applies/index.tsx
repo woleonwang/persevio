@@ -7,6 +7,7 @@ import styles from "../style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import dayjs from "dayjs";
 import EditableMarkdown from "@/components/EditableMarkdown";
+import ChatMessagePreview from "@/components/ChatMessagePreview";
 
 const PAGE_SIZE = 10;
 
@@ -34,9 +35,11 @@ const JobApplies = () => {
     useState(false);
   const [jobApplyResumeDrawerOpen, setJobApplyResumeDrawerOpen] =
     useState(false);
+  const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
   const [recommendReport, setRecommendReport] = useState("");
+  const [chatMessages, setChatMessages] = useState<TMessageFromApi[]>([]);
   const [isEditingRecommendReport, setIsEditingRecommendReport] =
     useState(false);
 
@@ -72,6 +75,7 @@ const JobApplies = () => {
       setJd(data.jd);
       setResume(data.resume);
       setRecommendReport(data.job_apply.evaluate_result);
+      setChatMessages(data.messages ?? []);
     }
   };
 
@@ -225,7 +229,10 @@ const JobApplies = () => {
                 className={styles.jobApplyPanel}
                 style={{ borderLeft: "1px solid #f2f2f2" }}
               >
-                <div className={styles.jobApplyPanelTitle}>
+                <div
+                  className={styles.jobApplyPanelTitle}
+                  style={{ marginBottom: 12 }}
+                >
                   <div>推荐报告</div>
 
                   <div style={{ display: "flex", gap: 12 }}>
@@ -241,6 +248,14 @@ const JobApplies = () => {
                     >
                       查看简历
                     </Button>
+                    {chatMessages.length > 0 && (
+                      <Button
+                        type="primary"
+                        onClick={() => setChatDrawerOpen(true)}
+                      >
+                        查看对话
+                      </Button>
+                    )}
                   </div>
                 </div>
                 {recommendReport || isEditingRecommendReport ? (
@@ -277,6 +292,15 @@ const JobApplies = () => {
               width={800}
             >
               <MarkdownContainer content={resume} />
+            </Drawer>
+
+            <Drawer
+              title="对话"
+              open={chatDrawerOpen}
+              onClose={() => setChatDrawerOpen(false)}
+              width={800}
+            >
+              <ChatMessagePreview messages={chatMessages} />
             </Drawer>
           </div>
         )}
