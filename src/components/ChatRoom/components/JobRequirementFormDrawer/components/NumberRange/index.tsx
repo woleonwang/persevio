@@ -17,7 +17,7 @@ interface IProps {
 }
 
 const NumberRange = (props: IProps) => {
-  const { value = {}, onChange, suffix = "years" } = props;
+  const { value, onChange, suffix = "years" } = props;
   const { t } = useTranslation();
 
   // 本地 state 用于显示和校验
