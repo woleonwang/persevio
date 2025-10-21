@@ -29,6 +29,7 @@ interface IJob {
 
   requirement_doc_id: number;
   jd_doc_id: number;
+  jd_language: "zh-CN" | "en-US";
   target_companies_doc_id: number;
   compensation_details_doc_id: number;
   screening_question_doc_id: number;

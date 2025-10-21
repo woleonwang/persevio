@@ -12,6 +12,7 @@ export type TExtraTagName =
   // 后端生成
   | "copy-link" // 复制链接
   | "jrd-language" // 选择 jrd 语言
+  | "jd-language" // 选择 jd 语言
   | "talent-evaluate-result"
   | "huoqujibenxinxi-jindu-one"
   | "upload-jd"

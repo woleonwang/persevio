@@ -285,6 +285,33 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       ],
     },
     {
+      key: "jd-language",
+      children: [
+        {
+          title: "中文",
+          handler: async () => {
+            const success = await updateJob({ jd_language: "zh-CN" });
+            if (success) {
+              sendMessage("好的，请用中文生成 JD");
+            } else {
+              message.error(t("update_job_failed"));
+            }
+          },
+        },
+        {
+          title: "English",
+          handler: async () => {
+            const success = await updateJob({ jd_language: "en-US" });
+            if (success) {
+              sendMessage("OK. Please generate JD in English.");
+            } else {
+              message.error(t("update_job_failed"));
+            }
+          },
+        },
+      ],
+    },
+    {
       key: "huoqujibenxinxi-jindu-one",
       title: t("share_basic"),
       handler: () => openJobRequirementFormDrawer("basic_info"),
@@ -429,6 +456,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     }
   };
 
+  const updateJob = async (job: { jd_language?: IJob["jd_language"] }) => {
+    const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), job);
+    return code === 0;
+  };
   const initProfile = async () => {
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
