@@ -62,8 +62,12 @@ const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
 type TSupportTag = {
   key: TExtraTagName;
-  title: string;
-  handler: (tag?: { name: string; content: string }) => void;
+  title?: string;
+  handler?: (tag?: { name: string; content: string }) => void;
+  children?: {
+    title: string;
+    handler: () => void;
+  }[];
   autoTrigger?: boolean;
   style?: "inline-button" | "block-button" | "button-with-text";
 };
@@ -268,6 +272,19 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const supportTags: TSupportTag[] = [
     {
+      key: "jrd-language",
+      children: [
+        {
+          title: "中文",
+          handler: () => sendMessage("好的，请用中文交流"),
+        },
+        {
+          title: "English",
+          handler: () => sendMessage("OK. Let's speak English."),
+        },
+      ],
+    },
+    {
       key: "huoqujibenxinxi-jindu-one",
       title: t("share_basic"),
       handler: () => openJobRequirementFormDrawer("basic_info"),
@@ -459,7 +476,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
             );
             return !!extraTag;
           });
-          autoTriggerTag?.handler(extraTag);
+          autoTriggerTag?.handler?.(extraTag);
         }
         lastMessageIdRef.current = lastMessage.id;
       }
@@ -922,28 +939,40 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                       tag.style === "inline-button"
                                   )
                                   .map((tag) => {
-                                    return (
-                                      <div
-                                        style={{ marginBottom: 16 }}
-                                        key={tag.key}
-                                      >
-                                        <Button
-                                          variant="solid"
-                                          color="primary"
-                                          onClick={() => {
-                                            const extraTag = (
-                                              item.extraTags ?? []
-                                            ).find(
-                                              (extraTag) =>
-                                                extraTag.name === tag.key
-                                            );
-                                            tag.handler(extraTag);
-                                          }}
+                                    const genButtonElement = (tag: {
+                                      title?: string;
+                                      key?: string;
+                                      handler?: (tag?: TExtraTag) => void;
+                                    }) => {
+                                      return (
+                                        <div
+                                          style={{ marginBottom: 16 }}
+                                          key={tag.key ?? tag.title}
                                         >
-                                          {tag.title}
-                                        </Button>
-                                      </div>
-                                    );
+                                          <Button
+                                            variant="solid"
+                                            color="primary"
+                                            onClick={() => {
+                                              const extraTag = (
+                                                item.extraTags ?? []
+                                              ).find(
+                                                (extraTag) =>
+                                                  extraTag.name === tag.key
+                                              );
+                                              tag.handler?.(extraTag);
+                                            }}
+                                          >
+                                            {tag.title}
+                                          </Button>
+                                        </div>
+                                      );
+                                    };
+
+                                    return tag.children
+                                      ? tag.children.map((tag) =>
+                                          genButtonElement(tag)
+                                        )
+                                      : genButtonElement(tag);
                                   })}
                               </div>
                               {visibleTags
@@ -998,7 +1027,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                             (extraTag) =>
                                               extraTag.name === tag.key
                                           );
-                                          tag.handler(extraTag);
+                                          tag.handler?.(extraTag);
                                         }}
                                       >
                                         {tag.title}
@@ -1029,7 +1058,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           (extraTag) =>
                                             extraTag.name === tag.key
                                         );
-                                        tag.handler(extraTag);
+                                        tag.handler?.(extraTag);
                                       }}
                                     >
                                       {tag.title}

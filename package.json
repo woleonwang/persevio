@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@livekit/components-react": "^2.9.15",
+    "@livekit/components-styles": "^1.1.6",
     "@mdxeditor/editor": "^3.29.1",
     "@types/node": "^22.15.3",
     "@types/recordrtc": "^5.6.14",
@@ -21,6 +23,7 @@
     "dayjs": "^1.11.13",
     "i18next": "^24.2.3",
     "less": "^4.2.1",
+    "livekit-client": "^2.15.11",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",
     "path": "^0.12.7",

@@ -65,6 +65,7 @@ import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
 import ApplyJob from "./pages/candidate/apply-job/index.tsx";
+import LiveKit from "./pages/livekit-voice-chat/page.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -254,6 +255,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/apply" element={<Apply />} />
+          <Route path="/livekit" element={<LiveKit />} />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>
