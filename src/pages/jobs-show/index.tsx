@@ -93,7 +93,7 @@ const JobsShow = () => {
         job_description_json: parseJSON(data.job.job_description_json),
       });
       originalI18nRef.current = i18n.language;
-      i18n.changeLanguage(data.company.lang ?? "en-US");
+      i18n.changeLanguage("en-US");
       setStatus("success");
     } else {
       setStatus("error");

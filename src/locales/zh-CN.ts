@@ -752,7 +752,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       hybrid: "混合型",
       remote: "完全在家工作",
     },
-    apply_now: "立即申请",
+    apply_now: "感兴趣",
     hours_ago: "小时前发布",
     days_ago_posted: "天前发布",
     team_language: "团队语言",

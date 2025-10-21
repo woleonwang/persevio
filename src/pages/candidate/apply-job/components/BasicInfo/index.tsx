@@ -35,7 +35,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
         We need this information to create your application and keep you updated
         on its progress.
       </div>
-      <div className={styles.container}>
+      <div className={styles.formContainer}>
         <Form
           form={form}
           layout="vertical"
