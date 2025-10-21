@@ -449,6 +449,7 @@ interface ITalentListItem {
   job_name: string;
   source_channel: "delivery" | "upload";
   evaluate_result: TEvaluationResult;
+  status: "accepted" | "rejected" | "pending";
   viewed_at: string;
   created_at: string;
   updated_at: string;

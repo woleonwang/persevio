@@ -21,7 +21,7 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import useTalent from "@/hooks/useTalent";
-import { Get, Post } from "@/utils/request";
+import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import dayjs from "dayjs";
@@ -193,6 +193,15 @@ const TalentDetail: React.FC<IProps> = (props) => {
     } else {
       message.error(t("update_failed"));
     }
+  };
+
+  const downloadTalentResume = async () => {
+    if (!talent) return;
+
+    await Download(
+      `/api/jobs/${job?.id}/talents/${talent?.id}/download_resume`,
+      `${talent.name}_resume`
+    );
   };
 
   const handleDownload = () => {
@@ -550,28 +559,42 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 }}
               >
                 {mode === "standard" && (
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    {talent?.status === "accepted" ? (
-                      <Tag color="green">已通过</Tag>
-                    ) : talent?.status === "rejected" ? (
-                      <Tag color="red">未通过</Tag>
-                    ) : (
-                      <div style={{ display: "flex", gap: 12 }}>
-                        <Button
-                          type="primary"
-                          onClick={() => updateTalentStatus("accept")}
-                        >
-                          通过
-                        </Button>
-                        <Button
-                          type="primary"
-                          danger
-                          onClick={() => updateTalentStatus("reject")}
-                        >
-                          拒绝
-                        </Button>
-                      </div>
-                    )}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Button type="primary" onClick={downloadTalentResume}>
+                      下载简历
+                    </Button>
+
+                    <div
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                      {talent?.status === "accepted" ? (
+                        <Tag color="green">已通过</Tag>
+                      ) : talent?.status === "rejected" ? (
+                        <Tag color="red">未通过</Tag>
+                      ) : (
+                        <div style={{ display: "flex", gap: 12 }}>
+                          <Button
+                            type="primary"
+                            onClick={() => updateTalentStatus("accept")}
+                          >
+                            通过
+                          </Button>
+                          <Button
+                            type="primary"
+                            danger
+                            onClick={() => updateTalentStatus("reject")}
+                          >
+                            拒绝
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
                 <MarkdownContainer content={talent.parsed_content || ""} />

@@ -19,6 +19,7 @@ const Talents: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchName, setSearchName] = useState<string>();
   const [selectedJob, setSelectedJob] = useState<string>();
+  const [selectedStatus, setSelectedStatus] = useState<string>();
   const { jobs } = globalStore;
 
   const { t: originalT } = useTranslation();
@@ -42,6 +43,12 @@ const Talents: React.FC = () => {
             ...talent,
             source_channel: talent.source_channel || "upload",
             evaluate_result: parseJSON(talent.evaluate_result),
+            status:
+              talent.status === "accepted"
+                ? "accepted"
+                : talent.status === "rejected"
+                ? "rejected"
+                : "pending",
           })
         )
       );
@@ -64,7 +71,8 @@ const Talents: React.FC = () => {
   const visibleTalents = talents.filter((talent) => {
     const nameMatch = !searchName || talent.name.includes(searchName);
     const jobMatch = !selectedJob || talent.job_name === selectedJob;
-    return nameMatch && jobMatch;
+    const statusMatch = !selectedStatus || talent.status === selectedStatus;
+    return nameMatch && jobMatch && statusMatch;
   });
 
   const currentPageTalents = visibleTalents.slice(
@@ -160,6 +168,15 @@ const Talents: React.FC = () => {
       },
     },
     {
+      title: t("status_column"),
+      dataIndex: "status",
+      key: "status",
+      width: 180,
+      render: (_, record) => {
+        return t(record.status);
+      },
+    },
+    {
       title: t("action_column"),
       key: "action",
       width: 150,
@@ -220,6 +237,30 @@ const Talents: React.FC = () => {
             filterOption={(input, option) =>
               (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
             }
+          />
+        </div>
+        <div className={styles.filterItem}>
+          <Select
+            placeholder={t("filter_placeholder")}
+            value={selectedStatus}
+            onChange={setSelectedStatus}
+            style={{ width: 200 }}
+            allowClear
+            options={[
+              {
+                label: t("accepted"),
+                value: "accepted",
+              },
+              {
+                label: t("rejected"),
+                value: "rejected",
+              },
+              {
+                label: t("pending"),
+                value: "pending",
+              },
+            ]}
+            autoClearSearchValue
           />
         </div>
       </div>
