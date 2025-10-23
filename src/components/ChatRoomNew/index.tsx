@@ -139,9 +139,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     isTranscribing,
     isStartRecordingOutside,
   } = useAssemblyOffline({
-    onFinish: (result) => {
+    onFinish: (result, payloadId) => {
       // console.log("handle result:", result);
-      sendMessage(result);
+      sendMessage(result, { voice_payload_id: payloadId });
     },
     disabled:
       isLoading ||
@@ -669,9 +669,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const sendMessage = async (
     rawMessage: string,
-    metadata?: {
-      before_text?: string;
-      after_text?: string;
+    options?: {
+      voice_payload_id?: number;
+      metadata?: {
+        before_text?: string;
+        after_text?: string;
+      };
     }
   ) => {
     if (isLoading) return;
@@ -695,8 +698,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     ]);
     setIsLoading(true);
 
+    const { voice_payload_id, metadata } = options ?? {};
     const { code } = await Post(apiMapping[chatType as TChatType].send, {
       content: formattedMessage,
+      voice_payload_id: voice_payload_id,
       metadata: metadata,
     });
 
@@ -1375,7 +1380,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               onClick={() => {
                 setMarkdownEditMessageId(undefined);
                 sendMessage(markdownEditMessageContent, {
-                  before_text: `#### ${t("edit_message_hint")}\n\n`,
+                  metadata: {
+                    before_text: `#### ${t("edit_message_hint")}\n\n`,
+                  },
                 });
               }}
             >

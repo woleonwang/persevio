@@ -7,7 +7,7 @@ const useAssemblyOffline = ({
   disabled,
   onStartTranscription,
 }: {
-  onFinish: (text: string) => void;
+  onFinish: (text: string, payloadId: number) => void;
   disabled?: boolean;
   onStartTranscription?: () => void;
 }) => {
@@ -214,7 +214,7 @@ const useAssemblyOffline = ({
           payload: base64String,
         });
         if (code === 0 && data.result) {
-          onFinish(data.result ?? "");
+          onFinish(data.result ?? "", data.voice_payload_id);
         }
         setIsTranscribing(false);
       }
