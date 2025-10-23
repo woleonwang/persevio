@@ -20,6 +20,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
+  LoadingOutlined,
   ReloadOutlined,
   SendOutlined,
   XFilled,
@@ -112,6 +113,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
+  const [isUploadingJd, setIsUploadingJd] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -276,11 +278,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       children: [
         {
           title: "中文",
-          handler: () => sendMessage("好的，请用中文交流"),
+          handler: () =>
+            sendMessage(
+              "好的，我们可以开始对话。请你用中文和我进行接下来的对话。"
+            ),
         },
         {
           title: "English",
-          handler: () => sendMessage("OK. Let's speak English."),
+          handler: () =>
+            sendMessage("Yes, we can start. Please speak with me in English."),
         },
       ],
     },
@@ -292,7 +298,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           handler: async () => {
             const success = await updateJob({ jd_language: "zh-CN" });
             if (success) {
-              sendMessage("好的，请用中文生成 JD");
+              sendMessage(
+                "请用中文来撰写这个职位的JD。请你在把JD发给我之前确保你的语言是正宗地道的适合在职位描述中使用的中文。"
+              );
             } else {
               message.error(t("update_job_failed"));
             }
@@ -303,7 +311,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           handler: async () => {
             const success = await updateJob({ jd_language: "en-US" });
             if (success) {
-              sendMessage("OK. Please generate JD in English.");
+              sendMessage(
+                "Please use English to draft the JD. Please make sure you use authentic English that is appropriate for the use in an official Job Description."
+              );
             } else {
               message.error(t("update_job_failed"));
             }
@@ -1019,6 +1029,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                             "file",
                                             fileInfo.file as any
                                           );
+                                          setIsUploadingJd(true);
                                           const { code, data } =
                                             await PostFormData(
                                               `/api/jobs/${jobId}/upload_resume_for_interview_design`,
@@ -1029,9 +1040,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           } else {
                                             message.error(t("upload_failed"));
                                           }
+                                          setIsUploadingJd(false);
                                         }}
                                         showUploadList={false}
-                                        accept="text/plain,.doc,.docx,.pdf"
+                                        accept=".doc,.docx,.pdf"
                                         multiple={false}
                                         style={{
                                           background: "rgb(239, 249, 239)",
@@ -1039,7 +1051,18 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           marginBottom: 16,
                                         }}
                                       >
-                                        {tag.title}
+                                        {isUploadingJd ? (
+                                          <>
+                                            <LoadingOutlined
+                                              style={{ fontSize: 16 }}
+                                            />
+                                            <div className={styles.buttonHint}>
+                                              {originalT("uploading")}
+                                            </div>
+                                          </>
+                                        ) : (
+                                          tag.title
+                                        )}
                                       </Upload.Dragger>
                                     ) : (
                                       <Button
