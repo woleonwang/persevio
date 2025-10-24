@@ -75,6 +75,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
     workExperienceCompanyName,
     candidate,
   } = props;
+
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -343,7 +344,9 @@ Shall we start now?`,
         content={
           <div>
             <div className={styles.hintHeader}>
-              <div className={styles.hintTitle}>{t("voice_input_hint_title")}</div>
+              <div className={styles.hintTitle}>
+                {t("voice_input_hint_title")}
+              </div>
               <CloseOutlined
                 onClick={() => setAudioHintVisible(false)}
                 style={{ cursor: "pointer" }}
@@ -393,7 +396,9 @@ Shall we start now?`,
             />
           )}
           <div className={styles.buttonHint}>
-            {!isRecording && !isTranscribing ? t("voice_input") : t("stop_voice_input")}
+            {!isRecording && !isTranscribing
+              ? t("voice_input")
+              : t("stop_voice_input")}
           </div>
         </div>
       </Popover>
@@ -469,11 +474,7 @@ Shall we start now?`,
                             <Button
                               shape="round"
                               onClick={() => {
-                                if (
-                                  confirm(
-                                    t("confirm_delete_message")
-                                  )
-                                ) {
+                                if (confirm(t("confirm_delete_message"))) {
                                   deleteMessage(parseInt(item.id));
                                 }
                               }}

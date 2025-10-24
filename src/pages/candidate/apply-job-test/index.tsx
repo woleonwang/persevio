@@ -12,7 +12,7 @@ import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import VionaAvatar from "@/assets/viona-avatar.png";
-import { checkIsAdmin } from "@/utils";
+import { checkIsAdmin, getQuery } from "@/utils";
 import Approve from "./components/Approve";
 import { targetsOptions } from "../network-pofile/components/EditableTargets";
 
@@ -29,11 +29,13 @@ const ApplyJobTest: React.FC = () => {
   const [isOtherTargetShow, setIsOtherTargetShow] = useState(false);
   const [otherTarget, setOtherTarget] = useState<string>();
   const [loadingText, setLoadingText] = useState<string>();
+  const [jobApplyId, setJobApplyId] = useState<number>();
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   const navigate = useNavigate();
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
+  const jobId = parseInt(getQuery("job_id") ?? "0");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -75,6 +77,25 @@ const ApplyJobTest: React.FC = () => {
       // } else {
       //   navigate("/candidate/home");
       // }
+      if (jobId) {
+        const { code, data } = await Get(
+          `/api/candidate/jobs/${jobId}/job_apply`
+        );
+        if (code === 0) {
+          setJobApplyId(data.job_apply.id);
+        } else {
+          const { code, data } = await Post(`/api/candidate/job_applies`, {
+            job_id: jobId,
+          });
+          if (code === 0) {
+            setJobApplyId(data.job_apply_id);
+          } else {
+            message.error("创建职位申请失败");
+          }
+        }
+      } else {
+        message.error("职位不存在");
+      }
     } else {
       setPageState("signin");
     }
@@ -295,10 +316,12 @@ const ApplyJobTest: React.FC = () => {
                   if (pageState === "conversation") {
                     return (
                       <div className={styles.conversation}>
-                        <CandidateChat
-                          chatType="profile"
-                          candidate={candidate}
-                        />
+                        {jobApplyId && (
+                          <CandidateChat
+                            chatType="job_interview"
+                            jobApplyId={jobApplyId}
+                          />
+                        )}
                       </div>
                     );
                   }
