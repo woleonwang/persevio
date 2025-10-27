@@ -1121,6 +1121,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   new: "Create",
   edit: "Edit",
+  delete: "Delete",
+  retry: "Retry",
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",

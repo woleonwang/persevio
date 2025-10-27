@@ -1,8 +1,18 @@
-import { Avatar, Badge, Button, message, Spin, Table, Tag } from "antd";
+import {
+  Avatar,
+  Badge,
+  Breadcrumb,
+  Button,
+  message,
+  Spin,
+  Table,
+  Tag,
+} from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { ExportOutlined } from "@ant-design/icons";
+import { ExportOutlined, RightOutlined } from "@ant-design/icons";
+import classnames from "classnames";
 
 import { checkJobDotStatus, setJobDotStatus } from "@/utils";
 import useJob from "@/hooks/useJob";
@@ -10,7 +20,6 @@ import { Get, Post } from "@/utils/request";
 
 import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
-import Step from "@/components/Step";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import { ColumnsType } from "antd/es/table";
 
@@ -104,31 +113,32 @@ const JobBoard = () => {
       },
     },
   ];
-  const stateText = () => {
-    if (jobState === "jrd") {
-      return "详细定义职位需求";
-    }
-    if (jobState === "jd") {
-      return "定义JD";
-    }
-    if (jobState === "preview") {
-      return "职位预览";
-    }
-    return "";
-  };
 
-  const stateIndex = () => {
-    if (jobState === "jrd") {
-      return 0;
-    }
-    if (jobState === "jd") {
-      return 1;
-    }
-    if (jobState === "preview") {
-      return 2;
-    }
-    return 0;
-  };
+  const stepItems = [
+    {
+      title: "Create Position",
+      key: "create",
+    },
+    {
+      title: "Detailed Define<br/>Job Requirements",
+      key: "jrd",
+    },
+    {
+      title: "Define Job<br/>Description",
+      key: "jd",
+    },
+    {
+      title: "Position Preview",
+      key: "preview",
+    },
+    {
+      title: "Confirm to Publish",
+      key: "confirm",
+    },
+  ];
+
+  const currentIndex =
+    stepItems.findIndex((step) => step.key === jobState) ?? 0;
 
   return (
     <div className={styles.container}>
@@ -156,14 +166,29 @@ const JobBoard = () => {
           </>
         ) : (
           <>
-            <div className={styles.title}>{`${job.name} - ${stateText()}`}</div>
+            <div className={styles.title}>{job.name}</div>
             <div className={styles.right}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ whiteSpace: "nowrap" }}>
-                  STEP {stateIndex() + 1} OF 3
-                </div>
-                <Step stepCount={3} currentIndex={stateIndex()} width={80} />
-              </div>
+              <Breadcrumb
+                items={stepItems}
+                itemRender={(item) => {
+                  const itemIndex = stepItems.findIndex(
+                    (step) => step.key === item.key
+                  );
+                  let status: "done" | "process" | "wait" = "wait";
+                  if (itemIndex < currentIndex) {
+                    status = "done";
+                  } else if (currentIndex === itemIndex) {
+                    status = "process";
+                  }
+                  return (
+                    <span
+                      className={classnames(styles.stepItem, styles[status])}
+                      dangerouslySetInnerHTML={{ __html: item.title as string }}
+                    />
+                  );
+                }}
+                separator={<RightOutlined />}
+              />
             </div>
           </>
         )}
@@ -174,6 +199,7 @@ const JobBoard = () => {
             chatType="jobRequirementDoc"
             jobId={job.id}
             onNextTask={() => setJobState("jd")}
+            allowEditMessage={true}
           />
         )}
         {jobState === "jd" && (
@@ -181,6 +207,7 @@ const JobBoard = () => {
             chatType="jobDescription"
             jobId={job.id}
             onNextTask={() => setJobState("preview")}
+            allowEditMessage={true}
           />
         )}
         {jobState === "preview" && (

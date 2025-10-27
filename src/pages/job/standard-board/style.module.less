@@ -3,25 +3,42 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0 20px;
 }
 
 .header {
   flex: 0;
-  padding: 20px 0;
-  text-align: center;
-  font-weight: bold;
-  position: relative;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .title {
-    font-size: 20px;
+    font-size: 16px;
   }
   .right {
-    position: absolute;
-    right: 20px;
-    top: 8px;
-    display: flex;
-    gap: 20px;
+    .stepItem {
+      width: 110px;
+      font-size: 12px;
+
+      &.wait {
+        color: #999;
+      }
+
+      &.process {
+        color: #3682fe;
+      }
+
+      &.done {
+        color: black;
+      }
+    }
+
+    :global {
+      .ant-breadcrumb ol {
+        align-items: center;
+        gap: 8px;
+      }
+    }
   }
 }
 

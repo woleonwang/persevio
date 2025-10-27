@@ -10,9 +10,9 @@ import {
   TourStepProps,
   Modal,
   FloatButton,
-  Steps,
   Upload,
   Popover,
+  Tooltip,
 } from "antd";
 import {
   AudioOutlined,
@@ -57,6 +57,7 @@ import ReactDOM from "react-dom";
 import SelectOptionsForm from "../ChatRoom/components/SelectOptionsForm";
 import JobRequirementFormDrawer from "../ChatRoom/components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
+import JrdSteps from "./components/JrdSteps";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -120,7 +121,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const editMessageTourElementRef = useRef<
-    HTMLButtonElement | HTMLAnchorElement | null
+    HTMLButtonElement | HTMLAnchorElement | HTMLElement | null
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
@@ -157,12 +158,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     initProfile();
+    setTimeout(() => setAudioHintVisible(false), 5000);
+  }, []);
+
+  useEffect(() => {
     fetchJob();
     fetchMessages();
     needScrollToBottom.current = true;
-
-    setTimeout(() => setAudioHintVisible(false), 5000);
-  }, []);
+  }, [jobId]);
 
   useEffect(() => {
     if (isLoading) {
@@ -776,7 +779,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const genPredefinedButton = () => {
     return (
-      <div style={{ gap: 5, display: "flex" }}>
+      <div
+        style={{ gap: 5, display: "flex", overflow: "auto", paddingBottom: 16 }}
+      >
         {[
           ...(chatType === "jobDescription"
             ? [t("make_details"), t("make_concise")]
@@ -789,15 +794,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         ].map((text) => {
           return (
             <Button
-              variant="outlined"
-              style={{ backgroundColor: "transparent" }}
-              color="primary"
+              variant="filled"
+              color="default"
               key={text}
-              shape="round"
               onClick={() => sendMessage(text)}
-              size="small"
             >
-              {text}
+              <span style={{ color: "#999" }}>→</span> {text}
             </Button>
           );
         })}
@@ -874,23 +876,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.right}>
-        {chatType === "jobRequirementDoc" && (
-          <div className={styles.progressWrapper}>
-            <Steps
-              progressDot
-              direction="horizontal"
-              size="small"
-              current={jrdProgress}
-              items={[
-                { title: t("gather_basic_information") },
-                { title: t("high_level_responsibility") },
-                { title: t("day_to_day_tasks") },
-                { title: t("icp") },
-              ]}
-            />
-          </div>
-        )}
+      {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
+      <div className={styles.chatArea}>
         <div
           className={styles.listArea}
           ref={(e) => (listContainerRef.current = e)}
@@ -915,6 +902,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                   <List.Item.Meta
                     avatar={
                       <Avatar
+                        style={{
+                          border: "none",
+                          background: "none",
+                          width: 40,
+                          height: 40,
+                        }}
                         icon={
                           item.role === "user" ? (
                             <img src={UserAvatar} />
@@ -925,7 +918,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                       />
                     }
                     title={
-                      <div>
+                      <div style={{ marginTop: 8 }}>
                         <span style={{ fontSize: 18 }}>
                           {item.role === "user"
                             ? t("you")
@@ -996,8 +989,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           key={tag.key ?? tag.title}
                                         >
                                           <Button
-                                            variant="solid"
-                                            color="primary"
+                                            variant="filled"
+                                            color="default"
+                                            className={styles.inlineButton}
                                             onClick={() => {
                                               const extraTag = (
                                                 item.extraTags ?? []
@@ -1142,36 +1136,35 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                           return canEditing || canDelete || canRetry ? (
                             <div className={styles.operationArea}>
-                              <Button.Group>
-                                {canEditing && (
-                                  <>
-                                    <Button
-                                      shape="round"
+                              {canEditing && (
+                                <>
+                                  <Tooltip title={originalT("edit")}>
+                                    <EditOutlined
                                       onClick={() => {
                                         setMarkdownEditMessageId(item.id);
                                         setMarkdownEditMessageContent(
                                           item.content
                                         );
                                       }}
-                                      icon={<EditOutlined />}
                                       ref={(e) => {
                                         if (maxIdOfAIMessage === item.id)
                                           editMessageTourElementRef.current = e;
                                       }}
                                     />
-                                    <Button
-                                      shape="round"
+                                  </Tooltip>
+                                  <Tooltip title={originalT("copy")}>
+                                    <CopyOutlined
                                       onClick={async () => {
                                         await copy(item.content);
-                                        message.success(t("copied"));
+                                        message.success(originalT("copied"));
                                       }}
-                                      icon={<CopyOutlined />}
                                     />
-                                  </>
-                                )}
-                                {canDelete && (
-                                  <Button
-                                    shape="round"
+                                  </Tooltip>
+                                </>
+                              )}
+                              {canDelete && (
+                                <Tooltip title={originalT("delete")}>
+                                  <DeleteOutlined
                                     onClick={() => {
                                       if (
                                         confirm(t("confirm_delete_messages"))
@@ -1179,21 +1172,20 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         deleteMessage(parseInt(item.id));
                                       }
                                     }}
-                                    icon={<DeleteOutlined />}
                                   />
-                                )}
-                                {canRetry && (
-                                  <Button
-                                    shape="round"
+                                </Tooltip>
+                              )}
+                              {canRetry && (
+                                <Tooltip title={originalT("retry")}>
+                                  <ReloadOutlined
                                     onClick={async () => {
                                       if (confirm(t("confirm_retry_message"))) {
                                         retryMessage(parseInt(item.id));
                                       }
                                     }}
-                                    icon={<ReloadOutlined />}
                                   />
-                                )}
-                              </Button.Group>
+                                </Tooltip>
+                              )}
                             </div>
                           ) : null;
                         })()}
