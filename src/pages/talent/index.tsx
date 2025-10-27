@@ -208,7 +208,7 @@ const Talent = () => {
                   }
                 >
                   <EyeOutlined
-                    style={{ color: "#1FAC6A", cursor: "pointer" }}
+                    style={{ color: "#3682fe", cursor: "pointer" }}
                   />
                 </Popover>
               </div>

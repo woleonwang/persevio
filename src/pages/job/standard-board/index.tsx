@@ -142,7 +142,7 @@ const JobBoard = () => {
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
-                  color: "#1fac6a",
+                  color: "#3682fe",
                   cursor: "pointer",
                 }}
                 onClick={async () => {

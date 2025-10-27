@@ -185,7 +185,7 @@ const JobsShow = () => {
                             await copy(window.location.href);
                             message.success(originalT("copied"));
                           }}
-                          style={{ color: "#1fac6a" }}
+                          style={{ color: "#3682fe" }}
                         />
                       </div>
 

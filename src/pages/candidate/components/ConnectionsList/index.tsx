@@ -349,7 +349,7 @@ const ConnectionsList = (props: {
 
       <Modal
         open={rejectReasonModalOpen}
-        title={<div style={{ color: "#1fac6a" }}>帮助我们更好地为您推荐</div>}
+        title={<div style={{ color: "#3682fe" }}>帮助我们更好地为您推荐</div>}
         onCancel={() => setRejectReasonModalOpen(false)}
         onOk={() => {
           const finalRejectReasons: string[] = rejectReason.map((reasonKey) => {

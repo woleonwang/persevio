@@ -103,7 +103,7 @@ const SignIn: React.FC = () => {
 
         <div>
           {t("signin.dont_have_account")}
-          <Link to="/signup" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+          <Link to="/signup" style={{ marginLeft: 8, color: "#3682fe" }}>
             {t("signin.sign_up")}
           </Link>
         </div>

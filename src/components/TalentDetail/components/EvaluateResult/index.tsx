@@ -125,12 +125,12 @@ ${t("ideal_profile.plus")}: ${result.job_requirements_met?.plus_requirements}`;
                         VH: {
                           width: "100%",
                           background:
-                            "linear-gradient(90deg, #B7FFA1 0%, #1FAC6A 100%)",
+                            "linear-gradient(90deg, #B7FFA1 0%, #3682fe 100%)",
                         },
                         H: {
                           width: "80%",
                           background:
-                            "linear-gradient(90deg, #B7FFA1 0%, #1FAC6A 100%)",
+                            "linear-gradient(90deg, #B7FFA1 0%, #3682fe 100%)",
                         },
                         N: {
                           width: "60%",

@@ -39,17 +39,17 @@ const FeedbackSignalNew = (props: IProps) => {
           {
             label: t("feedback_signal.over_qualified"),
             value: "over_qualified" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.more_senior"),
             value: "more_senior" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.meets_seniority_bar"),
             value: "meets_seniority_bar" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.slightly_junior"),
@@ -73,17 +73,17 @@ const FeedbackSignalNew = (props: IProps) => {
           {
             label: t("feedback_signal.directly_relevant"),
             value: "directly_relevant" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.highly_transferable"),
             value: "highly_transferable" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.partially_transferable"),
             value: "partially_transferable" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.no_relevant"),
@@ -102,12 +102,12 @@ const FeedbackSignalNew = (props: IProps) => {
           {
             label: t("feedback_signal.identical_environment"),
             value: "identical_environment" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.similar_environment"),
             value: "similar_environment" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.different_environment"),
@@ -126,17 +126,17 @@ const FeedbackSignalNew = (props: IProps) => {
           {
             label: t("feedback_signal.exceeds_expectations"),
             value: "exceeds" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.meets_standards"),
             value: "meets" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.likely_meets"),
             value: "likely_meets" as TEvaluation,
-            color: "#1FAC6A",
+            color: "#3682fe",
           },
           {
             label: t("feedback_signal.likely_does_not_meet"),

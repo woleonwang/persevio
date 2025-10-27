@@ -160,7 +160,7 @@ const CandidateLayout = () => {
                       icon={item.img}
                       style={{
                         fontSize: 20,
-                        color: isActive ? "#1FAC6A" : "#949DAC",
+                        color: isActive ? "#3682fe" : "#949DAC",
                       }}
                     />
                   </div>
@@ -214,7 +214,7 @@ const CandidateLayout = () => {
                     icon={item.img}
                     style={{
                       fontSize: 20,
-                      color: isActive ? "#1FAC6A" : "#949DAC",
+                      color: isActive ? "#3682fe" : "#949DAC",
                     }}
                   />
                 </div>
@@ -249,7 +249,7 @@ const CandidateLayout = () => {
                         icon={item.img}
                         style={{
                           fontSize: 20,
-                          color: isActive ? "#1FAC6A" : "#949DAC",
+                          color: isActive ? "#3682fe" : "#949DAC",
                         }}
                       />
                       <span style={{ marginLeft: 16 }}>{item.title}</span>
@@ -291,7 +291,7 @@ const CandidateLayout = () => {
                     icon={item.img}
                     style={{
                       fontSize: 20,
-                      color: isActive ? "#1FAC6A" : "#949DAC",
+                      color: isActive ? "#3682fe" : "#949DAC",
                     }}
                   />
                   <span style={{ marginLeft: 16 }}>{item.title}</span>

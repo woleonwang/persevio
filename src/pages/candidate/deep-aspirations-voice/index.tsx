@@ -12,7 +12,7 @@ const DeepAspirationsVoice = () => {
       <div className={styles.header}>
         <div>{originalT("candidate_home.deep_aspirations")}</div>
         <LeftCircleOutlined
-          style={{ color: "#1FAC6A", cursor: "pointer" }}
+          style={{ color: "#3682fe", cursor: "pointer" }}
           onClick={() => navigate("/candidate/home")}
         />
       </div>

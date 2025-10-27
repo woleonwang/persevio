@@ -851,14 +851,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               style={{
                 width: 48,
                 height: 48,
-                border: "4px solid #1FAC6A",
+                border: "4px solid #3682fe",
                 backgroundColor: "#f1f1f1",
               }}
               shape="circle"
               type="primary"
               disabled={isTranscribing || !isStartRecordingOutside}
               onClick={() => endTranscription()}
-              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
+              icon={<XFilled style={{ fontSize: 16, color: "#3682fe" }} />}
               iconPosition="start"
             />
           )}
@@ -1052,7 +1052,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         multiple={false}
                                         style={{
                                           background: "rgb(239, 249, 239)",
-                                          color: "#1FAC6A",
+                                          color: "#3682fe",
                                           marginBottom: 16,
                                         }}
                                       >
@@ -1077,7 +1077,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           height: 56,
                                           marginBottom: 16,
                                           background: "rgb(239, 249, 239)",
-                                          color: "#1FAC6A",
+                                          color: "#3682fe",
                                         }}
                                         onClick={() => {
                                           const extraTag = (
@@ -1255,7 +1255,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
             {textInputVisible && (
               <SendOutlined
                 onClick={() => submit()}
-                style={{ fontSize: 24, color: "#1FAC6A" }}
+                style={{ fontSize: 24, color: "#3682fe" }}
               />
             )}
             <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
@@ -1391,7 +1391,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           ]}
         >
           <>
-            <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
+            <div style={{ color: "#3682fe", marginBottom: 12, fontSize: 16 }}>
               {t("tips")}
             </div>
             <MarkdownEditor
@@ -1439,7 +1439,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
             }}
           >
             <ScaleLoader
-              color="#1FAC6A"
+              color="#3682fe"
               height={75 * Math.min(1, volume * 3) + 5}
               width={10}
             />

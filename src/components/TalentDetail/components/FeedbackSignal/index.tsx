@@ -39,17 +39,17 @@ const FeedbackSignal = (props: IProps) => {
     {
       label: t("feedback_signal.exceeds_expectations"),
       value: "exceeds",
-      color: "#1FAC6A",
+      color: "#3682fe",
     },
     {
       label: t("feedback_signal.meets_standards"),
       value: "meets",
-      color: "#1FAC6A",
+      color: "#3682fe",
     },
     {
       label: t("feedback_signal.likely_meets"),
       value: "likely_meets",
-      color: "#1FAC6A",
+      color: "#3682fe",
     },
     {
       label: t("feedback_signal.likely_does_not_meet"),

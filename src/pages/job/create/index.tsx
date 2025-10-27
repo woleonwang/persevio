@@ -90,7 +90,7 @@ const JobCreate = (props: IProps) => {
           suffix={
             <SendOutlined
               onClick={createJob}
-              style={{ fontSize: 20, color: "#1FAC6A" }}
+              style={{ fontSize: 20, color: "#3682fe" }}
             />
           }
           style={{ borderRadius: 32, width: 720, height: 64, paddingLeft: 32 }}

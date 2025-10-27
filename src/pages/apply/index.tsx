@@ -75,7 +75,7 @@ const Apply: React.FC = () => {
         </Form.Item>
         <div>
           Already have an account?
-          <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+          <Link to="/signin" style={{ marginLeft: 8, color: "#3682fe" }}>
             Sign In
           </Link>
         </div>
