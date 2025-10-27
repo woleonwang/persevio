@@ -89,6 +89,8 @@ createRoot(document.getElementById("root")!).render(
         token: {
           colorPrimaryHover: "#1FAC6A",
           colorPrimary: "#1FAC6A",
+          fontFamily:
+            '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
         },
       }}
       locale={zhCNReact} // 使用英文 locale
