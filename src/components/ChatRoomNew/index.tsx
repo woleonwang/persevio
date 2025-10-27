@@ -74,6 +74,10 @@ type TSupportTag = {
   style?: "inline-button" | "block-button" | "button-with-text";
 };
 
+const RECORD_HISTORY_DURATION_SECONDS = 20;
+const getInitialVolumeHistory = () => {
+  return Array.from({ length: RECORD_HISTORY_DURATION_SECONDS * 5 }, () => 0);
+};
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
     chatType,
@@ -93,7 +97,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [jrdProgress, setJrdProgress] = useState<number>(0);
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputPlaceholder, setInputPlaceholder] = useState("");
-  const [audioHintVisible, setAudioHintVisible] = useState(true);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -115,7 +118,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
   const [isUploadingJd, setIsUploadingJd] = useState(false);
-
+  // 最近10秒的音量历史， 1秒5个点，一共50个点
+  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +130,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
   const listContainerRef = useRef<HTMLDivElement | null>();
+  const volumeRef = useRef(0);
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -150,6 +155,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       selectOptionsModalOpen ||
       !!markdownEditMessageId,
   });
+  volumeRef.current = volume;
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -157,8 +163,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       : "https://igk8gb3qpgz.sg.larksuite.com/share/base/form/shrlgfakyAOv0sKElWPJMjC8yTh";
 
   useEffect(() => {
+    if (isRecording) {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
     initProfile();
-    setTimeout(() => setAudioHintVisible(false), 5000);
   }, []);
 
   useEffect(() => {
@@ -201,6 +209,23 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       }, 500);
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setVolumeHistory((prev) => [
+          ...prev.slice(-(RECORD_HISTORY_DURATION_SECONDS * 5 - 1)),
+          volumeRef.current,
+        ]);
+      }, 200);
+
+      return () => {
+        clearInterval(interval);
+      };
+    } else {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
+  }, [isRecording]);
 
   const t = (key: string) => {
     return originalT(`chat.${key}`);
@@ -807,73 +832,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     );
   };
 
-  const genRecordButton = () => {
-    return (
-      <Popover
-        content={
-          <div>
-            <div className={styles.hintHeader}>
-              <div className={styles.hintTitle}>
-                {t("voice_input_hint_title")}
-              </div>
-              <CloseOutlined
-                onClick={() => setAudioHintVisible(false)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-            <div>{t("voice_input_hint_content")}</div>
-            <ul className={styles.hintList}>
-              <li>{t("voice_input_hint_method1")}</li>
-              <li>{t("voice_input_hint_method2")}</li>
-            </ul>
-          </div>
-        }
-        placement="top"
-        open={audioHintVisible}
-      >
-        <div className={styles.buttonContainer}>
-          {!isRecording && !isTranscribing ? (
-            <Button
-              style={{
-                width: 48,
-                height: 48,
-                border: "4px solid gray",
-                color: "gray",
-                backgroundColor: "#f1f1f1",
-              }}
-              shape="circle"
-              variant="outlined"
-              color="default"
-              onClick={() => startTranscription()}
-              icon={<AudioOutlined style={{ fontSize: 24 }} />}
-              iconPosition="start"
-            />
-          ) : (
-            <Button
-              style={{
-                width: 48,
-                height: 48,
-                border: "4px solid #3682fe",
-                backgroundColor: "#f1f1f1",
-              }}
-              shape="circle"
-              type="primary"
-              disabled={isTranscribing || !isStartRecordingOutside}
-              onClick={() => endTranscription()}
-              icon={<XFilled style={{ fontSize: 16, color: "#3682fe" }} />}
-              iconPosition="start"
-            />
-          )}
-          <div className={styles.buttonHint}>
-            {!isRecording && !isTranscribing
-              ? t("voice_input")
-              : t("stop_voice_input")}
-          </div>
-        </div>
-      </Popover>
-    );
-  };
-
   return (
     <div className={styles.container}>
       {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
@@ -1199,71 +1157,92 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className={styles.inputArea}>
+        <div className={styles.footer}>
           <div className={classnames("flex-center")}>
             {genPredefinedButton()}
           </div>
-          <div
-            className={classnames("flex-center", "gap-12")}
-            style={{ marginTop: 12 }}
-          >
-            {genRecordButton()}
-            <Input.TextArea
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-              }}
-              placeholder={textInputVisible ? inputPlaceholder : ""}
-              style={
-                textInputVisible
-                  ? {
-                      width: 600,
-                      marginRight: "8px",
+          <div className={classnames(styles.inputAreaContainer)}>
+            <div className={styles.inputPanel}>
+              {textInputVisible ? (
+                <>
+                  <Input.TextArea
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                    }}
+                    placeholder={inputPlaceholder}
+                    style={{
+                      flex: 1,
                       resize: "none",
                       overflow: "hidden",
+                    }}
+                    onCompositionStartCapture={() =>
+                      (isCompositingRef.current = true)
                     }
-                  : {
-                      width: 0,
-                      height: 0,
-                      padding: 0,
-                      border: "none",
+                    onCompositionEndCapture={() =>
+                      (isCompositingRef.current = false)
                     }
-              }
-              onCompositionStartCapture={() =>
-                (isCompositingRef.current = true)
-              }
-              onCompositionEndCapture={() => (isCompositingRef.current = false)}
-              onPressEnter={(e) => {
-                if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
-                  e.preventDefault();
-                  submit();
-                }
-              }}
-              autoSize={{
-                minRows: 2,
-                maxRows: 16,
-              }}
-            />
-            {textInputVisible && (
-              <SendOutlined
-                onClick={() => submit()}
-                style={{ fontSize: 24, color: "#3682fe" }}
-              />
-            )}
-            <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
-              <Button
-                style={{
-                  width: 48,
-                  height: 48,
-                  border: "4px solid gray",
-                  color: "gray",
-                  backgroundColor: "#f1f1f1",
-                }}
-                shape="circle"
-                variant="outlined"
-                color="primary"
-                iconPosition="start"
-                icon={<EditOutlined style={{ fontSize: 24 }} />}
+                    onPressEnter={(e) => {
+                      if (
+                        !e.shiftKey &&
+                        !isCompositingRef.current &&
+                        canSubmit()
+                      ) {
+                        e.preventDefault();
+                        submit();
+                      }
+                    }}
+                    autoSize={{
+                      minRows: 2,
+                      maxRows: 2,
+                    }}
+                  />
+                  <div className={styles.audioButtonContainer}>
+                    <SendOutlined
+                      onClick={() => submit()}
+                      style={{
+                        fontSize: 24,
+                        color: canSubmit() ? "#3682fe" : "#333",
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.volumeHistoryContainer}>
+                    {volumeHistory.map((volume, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={styles.volumeHistoryItem}
+                          style={{
+                            height: 4 + Math.min(60, volume * 100),
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className={styles.audioButtonContainer}>
+                    {!isRecording && !isTranscribing ? (
+                      <AudioOutlined
+                        style={{ fontSize: 24 }}
+                        onClick={() => startTranscription()}
+                      />
+                    ) : (
+                      <XFilled
+                        style={{ fontSize: 24, color: "#3682fe" }}
+                        onClick={() => endTranscription()}
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className={styles.divider} />
+            <div className={styles.switchButtonContainer}>
+              <EditOutlined
+                style={{ fontSize: 24 }}
                 onClick={() => {
                   if (textInputVisible) {
                     setTextInputVisible(false);
@@ -1276,8 +1255,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                   }
                 }}
               />
-              <div className={styles.buttonHint}>{t("text_edit")}</div>
             </div>
+          </div>
+          <div className={styles.voiceInputHint}>
+            {textInputVisible ? "\u00A0" : "Press and hold Ctrl to speak"}
           </div>
         </div>
 
@@ -1403,42 +1384,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           closable={false}
         />
       </div>
-
-      {ReactDOM.createPortal(
-        <div
-          style={{
-            position: "fixed",
-            zIndex: 999999,
-            width: "100vw",
-            height: "100vh",
-            left: 0,
-            top: 0,
-            display: isRecording || isTranscribing ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            pointerEvents: "none",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "rgba(0,0,0,0.6)",
-              width: 100,
-              height: 100,
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ScaleLoader
-              color="#3682fe"
-              height={75 * Math.min(1, volume * 3) + 5}
-              width={10}
-            />
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   );
 };
