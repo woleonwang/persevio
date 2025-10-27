@@ -34,11 +34,13 @@ const JobCreate = () => {
       if (code === 0) {
         message.success(t("create_success"));
         fetchJobs();
-        navigate(`/app/jobs/${data.job_id}/chat/job-requirement`);
+        navigate(`/app/jobs/${data.job_id}/standard-board`);
       }
       isSubmittingRef.current = false;
     }
   };
+
+  const disabled = jobName === "";
 
   return (
     <div className={styles.container}>
@@ -81,38 +83,25 @@ const JobCreate = () => {
       <div className={styles.form}>
         <Input
           size="large"
+          className={styles.jobNameInput}
           suffix={
             <Button
+              disabled={disabled}
               type="primary"
-              style={{
-                width: 58,
-                height: 58,
-                borderRadius: 20,
-                position: "relative",
-                right: -8,
-              }}
+              className={classnames(styles.suffixButton, {
+                [styles.disabled]: disabled,
+              })}
               icon={
                 <SendOutlined
                   onClick={createJob}
-                  style={{
-                    fontSize: 30,
-                    color: "white",
-                    transform: "rotate(-45deg)",
-                    position: "relative",
-                    top: -3,
-                    left: 3,
-                  }}
+                  className={classnames(styles.suffixIcon, {
+                    [styles.disabled]: disabled,
+                  })}
                 />
               }
               onClick={createJob}
             />
           }
-          style={{
-            borderRadius: 20,
-            width: "100%",
-            height: 64,
-            paddingLeft: 32,
-          }}
           placeholder={t("reply_placeholder")}
           onPressEnter={createJob}
           value={jobName}

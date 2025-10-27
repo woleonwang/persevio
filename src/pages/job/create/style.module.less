@@ -68,5 +68,39 @@
 }
 
 .form {
+  width: 100%;
   margin-top: 24px;
+}
+
+.jobNameInput {
+  border-radius: 20px;
+  width: 100%;
+  height: 64px;
+  padding-left: 32px;
+
+  .suffixButton {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    position: relative;
+    right: -8px;
+
+    &.disabled {
+      border: none;
+      background-color: #d9d9d9;
+    }
+  }
+
+  .suffixIcon {
+    font-size: 30px !important;
+    color: white;
+    transform: rotate(-45deg);
+    position: relative;
+    top: -3px;
+    left: 3px;
+
+    &.disabled {
+      color: #333;
+    }
+  }
 }
