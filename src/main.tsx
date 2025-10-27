@@ -121,9 +121,9 @@ createRoot(document.getElementById("root")!).render(
             element={<PublicTalentDetailPage />}
           />
           {/** 分享创建职位页面 */}
-          <Route path="/share" element={<Share />}>
+          {/* <Route path="/share" element={<Share />}>
             <Route path="/share/create-job" element={<JobCreate share />} />
-          </Route>
+          </Route> */}
 
           <Route path="/app" element={<App />}>
             {/* 公司审核状态 */}

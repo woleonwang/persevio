@@ -7,17 +7,12 @@ import { useTranslation } from "react-i18next";
 
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
-import VionaAvatar from "@/assets/viona-avatar.png";
+import VionaAvatar from "@/assets/viona-avatar-with-bg.png";
 
 import styles from "./style.module.less";
 import { copy } from "@/utils";
 
-interface IProps {
-  share?: boolean;
-}
-const JobCreate = (props: IProps) => {
-  const { share } = props;
-
+const JobCreate = () => {
   const { fetchJobs } = globalStore;
   const [jobName, setJobName] = useState("");
 
@@ -48,27 +43,25 @@ const JobCreate = (props: IProps) => {
   return (
     <div className={styles.container}>
       <div className={classnames("flex-center")}>
-        <Avatar icon={<img src={VionaAvatar} />} size={64} />
-        <div style={{ marginLeft: 12 }}>
-          <b style={{ fontSize: 32 }}>{t("viona_title")}</b>
+        <div className={styles.vionaContainer}>
+          <Avatar
+            icon={<img src={VionaAvatar} />}
+            size={144}
+            style={{ background: "none" }}
+          />
+          <div className={styles.vionaName}>Viona</div>
+          <div className={styles.vionaTitle}>{t("viona_title")}</div>
         </div>
-      </div>
+        <div style={{ marginLeft: 12 }}>
+          <b
+            className={styles.readyMessage}
+            dangerouslySetInnerHTML={{ __html: t("ready_message") }}
+          />
 
-      <div
-        className={classnames("flex-center", "fs-36-b")}
-        style={{ marginTop: 24 }}
-      >
-        {t("ready_message")}
-      </div>
+          <div className={styles.shareMessage}>{t("share_message")}</div>
 
-      {!share && (
-        <div
-          className={classnames("flex-center", "gap-12")}
-          style={{ marginTop: 24, fontSize: 20 }}
-        >
-          {t("share_message")}
-          <Button
-            type="primary"
+          <div
+            className={styles.shareLink}
             onClick={async () => {
               const url = `${
                 window.origin
@@ -80,20 +73,46 @@ const JobCreate = (props: IProps) => {
             }}
           >
             {t("share_link")}
-          </Button>
+            <SendOutlined className={styles.shareLinkIcon} />
+          </div>
         </div>
-      )}
+      </div>
 
       <div className={styles.form}>
         <Input
           size="large"
           suffix={
-            <SendOutlined
+            <Button
+              type="primary"
+              style={{
+                width: 58,
+                height: 58,
+                borderRadius: 20,
+                position: "relative",
+                right: -8,
+              }}
+              icon={
+                <SendOutlined
+                  onClick={createJob}
+                  style={{
+                    fontSize: 30,
+                    color: "white",
+                    transform: "rotate(-45deg)",
+                    position: "relative",
+                    top: -3,
+                    left: 3,
+                  }}
+                />
+              }
               onClick={createJob}
-              style={{ fontSize: 20, color: "#3682fe" }}
             />
           }
-          style={{ borderRadius: 32, width: 720, height: 64, paddingLeft: 32 }}
+          style={{
+            borderRadius: 20,
+            width: "100%",
+            height: 64,
+            paddingLeft: 32,
+          }}
           placeholder={t("reply_placeholder")}
           onPressEnter={createJob}
           value={jobName}
