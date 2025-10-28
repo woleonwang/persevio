@@ -39,7 +39,7 @@ const JobDocument = (props: IProps) => {
 
   useEffect(() => {
     fetchDoc();
-  }, []);
+  }, [job.id, chatType]);
 
   const fetchDoc = async () => {
     const { code, data } = await Get(

@@ -35,6 +35,7 @@ const Talents = (props: IProps) => {
       fetchTalents();
     }
   }, [jobId]);
+
   const fetchTalents = async () => {
     const { code, data } = await Get<{
       talents: TTalent[];
