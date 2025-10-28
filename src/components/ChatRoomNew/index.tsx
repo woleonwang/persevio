@@ -10,13 +10,11 @@ import {
   TourStepProps,
   Modal,
   FloatButton,
-  Steps,
   Upload,
-  Popover,
+  Tooltip,
 } from "antd";
 import {
   AudioOutlined,
-  CloseOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
@@ -27,7 +25,6 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import { ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post, PostFormData } from "../../utils/request";
@@ -52,11 +49,11 @@ import MarkdownContainer from "../MarkdownContainer";
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
-import ReactDOM from "react-dom";
 
-import SelectOptionsForm from "../ChatRoom/components/SelectOptionsForm";
-import JobRequirementFormDrawer from "../ChatRoom/components/JobRequirementFormDrawer";
+import SelectOptionsForm from "./components/SelectOptionsForm";
+import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
+import JrdSteps from "./components/JrdSteps";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -73,6 +70,10 @@ type TSupportTag = {
   style?: "inline-button" | "block-button" | "button-with-text";
 };
 
+const RECORD_HISTORY_DURATION_SECONDS = 20;
+const getInitialVolumeHistory = () => {
+  return Array.from({ length: RECORD_HISTORY_DURATION_SECONDS * 5 }, () => 0);
+};
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
     chatType,
@@ -92,7 +93,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [jrdProgress, setJrdProgress] = useState<number>(0);
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputPlaceholder, setInputPlaceholder] = useState("");
-  const [audioHintVisible, setAudioHintVisible] = useState(true);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -114,17 +114,19 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   >();
   const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
   const [isUploadingJd, setIsUploadingJd] = useState(false);
-
+  // 最近10秒的音量历史， 1秒5个点，一共50个点
+  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const editMessageTourElementRef = useRef<
-    HTMLButtonElement | HTMLAnchorElement | null
+    HTMLButtonElement | HTMLAnchorElement | HTMLElement | null
   >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
   const listContainerRef = useRef<HTMLDivElement | null>();
+  const volumeRef = useRef(0);
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -149,6 +151,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       selectOptionsModalOpen ||
       !!markdownEditMessageId,
   });
+  volumeRef.current = volume;
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -156,13 +159,17 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       : "https://igk8gb3qpgz.sg.larksuite.com/share/base/form/shrlgfakyAOv0sKElWPJMjC8yTh";
 
   useEffect(() => {
+    if (isRecording) {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
     initProfile();
+  }, []);
+
+  useEffect(() => {
     fetchJob();
     fetchMessages();
     needScrollToBottom.current = true;
-
-    setTimeout(() => setAudioHintVisible(false), 5000);
-  }, []);
+  }, [jobId]);
 
   useEffect(() => {
     if (isLoading) {
@@ -198,6 +205,23 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       }, 500);
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setVolumeHistory((prev) => [
+          ...prev.slice(-(RECORD_HISTORY_DURATION_SECONDS * 5 - 1)),
+          volumeRef.current,
+        ]);
+      }, 200);
+
+      return () => {
+        clearInterval(interval);
+      };
+    } else {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
+  }, [isRecording]);
 
   const t = (key: string) => {
     return originalT(`chat.${key}`);
@@ -776,7 +800,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const genPredefinedButton = () => {
     return (
-      <div style={{ gap: 5, display: "flex" }}>
+      <div
+        style={{ gap: 5, display: "flex", overflow: "auto", paddingBottom: 16 }}
+      >
         {[
           ...(chatType === "jobDescription"
             ? [t("make_details"), t("make_concise")]
@@ -789,15 +815,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         ].map((text) => {
           return (
             <Button
-              variant="outlined"
-              style={{ backgroundColor: "transparent" }}
-              color="primary"
+              variant="filled"
+              color="default"
               key={text}
-              shape="round"
               onClick={() => sendMessage(text)}
-              size="small"
             >
-              {text}
+              <span style={{ color: "#999" }}>→</span> {text}
             </Button>
           );
         })}
@@ -805,92 +828,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     );
   };
 
-  const genRecordButton = () => {
-    return (
-      <Popover
-        content={
-          <div>
-            <div className={styles.hintHeader}>
-              <div className={styles.hintTitle}>
-                {t("voice_input_hint_title")}
-              </div>
-              <CloseOutlined
-                onClick={() => setAudioHintVisible(false)}
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-            <div>{t("voice_input_hint_content")}</div>
-            <ul className={styles.hintList}>
-              <li>{t("voice_input_hint_method1")}</li>
-              <li>{t("voice_input_hint_method2")}</li>
-            </ul>
-          </div>
-        }
-        placement="top"
-        open={audioHintVisible}
-      >
-        <div className={styles.buttonContainer}>
-          {!isRecording && !isTranscribing ? (
-            <Button
-              style={{
-                width: 48,
-                height: 48,
-                border: "4px solid gray",
-                color: "gray",
-                backgroundColor: "#f1f1f1",
-              }}
-              shape="circle"
-              variant="outlined"
-              color="default"
-              onClick={() => startTranscription()}
-              icon={<AudioOutlined style={{ fontSize: 24 }} />}
-              iconPosition="start"
-            />
-          ) : (
-            <Button
-              style={{
-                width: 48,
-                height: 48,
-                border: "4px solid #1FAC6A",
-                backgroundColor: "#f1f1f1",
-              }}
-              shape="circle"
-              type="primary"
-              disabled={isTranscribing || !isStartRecordingOutside}
-              onClick={() => endTranscription()}
-              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
-              iconPosition="start"
-            />
-          )}
-          <div className={styles.buttonHint}>
-            {!isRecording && !isTranscribing
-              ? t("voice_input")
-              : t("stop_voice_input")}
-          </div>
-        </div>
-      </Popover>
-    );
-  };
-
   return (
     <div className={styles.container}>
-      <div className={styles.right}>
-        {chatType === "jobRequirementDoc" && (
-          <div className={styles.progressWrapper}>
-            <Steps
-              progressDot
-              direction="horizontal"
-              size="small"
-              current={jrdProgress}
-              items={[
-                { title: t("gather_basic_information") },
-                { title: t("high_level_responsibility") },
-                { title: t("day_to_day_tasks") },
-                { title: t("icp") },
-              ]}
-            />
-          </div>
-        )}
+      {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
+      <div className={styles.chatArea}>
         <div
           className={styles.listArea}
           ref={(e) => (listContainerRef.current = e)}
@@ -915,6 +856,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                   <List.Item.Meta
                     avatar={
                       <Avatar
+                        style={{
+                          border: "none",
+                          background: "none",
+                          width: 40,
+                          height: 40,
+                        }}
                         icon={
                           item.role === "user" ? (
                             <img src={UserAvatar} />
@@ -925,7 +872,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                       />
                     }
                     title={
-                      <div>
+                      <div style={{ marginTop: 8 }}>
                         <span style={{ fontSize: 18 }}>
                           {item.role === "user"
                             ? t("you")
@@ -996,8 +943,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           key={tag.key ?? tag.title}
                                         >
                                           <Button
-                                            variant="solid"
-                                            color="primary"
+                                            variant="filled"
+                                            color="default"
+                                            className={styles.inlineButton}
                                             onClick={() => {
                                               const extraTag = (
                                                 item.extraTags ?? []
@@ -1051,8 +999,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         accept=".doc,.docx,.pdf"
                                         multiple={false}
                                         style={{
-                                          background: "rgb(239, 249, 239)",
-                                          color: "#1FAC6A",
+                                          background: "#e5e9ec",
+                                          color: "#3682fe",
                                           marginBottom: 16,
                                         }}
                                       >
@@ -1076,8 +1024,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           width: "100%",
                                           height: 56,
                                           marginBottom: 16,
-                                          background: "rgb(239, 249, 239)",
-                                          color: "#1FAC6A",
+                                          background: "#e5e9ec",
+                                          color: "#3682fe",
                                         }}
                                         onClick={() => {
                                           const extraTag = (
@@ -1142,36 +1090,35 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                           return canEditing || canDelete || canRetry ? (
                             <div className={styles.operationArea}>
-                              <Button.Group>
-                                {canEditing && (
-                                  <>
-                                    <Button
-                                      shape="round"
+                              {canEditing && (
+                                <>
+                                  <Tooltip title={originalT("edit")}>
+                                    <EditOutlined
                                       onClick={() => {
                                         setMarkdownEditMessageId(item.id);
                                         setMarkdownEditMessageContent(
                                           item.content
                                         );
                                       }}
-                                      icon={<EditOutlined />}
                                       ref={(e) => {
                                         if (maxIdOfAIMessage === item.id)
                                           editMessageTourElementRef.current = e;
                                       }}
                                     />
-                                    <Button
-                                      shape="round"
+                                  </Tooltip>
+                                  <Tooltip title={originalT("copy")}>
+                                    <CopyOutlined
                                       onClick={async () => {
                                         await copy(item.content);
-                                        message.success(t("copied"));
+                                        message.success(originalT("copied"));
                                       }}
-                                      icon={<CopyOutlined />}
                                     />
-                                  </>
-                                )}
-                                {canDelete && (
-                                  <Button
-                                    shape="round"
+                                  </Tooltip>
+                                </>
+                              )}
+                              {canDelete && (
+                                <Tooltip title={originalT("delete")}>
+                                  <DeleteOutlined
                                     onClick={() => {
                                       if (
                                         confirm(t("confirm_delete_messages"))
@@ -1179,21 +1126,20 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         deleteMessage(parseInt(item.id));
                                       }
                                     }}
-                                    icon={<DeleteOutlined />}
                                   />
-                                )}
-                                {canRetry && (
-                                  <Button
-                                    shape="round"
+                                </Tooltip>
+                              )}
+                              {canRetry && (
+                                <Tooltip title={originalT("retry")}>
+                                  <ReloadOutlined
                                     onClick={async () => {
                                       if (confirm(t("confirm_retry_message"))) {
                                         retryMessage(parseInt(item.id));
                                       }
                                     }}
-                                    icon={<ReloadOutlined />}
                                   />
-                                )}
-                              </Button.Group>
+                                </Tooltip>
+                              )}
                             </div>
                           ) : null;
                         })()}
@@ -1207,71 +1153,97 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className={styles.inputArea}>
+        <div className={styles.footer}>
           <div className={classnames("flex-center")}>
             {genPredefinedButton()}
           </div>
-          <div
-            className={classnames("flex-center", "gap-12")}
-            style={{ marginTop: 12 }}
-          >
-            {genRecordButton()}
-            <Input.TextArea
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-              }}
-              placeholder={textInputVisible ? inputPlaceholder : ""}
-              style={
-                textInputVisible
-                  ? {
-                      width: 600,
-                      marginRight: "8px",
+          <div className={classnames(styles.inputAreaContainer)}>
+            <div className={styles.inputPanel}>
+              {textInputVisible ? (
+                <>
+                  <Input.TextArea
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                    }}
+                    placeholder={inputPlaceholder}
+                    style={{
+                      flex: 1,
                       resize: "none",
                       overflow: "hidden",
+                    }}
+                    onCompositionStartCapture={() =>
+                      (isCompositingRef.current = true)
                     }
-                  : {
-                      width: 0,
-                      height: 0,
-                      padding: 0,
-                      border: "none",
+                    onCompositionEndCapture={() =>
+                      (isCompositingRef.current = false)
                     }
-              }
-              onCompositionStartCapture={() =>
-                (isCompositingRef.current = true)
-              }
-              onCompositionEndCapture={() => (isCompositingRef.current = false)}
-              onPressEnter={(e) => {
-                if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
-                  e.preventDefault();
-                  submit();
-                }
-              }}
-              autoSize={{
-                minRows: 2,
-                maxRows: 16,
-              }}
-            />
-            {textInputVisible && (
-              <SendOutlined
-                onClick={() => submit()}
-                style={{ fontSize: 24, color: "#1FAC6A" }}
-              />
-            )}
-            <div className={styles.buttonContainer} style={{ marginLeft: 12 }}>
-              <Button
-                style={{
-                  width: 48,
-                  height: 48,
-                  border: "4px solid gray",
-                  color: "gray",
-                  backgroundColor: "#f1f1f1",
-                }}
-                shape="circle"
-                variant="outlined"
-                color="primary"
-                iconPosition="start"
-                icon={<EditOutlined style={{ fontSize: 24 }} />}
+                    onPressEnter={(e) => {
+                      if (
+                        !e.shiftKey &&
+                        !isCompositingRef.current &&
+                        canSubmit()
+                      ) {
+                        e.preventDefault();
+                        submit();
+                      }
+                    }}
+                    autoSize={{
+                      minRows: 2,
+                      maxRows: 2,
+                    }}
+                  />
+                  <div className={styles.audioButtonContainer}>
+                    <SendOutlined
+                      onClick={() => submit()}
+                      style={{
+                        fontSize: 24,
+                        color: canSubmit() ? "#3682fe" : "#333",
+                      }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.volumeHistoryContainer}>
+                    {volumeHistory.map((volume, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={styles.volumeHistoryItem}
+                          style={{
+                            height: 4 + Math.min(60, volume * 100),
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className={styles.audioButtonContainer}>
+                    {!isRecording && !isTranscribing ? (
+                      <AudioOutlined
+                        style={{ fontSize: 24 }}
+                        onClick={() => startTranscription()}
+                      />
+                    ) : (
+                      <XFilled
+                        style={{ fontSize: 24, color: "#3682fe" }}
+                        onClick={() => {
+                          if (isTranscribing || !isStartRecordingOutside) {
+                            return;
+                          }
+                          endTranscription();
+                        }}
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className={styles.divider} />
+            <div className={styles.switchButtonContainer}>
+              <EditOutlined
+                style={{ fontSize: 24 }}
                 onClick={() => {
                   if (textInputVisible) {
                     setTextInputVisible(false);
@@ -1284,8 +1256,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                   }
                 }}
               />
-              <div className={styles.buttonHint}>{t("text_edit")}</div>
             </div>
+          </div>
+          <div className={styles.voiceInputHint}>
+            {textInputVisible ? "\u00A0" : "Press and hold Ctrl to speak"}
           </div>
         </div>
 
@@ -1391,7 +1365,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           ]}
         >
           <>
-            <div style={{ color: "#1FAC6A", marginBottom: 12, fontSize: 16 }}>
+            <div style={{ color: "#3682fe", marginBottom: 12, fontSize: 16 }}>
               {t("tips")}
             </div>
             <MarkdownEditor
@@ -1411,42 +1385,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           closable={false}
         />
       </div>
-
-      {ReactDOM.createPortal(
-        <div
-          style={{
-            position: "fixed",
-            zIndex: 999999,
-            width: "100vw",
-            height: "100vh",
-            left: 0,
-            top: 0,
-            display: isRecording || isTranscribing ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            pointerEvents: "none",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "rgba(0,0,0,0.6)",
-              width: 100,
-              height: 100,
-              borderRadius: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ScaleLoader
-              color="#1FAC6A"
-              height={75 * Math.min(1, volume * 3) + 5}
-              width={10}
-            />
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   );
 };

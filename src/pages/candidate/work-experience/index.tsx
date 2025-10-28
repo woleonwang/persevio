@@ -11,7 +11,7 @@ const WorkExperience = () => {
       <div className={styles.header}>
         <div>{`Deep dive into your work at ${companyName}`}</div>
         <LeftCircleOutlined
-          style={{ color: "#1FAC6A", cursor: "pointer" }}
+          style={{ color: "#3682fe", cursor: "pointer" }}
           onClick={() => navigate("/candidate/home")}
         />
       </div>

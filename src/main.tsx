@@ -11,7 +11,6 @@ import "dayjs/locale/zh-cn";
 import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
-import Share from "./layouts/Share";
 
 import Home from "./pages/home";
 import Signin from "./pages/signin";
@@ -66,6 +65,7 @@ import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
 import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 import LiveKit from "./pages/livekit-voice-chat/page.tsx";
+import TalentDetails from "./pages/job/talent-details/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -87,8 +87,10 @@ createRoot(document.getElementById("root")!).render(
     <ConfigProvider
       theme={{
         token: {
-          colorPrimaryHover: "#1FAC6A",
-          colorPrimary: "#1FAC6A",
+          colorPrimaryHover: "#3682fe",
+          colorPrimary: "#3682fe",
+          fontFamily:
+            '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
         },
       }}
       locale={zhCNReact} // 使用英文 locale
@@ -119,9 +121,9 @@ createRoot(document.getElementById("root")!).render(
             element={<PublicTalentDetailPage />}
           />
           {/** 分享创建职位页面 */}
-          <Route path="/share" element={<Share />}>
+          {/* <Route path="/share" element={<Share />}>
             <Route path="/share/create-job" element={<JobCreate share />} />
-          </Route>
+          </Route> */}
 
           <Route path="/app" element={<App />}>
             {/* 公司审核状态 */}
@@ -134,6 +136,10 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/app/jobs/:jobId/standard-board"
               element={<JobStandardBoard />}
+            />
+            <Route
+              path="/app/jobs/:jobId/standard-board/talents/:talentId"
+              element={<TalentDetails />}
             />
             {/* 职位文档对话 */}
             <Route

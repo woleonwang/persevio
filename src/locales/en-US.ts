@@ -692,11 +692,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   create_job: {
     new_role: "Open a new role",
     job_name: "Job Title",
-    viona_title: "Viona, AI recruiter.",
-    ready_message: "Ready to open a new role? Simply tell me the job title.",
+    viona_title: "AI Recruitment Specialist",
+    ready_message:
+      "Are you ready to post the position? <br/>Please tell me the <span>job title.</span>",
     share_message:
-      "You can share this link to invite your colleagues to this conversation.",
-    share_link: "Share Link",
+      "You can also share the link to define the job requirements together with your colleagues.",
+    share_link: "Share the link",
     copy_success: "Copied successfully",
     reply_placeholder: "Reply to Viona",
     create_success: "Create job succeed",
@@ -756,6 +757,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     status_init: "Initial Status",
     status_extracting: "Extracting",
     status_extracted: "Extracted",
+    candidate_name: "Candidate Name",
+    screening_status: "Status",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
+    status_unfiltered: "Unfiltered",
+    action: "Action",
+    view: "View",
+    candidate_list: "Candidate List",
+    current_job_title: "Current Job Title",
+    current_company: "Current Company",
+    current_compensation: "Current Compensation",
+    visa: "Visa",
+    received_on: "Received On",
   },
 
   job_document: {
@@ -1120,6 +1134,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   new: "Create",
   edit: "Edit",
+  delete: "Delete",
+  retry: "Retry",
   save: "Save",
   cancel: "Cancel",
   submit: "Submit",
@@ -1313,5 +1329,26 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     accepted: "Accepted",
     rejected: "Rejected",
     pending: "Pending",
+  },
+
+  job_details: {
+    updated_at: "Updated",
+    job_requirement_table: "Job Requirement Table",
+    job_description_jd: "Job Description (JD)",
+    talents: "Candidates",
+    recruitment_chatbot: "Recruitment Chatbot",
+  },
+
+  talent_details: {
+    confirm_accept: "Are you sure you want to accept this candidate?",
+    confirm_reject: "Are you sure you want to reject this candidate?",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
+    action_accept: "Accept",
+    action_reject: "Reject",
+    download_resume: "Download Resume",
+    ai_interview_record: "AI Interview Record",
+    candidate_evaluation_report: "Candidate Evaluation Report",
+    update_success: "Update successful",
   },
 };

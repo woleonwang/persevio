@@ -1,5 +1,5 @@
 .container {
-  background-color: white;
+  background-color: #f6f6f6;
   flex: auto;
   display: flex;
   flex-direction: column;
@@ -9,15 +9,14 @@
 
 // Banner 区域样式
 .banner {
-  background: linear-gradient(
-    259.26deg,
-    #deffc3 -2.17%,
-    #d0f7b6 43.99%,
-    #d6ecff 98.56%
-  );
+  background: url("/job-banner-bg.png");
+  background-size: cover;
+  background-position: left top;
   border-bottom: 1px solid #e9ecef;
+  border-radius: 16px;
   padding: 12px 0;
   flex: none;
+  margin: 12px;
 }
 
 .bannerInnerContainer {
@@ -35,6 +34,7 @@
 
 .companyRight {
   flex: auto;
+  margin-top: 20px;
 }
 
 .bannerContent {
@@ -72,7 +72,7 @@
 .postedTime {
   display: inline-block;
   background-color: #e5f7f7;
-  color: #1fac6a;
+  color: #3682fe;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 13px;
@@ -95,8 +95,13 @@
 }
 
 .attributeIcon {
-  color: #1fac6a;
+  color: #3682fe;
   font-weight: bold;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3682fe;
+  border: 3px solid #91bbfc;
 }
 
 .logo {
@@ -120,14 +125,15 @@
 }
 
 .applyButton {
-  background-color: #1fac6a;
-  border-color: #1fac6a;
+  background-color: #3682fe;
+  border-color: #3682fe;
   height: 52px;
   padding: 0 40px;
   font-size: 18px;
   font-weight: 600;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(31, 172, 106, 0.3);
+  margin-top: 50px;
 }
 
 .applyButton:hover {
@@ -147,7 +153,7 @@
 
 .left {
   width: 50%;
-  padding: 32px;
+  padding: 32px 0;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -156,10 +162,10 @@
 
 .right {
   width: 50%;
-  border-left: 1px solid #f0f0f0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  padding: 0 16px;
 }
 
 .footer {
@@ -167,7 +173,7 @@
   text-align: center;
   padding: 4px 0;
   font-size: 14px;
-  color: #1fac6a;
+  color: #3682fe;
   cursor: pointer;
   border-top: 1px solid #f0f0f0;
   background-color: #f8f9fa;
@@ -185,10 +191,10 @@
 }
 
 .greenBar {
-  width: 4px;
-  height: 24px;
-  background-color: #1fac6a;
-  border-radius: 2px;
+  width: 6px;
+  height: 22px;
+  background-color: #3682fe;
+  border-radius: 6px;
 }
 
 .sectionTitle span {
@@ -198,6 +204,7 @@
 }
 
 .sectionContent {
+  padding-left: 20px;
   color: #666;
   line-height: 1.7;
   font-size: 15px;
@@ -208,7 +215,7 @@
 }
 
 .expandLink {
-  color: #1fac6a;
+  color: #3682fe;
   cursor: pointer;
   margin-left: 8px;
   font-weight: 500;

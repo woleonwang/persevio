@@ -1,3 +1,5 @@
+@primary-color: #3682fe;
+
 .container {
   width: 1000px;
   margin: 60px;
@@ -9,11 +11,96 @@
   justify-content: center;
 }
 
-.title {
-  font-size: 16px;
+.vionaContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px dashed #ebecee;
+  padding-right: 20px;
+  margin-right: 40px;
+
+  & > div {
+    text-align: center;
+  }
+}
+
+.vionaName {
+  font-size: 20px;
   font-weight: bold;
+  color: #333;
+}
+
+.vionaTitle {
+  font-size: 14px;
+  color: #999;
+  width: 150px;
+}
+
+.readyMessage {
+  font-size: 38px;
+  & > span {
+    color: @primary-color;
+  }
+}
+
+.shareMessage {
+  font-size: 16px;
+  color: #999;
+  margin-top: 6px;
+}
+
+.shareLink {
+  color: @primary-color;
+  cursor: pointer;
+  font-size: 24px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shareLinkIcon {
+  font-size: 18px;
+  transform: rotate(-45deg);
+  position: relative;
+  top: -3px;
 }
 
 .form {
+  width: 100%;
   margin-top: 24px;
+}
+
+.jobNameInput {
+  border-radius: 20px;
+  width: 100%;
+  height: 64px;
+  padding-left: 32px;
+
+  .suffixButton {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    position: relative;
+    right: -8px;
+
+    &.disabled {
+      border: none;
+      background-color: #d9d9d9;
+    }
+  }
+
+  .suffixIcon {
+    font-size: 30px !important;
+    color: white;
+    transform: rotate(-45deg);
+    position: relative;
+    top: -3px;
+    left: 3px;
+
+    &.disabled {
+      color: #333;
+    }
+  }
 }

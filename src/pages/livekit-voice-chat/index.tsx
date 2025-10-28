@@ -36,6 +36,7 @@ const LivekitVoiceChat: React.FC = () => {
       const room = new Room({
         adaptiveStream: true,
         dynacast: true,
+        // metadata: {},
       });
 
       room.prepareConnection(serverUrl, token);

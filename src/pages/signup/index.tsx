@@ -261,7 +261,7 @@ const Signup: React.FC = () => {
                     onClick={sendVerificationCode}
                     style={{
                       color:
-                        countdown > 0 || isSendingCode ? "#1FAC6A" : "white",
+                        countdown > 0 || isSendingCode ? "#3682fe" : "white",
                     }}
                   >
                     {countdown > 0
@@ -288,7 +288,7 @@ const Signup: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <div>
                 {t("signup.already_have_account")}
-                <Link to="/signin" style={{ marginLeft: 8, color: "#1FAC6A" }}>
+                <Link to="/signin" style={{ marginLeft: 8, color: "#3682fe" }}>
                   {t("signup.sign_in")}
                 </Link>
               </div>

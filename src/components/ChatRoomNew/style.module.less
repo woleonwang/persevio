@@ -1,8 +1,10 @@
+@primary-color: #3682fe;
+@hover-button-bg-color: #edf2ff;
+
 .container {
   flex: auto;
-  padding: 20px;
-  background-color: #f3f3f3;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
 
   :global {
@@ -13,82 +15,20 @@
   }
 }
 
-.left {
-  flex: none;
-  overflow: hidden;
-  flex-direction: column;
-}
-
-.leftTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 20px;
-  margin-bottom: 16px;
-  margin-left: 5px;
-  justify-content: space-between;
-  display: flex;
-  flex: none;
-}
-
-.taskList {
-  flex: auto;
-  overflow: auto;
-}
-
-.taskBlock {
-  font-size: 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(238, 238, 238, 1);
-  background-color: rgba(249, 250, 251, 1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-  padding: 0 16px;
-  margin-bottom: 8px;
-  margin-left: 8px;
-  cursor: pointer;
-
-  &.disabled {
-    cursor: not-allowed;
-    &:not(.finished) {
-      color: rgba(0, 0, 0, 0.45);
-    }
-  }
-
-  &:not(.disabled) {
-    &:hover,
-    &.active {
-      background-color: rgba(243, 252, 248, 1);
-      border-color: rgba(114, 229, 73, 1);
-      color: rgba(31, 172, 106, 1);
-    }
-  }
-}
-
-.right {
+.chatArea {
   flex: auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-.progressWrapper {
-  margin: 20px 40px;
-
-  :global {
-    .ant-steps-item-content {
-      width: 200px !important;
-      position: relative;
-      left: -30px;
-    }
-  }
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .listArea {
   flex: 1;
   overflow: auto;
-  padding: 16px;
+  padding: 16px 0;
 }
 
 .timestamp {
@@ -107,27 +47,87 @@
   }
 }
 
-.inputArea {
+.footer {
   margin-top: 16px;
+}
+
+.inputAreaContainer {
+  border: 1px solid rgba(246, 246, 246, 1);
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
+  margin: 55px 4px 0;
+  display: flex;
+  border-radius: 16px;
+  padding: 8px;
+  height: 80px;
+  align-items: center;
+}
+
+.inputPanel {
+  flex: auto;
+  display: flex;
+  align-items: center;
+}
+
+.divider {
+  width: 1px;
+  height: 44px;
+  background-color: rgba(235, 236, 238, 1);
+}
+
+.volumeHistoryContainer {
+  flex: auto;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  background-color: @hover-button-bg-color;
+  padding: 0 16px;
+  border-radius: 16px;
+  border: 1px solid @primary-color;
+  height: 64px;
+}
+
+.volumeHistoryItem {
+  background-color: #3682fe;
+  flex: 1;
+}
+
+.audioButtonContainer {
+  margin: 0 32px;
+}
+
+.switchButtonContainer {
+  margin: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voiceInputHint {
+  font-size: 14px;
+  color: rgba(153, 153, 153, 1);
+  margin-top: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.voiceInputButton {
+  width: 48px !important;
+  height: 48px;
+  color: gray;
+  background-color: #f1f1f1;
 }
 
 .messageContainer {
   color: rgb(20, 20, 19);
   width: fit-content;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.5;
   font-family: chat-default;
-  padding: 0 16px;
   border-radius: 16px;
   background-color: white;
-  border: 1px solid rgb(230, 230, 230);
   letter-spacing: -0.24px;
   word-wrap: break-word;
   position: relative;
-
-  &.user {
-    background-color: rgb(246, 255, 237);
-  }
 
   &.editing {
     width: 100%;
@@ -148,9 +148,21 @@
   }
 
   .operationArea {
-    position: absolute;
-    right: 20px;
-    bottom: -20px;
+    display: flex;
+    gap: 8px;
+    & > span {
+      color: #999999;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+
+      &:hover {
+        background-color: #f6f6f6;
+      }
+    }
   }
 }
 
@@ -201,6 +213,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  .inlineButton {
+    min-width: 150px;
+    height: 44px;
+    background-color: #e5e9ec;
+    font-size: 16px;
+    &:hover {
+      color: @primary-color;
+      border-color: @primary-color;
+      background-color: @hover-button-bg-color !important;
+    }
+  }
 }
 
 .tagButtonWithText {
@@ -218,8 +242,8 @@
 
 .hintTitle {
   font-size: 18px;
-  color: #1fac6a;
-  border-left: 3px solid #1fac6a;
+  color: #3682fe;
+  border-left: 3px solid #3682fe;
   padding-left: 10px;
 }
 

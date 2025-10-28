@@ -140,7 +140,7 @@ const JobApplyShow = () => {
       <div className={styles.header}>
         <div>{originalT("job_applies.jobs")}</div>
         <LeftCircleOutlined
-          style={{ color: "#1FAC6A", cursor: "pointer" }}
+          style={{ color: "#3682fe", cursor: "pointer" }}
           onClick={() => navigate("/candidate/job-applies")}
         />
       </div>

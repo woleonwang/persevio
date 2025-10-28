@@ -414,7 +414,7 @@ const SelectOptionsForm = (props: IProps) => {
                     fontSize: 16,
                     marginBottom: 10,
                     marginTop: 30,
-                    color: "#1FAC6A",
+                    color: "#3682fe",
                     display: "flex",
                     gap: 12,
                   }}
@@ -571,9 +571,9 @@ const SelectOptionsForm = (props: IProps) => {
                     fontWeight: "bold",
                     marginBottom: 10,
                     marginTop: 30,
-                    color: "#1FAC6A",
+                    color: "#3682fe",
                     paddingLeft: 6,
-                    borderLeft: "3px solid #1FAC6A",
+                    borderLeft: "3px solid #3682fe",
                   }}
                 >
                   {group.editable ? (

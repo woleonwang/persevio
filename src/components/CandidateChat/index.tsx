@@ -384,14 +384,14 @@ Shall we start now?`,
               style={{
                 width: 48,
                 height: 48,
-                border: "4px solid #1FAC6A",
+                border: "4px solid #3682fe",
                 backgroundColor: "#f1f1f1",
               }}
               shape="circle"
               type="primary"
               disabled={isTranscribing || !isStartRecordingOutside}
               onClick={() => endTranscription()}
-              icon={<XFilled style={{ fontSize: 16, color: "#1FAC6A" }} />}
+              icon={<XFilled style={{ fontSize: 16, color: "#3682fe" }} />}
               iconPosition="start"
             />
           )}
@@ -615,7 +615,7 @@ Shall we start now?`,
             {textInputVisible && (
               <SendOutlined
                 onClick={() => submit()}
-                style={{ fontSize: 24, color: "#1FAC6A" }}
+                style={{ fontSize: 24, color: "#3682fe" }}
               />
             )}
           </div>
@@ -714,7 +714,7 @@ Shall we start now?`,
           >
             {isRecording ? (
               <ScaleLoader
-                color="#1FAC6A"
+                color="#3682fe"
                 height={75 * Math.min(1, volume * 3) + 5}
                 width={10}
               />

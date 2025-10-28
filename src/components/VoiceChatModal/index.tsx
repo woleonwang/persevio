@@ -219,7 +219,7 @@ const VoiceChatModal: React.FC<IProps> = (props) => {
           height: 64,
           backgroundColor: "#f1f1f1",
           border: "none",
-          color: "#1FAC6A",
+          color: "#3682fe",
         }}
         shape="circle"
         type="default"

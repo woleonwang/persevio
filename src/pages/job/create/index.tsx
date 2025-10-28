@@ -7,17 +7,12 @@ import { useTranslation } from "react-i18next";
 
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
-import VionaAvatar from "@/assets/viona-avatar.png";
+import VionaAvatar from "@/assets/viona-avatar-with-bg.png";
 
 import styles from "./style.module.less";
 import { copy } from "@/utils";
 
-interface IProps {
-  share?: boolean;
-}
-const JobCreate = (props: IProps) => {
-  const { share } = props;
-
+const JobCreate = () => {
   const { fetchJobs } = globalStore;
   const [jobName, setJobName] = useState("");
 
@@ -39,36 +34,36 @@ const JobCreate = (props: IProps) => {
       if (code === 0) {
         message.success(t("create_success"));
         fetchJobs();
-        navigate(`/app/jobs/${data.job_id}/chat/job-requirement`);
+        navigate(`/app/jobs/${data.job_id}/standard-board`);
       }
       isSubmittingRef.current = false;
     }
   };
 
+  const disabled = jobName === "";
+
   return (
     <div className={styles.container}>
       <div className={classnames("flex-center")}>
-        <Avatar icon={<img src={VionaAvatar} />} size={64} />
-        <div style={{ marginLeft: 12 }}>
-          <b style={{ fontSize: 32 }}>{t("viona_title")}</b>
+        <div className={styles.vionaContainer}>
+          <Avatar
+            icon={<img src={VionaAvatar} />}
+            size={144}
+            style={{ background: "none" }}
+          />
+          <div className={styles.vionaName}>Viona</div>
+          <div className={styles.vionaTitle}>{t("viona_title")}</div>
         </div>
-      </div>
+        <div style={{ marginLeft: 12 }}>
+          <b
+            className={styles.readyMessage}
+            dangerouslySetInnerHTML={{ __html: t("ready_message") }}
+          />
 
-      <div
-        className={classnames("flex-center", "fs-36-b")}
-        style={{ marginTop: 24 }}
-      >
-        {t("ready_message")}
-      </div>
+          <div className={styles.shareMessage}>{t("share_message")}</div>
 
-      {!share && (
-        <div
-          className={classnames("flex-center", "gap-12")}
-          style={{ marginTop: 24, fontSize: 20 }}
-        >
-          {t("share_message")}
-          <Button
-            type="primary"
+          <div
+            className={styles.shareLink}
             onClick={async () => {
               const url = `${
                 window.origin
@@ -80,20 +75,33 @@ const JobCreate = (props: IProps) => {
             }}
           >
             {t("share_link")}
-          </Button>
+            <SendOutlined className={styles.shareLinkIcon} />
+          </div>
         </div>
-      )}
+      </div>
 
       <div className={styles.form}>
         <Input
           size="large"
+          className={styles.jobNameInput}
           suffix={
-            <SendOutlined
+            <Button
+              disabled={disabled}
+              type="primary"
+              className={classnames(styles.suffixButton, {
+                [styles.disabled]: disabled,
+              })}
+              icon={
+                <SendOutlined
+                  onClick={createJob}
+                  className={classnames(styles.suffixIcon, {
+                    [styles.disabled]: disabled,
+                  })}
+                />
+              }
               onClick={createJob}
-              style={{ fontSize: 20, color: "#1FAC6A" }}
             />
           }
-          style={{ borderRadius: 32, width: 720, height: 64, paddingLeft: 32 }}
           placeholder={t("reply_placeholder")}
           onPressEnter={createJob}
           value={jobName}

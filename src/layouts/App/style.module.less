@@ -3,6 +3,8 @@
   height: 100%;
   display: flex;
   min-width: 1300px;
+  background-color: #f9f9f9;
+
   &.v {
     flex-direction: column;
     overflow: hidden;
@@ -13,8 +15,6 @@
   flex: none;
   width: 260px;
   height: 100%;
-  background-color: rgba(249, 250, 252, 1);
-  border-right: 1px solid rgba(238, 238, 238, 1);
   padding: 28px 20px;
   display: flex;
   flex-direction: column;
@@ -49,9 +49,10 @@
 
 .collapseIcon {
   position: absolute;
-  right: -20px;
+  right: 0px;
+  top: 30px;
   font-size: 36px;
-  color: #1fac6a;
+  color: #3682fe;
   cursor: pointer;
   z-index: 1;
 }
@@ -76,6 +77,7 @@
     background-color: white;
     font-weight: bold;
     color: #333333;
+    border: 1px solid #ebecee;
   }
 }
 
@@ -100,6 +102,7 @@
     background-color: white;
     font-weight: bold;
     color: #333333;
+    border: 1px solid #ebecee;
   }
 
   &:hover {
@@ -136,6 +139,10 @@
   display: flex;
   justify-content: center;
   overflow: hidden;
+  background-color: white;
+  margin: 12px;
+  border-radius: 16px;
+  border: 1px solid #ebecee;
 }
 
 .iframe {
