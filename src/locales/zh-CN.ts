@@ -1288,4 +1288,17 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     talents: "候选人",
     recruitment_chatbot: "招聘chatbot",
   },
+
+  talent_details: {
+    confirm_accept: "确定要通过该候选人吗？",
+    confirm_reject: "确定要拒绝该候选人吗？",
+    status_accepted: "已通过",
+    status_rejected: "未通过",
+    action_accept: "通过",
+    action_reject: "拒绝",
+    download_resume: "下载简历",
+    ai_interview_record: "AI 面试记录",
+    candidate_evaluation_report: "候选人评估报告",
+    update_success: "更新成功",
+  },
 };

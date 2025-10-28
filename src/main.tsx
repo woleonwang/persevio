@@ -65,6 +65,7 @@ import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
 import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 import LiveKit from "./pages/livekit-voice-chat/page.tsx";
+import TalentDetails from "./pages/job/talent-details/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -135,6 +136,10 @@ createRoot(document.getElementById("root")!).render(
             <Route
               path="/app/jobs/:jobId/standard-board"
               element={<JobStandardBoard />}
+            />
+            <Route
+              path="/app/jobs/:jobId/standard-board/talents/:talentId"
+              element={<TalentDetails />}
             />
             {/* 职位文档对话 */}
             <Route

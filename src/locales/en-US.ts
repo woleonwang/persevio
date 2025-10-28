@@ -1338,4 +1338,17 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     talents: "Candidates",
     recruitment_chatbot: "Recruitment Chatbot",
   },
+
+  talent_details: {
+    confirm_accept: "Are you sure you want to accept this candidate?",
+    confirm_reject: "Are you sure you want to reject this candidate?",
+    status_accepted: "Accepted",
+    status_rejected: "Rejected",
+    action_accept: "Accept",
+    action_reject: "Reject",
+    download_resume: "Download Resume",
+    ai_interview_record: "AI Interview Record",
+    candidate_evaluation_report: "Candidate Evaluation Report",
+    update_success: "Update successful",
+  },
 };

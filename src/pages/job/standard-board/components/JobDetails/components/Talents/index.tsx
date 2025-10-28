@@ -101,7 +101,9 @@ const Talents = (props: IProps) => {
           <Button
             type="link"
             onClick={() => {
-              navigate(`/app/jobs/${jobId}/talents/${record.id}/detail`);
+              navigate(
+                `/app/jobs/${jobId}/standard-board/talents/${record.id}`
+              );
             }}
           >
             {t("view")}
@@ -126,6 +128,7 @@ const Talents = (props: IProps) => {
       <div className={styles.tableContainer}>
         <Table
           columns={columns}
+          rowKey="id"
           dataSource={talents}
           pagination={{
             pageSize: 10,
