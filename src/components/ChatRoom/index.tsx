@@ -13,7 +13,6 @@ import { IProps, TMessage, TMessageFromApi } from "./type";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import UserAvatar from "@/assets/user-avatar.png";
 import styles from "./style.module.less";
-import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
 import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
 import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
 import { SendOutlined } from "@ant-design/icons";

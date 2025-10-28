@@ -1267,4 +1267,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     rejected: "已拒绝",
     pending: "待审核",
   },
+
+  job_details: {
+    updated_at: "更新",
+    job_requirement_table: "职位需求表",
+    job_description_jd: "职位描述(JD)",
+    talents: "候选人",
+    recruitment_chatbot: "招聘chatbot",
+  },
 };

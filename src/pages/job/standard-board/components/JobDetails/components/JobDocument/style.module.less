@@ -1,0 +1,58 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.docHeader {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  .docTitle {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    color: #999999;
+    font-weight: normal;
+    margin-left: 20px;
+  }
+
+  .operations {
+    display: flex;
+    gap: 12px;
+
+    :global {
+      .anticon {
+        font-size: 20px;
+        margin-left: 12px;
+      }
+    }
+  }
+}
+
+.docContent {
+  flex: auto;
+  overflow: auto;
+  margin: 20px 0;
+  font-size: 14px;
+  :global {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 16px;
+    }
+
+    ul,
+    ol {
+      background-color: #eff3fe;
+      border-radius: 16px;
+      padding: 16px 32px;
+    }
+  }
+}

@@ -1317,4 +1317,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     rejected: "Rejected",
     pending: "Pending",
   },
+
+  job_details: {
+    updated_at: "Updated",
+    job_requirement_table: "Job Requirement Table",
+    job_description_jd: "Job Description (JD)",
+    talents: "Candidates",
+    recruitment_chatbot: "Recruitment Chatbot",
+  },
 };
