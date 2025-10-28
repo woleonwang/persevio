@@ -2,8 +2,8 @@
 
 .container {
   flex: auto;
-  padding: 20px;
-  background-color: #f3f3f3;
+  background-color: white;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -37,21 +37,21 @@
 }
 
 .messageContainer {
-  color: rgb(20, 20, 19);
+  color: #333;
   width: fit-content;
   font-size: 15px;
   line-height: 1.5;
   font-family: chat-default;
-  padding: 0 16px;
   border-radius: 16px;
   background-color: white;
-  border: 1px solid rgb(230, 230, 230);
   letter-spacing: -0.24px;
   word-wrap: break-word;
   position: relative;
 
   &.user {
-    background-color: rgb(246, 255, 237);
+    padding: 1px 16px;
+    background-color: #f6f6f6;
+    border-radius: 16px;
   }
 
   &.lastMessage {
@@ -60,6 +60,7 @@
 }
 
 .preDefinedQuestionContainer {
+  overflow-x: auto;
   position: relative;
   margin-top: 10px;
   padding: 0 16px;
@@ -67,38 +68,20 @@
   justify-content: space-between;
   align-items: center;
   .messageCard {
-    padding: 4px 8px;
-    background-color: #f6ffed; // 浅绿色
+    white-space: nowrap;
+    padding: 10px 16px;
+    background-color: #edf2ff; // 浅绿色
     border-radius: 16px;
     width: fit-content;
     align-items: center;
     cursor: pointer;
     font-size: 14px;
     color: @primary-color;
-    border: 1px solid @primary-color;
     margin-bottom: 4px;
     transition: all 0.3s ease;
-    width: fit-content;
     margin-left: auto;
     margin-right: 5px;
-  }
-
-  .questionsContainer {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: absolute;
-    bottom: 60px;
-    right: 0;
-
-    &.show {
-      max-height: 500px;
-      opacity: 1;
-      transform: translateY(0);
-      overflow: auto;
-    }
+    font-size: 14px;
   }
 }
 
@@ -119,7 +102,6 @@
   width: 100vw !important;
   height: 100vh !important;
   z-index: 9999 !important;
-  background-color: #f3f3f3 !important;
   padding: 20px !important;
   box-sizing: border-box !important;
 }

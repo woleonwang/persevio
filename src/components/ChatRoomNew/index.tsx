@@ -11,12 +11,10 @@ import {
   Modal,
   FloatButton,
   Upload,
-  Popover,
   Tooltip,
 } from "antd";
 import {
   AudioOutlined,
-  CloseOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
@@ -27,7 +25,6 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
-import { ScaleLoader } from "react-spinners";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post, PostFormData } from "../../utils/request";
@@ -52,10 +49,9 @@ import MarkdownContainer from "../MarkdownContainer";
 import { useNavigate } from "react-router";
 import MarkdownEditor from "../MarkdownEditor";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
-import ReactDOM from "react-dom";
 
-import SelectOptionsForm from "../ChatRoom/components/SelectOptionsForm";
-import JobRequirementFormDrawer from "../ChatRoom/components/JobRequirementFormDrawer";
+import SelectOptionsForm from "./components/SelectOptionsForm";
+import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
 import JrdSteps from "./components/JrdSteps";
 
@@ -1003,7 +999,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                         accept=".doc,.docx,.pdf"
                                         multiple={false}
                                         style={{
-                                          background: "rgb(239, 249, 239)",
+                                          background: "#e5e9ec",
                                           color: "#3682fe",
                                           marginBottom: 16,
                                         }}
@@ -1028,7 +1024,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           width: "100%",
                                           height: 56,
                                           marginBottom: 16,
-                                          background: "rgb(239, 249, 239)",
+                                          background: "#e5e9ec",
                                           color: "#3682fe",
                                         }}
                                         onClick={() => {
@@ -1231,7 +1227,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                     ) : (
                       <XFilled
                         style={{ fontSize: 24, color: "#3682fe" }}
-                        onClick={() => endTranscription()}
+                        onClick={() => {
+                          if (isTranscribing || !isStartRecordingOutside) {
+                            return;
+                          }
+                          endTranscription();
+                        }}
                       />
                     )}
                   </div>

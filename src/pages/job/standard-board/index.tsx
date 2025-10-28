@@ -211,20 +211,20 @@ const JobBoard = () => {
           />
         )}
         {jobState === "preview" && (
-          <div
-            style={{
-              flex: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: 20,
-            }}
-          >
+          <div className={styles.previewContainer}>
+            <div className={styles.previewHeader}>
+              A preview of the job position has been generated. Please review
+              the information carefully. Once you confirm that everything is
+              correct, click the "Confirm and Post" button at the bottom of the
+              page to publish the position to the Persevio recruitment website.
+            </div>
             <iframe
               src={`/jobs/${job.id}/chat?preview=1`}
               style={{
                 border: "1px solid #eee",
                 flex: "auto",
                 width: "100%",
+                borderRadius: 16,
               }}
             />
             <div

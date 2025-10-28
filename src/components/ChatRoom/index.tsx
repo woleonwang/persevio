@@ -16,6 +16,7 @@ import styles from "./style.module.less";
 import BarsOutlined from "@ant-design/icons/lib/icons/BarsOutlined";
 import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
 import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
+import { SendOutlined } from "@ant-design/icons";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -26,8 +27,6 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
-  const [preDefinedQuestionsVisible, setPreDefinedQuestionsVisible] =
-    useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -236,6 +235,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
                 <List.Item.Meta
                   avatar={
                     <Avatar
+                      style={{
+                        border: "none",
+                        background: "none",
+                        width: 40,
+                        height: 40,
+                      }}
                       icon={
                         item.role === "user" ? (
                           <img src={UserAvatar} />
@@ -246,7 +251,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
                     />
                   }
                   title={
-                    <div>
+                    <div style={{ marginTop: 8 }}>
                       <span style={{ fontSize: 18 }}>
                         {item.role === "user"
                           ? "You"
@@ -297,47 +302,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
       </div>
 
       <div className={styles.preDefinedQuestionContainer}>
-        <div
-          className={classnames(styles.questionsContainer, {
-            [styles.show]: preDefinedQuestionsVisible,
-          })}
-        >
-          {PreDefinedMessages.slice(1).map((message) => {
-            return (
-              <div
-                className={styles.messageCard}
-                onClick={() => {
-                  sendMessage(message);
-                  setPreDefinedQuestionsVisible(false);
-                }}
-                key={message}
-              >
-                <div>{message}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div
-          className={styles.messageCard}
-          onClick={() => {
-            sendMessage(PreDefinedMessages[0]);
-            setPreDefinedQuestionsVisible(false);
-          }}
-        >
-          <div>{PreDefinedMessages[0]}</div>
-        </div>
-        <div
-          onClick={() =>
-            setPreDefinedQuestionsVisible(!preDefinedQuestionsVisible)
-          }
-        >
-          <Button
-            size="large"
-            variant="outlined"
-            color="primary"
-            icon={<BarsOutlined />}
-          />
-        </div>
+        {PreDefinedMessages.map((message) => {
+          return (
+            <div
+              className={styles.messageCard}
+              onClick={() => {
+                sendMessage(message);
+              }}
+              key={message}
+            >
+              <div>{message}</div>
+            </div>
+          );
+        })}
       </div>
 
       <div className={styles.inputArea}>
@@ -373,9 +350,19 @@ const ChatRoom: React.FC<IProps> = (props) => {
           />
 
           <div style={{ display: "flex", gap: 10 }}>
-            <Button type="primary" onClick={submit} disabled={!canSubmit()}>
-              {originalT("submit")}
-            </Button>
+            <Button
+              type="primary"
+              onClick={submit}
+              disabled={!canSubmit()}
+              icon={
+                <SendOutlined
+                  style={{
+                    transform: "rotate(-45deg)",
+                    transformOrigin: "5px 5px",
+                  }}
+                />
+              }
+            />
             {enableFullscreen && (
               <Button
                 type="default"

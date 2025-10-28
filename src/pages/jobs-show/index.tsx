@@ -46,8 +46,6 @@ const JobsShow = () => {
   const [company, setCompany] = useState<TCompany>();
   const [job, setJob] = useState<TJob>();
   const [status, setStatus] = useState<TStatus>("loading");
-  const [isCompanyDescriptionExpanded, setIsCompanyDescriptionExpanded] =
-    useState(false);
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
 
@@ -192,7 +190,7 @@ const JobsShow = () => {
                       <div className={styles.jobAttributes}>
                         {!!job.basic_info.location && (
                           <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon}>◎</span>
+                            <span className={styles.attributeIcon} />
                             <span>
                               {job.basic_info.location
                                 .map((item) => item.city)
@@ -202,7 +200,7 @@ const JobsShow = () => {
                         )}
                         {!!job.basic_info.role_type && (
                           <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon}>◎</span>
+                            <span className={styles.attributeIcon} />
                             <span>
                               {originalT(
                                 `public_jobs.job_card.role_type.${job.basic_info.role_type}`
@@ -212,13 +210,13 @@ const JobsShow = () => {
                         )}
                         {!!job.basic_info.team_name && (
                           <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon}>◎</span>
+                            <span className={styles.attributeIcon} />
                             <span>{job.basic_info.team_name}</span>
                           </div>
                         )}
                         {!!job.basic_info.team_lanugage && (
                           <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon}>◎</span>
+                            <span className={styles.attributeIcon} />
                             <span>
                               {t("team_language")}:{" "}
                               {job.basic_info.team_lanugage}
@@ -227,7 +225,7 @@ const JobsShow = () => {
                         )}
                         {!!job.basic_info.employee_level && (
                           <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon}>◎</span>
+                            <span className={styles.attributeIcon} />
                             <span>
                               {(job.basic_info.employee_level ?? [])
                                 .map((level) =>
@@ -265,36 +263,7 @@ const JobsShow = () => {
                         />
                       )}
                     </div>
-                    <div className={styles.companyRight}>
-                      <div className={styles.companyName}>{company.name}</div>
-                      {!!job.job_description_json.company_introduction && (
-                        <div className={styles.companyDescription}>
-                          {isCompanyDescriptionExpanded
-                            ? job.job_description_json.company_introduction
-                            : `${job.job_description_json.company_introduction.slice(
-                                0,
-                                100
-                              )}${
-                                job.job_description_json.company_introduction
-                                  .length > 100
-                                  ? "..."
-                                  : ""
-                              }`}
-                          {!isCompanyDescriptionExpanded && (
-                            <span
-                              className={styles.expandLink}
-                              onClick={() =>
-                                setIsCompanyDescriptionExpanded(
-                                  !isCompanyDescriptionExpanded
-                                )
-                              }
-                            >
-                              {t("expand")}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <div className={styles.companyRight}></div>
                   </div>
                 </div>
 
@@ -308,6 +277,19 @@ const JobsShow = () => {
           {/* 主要内容区域：JD和聊天框水平布局 */}
           <div className={styles.mainContent}>
             <div className={styles.left}>
+              {!!job.job_description_json.company_introduction && (
+                <div className={styles.jobDescriptionSection}>
+                  <div className={styles.sectionTitle}>
+                    <div className={styles.greenBar}></div>
+                    <span>{company.name}</span>
+                  </div>
+                  <div className={styles.sectionContent}>
+                    <MarkdownContainer
+                      content={job.job_description_json.company_introduction}
+                    />
+                  </div>
+                </div>
+              )}
               {!!job.job_description_json.job_description ? (
                 <>
                   <div className={styles.jobDescriptionSection}>

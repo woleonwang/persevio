@@ -11,7 +11,6 @@ import "dayjs/locale/zh-cn";
 import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
-import Share from "./layouts/Share";
 
 import Home from "./pages/home";
 import Signin from "./pages/signin";

@@ -1,3 +1,5 @@
+@primary-color: #3682fe;
+
 .container {
   flex: auto;
   display: flex;
@@ -39,6 +41,24 @@
         gap: 8px;
       }
     }
+  }
+}
+
+.previewContainer {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+
+  .previewHeader {
+    font-size: 14px;
+    color: @primary-color;
+    padding: 12px;
+    border: 1px solid #2b61ff4d;
+    background-color: #edf2ff;
+    border-radius: 8px;
   }
 }
 
