@@ -7,13 +7,23 @@ import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import { parseJSON } from "@/utils";
+import dayjs from "dayjs";
 
 interface IProps {
   jobId: number;
 }
+
+type TTalentItem = TTalent & {
+  current_job_title: string;
+  current_company: string;
+  current_compensation: string;
+  visa: string;
+};
+
 const Talents = (props: IProps) => {
   const { jobId } = props;
-  const [talents, setTalents] = useState<TTalent[]>([]);
+  const [talents, setTalents] = useState<TTalentItem[]>([]);
 
   const navigate = useNavigate();
 
@@ -31,40 +41,62 @@ const Talents = (props: IProps) => {
     }>(`/api/jobs/${jobId}/talents`);
 
     if (code === 0) {
-      setTalents(data.talents);
+      setTalents(
+        data.talents.map((talent) => {
+          return {
+            ...talent,
+            ...parseJSON(talent.basic_info_json),
+          };
+        })
+      );
     }
   };
 
   const columns: ColumnsType<TTalent> = [
     {
-      title: "候选人姓名",
+      title: t("candidate_name"),
       dataIndex: "name",
     },
-    // {
-    //   title: "邮箱地址",
-    //   dataIndex: "email",
-    // },
-    // {
-    //   title: "手机号码",
-    //   dataIndex: "phone",
-    // },
     {
-      title: "筛选状态",
-      dataIndex: "status",
-      render: (status: string) => {
-        if (status === "accepted") {
-          return <Tag color="green">已通过</Tag>;
-        }
-        if (status === "rejected") {
-          return <Tag color="red">未通过</Tag>;
-        }
-        return <Tag color="blue">未筛选</Tag>;
+      title: t("current_job_title"),
+      dataIndex: "current_job_title",
+    },
+    {
+      title: t("current_company"),
+      dataIndex: "current_company",
+    },
+    {
+      title: t("current_compensation"),
+      dataIndex: "current_compensation",
+    },
+    {
+      title: t("visa"),
+      dataIndex: "visa",
+    },
+    {
+      title: t("received_on"),
+      dataIndex: "created_at",
+      render: (created_at: string) => {
+        return dayjs(created_at).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
-      title: "操作",
+      title: t("screening_status"),
+      dataIndex: "status",
+      render: (status: string) => {
+        if (status === "accepted") {
+          return <Tag color="green">{t("status_accepted")}</Tag>;
+        }
+        if (status === "rejected") {
+          return <Tag color="red">{t("status_rejected")}</Tag>;
+        }
+        return <Tag color="blue">{t("status_unfiltered")}</Tag>;
+      },
+    },
+    {
+      title: t("action"),
       dataIndex: "action",
-      render: (_, record) => {
+      render: (_: any, record: TTalent) => {
         return (
           <Button
             type="link"
@@ -72,17 +104,26 @@ const Talents = (props: IProps) => {
               navigate(`/app/jobs/${jobId}/talents/${record.id}/detail`);
             }}
           >
-            查看
+            {t("view")}
           </Button>
         );
       },
     },
-  ];
+  ].map((item) => {
+    return {
+      ...item,
+      render:
+        item.render ??
+        ((data) => {
+          return data ?? "--";
+        }),
+    };
+  });
 
   return (
-    <div>
-      <div className={styles.block}>
-        <h3>候选人列表</h3>
+    <div className={styles.container}>
+      <h3>{t("candidate_list")}</h3>
+      <div className={styles.tableContainer}>
         <Table
           columns={columns}
           dataSource={talents}

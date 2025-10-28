@@ -9,11 +9,15 @@ import useJob from "@/hooks/useJob";
 import Talents from "./components/Talents";
 import styles from "./style.module.less";
 import JobDocument from "./components/JobDocument";
+import { getQuery, updateQuery } from "@/utils";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents";
 const JobDetails = () => {
+  const tab = getQuery("tab");
   const { job } = useJob();
-  const [chatType, setChatType] = useState<TMenu>("jobRequirement");
+  const [chatType, setChatType] = useState<TMenu>(
+    (tab as TMenu) || "jobRequirement"
+  );
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
@@ -58,6 +62,7 @@ const JobDetails = () => {
               <div
                 onClick={() => {
                   setChatType(item as TMenu);
+                  updateQuery("tab", item);
                 }}
                 className={classnames(styles.menuItem, {
                   [styles.active]: chatType === item,

@@ -68,6 +68,16 @@ export const deleteQuery = (key: string) => {
   );
 };
 
+export const updateQuery = (key: string, value: string) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.set(key, value);
+  window.history.replaceState(
+    {},
+    "",
+    `${window.location.pathname}?${urlParams.toString()}`
+  );
+};
+
 export const backOrDirect = (navigate: any, path: string) => {
   if (window.history.length > 1) {
     navigate(-1);
