@@ -28,7 +28,7 @@
 .listArea {
   flex: 1;
   overflow: auto;
-  padding: 16px 0;
+  padding: 16px 16px 16px 0;
 }
 
 .timestamp {
@@ -141,6 +141,20 @@
 
   &.editing {
     width: 100%;
+  }
+
+  &.user {
+    margin-left: auto;
+
+    .messageContent {
+      padding: 1px 16px;
+      border-radius: 16px;
+      background-color: #f6f6f6;
+    }
+
+    .operationArea {
+      justify-content: flex-end;
+    }
   }
 
   &.lastMessage {

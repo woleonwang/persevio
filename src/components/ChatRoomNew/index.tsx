@@ -855,77 +855,73 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                   const isLast = index === messages.length - 1;
                   return (
                     <List.Item
-                      style={
-                        isLast
+                      style={{
+                        ...(isLast
                           ? {
                               minHeight:
                                 (listContainerRef.current?.clientHeight ?? 80) -
                                 8, // 32 is container's padding
                               alignItems: "flex-start",
                             }
-                          : {}
-                      }
+                          : {}),
+                      }}
                     >
                       <List.Item.Meta
+                        style={{}}
                         avatar={
-                          <Avatar
-                            style={{
-                              border: "none",
-                              background: "none",
-                              width: 40,
-                              height: 40,
-                            }}
-                            icon={
-                              item.role === "user" ? (
-                                <img src={UserAvatar} />
-                              ) : (
-                                <img src={VionaAvatar} />
-                              )
-                            }
-                          />
+                          item.role === "ai" && (
+                            <Avatar
+                              style={{
+                                border: "none",
+                                background: "none",
+                                width: 40,
+                                height: 40,
+                              }}
+                              icon={<img src={VionaAvatar} />}
+                            />
+                          )
                         }
                         title={
-                          <div style={{ marginTop: 8 }}>
-                            <span style={{ fontSize: 18 }}>
-                              {item.role === "user"
-                                ? t("you")
-                                : `Viona, ${t("viona_intro_staff")}`}
-                            </span>
-                            <span className={styles.timestamp}>
-                              {dayjs(item.updated_at).format(datetimeFormat)}
-                            </span>
-                          </div>
+                          item.role === "ai" && (
+                            <div style={{ marginTop: 8 }}>
+                              <span style={{ fontSize: 18 }}>
+                                {`Viona, ${t("viona_intro_staff")}`}
+                              </span>
+                              <span className={styles.timestamp}>
+                                {dayjs(item.updated_at).format(datetimeFormat)}
+                              </span>
+                            </div>
+                          )
                         }
                         description={
                           <div
-                            className={classnames(
-                              styles.messageContainer,
-                              item.role === "user" ? styles.user : "",
-                              {
-                                [styles.lastMessage]:
-                                  index === messages.length - 1,
-                              }
-                            )}
+                            className={classnames(styles.messageContainer, {
+                              [styles.lastMessage]:
+                                index === messages.length - 1,
+                              [styles.user]: item.role === "user",
+                            })}
                           >
-                            {item.id === "fake_ai_id" ? (
-                              <p>
-                                {loadingText}
-                                {dayjs().diff(
-                                  loadingStartedAtRef.current ?? dayjs(),
-                                  "second"
-                                ) > 30
-                                  ? `(${t("viona_is_thinking")})`
-                                  : ""}
-                              </p>
-                            ) : (
-                              <MarkdownContainer
-                                content={
-                                  item.messageSubType === "error"
-                                    ? t("error_message")
-                                    : item.content
-                                }
-                              />
-                            )}
+                            <div className={styles.messageContent}>
+                              {item.id === "fake_ai_id" ? (
+                                <p>
+                                  {loadingText}
+                                  {dayjs().diff(
+                                    loadingStartedAtRef.current ?? dayjs(),
+                                    "second"
+                                  ) > 30
+                                    ? `(${t("viona_is_thinking")})`
+                                    : ""}
+                                </p>
+                              ) : (
+                                <MarkdownContainer
+                                  content={
+                                    item.messageSubType === "error"
+                                      ? t("error_message")
+                                      : item.content
+                                  }
+                                />
+                              )}
+                            </div>
 
                             {(() => {
                               const visibleTags = (item.extraTags ?? [])
@@ -935,17 +931,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   );
                                 })
                                 .filter(Boolean) as TSupportTag[];
+                              const inlineButtons = visibleTags.filter(
+                                (tag) =>
+                                  !tag.style || tag.style === "inline-button"
+                              );
 
                               return (
                                 <>
-                                  <div className={styles.inlineButtonWrapper}>
-                                    {visibleTags
-                                      .filter(
-                                        (tag) =>
-                                          !tag.style ||
-                                          tag.style === "inline-button"
-                                      )
-                                      .map((tag) => {
+                                  {inlineButtons.length > 0 && (
+                                    <div className={styles.inlineButtonWrapper}>
+                                      {inlineButtons.map((tag) => {
                                         const genButtonElement = (tag: {
                                           title?: string;
                                           key?: string;
@@ -982,7 +977,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                             )
                                           : genButtonElement(tag);
                                       })}
-                                  </div>
+                                    </div>
+                                  )}
                                   {visibleTags
                                     .filter(
                                       (tag) => tag.style === "block-button"
