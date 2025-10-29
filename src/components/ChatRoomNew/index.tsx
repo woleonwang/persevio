@@ -1240,7 +1240,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                     </>
                   ) : (
                     <>
-                      <div className={styles.volumeHistoryContainer}>
+                      <div
+                        className={classnames(styles.volumeHistoryContainer, {
+                          [styles.active]: isRecording,
+                        })}
+                      >
                         {volumeHistory.map((volume, index) => {
                           return (
                             <div
@@ -1254,12 +1258,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                         })}
                       </div>
                       <div className={styles.audioButtonContainer}>
-                        {!isRecording && !isTranscribing ? (
-                          <AudioOutlined
-                            style={{ fontSize: 24 }}
-                            onClick={() => startTranscription()}
-                          />
-                        ) : (
+                        {isRecording ? (
                           <XFilled
                             style={{ fontSize: 24, color: "#3682fe" }}
                             onClick={() => {
@@ -1268,6 +1267,15 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                               }
                               endTranscription();
                             }}
+                          />
+                        ) : isTranscribing ? (
+                          <LoadingOutlined
+                            style={{ fontSize: 24, color: "#3682fe" }}
+                          />
+                        ) : (
+                          <AudioOutlined
+                            style={{ fontSize: 24 }}
+                            onClick={() => startTranscription()}
                           />
                         )}
                       </div>

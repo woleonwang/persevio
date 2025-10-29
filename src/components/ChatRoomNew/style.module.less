@@ -79,16 +79,25 @@
   display: flex;
   gap: 2px;
   align-items: center;
-  background-color: @hover-button-bg-color;
   padding: 0 16px;
   border-radius: 16px;
-  border: 1px solid @primary-color;
   height: 64px;
-}
+  background-color: white;
+  border: 1px solid #eeeeee;
 
-.volumeHistoryItem {
-  background-color: #3682fe;
-  flex: 1;
+  .volumeHistoryItem {
+    flex: 1;
+    background-color: #eeeeee;
+  }
+
+  &.active {
+    background-color: @hover-button-bg-color;
+    border: 1px solid @primary-color;
+
+    .volumeHistoryItem {
+      background-color: #3682fe;
+    }
+  }
 }
 
 .audioButtonContainer {
