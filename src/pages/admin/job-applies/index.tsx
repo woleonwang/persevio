@@ -8,6 +8,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import dayjs from "dayjs";
 import EditableMarkdown from "@/components/EditableMarkdown";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
+import { deleteQuery, getQuery, updateQuery } from "@/utils";
 
 const PAGE_SIZE = 10;
 
@@ -29,8 +30,8 @@ const JobApplies = () => {
   const [status, setStatus] = useState<TJobListStatus>("INITIAL");
   const [total, setTotal] = useState();
 
-  const [selectedJobApply, setSelectedJobApply] =
-    useState<IJobApplyListItemForAdmin>();
+  const [selectedJobApplyId, setSelectedJobApplyId] = useState<number>();
+  const [jobApply, setJobApply] = useState<IJobApplyListItemForAdmin>();
   const [jobApplyDetailDrawerOpen, setJobApplyDetailDrawerOpen] =
     useState(false);
   const [jobApplyResumeDrawerOpen, setJobApplyResumeDrawerOpen] =
@@ -48,10 +49,12 @@ const JobApplies = () => {
   }, [status, page]);
 
   useEffect(() => {
-    if (selectedJobApply) {
+    if (selectedJobApplyId) {
+      updateQuery("open-id", selectedJobApplyId.toString());
+      setJobApplyDetailDrawerOpen(true);
       fetchJobApply();
     }
-  }, [selectedJobApply]);
+  }, [selectedJobApplyId]);
 
   const fetchJobApplies = async () => {
     const { code, data } = await Get(
@@ -59,16 +62,22 @@ const JobApplies = () => {
     );
 
     if (code === 0) {
-      setJobApplies(
-        data.job_applies.filter((item: IJobApplyListItem) => item.deliveried_at)
+      const jobApplies = data.job_applies.filter(
+        (item: IJobApplyListItem) => item.deliveried_at
       );
+      setJobApplies(jobApplies);
       setTotal(data.total);
+
+      const openId = getQuery("open-id");
+      if (openId) {
+        setSelectedJobApplyId(parseInt(openId));
+      }
     }
   };
 
   const fetchJobApply = async () => {
     const { code, data } = await Get(
-      `/api/admin/job_applies/${selectedJobApply?.id}`
+      `/api/admin/job_applies/${selectedJobApplyId}`
     );
 
     if (code === 0) {
@@ -76,20 +85,27 @@ const JobApplies = () => {
       setResume(data.resume);
       setRecommendReport(data.job_apply.evaluate_result);
       setChatMessages(data.messages ?? []);
+      setJobApply(data.job_apply);
     }
   };
 
   const feedback = async (action: "accept" | "reject") => {
     const { code } = await Post(
-      `/api/admin/job_applies/${selectedJobApply?.id}/feedback/${action}`
+      `/api/admin/job_applies/${selectedJobApplyId}/feedback/${action}`
     );
     if (code === 0) {
       message.success("操作成功");
       fetchJobApplies();
-      setJobApplyDetailDrawerOpen(false);
+      closeDrawer();
     } else {
       message.error("操作失败");
     }
+  };
+
+  const closeDrawer = () => {
+    setJobApplyDetailDrawerOpen(false);
+    setSelectedJobApplyId(undefined);
+    deleteQuery("open-id");
   };
 
   const jobApplyTableColumns: ColumnsType<IJobApplyListItemForAdmin> = [
@@ -170,8 +186,7 @@ const JobApplies = () => {
           onRow={(jobApply) => {
             return {
               onClick: () => {
-                setSelectedJobApply(jobApply);
-                setJobApplyDetailDrawerOpen(true);
+                setSelectedJobApplyId(jobApply.id);
               },
             };
           }}
@@ -179,12 +194,12 @@ const JobApplies = () => {
       </div>
 
       <Drawer
-        title={`${selectedJobApply?.job.name} - ${selectedJobApply?.candidate.name}`}
+        title={`${jobApply?.job.name} - ${jobApply?.candidate.name}`}
         open={jobApplyDetailDrawerOpen}
-        onClose={() => setJobApplyDetailDrawerOpen(false)}
+        onClose={() => closeDrawer()}
         width={1500}
       >
-        {selectedJobApply && (
+        {jobApply && (
           <div
             style={{
               display: "flex",
@@ -194,7 +209,7 @@ const JobApplies = () => {
             }}
           >
             <div style={{ display: "flex", flex: "none" }}>
-              {selectedJobApply.status === "INITIAL" && (
+              {jobApply.status === "INITIAL" && (
                 <>
                   <Button type="primary" onClick={() => feedback("accept")}>
                     Accept
@@ -209,12 +224,12 @@ const JobApplies = () => {
                   </Button>
                 </>
               )}
-              {selectedJobApply.status === "ACCEPTED" && (
+              {jobApply.status === "ACCEPTED" && (
                 <div className={classnames(styles.status, styles.accepted)}>
                   Accepted
                 </div>
               )}
-              {selectedJobApply.status === "REJECTED" && (
+              {jobApply.status === "REJECTED" && (
                 <div className={classnames(styles.status, styles.rejected)}>
                   Rejected
                 </div>
@@ -264,7 +279,7 @@ const JobApplies = () => {
                     isEditing={isEditingRecommendReport}
                     onSubmit={async (value) => {
                       const { code } = await Post(
-                        `/api/admin/job_applies/${selectedJobApply?.id}`,
+                        `/api/admin/job_applies/${selectedJobApplyId}`,
                         {
                           evaluate_result: value,
                         }

@@ -55,9 +55,11 @@ const JrdSteps = (props: { current: number }) => {
               </div>
               <div className={styles.stepContentContainer}>
                 <div className={styles.stepContent}>{step.title}</div>
-                <div className={styles.stepTime}>
-                  Remining:{status === "done" ? "done" : `${step.time}min`}
-                </div>
+                {status === "active" && (
+                  <div className={styles.stepTime}>
+                    Remining:{`${step.time}min`}
+                  </div>
+                )}
               </div>
             </div>
           );
