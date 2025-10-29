@@ -1,13 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { ConfigProvider } from "antd";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import dayjs from "dayjs";
 
 import "dayjs/locale/zh-cn";
-
 import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
@@ -29,7 +27,7 @@ import CandidateResume from "./pages/candidate/candidate-resume";
 
 import enUS from "./locales/en-US.ts";
 import zhCN from "./locales/zh-CN.ts";
-import zhCNReact from "antd/es/locale/zh_CN"; // 英文
+import AntdLocaleProvider from "./components/AntdLocaleProvider";
 import CareerAspirations from "./pages/candidate/career-aspirations";
 import DeepAspirations from "./pages/candidate/deep-aspirations";
 import DeepAspirationsVoice from "./pages/candidate/deep-aspirations-voice";
@@ -84,17 +82,7 @@ dayjs.locale("zh-cn");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimaryHover: "#3682fe",
-          colorPrimary: "#3682fe",
-          fontFamily:
-            '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
-        },
-      }}
-      locale={zhCNReact} // 使用英文 locale
-    >
+    <AntdLocaleProvider>
       <BrowserRouter>
         <Routes>
           {/** 首页 */}
@@ -264,6 +252,6 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/livekit" element={<LiveKit />} />
         </Routes>
       </BrowserRouter>
-    </ConfigProvider>
+    </AntdLocaleProvider>
   </StrictMode>
 );

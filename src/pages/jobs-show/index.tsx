@@ -188,7 +188,7 @@ const JobsShow = () => {
                       </div>
 
                       <div className={styles.jobAttributes}>
-                        {!!job.basic_info.location && (
+                        {!!job.basic_info.location?.length && (
                           <div className={styles.attributeItem}>
                             <span className={styles.attributeIcon} />
                             <span>
@@ -223,11 +223,11 @@ const JobsShow = () => {
                             </span>
                           </div>
                         )}
-                        {!!job.basic_info.employee_level && (
+                        {!!job.basic_info.employee_level?.length && (
                           <div className={styles.attributeItem}>
                             <span className={styles.attributeIcon} />
                             <span>
-                              {(job.basic_info.employee_level ?? [])
+                              {job.basic_info.employee_level
                                 .map((level) =>
                                   originalT(
                                     `public_jobs.job_card.employee_level.${level}`

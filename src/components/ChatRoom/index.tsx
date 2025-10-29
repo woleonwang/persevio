@@ -218,6 +218,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
           dataSource={messages}
           split={false}
           renderItem={(item, index) => {
+            const isFirst = index === 0;
             const isLast = index === messages.length - 1;
             return (
               <List.Item
@@ -289,6 +290,26 @@ const ChatRoom: React.FC<IProps> = (props) => {
                               : item.content
                           }
                         />
+                      )}
+                      {isFirst && (
+                        <div className={styles.messageBlock}>
+                          {PreDefinedMessages.slice(0, 3).map((message) => {
+                            return (
+                              <div
+                                key={message}
+                                onClick={() => sendMessage(message)}
+                                className={styles.messageBlockItem}
+                              >
+                                <span
+                                  style={{ color: "#C1C1C1", marginRight: 6 }}
+                                >
+                                  →
+                                </span>
+                                {message}
+                              </div>
+                            );
+                          })}
+                        </div>
                       )}
                     </div>
                   }

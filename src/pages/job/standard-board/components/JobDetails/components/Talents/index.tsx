@@ -9,6 +9,7 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 import { parseJSON } from "@/utils";
 import dayjs from "dayjs";
+import Empty from "@/components/Empty";
 
 interface IProps {
   jobId: number;
@@ -133,6 +134,9 @@ const Talents = (props: IProps) => {
           dataSource={talents}
           pagination={{
             pageSize: 10,
+          }}
+          locale={{
+            emptyText: <Empty style={{ margin: "60px 0" }} />,
           }}
         />
       </div>

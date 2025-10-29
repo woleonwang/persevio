@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { ExportOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
+import { ShareAltOutlined } from "@ant-design/icons";
+import { message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 
@@ -9,14 +9,15 @@ import useJob from "@/hooks/useJob";
 import Talents from "./components/Talents";
 import styles from "./style.module.less";
 import JobDocument from "./components/JobDocument";
-import { getQuery, updateQuery } from "@/utils";
+import { copy, getQuery, updateQuery } from "@/utils";
+import { Post } from "@/utils/request";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents";
-const JobDetails = () => {
+const JobDetails = ({ onStateChanged }: { onStateChanged: () => void }) => {
   const tab = getQuery("tab");
   const { job } = useJob();
   const [chatType, setChatType] = useState<TMenu>(
-    (tab as TMenu) || "jobRequirement"
+    (tab as TMenu) || "jobDescription"
   );
 
   const { t: originalT } = useTranslation();
@@ -24,12 +25,25 @@ const JobDetails = () => {
 
   const chatTypeTitle: Record<TMenu, string> = useMemo(
     () => ({
-      jobRequirement: t("job_requirement_table"),
       jobDescription: t("job_description_jd"),
       talents: t("talents"),
+      jobRequirement: t("job_requirement_table"),
     }),
     [t]
   );
+
+  const togglePostJob = async () => {
+    if (!job) return;
+
+    const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+      open: job.posted_at ? "0" : "1",
+    });
+
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      onStateChanged();
+    }
+  };
 
   if (!job) {
     return <Spin />;
@@ -44,15 +58,19 @@ const JobDetails = () => {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            color: "#3682fe",
             cursor: "pointer",
           }}
           onClick={async () => {
-            window.open(`${window.origin}/jobs/${job.id}/chat`);
+            await copy(
+              `${window.origin}/app/jobs/${
+                job.id
+              }/standard-board?token=${localStorage.getItem("token")}`
+            );
+            message.success(originalT("copied"));
           }}
         >
-          <ExportOutlined />
-          <div>{t("recruitment_chatbot")}</div>
+          <ShareAltOutlined style={{ color: "#3682fe" }} />
+          <div style={{ fontSize: 14 }}>{t("share_position")}</div>
         </div>
       </div>
       <div className={styles.body}>
@@ -78,7 +96,12 @@ const JobDetails = () => {
           {chatType === "talents" ? (
             <Talents jobId={job.id} />
           ) : (
-            <JobDocument job={job} chatType={chatType} key={chatType} />
+            <JobDocument
+              job={job}
+              chatType={chatType}
+              key={chatType}
+              togglePostJob={togglePostJob}
+            />
           )}
         </div>
       </div>

@@ -1139,44 +1139,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   ...CandidateResume,
 
-  new: "Create",
-  edit: "Edit",
-  delete: "Delete",
-  retry: "Retry",
-  save: "Save",
-  cancel: "Cancel",
-  submit: "Submit",
-  submitting: "Submitting...",
-  submit_succeed: "Submit succeed!",
-  submit_failed: "Submit failed!",
-  close: "Close",
-  add: "Add",
-  create_succeed: "Create succeed!",
-  create: "Create",
-  update_succeed: "Update Succeed!",
-  back: "Back",
-  chat_with_viona: "Chat with Viona",
-  created_at: "Created At",
-  chat_title: "Chat",
-
-  accept: "Accept",
-  reject: "Reject",
-  accepted: "Accepted",
-  rejected: "Rejected",
-
-  copy: "Copy",
-  copied: "Copied",
-
-  loading: "Loading...",
-  uploading: "Uploading...",
-
-  year: "year(s)",
-
-  numberRange: {
-    min: "Min",
-    max: "Max",
-  },
-
   public_jobs: {
     banner: {
       title: "Find Your Dream Job",
@@ -1343,7 +1305,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_requirement_table: "Job Requirement Table",
     job_description_jd: "Job Description (JD)",
     talents: "Candidates",
-    recruitment_chatbot: "Recruitment Chatbot",
+    share_position: "Share the Position",
+    unpost_job_title: "Unpost this Job?",
+    unpost_job_content:
+      "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",
+    unpost_job: "Unpost Job",
+    job_posting: "Job Posting",
   },
 
   talent_details: {
@@ -1357,5 +1324,44 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     ai_interview_record: "AI Interview Record",
     candidate_evaluation_report: "Candidate Evaluation Report",
     update_success: "Update successful",
+  },
+
+  new: "Create",
+  edit: "Edit",
+  delete: "Delete",
+  retry: "Retry",
+  save: "Save",
+  cancel: "Cancel",
+  submit: "Submit",
+  submitting: "Submitting...",
+  submit_succeed: "Submit succeed!",
+  submit_failed: "Submit failed!",
+  close: "Close",
+  add: "Add",
+  create_succeed: "Create succeed!",
+  create: "Create",
+  update_succeed: "Update Succeed!",
+  back: "Back",
+  chat_with_viona: "Chat with Viona",
+  created_at: "Created At",
+  chat_title: "Chat",
+
+  accept: "Accept",
+  reject: "Reject",
+  accepted: "Accepted",
+  rejected: "Rejected",
+
+  copy: "Copy",
+  copied: "Copied",
+
+  loading: "Loading...",
+  uploading: "Uploading...",
+
+  year: "year(s)",
+  empty_text: "No data",
+
+  numberRange: {
+    min: "Min",
+    max: "Max",
   },
 };

@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
-import { copy } from "@/utils";
+import { confirmModal, copy } from "@/utils";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
@@ -20,6 +20,7 @@ type TChatType = "jobRequirement" | "jobDescription";
 interface IProps {
   job: IJob;
   chatType: TChatType;
+  togglePostJob: () => Promise<void>;
 }
 
 const chatTypeMappings: Record<TChatType, string> = {
@@ -27,7 +28,7 @@ const chatTypeMappings: Record<TChatType, string> = {
   jobDescription: "jd",
 };
 const JobDocument = (props: IProps) => {
-  const { job, chatType } = props;
+  const { job, chatType, togglePostJob } = props;
 
   const [documentContent, setDocumentContent] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
@@ -136,6 +137,36 @@ const JobDocument = (props: IProps) => {
                 setIsEditing(true);
               }}
             />
+            {chatType === "jobDescription" && (
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ marginLeft: 6 }}
+                  onClick={() => {
+                    confirmModal({
+                      title: t("unpost_job_title"),
+                      content: t("unpost_job_content"),
+                      onOk: () => {
+                        togglePostJob();
+                      },
+                    });
+                  }}
+                >
+                  {t("unpost_job")}
+                </Button>
+
+                <Button
+                  type="primary"
+                  style={{ marginLeft: 6 }}
+                  onClick={() => {
+                    window.open(`${window.origin}/jobs/${job.id}/chat`);
+                  }}
+                >
+                  {t("job_posting")}
+                </Button>
+              </>
+            )}
           </div>
         )}
       </div>

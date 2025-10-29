@@ -12,6 +12,8 @@ class GlobalStore {
 
   mode = "";
 
+  antdLocale: "zh-CN" | "en-US" = "en-US";
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -22,6 +24,10 @@ class GlobalStore {
 
   setCollapseForDrawer = (collapse: boolean) => {
     this.collapseForDrawer = collapse;
+  };
+
+  setAntdLocale = (locale: "zh-CN" | "en-US") => {
+    this.antdLocale = locale as "zh-CN" | "en-US";
   };
 
   fetchJobs = async () => {

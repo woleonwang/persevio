@@ -195,7 +195,13 @@ const AppLayout = () => {
     // 校验 token
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
-      i18n.changeLanguage(data.lang ?? "en-US");
+      // 设置 i18n 语言
+      const lang = data.lang ?? "en-US";
+      i18n.changeLanguage(lang);
+
+      // 根据语言设置 antd locale
+      globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
+
       setInited(true);
 
       if (data.company_status !== "approved") {

@@ -153,7 +153,9 @@ const JobBoard = () => {
             </div>
           </div>
         )}
-        {jobState === "board" && <JobDetails />}
+        {jobState === "board" && (
+          <JobDetails onStateChanged={() => fetchJob()} />
+        )}
       </div>
     </div>
   );

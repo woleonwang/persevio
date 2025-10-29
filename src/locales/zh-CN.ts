@@ -639,7 +639,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       approving_title: "审核中",
       rejected_title: "审核未通过",
       approving_message: "您的注册申请还在审核中,请耐心等待。",
-      rejected_message: "很抱歉，您的账号未能通过审核；您可以联系 admin@persevio.ai 获取帮助。",
+      rejected_message:
+        "很抱歉，您的账号未能通过审核；您可以联系 admin@persevio.ai 获取帮助。",
     },
   },
 
@@ -1090,44 +1091,6 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   ...CandidateResume,
 
-  new: "创建",
-  edit: "编辑",
-  save: "保存",
-  delete: "删除",
-  retry: "重试",
-  cancel: "取消",
-  submit: "提交",
-  submitting: "提交中...",
-  submit_succeed: "提交成功",
-  submit_failed: "提交失败",
-  close: "关闭",
-  add: "添加",
-  create_succeed: "创建成功",
-  create: "创建",
-  update_succeed: "编辑成功",
-  back: "返回",
-  chat_with_viona: "和 Viona 聊聊",
-  created_at: "创建时间",
-  chat_title: "对话",
-
-  accept: "通过",
-  reject: "拒绝",
-  accepted: "已通过",
-  rejected: "已拒绝",
-
-  copy: "复制",
-  copied: "复制成功",
-
-  loading: "加载中...",
-  uploading: "上传中...",
-
-  year: "年",
-
-  numberRange: {
-    min: "最小值",
-    max: "最大值",
-  },
-
   public_jobs: {
     banner: {
       title: "大标题",
@@ -1292,7 +1255,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
     talents: "候选人",
-    recruitment_chatbot: "招聘chatbot",
+    share_position: "分享职位",
+    unpost_job_title: "取消发布职位？",
+    unpost_job_content:
+      "取消发布后，职位将不再对候选人可见。您可以随时重新发布。",
+    unpost_job: "取消发布",
+    job_posting: "职位页面",
   },
 
   talent_details: {
@@ -1306,5 +1274,44 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     ai_interview_record: "AI 面试记录",
     candidate_evaluation_report: "候选人评估报告",
     update_success: "更新成功",
+  },
+
+  new: "创建",
+  edit: "编辑",
+  save: "保存",
+  delete: "删除",
+  retry: "重试",
+  cancel: "取消",
+  submit: "提交",
+  submitting: "提交中...",
+  submit_succeed: "提交成功",
+  submit_failed: "提交失败",
+  close: "关闭",
+  add: "添加",
+  create_succeed: "创建成功",
+  create: "创建",
+  update_succeed: "编辑成功",
+  back: "返回",
+  chat_with_viona: "和 Viona 聊聊",
+  created_at: "创建时间",
+  chat_title: "对话",
+
+  accept: "通过",
+  reject: "拒绝",
+  accepted: "已通过",
+  rejected: "已拒绝",
+
+  copy: "复制",
+  copied: "复制成功",
+
+  loading: "加载中...",
+  uploading: "上传中...",
+
+  year: "年",
+  empty_text: "暂无数据",
+
+  numberRange: {
+    min: "最小值",
+    max: "最大值",
   },
 };

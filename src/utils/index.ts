@@ -1,3 +1,5 @@
+import { Modal, ModalFuncProps } from "antd";
+
 export const copy = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
@@ -95,4 +97,12 @@ export const checkIsAdmin = (candidate?: ICandidateSettings) => {
       "jackytgx@gmail.com",
     ].includes(candidate.email)
   );
+};
+
+export const confirmModal = (modalParams: ModalFuncProps) => {
+  Modal.confirm({
+    icon: null,
+    centered: true,
+    ...modalParams,
+  });
 };

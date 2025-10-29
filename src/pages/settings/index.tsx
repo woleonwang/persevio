@@ -5,6 +5,7 @@ import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import globalStore from "@/store/global";
 
 const Settings = () => {
   const [form] = Form.useForm();
@@ -112,6 +113,7 @@ const Settings = () => {
         });
       }
       i18n.changeLanguage(lang);
+      globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
     } else {
       message.error(t("update_lang_success"));
     }
