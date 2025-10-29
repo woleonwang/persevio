@@ -8,22 +8,22 @@ const JrdSteps = (props: { current: number }) => {
   const steps = [
     {
       key: "gatherRoleOverview",
-      title: "Gather Role Overview",
+      title: "Role Overview",
       time: 5,
     },
     {
       key: "keyResponsibilities",
-      title: "Key Responsibilities",
+      title: "Job Scope",
       time: 5,
     },
     {
       key: "dayToDayTasks",
-      title: "Day-to-Day Tasks",
+      title: "Ideal Candidate Profile",
       time: 5,
     },
     {
       key: "candidateAssessmentCriteria",
-      title: "Candidate Assessment Criteria",
+      title: "Other Info",
       time: 5,
     },
   ];
