@@ -417,7 +417,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     {
       key: "jd-done",
       title: t("view_jd"),
-      handler: () => viewDoc?.("job-description"),
+      ...(onNextTask
+        ? { autoTrigger: true, handler: () => onNextTask?.() }
+        : { handler: () => viewDoc?.("job-description") }),
     },
     {
       key: "compensation-details-done",
