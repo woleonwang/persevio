@@ -58,7 +58,7 @@
   display: flex;
   border-radius: 16px;
   padding: 8px;
-  height: 80px;
+  min-height: 80px;
   align-items: center;
 }
 
@@ -88,14 +88,15 @@
   .volumeHistoryItem {
     flex: 1;
     background-color: #eeeeee;
+    transition: all 0.3s ease;
   }
 
   &.active {
     background-color: @hover-button-bg-color;
     border: 1px solid @primary-color;
-
     .volumeHistoryItem {
       background-color: #3682fe;
+      transition: none;
     }
   }
 }

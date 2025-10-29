@@ -160,9 +160,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       : "https://igk8gb3qpgz.sg.larksuite.com/share/base/form/shrlgfakyAOv0sKElWPJMjC8yTh";
 
   useEffect(() => {
-    if (isRecording) {
-      setVolumeHistory(getInitialVolumeHistory());
-    }
     initProfile();
   }, []);
 
@@ -209,6 +206,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     if (isRecording) {
+      setTextInputVisible(false);
       const interval = setInterval(() => {
         setVolumeHistory((prev) => [
           ...prev.slice(-(RECORD_HISTORY_DURATION_SECONDS * 5 - 1)),
@@ -1225,7 +1223,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                         }}
                         autoSize={{
                           minRows: 2,
-                          maxRows: 2,
+                          maxRows: 6,
                         }}
                       />
                       <div className={styles.audioButtonContainer}>
@@ -1304,9 +1302,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 </div>
               </div>
               <div className={styles.voiceInputHint}>
-                {textInputVisible
+                {textInputVisible || (isRecording && isStartRecordingOutside)
                   ? "\u00A0"
-                  : isRecording
+                  : isRecording && !isStartRecordingOutside
                   ? "Release Ctrl to stop speaking"
                   : "Press and hold Ctrl to speak"}
               </div>
