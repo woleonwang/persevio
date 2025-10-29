@@ -62,7 +62,7 @@ const JobApplies = () => {
     );
 
     if (code === 0) {
-      setJobApplies(jobApplies);
+      setJobApplies(data.job_applies);
       setTotal(data.total);
 
       const openId = getQuery("open-id");
