@@ -195,7 +195,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   useEffect(() => {
     if (messages.length === 0) return;
 
-    if (needScrollToBottom.current) {
+    if (messages.length > 2 && needScrollToBottom.current) {
       scrollToBottom();
       needScrollToBottom.current = false;
     }
