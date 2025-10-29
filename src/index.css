@@ -41,7 +41,7 @@
 
 @font-face {
   font-family: "chat-default";
-  src: url("/sora-regular.ttf");
+  src: url("/sora-semi-bold.ttf");
   font-weight: 600;
   font-style: normal;
 }
