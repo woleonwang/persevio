@@ -92,7 +92,7 @@ const Talents = (props: IProps) => {
         if (status === "rejected") {
           return <Tag color="red">{t("status_rejected")}</Tag>;
         }
-        return <Tag color="blue">{t("status_unfiltered")}</Tag>;
+        return <Tag color="default">{t("status_unfiltered")}</Tag>;
       },
     },
     {
