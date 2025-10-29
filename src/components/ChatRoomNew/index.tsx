@@ -30,7 +30,6 @@ import "@mdxeditor/editor/style.css";
 import { Get, Post, PostFormData } from "../../utils/request";
 
 import VionaAvatar from "../../assets/viona-avatar.png";
-import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
 import {
   IProps,
