@@ -867,7 +867,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                       }}
                     >
                       <List.Item.Meta
-                        style={{}}
                         avatar={
                           item.role === "ai" && (
                             <Avatar

@@ -234,63 +234,59 @@ const ChatRoom: React.FC<IProps> = (props) => {
               >
                 <List.Item.Meta
                   avatar={
-                    <Avatar
-                      style={{
-                        border: "none",
-                        background: "none",
-                        width: 40,
-                        height: 40,
-                      }}
-                      icon={
-                        item.role === "user" ? (
-                          <img src={UserAvatar} />
-                        ) : (
-                          <img src={VionaAvatar} />
-                        )
-                      }
-                    />
+                    item.role === "ai" && (
+                      <Avatar
+                        style={{
+                          border: "none",
+                          background: "none",
+                          width: 40,
+                          height: 40,
+                        }}
+                        icon={<img src={VionaAvatar} />}
+                      />
+                    )
                   }
                   title={
-                    <div style={{ marginTop: 8 }}>
-                      <span style={{ fontSize: 18 }}>
-                        {item.role === "user"
-                          ? "You"
-                          : `Viona, ${t("viona_intro_candidate")}`}
-                      </span>
-                      <span className={styles.timestamp}>
-                        {dayjs(item.updated_at).format(datetimeFormat)}
-                      </span>
-                    </div>
+                    item.role === "ai" && (
+                      <div style={{ marginTop: 8 }}>
+                        <span style={{ fontSize: 18 }}>
+                          {`Viona, ${t("viona_intro_candidate")}`}
+                        </span>
+                        <span className={styles.timestamp}>
+                          {dayjs(item.updated_at).format(datetimeFormat)}
+                        </span>
+                      </div>
+                    )
                   }
                   description={
                     <div
-                      className={classnames(
-                        styles.messageContainer,
-                        item.role === "user" ? styles.user : "",
-                        {
-                          [styles.lastMessage]: index === messages.length - 1,
-                        }
-                      )}
+                      className={classnames(styles.messageContainer, {
+                        [styles.lastMessage]: index === messages.length - 1,
+                        [styles.user]: item.role === "user",
+                      })}
                     >
-                      {item.id === "fake_ai_id" ? (
-                        <p>
-                          {loadingText}
-                          {dayjs().diff(
-                            loadingStartedAtRef.current ?? dayjs(),
-                            "second"
-                          ) > 30
-                            ? `(${t("viona_is_thinking")})`
-                            : ""}
-                        </p>
-                      ) : (
-                        <MarkdownContainer
-                          content={
-                            item.messageSubType === "error"
-                              ? "Something wrong with Viona, please retry."
-                              : item.content
-                          }
-                        />
-                      )}
+                      <div className={styles.messageContent}>
+                        {item.id === "fake_ai_id" ? (
+                          <p>
+                            {loadingText}
+                            {dayjs().diff(
+                              loadingStartedAtRef.current ?? dayjs(),
+                              "second"
+                            ) > 30
+                              ? `(${t("viona_is_thinking")})`
+                              : ""}
+                          </p>
+                        ) : (
+                          <MarkdownContainer
+                            content={
+                              item.messageSubType === "error"
+                                ? "Something wrong with Viona, please retry."
+                                : item.content
+                            }
+                          />
+                        )}
+                      </div>
+
                       {isFirst && (
                         <div className={styles.messageBlock}>
                           {PreDefinedMessages.slice(0, 3).map((message) => {
