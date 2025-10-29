@@ -62,9 +62,6 @@ const JobApplies = () => {
     );
 
     if (code === 0) {
-      const jobApplies = data.job_applies.filter(
-        (item: IJobApplyListItem) => item.deliveried_at
-      );
       setJobApplies(jobApplies);
       setTotal(data.total);
 
