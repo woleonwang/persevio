@@ -643,6 +643,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     logo: "Logo",
     upload_logo_succeed: "Upload logo succeed",
     upload_logo_failed: "Upload logo failed",
+    status: {
+      approving_title: "Under Review",
+      rejected_title: "Application Rejected",
+      approving_message: "Thank you for your interest. We'll contact you soon.",
+      rejected_message:
+        "Sorry, your account has not been approved. Please contact admin@persevio.ai for assistance.",
+    },
   },
 
   settings: {

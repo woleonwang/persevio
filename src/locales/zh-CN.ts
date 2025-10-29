@@ -607,6 +607,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     logo: "Logo",
     upload_logo_succeed: "Logo 上传成功",
     upload_logo_failed: "Logo上传失败",
+    status: {
+      approving_title: "审核中",
+      rejected_title: "审核未通过",
+      approving_message: "您的注册申请还在审核中,请耐心等待。",
+      rejected_message: "很抱歉，您的账号未能通过审核；您可以联系 admin@persevio.ai 获取帮助。",
+    },
   },
 
   settings: {
