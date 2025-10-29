@@ -10,6 +10,7 @@ import { Post } from "@/utils/request";
 import styles from "./style.module.less";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import JobDetails from "./components/JobDetails";
+import globalStore from "@/store/global";
 
 type TJobState = "jrd" | "jd" | "preview" | "board";
 
@@ -21,6 +22,8 @@ const JobBoard = () => {
 
   const [jobState, setJobState] = useState<TJobState>();
 
+  const { setMenuCollapse } = globalStore;
+
   useEffect(() => {
     if (job) {
       if (job.posted_at) {
@@ -29,8 +32,10 @@ const JobBoard = () => {
         setJobState("preview");
       } else if (job.requirement_doc_id) {
         setJobState("jd");
+        setMenuCollapse(true);
       } else {
         setJobState("jrd");
+        setMenuCollapse(true);
       }
     }
   }, [job]);
