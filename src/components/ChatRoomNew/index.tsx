@@ -93,7 +93,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [loadingText, setLoadingText] = useState(".");
   const [jrdProgress, setJrdProgress] = useState<number>(0);
   const [textInputVisible, setTextInputVisible] = useState(false);
-  const [inputPlaceholder, setInputPlaceholder] = useState("");
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -1199,7 +1198,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                         onChange={(e) => {
                           setInputValue(e.target.value);
                         }}
-                        placeholder={inputPlaceholder}
+                        placeholder={t("reply_viona_directly_or_edit")}
                         style={{
                           flex: 1,
                           resize: "none",
@@ -1283,22 +1282,17 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                 <div className={styles.divider} />
                 <div className={styles.switchButtonContainer}>
-                  <EditOutlined
-                    style={{ fontSize: 24 }}
-                    onClick={() => {
-                      if (textInputVisible) {
-                        setTextInputVisible(false);
-                        setInputPlaceholder("");
-                      } else {
-                        setTextInputVisible(true);
-                        setTimeout(() => {
-                          setInputPlaceholder(
-                            t("reply_viona_directly_or_edit")
-                          );
-                        }, 400);
-                      }
-                    }}
-                  />
+                  {textInputVisible ? (
+                    <AudioOutlined
+                      style={{ fontSize: 24 }}
+                      onClick={() => setTextInputVisible(false)}
+                    />
+                  ) : (
+                    <EditOutlined
+                      style={{ fontSize: 24 }}
+                      onClick={() => setTextInputVisible(true)}
+                    />
+                  )}
                 </div>
               </div>
               <div className={styles.voiceInputHint}>
