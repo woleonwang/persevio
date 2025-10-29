@@ -1,0 +1,74 @@
+.container {
+  padding: 20px;
+  flex: auto;
+  overflow: auto;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 3px;
+    width: 3px;
+    height: 16px;
+    background-color: #3682fe;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}
+
+.group {
+  padding: 12px;
+  border: 1px solid #dddddd;
+  background-color: #fafafa;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.groupTitle {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.deleteBtn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.formItem {
+  label {
+    align-items: baseline !important;
+  }
+}
+
+.drawerFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.inlineFormItem {
+  margin-left: 20px;
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

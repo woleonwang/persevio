@@ -54,6 +54,7 @@ import SelectOptionsForm from "./components/SelectOptionsForm";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
 import JrdSteps from "./components/JrdSteps";
+import JobRequirementForm from "./components/JobRequirementForm";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -800,9 +801,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const genPredefinedButton = () => {
     return (
-      <div
-        style={{ gap: 5, display: "flex", overflow: "auto", paddingBottom: 16 }}
-      >
+      <div style={{ gap: 5, display: "flex", overflow: "auto" }}>
         {[
           ...(chatType === "jobDescription"
             ? [t("make_details"), t("make_concise")]
@@ -831,121 +830,227 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   return (
     <div className={styles.container}>
       {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
+
       <div className={styles.chatArea}>
-        <div
-          className={styles.listArea}
-          ref={(e) => (listContainerRef.current = e)}
-        >
-          <List
-            dataSource={messages}
-            split={false}
-            renderItem={(item, index) => {
-              const isLast = index === messages.length - 1;
-              return (
-                <List.Item
-                  style={
-                    isLast
-                      ? {
-                          minHeight:
-                            (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
-                          alignItems: "flex-start",
-                        }
-                      : {}
-                  }
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        style={{
-                          border: "none",
-                          background: "none",
-                          width: 40,
-                          height: 40,
-                        }}
-                        icon={
-                          item.role === "user" ? (
-                            <img src={UserAvatar} />
-                          ) : (
-                            <img src={VionaAvatar} />
-                          )
-                        }
-                      />
-                    }
-                    title={
-                      <div style={{ marginTop: 8 }}>
-                        <span style={{ fontSize: 18 }}>
-                          {item.role === "user"
-                            ? t("you")
-                            : `Viona, ${t("viona_intro_staff")}`}
-                        </span>
-                        <span className={styles.timestamp}>
-                          {dayjs(item.updated_at).format(datetimeFormat)}
-                        </span>
-                      </div>
-                    }
-                    description={
-                      <div
-                        className={classnames(
-                          styles.messageContainer,
-                          item.role === "user" ? styles.user : "",
-                          {
-                            [styles.lastMessage]: index === messages.length - 1,
-                          }
-                        )}
-                      >
-                        {item.id === "fake_ai_id" ? (
-                          <p>
-                            {loadingText}
-                            {dayjs().diff(
-                              loadingStartedAtRef.current ?? dayjs(),
-                              "second"
-                            ) > 30
-                              ? `(${t("viona_is_thinking")})`
-                              : ""}
-                          </p>
-                        ) : (
-                          <MarkdownContainer
-                            content={
-                              item.messageSubType === "error"
-                                ? t("error_message")
-                                : item.content
+        {mode === "standard" && showJobRequirementFormDrawer ? (
+          <JobRequirementForm
+            group={jobRequirementFormType}
+            onOk={(result: string) => {
+              if (!isLoading) {
+                sendJobRequirementForm(result);
+                handleJobRequirementFormDrawerOpen(false);
+              }
+            }}
+            userRole="staff"
+          />
+        ) : (
+          <>
+            <div
+              className={styles.listArea}
+              ref={(e) => (listContainerRef.current = e)}
+            >
+              <List
+                dataSource={messages}
+                split={false}
+                renderItem={(item, index) => {
+                  const isLast = index === messages.length - 1;
+                  return (
+                    <List.Item
+                      style={
+                        isLast
+                          ? {
+                              minHeight:
+                                (listContainerRef.current?.clientHeight ?? 80) -
+                                8, // 32 is container's padding
+                              alignItems: "flex-start",
+                            }
+                          : {}
+                      }
+                    >
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar
+                            style={{
+                              border: "none",
+                              background: "none",
+                              width: 40,
+                              height: 40,
+                            }}
+                            icon={
+                              item.role === "user" ? (
+                                <img src={UserAvatar} />
+                              ) : (
+                                <img src={VionaAvatar} />
+                              )
                             }
                           />
-                        )}
+                        }
+                        title={
+                          <div style={{ marginTop: 8 }}>
+                            <span style={{ fontSize: 18 }}>
+                              {item.role === "user"
+                                ? t("you")
+                                : `Viona, ${t("viona_intro_staff")}`}
+                            </span>
+                            <span className={styles.timestamp}>
+                              {dayjs(item.updated_at).format(datetimeFormat)}
+                            </span>
+                          </div>
+                        }
+                        description={
+                          <div
+                            className={classnames(
+                              styles.messageContainer,
+                              item.role === "user" ? styles.user : "",
+                              {
+                                [styles.lastMessage]:
+                                  index === messages.length - 1,
+                              }
+                            )}
+                          >
+                            {item.id === "fake_ai_id" ? (
+                              <p>
+                                {loadingText}
+                                {dayjs().diff(
+                                  loadingStartedAtRef.current ?? dayjs(),
+                                  "second"
+                                ) > 30
+                                  ? `(${t("viona_is_thinking")})`
+                                  : ""}
+                              </p>
+                            ) : (
+                              <MarkdownContainer
+                                content={
+                                  item.messageSubType === "error"
+                                    ? t("error_message")
+                                    : item.content
+                                }
+                              />
+                            )}
 
-                        {(() => {
-                          const visibleTags = (item.extraTags ?? [])
-                            .map((extraTag) => {
-                              return supportTags.find(
-                                (tag) => tag.key === extraTag.name
-                              );
-                            })
-                            .filter(Boolean) as TSupportTag[];
+                            {(() => {
+                              const visibleTags = (item.extraTags ?? [])
+                                .map((extraTag) => {
+                                  return supportTags.find(
+                                    (tag) => tag.key === extraTag.name
+                                  );
+                                })
+                                .filter(Boolean) as TSupportTag[];
 
-                          return (
-                            <>
-                              <div className={styles.inlineButtonWrapper}>
-                                {visibleTags
-                                  .filter(
-                                    (tag) =>
-                                      !tag.style ||
-                                      tag.style === "inline-button"
-                                  )
-                                  .map((tag) => {
-                                    const genButtonElement = (tag: {
-                                      title?: string;
-                                      key?: string;
-                                      handler?: (tag?: TExtraTag) => void;
-                                    }) => {
-                                      return (
-                                        <div
-                                          style={{ marginBottom: 16 }}
-                                          key={tag.key ?? tag.title}
-                                        >
+                              return (
+                                <>
+                                  <div className={styles.inlineButtonWrapper}>
+                                    {visibleTags
+                                      .filter(
+                                        (tag) =>
+                                          !tag.style ||
+                                          tag.style === "inline-button"
+                                      )
+                                      .map((tag) => {
+                                        const genButtonElement = (tag: {
+                                          title?: string;
+                                          key?: string;
+                                          handler?: (tag?: TExtraTag) => void;
+                                        }) => {
+                                          return (
+                                            <div
+                                              style={{ marginBottom: 16 }}
+                                              key={tag.key ?? tag.title}
+                                            >
+                                              <Button
+                                                variant="filled"
+                                                color="default"
+                                                className={styles.inlineButton}
+                                                onClick={() => {
+                                                  const extraTag = (
+                                                    item.extraTags ?? []
+                                                  ).find(
+                                                    (extraTag) =>
+                                                      extraTag.name === tag.key
+                                                  );
+                                                  tag.handler?.(extraTag);
+                                                }}
+                                              >
+                                                {tag.title}
+                                              </Button>
+                                            </div>
+                                          );
+                                        };
+
+                                        return tag.children
+                                          ? tag.children.map((tag) =>
+                                              genButtonElement(tag)
+                                            )
+                                          : genButtonElement(tag);
+                                      })}
+                                  </div>
+                                  {visibleTags
+                                    .filter(
+                                      (tag) => tag.style === "block-button"
+                                    )
+                                    .map((tag) => (
+                                      <div
+                                        style={{ width: "100%" }}
+                                        key={tag.key}
+                                      >
+                                        {tag.key === "upload-jd" ? (
+                                          <Upload.Dragger
+                                            beforeUpload={() => false}
+                                            onChange={async (fileInfo) => {
+                                              const formData = new FormData();
+                                              formData.append(
+                                                "file",
+                                                fileInfo.file as any
+                                              );
+                                              setIsUploadingJd(true);
+                                              const { code, data } =
+                                                await PostFormData(
+                                                  `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                                  formData
+                                                );
+                                              if (code === 0) {
+                                                sendMessage(data.resume);
+                                              } else {
+                                                message.error(
+                                                  t("upload_failed")
+                                                );
+                                              }
+                                              setIsUploadingJd(false);
+                                            }}
+                                            showUploadList={false}
+                                            accept=".doc,.docx,.pdf"
+                                            multiple={false}
+                                            style={{
+                                              background: "#e5e9ec",
+                                              color: "#3682fe",
+                                              marginBottom: 16,
+                                            }}
+                                          >
+                                            {isUploadingJd ? (
+                                              <>
+                                                <LoadingOutlined
+                                                  style={{ fontSize: 16 }}
+                                                />
+                                                <div
+                                                  className={styles.buttonHint}
+                                                >
+                                                  {originalT("uploading")}
+                                                </div>
+                                              </>
+                                            ) : (
+                                              tag.title
+                                            )}
+                                          </Upload.Dragger>
+                                        ) : (
                                           <Button
-                                            variant="filled"
-                                            color="default"
-                                            className={styles.inlineButton}
+                                            type="dashed"
+                                            style={{
+                                              width: "100%",
+                                              height: 56,
+                                              marginBottom: 16,
+                                              background: "#e5e9ec",
+                                              color: "#3682fe",
+                                            }}
                                             onClick={() => {
                                               const extraTag = (
                                                 item.extraTags ?? []
@@ -958,325 +1063,263 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           >
                                             {tag.title}
                                           </Button>
-                                        </div>
-                                      );
-                                    };
-
-                                    return tag.children
-                                      ? tag.children.map((tag) =>
-                                          genButtonElement(tag)
-                                        )
-                                      : genButtonElement(tag);
-                                  })}
-                              </div>
-                              {visibleTags
-                                .filter((tag) => tag.style === "block-button")
-                                .map((tag) => (
-                                  <div style={{ width: "100%" }} key={tag.key}>
-                                    {tag.key === "upload-jd" ? (
-                                      <Upload.Dragger
-                                        beforeUpload={() => false}
-                                        onChange={async (fileInfo) => {
-                                          const formData = new FormData();
-                                          formData.append(
-                                            "file",
-                                            fileInfo.file as any
-                                          );
-                                          setIsUploadingJd(true);
-                                          const { code, data } =
-                                            await PostFormData(
-                                              `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                              formData
-                                            );
-                                          if (code === 0) {
-                                            sendMessage(data.resume);
-                                          } else {
-                                            message.error(t("upload_failed"));
-                                          }
-                                          setIsUploadingJd(false);
-                                        }}
-                                        showUploadList={false}
-                                        accept=".doc,.docx,.pdf"
-                                        multiple={false}
-                                        style={{
-                                          background: "#e5e9ec",
-                                          color: "#3682fe",
-                                          marginBottom: 16,
-                                        }}
-                                      >
-                                        {isUploadingJd ? (
-                                          <>
-                                            <LoadingOutlined
-                                              style={{ fontSize: 16 }}
-                                            />
-                                            <div className={styles.buttonHint}>
-                                              {originalT("uploading")}
-                                            </div>
-                                          </>
-                                        ) : (
-                                          tag.title
                                         )}
-                                      </Upload.Dragger>
-                                    ) : (
-                                      <Button
-                                        type="dashed"
-                                        style={{
-                                          width: "100%",
-                                          height: 56,
-                                          marginBottom: 16,
-                                          background: "#e5e9ec",
-                                          color: "#3682fe",
-                                        }}
-                                        onClick={() => {
-                                          const extraTag = (
-                                            item.extraTags ?? []
-                                          ).find(
-                                            (extraTag) =>
-                                              extraTag.name === tag.key
-                                          );
-                                          tag.handler?.(extraTag);
-                                        }}
+                                      </div>
+                                    ))}
+                                  {visibleTags
+                                    .filter(
+                                      (tag) => tag.style === "button-with-text"
+                                    )
+                                    .map((tag) => (
+                                      <div
+                                        key={tag.key}
+                                        className={styles.tagButtonWithText}
                                       >
-                                        {tag.title}
-                                      </Button>
-                                    )}
-                                  </div>
-                                ))}
-                              {visibleTags
-                                .filter(
-                                  (tag) => tag.style === "button-with-text"
-                                )
-                                .map((tag) => (
-                                  <div
-                                    key={tag.key}
-                                    className={styles.tagButtonWithText}
-                                  >
-                                    <div>
-                                      {t("interview_feedback_confirm_text")}
-                                    </div>
-                                    <Button
-                                      variant="outlined"
-                                      color="primary"
-                                      style={{ marginTop: 8 }}
-                                      onClick={() => {
-                                        const extraTag = (
-                                          item.extraTags ?? []
-                                        ).find(
-                                          (extraTag) =>
-                                            extraTag.name === tag.key
-                                        );
-                                        tag.handler?.(extraTag);
-                                      }}
-                                    >
-                                      {tag.title}
-                                    </Button>
-                                  </div>
-                                ))}
-                            </>
-                          );
-                        })()}
-
-                        {(() => {
-                          const canEditing = canMessageEdit(item);
-
-                          const canDelete =
-                            !!profile?.is_admin &&
-                            item.messageType === "normal" &&
-                            !["fake_ai_id", "fake_user_id"].includes(item.id);
-                          // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
-
-                          const canRetry =
-                            isLast && item.messageSubType === "error";
-
-                          return canEditing || canDelete || canRetry ? (
-                            <div className={styles.operationArea}>
-                              {canEditing && (
-                                <>
-                                  <Tooltip title={originalT("edit")}>
-                                    <EditOutlined
-                                      onClick={() => {
-                                        setMarkdownEditMessageId(item.id);
-                                        setMarkdownEditMessageContent(
-                                          item.content
-                                        );
-                                      }}
-                                      ref={(e) => {
-                                        if (maxIdOfAIMessage === item.id)
-                                          editMessageTourElementRef.current = e;
-                                      }}
-                                    />
-                                  </Tooltip>
-                                  <Tooltip title={originalT("copy")}>
-                                    <CopyOutlined
-                                      onClick={async () => {
-                                        await copy(item.content);
-                                        message.success(originalT("copied"));
-                                      }}
-                                    />
-                                  </Tooltip>
+                                        <div>
+                                          {t("interview_feedback_confirm_text")}
+                                        </div>
+                                        <Button
+                                          variant="outlined"
+                                          color="primary"
+                                          style={{ marginTop: 8 }}
+                                          onClick={() => {
+                                            const extraTag = (
+                                              item.extraTags ?? []
+                                            ).find(
+                                              (extraTag) =>
+                                                extraTag.name === tag.key
+                                            );
+                                            tag.handler?.(extraTag);
+                                          }}
+                                        >
+                                          {tag.title}
+                                        </Button>
+                                      </div>
+                                    ))}
                                 </>
-                              )}
-                              {canDelete && (
-                                <Tooltip title={originalT("delete")}>
-                                  <DeleteOutlined
-                                    onClick={() => {
-                                      if (
-                                        confirm(t("confirm_delete_messages"))
-                                      ) {
-                                        deleteMessage(parseInt(item.id));
-                                      }
-                                    }}
-                                  />
-                                </Tooltip>
-                              )}
-                              {canRetry && (
-                                <Tooltip title={originalT("retry")}>
-                                  <ReloadOutlined
-                                    onClick={async () => {
-                                      if (confirm(t("confirm_retry_message"))) {
-                                        retryMessage(parseInt(item.id));
-                                      }
-                                    }}
-                                  />
-                                </Tooltip>
-                              )}
-                            </div>
-                          ) : null;
-                        })()}
-                      </div>
-                    }
-                  />
-                </List.Item>
-              );
-            }}
-          />
-          <div ref={messagesEndRef} />
-        </div>
+                              );
+                            })()}
 
-        <div className={styles.footer}>
-          <div className={classnames("flex-center")}>
-            {genPredefinedButton()}
-          </div>
-          <div className={classnames(styles.inputAreaContainer)}>
-            <div className={styles.inputPanel}>
-              {textInputVisible ? (
-                <>
-                  <Input.TextArea
-                    value={inputValue}
-                    onChange={(e) => {
-                      setInputValue(e.target.value);
-                    }}
-                    placeholder={inputPlaceholder}
-                    style={{
-                      flex: 1,
-                      resize: "none",
-                      overflow: "hidden",
-                    }}
-                    onCompositionStartCapture={() =>
-                      (isCompositingRef.current = true)
-                    }
-                    onCompositionEndCapture={() =>
-                      (isCompositingRef.current = false)
-                    }
-                    onPressEnter={(e) => {
-                      if (
-                        !e.shiftKey &&
-                        !isCompositingRef.current &&
-                        canSubmit()
-                      ) {
-                        e.preventDefault();
-                        submit();
-                      }
-                    }}
-                    autoSize={{
-                      minRows: 2,
-                      maxRows: 2,
-                    }}
-                  />
-                  <div className={styles.audioButtonContainer}>
-                    <SendOutlined
-                      onClick={() => submit()}
-                      style={{
-                        fontSize: 24,
-                        color: canSubmit() ? "#3682fe" : "#333",
-                      }}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className={styles.volumeHistoryContainer}>
-                    {volumeHistory.map((volume, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className={styles.volumeHistoryItem}
-                          style={{
-                            height: 4 + Math.min(60, volume * 100),
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div className={styles.audioButtonContainer}>
-                    {!isRecording && !isTranscribing ? (
-                      <AudioOutlined
-                        style={{ fontSize: 24 }}
-                        onClick={() => startTranscription()}
-                      />
-                    ) : (
-                      <XFilled
-                        style={{ fontSize: 24, color: "#3682fe" }}
-                        onClick={() => {
-                          if (isTranscribing || !isStartRecordingOutside) {
-                            return;
-                          }
-                          endTranscription();
-                        }}
-                      />
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                            {(() => {
+                              const canEditing = canMessageEdit(item);
 
-            <div className={styles.divider} />
-            <div className={styles.switchButtonContainer}>
-              <EditOutlined
-                style={{ fontSize: 24 }}
-                onClick={() => {
-                  if (textInputVisible) {
-                    setTextInputVisible(false);
-                    setInputPlaceholder("");
-                  } else {
-                    setTextInputVisible(true);
-                    setTimeout(() => {
-                      setInputPlaceholder(t("reply_viona_directly_or_edit"));
-                    }, 400);
-                  }
+                              const canDelete =
+                                !!profile?.is_admin &&
+                                item.messageType === "normal" &&
+                                !["fake_ai_id", "fake_user_id"].includes(
+                                  item.id
+                                );
+                              // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+
+                              const canRetry =
+                                isLast && item.messageSubType === "error";
+
+                              return canEditing || canDelete || canRetry ? (
+                                <div className={styles.operationArea}>
+                                  {canEditing && (
+                                    <>
+                                      <Tooltip title={originalT("edit")}>
+                                        <EditOutlined
+                                          onClick={() => {
+                                            setMarkdownEditMessageId(item.id);
+                                            setMarkdownEditMessageContent(
+                                              item.content
+                                            );
+                                          }}
+                                          ref={(e) => {
+                                            if (maxIdOfAIMessage === item.id)
+                                              editMessageTourElementRef.current =
+                                                e;
+                                          }}
+                                        />
+                                      </Tooltip>
+                                      <Tooltip title={originalT("copy")}>
+                                        <CopyOutlined
+                                          onClick={async () => {
+                                            await copy(item.content);
+                                            message.success(
+                                              originalT("copied")
+                                            );
+                                          }}
+                                        />
+                                      </Tooltip>
+                                    </>
+                                  )}
+                                  {canDelete && (
+                                    <Tooltip title={originalT("delete")}>
+                                      <DeleteOutlined
+                                        onClick={() => {
+                                          if (
+                                            confirm(
+                                              t("confirm_delete_messages")
+                                            )
+                                          ) {
+                                            deleteMessage(parseInt(item.id));
+                                          }
+                                        }}
+                                      />
+                                    </Tooltip>
+                                  )}
+                                  {canRetry && (
+                                    <Tooltip title={originalT("retry")}>
+                                      <ReloadOutlined
+                                        onClick={async () => {
+                                          if (
+                                            confirm(t("confirm_retry_message"))
+                                          ) {
+                                            retryMessage(parseInt(item.id));
+                                          }
+                                        }}
+                                      />
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              ) : null;
+                            })()}
+                          </div>
+                        }
+                      />
+                    </List.Item>
+                  );
                 }}
               />
+              <div ref={messagesEndRef} />
             </div>
-          </div>
-          <div className={styles.voiceInputHint}>
-            {textInputVisible ? "\u00A0" : "Press and hold Ctrl to speak"}
-          </div>
-        </div>
+
+            <div className={styles.footer}>
+              <div className={classnames("flex-center")}>
+                {genPredefinedButton()}
+              </div>
+              <div className={classnames(styles.inputAreaContainer)}>
+                <div className={styles.inputPanel}>
+                  {textInputVisible ? (
+                    <>
+                      <Input.TextArea
+                        value={inputValue}
+                        onChange={(e) => {
+                          setInputValue(e.target.value);
+                        }}
+                        placeholder={inputPlaceholder}
+                        style={{
+                          flex: 1,
+                          resize: "none",
+                          overflow: "hidden",
+                        }}
+                        onCompositionStartCapture={() =>
+                          (isCompositingRef.current = true)
+                        }
+                        onCompositionEndCapture={() =>
+                          (isCompositingRef.current = false)
+                        }
+                        onPressEnter={(e) => {
+                          if (
+                            !e.shiftKey &&
+                            !isCompositingRef.current &&
+                            canSubmit()
+                          ) {
+                            e.preventDefault();
+                            submit();
+                          }
+                        }}
+                        autoSize={{
+                          minRows: 2,
+                          maxRows: 2,
+                        }}
+                      />
+                      <div className={styles.audioButtonContainer}>
+                        <SendOutlined
+                          onClick={() => submit()}
+                          style={{
+                            fontSize: 24,
+                            color: canSubmit() ? "#3682fe" : "#333",
+                          }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={styles.volumeHistoryContainer}>
+                        {volumeHistory.map((volume, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className={styles.volumeHistoryItem}
+                              style={{
+                                height: 4 + Math.min(60, volume * 100),
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                      <div className={styles.audioButtonContainer}>
+                        {!isRecording && !isTranscribing ? (
+                          <AudioOutlined
+                            style={{ fontSize: 24 }}
+                            onClick={() => startTranscription()}
+                          />
+                        ) : (
+                          <XFilled
+                            style={{ fontSize: 24, color: "#3682fe" }}
+                            onClick={() => {
+                              if (isTranscribing || !isStartRecordingOutside) {
+                                return;
+                              }
+                              endTranscription();
+                            }}
+                          />
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className={styles.divider} />
+                <div className={styles.switchButtonContainer}>
+                  <EditOutlined
+                    style={{ fontSize: 24 }}
+                    onClick={() => {
+                      if (textInputVisible) {
+                        setTextInputVisible(false);
+                        setInputPlaceholder("");
+                      } else {
+                        setTextInputVisible(true);
+                        setTimeout(() => {
+                          setInputPlaceholder(
+                            t("reply_viona_directly_or_edit")
+                          );
+                        }, 400);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              <div className={styles.voiceInputHint}>
+                {textInputVisible
+                  ? "\u00A0"
+                  : isRecording
+                  ? "Release Ctrl to stop speaking"
+                  : "Press and hold Ctrl to speak"}
+              </div>
+            </div>
+          </>
+        )}
 
         <FloatButton onClick={() => openSurvey()} type="primary" />
 
-        <JobRequirementFormDrawer
-          open={showJobRequirementFormDrawer}
-          onClose={() => handleJobRequirementFormDrawerOpen(false)}
-          group={jobRequirementFormType}
-          onOk={(result: string) => {
-            if (!isLoading) {
-              sendJobRequirementForm(result);
-              handleJobRequirementFormDrawerOpen(false);
-            }
-          }}
-          userRole="staff"
-        />
+        {mode === "utils" && (
+          <JobRequirementFormDrawer
+            open={showJobRequirementFormDrawer}
+            onClose={() => handleJobRequirementFormDrawerOpen(false)}
+            group={jobRequirementFormType}
+            onOk={(result: string) => {
+              if (!isLoading) {
+                sendJobRequirementForm(result);
+                handleJobRequirementFormDrawerOpen(false);
+              }
+            }}
+            userRole="staff"
+          />
+        )}
 
         <Modal
           open={selectOptionsModalOpen}
