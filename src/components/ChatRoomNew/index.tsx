@@ -800,27 +800,20 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const genPredefinedButton = () => {
     return (
       <div style={{ gap: 5, display: "flex", overflow: "auto" }}>
-        {[
-          ...(chatType === "jobDescription"
-            ? [t("make_details"), t("make_concise")]
-            : []),
-          t("yes"),
-          t("no"),
-          t("accurate"),
-          t("proposal"),
-          t("no_others"),
-        ].map((text) => {
-          return (
-            <Button
-              variant="filled"
-              color="default"
-              key={text}
-              onClick={() => sendMessage(text)}
-            >
-              <span style={{ color: "#999" }}>→</span> {text}
-            </Button>
-          );
-        })}
+        {[t("yes"), t("no"), t("accurate"), t("proposal"), t("no_others")].map(
+          (text) => {
+            return (
+              <Button
+                variant="filled"
+                color="default"
+                key={text}
+                onClick={() => sendMessage(text)}
+              >
+                <span style={{ color: "#999" }}>→</span> {text}
+              </Button>
+            );
+          }
+        )}
       </div>
     );
   };

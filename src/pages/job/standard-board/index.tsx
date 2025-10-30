@@ -46,23 +46,23 @@ const JobBoard = () => {
 
   const stepItems = [
     {
-      title: "Create Position",
+      title: "Create New Job",
       key: "create",
     },
     {
-      title: "Detailed Define<br/>Job Requirements",
+      title: "Job Intake",
       key: "jrd",
     },
     {
-      title: "Define Job<br/>Description",
+      title: "Draft JD",
       key: "jd",
     },
     {
-      title: "Position Preview",
+      title: "Preview",
       key: "preview",
     },
     {
-      title: "Confirm to Publish",
+      title: "Publish",
       key: "confirm",
     },
   ];

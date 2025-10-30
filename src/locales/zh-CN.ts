@@ -189,8 +189,6 @@ export default {
     accurate: "准确。",
     proposal: "你的提议不错。",
     no_others: "没什么其它的了。",
-    make_details: "写得更详细些。",
-    make_concise: "写得更简洁些。",
     confirm: "确认",
 
     // 新增的国际化键值

@@ -196,8 +196,6 @@ export default {
     accurate: "Accurate.",
     proposal: "Your proposal is good.",
     no_others: "No further modifications needed.",
-    make_details: "Make it more detailed",
-    make_concise: "Make it more concise",
     confirm: "Confirm",
 
     // 新增的国际化键值
@@ -1305,12 +1303,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_requirement_table: "Job Requirement Table",
     job_description_jd: "Job Description (JD)",
     talents: "Candidates",
-    share_position: "Share the Position",
+    share_position: "Copy Link",
     unpost_job_title: "Unpost this Job?",
     unpost_job_content:
       "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",
-    unpost_job: "Unpost Job",
-    job_posting: "Job Posting",
+    unpost_job: "Delist",
+    job_posting: "Your Job Listing",
   },
 
   talent_details: {
