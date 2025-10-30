@@ -11,6 +11,7 @@ import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
 import Step from "@/components/Step";
+import { getQuery } from "@/utils";
 
 const ApplyJob: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -30,6 +31,10 @@ const ApplyJob: React.FC = () => {
   // const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
+    const token = getQuery("candidate_token");
+    if (token) {
+      localStorage.setItem("candidate_token", token);
+    }
     init();
   }, []);
 
