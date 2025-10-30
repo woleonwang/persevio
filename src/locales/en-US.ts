@@ -357,7 +357,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
     high_level_responsibility: "Key Responsibilities",
     day_to_day_tasks: "Day-to-Day Tasks",
+    view_document: "View Document",
+    context: "Context",
+    realities: "Realities",
+    responsibilities: "Responsibilities",
     icp: "Candidate Assessment Criteria",
+    jrd: "Job Requirement Document",
   },
 
   job_requirement_form: {
@@ -723,7 +728,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     fill_candidate_scorecard: "Fill Candidate Scorecard",
     complete_conversation_tasks:
       "Complete conversation tasks with Viona, here are the detailed documents generated for you:",
-    job_requirement_table: "Job Requirement Table",
+    job_requirement_table: "Job Requirement Document",
     job_description_jd: "Job Description (JD)",
     job_compensation_details: "Job compensation details",
     job_outreach_message: "Job outreach message",
@@ -787,10 +792,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     save: "Save",
     submit_succeed: "Submit successful",
     submit_failed: "Submit failed",
-    not_written_job_requirement: "Job requirement table not written yet",
+    not_written_job_requirement: "Job requirement document not written yet",
     not_written_job_description: "Job description (JD) not written yet",
     not_created_interview_plan: "Interview plan & scorecard not created yet",
-    job_requirement_table: "Job Requirement Table",
+    job_requirement_table: "Job Requirement Document",
     job_description_jd: "Job Description (JD)",
     job_compensation_details: "Job compensation details",
     job_outreach_message: "Job outreach message",
@@ -1300,7 +1305,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   job_details: {
     updated_at: "Updated",
-    job_requirement_table: "Job Requirement Table",
+    job_requirement_table: "Job Requirement Document",
     job_description_jd: "Job Description (JD)",
     talents: "Candidates",
     share_position: "Copy Link",

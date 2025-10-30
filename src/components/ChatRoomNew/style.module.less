@@ -4,13 +4,81 @@
 .container {
   flex: auto;
   display: flex;
-  flex-direction: column;
   overflow: hidden;
+  align-items: center;
+  justify-content: center;
 
   :global {
     .ant-float-btn {
       bottom: 120px;
       right: 60px;
+    }
+  }
+}
+
+.conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.sideDocument {
+  flex: 1;
+  height: 100%;
+  background-color: #f6f6f6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  .sideDocumentHeader {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .sideDocumentOperations {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .sideDocumentOperationSeparator {
+    height: 16px;
+    border-left: 1px solid #dddddd;
+  }
+
+  .sideDocumentContent {
+    background-color: white;
+    padding: 22px 24px;
+    border-radius: 4px;
+    margin-top: 20px;
+
+    :global {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: 16px;
+      }
+
+      ul,
+      ol {
+        background-color: #eff3fe;
+        border-radius: 16px;
+        padding: 16px 32px;
+      }
+
+      ul,
+      ol {
+        ul,
+        ol {
+          background-color: #e0e7fa;
+        }
+      }
     }
   }
 }
@@ -23,6 +91,7 @@
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
+  padding: 0 40px;
 }
 
 .listArea {

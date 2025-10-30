@@ -27,6 +27,10 @@ export type TExtraTagName =
   | "extract-icp"
   | "success-metric"
   | "current-round-evaluation"
+  | "context-done"
+  | "realities-done"
+  | "responsibilities-done"
+  | "icp-done"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面

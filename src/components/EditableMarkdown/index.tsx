@@ -3,6 +3,7 @@ import MarkdownContainer from "../MarkdownContainer";
 import MarkdownEditor from "../MarkdownEditor";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import classnames from "classnames";
 import styles from "./style.module.less";
 
 interface IProps {
@@ -10,9 +11,11 @@ interface IProps {
   isEditing: boolean;
   onSubmit: (value: string) => void;
   onCancel: () => void;
+  style?: React.CSSProperties;
+  className?: string;
 }
 const EditableMarkdown = (props: IProps) => {
-  const { value, isEditing, onSubmit, onCancel } = props;
+  const { value, isEditing, onSubmit, onCancel, style, className } = props;
 
   const [editingValue, setEditingValue] = useState("");
 
@@ -23,18 +26,16 @@ const EditableMarkdown = (props: IProps) => {
   const { t } = useTranslation();
 
   return isEditing ? (
-    <>
-      <div className={styles.container}>
-        <MarkdownEditor
-          value={editingValue}
-          onChange={(val) => setEditingValue(val)}
-          style={{
-            flex: "auto",
-            overflow: "hidden",
-            display: "flex",
-          }}
-        />
-      </div>
+    <div className={classnames(styles.container, className)} style={style}>
+      <MarkdownEditor
+        value={editingValue}
+        onChange={(val) => setEditingValue(val)}
+        style={{
+          flex: "auto",
+          overflow: "hidden",
+          display: "flex",
+        }}
+      />
       <div style={{ marginTop: 12 }}>
         <Button onClick={() => onSubmit(editingValue)} type="primary">
           {t("save")}
@@ -43,16 +44,9 @@ const EditableMarkdown = (props: IProps) => {
           {t("cancel")}
         </Button>
       </div>
-    </>
+    </div>
   ) : (
-    <div
-      className={styles.container}
-      style={{
-        flex: "auto",
-        overflow: "auto",
-        padding: "0 24px",
-      }}
-    >
+    <div className={classnames(styles.container, className)} style={style}>
       <MarkdownContainer content={value} />
     </div>
   );

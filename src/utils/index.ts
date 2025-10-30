@@ -106,3 +106,23 @@ export const confirmModal = (modalParams: ModalFuncProps) => {
     ...modalParams,
   });
 };
+
+export const downloadText = ({
+  name,
+  content,
+}: {
+  name: string;
+  content: string;
+}) => {
+  // 创建 blob 并下载
+  const blob = new Blob([content], {
+    type: "text/plain;charset=utf-8",
+  });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+};

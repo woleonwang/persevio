@@ -59,6 +59,8 @@ interface IJob {
   feedback_for_interview_design: string;
   interview_transcript_for_interview_feedback: string;
   interview_design_for_interview_feedback: string;
+
+  jrd_context_document_json: string;
 }
 
 type TPublicJob = {

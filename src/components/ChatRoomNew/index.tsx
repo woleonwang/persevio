@@ -15,8 +15,10 @@ import {
 } from "antd";
 import {
   AudioOutlined,
+  CloseOutlined,
   CopyOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
   LoadingOutlined,
   ReloadOutlined,
@@ -41,7 +43,7 @@ import {
   TMessageFromApi,
   TRoleOverviewType,
 } from "./type";
-import { copy } from "../../utils";
+import { copy, downloadText, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import MarkdownContainer from "../MarkdownContainer";
@@ -54,9 +56,17 @@ import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
 import JrdSteps from "./components/JrdSteps";
 import JobRequirementForm from "./components/JobRequirementForm";
+import EditableMarkdown from "../EditableMarkdown";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
+
+type TEditableDocumentType =
+  | "context"
+  | "realities"
+  | "responsibilities"
+  | "icp"
+  | "jrd";
 
 type TSupportTag = {
   key: TExtraTagName;
@@ -107,7 +117,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
   const [markdownEditMessageContent, setMarkdownEditMessageContent] =
     useState<string>("");
-
   const [selectOptionsType, setSelectOptionsType] = useState<
     "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
@@ -115,6 +124,13 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const [isUploadingJd, setIsUploadingJd] = useState(false);
   // 最近10秒的音量历史， 1秒5个点，一共50个点
   const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
+  const [sideDocumentVisible, setSideDocumentVisible] = useState(false);
+  const [sideDocumentType, setSideDocumentType] =
+    useState<TEditableDocumentType>();
+
+  const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
+  const [isEditingSideDocument, setIsEditingSideDocument] = useState(false);
+
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +142,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   const loadingStartedAtRef = useRef<Dayjs>();
   const listContainerRef = useRef<HTMLDivElement | null>();
   const volumeRef = useRef(0);
+  const jrdContextDocumentJsonRef = useRef();
+  jrdContextDocumentJsonRef.current = parseJSON(job?.jrd_context_document_json);
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -162,9 +180,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    fetchJob();
-    fetchMessages();
-    needScrollToBottom.current = true;
+    initConversation();
   }, [jobId]);
 
   useEffect(() => {
@@ -476,7 +492,35 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       },
       style: "button-with-text",
     },
+
+    ...(
+      [
+        "context-done",
+        "realities-done",
+        "responsibilities-done",
+        "icp-done",
+      ] as TExtraTagName[]
+    ).map((key) => {
+      return {
+        key: key,
+        title: t("view_document"),
+        handler: () => {
+          setSideDocumentVisible(true);
+          setSideDocumentContent(
+            jrdContextDocumentJsonRef.current?.[key.split("-")[0]] ?? ""
+          );
+          setSideDocumentType(key.split("-")[0] as TEditableDocumentType);
+        },
+        autoTrigger: true,
+      };
+    }),
   ];
+
+  const initConversation = async () => {
+    needScrollToBottom.current = true;
+    await fetchJob();
+    await fetchMessages();
+  };
 
   const fetchJob = async () => {
     const { code, data } = await Get(formatUrl(`/api/jobs/${jobId}`));
@@ -555,6 +599,22 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         });
       }
       setMessages(messageHistory);
+    }
+  };
+
+  const updateJrdContextDocument = async (content: string) => {
+    const { code } = await Post(
+      formatUrl(`/api/jobs/${jobId}/jrd_context_document`),
+      {
+        field: sideDocumentType,
+        content: content,
+      }
+    );
+    if (code === 0) {
+      message.success(originalT("submit_succeed"));
+      setIsEditingSideDocument(false);
+      setSideDocumentContent(content);
+      fetchJob();
     }
   };
 
@@ -820,223 +880,267 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
+      <div className={styles.conversation}>
+        {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
 
-      <div className={styles.chatArea}>
-        {mode === "standard" && showJobRequirementFormDrawer ? (
-          <JobRequirementForm
-            group={jobRequirementFormType}
-            onOk={(result: string) => {
-              if (!isLoading) {
-                sendJobRequirementForm(result);
-                handleJobRequirementFormDrawerOpen(false);
-              }
-            }}
-            userRole="staff"
-          />
-        ) : (
-          <>
-            <div
-              className={styles.listArea}
-              ref={(e) => (listContainerRef.current = e)}
-            >
-              <List
-                dataSource={messages}
-                split={false}
-                renderItem={(item, index) => {
-                  const isLast = index === messages.length - 1;
-                  return (
-                    <List.Item
-                      style={{
-                        ...(isLast
-                          ? {
-                              minHeight:
-                                (listContainerRef.current?.clientHeight ?? 80) -
-                                8, // 32 is container's padding
-                              alignItems: "flex-start",
-                            }
-                          : {}),
-                      }}
-                    >
-                      <List.Item.Meta
-                        avatar={
-                          item.role === "ai" && (
-                            <Avatar
-                              style={{
-                                border: "none",
-                                background: "none",
-                                width: 40,
-                                height: 40,
-                              }}
-                              icon={<img src={VionaAvatar} />}
-                            />
-                          )
-                        }
-                        title={
-                          item.role === "ai" && (
-                            <div style={{ marginTop: 8 }}>
-                              <span style={{ fontSize: 18 }}>
-                                {`Viona, ${t("viona_intro_staff")}`}
-                              </span>
-                              <span className={styles.timestamp}>
-                                {dayjs(item.updated_at).format(datetimeFormat)}
-                              </span>
-                            </div>
-                          )
-                        }
-                        description={
-                          <div
-                            className={classnames(styles.messageContainer, {
-                              [styles.lastMessage]:
-                                index === messages.length - 1,
-                              [styles.user]: item.role === "user",
-                            })}
-                          >
-                            <div className={styles.messageContent}>
-                              {item.id === "fake_ai_id" ? (
-                                <p>
-                                  {loadingText}
-                                  {dayjs().diff(
-                                    loadingStartedAtRef.current ?? dayjs(),
-                                    "second"
-                                  ) > 30
-                                    ? `(${t("viona_is_thinking")})`
-                                    : ""}
-                                </p>
-                              ) : (
-                                <MarkdownContainer
-                                  content={
-                                    item.messageSubType === "error"
-                                      ? t("error_message")
-                                      : item.content
-                                  }
-                                />
-                              )}
-                            </div>
-
-                            {(() => {
-                              const visibleTags = (item.extraTags ?? [])
-                                .map((extraTag) => {
-                                  return supportTags.find(
-                                    (tag) => tag.key === extraTag.name
-                                  );
-                                })
-                                .filter(Boolean) as TSupportTag[];
-                              const inlineButtons = visibleTags.filter(
-                                (tag) =>
-                                  !tag.style || tag.style === "inline-button"
-                              );
-
-                              return (
-                                <>
-                                  {inlineButtons.length > 0 && (
-                                    <div className={styles.inlineButtonWrapper}>
-                                      {inlineButtons.map((tag) => {
-                                        const genButtonElement = (tag: {
-                                          title?: string;
-                                          key?: string;
-                                          handler?: (tag?: TExtraTag) => void;
-                                        }) => {
-                                          return (
-                                            <div
-                                              style={{ marginBottom: 16 }}
-                                              key={tag.key ?? tag.title}
-                                            >
-                                              <Button
-                                                variant="filled"
-                                                color="default"
-                                                className={styles.inlineButton}
-                                                onClick={() => {
-                                                  const extraTag = (
-                                                    item.extraTags ?? []
-                                                  ).find(
-                                                    (extraTag) =>
-                                                      extraTag.name === tag.key
-                                                  );
-                                                  tag.handler?.(extraTag);
-                                                }}
-                                              >
-                                                {tag.title}
-                                              </Button>
-                                            </div>
-                                          );
-                                        };
-
-                                        return tag.children
-                                          ? tag.children.map((tag) =>
-                                              genButtonElement(tag)
-                                            )
-                                          : genButtonElement(tag);
-                                      })}
-                                    </div>
+        <div className={styles.chatArea}>
+          {mode === "standard" && showJobRequirementFormDrawer ? (
+            <JobRequirementForm
+              group={jobRequirementFormType}
+              onOk={(result: string) => {
+                if (!isLoading) {
+                  sendJobRequirementForm(result);
+                  handleJobRequirementFormDrawerOpen(false);
+                }
+              }}
+              userRole="staff"
+            />
+          ) : (
+            <>
+              <div
+                className={styles.listArea}
+                ref={(e) => (listContainerRef.current = e)}
+              >
+                <List
+                  dataSource={messages}
+                  split={false}
+                  renderItem={(item, index) => {
+                    const isLast = index === messages.length - 1;
+                    return (
+                      <List.Item
+                        style={{
+                          ...(isLast
+                            ? {
+                                minHeight:
+                                  (listContainerRef.current?.clientHeight ??
+                                    80) - 8, // 32 is container's padding
+                                alignItems: "flex-start",
+                              }
+                            : {}),
+                        }}
+                      >
+                        <List.Item.Meta
+                          avatar={
+                            item.role === "ai" && (
+                              <Avatar
+                                style={{
+                                  border: "none",
+                                  background: "none",
+                                  width: 40,
+                                  height: 40,
+                                }}
+                                icon={<img src={VionaAvatar} />}
+                              />
+                            )
+                          }
+                          title={
+                            item.role === "ai" && (
+                              <div style={{ marginTop: 8 }}>
+                                <span style={{ fontSize: 18 }}>
+                                  {`Viona, ${t("viona_intro_staff")}`}
+                                </span>
+                                <span className={styles.timestamp}>
+                                  {dayjs(item.updated_at).format(
+                                    datetimeFormat
                                   )}
-                                  {visibleTags
-                                    .filter(
-                                      (tag) => tag.style === "block-button"
-                                    )
-                                    .map((tag) => (
+                                </span>
+                              </div>
+                            )
+                          }
+                          description={
+                            <div
+                              className={classnames(styles.messageContainer, {
+                                [styles.lastMessage]:
+                                  index === messages.length - 1,
+                                [styles.user]: item.role === "user",
+                              })}
+                            >
+                              <div className={styles.messageContent}>
+                                {item.id === "fake_ai_id" ? (
+                                  <p>
+                                    {loadingText}
+                                    {dayjs().diff(
+                                      loadingStartedAtRef.current ?? dayjs(),
+                                      "second"
+                                    ) > 30
+                                      ? `(${t("viona_is_thinking")})`
+                                      : ""}
+                                  </p>
+                                ) : (
+                                  <MarkdownContainer
+                                    content={
+                                      item.messageSubType === "error"
+                                        ? t("error_message")
+                                        : item.content
+                                    }
+                                  />
+                                )}
+                              </div>
+
+                              {(() => {
+                                const visibleTags = (item.extraTags ?? [])
+                                  .map((extraTag) => {
+                                    return supportTags.find(
+                                      (tag) => tag.key === extraTag.name
+                                    );
+                                  })
+                                  .filter(Boolean) as TSupportTag[];
+                                const inlineButtons = visibleTags.filter(
+                                  (tag) =>
+                                    !tag.style || tag.style === "inline-button"
+                                );
+
+                                return (
+                                  <>
+                                    {inlineButtons.length > 0 && (
                                       <div
-                                        style={{ width: "100%" }}
-                                        key={tag.key}
+                                        className={styles.inlineButtonWrapper}
                                       >
-                                        {tag.key === "upload-jd" ? (
-                                          <Upload.Dragger
-                                            beforeUpload={() => false}
-                                            onChange={async (fileInfo) => {
-                                              const formData = new FormData();
-                                              formData.append(
-                                                "file",
-                                                fileInfo.file as any
-                                              );
-                                              setIsUploadingJd(true);
-                                              const { code, data } =
-                                                await PostFormData(
-                                                  `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                                  formData
-                                                );
-                                              if (code === 0) {
-                                                sendMessage(data.resume);
-                                              } else {
-                                                message.error(
-                                                  t("upload_failed")
-                                                );
-                                              }
-                                              setIsUploadingJd(false);
-                                            }}
-                                            showUploadList={false}
-                                            accept=".doc,.docx,.pdf"
-                                            multiple={false}
-                                            style={{
-                                              background: "#e5e9ec",
-                                              color: "#3682fe",
-                                              marginBottom: 16,
-                                            }}
-                                          >
-                                            {isUploadingJd ? (
-                                              <>
-                                                <LoadingOutlined
-                                                  style={{ fontSize: 16 }}
-                                                />
-                                                <div
-                                                  className={styles.buttonHint}
+                                        {inlineButtons.map((tag) => {
+                                          const genButtonElement = (tag: {
+                                            title?: string;
+                                            key?: string;
+                                            handler?: (tag?: TExtraTag) => void;
+                                          }) => {
+                                            return (
+                                              <div
+                                                style={{ marginBottom: 16 }}
+                                                key={tag.key ?? tag.title}
+                                              >
+                                                <Button
+                                                  variant="filled"
+                                                  color="default"
+                                                  className={
+                                                    styles.inlineButton
+                                                  }
+                                                  onClick={() => {
+                                                    const extraTag = (
+                                                      item.extraTags ?? []
+                                                    ).find(
+                                                      (extraTag) =>
+                                                        extraTag.name ===
+                                                        tag.key
+                                                    );
+                                                    tag.handler?.(extraTag);
+                                                  }}
                                                 >
-                                                  {originalT("uploading")}
-                                                </div>
-                                              </>
-                                            ) : (
-                                              tag.title
+                                                  {tag.title}
+                                                </Button>
+                                              </div>
+                                            );
+                                          };
+
+                                          return tag.children
+                                            ? tag.children.map((tag) =>
+                                                genButtonElement(tag)
+                                              )
+                                            : genButtonElement(tag);
+                                        })}
+                                      </div>
+                                    )}
+                                    {visibleTags
+                                      .filter(
+                                        (tag) => tag.style === "block-button"
+                                      )
+                                      .map((tag) => (
+                                        <div
+                                          style={{ width: "100%" }}
+                                          key={tag.key}
+                                        >
+                                          {tag.key === "upload-jd" ? (
+                                            <Upload.Dragger
+                                              beforeUpload={() => false}
+                                              onChange={async (fileInfo) => {
+                                                const formData = new FormData();
+                                                formData.append(
+                                                  "file",
+                                                  fileInfo.file as any
+                                                );
+                                                setIsUploadingJd(true);
+                                                const { code, data } =
+                                                  await PostFormData(
+                                                    `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                                    formData
+                                                  );
+                                                if (code === 0) {
+                                                  sendMessage(data.resume);
+                                                } else {
+                                                  message.error(
+                                                    t("upload_failed")
+                                                  );
+                                                }
+                                                setIsUploadingJd(false);
+                                              }}
+                                              showUploadList={false}
+                                              accept=".doc,.docx,.pdf"
+                                              multiple={false}
+                                              style={{
+                                                background: "#e5e9ec",
+                                                color: "#3682fe",
+                                                marginBottom: 16,
+                                              }}
+                                            >
+                                              {isUploadingJd ? (
+                                                <>
+                                                  <LoadingOutlined
+                                                    style={{ fontSize: 16 }}
+                                                  />
+                                                  <div
+                                                    className={
+                                                      styles.buttonHint
+                                                    }
+                                                  >
+                                                    {originalT("uploading")}
+                                                  </div>
+                                                </>
+                                              ) : (
+                                                tag.title
+                                              )}
+                                            </Upload.Dragger>
+                                          ) : (
+                                            <Button
+                                              type="dashed"
+                                              style={{
+                                                width: "100%",
+                                                height: 56,
+                                                marginBottom: 16,
+                                                background: "#e5e9ec",
+                                                color: "#3682fe",
+                                              }}
+                                              onClick={() => {
+                                                const extraTag = (
+                                                  item.extraTags ?? []
+                                                ).find(
+                                                  (extraTag) =>
+                                                    extraTag.name === tag.key
+                                                );
+                                                tag.handler?.(extraTag);
+                                              }}
+                                            >
+                                              {tag.title}
+                                            </Button>
+                                          )}
+                                        </div>
+                                      ))}
+                                    {visibleTags
+                                      .filter(
+                                        (tag) =>
+                                          tag.style === "button-with-text"
+                                      )
+                                      .map((tag) => (
+                                        <div
+                                          key={tag.key}
+                                          className={styles.tagButtonWithText}
+                                        >
+                                          <div>
+                                            {t(
+                                              "interview_feedback_confirm_text"
                                             )}
-                                          </Upload.Dragger>
-                                        ) : (
+                                          </div>
                                           <Button
-                                            type="dashed"
-                                            style={{
-                                              width: "100%",
-                                              height: 56,
-                                              marginBottom: 16,
-                                              background: "#e5e9ec",
-                                              color: "#3682fe",
-                                            }}
+                                            variant="outlined"
+                                            color="primary"
+                                            style={{ marginTop: 8 }}
                                             onClick={() => {
                                               const extraTag = (
                                                 item.extraTags ?? []
@@ -1049,374 +1153,387 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                           >
                                             {tag.title}
                                           </Button>
-                                        )}
-                                      </div>
-                                    ))}
-                                  {visibleTags
-                                    .filter(
-                                      (tag) => tag.style === "button-with-text"
-                                    )
-                                    .map((tag) => (
-                                      <div
-                                        key={tag.key}
-                                        className={styles.tagButtonWithText}
-                                      >
-                                        <div>
-                                          {t("interview_feedback_confirm_text")}
                                         </div>
-                                        <Button
-                                          variant="outlined"
-                                          color="primary"
-                                          style={{ marginTop: 8 }}
-                                          onClick={() => {
-                                            const extraTag = (
-                                              item.extraTags ?? []
-                                            ).find(
-                                              (extraTag) =>
-                                                extraTag.name === tag.key
-                                            );
-                                            tag.handler?.(extraTag);
-                                          }}
-                                        >
-                                          {tag.title}
-                                        </Button>
-                                      </div>
-                                    ))}
-                                </>
-                              );
-                            })()}
-
-                            {(() => {
-                              const canEditing = canMessageEdit(item);
-
-                              const canDelete =
-                                !!profile?.is_admin &&
-                                item.messageType === "normal" &&
-                                !["fake_ai_id", "fake_user_id"].includes(
-                                  item.id
+                                      ))}
+                                  </>
                                 );
-                              // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+                              })()}
 
-                              const canRetry =
-                                isLast && item.messageSubType === "error";
+                              {(() => {
+                                const canEditing = canMessageEdit(item);
 
-                              return canEditing || canDelete || canRetry ? (
-                                <div className={styles.operationArea}>
-                                  {canEditing && (
-                                    <>
-                                      <Tooltip title={originalT("edit")}>
-                                        <EditOutlined
+                                const canDelete =
+                                  !!profile?.is_admin &&
+                                  item.messageType === "normal" &&
+                                  !["fake_ai_id", "fake_user_id"].includes(
+                                    item.id
+                                  );
+                                // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+
+                                const canRetry =
+                                  isLast && item.messageSubType === "error";
+
+                                return canEditing || canDelete || canRetry ? (
+                                  <div className={styles.operationArea}>
+                                    {canEditing && (
+                                      <>
+                                        <Tooltip title={originalT("edit")}>
+                                          <EditOutlined
+                                            onClick={() => {
+                                              setMarkdownEditMessageId(item.id);
+                                              setMarkdownEditMessageContent(
+                                                item.content
+                                              );
+                                            }}
+                                            ref={(e) => {
+                                              if (maxIdOfAIMessage === item.id)
+                                                editMessageTourElementRef.current =
+                                                  e;
+                                            }}
+                                          />
+                                        </Tooltip>
+                                        <Tooltip title={originalT("copy")}>
+                                          <CopyOutlined
+                                            onClick={async () => {
+                                              await copy(item.content);
+                                              message.success(
+                                                originalT("copied")
+                                              );
+                                            }}
+                                          />
+                                        </Tooltip>
+                                      </>
+                                    )}
+                                    {canDelete && (
+                                      <Tooltip title={originalT("delete")}>
+                                        <DeleteOutlined
                                           onClick={() => {
-                                            setMarkdownEditMessageId(item.id);
-                                            setMarkdownEditMessageContent(
-                                              item.content
-                                            );
-                                          }}
-                                          ref={(e) => {
-                                            if (maxIdOfAIMessage === item.id)
-                                              editMessageTourElementRef.current =
-                                                e;
+                                            if (
+                                              confirm(
+                                                t("confirm_delete_messages")
+                                              )
+                                            ) {
+                                              deleteMessage(parseInt(item.id));
+                                            }
                                           }}
                                         />
                                       </Tooltip>
-                                      <Tooltip title={originalT("copy")}>
-                                        <CopyOutlined
+                                    )}
+                                    {canRetry && (
+                                      <Tooltip title={originalT("retry")}>
+                                        <ReloadOutlined
                                           onClick={async () => {
-                                            await copy(item.content);
-                                            message.success(
-                                              originalT("copied")
-                                            );
+                                            if (
+                                              confirm(
+                                                t("confirm_retry_message")
+                                              )
+                                            ) {
+                                              retryMessage(parseInt(item.id));
+                                            }
                                           }}
                                         />
                                       </Tooltip>
-                                    </>
-                                  )}
-                                  {canDelete && (
-                                    <Tooltip title={originalT("delete")}>
-                                      <DeleteOutlined
-                                        onClick={() => {
-                                          if (
-                                            confirm(
-                                              t("confirm_delete_messages")
-                                            )
-                                          ) {
-                                            deleteMessage(parseInt(item.id));
-                                          }
-                                        }}
-                                      />
-                                    </Tooltip>
-                                  )}
-                                  {canRetry && (
-                                    <Tooltip title={originalT("retry")}>
-                                      <ReloadOutlined
-                                        onClick={async () => {
-                                          if (
-                                            confirm(t("confirm_retry_message"))
-                                          ) {
-                                            retryMessage(parseInt(item.id));
-                                          }
-                                        }}
-                                      />
-                                    </Tooltip>
-                                  )}
-                                </div>
-                              ) : null;
-                            })()}
-                          </div>
-                        }
-                      />
-                    </List.Item>
-                  );
-                }}
-              />
-              <div ref={messagesEndRef} />
-            </div>
-
-            <div className={styles.footer}>
-              <div className={classnames("flex-center")}>
-                {genPredefinedButton()}
-              </div>
-              <div className={classnames(styles.inputAreaContainer)}>
-                <div className={styles.inputPanel}>
-                  {textInputVisible ? (
-                    <>
-                      <Input.TextArea
-                        value={inputValue}
-                        onChange={(e) => {
-                          setInputValue(e.target.value);
-                        }}
-                        placeholder={t("reply_viona_directly_or_edit")}
-                        style={{
-                          flex: 1,
-                          resize: "none",
-                          overflow: "hidden",
-                        }}
-                        onCompositionStartCapture={() =>
-                          (isCompositingRef.current = true)
-                        }
-                        onCompositionEndCapture={() =>
-                          (isCompositingRef.current = false)
-                        }
-                        onPressEnter={(e) => {
-                          if (
-                            !e.shiftKey &&
-                            !isCompositingRef.current &&
-                            canSubmit()
-                          ) {
-                            e.preventDefault();
-                            submit();
+                                    )}
+                                  </div>
+                                ) : null;
+                              })()}
+                            </div>
                           }
-                        }}
-                        autoSize={{
-                          minRows: 2,
-                          maxRows: 6,
-                        }}
-                      />
-                      <div className={styles.audioButtonContainer}>
-                        <SendOutlined
-                          onClick={() => submit()}
+                        />
+                      </List.Item>
+                    );
+                  }}
+                />
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className={styles.footer}>
+                <div className={classnames("flex-center")}>
+                  {genPredefinedButton()}
+                </div>
+                <div className={classnames(styles.inputAreaContainer)}>
+                  <div className={styles.inputPanel}>
+                    {textInputVisible ? (
+                      <>
+                        <Input.TextArea
+                          value={inputValue}
+                          onChange={(e) => {
+                            setInputValue(e.target.value);
+                          }}
+                          placeholder={t("reply_viona_directly_or_edit")}
                           style={{
-                            fontSize: 24,
-                            color: canSubmit() ? "#3682fe" : "#333",
+                            flex: 1,
+                            resize: "none",
+                            overflow: "hidden",
+                          }}
+                          onCompositionStartCapture={() =>
+                            (isCompositingRef.current = true)
+                          }
+                          onCompositionEndCapture={() =>
+                            (isCompositingRef.current = false)
+                          }
+                          onPressEnter={(e) => {
+                            if (
+                              !e.shiftKey &&
+                              !isCompositingRef.current &&
+                              canSubmit()
+                            ) {
+                              e.preventDefault();
+                              submit();
+                            }
+                          }}
+                          autoSize={{
+                            minRows: 2,
+                            maxRows: 6,
                           }}
                         />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className={classnames(styles.volumeHistoryContainer, {
-                          [styles.active]: isRecording,
-                        })}
-                      >
-                        {volumeHistory.map((volume, index) => {
-                          return (
-                            <div
-                              key={index}
-                              className={styles.volumeHistoryItem}
-                              style={{
-                                height: 4 + Math.min(60, volume * 100),
-                              }}
-                            />
-                          );
-                        })}
-                      </div>
-                      <div className={styles.audioButtonContainer}>
-                        {isRecording ? (
-                          <XFilled
-                            style={{ fontSize: 24, color: "#3682fe" }}
-                            onClick={() => {
-                              if (isTranscribing || !isStartRecordingOutside) {
-                                return;
-                              }
-                              endTranscription();
+                        <div className={styles.audioButtonContainer}>
+                          <SendOutlined
+                            onClick={() => submit()}
+                            style={{
+                              fontSize: 24,
+                              color: canSubmit() ? "#3682fe" : "#333",
                             }}
                           />
-                        ) : isTranscribing ? (
-                          <LoadingOutlined
-                            style={{ fontSize: 24, color: "#3682fe" }}
-                          />
-                        ) : (
-                          <AudioOutlined
-                            style={{ fontSize: 24 }}
-                            onClick={() => startTranscription()}
-                          />
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          className={classnames(styles.volumeHistoryContainer, {
+                            [styles.active]: isRecording,
+                          })}
+                        >
+                          {volumeHistory.map((volume, index) => {
+                            return (
+                              <div
+                                key={index}
+                                className={styles.volumeHistoryItem}
+                                style={{
+                                  height: 4 + Math.min(60, volume * 100),
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className={styles.audioButtonContainer}>
+                          {isRecording ? (
+                            <XFilled
+                              style={{ fontSize: 24, color: "#3682fe" }}
+                              onClick={() => {
+                                if (
+                                  isTranscribing ||
+                                  !isStartRecordingOutside
+                                ) {
+                                  return;
+                                }
+                                endTranscription();
+                              }}
+                            />
+                          ) : isTranscribing ? (
+                            <LoadingOutlined
+                              style={{ fontSize: 24, color: "#3682fe" }}
+                            />
+                          ) : (
+                            <AudioOutlined
+                              style={{ fontSize: 24 }}
+                              onClick={() => startTranscription()}
+                            />
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
 
-                <div className={styles.divider} />
-                <div className={styles.switchButtonContainer}>
-                  {textInputVisible ? (
-                    <AudioOutlined
-                      style={{ fontSize: 24 }}
-                      onClick={() => setTextInputVisible(false)}
-                    />
-                  ) : (
-                    <EditOutlined
-                      style={{ fontSize: 24 }}
-                      onClick={() => setTextInputVisible(true)}
-                    />
-                  )}
+                  <div className={styles.divider} />
+                  <div className={styles.switchButtonContainer}>
+                    {textInputVisible ? (
+                      <AudioOutlined
+                        style={{ fontSize: 24 }}
+                        onClick={() => setTextInputVisible(false)}
+                      />
+                    ) : (
+                      <EditOutlined
+                        style={{ fontSize: 24 }}
+                        onClick={() => setTextInputVisible(true)}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className={styles.voiceInputHint}>
+                  {textInputVisible || (isRecording && isStartRecordingOutside)
+                    ? "\u00A0"
+                    : isRecording && !isStartRecordingOutside
+                    ? "Release Ctrl to stop speaking"
+                    : "Press and hold Ctrl to speak"}
                 </div>
               </div>
-              <div className={styles.voiceInputHint}>
-                {textInputVisible || (isRecording && isStartRecordingOutside)
-                  ? "\u00A0"
-                  : isRecording && !isStartRecordingOutside
-                  ? "Release Ctrl to stop speaking"
-                  : "Press and hold Ctrl to speak"}
-              </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        <FloatButton onClick={() => openSurvey()} type="primary" />
+          <FloatButton onClick={() => openSurvey()} type="primary" />
 
-        {mode === "utils" && (
-          <JobRequirementFormDrawer
-            open={showJobRequirementFormDrawer}
-            onClose={() => handleJobRequirementFormDrawerOpen(false)}
-            group={jobRequirementFormType}
-            onOk={(result: string) => {
-              if (!isLoading) {
-                sendJobRequirementForm(result);
-                handleJobRequirementFormDrawerOpen(false);
-              }
-            }}
-            userRole="staff"
-          />
-        )}
-
-        <Modal
-          open={selectOptionsModalOpen}
-          footer={null}
-          destroyOnClose
-          style={{
-            top: 0,
-            maxWidth: "100vw",
-            height: "100vh",
-          }}
-          width="100vw"
-          onCancel={() => setSelectOptionsModalOpen(false)}
-          title={
-            {
-              high_level_responsibility: t("extract_high_level_responsibility"),
-              day_to_day_tasks: t("extract_day_to_day_tasks"),
-              icp: t("extract_icp"),
-              "success-metric": t("extract_success_metric"),
-            }[selectOptionsType ?? "icp"]
-          }
-          closable={false}
-          maskClosable={false}
-        >
-          {job && selectOptionsType && (
-            <div
-              style={{
-                height: "calc(100vh - 72px)",
-                overflow: "auto",
+          {mode === "utils" && (
+            <JobRequirementFormDrawer
+              open={showJobRequirementFormDrawer}
+              onClose={() => handleJobRequirementFormDrawerOpen(false)}
+              group={jobRequirementFormType}
+              onOk={(result: string) => {
+                if (!isLoading) {
+                  sendJobRequirementForm(result);
+                  handleJobRequirementFormDrawerOpen(false);
+                }
               }}
-            >
-              <SelectOptionsForm
-                job={job}
-                type={selectOptionsType}
-                onOk={(result) => {
-                  sendMessage(result);
-                  setSelectOptionsModalOpen(false);
+              userRole="staff"
+            />
+          )}
+
+          <Modal
+            open={selectOptionsModalOpen}
+            footer={null}
+            destroyOnClose
+            style={{
+              top: 0,
+              maxWidth: "100vw",
+              height: "100vh",
+            }}
+            width="100vw"
+            onCancel={() => setSelectOptionsModalOpen(false)}
+            title={
+              {
+                high_level_responsibility: t(
+                  "extract_high_level_responsibility"
+                ),
+                day_to_day_tasks: t("extract_day_to_day_tasks"),
+                icp: t("extract_icp"),
+                "success-metric": t("extract_success_metric"),
+              }[selectOptionsType ?? "icp"]
+            }
+            closable={false}
+            maskClosable={false}
+          >
+            {job && selectOptionsType && (
+              <div
+                style={{
+                  height: "calc(100vh - 72px)",
+                  overflow: "auto",
                 }}
-                onClose={() => {
-                  setSelectOptionsModalOpen(false);
+              >
+                <SelectOptionsForm
+                  job={job}
+                  type={selectOptionsType}
+                  onOk={(result) => {
+                    sendMessage(result);
+                    setSelectOptionsModalOpen(false);
+                  }}
+                  onClose={() => {
+                    setSelectOptionsModalOpen(false);
+                  }}
+                />
+              </div>
+            )}
+          </Modal>
+
+          <Modal
+            open={!!markdownEditMessageId}
+            onCancel={() => {
+              setMarkdownEditMessageId(undefined);
+            }}
+            width={"80vw"}
+            getContainer={document.body}
+            destroyOnClose
+            centered
+            footer={[
+              <Button
+                key="cancel"
+                onClick={() => setMarkdownEditMessageId(undefined)}
+              >
+                {originalT("cancel")}
+              </Button>,
+              <Button
+                key="no_edit"
+                type="primary"
+                onClick={() => {
+                  setMarkdownEditMessageId(undefined);
+                  sendMessage(t("no_edits"));
+                }}
+              >
+                {t("no_edits")}
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                onClick={() => {
+                  setMarkdownEditMessageId(undefined);
+                  sendMessage(markdownEditMessageContent, {
+                    metadata: {
+                      before_text: `#### ${t("edit_message_hint")}\n\n`,
+                    },
+                  });
+                }}
+              >
+                {originalT("submit")}
+              </Button>,
+            ]}
+          >
+            <>
+              <div style={{ color: "#3682fe", marginBottom: 12, fontSize: 16 }}>
+                {t("tips")}
+              </div>
+              <MarkdownEditor
+                value={markdownEditMessageContent}
+                onChange={(md) => setMarkdownEditMessageContent(md)}
+              />
+            </>
+          </Modal>
+
+          <Tour
+            open={editMessageTourOpen}
+            onClose={() => {
+              localStorage.setItem(EditMessageGuideKey, Date.now().toString());
+              setEditMessageTourOpen(false);
+            }}
+            steps={EditMessageTourSteps}
+            closable={false}
+          />
+        </div>
+      </div>
+
+      {sideDocumentVisible && (
+        <div className={styles.sideDocument}>
+          <div className={styles.sideDocumentHeader}>
+            <div className={styles.sideDocumentTitle}>
+              {t(sideDocumentType ?? "")}
+            </div>
+            <div className={styles.sideDocumentOperations}>
+              <EditOutlined onClick={() => setIsEditingSideDocument(true)} />
+              <CopyOutlined
+                onClick={async () => {
+                  await copy(sideDocumentContent);
+                  message.success(originalT("copied"));
                 }}
               />
+              <DownloadOutlined
+                onClick={() =>
+                  downloadText({
+                    name: `${t(sideDocumentType ?? "")}.md`,
+                    content: sideDocumentContent,
+                  })
+                }
+              />
+              <div className={styles.sideDocumentOperationSeparator} />
+              <CloseOutlined onClick={() => setSideDocumentVisible(false)} />
             </div>
-          )}
-        </Modal>
-
-        <Modal
-          open={!!markdownEditMessageId}
-          onCancel={() => {
-            setMarkdownEditMessageId(undefined);
-          }}
-          width={"80vw"}
-          getContainer={document.body}
-          destroyOnClose
-          centered
-          footer={[
-            <Button
-              key="cancel"
-              onClick={() => setMarkdownEditMessageId(undefined)}
-            >
-              {originalT("cancel")}
-            </Button>,
-            <Button
-              key="no_edit"
-              type="primary"
-              onClick={() => {
-                setMarkdownEditMessageId(undefined);
-                sendMessage(t("no_edits"));
-              }}
-            >
-              {t("no_edits")}
-            </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              onClick={() => {
-                setMarkdownEditMessageId(undefined);
-                sendMessage(markdownEditMessageContent, {
-                  metadata: {
-                    before_text: `#### ${t("edit_message_hint")}\n\n`,
-                  },
-                });
-              }}
-            >
-              {originalT("submit")}
-            </Button>,
-          ]}
-        >
-          <>
-            <div style={{ color: "#3682fe", marginBottom: 12, fontSize: 16 }}>
-              {t("tips")}
-            </div>
-            <MarkdownEditor
-              value={markdownEditMessageContent}
-              onChange={(md) => setMarkdownEditMessageContent(md)}
-            />
-          </>
-        </Modal>
-
-        <Tour
-          open={editMessageTourOpen}
-          onClose={() => {
-            localStorage.setItem(EditMessageGuideKey, Date.now().toString());
-            setEditMessageTourOpen(false);
-          }}
-          steps={EditMessageTourSteps}
-          closable={false}
-        />
-      </div>
+          </div>
+          <EditableMarkdown
+            className={styles.sideDocumentContent}
+            isEditing={isEditingSideDocument}
+            value={sideDocumentContent}
+            onSubmit={(md) => updateJrdContextDocument(md)}
+            onCancel={() => setIsEditingSideDocument(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

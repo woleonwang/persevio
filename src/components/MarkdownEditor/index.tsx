@@ -36,7 +36,7 @@ const MarkdownEditor: React.FC<IProps> = (props) => {
   }, [value]);
 
   return (
-    <div style={style}>
+    <div style={style} className={styles.mdEditorContainer}>
       <MDXEditor
         ref={markdownRef}
         contentEditableClassName={styles.mdEditor}
