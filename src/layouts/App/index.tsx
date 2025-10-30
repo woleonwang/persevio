@@ -1,8 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 
 import {
-  LeftCircleFilled,
-  RightCircleFilled,
   FileDoneOutlined,
   SettingOutlined,
   DeleteOutlined,
