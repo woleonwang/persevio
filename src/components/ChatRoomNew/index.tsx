@@ -518,6 +518,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   const initConversation = async () => {
     needScrollToBottom.current = true;
+    setSideDocumentVisible(false);
+    setIsEditingSideDocument(false);
     await fetchJob();
     await fetchMessages();
   };
