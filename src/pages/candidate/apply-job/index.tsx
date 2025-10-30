@@ -159,7 +159,7 @@ const ApplyJob: React.FC = () => {
                         <li>
                           <b>Chat On Your Terms</b>:Complete your chat anytime,
                           anywhere. It's text-based, instant, and requires no
-                          scheduling.。
+                          scheduling.
                         </li>
                         <li>
                           <b>Get Noticed Faster</b>: Your application gets

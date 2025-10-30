@@ -13,6 +13,24 @@
   text-rendering: optimizeLegibility;
 }
 
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+* {
+  font-family: inherit;
+  scrollbar-color: transparent transparent;
+}
+
+:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+
 @font-face {
   font-family: "Sora";
   src: url("/sora-regular.ttf");

@@ -280,13 +280,7 @@ const AppLayout = () => {
                         : undefined
                     }
                   >
-                    <Icon
-                      icon={item.img}
-                      style={{
-                        fontSize: 20,
-                        color: isActive ? "#3682fe" : "#949DAC",
-                      }}
-                    />
+                    <Icon icon={item.img} style={{ fontSize: 20 }} />
                     {item.badge && (
                       <Badge
                         count={item.badge}
@@ -344,20 +338,16 @@ const AppLayout = () => {
             {FOOTER.map((item) => {
               const isActive = currentPath.startsWith(item.path);
               return (
-                <div
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon
-                    icon={item.img}
-                    style={{
-                      fontSize: 20,
-                      color: isActive ? "#3682fe" : "#949DAC",
-                    }}
-                  />
+                <div className={styles.menuItemContainer}>
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon icon={item.img} style={{ fontSize: 20 }} />
+                  </div>
                 </div>
               );
             })}
@@ -459,21 +449,17 @@ const AppLayout = () => {
             {FOOTER.map((item) => {
               const isActive = currentPath.startsWith(item.path);
               return (
-                <div
-                  className={`${styles.menuItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                >
-                  <Icon
-                    icon={item.img}
-                    style={{
-                      fontSize: 20,
-                      color: isActive ? "#3682fe" : "#949DAC",
-                    }}
-                  />
-                  <span style={{ marginLeft: 16 }}>{item.title}</span>
+                <div className={styles.menuItemContainer}>
+                  <div
+                    className={`${styles.menuItem} ${
+                      isActive ? styles.active : ""
+                    }`}
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                  >
+                    <Icon icon={item.img} style={{ fontSize: 20 }} />
+                    <span style={{ marginLeft: 16 }}>{item.title}</span>
+                  </div>
                 </div>
               );
             })}
