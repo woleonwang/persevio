@@ -21,6 +21,7 @@ import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
+import CollapseIcon from "@/assets/icons/collaspe";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -258,21 +259,23 @@ const AppLayout = () => {
     <div className={styles.container}>
       {menuCollapse || collapseForDrawer ? (
         <div className={classnames(styles.menu, styles.collapse)}>
-          <RightCircleFilled
-            className={styles.collapseIcon}
-            onClick={() => setMenuCollapse(false)}
-          />
-          <div className={styles.menuContent}>
-            <div className={styles.menuItemWrapper}>
-              {MENU.map((item) => {
-                const isActive = item.path && currentPath.startsWith(item.path);
+          <div className={styles.header}>
+            <Icon
+              icon={<CollapseIcon />}
+              className={styles.collapseIcon}
+              onClick={() => setMenuCollapse(false)}
+            />
+          </div>
+          <div className={styles.menuItemWrapper}>
+            {MENU.map((item) => {
+              const isActive = item.path && currentPath.startsWith(item.path);
 
-                const menuNode: ReactNode = (
+              const menuNode: ReactNode = (
+                <div className={styles.menuItemContainer} key={item.path}>
                   <div
                     className={`${styles.menuItem} ${
                       isActive ? styles.active : ""
                     }`}
-                    key={item.path}
                     onClick={
                       item.path
                         ? () => navigate(item.path as string)
@@ -298,189 +301,184 @@ const AppLayout = () => {
                       />
                     )}
                   </div>
-                );
+                </div>
+              );
 
-                if (!item.children) return menuNode;
+              if (!item.children) return menuNode;
 
-                return (
-                  <Popover
-                    placement="rightTop"
-                    rootClassName={styles.collapseSubMenuContainer}
-                    // openClassName={styles.collapseSubMenuContainer}
-                    // className={styles.collapseSubMenuContainer}
-                    content={
-                      <div>
-                        {item.children.map((child) => {
-                          return (
-                            <div
-                              className={`${styles.subMenuItem} ${
-                                child.active ? styles.active : ""
-                              }`}
-                              key={child.path}
-                              onClick={() => navigate(child.path)}
-                            >
-                              {child.title}
-                              {child.badge && (
-                                <Badge
-                                  count={child.badge}
-                                  style={{ marginLeft: 8 }}
-                                />
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    }
-                    key={item.title}
-                  >
-                    {menuNode}
-                  </Popover>
-                );
-              })}
-            </div>
-            <div>
-              {FOOTER.map((item) => {
-                const isActive = currentPath.startsWith(item.path);
-                return (
-                  <div
-                    className={`${styles.menuItem} ${
-                      isActive ? styles.active : ""
-                    }`}
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <Icon
-                      icon={item.img}
-                      style={{
-                        fontSize: 20,
-                        color: isActive ? "#3682fe" : "#949DAC",
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+              return (
+                <Popover
+                  placement="rightTop"
+                  rootClassName={styles.collapseSubMenuContainer}
+                  // openClassName={styles.collapseSubMenuContainer}
+                  // className={styles.collapseSubMenuContainer}
+                  content={
+                    <div>
+                      {item.children.map((child) => {
+                        return (
+                          <div
+                            className={`${styles.subMenuItem} ${
+                              child.active ? styles.active : ""
+                            }`}
+                            key={child.path}
+                            onClick={() => navigate(child.path)}
+                          >
+                            {child.title}
+                            {child.badge && (
+                              <Badge
+                                count={child.badge}
+                                style={{ marginLeft: 8 }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  }
+                  key={item.title}
+                >
+                  {menuNode}
+                </Popover>
+              );
+            })}
+          </div>
+          <div>
+            {FOOTER.map((item) => {
+              const isActive = currentPath.startsWith(item.path);
+              return (
+                <div
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.active : ""
+                  }`}
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Icon
+                    icon={item.img}
+                    style={{
+                      fontSize: 20,
+                      color: isActive ? "#3682fe" : "#949DAC",
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
         <div className={styles.menu}>
-          <LeftCircleFilled
-            className={styles.collapseIcon}
-            onClick={() => setMenuCollapse(true)}
-          />
-          <div className={styles.menuContent}>
-            <img src={logo} style={{ width: "80%" }} />
-            <div className={styles.menuItemWrapper}>
-              {MENU.map((item) => {
-                const isActive = item.path && currentPath.startsWith(item.path);
-                return (
-                  <div key={item.title}>
-                    <div
-                      className={`${styles.menuItem} ${
-                        isActive ? styles.active : ""
-                      }`}
-                      onClick={
-                        item.path
-                          ? () => navigate(item.path as string)
-                          : undefined
-                      }
-                    >
-                      <Icon
-                        icon={item.img}
-                        style={{
-                          fontSize: 20,
-                          color: isActive ? "#3682fe" : "#949DAC",
-                        }}
-                      />
-                      <span style={{ marginLeft: 16 }}>{item.title}</span>
-                      {item.badge && (
-                        <Badge count={item.badge} style={{ marginLeft: 8 }} />
-                      )}
-                      {item.key === "jobs" && (
-                        <div style={{ position: "absolute", right: 20 }}>
-                          <SearchOutlined
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSearchKeyword("");
-                              setShowSearch((current) => !current);
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    {item.children && (
-                      <div className={styles.subMenuContainer}>
-                        {showSearch && (
-                          <div style={{ padding: "0 16px" }}>
-                            <Input
-                              placeholder={t("app_layout.search_placeholder")}
-                              onChange={(e) => {
-                                setSearchKeyword(e.target.value);
-                              }}
-                              value={searchKeyword}
-                              allowClear
-                            />
-                          </div>
-                        )}
-                        {item.children.map((child) => {
-                          return (
-                            <div
-                              className={`${styles.subMenuItem} ${
-                                child.active ? styles.active : ""
-                              }`}
-                              key={child.path}
-                              onClick={() => navigate(child.path)}
-                            >
-                              <div>{child.title}</div>
-                              {!!child.onRemove && (
-                                <div
-                                  className={styles.deleteIcon}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    child.onRemove?.();
-                                  }}
-                                >
-                                  <DeleteOutlined />
-                                </div>
-                              )}
-                              {child.badge && (
-                                <Badge
-                                  count={child.badge}
-                                  style={{ marginLeft: 8 }}
-                                />
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div>
-              {FOOTER.map((item) => {
-                const isActive = currentPath.startsWith(item.path);
-                return (
+          <div className={styles.header}>
+            <img src={logo} className={styles.logo} />
+            <Icon
+              icon={<CollapseIcon />}
+              className={styles.collapseIcon}
+              onClick={() => setMenuCollapse(true)}
+            />
+          </div>
+          <div className={styles.menuItemWrapper}>
+            {MENU.map((item) => {
+              const isActive = item.path && currentPath.startsWith(item.path);
+              return (
+                <div className={styles.menuItemContainer} key={item.title}>
                   <div
                     className={`${styles.menuItem} ${
                       isActive ? styles.active : ""
                     }`}
-                    key={item.path}
-                    onClick={() => navigate(item.path)}
+                    onClick={
+                      item.path
+                        ? () => navigate(item.path as string)
+                        : undefined
+                    }
                   >
-                    <Icon
-                      icon={item.img}
-                      style={{
-                        fontSize: 20,
-                        color: isActive ? "#3682fe" : "#949DAC",
-                      }}
-                    />
+                    <Icon icon={item.img} style={{ fontSize: 20 }} />
                     <span style={{ marginLeft: 16 }}>{item.title}</span>
+                    {item.badge && (
+                      <Badge count={item.badge} style={{ marginLeft: 8 }} />
+                    )}
+                    {item.key === "jobs" && (
+                      <div style={{ position: "absolute", right: 20 }}>
+                        <SearchOutlined
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSearchKeyword("");
+                            setShowSearch((current) => !current);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-                );
-              })}
-            </div>
+                  {item.children && (
+                    <div className={styles.subMenuContainer}>
+                      {showSearch && (
+                        <div style={{ marginBottom: 8 }}>
+                          <Input
+                            placeholder={t("app_layout.search_placeholder")}
+                            onChange={(e) => {
+                              setSearchKeyword(e.target.value);
+                            }}
+                            value={searchKeyword}
+                            allowClear
+                          />
+                        </div>
+                      )}
+                      {item.children.map((child) => {
+                        return (
+                          <div
+                            className={`${styles.subMenuItem} ${
+                              child.active ? styles.active : ""
+                            }`}
+                            key={child.path}
+                            onClick={() => navigate(child.path)}
+                          >
+                            <div>{child.title}</div>
+                            {!!child.onRemove && (
+                              <div
+                                className={styles.deleteIcon}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  child.onRemove?.();
+                                }}
+                              >
+                                <DeleteOutlined />
+                              </div>
+                            )}
+                            {child.badge && (
+                              <Badge
+                                count={child.badge}
+                                style={{ marginLeft: 8 }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div>
+            {FOOTER.map((item) => {
+              const isActive = currentPath.startsWith(item.path);
+              return (
+                <div
+                  className={`${styles.menuItem} ${
+                    isActive ? styles.active : ""
+                  }`}
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Icon
+                    icon={item.img}
+                    style={{
+                      fontSize: 20,
+                      color: isActive ? "#3682fe" : "#949DAC",
+                    }}
+                  />
+                  <span style={{ marginLeft: 16 }}>{item.title}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
