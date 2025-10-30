@@ -30,7 +30,7 @@ const ApplyJob: React.FC = () => {
   // const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
-    const token = getQuery("token");
+    const token = getQuery("candidate_token");
     if (token) {
       localStorage.setItem("candidate_token", token);
     }
