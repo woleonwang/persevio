@@ -53,17 +53,13 @@ const JobCreate = () => {
             size={144}
             style={{ background: "none" }}
           /> */}
+
           <video
             src={VionaVideo}
             autoPlay
             loop
             muted
-            style={{
-              width: 144,
-              height: 144,
-              borderRadius: "50%",
-              margin: "24px 0 16px 0",
-            }}
+            className={styles.vionaVideo}
           />
           <div className={styles.vionaName}>Viona</div>
           <div className={styles.vionaTitle}>{t("viona_title")}</div>
