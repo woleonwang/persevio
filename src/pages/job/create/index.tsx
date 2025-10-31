@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { Avatar, Button, Input, message } from "antd";
-import { SendOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
