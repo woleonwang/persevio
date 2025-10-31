@@ -236,6 +236,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     }
   }, [isRecording]);
 
+  useEffect(() => {
+    if (jrdContextDocumentJsonRef.current) {
+      setSideDocumentContent(
+        jrdContextDocumentJsonRef.current[sideDocumentType ?? ""] ?? ""
+      );
+    }
+  }, [job]);
+
   const t = (key: string) => {
     return originalT(`chat.${key}`);
   };
@@ -618,7 +626,6 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     if (code === 0) {
       message.success(originalT("submit_succeed"));
       setIsEditingSideDocument(false);
-      setSideDocumentContent(content);
       fetchJob();
     }
   };
