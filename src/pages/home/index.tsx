@@ -261,7 +261,13 @@ const Home = () => {
   return (
     <HomeHeader>
       <div className={styles.bannerContainer}>
-        <video src={bannerVideo} autoPlay loop className={styles.bannerVideo} />
+        <video
+          src={bannerVideo}
+          autoPlay
+          loop
+          className={styles.bannerVideo}
+          muted
+        />
         <div className={styles.title}>
           <div>
             <span className={styles.green}>Hi,</span> I am Viona.

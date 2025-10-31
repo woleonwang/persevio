@@ -11,6 +11,9 @@ import VionaAvatar from "@/assets/viona-avatar-with-bg.png";
 
 import styles from "./style.module.less";
 import { copy } from "@/utils";
+import Share from "@/assets/icons/share";
+import Icon from "@/components/Icon";
+import Send from "@/assets/icons/send";
 
 const JobCreate = () => {
   const { fetchJobs } = globalStore;
@@ -75,7 +78,7 @@ const JobCreate = () => {
             }}
           >
             {t("share_link")}
-            <SendOutlined className={styles.shareLinkIcon} />
+            <Icon icon={<Share />} className={styles.shareLinkIcon} />
           </div>
         </div>
       </div>
@@ -92,8 +95,8 @@ const JobCreate = () => {
                 [styles.disabled]: disabled,
               })}
               icon={
-                <SendOutlined
-                  onClick={createJob}
+                <Icon
+                  icon={<Send />}
                   className={classnames(styles.suffixIcon, {
                     [styles.disabled]: disabled,
                   })}
