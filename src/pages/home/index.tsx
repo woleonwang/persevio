@@ -1,4 +1,5 @@
 import styles from "./style.module.less";
+import bannerVideo from "../../assets/banner-video.mp4";
 import logo from "../../assets/logo.png";
 import block1 from "../../assets/block-1.png";
 import calendarCheck from "../../assets/calendar-check.png";
@@ -260,6 +261,7 @@ const Home = () => {
   return (
     <HomeHeader>
       <div className={styles.bannerContainer}>
+        <video src={bannerVideo} autoPlay loop className={styles.bannerVideo} />
         <div className={styles.title}>
           <div>
             <span className={styles.green}>Hi,</span> I am Viona.

@@ -5,11 +5,15 @@
   padding-left: 20px;
   width: 1300px;
   height: 650px;
-  background-image: url("/banner-bg.png");
-  background-position-x: right;
-  background-repeat: no-repeat;
-  background-size: contain;
   position: relative;
+
+  .bannerVideo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: -1;
+  }
 
   .title {
     font-size: 56px;
