@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import { Avatar, Button, Input, message } from "antd";
+import { Button, Input, message } from "antd";
 import { useNavigate } from "react-router";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
-import VionaAvatar from "@/assets/viona-avatar-with-bg.png";
 import VionaVideo from "@/assets/banner-video.mp4";
 
 import styles from "./style.module.less";
