@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
 import VionaAvatar from "@/assets/viona-avatar-with-bg.png";
+import VionaVideo from "@/assets/banner-video.mp4";
 
 import styles from "./style.module.less";
 import { copy } from "@/utils";
@@ -48,10 +49,22 @@ const JobCreate = () => {
     <div className={styles.container}>
       <div className={classnames("flex-center")}>
         <div className={styles.vionaContainer}>
-          <Avatar
+          {/* <Avatar
             icon={<img src={VionaAvatar} />}
             size={144}
             style={{ background: "none" }}
+          /> */}
+          <video
+            src={VionaVideo}
+            autoPlay
+            loop
+            muted
+            style={{
+              width: 144,
+              height: 144,
+              borderRadius: "50%",
+              margin: "24px 0 16px 0",
+            }}
           />
           <div className={styles.vionaName}>Viona</div>
           <div className={styles.vionaTitle}>{t("viona_title")}</div>

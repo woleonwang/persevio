@@ -499,6 +499,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         "realities-done",
         "responsibilities-done",
         "icp-done",
+        "summary-draft",
       ] as TExtraTagName[]
     ).map((key) => {
       return {

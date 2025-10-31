@@ -31,6 +31,7 @@ export type TExtraTagName =
   | "realities-done"
   | "responsibilities-done"
   | "icp-done"
+  | "summary-draft"
   | TDoneTag
   // 前端生成
   | "open-link" // 打开新页面
