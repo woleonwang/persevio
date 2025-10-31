@@ -272,6 +272,7 @@ const JobApplies = () => {
                 </div>
                 {recommendReport || isEditingRecommendReport ? (
                   <EditableMarkdown
+                    style={{ padding: 20 }}
                     value={recommendReport}
                     isEditing={isEditingRecommendReport}
                     onSubmit={async (value) => {

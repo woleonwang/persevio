@@ -46,7 +46,10 @@ const EditableMarkdown = (props: IProps) => {
       </div>
     </div>
   ) : (
-    <div className={classnames(styles.container, className)} style={style}>
+    <div
+      className={classnames(styles.container, styles.autoScroll, className)}
+      style={style}
+    >
       <MarkdownContainer content={value} />
     </div>
   );

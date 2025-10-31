@@ -1,7 +1,22 @@
 .mdEditorContainer {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   :global {
     .mdxeditor {
       flex: auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .mdxeditor-toolbar {
+      flex: none;
+    }
+
+    .mdxeditor-root-contenteditable {
+      overflow: auto;
     }
   }
 }
