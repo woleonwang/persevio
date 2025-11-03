@@ -170,6 +170,13 @@ const JobDocument = (props: IProps) => {
           </div>
         )}
       </div>
+      {chatType === "jobRequirement" && (
+        <div className={styles.hint}>
+          When Viona introduces this role to candiate, she will reference the
+          information in this document. You can edit the information here to
+          control how Viona introduces this role to thee candidate
+        </div>
+      )}
       <div className={styles.docContent}>
         {isEditing ? (
           <MarkdownEditor
