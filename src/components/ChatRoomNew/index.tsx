@@ -57,6 +57,10 @@ import globalStore from "@/store/global";
 import JrdSteps from "./components/JrdSteps";
 import JobRequirementForm from "./components/JobRequirementForm";
 import EditableMarkdown from "../EditableMarkdown";
+import Edit from "@/assets/icons/edit";
+import Icon from "../Icon";
+import Pause from "@/assets/icons/pause";
+import Send from "@/assets/icons/send";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -80,9 +84,13 @@ type TSupportTag = {
   style?: "inline-button" | "block-button" | "button-with-text";
 };
 
-const RECORD_HISTORY_DURATION_SECONDS = 20;
+const RECORD_HISTORY_DURATION_SECONDS = 6;
+const POINTS_PER_SECOND = 10;
 const getInitialVolumeHistory = () => {
-  return Array.from({ length: RECORD_HISTORY_DURATION_SECONDS * 5 }, () => 0);
+  return Array.from(
+    { length: RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND },
+    () => 0
+  );
 };
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
@@ -223,10 +231,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       setTextInputVisible(false);
       const interval = setInterval(() => {
         setVolumeHistory((prev) => [
-          ...prev.slice(-(RECORD_HISTORY_DURATION_SECONDS * 5 - 1)),
+          ...prev.slice(
+            -(RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND - 1)
+          ),
           volumeRef.current,
         ]);
-      }, 200);
+      }, 1000 / POINTS_PER_SECOND);
 
       return () => {
         clearInterval(interval);
@@ -893,7 +903,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.conversation}>
-        {chatType === "jobRequirementDoc" && <JrdSteps current={jrdProgress} />}
+        {chatType === "jobRequirementDoc" && (
+          <JrdSteps current={jrdProgress} collapse={sideDocumentVisible} />
+        )}
 
         <div className={styles.chatArea}>
           {mode === "standard" && showJobRequirementFormDrawer ? (
@@ -1266,73 +1278,112 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 <div className={classnames(styles.inputAreaContainer)}>
                   <div className={styles.inputPanel}>
                     {textInputVisible ? (
-                      <>
-                        <Input.TextArea
-                          value={inputValue}
-                          onChange={(e) => {
-                            setInputValue(e.target.value);
-                          }}
-                          placeholder={t("reply_viona_directly_or_edit")}
-                          style={{
-                            flex: 1,
-                            resize: "none",
-                            overflow: "hidden",
-                          }}
-                          onCompositionStartCapture={() =>
-                            (isCompositingRef.current = true)
-                          }
-                          onCompositionEndCapture={() =>
-                            (isCompositingRef.current = false)
-                          }
-                          onPressEnter={(e) => {
-                            if (
-                              !e.shiftKey &&
-                              !isCompositingRef.current &&
-                              canSubmit()
-                            ) {
-                              e.preventDefault();
-                              submit();
+                      <div className={styles.textInputContainer}>
+                        <div className={styles.textInputLeft}>
+                          <Input.TextArea
+                            className={styles.textInputArea}
+                            value={inputValue}
+                            onChange={(e) => {
+                              setInputValue(e.target.value);
+                            }}
+                            placeholder={t("reply_viona_directly_or_edit")}
+                            onCompositionStartCapture={() =>
+                              (isCompositingRef.current = true)
                             }
-                          }}
-                          autoSize={{
-                            minRows: 2,
-                            maxRows: 6,
-                          }}
-                        />
-                        <div className={styles.audioButtonContainer}>
-                          <SendOutlined
-                            onClick={() => submit()}
-                            style={{
-                              fontSize: 24,
-                              color: canSubmit() ? "#3682fe" : "#333",
+                            onCompositionEndCapture={() =>
+                              (isCompositingRef.current = false)
+                            }
+                            onPressEnter={(e) => {
+                              if (
+                                !e.shiftKey &&
+                                !isCompositingRef.current &&
+                                canSubmit()
+                              ) {
+                                e.preventDefault();
+                                submit();
+                              }
+                            }}
+                            autoSize={{
+                              minRows: 1,
+                              maxRows: 6,
                             }}
                           />
+                          <div
+                            className={classnames(styles.sendButton, {
+                              [styles.disabled]: !canSubmit(),
+                            })}
+                            onClick={() => submit()}
+                          >
+                            <Icon icon={<Send />} style={{ fontSize: 24 }} />
+                          </div>
                         </div>
-                      </>
+
+                        <Tooltip title={t("voice_input")}>
+                          <div
+                            className={styles.button}
+                            onClick={() => setTextInputVisible(false)}
+                          >
+                            <AudioOutlined style={{ fontSize: 24 }} />
+                          </div>
+                        </Tooltip>
+                      </div>
                     ) : (
-                      <>
-                        <div
-                          className={classnames(styles.volumeHistoryContainer, {
-                            [styles.active]: isRecording,
-                          })}
-                        >
-                          {volumeHistory.map((volume, index) => {
-                            return (
-                              <div
-                                key={index}
-                                className={styles.volumeHistoryItem}
-                                style={{
-                                  height: 4 + Math.min(60, volume * 100),
-                                }}
-                              />
-                            );
-                          })}
+                      <div className={styles.audioInputContainer}>
+                        <div className={styles.left}>
+                          <div
+                            className={classnames(
+                              styles.volumeHistoryContainer,
+                              {
+                                [styles.active]: isRecording,
+                              }
+                            )}
+                          >
+                            {volumeHistory.map((volume, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className={styles.volumeHistoryItem}
+                                  style={{
+                                    height: 4 + Math.min(60, volume * 100),
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                          <div className={styles.voiceInputHint}>
+                            {isRecording && !isStartRecordingOutside ? (
+                              <>
+                                Release
+                                <span
+                                  className={classnames(styles.highlight, {
+                                    [styles.active]: isRecording,
+                                  })}
+                                >
+                                  Ctrl
+                                </span>
+                                to stop speaking
+                              </>
+                            ) : !isRecording ? (
+                              <>
+                                Press and hold{" "}
+                                <span
+                                  className={classnames(styles.highlight, {
+                                    [styles.active]: isRecording,
+                                  })}
+                                >
+                                  Ctrl
+                                </span>{" "}
+                                to speak
+                              </>
+                            ) : null}
+                          </div>
                         </div>
-                        <div className={styles.audioButtonContainer}>
-                          {isRecording ? (
-                            <XFilled
-                              style={{ fontSize: 24, color: "#3682fe" }}
-                              onClick={() => {
+                        <div className={styles.right}>
+                          <div className={styles.divider} />
+                          <div
+                            className={styles.button}
+                            onClick={() => {
+                              if (isRecording) {
                                 if (
                                   isTranscribing ||
                                   !isStartRecordingOutside
@@ -1340,44 +1391,39 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   return;
                                 }
                                 endTranscription();
-                              }}
-                            />
-                          ) : isTranscribing ? (
-                            <LoadingOutlined
-                              style={{ fontSize: 24, color: "#3682fe" }}
-                            />
-                          ) : (
-                            <AudioOutlined
-                              style={{ fontSize: 24 }}
-                              onClick={() => startTranscription()}
-                            />
-                          )}
+                              } else {
+                                startTranscription();
+                              }
+                            }}
+                          >
+                            {isRecording ? (
+                              <Icon
+                                icon={<Pause />}
+                                style={{ fontSize: 24, color: "#3682fe" }}
+                              />
+                            ) : isTranscribing ? (
+                              <LoadingOutlined
+                                style={{ fontSize: 24, color: "#3682fe" }}
+                              />
+                            ) : (
+                              <Tooltip title={t("voice_input")}>
+                                <AudioOutlined style={{ fontSize: 24 }} />
+                              </Tooltip>
+                            )}
+                          </div>
+                          <div className={styles.divider} />
+                          <div
+                            className={styles.button}
+                            onClick={() => setTextInputVisible(true)}
+                          >
+                            <Tooltip title={t("text_edit")}>
+                              <Icon icon={<Edit />} style={{ fontSize: 24 }} />
+                            </Tooltip>
+                          </div>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
-
-                  <div className={styles.divider} />
-                  <div className={styles.switchButtonContainer}>
-                    {textInputVisible ? (
-                      <AudioOutlined
-                        style={{ fontSize: 24 }}
-                        onClick={() => setTextInputVisible(false)}
-                      />
-                    ) : (
-                      <EditOutlined
-                        style={{ fontSize: 24 }}
-                        onClick={() => setTextInputVisible(true)}
-                      />
-                    )}
-                  </div>
-                </div>
-                <div className={styles.voiceInputHint}>
-                  {textInputVisible || (isRecording && isStartRecordingOutside)
-                    ? "\u00A0"
-                    : isRecording && !isStartRecordingOutside
-                    ? "Release Ctrl to stop speaking"
-                    : "Press and hold Ctrl to speak"}
                 </div>
               </div>
             </>

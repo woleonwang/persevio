@@ -1,9 +1,9 @@
 import classnames from "classnames";
-import { CheckOutlined } from "@ant-design/icons";
 
 import styles from "./style.module.less";
-const JrdSteps = (props: { current: number }) => {
-  const { current } = props;
+import { Popover } from "antd";
+const JrdSteps = (props: { current: number; collapse: boolean }) => {
+  const { current, collapse } = props;
 
   const steps = [
     {
@@ -30,41 +30,37 @@ const JrdSteps = (props: { current: number }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.grayLine} />
-      <div
-        className={styles.blueLine}
-        style={{ width: `calc((100% - 320px) / 3 * ${current})` }}
-      />
-      <div className={styles.gradientLine} />
-      <div className={styles.stepsContainer}>
-        {steps.map((step, index) => {
-          let status = "waiting";
-          if (index < current) {
-            status = "done";
-          } else if (index === current) {
-            status = "active";
-          }
-          return (
-            <div key={step.key} className={styles.step}>
-              <div className={classnames(styles.stepTitle, styles[status])}>
-                {status === "done" ? (
-                  <CheckOutlined style={{ fontSize: 14 }} />
-                ) : (
-                  index + 1
-                )}
-              </div>
+      {steps.map((step, index) => {
+        let status = "waiting";
+        if (index < current) {
+          status = "done";
+        } else if (index === current) {
+          status = "active";
+        }
+        return (
+          <div
+            key={step.key}
+            className={classnames(styles.step, styles[status])}
+          >
+            <Popover content={step.title} placement="right">
+              <div className={styles.dot}></div>
+            </Popover>
+            {!collapse && (
               <div className={styles.stepContentContainer}>
                 <div className={styles.stepContent}>{step.title}</div>
                 {status === "active" && (
                   <div className={styles.stepTime}>
-                    Remining:{`${step.time}min`}
+                    Remining:{" "}
+                    <span
+                      className={styles.stepTimeValue}
+                    >{`${step.time}min`}</span>
                   </div>
                 )}
               </div>
-            </div>
-          );
-        })}
-      </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -4,81 +4,46 @@
 
 .container {
   position: relative;
-}
-
-.grayLine {
-  position: absolute;
-  width: 100%;
-  height: 3px;
-  top: @top;
-  background-color: #eee;
-  z-index: 1;
-}
-
-.blueLine {
-  position: absolute;
-  height: 3px;
-  width: 40%;
-  top: @top;
-  left: @padding-width;
-  background-color: @primary-color;
-  z-index: 2;
-}
-
-.gradientLine {
-  position: absolute;
-  height: 3px;
-  width: @padding-width;
-  top: @top;
-  background: linear-gradient(to right, white, @primary-color);
-  z-index: 3;
-}
-
-.stepsContainer {
-  margin: 0 @padding-width;
-  z-index: 4;
-  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 
   .step {
-    display: flex;
-    flex-direction: column;
     position: relative;
-    padding-bottom: 120px;
-  }
+    padding-bottom: 24px;
+    padding-left: 12px;
+    border-left: 2px solid transparent;
+    min-height: 34px;
 
-  .stepTitle {
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-    border-radius: 50%;
-    font-size: 16px;
-    color: #333;
-    background-color: #e5e9ec;
+    &:not(:last-child) {
+      border-left: 2px solid #e6eaef;
+    }
 
     &.active {
-      background-color: @primary-color;
-      color: white;
-    }
+      .dot {
+        background-color: @primary-color;
+      }
 
-    &.done {
-      background-color: @primary-color;
-      color: white;
+      .stepContent {
+        color: @primary-color;
+      }
     }
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #8491a5;
+    position: absolute;
+    left: -5px;
   }
 
   .stepContentContainer {
-    position: absolute;
-    top: 30px;
-    left: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transform: translateX(-50%);
+    position: relative;
+    top: -5px;
   }
 
   .stepContent {
@@ -91,5 +56,9 @@
     font-size: 14px;
     color: #999;
     white-space: nowrap;
+  }
+
+  .stepTimeValue {
+    color: @primary-color;
   }
 }

@@ -305,6 +305,13 @@ You can share Viona using this chat page link, either by including it in your jo
     required: "Required",
     optional: "Optional",
 
+    question_predefined_1: "Tell me more about the company",
+    question_predefined_2: "Why is this role created? What is its goal?",
+    question_predefined_3: "What is the application process like?",
+    question_predefined_4:
+      "What is the single most important requirement for this role?",
+    question_predefined_5: "How would you describe the culture of the company?",
+
     question_context: "Give me a brief overview of this role and its context.",
     question_company: "Give me a brief introduction of your company。",
     question_objectives: "What are the core objectives of this role?",
@@ -312,9 +319,7 @@ You can share Viona using this chat page link, either by including it in your jo
       "Give me a brief introduction of the team this role will join. ",
     question_candidate: "What is an ideal candidate look like? ",
     question_interview: "What is the interview process? ",
-    question_compensation: "What is the compensation like?",
     question_location: "What is the working location of this role?",
-    question_hours: "What is the working hours of this role?",
 
     copied: "Copied",
     edit_message_hint:

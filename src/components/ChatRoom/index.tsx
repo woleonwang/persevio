@@ -79,6 +79,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
     send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
   };
 
+  const PredefinedMessageInChat = [
+    t("question_predefined_1"),
+    t("question_predefined_2"),
+    t("question_predefined_3"),
+    t("question_predefined_4"),
+    t("question_predefined_5"),
+  ];
+
   const PreDefinedMessages = [
     t("question_context"),
     t("question_company"),
@@ -86,9 +94,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     t("question_team"),
     t("question_candidate"),
     t("question_interview"),
-    t("question_compensation"),
     t("question_location"),
-    t("question_hours"),
   ];
 
   const fetchMessages = async () => {
@@ -288,7 +294,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
 
                       {isFirst && (
                         <div className={styles.messageBlock}>
-                          {PreDefinedMessages.slice(0, 3).map((message) => {
+                          {PredefinedMessageInChat.map((message) => {
                             return (
                               <div
                                 key={message}

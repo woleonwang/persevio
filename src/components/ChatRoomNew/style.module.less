@@ -17,15 +17,16 @@
 }
 
 .conversation {
-  flex: 1;
+  flex: 3;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   height: 100%;
+  position: relative;
 }
 
 .sideDocument {
-  flex: 1;
+  flex: 2;
   height: 100%;
   background-color: #f6f6f6;
   padding: 20px;
@@ -89,7 +90,7 @@
   flex-direction: column;
   overflow: hidden;
   width: 100%;
-  max-width: 900px;
+  max-width: 880px;
   margin: 0 auto;
   padding: 0 40px;
 }
@@ -123,11 +124,10 @@
 .inputAreaContainer {
   border: 1px solid rgba(246, 246, 246, 1);
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
-  margin: 36px 4px 0;
+  margin-top: 20px;
   display: flex;
   border-radius: 16px;
-  padding: 8px;
-  min-height: 80px;
+  padding: 7px 8px;
   align-items: center;
 }
 
@@ -137,63 +137,131 @@
   align-items: center;
 }
 
-.divider {
-  width: 1px;
-  height: 44px;
-  background-color: rgba(235, 236, 238, 1);
-}
-
-.volumeHistoryContainer {
+.audioInputContainer {
   flex: auto;
   display: flex;
-  gap: 2px;
   align-items: center;
-  padding: 0 16px;
-  border-radius: 16px;
-  height: 64px;
-  background-color: white;
-  border: 1px solid #eeeeee;
+  justify-content: space-between;
 
-  .volumeHistoryItem {
-    flex: 1;
-    background-color: #eeeeee;
-    transition: all 0.3s ease;
+  .left {
+    flex: auto;
+    display: flex;
+    align-items: center;
   }
 
-  &.active {
-    background-color: @hover-button-bg-color;
-    border: 1px solid @primary-color;
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .divider {
+    width: 1px;
+    height: 32px;
+    background-color: rgba(235, 236, 238, 1);
+  }
+
+  .volumeHistoryContainer {
+    // width: 290px;
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    padding: 0 16px;
+    border-radius: 16px;
+    height: 50px;
+    background-color: rgba(245, 246, 249, 1);
+    border: 1px solid rgba(191, 200, 215, 0.5);
+
     .volumeHistoryItem {
-      background-color: #3682fe;
-      transition: none;
+      width: 2px;
+      height: 4px;
+      background-color: rgba(187, 200, 222, 1);
+      transition: all 0.3s ease;
+    }
+
+    &.active {
+      background-color: @hover-button-bg-color;
+      border: 1px solid @primary-color;
+      .volumeHistoryItem {
+        background-color: #3682fe;
+        transition: none;
+      }
+    }
+  }
+
+  .voiceInputHint {
+    font-size: 14px;
+    color: rgba(153, 153, 153, 1);
+    margin-left: 16px;
+    text-align: center;
+
+    .highlight {
+      padding: 4px 12px;
+      background-color: rgb(246, 246, 246);
+      border-radius: 8px;
+      border: 1px solid rgb(197, 201, 205);
+      color: #999999;
+      margin: 0 10px;
+
+      &.active {
+        background-color: @hover-button-bg-color;
+        color: @primary-color;
+        border-color: @primary-color;
+      }
     }
   }
 }
 
-.audioButtonContainer {
-  margin: 0 32px;
+.textInputContainer {
+  flex: auto;
+  display: flex;
+  align-items: center;
+
+  .textInputLeft {
+    flex: auto;
+    position: relative;
+  }
+
+  .textInputArea {
+    min-height: 48px !important;
+    flex: 1;
+    resize: none;
+  }
+
+  .sendButton {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 40px;
+    height: 40px;
+    background-color: @primary-color;
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.disabled {
+      background-color: #999;
+    }
+  }
 }
 
-.switchButtonContainer {
-  margin: 0 28px;
+.button {
+  margin: 0 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+  cursor: pointer;
 
-.voiceInputHint {
-  font-size: 14px;
-  color: rgba(153, 153, 153, 1);
-  margin-top: 16px;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.voiceInputButton {
-  width: 48px !important;
-  height: 48px;
-  color: gray;
-  background-color: #f1f1f1;
+  &:hover {
+    background-color: #f6f6f6;
+  }
 }
 
 .messageContainer {
