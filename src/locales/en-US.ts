@@ -1311,14 +1311,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_details: {
     updated_at: "Updated",
     job_requirement_table: "Job Requirement Document",
-    job_description_jd: "Job Description (JD)",
+    job_description_jd: "Your Job Listing",
     talents: "Candidates",
     share_position: "Copy Link",
     unpost_job_title: "Unpost this Job?",
     unpost_job_content:
       "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",
     unpost_job: "Delist",
-    job_posting: "Your Job Listing",
+    job_posting: "Go to Your Listing",
   },
 
   talent_details: {

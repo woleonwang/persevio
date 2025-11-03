@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, message, Spin } from "antd";
+import { Breadcrumb, Button, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { CheckCircleFilled, RightOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import styles from "./style.module.less";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import JobDetails from "./components/JobDetails";
 import globalStore from "@/store/global";
+import { infoModal } from "@/utils";
 
 type TJobState = "jrd" | "jd" | "preview" | "board";
 
@@ -161,8 +162,15 @@ const JobBoard = () => {
                     open: "1",
                   });
                   if (code === 0) {
-                    message.success(t("operation_success"));
-                    fetchJob();
+                    infoModal({
+                      title: "Published Successfully!",
+                      content:
+                        "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",
+                      okText: "Go to Job Details Page",
+                      onOk: async () => {
+                        fetchJob();
+                      },
+                    });
                   }
                 }}
               >

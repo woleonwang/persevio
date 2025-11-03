@@ -26,8 +26,8 @@ const JobDetails = ({ onStateChanged }: { onStateChanged: () => void }) => {
   const chatTypeTitle: Record<TMenu, string> = useMemo(
     () => ({
       jobDescription: t("job_description_jd"),
-      talents: t("talents"),
       jobRequirement: t("job_requirement_table"),
+      talents: t("talents"),
     }),
     [t]
   );

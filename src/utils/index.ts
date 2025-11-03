@@ -107,6 +107,14 @@ export const confirmModal = (modalParams: ModalFuncProps) => {
   });
 };
 
+export const infoModal = (modalParams: ModalFuncProps) => {
+  Modal.info({
+    icon: null,
+    centered: true,
+    ...modalParams,
+  });
+};
+
 export const downloadText = ({
   name,
   content,

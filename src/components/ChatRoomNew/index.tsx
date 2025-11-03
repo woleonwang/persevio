@@ -70,7 +70,8 @@ type TEditableDocumentType =
   | "realities"
   | "responsibilities"
   | "icp"
-  | "jrd";
+  | "jrd"
+  | "jd";
 
 type TSupportTag = {
   key: TExtraTagName;
@@ -92,6 +93,15 @@ const getInitialVolumeHistory = () => {
     () => 0
   );
 };
+
+const SIDE_DOCUMENT_TYPES = [
+  "context-done",
+  "realities-done",
+  "responsibilities-done",
+  "icp-done",
+  "summary-draft",
+  "jd-draft",
+];
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
     chatType,
@@ -241,10 +251,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       return () => {
         clearInterval(interval);
       };
-    } else {
-      setVolumeHistory(getInitialVolumeHistory());
     }
   }, [isRecording]);
+
+  useEffect(() => {
+    if (!isTranscribing) {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
+  }, [isTranscribing]);
 
   useEffect(() => {
     if (jrdContextDocumentJsonRef.current) {
@@ -532,15 +546,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       style: "button-with-text",
     },
 
-    ...(
-      [
-        "context-done",
-        "realities-done",
-        "responsibilities-done",
-        "icp-done",
-        "summary-draft",
-      ] as TExtraTagName[]
-    ).map((key) => {
+    ...(SIDE_DOCUMENT_TYPES as TExtraTagName[]).map((key) => {
       return {
         key: key,
         title: t("view_document"),
@@ -620,6 +626,14 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       const lastMessage = messageHistory[messageHistory.length - 1];
       if (lastMessage) {
         if (lastMessage.id !== lastMessageIdRef.current) {
+          // 如果没有打开文档的按钮，则关闭文档
+          if (
+            !SIDE_DOCUMENT_TYPES.find((type) =>
+              (lastMessage.extraTags ?? []).find((tag) => tag.name === type)
+            )
+          ) {
+            setSideDocumentVisible(false);
+          }
           // 如果最后一条消息需要弹表单或者抽屉，则直接打开
           let extraTag;
           const autoTriggerTag = supportTags.find((supportTag) => {
@@ -1207,11 +1221,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
                                 const canDelete =
                                   !!profile?.is_admin &&
+                                  item.role === "user" &&
                                   item.messageType === "normal" &&
                                   !["fake_ai_id", "fake_user_id"].includes(
                                     item.id
                                   );
-                                // 操作区. 普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
+                                // 操作区. 用户消息 &&普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
 
                                 const canRetry =
                                   isLast && item.messageSubType === "error";

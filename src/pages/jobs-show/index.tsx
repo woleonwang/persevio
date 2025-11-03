@@ -208,35 +208,6 @@ const JobsShow = () => {
                             </span>
                           </div>
                         )}
-                        {!!job.basic_info.team_name && (
-                          <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon} />
-                            <span>{job.basic_info.team_name}</span>
-                          </div>
-                        )}
-                        {!!job.basic_info.team_lanugage && (
-                          <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon} />
-                            <span>
-                              {t("team_language")}:{" "}
-                              {job.basic_info.team_lanugage}
-                            </span>
-                          </div>
-                        )}
-                        {!!job.basic_info.employee_level?.length && (
-                          <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon} />
-                            <span>
-                              {job.basic_info.employee_level
-                                .map((level) =>
-                                  originalT(
-                                    `public_jobs.job_card.employee_level.${level}`
-                                  )
-                                )
-                                .join("、")}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -374,9 +345,11 @@ const JobsShow = () => {
             </Modal>
           </div>
 
-          <Link className={styles.footer} to="/">
-            {t("powered_by_persevio")}
-          </Link>
+          {!isPreview && (
+            <Link className={styles.footer} to="/">
+              {t("powered_by_persevio")}
+            </Link>
+          )}
         </div>
       )}
     </HomeHeader>
