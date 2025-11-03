@@ -15,6 +15,9 @@ import styles from "./style.module.less";
 import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
 import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
 import { SendOutlined } from "@ant-design/icons";
+import Icon from "../Icon";
+import ListDown from "@/assets/icons/list-down";
+import ListUp from "@/assets/icons/list-up";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -25,6 +28,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(".");
+  const [preDefinedQuestionsVisible, setPreDefinedQuestionsVisible] =
+    useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -323,19 +328,56 @@ const ChatRoom: React.FC<IProps> = (props) => {
       </div>
 
       <div className={styles.preDefinedQuestionContainer}>
-        {PreDefinedMessages.map((message) => {
-          return (
-            <div
-              className={styles.messageCard}
-              onClick={() => {
-                sendMessage(message);
-              }}
-              key={message}
-            >
-              <div>{message}</div>
-            </div>
-          );
-        })}
+        <div
+          className={classnames(styles.questionsContainer, {
+            [styles.show]: preDefinedQuestionsVisible,
+          })}
+        >
+          {PreDefinedMessages.slice(1).map((message) => {
+            return (
+              <div
+                className={styles.messageCard}
+                onClick={() => {
+                  sendMessage(message);
+                  setPreDefinedQuestionsVisible(false);
+                }}
+                key={message}
+              >
+                <div>{message}</div>
+              </div>
+            );
+          })}
+        </div>
+        <div
+          className={styles.messageCard}
+          style={{ marginBottom: 0 }}
+          onClick={() => {
+            sendMessage(PreDefinedMessages[0]);
+            setPreDefinedQuestionsVisible(false);
+          }}
+        >
+          <div>{PreDefinedMessages[0]}</div>
+        </div>
+        <div
+          onClick={() =>
+            setPreDefinedQuestionsVisible(!preDefinedQuestionsVisible)
+          }
+        >
+          <Button
+            size="large"
+            variant="outlined"
+            color="primary"
+            icon={
+              <Icon
+                icon={preDefinedQuestionsVisible ? <ListDown /> : <ListUp />}
+              />
+            }
+            style={{
+              backgroundColor: "rgba(237, 242, 255, 1)",
+              borderRadius: 12,
+            }}
+          />
+        </div>
       </div>
 
       <div className={styles.inputArea}>

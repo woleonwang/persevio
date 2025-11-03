@@ -59,6 +59,8 @@ import Edit from "@/assets/icons/edit";
 import Icon from "../Icon";
 import Pause from "@/assets/icons/pause";
 import Send from "@/assets/icons/send";
+import Switch from "@/assets/icons/switch";
+import Bag from "@/assets/icons/bag";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -72,10 +74,10 @@ type TEditableDocumentType =
 
 type TSupportTag = {
   key: TExtraTagName;
-  title?: string;
+  title?: React.ReactNode;
   handler?: (tag?: { name: string; content: string }) => void;
   children?: {
-    title: string;
+    title: React.ReactNode;
     handler: () => void;
   }[];
   autoTrigger?: boolean;
@@ -330,14 +332,22 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "jrd-language",
       children: [
         {
-          title: "中文",
+          title: (
+            <div className={styles.languageButton}>
+              <Icon icon={<Switch />} /> 中文
+            </div>
+          ),
           handler: () =>
             sendMessage(
               "好的，我们可以开始对话。请你用中文和我进行接下来的对话。"
             ),
         },
         {
-          title: "English",
+          title: (
+            <div className={styles.languageButton}>
+              <Icon icon={<Switch />} /> English
+            </div>
+          ),
           handler: () =>
             sendMessage("Yes, we can start. Please speak with me in English."),
         },
@@ -347,7 +357,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       key: "jd-language",
       children: [
         {
-          title: "中文",
+          title: (
+            <div className={styles.languageButton}>
+              <Icon icon={<Switch />} /> 中文
+            </div>
+          ),
           handler: async () => {
             const success = await updateJob({ jd_language: "zh-CN" });
             if (success) {
@@ -360,7 +374,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           },
         },
         {
-          title: "English",
+          title: (
+            <div className={styles.languageButton}>
+              <Icon icon={<Switch />} /> English
+            </div>
+          ),
           handler: async () => {
             const success = await updateJob({ jd_language: "en-US" });
             if (success) {
@@ -382,7 +400,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     },
     {
       key: "upload-jd",
-      title: t("share_reference"),
+      title: (
+        <div className={styles.bagButton}>
+          <Icon icon={<Bag />} style={{ fontSize: 24 }} />
+          {t("share_reference")}
+        </div>
+      ),
       handler: () => {},
       style: "block-button",
     },
@@ -1020,18 +1043,20 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                       >
                                         {inlineButtons.map((tag) => {
                                           const genButtonElement = (tag: {
-                                            title?: string;
+                                            title?: React.ReactNode;
                                             key?: string;
                                             handler?: (tag?: TExtraTag) => void;
                                           }) => {
                                             return (
                                               <div
                                                 style={{ marginBottom: 16 }}
-                                                key={tag.key ?? tag.title}
+                                                key={
+                                                  tag.key ??
+                                                  (tag.title as string)
+                                                }
                                               >
                                                 <Button
-                                                  variant="filled"
-                                                  color="default"
+                                                  type="primary"
                                                   className={
                                                     styles.inlineButton
                                                   }
@@ -1096,11 +1121,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                               showUploadList={false}
                                               accept=".doc,.docx,.pdf"
                                               multiple={false}
-                                              style={{
-                                                background: "#e5e9ec",
-                                                color: "#3682fe",
-                                                marginBottom: 16,
-                                              }}
+                                              className={styles.uploadJdButton}
                                             >
                                               {isUploadingJd ? (
                                                 <>

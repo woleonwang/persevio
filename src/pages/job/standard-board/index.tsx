@@ -1,7 +1,7 @@
 import { Breadcrumb, Button, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { RightOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, RightOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 
 import useJob from "@/hooks/useJob";
@@ -89,10 +89,21 @@ const JobBoard = () => {
                   status = "process";
                 }
                 return (
-                  <span
-                    className={classnames(styles.stepItem, styles[status])}
-                    dangerouslySetInnerHTML={{ __html: item.title as string }}
-                  />
+                  <div className="flex-center">
+                    {status === "done" && (
+                      <CheckCircleFilled
+                        style={{
+                          color: "rgba(54, 198, 141, 1)",
+                          fontSize: 18,
+                          marginRight: 8,
+                        }}
+                      />
+                    )}
+                    <span
+                      className={classnames(styles.stepItem, styles[status])}
+                      dangerouslySetInnerHTML={{ __html: item.title as string }}
+                    />
+                  </div>
                 );
               }}
               separator={<RightOutlined />}
