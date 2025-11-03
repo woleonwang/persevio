@@ -22,8 +22,6 @@ import {
   EditOutlined,
   LoadingOutlined,
   ReloadOutlined,
-  SendOutlined,
-  XFilled,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
