@@ -628,6 +628,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         if (lastMessage.id !== lastMessageIdRef.current) {
           // 如果没有打开文档的按钮，则关闭文档
           if (
+            lastMessage.role === "ai" &&
             !SIDE_DOCUMENT_TYPES.find((type) =>
               (lastMessage.extraTags ?? []).find((tag) => tag.name === type)
             )
@@ -1382,7 +1383,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                   key={index}
                                   className={styles.volumeHistoryItem}
                                   style={{
-                                    height: 4 + Math.min(60, volume * 100),
+                                    height: 4 + Math.min(50, volume * 100),
                                   }}
                                 />
                               );
