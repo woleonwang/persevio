@@ -937,7 +937,11 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.conversation}>
+      <div
+        className={classnames(styles.conversation, {
+          [styles.collapsed]: sideDocumentVisible,
+        })}
+      >
         {chatType === "jobRequirementDoc" && (
           <JrdSteps current={jrdProgress} collapse={sideDocumentVisible} />
         )}

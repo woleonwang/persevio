@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, message } from "antd";
+import { Button, Drawer, message } from "antd";
 import {
   CopyOutlined,
   DownloadOutlined,
@@ -14,6 +14,7 @@ import { Get, Post } from "@/utils/request";
 import { confirmModal, copy } from "@/utils";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import ChatMessagePreview from "@/components/ChatMessagePreview";
 
 type TChatType = "jobRequirement" | "jobDescription";
 
@@ -34,12 +35,15 @@ const JobDocument = (props: IProps) => {
   const [updatedAt, setUpdatedAt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingValue, setEditingValue] = useState("");
+  const [showConversationRecord, setShowConversationRecord] = useState(false);
+  const [chatMessages, setChatMessages] = useState<TMessageFromApi[]>([]);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
 
   useEffect(() => {
     fetchDoc();
+    fetchConversationRecord();
   }, [job.id, chatType]);
 
   const fetchDoc = async () => {
@@ -55,6 +59,16 @@ const JobDocument = (props: IProps) => {
     }
   };
 
+  const fetchConversationRecord = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${job.id}/chat/${
+        chatType === "jobRequirement" ? "JOB_REQUIREMENT" : "JOB_DESCRIPTION"
+      }/messages`
+    );
+    if (code === 0) {
+      setChatMessages(data.messages);
+    }
+  };
   const updateDoc = async () => {
     const { code } = await Post(
       `/api/jobs/${job.id}/docs/${chatTypeMappings[chatType]}`,
@@ -137,6 +151,16 @@ const JobDocument = (props: IProps) => {
                 setIsEditing(true);
               }}
             />
+            <Button
+              variant="outlined"
+              color="primary"
+              style={{ marginLeft: 6 }}
+              onClick={() => {
+                setShowConversationRecord(true);
+              }}
+            >
+              {t("conversation_record")}
+            </Button>
             {chatType === "jobDescription" && (
               <>
                 <Button
@@ -201,6 +225,15 @@ const JobDocument = (props: IProps) => {
           </Button>
         </div>
       )}
+
+      <Drawer
+        title={t("conversation_record")}
+        open={showConversationRecord}
+        onClose={() => setShowConversationRecord(false)}
+        width={1000}
+      >
+        <ChatMessagePreview messages={chatMessages} />
+      </Drawer>
     </div>
   );
 };

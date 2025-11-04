@@ -367,7 +367,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     realities: "Realities",
     responsibilities: "Responsibilities",
     icp: "Candidate Assessment Criteria",
-    jrd: "Job Requirement Document",
+    summary: "Job Requirement Document",
+    jd: "Job Description Document",
   },
 
   job_requirement_form: {
@@ -1319,6 +1320,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",
     unpost_job: "Delist",
     job_posting: "Go to Your Listing",
+    conversation_record: "Conversation Record",
   },
 
   talent_details: {

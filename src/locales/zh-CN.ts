@@ -353,7 +353,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     realities: "职位现实",
     responsibilities: "职位职责",
     icp: "候选人画像",
-    jrd: "职位需求文档",
+    summary: "职位需求",
+    jd: "职位描述",
   },
 
   job_requirement_form: {
@@ -1268,6 +1269,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       "取消发布后，职位将不再对候选人可见。您可以随时重新发布。",
     unpost_job: "取消发布",
     job_posting: "职位页面",
+    conversation_record: "对话记录",
   },
 
   talent_details: {

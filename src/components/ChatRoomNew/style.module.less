@@ -19,12 +19,21 @@
 
 .conversation {
   min-width: calc(@main-width + 20px);
-  flex: 3;
+  flex: auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   height: 100%;
   position: relative;
+
+  &.collapsed {
+    width: calc(@main-width + 80px);
+    flex: none;
+    .listArea,
+    .footer {
+      padding: 0 40px;
+    }
+  }
 }
 
 .sideDocument {
@@ -98,7 +107,7 @@
 .listArea {
   flex: 1;
   overflow: auto;
-  padding: 0 calc((100% - @main-width) / 2);
+  padding: 0 calc((100% - @main-width - 15px) / 2);
 }
 
 .timestamp {
