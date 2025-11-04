@@ -178,13 +178,15 @@ const JobsShow = () => {
                     <div className={styles.bannerLeft}>
                       <div className={styles.jobTitleSection}>
                         <h1 className={styles.jobTitle}>{job.name}</h1>
-                        <ShareAltOutlined
-                          onClick={async () => {
-                            await copy(window.location.href);
-                            message.success(originalT("copied"));
-                          }}
-                          style={{ color: "#3682fe" }}
-                        />
+                        {!isPreview && (
+                          <ShareAltOutlined
+                            onClick={async () => {
+                              await copy(window.location.href);
+                              message.success(originalT("copied"));
+                            }}
+                            style={{ color: "#3682fe" }}
+                          />
+                        )}
                       </div>
 
                       <div className={styles.jobAttributes}>
