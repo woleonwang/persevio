@@ -926,8 +926,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 color="default"
                 key={text}
                 onClick={() => sendMessage(text)}
+                style={{ borderRadius: 12 }}
               >
-                <span style={{ color: "#999" }}>→</span> {text}
+                <span style={{ color: "#c1c1c1" }}>→</span> {text}
               </Button>
             );
           }
