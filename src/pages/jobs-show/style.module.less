@@ -169,10 +169,6 @@
 //   background-color: #f8f9fa;
 // }
 
-.mobileVisible {
-  display: none;
-}
-
 @media (min-width: 769px) {
   .headerContainer {
     height: 100vh;
@@ -180,16 +176,21 @@
     display: flex;
     flex-direction: column;
   }
+
+  .mobileVisible {
+    display: none !important;
+  }
 }
 
 @media (max-width: 768px) {
   .container {
     height: auto;
     overflow: visible;
+    margin: 8px;
   }
 
   .banner {
-    padding: 32px 0;
+    padding: 16px 0;
     display: block;
     height: auto;
     background: url("/job-banner-bg.png") no-repeat right top;
@@ -197,19 +198,19 @@
     background-color: white;
 
     .bannerLeft {
-      margin: 0 24px;
+      margin: 0 12px;
 
       .jobTitle {
-        font-size: 32px;
+        font-size: 16px;
       }
 
       .jobAttributes {
-        gap: 56px;
-        margin-bottom: 20px;
+        gap: 28px;
+        margin-bottom: 10px;
       }
 
       .attributeItem {
-        font-size: 24px;
+        font-size: 12px;
         color: #6b8099;
       }
     }
@@ -218,49 +219,137 @@
       width: 100%;
       display: block;
       height: auto;
-      padding: 0 24px;
+      padding: 0 12px;
 
       .applyButton {
         width: 100%;
-        font-size: 28px;
-        padding: 25px 24px;
+        font-size: 14px;
+        padding: 12px;
         height: auto;
       }
     }
   }
 
   .companySection {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     display: flex;
-    gap: 12px;
-  }
+    background-color: #f6f6f6;
+    border-radius: 12px;
+    padding: 8px;
+    align-items: center;
 
-  .companyLeft {
-    flex: none;
-    margin-top: 0;
-  }
+    .logo {
+      height: 50px;
+      width: 50px;
+      border-radius: 16px;
+    }
 
-  .logo {
-    height: 48px;
-    width: 48px;
-  }
-
-  .companyRight {
-    flex: auto;
     .companyName {
-      font-size: 18px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  }
+
+  .chatRoomSection {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: white;
+    margin: 0 6px 6px;
+
+    .messageBlock {
+      display: flex;
+      gap: 6px;
+    }
+
+    .avatar {
+      border: none;
+      background: none;
+      width: 34px;
+      height: 34px;
+      flex: none;
+    }
+
+    .timestamp {
+      font-size: 14px;
+      color: #999999;
+      margin-left: 6px;
+    }
+
+    .messageContainer {
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .inputArea {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .sendButton {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
     }
   }
 
   .mainContent {
     flex-direction: column;
-    padding: 0;
+    padding: 11px 0;
+    background-color: white;
+    margin: 0 6px 6px;
+    border-radius: 6px;
+    width: auto;
+
+    .left {
+      width: 100%;
+      padding: 10px 10px 10px 0;
+      order: 1;
+
+      .sectionTitle span {
+        font-size: 15px;
+      }
+
+      .sectionContent {
+        font-size: 13px;
+        padding-left: 24px;
+      }
+    }
   }
 
-  .left {
-    width: 100%;
-    padding: 20px;
-    order: 1;
+  .chatDrawer {
+    :global {
+      .ant-drawer-header {
+        padding: 15px 16px;
+      }
+
+      .ant-drawer-header-title {
+        padding: 0;
+      }
+
+      .ant-drawer-close {
+        position: absolute;
+        right: 6px;
+        top: 18px;
+        font-size: 16px;
+        color: #c1c1c1;
+      }
+
+      .ant-drawer-title {
+        font-size: 16px;
+      }
+
+      .ant-drawer-body {
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+    }
   }
 
   .right {
@@ -270,18 +359,10 @@
     order: 2;
   }
 
-  .sectionTitle span {
-    font-size: 18px;
-  }
-
   .vionaAvatar {
     position: fixed;
     bottom: 50px;
     right: 30px;
-  }
-
-  .mobileVisible {
-    display: block !important;
   }
 
   .desktopVisible {

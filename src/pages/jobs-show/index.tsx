@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Button, message, Modal, Spin, Tooltip } from "antd";
+import { Avatar, Button, Drawer, Input, message, Spin, Tooltip } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
 import { ShareAltOutlined } from "@ant-design/icons";
@@ -15,6 +15,9 @@ import HomeHeader from "@/components/HomeHeader";
 import styles from "./style.module.less";
 
 import VionaAvatar from "@/assets/viona-avatar.png";
+import dayjs from "dayjs";
+import Icon from "@/components/Icon";
+import Send from "@/assets/icons/send";
 
 type TCompany = {
   logo: string;
@@ -81,6 +84,9 @@ const JobsShow = () => {
     return value;
   }, []);
 
+  const currentTime = useMemo(() => {
+    return dayjs().format("YYYY/MM/DD HH:mm:ss");
+  }, []);
   const fetchJob = async () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`);
     if (code === 0) {
@@ -204,29 +210,72 @@ const JobsShow = () => {
               </div>
             </div>
             <div className={styles.bannerRight}>
-              {/* <div className={styles.companySection}>
-                  <div
-                    className={classnames(
-                      styles.companyLeft,
-                      styles.mobileVisible
-                    )}
-                  >
-                    {!!company.logo && (
-                      <img
-                        src={
-                          company.logo.startsWith("http")
-                            ? company.logo
-                            : `/api/logo/${company.logo}`
-                        }
-                        className={styles.logo}
-                        alt={company.name}
-                      />
-                    )}
-                  </div>
-                  <div className={styles.companyRight}></div>
-                </div> */}
+              <div
+                className={classnames(
+                  styles.companySection,
+                  styles.mobileVisible
+                )}
+              >
+                {!!company.logo && (
+                  <img
+                    src={
+                      company.logo.startsWith("http")
+                        ? company.logo
+                        : `/api/logo/${company.logo}`
+                    }
+                    className={styles.logo}
+                    alt={company.name}
+                  />
+                )}
+                <div className={styles.companyName}>{company.name}</div>
+              </div>
 
               {!isPreview && <div>{ApplyButton}</div>}
+            </div>
+          </div>
+
+          <div
+            className={classnames(styles.chatRoomSection, styles.mobileVisible)}
+            onClickCapture={(e) => {
+              e.stopPropagation();
+              setChatModalVisible(true);
+            }}
+          >
+            <div className={styles.messageBlock}>
+              <Avatar
+                className={styles.avatar}
+                icon={<img src={VionaAvatar} />}
+              />
+              <div>
+                <div style={{ marginTop: 8 }}>
+                  <span style={{ fontSize: 14, fontWeight: "bold" }}>
+                    Viona
+                  </span>
+                  <span className={styles.timestamp}>{currentTime}</span>
+                </div>
+                <div className={styles.messageContainer}>
+                  Hi, I'm Viona, your AI recruiter for this role. Have questions
+                  about our company or this role? Ask me!
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.inputArea}>
+              <Input
+                placeholder={originalT("chat.reply_viona")}
+                style={{
+                  width: "100%",
+                  height: 44,
+                  fontSize: 14,
+                  borderRadius: 12,
+                }}
+              />
+
+              <Button
+                type="primary"
+                icon={<Icon icon={<Send />} style={{ fontSize: 20 }} />}
+                className={styles.sendButton}
+              />
             </div>
           </div>
 
@@ -310,25 +359,17 @@ const JobsShow = () => {
             </Tooltip>
           </div>
 
-          <div className={styles.mobileVisible}>
-            <Modal
-              footer={false}
-              open={chatModalVisible}
-              onCancel={() => setChatModalVisible(false)}
-              styles={{
-                content: {
-                  height: "80vh",
-                  overflow: "hidden",
-                  padding: 0,
-                  display: "flex",
-                },
-                body: { display: "flex", height: "100%", width: "100%" },
-              }}
-              style={{ top: "5vh" }}
-            >
-              {ChatRoomArea}
-            </Modal>
-          </div>
+          <Drawer
+            title="Viona, your application copilot"
+            open={chatModalVisible}
+            onClose={() => setChatModalVisible(false)}
+            placement="bottom"
+            height="90vh"
+            style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
+            className={classnames(styles.chatDrawer, styles.mobileVisible)}
+          >
+            {ChatRoomArea}
+          </Drawer>
 
           {/* {!isPreview && (
             <Link className={styles.footer} to="/">
