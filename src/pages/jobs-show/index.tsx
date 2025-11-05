@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Button, message, Modal, Spin, Tooltip } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
@@ -153,97 +153,80 @@ const JobsShow = () => {
         <div className={styles.container}>
           {/* Banner 区域 */}
           <div className={styles.banner}>
-            <div className={styles.bannerInnerContainer}>
-              <div
-                className={classnames(
-                  styles.companyLeft,
-                  styles.desktopVisible
-                )}
-              >
-                {!!company.logo && (
-                  <img
-                    src={
-                      company.logo.startsWith("http")
-                        ? company.logo
-                        : `/api/logo/${company.logo}`
-                    }
-                    className={styles.logo}
-                    alt={company.name}
-                  />
-                )}
-              </div>
-              <div className={styles.companyRight}>
-                <div className={styles.bannerContent}>
-                  <div className={styles.bannerHeader}>
-                    <div className={styles.bannerLeft}>
-                      <div className={styles.jobTitleSection}>
-                        <h1 className={styles.jobTitle}>{job.name}</h1>
-                        {!isPreview && (
-                          <ShareAltOutlined
-                            onClick={async () => {
-                              await copy(window.location.href);
-                              message.success(originalT("copied"));
-                            }}
-                            style={{ color: "#3682fe" }}
-                          />
-                        )}
-                      </div>
-
-                      <div className={styles.jobAttributes}>
-                        {!!job.basic_info.location?.length && (
-                          <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon} />
-                            <span>
-                              {job.basic_info.location
-                                .map((item) => item.city)
-                                .join(", ")}
-                            </span>
-                          </div>
-                        )}
-                        {!!job.basic_info.role_type && (
-                          <div className={styles.attributeItem}>
-                            <span className={styles.attributeIcon} />
-                            <span>
-                              {originalT(
-                                `public_jobs.job_card.role_type.${job.basic_info.role_type}`
-                              )}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {!isPreview && (
-                      <div className={styles.bannerRight}>{ApplyButton}</div>
-                    )}
-                  </div>
-                  <div className={styles.companySection}>
-                    <div
-                      className={classnames(
-                        styles.companyLeft,
-                        styles.mobileVisible
-                      )}
-                    >
-                      {!!company.logo && (
-                        <img
-                          src={
-                            company.logo.startsWith("http")
-                              ? company.logo
-                              : `/api/logo/${company.logo}`
-                          }
-                          className={styles.logo}
-                          alt={company.name}
-                        />
-                      )}
-                    </div>
-                    <div className={styles.companyRight}></div>
-                  </div>
+            <div className={styles.bannerLeft}>
+              {!!company.logo && (
+                <img
+                  src={
+                    company.logo.startsWith("http")
+                      ? company.logo
+                      : `/api/logo/${company.logo}`
+                  }
+                  className={classnames(styles.logo, styles.desktopVisible)}
+                  alt={company.name}
+                />
+              )}
+              <div className={styles.companyInfo}>
+                <div className={styles.jobTitleSection}>
+                  <div className={styles.jobTitle}>{job.name}</div>
+                  {!isPreview && (
+                    <ShareAltOutlined
+                      onClick={async () => {
+                        await copy(window.location.href);
+                        message.success(originalT("copied"));
+                      }}
+                      style={{ color: "#3682fe" }}
+                    />
+                  )}
                 </div>
 
-                {!isPreview && (
-                  <div className={styles.mobileVisible}>{ApplyButton}</div>
-                )}
+                <div className={styles.jobAttributes}>
+                  {!!job.basic_info.location?.length && (
+                    <div className={styles.attributeItem}>
+                      <span className={styles.attributeIcon} />
+                      <span>
+                        {job.basic_info.location
+                          .map((item) => item.city)
+                          .join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  {!!job.basic_info.role_type && (
+                    <div className={styles.attributeItem}>
+                      <span className={styles.attributeIcon} />
+                      <span>
+                        {originalT(
+                          `public_jobs.job_card.role_type.${job.basic_info.role_type}`
+                        )}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
+            </div>
+            <div className={styles.bannerRight}>
+              {/* <div className={styles.companySection}>
+                  <div
+                    className={classnames(
+                      styles.companyLeft,
+                      styles.mobileVisible
+                    )}
+                  >
+                    {!!company.logo && (
+                      <img
+                        src={
+                          company.logo.startsWith("http")
+                            ? company.logo
+                            : `/api/logo/${company.logo}`
+                        }
+                        className={styles.logo}
+                        alt={company.name}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.companyRight}></div>
+                </div> */}
+
+              {!isPreview && <div>{ApplyButton}</div>}
             </div>
           </div>
 
@@ -347,11 +330,11 @@ const JobsShow = () => {
             </Modal>
           </div>
 
-          {!isPreview && (
+          {/* {!isPreview && (
             <Link className={styles.footer} to="/">
               {t("powered_by_persevio")}
             </Link>
-          )}
+          )} */}
         </div>
       )}
     </HomeHeader>

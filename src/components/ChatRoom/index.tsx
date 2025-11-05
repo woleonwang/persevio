@@ -373,6 +373,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             icon={
               <Icon
                 icon={preDefinedQuestionsVisible ? <ListDown /> : <ListUp />}
+                style={{ fontSize: 24 }}
               />
             }
             style={{

@@ -348,7 +348,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         {
           title: (
             <div className={styles.languageButton}>
-              <Icon icon={<Switch />} /> 中文
+              <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
             </div>
           ),
           handler: () =>
@@ -359,7 +359,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         {
           title: (
             <div className={styles.languageButton}>
-              <Icon icon={<Switch />} /> English
+              <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English
             </div>
           ),
           handler: () =>
@@ -373,7 +373,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         {
           title: (
             <div className={styles.languageButton}>
-              <Icon icon={<Switch />} /> 中文
+              <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
             </div>
           ),
           handler: async () => {
@@ -390,7 +390,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         {
           title: (
             <div className={styles.languageButton}>
-              <Icon icon={<Switch />} /> English
+              <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English
             </div>
           ),
           handler: async () => {
