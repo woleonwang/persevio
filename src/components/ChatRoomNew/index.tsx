@@ -15,11 +15,6 @@ import {
 } from "antd";
 import {
   AudioOutlined,
-  CloseOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  EditOutlined,
   LoadingOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
@@ -61,6 +56,11 @@ import Pause from "@/assets/icons/pause";
 import Send from "@/assets/icons/send";
 import Switch from "@/assets/icons/switch";
 import Bag from "@/assets/icons/bag";
+import Copy from "@/assets/icons/copy";
+import Pen from "@/assets/icons/pen";
+import Delete from "@/assets/icons/delete";
+import Download from "@/assets/icons/download";
+import Close from "@/assets/icons/close";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -1241,35 +1241,39 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                     {canEditing && (
                                       <>
                                         <Tooltip title={originalT("edit")}>
-                                          <EditOutlined
+                                          <div
+                                            ref={(e) => {
+                                              if (maxIdOfAIMessage === item.id)
+                                                editMessageTourElementRef.current =
+                                                  e;
+                                            }}
                                             onClick={() => {
                                               setMarkdownEditMessageId(item.id);
                                               setMarkdownEditMessageContent(
                                                 item.content
                                               );
                                             }}
-                                            ref={(e) => {
-                                              if (maxIdOfAIMessage === item.id)
-                                                editMessageTourElementRef.current =
-                                                  e;
-                                            }}
-                                          />
+                                          >
+                                            <Icon icon={<Pen />} />
+                                          </div>
                                         </Tooltip>
                                         <Tooltip title={originalT("copy")}>
-                                          <CopyOutlined
+                                          <div
                                             onClick={async () => {
                                               await copy(item.content);
                                               message.success(
                                                 originalT("copied")
                                               );
                                             }}
-                                          />
+                                          >
+                                            <Icon icon={<Copy />} />
+                                          </div>
                                         </Tooltip>
                                       </>
                                     )}
                                     {canDelete && (
                                       <Tooltip title={originalT("delete")}>
-                                        <DeleteOutlined
+                                        <div
                                           onClick={() => {
                                             if (
                                               confirm(
@@ -1279,7 +1283,9 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                                               deleteMessage(parseInt(item.id));
                                             }
                                           }}
-                                        />
+                                        >
+                                          <Icon icon={<Delete />} />
+                                        </div>
                                       </Tooltip>
                                     )}
                                     {canRetry && (
@@ -1603,14 +1609,19 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               {t(sideDocumentType ?? "")}
             </div>
             <div className={styles.sideDocumentOperations}>
-              <EditOutlined onClick={() => setIsEditingSideDocument(true)} />
-              <CopyOutlined
+              <Icon
+                icon={<Pen />}
+                onClick={() => setIsEditingSideDocument(true)}
+              />
+              <Icon
+                icon={<Copy />}
                 onClick={async () => {
                   await copy(sideDocumentContent);
                   message.success(originalT("copied"));
                 }}
               />
-              <DownloadOutlined
+              <Icon
+                icon={<Download />}
                 onClick={() =>
                   downloadText({
                     name: `${t(sideDocumentType ?? "")}.md`,
@@ -1619,7 +1630,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                 }
               />
               <div className={styles.sideDocumentOperationSeparator} />
-              <CloseOutlined onClick={() => setSideDocumentVisible(false)} />
+              <Icon
+                icon={<Close />}
+                onClick={() => setSideDocumentVisible(false)}
+              />
             </div>
           </div>
           <EditableMarkdown

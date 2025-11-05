@@ -307,7 +307,10 @@ const ChatRoom: React.FC<IProps> = (props) => {
                                 className={styles.messageBlockItem}
                               >
                                 <span
-                                  style={{ color: "#C1C1C1", marginRight: 6 }}
+                                  style={{
+                                    color: "#3682FE",
+                                    marginRight: 6,
+                                  }}
                                 >
                                   →
                                 </span>

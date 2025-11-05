@@ -19,7 +19,7 @@
 
 .conversation {
   min-width: calc(@main-width + 20px);
-  flex: auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -27,17 +27,20 @@
   position: relative;
 
   &.collapsed {
-    width: calc(@main-width + 80px);
-    flex: none;
+    min-width: 0;
     .listArea,
     .footer {
       padding: 0 40px;
+    }
+
+    .button {
+      margin: 0 8px;
     }
   }
 }
 
 .sideDocument {
-  flex: auto;
+  flex: 1;
   height: 100%;
   background-color: #f6f6f6;
   padding: 20px;
@@ -54,6 +57,13 @@
     display: flex;
     gap: 12px;
     align-items: center;
+
+    :global {
+      .perse-icon {
+        font-size: 16px;
+        cursor: pointer;
+      }
+    }
   }
 
   .sideDocumentOperationSeparator {
@@ -321,7 +331,7 @@
   .operationArea {
     display: flex;
     gap: 8px;
-    & > span {
+    & > div {
       color: #999999;
       width: 32px;
       height: 32px;
@@ -329,6 +339,11 @@
       align-items: center;
       justify-content: center;
       border-radius: 8px;
+      cursor: pointer;
+
+      span {
+        font-size: 24px;
+      }
 
       &:hover {
         background-color: #f6f6f6;

@@ -1,8 +1,8 @@
 const Edit = () => {
   return (
     <svg
-      width="28"
-      height="28"
+      width="1em"
+      height="1em"
       viewBox="0 0 28 28"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
