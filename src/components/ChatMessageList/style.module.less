@@ -1,0 +1,38 @@
+.listArea {
+  flex: 1;
+  overflow: auto;
+}
+
+.timestamp {
+  color: #999999;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.messageContainer {
+  color: rgb(20, 20, 19);
+  width: fit-content;
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: chat-default;
+  border-radius: 16px;
+  background-color: white;
+  letter-spacing: -0.24px;
+  word-wrap: break-word;
+  position: relative;
+
+  &.user {
+    margin-left: auto;
+    max-width: 80%;
+    .messageContent {
+      padding: 1px 16px;
+      border-radius: 12px;
+      background-color: #f6f6f6;
+    }
+  }
+
+  &.lastMessage {
+    margin-bottom: 100px;
+  }
+}

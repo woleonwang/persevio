@@ -50,6 +50,8 @@ const ApplyJob: React.FC = () => {
           `/api/candidate/jobs/${jobId}/job_apply`
         );
         if (code === 0) {
+          setPageState("waiting");
+          return;
           const jobApply: IJobApply = data.job_apply;
           setJobApplyId(jobApply.id);
           if (

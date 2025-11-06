@@ -3,7 +3,6 @@ import { Avatar, List, Button } from "antd";
 import { AudioMutedOutlined, AudioOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs from "dayjs";
-import "@mdxeditor/editor/style.css";
 
 import { Get, Post } from "../../utils/request";
 
