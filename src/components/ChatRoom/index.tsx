@@ -336,20 +336,22 @@ const ChatRoom: React.FC<IProps> = (props) => {
             [styles.show]: preDefinedQuestionsVisible,
           })}
         >
-          {PreDefinedMessages.slice(1).map((message) => {
-            return (
-              <div
-                className={styles.messageCard}
-                onClick={() => {
-                  sendMessage(message);
-                  setPreDefinedQuestionsVisible(false);
-                }}
-                key={message}
-              >
-                <div>{message}</div>
-              </div>
-            );
-          })}
+          <div style={{ overflow: "auto" }}>
+            {PreDefinedMessages.slice(1).map((message) => {
+              return (
+                <div
+                  className={styles.messageCard}
+                  onClick={() => {
+                    sendMessage(message);
+                    setPreDefinedQuestionsVisible(false);
+                  }}
+                  key={message}
+                >
+                  <div>{message}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
         <div
           className={styles.messageCard}

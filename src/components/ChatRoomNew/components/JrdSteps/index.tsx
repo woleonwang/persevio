@@ -9,17 +9,17 @@ const JrdSteps = (props: { current: number; collapse: boolean }) => {
     {
       key: "gatherRoleOverview",
       title: "Role Overview",
-      time: 5,
+      time: 20,
     },
     {
       key: "keyResponsibilities",
       title: "Job Scope",
-      time: 5,
+      time: 15,
     },
     {
       key: "dayToDayTasks",
       title: "Ideal Candidate Profile",
-      time: 5,
+      time: 10,
     },
     {
       key: "candidateAssessmentCriteria",
@@ -50,10 +50,10 @@ const JrdSteps = (props: { current: number; collapse: boolean }) => {
                 <div className={styles.stepContent}>{step.title}</div>
                 {status === "active" && (
                   <div className={styles.stepTime}>
-                    Remining:{" "}
                     <span
                       className={styles.stepTimeValue}
                     >{`${step.time}min`}</span>
+                    {" "}Left
                   </div>
                 )}
               </div>

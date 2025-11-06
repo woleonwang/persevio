@@ -63,7 +63,6 @@
 }
 
 .preDefinedQuestionContainer {
-  position: relative;
   margin-top: 10px;
   padding: 0 16px;
   display: flex;
@@ -94,11 +93,16 @@
     transform: translateY(10px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: absolute;
-    bottom: 60px;
+    bottom: 120px;
     right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
 
     &.show {
-      max-height: 500px;
+      max-height: 5000px;
       opacity: 1;
       transform: translateY(0);
       overflow: auto;
