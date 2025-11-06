@@ -345,19 +345,21 @@ const JobsShow = () => {
             </div>
           </div>
 
-          <div className={classnames(styles.mobileVisible, styles.vionaAvatar)}>
-            <Tooltip
-              title={t("ask_me_anything")}
-              placement="left"
-              open={tooltipVisible}
-            >
+          <Tooltip
+            title={t("ask_me_anything")}
+            placement="left"
+            open={tooltipVisible}
+            classNames={{ root: styles.mobileVisible }}
+          >
+            <div className={classnames(styles.vionaAvatar)}>
               <img
                 src={VionaAvatar}
                 style={{ width: 50, height: 50 }}
                 onClick={() => setChatModalVisible(true)}
+                className={styles.mobileVisible}
               />
-            </Tooltip>
-          </div>
+            </div>
+          </Tooltip>
 
           <Drawer
             title="Viona, your application copilot"

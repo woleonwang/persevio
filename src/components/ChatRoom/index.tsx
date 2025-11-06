@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Avatar, List, Input, Button, message } from "antd";
+import { Input, Button, message } from "antd";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import { observer } from "mobx-react-lite";
@@ -7,10 +7,8 @@ import { useTranslation } from "react-i18next";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post } from "@/utils/request";
-import MarkdownContainer from "@/components/MarkdownContainer";
 import { IProps, TMessage, TMessageFromApi } from "./type";
 
-import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
 import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
 import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
@@ -18,6 +16,7 @@ import { SendOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
 import ListDown from "@/assets/icons/list-down";
 import ListUp from "@/assets/icons/list-up";
+import ChatMessageList from "../ChatMessageList";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -27,23 +26,22 @@ const ChatRoom: React.FC<IProps> = (props) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState(".");
   const [preDefinedQuestionsVisible, setPreDefinedQuestionsVisible] =
     useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const isCompositingRef = useRef(false);
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
-  const listContainerRef = useRef<HTMLDivElement | null>();
+  const childrenFunctionsRef = useRef<{
+    scrollToBottom?: () => void;
+  }>({});
 
   const { t: originalT } = useTranslation();
 
   useEffect(() => {
     setMessages([]);
     fetchMessages();
-    needScrollToBottom.current = true;
   }, [jobId]);
 
   useEffect(() => {
@@ -53,13 +51,8 @@ const ChatRoom: React.FC<IProps> = (props) => {
         fetchMessages();
       }, 3000);
 
-      const intervalText = setInterval(() => {
-        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
-      }, 500);
-
       return () => {
         clearInterval(intervalFetchMessage);
-        clearInterval(intervalText);
       };
     } else {
       loadingStartedAtRef.current = undefined;
@@ -70,7 +63,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     if (messages.length === 0) return;
 
     if (needScrollToBottom.current) {
-      scrollToBottom();
+      childrenFunctionsRef.current.scrollToBottom?.();
       needScrollToBottom.current = false;
     }
   }, [messages]);
@@ -118,17 +111,12 @@ const ChatRoom: React.FC<IProps> = (props) => {
           updated_at: dayjs().format(datetimeFormat),
         });
       }
-      setMessages(messageHistory);
-    }
-  };
 
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      // 先滚动到底部，再向上滚动 100px
-      messagesEndRef.current.scrollIntoView();
-      if (messagesEndRef.current.parentElement) {
-        messagesEndRef.current.parentElement.scrollTop -= 120;
+      if (messageHistory.length > 1) {
+        needScrollToBottom.current = true;
       }
+
+      setMessages(messageHistory);
     }
   };
 
@@ -220,115 +208,39 @@ const ChatRoom: React.FC<IProps> = (props) => {
         [styles.fullscreen]: isFullscreen,
       })}
     >
-      <div
+      <ChatMessageList
+        messages={messages}
+        isLoading={isLoading}
+        childrenFunctionsRef={childrenFunctionsRef}
         className={styles.listArea}
-        ref={(e) => (listContainerRef.current = e)}
-      >
-        <List
-          dataSource={messages}
-          split={false}
-          renderItem={(item, index) => {
-            const isFirst = index === 0;
-            const isLast = index === messages.length - 1;
-            return (
-              <List.Item
-                style={
-                  isLast
-                    ? {
-                        minHeight:
-                          (listContainerRef.current?.clientHeight ?? 80) - 8,
-                        alignItems: "flex-start",
-                      }
-                    : {}
-                }
-              >
-                <List.Item.Meta
-                  avatar={
-                    item.role === "ai" && (
-                      <Avatar
-                        style={{
-                          border: "none",
-                          background: "none",
-                          width: 40,
-                          height: 40,
-                        }}
-                        icon={<img src={VionaAvatar} />}
-                      />
-                    )
-                  }
-                  title={
-                    item.role === "ai" && (
-                      <div style={{ marginTop: 8 }}>
-                        <span style={{ fontSize: 18 }}>
-                          {`Viona, ${t("viona_intro_candidate")}`}
-                        </span>
-                        <span className={styles.timestamp}>
-                          {dayjs(item.updated_at).format(datetimeFormat)}
-                        </span>
-                      </div>
-                    )
-                  }
-                  description={
+        renderOperationContent={(_, __, isFirst) => {
+          return (
+            isFirst && (
+              <div className={styles.messageBlock}>
+                {PredefinedMessageInChat.map((message) => {
+                  return (
                     <div
-                      className={classnames(styles.messageContainer, {
-                        [styles.lastMessage]: index === messages.length - 1,
-                        [styles.user]: item.role === "user",
-                      })}
+                      key={message}
+                      onClick={() => sendMessage(message)}
+                      className={styles.messageBlockItem}
                     >
-                      <div className={styles.messageContent}>
-                        {item.id === "fake_ai_id" ? (
-                          <p>
-                            {loadingText}
-                            {dayjs().diff(
-                              loadingStartedAtRef.current ?? dayjs(),
-                              "second"
-                            ) > 30
-                              ? `(${t("viona_is_thinking")})`
-                              : ""}
-                          </p>
-                        ) : (
-                          <MarkdownContainer
-                            content={
-                              item.messageSubType === "error"
-                                ? "Something wrong with Viona, please retry."
-                                : item.content
-                            }
-                          />
-                        )}
-                      </div>
-
-                      {isFirst && (
-                        <div className={styles.messageBlock}>
-                          {PredefinedMessageInChat.map((message) => {
-                            return (
-                              <div
-                                key={message}
-                                onClick={() => sendMessage(message)}
-                                className={styles.messageBlockItem}
-                              >
-                                <span
-                                  style={{
-                                    color: "#3682FE",
-                                    marginRight: 6,
-                                  }}
-                                >
-                                  →
-                                </span>
-                                {message}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
+                      <span
+                        style={{
+                          color: "#3682FE",
+                          marginRight: 6,
+                        }}
+                      >
+                        →
+                      </span>
+                      {message}
                     </div>
-                  }
-                />
-              </List.Item>
-            );
-          }}
-        />
-        <div ref={messagesEndRef} />
-      </div>
+                  );
+                })}
+              </div>
+            )
+          );
+        }}
+      />
 
       <div className={styles.preDefinedQuestionContainer}>
         <div
