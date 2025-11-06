@@ -26,7 +26,9 @@ const Step = ({
               [styles.active]: index <= currentIndex,
             })}
             style={{ width }}
-          />
+          >
+            Step {index + 1}
+          </div>
         );
       })}
     </div>

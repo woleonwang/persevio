@@ -1,9 +1,11 @@
 import { Button, Form, Input, message, Upload } from "antd";
-import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import React, { useReducer, useState } from "react";
+import UploadIcon from "@/assets/icons/upload";
 
 import styles from "./style.module.less";
 import { PostFormData } from "@/utils/request";
+import Icon from "@/components/Icon";
 
 export interface TBaiscInfo {
   name: string;
@@ -30,7 +32,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>Step 1: Provide Your Basic Information</div>
+      <div className={styles.title}> Provide Your Basic Information</div>
       <div className={styles.hint}>
         We need this information to create your application and keep you updated
         on its progress.
@@ -42,13 +44,13 @@ const BasicInfo: React.FC<IProps> = (props) => {
           onFieldsChange={() => forceUpdate()}
         >
           <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Please fill in" />
           </Form.Item>
           <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Please fill in" />
           </Form.Item>
           <Form.Item label="Email" name="email" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Please fill in" />
           </Form.Item>
 
           <Form.Item
@@ -92,27 +94,29 @@ const BasicInfo: React.FC<IProps> = (props) => {
               accept=".doc,.docx,.pdf"
               multiple={false}
             >
-              {resumeFileName ? (
-                <div>{resumeFileName}</div>
-              ) : isUploadingResume ? (
-                <div>
-                  <LoadingOutlined className={styles.uploadingIcon} />
-                  Uploading resume...
-                </div>
-              ) : (
-                <div>
-                  <UploadOutlined className={styles.uploadIcon} />
-                  <div>Support uploading .doc,.docx,.pdf format files</div>
-                </div>
-              )}
+              <div className={styles.uploadIconContainer}>
+                {resumeFileName ? (
+                  resumeFileName
+                ) : isUploadingResume ? (
+                  <>
+                    <LoadingOutlined className={styles.uploadingIcon} />
+                    Uploading resume...
+                  </>
+                ) : (
+                  <>
+                    <Icon icon={<UploadIcon />} className={styles.uploadIcon} />
+                    <div>Support uploading .doc,.docx,.pdf format files</div>
+                  </>
+                )}
+              </div>
             </Upload.Dragger>
           </Form.Item>
         </Form>
 
-        <div style={{ marginTop: 40, textAlign: "center" }}>
+        <div style={{ marginTop: 52, textAlign: "center" }}>
           <Button
             size="large"
-            style={{ width: "100%" }}
+            style={{ width: "100%", height: 44, borderRadius: 12 }}
             type="primary"
             disabled={!canSubmit()}
             onClick={() => {

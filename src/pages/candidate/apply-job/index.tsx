@@ -142,7 +142,7 @@ const ApplyJob: React.FC = () => {
                   style={{ display: pageState === "mode" ? "block" : "none" }}
                 >
                   <div className={styles.title}>
-                    Step 2: Let's Chat and Prepare Your Application
+                    Let's Chat and Prepare Your Application
                   </div>
                   <div className={styles.hint}>
                     Before we can submit your application, our consultant needs

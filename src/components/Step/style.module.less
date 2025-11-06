@@ -7,14 +7,22 @@
   gap: 8px;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
 
   .step {
-    height: 12px;
-    border-radius: 6px;
-    background-color: rgba(234, 234, 234, 1);
+    border-radius: 16px;
+    background-color: white;
+    border: 1px solid white;
+    width: 140px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     &.active {
-      background-color: @primary-color;
+      border-color: @primary-color;
+      color: @primary-color;
+      background-color: #edf2ff;
+      font-weight: bold;
     }
   }
 }
