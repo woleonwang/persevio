@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, message, Tooltip } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import classnames from "classnames";
 import { observer } from "mobx-react-lite";
