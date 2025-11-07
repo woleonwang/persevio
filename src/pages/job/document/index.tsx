@@ -59,11 +59,11 @@ const JobDocument = () => {
             "job-description": t("job_description_jd"),
           }
         : {
-            "job-requirement": t("detailed_define_job_requirement"),
-            "job-description": t("define_jd"),
-            "job-compensation-details": t("define_compensation_details"),
-            "job-outreach-message": t("define_outreach_message"),
-            "job-interview-plan": t("define_interview_plan"),
+            "job-requirement": t("job_requirement_table"),
+            "job-description": t("job_description_jd"),
+            "job-compensation-details": t("job_compensation_details"),
+            "job-outreach-message": t("job_outreach_message"),
+            "job-interview-plan": t("interview_plan_scorecard"),
           },
     [t]
   );

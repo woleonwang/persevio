@@ -17,7 +17,11 @@ interface IProps {
   className?: string;
   style?: React.CSSProperties;
   renderTagsContent?: (item: TMessage) => React.ReactNode;
-  renderOperationContent?: (item: TMessage, isLast: boolean) => React.ReactNode;
+  renderOperationContent?: (
+    item: TMessage,
+    isLast: boolean,
+    isFirst: boolean
+  ) => React.ReactNode;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -83,6 +87,7 @@ const ChatMessageList = (props: IProps) => {
         split={false}
         renderItem={(item, index) => {
           const isLast = index === messages.length - 1;
+          const isFirst = index === 0;
           return (
             <List.Item
               style={{
@@ -150,7 +155,7 @@ const ChatMessageList = (props: IProps) => {
                       )}
                     </div>
                     {renderTagsContent?.(item)}
-                    {renderOperationContent?.(item, isLast)}
+                    {renderOperationContent?.(item, isLast, isFirst)}
                   </div>
                 }
               />
