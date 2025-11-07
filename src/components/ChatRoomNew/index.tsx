@@ -78,9 +78,10 @@ const SIDE_DOCUMENT_TYPES = [
   "realities-done",
   "responsibilities-done",
   "icp-done",
+  "env-done",
+  "highlights-done",
   "summary-draft",
   "jd-draft",
-  "env-done",
 ];
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
@@ -531,11 +532,10 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
       if (chatType === "jobRequirementDoc") {
         const tagPrograss = {
-          "context-done": 0,
-          "realities-done": 1,
+          "context-done": 1,
           "responsibilities-done": 2,
           "icp-done": 3,
-          "env-done": 3,
+          "highlights-done": 3,
         };
 
         let progress = 0;

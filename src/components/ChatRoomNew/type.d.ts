@@ -32,6 +32,7 @@ export type TExtraTagName =
   | "responsibilities-done"
   | "icp-done"
   | "env-done"
+  | "highlights-done"
   | "summary-draft"
   | "jd-draft"
   | TDoneTag
