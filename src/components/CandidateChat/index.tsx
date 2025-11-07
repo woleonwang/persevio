@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, message } from "antd";
+import { Button, message, Tooltip } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import classnames from "classnames";
@@ -17,6 +17,8 @@ import {
 
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
+import Icon from "../Icon";
+import Delete from "@/assets/icons/delete";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -284,6 +286,8 @@ Shall we start now?`,
             })
             .filter(Boolean) as TSupportTag[];
 
+          if (visibleTags.length === 0) return null;
+
           return (
             <div
               style={{
@@ -314,22 +318,24 @@ Shall we start now?`,
           );
         }}
         renderOperationContent={(item) => {
+          const canDelete =
+            item.role === "user" &&
+            item.messageType === "normal" &&
+            !["fake_ai_id", "fake_user_id"].includes(item.id);
           return (
-            item.id !== "fake_ai_id" &&
-            item.id !== "fake_user_id" &&
-            item.role === "user" && (
+            canDelete && (
               <div className={classnames(styles.operationArea, styles.user)}>
-                <Button.Group>
-                  <Button
-                    shape="round"
+                <Tooltip title={originalT("delete")}>
+                  <div
                     onClick={() => {
                       if (confirm(t("confirm_delete_message"))) {
                         deleteMessage(parseInt(item.id));
                       }
                     }}
-                    icon={<DeleteOutlined />}
-                  />
-                </Button.Group>
+                  >
+                    <Icon icon={<Delete />} />
+                  </div>
+                </Tooltip>
               </div>
             )
           );

@@ -117,9 +117,7 @@ const ChatMessageList = (props: IProps) => {
                 title={
                   item.role === "ai" && (
                     <div style={{ marginTop: 8 }}>
-                      <span style={{ fontSize: 18 }}>
-                        {`Viona, ${t("viona_intro_staff")}`}
-                      </span>
+                      <span style={{ fontSize: 18 }}>Viona</span>
                       <span className={styles.timestamp}>
                         {dayjs(item.updated_at).format(datetimeFormat)}
                       </span>

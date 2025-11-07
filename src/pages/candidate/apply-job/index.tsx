@@ -148,6 +148,8 @@ const ApplyJob: React.FC = () => {
     return <div>Apply job does not exist</div>;
   }
 
+  const currentIndex = pageState === "basic" ? 0 : 1;
+
   return (
     <div className={classnames(styles.container, styles.mobile)}>
       <div className={styles.header}>
@@ -156,7 +158,7 @@ const ApplyJob: React.FC = () => {
           className={styles.banner}
           onClick={() => navigate("/")}
         />
-        <div className={styles.headerRight}>
+        <div className={classnames(styles.headerRight, styles.desktopVisible)}>
           <div
             className={styles.buttonWrapper}
             onClick={async () => {
@@ -191,18 +193,29 @@ const ApplyJob: React.FC = () => {
             </div>
           )}
         </div>
+
+        {(pageState === "basic" || pageState === "resume") && (
+          <div>
+            <Step
+              stepCount={2}
+              currentIndex={currentIndex}
+              className={classnames(styles.stepContainer, styles.mobileVisible)}
+            />
+          </div>
+        )}
       </div>
       <div className={styles.main}>
         {(() => {
           if (pageState === "basic" || pageState === "resume") {
-            const currentIndex = pageState === "basic" ? 0 : 1;
-
             return (
               <>
                 <Step
                   stepCount={2}
                   currentIndex={currentIndex}
-                  className={styles.stepContainer}
+                  className={classnames(
+                    styles.stepContainer,
+                    styles.desktopVisible
+                  )}
                 />
 
                 <div className={styles.body}>

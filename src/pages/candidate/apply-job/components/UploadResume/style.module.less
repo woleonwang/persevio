@@ -54,3 +54,54 @@
   color: #999999;
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 16px;
+    background-color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .formContainer {
+      margin: 30px 0;
+      flex: auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      justify-content: space-between;
+
+      :global {
+        .ant-upload-drag {
+          height: 280px;
+        }
+      }
+
+      .uploadIconContainer {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+
+        .uploadIcon {
+          font-size: 46px;
+          cursor: pointer;
+          color: @primary-color;
+        }
+      }
+    }
+  }
+
+  .title {
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .hint {
+    text-align: left;
+    font-size: 12px;
+  }
+}

@@ -129,7 +129,12 @@ const useAssemblyOffline = ({
     }
 
     setIsRecording(true);
-    await initConnection();
+    try {
+      await initConnection();
+    } catch (error) {
+      alert(error);
+    }
+
     audioChunksRef.current = [];
     mediaRecorderRef.current?.start();
     onStartTranscription?.();
@@ -159,9 +164,17 @@ const useAssemblyOffline = ({
 
   const initConnection = async () => {
     console.log("start stream: ", new Date().toISOString());
-    streamRef.current = await navigator.mediaDevices.getUserMedia({
+
+    const getUserMedia =
+      navigator.mediaDevices?.getUserMedia ||
+      (navigator as any).webkitGetUserMedia ||
+      (navigator as any).mozGetUserMedia ||
+      (navigator as any).getUserMedia;
+
+    streamRef.current = await getUserMedia({
       audio: true,
     });
+
     console.log("end stream: ", new Date().toISOString());
 
     if (!isRecordingRef.current) {

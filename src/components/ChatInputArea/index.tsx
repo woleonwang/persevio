@@ -35,12 +35,16 @@ const getInitialVolumeHistory = () => {
     () => 0
   );
 };
+
+const LONG_PRESS_DURATION = 300; // 长按时间阈值（毫秒）
+
 const ChatInputArea = (props: IProps) => {
   const { onSubmit, isLoading = false, disabledVoiceInput = false } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
   const volumeRef = useRef(0);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isCompositingRef = useRef(false);
   const { t: originalT } = useTranslation();
@@ -98,138 +102,247 @@ const ChatInputArea = (props: IProps) => {
     <div className={classnames(styles.inputAreaContainer)}>
       <div className={styles.inputPanel}>
         {textInputVisible ? (
-          <div className={styles.textInputContainer}>
-            <div className={styles.textInputLeft}>
-              <Input.TextArea
-                className={styles.textInputArea}
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                }}
-                placeholder={t("reply_viona_directly_or_edit")}
-                onCompositionStartCapture={() =>
-                  (isCompositingRef.current = true)
-                }
-                onCompositionEndCapture={() =>
-                  (isCompositingRef.current = false)
-                }
-                onPressEnter={(e) => {
-                  if (!e.shiftKey && !isCompositingRef.current && canSubmit()) {
-                    e.preventDefault();
-                    submit();
+          <>
+            <div
+              className={classnames(
+                styles.textInputContainer,
+                styles.desktopVisible
+              )}
+            >
+              <div className={styles.textInputLeft}>
+                <Input.TextArea
+                  className={styles.textInputArea}
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                  }}
+                  placeholder={t("reply_viona_directly_or_edit")}
+                  onCompositionStartCapture={() =>
+                    (isCompositingRef.current = true)
                   }
-                }}
-                autoSize={{
-                  minRows: 1,
-                  maxRows: 6,
-                }}
-              />
-              <div
-                className={classnames(styles.sendButton, {
-                  [styles.disabled]: !canSubmit(),
-                })}
-                onClick={() => submit()}
-              >
-                <Icon icon={<Send />} style={{ fontSize: 24 }} />
-              </div>
-            </div>
-
-            <Tooltip title={t("voice_input")}>
-              <div
-                className={styles.button}
-                onClick={() => setTextInputVisible(false)}
-              >
-                <AudioOutlined style={{ fontSize: 24 }} />
-              </div>
-            </Tooltip>
-          </div>
-        ) : (
-          <div className={styles.audioInputContainer}>
-            <div className={styles.left}>
-              <div
-                className={classnames(styles.volumeHistoryContainer, {
-                  [styles.active]: isRecording,
-                })}
-              >
-                {volumeHistory.map((volume, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={styles.volumeHistoryItem}
-                      style={{
-                        height: 4 + Math.min(50, volume * 100),
-                      }}
-                    />
-                  );
-                })}
-              </div>
-              <div className={styles.voiceInputHint}>
-                {isRecording && !isStartRecordingOutside ? (
-                  <>
-                    Release
-                    <span
-                      className={classnames(styles.highlight, {
-                        [styles.active]: isRecording,
-                      })}
-                    >
-                      Ctrl
-                    </span>
-                    to stop speaking
-                  </>
-                ) : !isRecording ? (
-                  <>
-                    Press and hold{" "}
-                    <span
-                      className={classnames(styles.highlight, {
-                        [styles.active]: isRecording,
-                      })}
-                    >
-                      Ctrl
-                    </span>{" "}
-                    to speak
-                  </>
-                ) : null}
-              </div>
-            </div>
-            <div className={styles.right}>
-              <div className={styles.divider} />
-              <div
-                className={styles.button}
-                onClick={() => {
-                  if (isRecording) {
-                    if (isTranscribing || !isStartRecordingOutside) {
-                      return;
+                  onCompositionEndCapture={() =>
+                    (isCompositingRef.current = false)
+                  }
+                  onPressEnter={(e) => {
+                    if (
+                      !e.shiftKey &&
+                      !isCompositingRef.current &&
+                      canSubmit()
+                    ) {
+                      e.preventDefault();
+                      submit();
                     }
-                    endTranscription();
-                  } else {
-                    startTranscription();
-                  }
-                }}
-              >
-                {isRecording ? (
-                  <Icon
-                    icon={<Pause />}
-                    style={{ fontSize: 24, color: "#3682fe" }}
-                  />
-                ) : isTranscribing ? (
-                  <LoadingOutlined style={{ fontSize: 24, color: "#3682fe" }} />
-                ) : (
-                  <Tooltip title={t("voice_input")}>
-                    <AudioOutlined style={{ fontSize: 24 }} />
-                  </Tooltip>
-                )}
+                  }}
+                  autoSize={{
+                    minRows: 1,
+                    maxRows: 6,
+                  }}
+                />
+                <div
+                  className={classnames(styles.sendButton, {
+                    [styles.disabled]: !canSubmit(),
+                  })}
+                  onClick={() => submit()}
+                >
+                  <Icon icon={<Send />} style={{ fontSize: 24 }} />
+                </div>
               </div>
-              <div className={styles.divider} />
-              <div
-                className={styles.button}
-                onClick={() => setTextInputVisible(true)}
-              >
-                <Tooltip title={t("text_edit")}>
-                  <Icon icon={<Edit />} style={{ fontSize: 24 }} />
-                </Tooltip>
+
+              <Tooltip title={t("voice_input")}>
+                <div
+                  className={styles.button}
+                  onClick={() => setTextInputVisible(false)}
+                >
+                  <AudioOutlined style={{ fontSize: 24 }} />
+                </div>
+              </Tooltip>
+            </div>
+            <div
+              className={classnames(
+                styles.textInputContainer,
+                styles.mobileVisible
+              )}
+            >
+              <div className={styles.textInputLeft}>
+                <Input.TextArea
+                  className={styles.textInputArea}
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                  }}
+                  placeholder={t("reply_viona_directly_or_edit")}
+                  onCompositionStartCapture={() =>
+                    (isCompositingRef.current = true)
+                  }
+                  onCompositionEndCapture={() =>
+                    (isCompositingRef.current = false)
+                  }
+                  autoSize={{
+                    minRows: 1,
+                    maxRows: 6,
+                  }}
+                />
+                <div
+                  className={classnames(styles.sendButton, {
+                    [styles.disabled]: !canSubmit(),
+                  })}
+                  onClick={() => submit()}
+                >
+                  <Icon icon={<Send />} style={{ fontSize: 24 }} />
+                </div>
+              </div>
+
+              <Tooltip title={t("voice_input")}>
+                <div
+                  className={styles.button}
+                  onClick={() => setTextInputVisible(false)}
+                >
+                  <AudioOutlined style={{ fontSize: 24 }} />
+                </div>
+              </Tooltip>
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              className={classnames(
+                styles.audioInputContainer,
+                styles.desktopVisible
+              )}
+            >
+              <div className={styles.left}>
+                <div
+                  className={classnames(styles.volumeHistoryContainer, {
+                    [styles.active]: isRecording,
+                  })}
+                >
+                  {volumeHistory.map((volume, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={styles.volumeHistoryItem}
+                        style={{
+                          height: 4 + Math.min(50, volume * 100),
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <div className={styles.voiceInputHint}>
+                  {isRecording && !isStartRecordingOutside ? (
+                    <>
+                      Release
+                      <span
+                        className={classnames(styles.highlight, {
+                          [styles.active]: isRecording,
+                        })}
+                      >
+                        Ctrl
+                      </span>
+                      to stop speaking
+                    </>
+                  ) : !isRecording ? (
+                    <>
+                      Press and hold{" "}
+                      <span
+                        className={classnames(styles.highlight, {
+                          [styles.active]: isRecording,
+                        })}
+                      >
+                        Ctrl
+                      </span>{" "}
+                      to speak
+                    </>
+                  ) : null}
+                </div>
+              </div>
+              <div className={styles.right}>
+                <div className={styles.divider} />
+                <div
+                  className={styles.button}
+                  onClick={() => {
+                    if (isRecording) {
+                      if (isTranscribing || !isStartRecordingOutside) {
+                        return;
+                      }
+                      endTranscription();
+                    } else {
+                      startTranscription();
+                    }
+                  }}
+                >
+                  {isRecording ? (
+                    <Icon
+                      icon={<Pause />}
+                      style={{ fontSize: 24, color: "#3682fe" }}
+                    />
+                  ) : isTranscribing ? (
+                    <LoadingOutlined
+                      style={{ fontSize: 24, color: "#3682fe" }}
+                    />
+                  ) : (
+                    <Tooltip title={t("voice_input")}>
+                      <AudioOutlined style={{ fontSize: 24 }} />
+                    </Tooltip>
+                  )}
+                </div>
+                <div className={styles.divider} />
+                <div
+                  className={styles.button}
+                  onClick={() => setTextInputVisible(true)}
+                >
+                  <Tooltip title={t("text_edit")}>
+                    <Icon icon={<Edit />} style={{ fontSize: 24 }} />
+                  </Tooltip>
+                </div>
               </div>
             </div>
-          </div>
+            <div
+              className={classnames(
+                styles.audioInputContainer,
+                styles.mobileVisible
+              )}
+            >
+              <div className={classnames(styles.left, styles.mobileVisible)}>
+                <div
+                  className={styles.voiceInputButton}
+                  onTouchStart={(e) => {
+                    e.preventDefault();
+                    longPressTimerRef.current = setTimeout(() => {
+                      startTranscription();
+                    }, LONG_PRESS_DURATION);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    // 清除长按定时器
+                    if (longPressTimerRef.current) {
+                      clearTimeout(longPressTimerRef.current);
+                      longPressTimerRef.current = null;
+                    }
+
+                    // 如果正在录音，则停止
+                    if (isRecording) {
+                      endTranscription();
+                    }
+                  }}
+                >
+                  {isRecording
+                    ? "Release to stop speaking"
+                    : "Press and hold to speak"}
+                </div>
+              </div>
+              <div className={styles.right}>
+                <div
+                  className={styles.button}
+                  onClick={() => setTextInputVisible(true)}
+                >
+                  <Tooltip title={t("text_edit")}>
+                    <Icon icon={<Edit />} style={{ fontSize: 24 }} />
+                  </Tooltip>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

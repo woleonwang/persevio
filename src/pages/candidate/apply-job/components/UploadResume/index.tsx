@@ -34,7 +34,11 @@ const UploadResume = (props: IProps) => {
       </div>
       <div className={styles.formContainer}>
         <Form form={form} layout="vertical">
-          <Form.Item name="resumePath" rules={[{ required: true }]}>
+          <Form.Item
+            name="resumePath"
+            rules={[{ required: true }]}
+            label="Resume"
+          >
             <Upload.Dragger
               beforeUpload={() => false}
               onChange={async (fileInfo) => {
