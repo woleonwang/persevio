@@ -165,13 +165,7 @@ const useAssemblyOffline = ({
   const initConnection = async () => {
     console.log("start stream: ", new Date().toISOString());
 
-    const getUserMedia =
-      navigator.mediaDevices?.getUserMedia ||
-      (navigator as any).webkitGetUserMedia ||
-      (navigator as any).mozGetUserMedia ||
-      (navigator as any).getUserMedia;
-
-    streamRef.current = await getUserMedia({
+    streamRef.current = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
 
