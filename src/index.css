@@ -158,3 +158,12 @@ img {
   word-break: break-word !important; /* 强制单词在必要时断开 */
   /* 你可能还需要调整行高或其他布局属性 */
 }
+
+.ant-modal {
+  .ant-modal-title {
+    font-size: 18px;
+  }
+  .ant-modal-content {
+    border-radius: 16px;
+  }
+}

@@ -20,83 +20,39 @@
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid #eeeeee;
-}
 
-.banner {
-  height: 40px;
-  width: auto;
-  cursor: pointer;
-  margin: 24px 0;
-}
-
-.form {
-  max-width: 800px;
-  margin: 0 auto;
-  overflow: auto;
-  padding: 20px;
-}
-
-.modeContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.modeItem {
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(234, 234, 234, 1);
-  cursor: pointer;
-
-  .modeItemTitle {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
+  .banner {
+    height: 40px;
+    width: auto;
+    cursor: pointer;
+    margin: 24px 0;
   }
 
-  .modeItemList {
-    list-style: disc;
-    padding-left: 20px;
+  .headerRight {
+    position: absolute;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
   }
 
-  &.active {
-    border-color: @primary-color;
-    .modeItemTitle {
-      color: @primary-color;
-    }
-  }
-}
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 16px;
-
-  .back {
+  .buttonWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
   }
-}
 
-.title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  text-align: center;
-}
+  .button {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: @primary-color;
+  }
 
-.hint {
-  font-size: 14px;
-  color: rgba(153, 153, 153, 1);
-  padding: 20px 0;
-}
-
-.conversation {
-  flex: auto;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  .icon {
+    font-size: 24px;
+  }
 }
 
 .main {
@@ -114,10 +70,33 @@
   width: 100%;
 }
 
-.chatWrapper {
+.modalDescription {
+  margin-top: 24px;
+  color: #666;
+  font-size: 16px;
+}
+
+.form {
+  margin-top: 24px;
+
+  :global {
+    .ant-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+  }
+
+  .otherReasonInput {
+    margin-top: 24px;
+    margin-left: 24px;
+  }
+}
+
+.conversation {
   flex: auto;
-  width: 1000px;
-  display: flex;
   overflow: hidden;
-  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }

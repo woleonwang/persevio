@@ -15,7 +15,7 @@ const Waiting = (props: IProps) => {
             __html:
               mode === "ai"
                 ? "Excellent! <br/>We have everything we need for now and are preparing your application. <br/>We're now working to get you feedback as quickly as possible."
-                : "Thank you.  A consultant will be calling you soon.",
+                : "Thank you. <br/>A consultant will be calling you soon.",
           }}
         />
       </div>

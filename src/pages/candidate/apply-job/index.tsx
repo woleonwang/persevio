@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { message } from "antd";
+import { Button, Checkbox, Input, message, Modal } from "antd";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router";
 
@@ -11,8 +11,12 @@ import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
 import Step from "@/components/Step";
-import { getQuery } from "@/utils";
+import { copy, deleteQuery, getQuery } from "@/utils";
 import UploadResume from "./components/UploadResume";
+import Copy from "@/assets/icons/copy";
+import Icon from "@/components/Icon";
+import Chat from "@/assets/icons/chat";
+import { useTranslation } from "react-i18next";
 
 type TPageState = "basic" | "resume" | "conversation" | "waiting";
 
@@ -22,18 +26,23 @@ const ApplyJob: React.FC = () => {
   const [jobApplyId, setJobApplyId] = useState<number>();
   const [mode, setMode] = useState<"ai" | "human">("ai");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+  const [otherReason, setOtherReason] = useState<string>();
+
   const { jobId: jobIdStr } = useParams();
   const jobId = parseInt(jobIdStr ?? "0");
 
   const navigate = useNavigate();
 
-  // const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
   // const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
     const token = getQuery("candidate_token");
     if (token) {
       localStorage.setItem("candidate_token", token);
+      deleteQuery("candidate_token");
     }
     init();
   }, []);
@@ -117,6 +126,24 @@ const ApplyJob: React.FC = () => {
     setIsSubmitting(false);
   };
 
+  const switchModeToHuman = async () => {
+    const { code } = await Post(`/api/candidate/conversation_mode`, {
+      mode: "human",
+      reasons: selectedReasons,
+      other_reason: selectedReasons.includes("others")
+        ? otherReason
+        : undefined,
+    });
+    if (code === 0) {
+      message.success("Switch mode to human successful");
+      setMode("human");
+      setPageState("waiting");
+      setIsModalOpen(false);
+    } else {
+      message.error("Switch mode to human failed");
+    }
+  };
+
   if (!jobId) {
     return <div>Apply job does not exist</div>;
   }
@@ -129,6 +156,41 @@ const ApplyJob: React.FC = () => {
           className={styles.banner}
           onClick={() => navigate("/")}
         />
+        <div className={styles.headerRight}>
+          <div
+            className={styles.buttonWrapper}
+            onClick={async () => {
+              await copy(
+                `${window.location.href}?candidate_token=${localStorage.getItem(
+                  "candidate_token"
+                )}`
+              );
+              message.success(originalT("copied"));
+            }}
+          >
+            <Button
+              icon={<Icon icon={<Copy />} className={styles.icon} />}
+              className={styles.button}
+            />
+            <span>Copy Link</span>
+          </div>
+
+          {pageState === "conversation" && (
+            <div
+              className={styles.buttonWrapper}
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Button
+                icon={<Icon icon={<Chat />} className={styles.icon} />}
+                className={styles.button}
+              />
+              <span>
+                Schedule <br />
+                human recruiter
+              </span>
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.main}>
         {(() => {
@@ -143,27 +205,22 @@ const ApplyJob: React.FC = () => {
                   className={styles.stepContainer}
                 />
 
-                <div
-                  className={styles.body}
-                  style={{ display: pageState === "basic" ? "block" : "none" }}
-                >
-                  <BasicInfo
-                    onFinish={(params) => {
-                      onSubmitBasicInfo(params);
-                    }}
-                  />
-                </div>
-
-                <div
-                  className={styles.form}
-                  style={{ display: pageState === "resume" ? "block" : "none" }}
-                >
-                  <UploadResume
-                    isSubmitting={isSubmitting}
-                    onFinish={(resumePath) => {
-                      onSubmitResume(resumePath);
-                    }}
-                  />
+                <div className={styles.body}>
+                  {pageState === "basic" && (
+                    <BasicInfo
+                      onFinish={(params) => {
+                        onSubmitBasicInfo(params);
+                      }}
+                    />
+                  )}
+                  {pageState === "resume" && (
+                    <UploadResume
+                      isSubmitting={isSubmitting}
+                      onFinish={(resumePath) => {
+                        onSubmitResume(resumePath);
+                      }}
+                    />
+                  )}
                 </div>
               </>
             );
@@ -184,6 +241,55 @@ const ApplyJob: React.FC = () => {
           }
         })()}
       </div>
+
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="We have arranged a real recruitment staff for you."
+        okText="Submit"
+        okButtonProps={{
+          disabled:
+            selectedReasons.length === 0 ||
+            (selectedReasons.includes("others") && !otherReason),
+        }}
+        onOk={() => {
+          switchModeToHuman();
+        }}
+        centered
+        styles={{
+          content: {
+            width: "640px",
+          },
+        }}
+      >
+        <div className={styles.modalDescription}>
+          May I briefly understand the reason why you hope to communicate with a
+          real person? This can help us serve you better.
+        </div>
+        <div className={styles.form}>
+          <Checkbox.Group value={selectedReasons} onChange={setSelectedReasons}>
+            <Checkbox value="dissatisfied_with_my_answer">
+              Dissatisfied with my answer
+            </Checkbox>
+            <Checkbox value="want_to_consult_more_complex_questions">
+              Want to consult some more complex questions
+            </Checkbox>
+            <Checkbox value="want_to_chat_with_a_real_person">
+              Just want to chat with a real person for more reassurance
+            </Checkbox>
+            <Checkbox value="others">Others</Checkbox>
+          </Checkbox.Group>
+          <div className={styles.otherReasonInput}>
+            <Input.TextArea
+              placeholder="Please enter other reasons"
+              rows={4}
+              disabled={!selectedReasons.includes("others")}
+              value={otherReason}
+              onChange={(e) => setOtherReason(e.target.value)}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
