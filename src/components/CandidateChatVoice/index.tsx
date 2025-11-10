@@ -9,7 +9,6 @@ import { Get, Post } from "../../utils/request";
 import VionaAvatar from "../../assets/viona-avatar.png";
 import UserAvatar from "../../assets/user-avatar.png";
 import styles from "./style.module.less";
-import { TMessage, TMessageFromApi } from "../ChatRoomNew/type";
 
 import { observer } from "mobx-react-lite";
 import MarkdownContainer from "../MarkdownContainer";

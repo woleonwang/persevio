@@ -23,8 +23,6 @@ import {
   TDoneTag,
   TExtraTag,
   TExtraTagName,
-  TMessage,
-  TMessageFromApi,
   TRoleOverviewType,
 } from "./type";
 import { copy, downloadText, parseJSON } from "@/utils";

@@ -531,6 +531,7 @@ type TMessageFromApi = {
     };
   };
   updated_at: string;
+  payload_id?: number;
 };
 
 type TMessage = {
@@ -542,4 +543,5 @@ type TMessage = {
   messageType?: "normal" | "system";
   messageSubType?: "normal" | "error";
   extraTags?: TExtraTag[];
+  payloadId?: number;
 };

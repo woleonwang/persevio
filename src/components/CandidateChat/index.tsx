@@ -8,16 +8,14 @@ import { useTranslation } from "react-i18next";
 import { Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
-import {
-  TExtraTagName,
-  TMessage,
-  TMessageFromApi,
-} from "@/components/ChatRoomNew/type";
+import { TExtraTagName } from "@/components/ChatRoomNew/type";
 
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import Icon from "../Icon";
 import Delete from "@/assets/icons/delete";
+import Chat from "@/assets/icons/chat";
+import usePlayAudio from "@/hooks/usePlayAudio";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -54,6 +52,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [playingAudioMessageId, setPlayingAudioMessageId] = useState<number>();
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -66,6 +65,9 @@ const CandidateChat: React.FC<IProps> = (props) => {
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`chat.${key}`);
+
+  const { playBase64Audio, totalSeconds, currentSeconds, isPlaying } =
+    usePlayAudio();
 
   useEffect(() => {
     needScrollToBottom.current = true;
@@ -202,6 +204,7 @@ Shall we start now?`,
           messageType: item.content.metadata.message_type || "normal",
           messageSubType: item.content.metadata.message_sub_type || "normal",
           extraTags: item.content.metadata.extra_tags || [],
+          payloadId: item.payload_id,
         });
       }
     });
@@ -272,6 +275,21 @@ Shall we start now?`,
     }
   };
 
+  const playAudioById = async (messageId?: number) => {
+    if (!messageId) return;
+
+    const { code, data } = await Get(
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
+      }/messages/${messageId}`
+    );
+
+    if (code === 0) {
+      setPlayingAudioMessageId(messageId);
+      playBase64Audio(data.payload);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <ChatMessageList
@@ -324,9 +342,29 @@ Shall we start now?`,
             item.role === "user" &&
             item.messageType === "normal" &&
             !["fake_ai_id", "fake_user_id"].includes(item.id);
+
+          const canPlayAudio = !!item.payloadId;
+          const isCurrentMessage = playingAudioMessageId === parseInt(item.id);
+
           return (
             canDelete && (
               <div className={classnames(styles.operationArea, styles.user)}>
+                {canPlayAudio &&
+                  (isCurrentMessage && isPlaying ? (
+                    <div>
+                      {currentSeconds}/{totalSeconds}
+                    </div>
+                  ) : (
+                    <Tooltip title={originalT("play_audio")}>
+                      <div
+                        onClick={() => {
+                          playAudioById(parseInt(item.id));
+                        }}
+                      >
+                        <Icon icon={<Chat />} />
+                      </div>
+                    </Tooltip>
+                  ))}
                 <Tooltip title={originalT("delete")}>
                   <div
                     onClick={() => {

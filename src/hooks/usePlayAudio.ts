@@ -47,6 +47,7 @@ const usePlayAudio = () => {
         // 播放结束后清理 URL
         audio.onended = () => {
           console.log("playBase64Audio ended");
+          setIsPlaying(false);
           URL.revokeObjectURL(url);
         };
 
@@ -67,7 +68,12 @@ const usePlayAudio = () => {
     }
   };
 
-  return { playBase64Audio, totalSeconds, currentSeconds, isPlaying };
+  return {
+    playBase64Audio,
+    totalSeconds: Math.floor(totalSeconds),
+    currentSeconds: Math.floor(currentSeconds),
+    isPlaying,
+  };
 };
 
 export default usePlayAudio;

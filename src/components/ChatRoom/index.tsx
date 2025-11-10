@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import "@mdxeditor/editor/style.css";
 
 import { Get, Post } from "@/utils/request";
-import { IProps, TMessage, TMessageFromApi } from "./type";
+import { IProps } from "./type";
 
 import styles from "./style.module.less";
 import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
