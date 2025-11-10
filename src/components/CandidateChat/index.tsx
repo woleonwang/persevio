@@ -240,13 +240,16 @@ Shall we start now?`,
     ]);
     setIsLoading(true);
 
+    const { voice_payload_id, metadata } = options ?? {};
+
     Post(
       `/api/candidate/chat/${ChatTypeMappings[chatType]}${
         jobApplyId ? `/${jobApplyId}` : ""
       }/send`,
       {
         content: formattedMessage,
-        metadata: options?.metadata,
+        voice_payload_id: voice_payload_id,
+        metadata: metadata,
       }
     );
   };

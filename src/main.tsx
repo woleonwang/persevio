@@ -65,6 +65,7 @@ import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
 import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 import LiveKit from "./pages/livekit-voice-chat/page.tsx";
 import TalentDetails from "./pages/job/talent-details/index.tsx";
+import PlayAudio from "./pages/play-audio/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -90,6 +91,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/" element={<Home />} />
           {/** 贪吃蛇游戏 */}
           <Route path="/snake" element={<SnakeGame />} />
+          {/** 贪吃蛇游戏 */}
+          <Route path="/play-audio" element={<PlayAudio />} />
           {/** 职位列表 */}
           <Route path="/jobs" element={<PublicJobs />} />
           {/** 分享职位详情文档 */}

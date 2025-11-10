@@ -1,6 +1,8 @@
 import { message } from "antd";
 import { useRef, useState } from "react";
 
+const WebmMimePrefix = "GkXfo59ChoEBQveBAULyg";
+
 const usePlayAudio = () => {
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [currentSeconds, setCurrentSeconds] = useState(0);
@@ -19,7 +21,11 @@ const usePlayAudio = () => {
       }
 
       // 创建 Blob 对象（假设是 webm 格式，与录音格式一致）
-      const blob = new Blob([bytes], { type: "audio/webm;codecs=opus" });
+      const blob = new Blob([bytes], {
+        type: binaryString.startsWith(WebmMimePrefix)
+          ? "audio/webm;codecs=opus"
+          : "audio/mp4",
+      });
       const url = URL.createObjectURL(blob);
 
       if (audioRef.current) {

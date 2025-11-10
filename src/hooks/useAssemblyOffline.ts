@@ -184,8 +184,16 @@ const useAssemblyOffline = ({
 
     log("start init media recorder");
 
+    // 判断是否是 safari 浏览器
+    let mimeType = "audio/webm;codecs=opus";
+    const ua = window.navigator.userAgent;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    if (isSafari) {
+      mimeType = "audio/mp4";
+    }
+
     mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
-      mimeType: "audio/webm;codec=Opus",
+      mimeType,
       audioBitsPerSecond: 8000,
     });
     const recorder = mediaRecorderRef.current;

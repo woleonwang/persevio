@@ -70,7 +70,7 @@ const useVoiceChat = ({
     });
 
     mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
-      mimeType: "audio/webm;codec=Opus",
+      mimeType: "audio/webm;codecs=Opus",
       audioBitsPerSecond: 8000,
     });
 
