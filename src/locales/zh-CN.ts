@@ -1319,6 +1319,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   year: "年",
   empty_text: "暂无数据",
 
+  download: "下载",
+
   numberRange: {
     min: "最小值",
     max: "最大值",

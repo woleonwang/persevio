@@ -1370,6 +1370,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   year: "year(s)",
   empty_text: "No data",
 
+  download: "Download",
+
   numberRange: {
     min: "Min",
     max: "Max",

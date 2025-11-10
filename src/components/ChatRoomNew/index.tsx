@@ -1235,26 +1235,32 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
               {t(sideDocumentType ?? "")}
             </div>
             <div className={styles.sideDocumentOperations}>
-              <Icon
-                icon={<Pen />}
-                onClick={() => setIsEditingSideDocument(true)}
-              />
-              <Icon
-                icon={<Copy />}
-                onClick={async () => {
-                  await copy(sideDocumentContent);
-                  message.success(originalT("copied"));
-                }}
-              />
-              <Icon
-                icon={<Download />}
-                onClick={() =>
-                  downloadText({
-                    name: `${t(sideDocumentType ?? "")}.md`,
-                    content: sideDocumentContent,
-                  })
-                }
-              />
+              <Tooltip title={originalT("edit")}>
+                <Icon
+                  icon={<Pen />}
+                  onClick={() => setIsEditingSideDocument(true)}
+                />
+              </Tooltip>
+              <Tooltip title={originalT("copy")}>
+                <Icon
+                  icon={<Copy />}
+                  onClick={async () => {
+                    await copy(sideDocumentContent);
+                    message.success(originalT("copied"));
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title={originalT("download")}>
+                <Icon
+                  icon={<Download />}
+                  onClick={() =>
+                    downloadText({
+                      name: `${t(sideDocumentType ?? "")}.md`,
+                      content: sideDocumentContent,
+                    })
+                  }
+                />
+              </Tooltip>
               <div className={styles.sideDocumentOperationSeparator} />
               <Icon
                 icon={<Close />}

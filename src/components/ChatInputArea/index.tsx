@@ -239,19 +239,23 @@ const ChatInputArea = (props: IProps) => {
                   })}
                 </div>
                 <div className={styles.voiceInputHint}>
-                  {isRecording && !isStartRecordingOutside ? (
-                    <>
-                      Release
-                      <span
-                        className={classnames(styles.highlight, {
-                          [styles.active]: isRecording,
-                        })}
-                      >
-                        Ctrl
-                      </span>
-                      to stop speaking
-                    </>
-                  ) : !isRecording ? (
+                  {isRecording ? (
+                    isStartRecordingOutside ? (
+                      <>Click again to stop recording</>
+                    ) : (
+                      <>
+                        Release
+                        <span
+                          className={classnames(styles.highlight, {
+                            [styles.active]: isRecording,
+                          })}
+                        >
+                          Ctrl
+                        </span>
+                        to stop speaking
+                      </>
+                    )
+                  ) : (
                     <>
                       Press and hold{" "}
                       <span
@@ -263,7 +267,7 @@ const ChatInputArea = (props: IProps) => {
                       </span>{" "}
                       to speak
                     </>
-                  ) : null}
+                  )}
                 </div>
               </div>
               <div className={styles.right}>
