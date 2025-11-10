@@ -45,6 +45,7 @@ const useAssemblyOffline = ({
   });
 
   useEffect(() => {
+    log(navigator.userAgent);
     return () => {
       if (mediaRecorderRef.current) {
         mediaRecorderRef.current.onstop = null;
@@ -187,7 +188,8 @@ const useAssemblyOffline = ({
     // 判断是否是 safari 浏览器
     let mimeType = "audio/webm;codecs=opus";
     const ua = window.navigator.userAgent;
-    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    const isSafari =
+      /^((?!chrome|android).)*safari/i.test(ua) || /iPhone|iPad|iPod/i.test(ua);
     if (isSafari) {
       mimeType = "audio/mp4";
     }
