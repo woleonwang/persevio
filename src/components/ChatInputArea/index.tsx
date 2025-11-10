@@ -11,6 +11,7 @@ import Pause from "@/assets/icons/pause";
 import Edit from "@/assets/icons/edit";
 
 import styles from "./style.module.less";
+import { getQuery } from "@/utils";
 
 interface IProps {
   onSubmit: (
@@ -48,6 +49,7 @@ const ChatInputArea = (props: IProps) => {
 
   const isCompositingRef = useRef(false);
   const { t: originalT } = useTranslation();
+  const isDebug = getQuery("debug") === "1";
 
   const {
     startTranscription,
@@ -56,6 +58,7 @@ const ChatInputArea = (props: IProps) => {
     volume,
     isTranscribing,
     isStartRecordingOutside,
+    logs,
   } = useAssemblyOffline({
     onFinish: (result, payloadId) => {
       onSubmit(result, { voice_payload_id: payloadId });
@@ -100,6 +103,13 @@ const ChatInputArea = (props: IProps) => {
 
   return (
     <div className={classnames(styles.inputAreaContainer)}>
+      {isDebug && (
+        <div className={styles.debugContainer}>
+          {logs.map((log, index) => (
+            <div key={index}>{log}</div>
+          ))}
+        </div>
+      )}
       <div className={styles.inputPanel}>
         {textInputVisible ? (
           <>

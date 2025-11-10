@@ -14,6 +14,7 @@ const useAssemblyOffline = ({
   const [isRecording, setIsRecording] = useState(false);
   const [volume, setVolume] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
 
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
@@ -162,19 +163,26 @@ const useAssemblyOffline = ({
     volumeMonitorRef.current = {};
   };
 
+  const log = (message: string) => {
+    setLogs((prev) => [...prev, message]);
+  };
+
   const initConnection = async () => {
-    console.log("start stream: ", new Date().toISOString());
+    log("start init stream");
 
     streamRef.current = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
 
-    console.log("end stream: ", new Date().toISOString());
+    log("end init stream");
 
     if (!isRecordingRef.current) {
+      log("clear");
       clear();
       return;
     }
+
+    log("start init media recorder");
 
     mediaRecorderRef.current = new MediaRecorder(streamRef.current, {
       mimeType: "audio/webm;codec=Opus",
@@ -182,16 +190,18 @@ const useAssemblyOffline = ({
     });
     const recorder = mediaRecorderRef.current;
 
+    log("end init media recorder");
+
     recorder.ondataavailable = (event) => {
       audioChunksRef.current.push(event.data);
     };
 
     recorder.onstart = () => {
-      console.log("Recording started");
+      log("Recording started");
     };
 
     recorder.onstop = async () => {
-      console.log("length:", audioChunksRef.current.length);
+      log("length: " + audioChunksRef.current.length);
 
       if (audioChunksRef.current.length === 0) {
         setIsRecording(false);
@@ -207,8 +217,8 @@ const useAssemblyOffline = ({
         }
         const base64String = window.btoa(binary);
 
-        console.log("data length: ", base64String.length);
-        console.log("start transcribe:", new Date().toISOString());
+        log("data length: " + base64String.length);
+        log("start transcribe: " + new Date().toISOString());
 
         setIsRecording(false);
         if (base64String.length === 0) {
@@ -217,9 +227,11 @@ const useAssemblyOffline = ({
         }
 
         setIsTranscribing(true);
+        log("start send");
         const { code, data } = await Post("/api/stt/send", {
           payload: base64String,
         });
+        log("end send:" + JSON.stringify(data.result));
         if (code === 0 && data.result) {
           onFinish(data.result ?? "", data.voice_payload_id);
         }
@@ -227,6 +239,7 @@ const useAssemblyOffline = ({
       }
     };
 
+    log("start init stream audio context");
     const audioContext = new AudioContext();
     volumeMonitorRef.current.audioContext = audioContext;
     const source = audioContext.createMediaStreamSource(streamRef.current);
@@ -235,6 +248,8 @@ const useAssemblyOffline = ({
     analyser.fftSize = 256;
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     source.connect(analyser);
+
+    log("end init stream audio context");
 
     const processAudio = () => {
       // 获取时域数据
@@ -258,6 +273,7 @@ const useAssemblyOffline = ({
         requestAnimationFrame(processAudio);
     };
 
+    log("start process audio");
     processAudio();
   };
 
@@ -280,6 +296,7 @@ const useAssemblyOffline = ({
     isTranscribing,
     isStartRecordingOutside: recordingStateRef.current.isStartRecordingOutside,
     volume,
+    logs,
   };
 };
 
