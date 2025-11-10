@@ -223,6 +223,19 @@ export default {
       "确定删除这条消息吗？删除后，该条消息之后的聊天记录不可恢复。",
     voice_chat: "语音对话",
     text_edit: "文字编辑",
+    click_again_to_stop_recording: "再次点击停止录音",
+    release_ctrl_to_stop_speaking: "松开",
+    ctrl_key: "Ctrl",
+    to_stop_speaking: "停止说话",
+    press_and_hold: "按住",
+    to_speak: "说话",
+    release_to_stop_speaking: "松开停止说话",
+    press_and_hold_to_speak: "按住说话",
+    jrd_step_role_overview: "角色概览",
+    jrd_step_job_scope: "工作范围",
+    jrd_step_ideal_candidate_profile: "理想候选人画像",
+    jrd_step_other_info: "其他信息",
+    jrd_step_left: "剩余",
 
     task: "任务",
     next_task: "下一个任务: ",
@@ -718,6 +731,17 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     copy_job_requirement_link:
       "复制【职位需求】链接，用于HR、用人经理、面试官等定义职位需求、生成面试反馈",
     post_job: "确认发布",
+    step_create_new_job: "创建新职位",
+    step_job_intake: "职位需求",
+    step_draft_jd: "起草JD",
+    step_preview: "预览",
+    step_publish: "发布",
+    preview_description:
+      '职位预览已生成。请仔细审阅信息。确认无误后，点击页面底部的"确认发布"按钮，将职位发布到 Persevio 招聘网站。',
+    published_successfully: "发布成功！",
+    published_success_content:
+      "您的职位现已上线并接受申请！您可以在职位详情页查看和编辑职位信息。",
+    go_to_job_details_page: "前往职位详情页",
   },
 
   job_chat: {

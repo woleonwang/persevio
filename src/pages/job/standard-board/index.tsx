@@ -47,23 +47,23 @@ const JobBoard = () => {
 
   const stepItems = [
     {
-      title: "Create New Job",
+      title: t("step_create_new_job"),
       key: "create",
     },
     {
-      title: "Job Intake",
+      title: t("step_job_intake"),
       key: "jrd",
     },
     {
-      title: "Draft JD",
+      title: t("step_draft_jd"),
       key: "jd",
     },
     {
-      title: "Preview",
+      title: t("step_preview"),
       key: "preview",
     },
     {
-      title: "Publish",
+      title: t("step_publish"),
       key: "confirm",
     },
   ];
@@ -134,10 +134,7 @@ const JobBoard = () => {
         {jobState === "preview" && (
           <div className={styles.previewContainer}>
             <div className={styles.previewHeader}>
-              A preview of the job position has been generated. Please review
-              the information carefully. Once you confirm that everything is
-              correct, click the "Confirm and Post" button at the bottom of the
-              page to publish the position to the Persevio recruitment website.
+              {t("preview_description")}
             </div>
             <iframe
               src={`/jobs/${job.id}/chat?preview=1`}
@@ -163,10 +160,9 @@ const JobBoard = () => {
                   });
                   if (code === 0) {
                     infoModal({
-                      title: "Published Successfully!",
-                      content:
-                        "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",
-                      okText: "Go to Job Details Page",
+                      title: t("published_successfully"),
+                      content: t("published_success_content"),
+                      okText: t("go_to_job_details_page"),
                       onOk: async () => {
                         fetchJob();
                       },

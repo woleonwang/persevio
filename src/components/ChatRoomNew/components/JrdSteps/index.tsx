@@ -1,29 +1,32 @@
 import classnames from "classnames";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 import { Popover } from "antd";
 const JrdSteps = (props: { current: number; collapse: boolean }) => {
   const { current, collapse } = props;
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`chat.${key}`);
 
   const steps = [
     {
       key: "gatherRoleOverview",
-      title: "Role Overview",
+      title: t("jrd_step_role_overview"),
       time: 20,
     },
     {
       key: "keyResponsibilities",
-      title: "Job Scope",
+      title: t("jrd_step_job_scope"),
       time: 15,
     },
     {
       key: "dayToDayTasks",
-      title: "Ideal Candidate Profile",
+      title: t("jrd_step_ideal_candidate_profile"),
       time: 10,
     },
     {
       key: "candidateAssessmentCriteria",
-      title: "Other Info",
+      title: t("jrd_step_other_info"),
       time: 5,
     },
   ];
@@ -52,8 +55,8 @@ const JrdSteps = (props: { current: number; collapse: boolean }) => {
                   <div className={styles.stepTime}>
                     <span
                       className={styles.stepTimeValue}
-                    >{`${step.time}min`}</span>
-                    {" "}Left
+                    >{`${step.time}min`}</span>{" "}
+                    {t("jrd_step_left")}
                   </div>
                 )}
               </div>

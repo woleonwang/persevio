@@ -232,6 +232,19 @@ export default {
       "Are you sure you want to delete this message? Chat history after this message cannot be recovered.",
     voice_chat: "Voice Chat",
     text_edit: "Text Edit",
+    click_again_to_stop_recording: "Click again to stop recording",
+    release_ctrl_to_stop_speaking: "Release",
+    ctrl_key: "Ctrl",
+    to_stop_speaking: "to stop speaking",
+    press_and_hold: "Press and hold",
+    to_speak: "to speak",
+    release_to_stop_speaking: "Release to stop speaking",
+    press_and_hold_to_speak: "Press and hold to speak",
+    jrd_step_role_overview: "Role Overview",
+    jrd_step_job_scope: "Job Scope",
+    jrd_step_ideal_candidate_profile: "Ideal Candidate Profile",
+    jrd_step_other_info: "Other Info",
+    jrd_step_left: "Left",
 
     task: "Tasks",
     next_task: "Your next task is: ",
@@ -759,6 +772,17 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     copy_job_requirement_link:
       "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
     post_job: "Confirm Publish",
+    step_create_new_job: "Create New Job",
+    step_job_intake: "Job Intake",
+    step_draft_jd: "Draft JD",
+    step_preview: "Preview",
+    step_publish: "Publish",
+    preview_description:
+      "A preview of the job position has been generated. Please review the information carefully. Once you confirm that everything is correct, click the \"Confirm and Post\" button at the bottom of the page to publish the position to the Persevio recruitment website.",
+    published_successfully: "Published Successfully!",
+    published_success_content:
+      "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",
+    go_to_job_details_page: "Go to Job Details Page",
   },
 
   job_chat: {
