@@ -11,7 +11,7 @@ import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
 import Step from "@/components/Step";
-import { copy, deleteQuery, getQuery } from "@/utils";
+import { copy, deleteQuery, getQuery, parseJSON } from "@/utils";
 import UploadResume from "./components/UploadResume";
 import Copy from "@/assets/icons/copy";
 import Icon from "@/components/Icon";
@@ -91,9 +91,13 @@ const ApplyJob: React.FC = () => {
   };
 
   const onSubmitBasicInfo = async (basicInfo: TBaiscInfo) => {
+    const shareToken = parseJSON(localStorage.getItem("share_token") ?? "")[
+      jobId
+    ];
     const params = {
       ...basicInfo,
       job_id: jobId,
+      share_token: shareToken,
     };
     const { code, data } = await Post(`/api/candidate/register`, params);
 

@@ -4,7 +4,7 @@ export const copy = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
-export const parseJSON = (jsonString?: string) => {
+export const parseJSON = (jsonString?: string): Record<string, any> => {
   if (!jsonString) return {};
 
   const startIndex = jsonString.indexOf("{");

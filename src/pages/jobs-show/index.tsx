@@ -63,6 +63,7 @@ const JobsShow = () => {
 
   useEffect(() => {
     fetchJob();
+    storeShareToken();
     setTimeout(() => {
       setTooltipVisible(false);
     }, 5000);
@@ -101,6 +102,19 @@ const JobsShow = () => {
       setStatus("success");
     } else {
       setStatus("error");
+    }
+  };
+
+  const storeShareToken = () => {
+    const shareToken = getQuery("share_token");
+    if (!shareToken) return;
+
+    const shareTokenMapping = parseJSON(
+      localStorage.getItem("share_token") ?? ""
+    );
+    if (id) {
+      shareTokenMapping[id] = shareToken;
+      localStorage.setItem("share_token", JSON.stringify(shareTokenMapping));
     }
   };
 
