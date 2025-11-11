@@ -99,6 +99,7 @@ const ChatInputArea = (props: IProps) => {
   const submit = () => {
     if (!canSubmit()) return;
     onSubmit(inputValue.trim().replaceAll("\n", "\n\n"));
+    setInputValue("");
   };
 
   return (

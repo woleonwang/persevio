@@ -232,7 +232,7 @@ const JobDocument = (props: IProps) => {
         onClose={() => setShowConversationRecord(false)}
         width={1000}
       >
-        <ChatMessagePreview messages={chatMessages} />
+        <ChatMessagePreview messages={chatMessages} job={job} />
       </Drawer>
     </div>
   );

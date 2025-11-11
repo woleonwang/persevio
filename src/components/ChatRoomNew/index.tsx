@@ -17,14 +17,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { Get, Post, PostFormData } from "../../utils/request";
 
 import styles from "./style.module.less";
-import {
-  IProps,
-  TChatType,
-  TDoneTag,
-  TExtraTag,
-  TExtraTagName,
-  TRoleOverviewType,
-} from "./type";
+import { IProps, TChatType, TRoleOverviewType } from "./type";
 import { copy, downloadText, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -47,40 +40,11 @@ import Download from "@/assets/icons/download";
 import Close from "@/assets/icons/close";
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
+import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 
 const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
-type TEditableDocumentType =
-  | "context"
-  | "realities"
-  | "responsibilities"
-  | "icp"
-  | "jrd"
-  | "jd";
-
-type TSupportTag = {
-  key: TExtraTagName;
-  title?: React.ReactNode;
-  handler?: (tag?: { name: string; content: string }) => void;
-  children?: {
-    title: React.ReactNode;
-    handler: () => void;
-  }[];
-  autoTrigger?: boolean;
-  style?: "inline-button" | "block-button" | "button-with-text";
-};
-
-const SIDE_DOCUMENT_TYPES = [
-  "context-done",
-  "realities-done",
-  "responsibilities-done",
-  "icp-done",
-  "env-done",
-  "highlights-done",
-  "summary-draft",
-  "jd-draft",
-];
 const ChatRoomNew: React.FC<IProps> = (props) => {
   const {
     chatType,

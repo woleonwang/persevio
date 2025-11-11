@@ -514,6 +514,67 @@ interface ICandidateTask {
   updated_at: string;
 }
 
+type TDoneTag =
+  | "jrd-done"
+  | "compensation-details-done"
+  | "outreach-done"
+  | "intake-done"
+  | "jd-done"
+  | "interview-plan-done";
+
+type TExtraTagName =
+  // 后端生成
+  | "copy-link" // 复制链接
+  | "jrd-language" // 选择 jrd 语言
+  | "jd-language" // 选择 jd 语言
+  | "talent-evaluate-result"
+  | "huoqujibenxinxi-jindu-one"
+  | "upload-jd"
+  | "salary-structure-request"
+  | "shaixuanbiaozhun"
+  | "screening-q-request"
+  | "jindu-two"
+  // | "jindu-three"
+  | "jindu-four"
+  | "extract-high-level-responsibility"
+  | "extract-day-to-day-tasks"
+  | "extract-icp"
+  | "success-metric"
+  | "current-round-evaluation"
+  | "context-done"
+  | "realities-done"
+  | "responsibilities-done"
+  | "icp-done"
+  | "env-done"
+  | "highlights-done"
+  | "summary-draft"
+  | "jd-draft"
+  | TDoneTag
+  // 前端生成
+  | "open-link" // 打开新页面
+  | "to-compensation-details-btn"
+  | "to-jd-btn"
+  | "to-post-job-btn"
+  | "to-target-companies-btn"
+  | "to-screening-questions-btn"
+  | "to-interview-plan-btn"
+  | "to-outreach-btn"
+  | "to-social-post-btn"
+  | "to-faq-btn"
+  | "to-chatbot-btn"
+  | "chatbot-config-btn"
+  | "post-job-btn"
+  | "interview-feedback-confirm-btn"
+  //candiate
+  | "interview-done"
+  | "conversation-done"
+  | "job-interview-done";
+
+type TExtraTag = {
+  name: TExtraTagName;
+  content: string;
+};
+
 type TMessageFromApi = {
   id: number;
   content: {
@@ -544,4 +605,24 @@ type TMessage = {
   messageSubType?: "normal" | "error";
   extraTags?: TExtraTag[];
   payloadId?: number;
+};
+
+type TEditableDocumentType =
+  | "context"
+  | "realities"
+  | "responsibilities"
+  | "icp"
+  | "jrd"
+  | "jd";
+
+type TSupportTag = {
+  key: TExtraTagName;
+  title?: React.ReactNode;
+  handler?: (tag?: { name: string; content: string }) => void;
+  children?: {
+    title: React.ReactNode;
+    handler: () => void;
+  }[];
+  autoTrigger?: boolean;
+  style?: "inline-button" | "block-button" | "button-with-text";
 };

@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
-import { TExtraTagName } from "@/components/ChatRoomNew/type";
 
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";

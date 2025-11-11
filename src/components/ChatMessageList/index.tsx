@@ -10,7 +10,7 @@ import styles from "./style.module.less";
 
 interface IProps {
   messages: TMessage[];
-  isLoading: boolean;
+  isLoading?: boolean;
   childrenFunctionsRef?: React.RefObject<{
     scrollToBottom?: (() => void) | undefined;
   }>;
@@ -28,7 +28,7 @@ const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 const ChatMessageList = (props: IProps) => {
   const {
     messages,
-    isLoading,
+    isLoading = false,
     className,
     style,
     childrenFunctionsRef,
