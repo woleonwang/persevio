@@ -58,7 +58,6 @@ import PublicTalentDetailPage from "./pages/public/talent/detail";
 import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
-import SignIn from "./pages/signin";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
@@ -102,10 +101,6 @@ createRoot(document.getElementById("root")!).render(
           <Route
             path="/jobs/:id/:companyName/:jobName"
             element={<JobsShow />}
-          />
-          <Route
-            path="/product/business-growth/marvin_test"
-            element={<SignIn />}
           />
           {/** 分享候选人面试设计 & 面试反馈文档 */}
           <Route

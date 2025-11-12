@@ -156,7 +156,11 @@ const ApplyJob: React.FC = () => {
 
   return (
     <div className={classnames(styles.container, styles.mobile)}>
-      <div className={styles.header}>
+      <div
+        className={classnames(styles.header, {
+          [styles.mobileVisible]: pageState === "waiting",
+        })}
+      >
         <img
           src={logo}
           className={styles.banner}
