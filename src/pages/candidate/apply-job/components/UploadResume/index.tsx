@@ -55,7 +55,7 @@ const UploadResume = (props: IProps) => {
                   console.log("resume:", data.resume);
                   setResumeFileName(fileInfo.file.name);
                 } else {
-                  message.error("Upload failed");
+                  message.error(data.message);
                 }
                 setIsUploadingResume(false);
               }}
