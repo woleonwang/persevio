@@ -156,9 +156,7 @@ interface IPreRegisterInfo {
   email: string;
   name: string;
   phone: string;
-  resume_path: string;
   mode: "ai" | "human";
-  job_id: number;
 }
 
 interface ICandidateSettings {

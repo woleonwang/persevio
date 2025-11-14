@@ -1,5 +1,5 @@
 import { Button, Form, Input } from "antd";
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 
 import styles from "./style.module.less";
 
@@ -10,13 +10,19 @@ export interface TBaiscInfo {
 }
 
 interface IProps {
+  initValues: TBaiscInfo;
   onFinish: (params: TBaiscInfo) => void;
 }
 
 const BasicInfo: React.FC<IProps> = (props) => {
-  const [form] = Form.useForm<TBaiscInfo>();
+  const { initValues, onFinish } = props;
+  const [form] = Form.useForm<IPreRegisterInfo>();
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
+  useEffect(() => {
+    form.setFieldsValue(initValues);
+    forceUpdate();
+  }, [initValues]);
   const canSubmit = () => {
     const { name, phone, email } = form.getFieldsValue();
     return name && phone && email;
@@ -60,7 +66,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                   phone,
                   email,
                 };
-                props.onFinish(params);
+                onFinish(params);
               });
             }}
           >

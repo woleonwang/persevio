@@ -23,11 +23,17 @@ const ApplyJob: React.FC = () => {
   const [pageState, setPageState] = useState<TPageState>();
 
   const [jobApplyId, setJobApplyId] = useState<number>();
-  const [mode, setMode] = useState<"ai" | "human">("ai");
+  const [preRegisterInfo, setPreRegisterInfo] = useState<IPreRegisterInfo>({
+    email: "",
+    name: "",
+    phone: "",
+    mode: "ai",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [otherReason, setOtherReason] = useState<string>();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const { jobId: jobIdStr } = useParams();
   const jobId = parseInt(jobIdStr ?? "0");
@@ -55,16 +61,18 @@ const ApplyJob: React.FC = () => {
         return;
       }
 
+      setIsLoggedIn(true);
+
+      const preRegisterInfo: IPreRegisterInfo = parseJSON(
+        data1.candidate.pre_register_info ?? "{}"
+      );
+      setPreRegisterInfo(preRegisterInfo);
+
       // 没上传简历
       if (!data1.candidate.resume_path) {
         setPageState("resume");
         return;
       }
-
-      const preRegisterInfo: IPreRegisterInfo = JSON.parse(
-        data1.candidate.pre_register_info ?? "{}"
-      );
-      setMode(preRegisterInfo.mode);
 
       const { code, data } = await Get(
         `/api/candidate/jobs/${jobId}/job_apply`
@@ -90,24 +98,38 @@ const ApplyJob: React.FC = () => {
   };
 
   const onSubmitBasicInfo = async (basicInfo: TBaiscInfo) => {
-    const shareToken = parseJSON(localStorage.getItem("share_token") ?? "")[
-      jobId
-    ];
-    const params = {
-      ...basicInfo,
-      job_id: jobId,
-      share_token: shareToken,
-    };
-    const { code, data } = await Post(`/api/candidate/register`, params);
+    setPreRegisterInfo({ ...preRegisterInfo, ...basicInfo });
+    if (isLoggedIn) {
+      const { code } = await Post(`/api/candidate/pre_register_info`, {
+        ...basicInfo,
+      });
 
-    if (code === 0) {
-      const { job_apply_id, token } = data;
-      message.success("Save successful");
-      localStorage.setItem("candidate_token", token);
-      setJobApplyId(job_apply_id);
-      setPageState("resume");
+      if (code === 0) {
+        message.success("Update successful");
+        setPageState("resume");
+      } else {
+        message.error("Update failed");
+      }
     } else {
-      message.error("Save failed");
+      const shareToken = parseJSON(localStorage.getItem("share_token") ?? "")[
+        jobId
+      ];
+      const params = {
+        ...basicInfo,
+        job_id: jobId,
+        share_token: shareToken,
+      };
+      const { code, data } = await Post(`/api/candidate/register`, params);
+
+      if (code === 0) {
+        const { job_apply_id, token } = data;
+        message.success("Save successful");
+        localStorage.setItem("candidate_token", token);
+        setJobApplyId(job_apply_id);
+        setPageState("resume");
+      } else {
+        message.error("Save failed");
+      }
     }
   };
 
@@ -139,7 +161,7 @@ const ApplyJob: React.FC = () => {
     });
     if (code === 0) {
       message.success("Switch mode to human successful");
-      setMode("human");
+      setPreRegisterInfo({ ...preRegisterInfo, mode: "human" });
       setPageState("waiting");
       setIsModalOpen(false);
     } else {
@@ -251,6 +273,7 @@ const ApplyJob: React.FC = () => {
                       onFinish={(params) => {
                         onSubmitBasicInfo(params);
                       }}
+                      initValues={preRegisterInfo}
                     />
                   )}
                   {pageState === "resume" && (
@@ -258,6 +281,9 @@ const ApplyJob: React.FC = () => {
                       isSubmitting={isSubmitting}
                       onFinish={(resumePath) => {
                         onSubmitResume(resumePath);
+                      }}
+                      onBack={() => {
+                        setPageState("basic");
                       }}
                     />
                   )}
@@ -277,7 +303,7 @@ const ApplyJob: React.FC = () => {
               </div>
             );
           } else if (pageState === "waiting") {
-            return <Waiting mode={mode} />;
+            return <Waiting mode={preRegisterInfo.mode ?? "ai"} />;
           }
         })()}
       </div>

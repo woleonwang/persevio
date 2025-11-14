@@ -11,10 +11,11 @@ import styles from "./style.module.less";
 interface IProps {
   isSubmitting: boolean;
   onFinish: (resumePath: string) => void;
+  onBack: () => void;
 }
 
 const UploadResume = (props: IProps) => {
-  const { isSubmitting, onFinish } = props;
+  const { isSubmitting, onFinish, onBack } = props;
   const [resumePath, setResumePath] = useState<string>();
   const [resumeFileName, setResumeFileName] = useState<string>();
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -82,10 +83,28 @@ const UploadResume = (props: IProps) => {
           </Form.Item>
         </Form>
 
-        <div style={{ marginTop: 52, textAlign: "center" }}>
+        <div
+          style={{
+            marginTop: 52,
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
           <Button
             size="large"
-            style={{ width: "100%", height: 44, borderRadius: 12 }}
+            style={{ flex: 1, height: 44, borderRadius: 12 }}
+            type="primary"
+            onClick={() => {
+              onBack();
+            }}
+          >
+            Previous Step
+          </Button>
+          <Button
+            size="large"
+            style={{ flex: 1, height: 44, borderRadius: 12 }}
             type="primary"
             disabled={!canSubmit()}
             onClick={() => {
