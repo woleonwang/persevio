@@ -75,7 +75,7 @@
   .menuItem {
     border-radius: 12px;
     padding: 16px;
-    color: rgba(102, 102, 102, 1);
+    color: #333;
     font-size: 14px;
     display: flex;
     align-items: center;
@@ -102,6 +102,13 @@
       background-color: #333333;
       border-radius: 0 12px 12px 0;
     }
+
+    :global {
+      .perse-icon {
+        font-size: 24px;
+        color: #333333;
+      }
+    }
   }
 }
 
@@ -109,12 +116,15 @@
   margin-top: 8px;
   max-height: 300px;
   overflow: auto;
+  margin-left: 28px;
+  padding-left: 12px;
+  border-left: 1px solid #ebecee;
 }
 
 .subMenuItem {
   cursor: pointer;
   border-radius: 12px;
-  padding: 10px 12px 10px 60px;
+  padding: 7px 10px;
   font-size: 14px;
   color: rgba(102, 102, 102, 1);
   display: flex;
@@ -140,7 +150,15 @@
 
   .deleteIcon {
     visibility: hidden;
-    color: red;
+    color: #999;
+    background-color: #f5f6f9;
+    padding: 5px;
+    border-radius: 8px;
+    :global {
+      .perse-icon {
+        transition: none;
+      }
+    }
   }
 }
 

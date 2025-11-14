@@ -320,15 +320,15 @@ const ChatInputArea = (props: IProps) => {
             >
               <div className={classnames(styles.left, styles.mobileVisible)}>
                 <div
-                  className={styles.voiceInputButton}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
+                  className={classnames(styles.voiceInputButton, {
+                    [styles.recording]: isRecording,
+                  })}
+                  onTouchStart={() => {
                     longPressTimerRef.current = setTimeout(() => {
                       startTranscription();
                     }, LONG_PRESS_DURATION);
                   }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault();
+                  onTouchEnd={() => {
                     // 清除长按定时器
                     if (longPressTimerRef.current) {
                       clearTimeout(longPressTimerRef.current);
@@ -341,9 +341,15 @@ const ChatInputArea = (props: IProps) => {
                     }
                   }}
                 >
-                  {isRecording
-                    ? t("release_to_stop_speaking")
-                    : t("press_and_hold_to_speak")}
+                  {isRecording ? (
+                    t("release_to_stop_speaking")
+                  ) : isTranscribing ? (
+                    <LoadingOutlined
+                      style={{ fontSize: 24, color: "#3682fe" }}
+                    />
+                  ) : (
+                    t("press_and_hold_to_speak")
+                  )}
                 </div>
               </div>
               <div className={styles.right}>

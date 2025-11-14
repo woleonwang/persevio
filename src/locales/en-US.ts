@@ -162,7 +162,7 @@ export default {
   hello: "world",
 
   menu: {
-    newRole: "Open a new role",
+    newRole: "Publish Job",
     jobs: "Jobs",
     company: "Company Info",
     settings: "Settings",
@@ -778,7 +778,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     step_preview: "Preview",
     step_publish: "Publish",
     preview_description:
-      "A preview of the job position has been generated. Please review the information carefully. Once you confirm that everything is correct, click the \"Confirm and Post\" button at the bottom of the page to publish the position to the Persevio recruitment website.",
+      'A preview of the job position has been generated. Please review the information carefully. Once you confirm that everything is correct, click the "Confirm and Post" button at the bottom of the page to publish the position to the Persevio recruitment website.',
     published_successfully: "Published Successfully!",
     published_success_content:
       "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",

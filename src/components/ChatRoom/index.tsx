@@ -315,7 +315,9 @@ const ChatRoom: React.FC<IProps> = (props) => {
               width: "100%",
               marginRight: "8px",
               resize: "none",
+              fontSize: 16,
             }}
+            size="large"
             onCompositionStartCapture={() => (isCompositingRef.current = true)}
             onCompositionEndCapture={() => (isCompositingRef.current = false)}
             onPressEnter={(e) => {
@@ -326,7 +328,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
             }}
             autoSize={{
               minRows: 1,
-              maxRows: 16,
+              maxRows: 4,
             }}
           />
 
@@ -343,12 +345,14 @@ const ChatRoom: React.FC<IProps> = (props) => {
                   }}
                 />
               }
+              size="large"
             />
             {enableFullscreen && (
               <Button
                 type="default"
                 onClick={toggleFullscreen}
                 icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
+                size="large"
               />
             )}
           </div>

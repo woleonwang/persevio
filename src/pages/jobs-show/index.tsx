@@ -40,6 +40,7 @@ type TJob = {
   job_description_json: TJobDescription;
   screening_questions: string;
   basic_info: TJobBasicInfo;
+  posted_at?: string;
 };
 
 type TStatus = "loading" | "success" | "error";
@@ -346,6 +347,13 @@ const JobsShow = () => {
                       />
                     </div>
                   </div>
+
+                  {!!job.posted_at && (
+                    <div className={styles.postedAt}>
+                      Updated at:{" "}
+                      {dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss")}
+                    </div>
+                  )}
                 </>
               ) : (
                 <div>

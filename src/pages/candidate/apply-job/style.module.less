@@ -102,6 +102,10 @@
   width: 100%;
 }
 
+.modalContent {
+  width: 640px;
+}
+
 @media (max-width: 768px) {
   .header {
     justify-content: space-between;
@@ -114,6 +118,29 @@
 
   .desktopVisible {
     display: none !important;
+  }
+
+  .header {
+    .button {
+      background-color: #edf2ff;
+      border: 1px solid @primary-color;
+      color: @primary-color;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex: none;
+
+      &:hover {
+        background-color: #edf2ff !important;
+      }
+    }
+    .icon {
+      font-size: 16px;
+    }
+  }
+
+  .modalContent {
+    width: 80vw;
   }
 }
 

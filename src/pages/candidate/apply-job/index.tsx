@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Input, message, Modal } from "antd";
+import { Button, Checkbox, Input, message, Modal, Tooltip } from "antd";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router";
 
@@ -16,7 +16,6 @@ import UploadResume from "./components/UploadResume";
 import Copy from "@/assets/icons/copy";
 import Icon from "@/components/Icon";
 import Chat from "@/assets/icons/chat";
-import { useTranslation } from "react-i18next";
 
 type TPageState = "basic" | "resume" | "conversation" | "waiting";
 
@@ -35,7 +34,7 @@ const ApplyJob: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const { t: originalT } = useTranslation();
+  // const { t: originalT } = useTranslation();
   // const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
@@ -148,6 +147,17 @@ const ApplyJob: React.FC = () => {
     }
   };
 
+  const copyLink = async () => {
+    await copy(
+      `${window.location.href}?candidate_token=${localStorage.getItem(
+        "candidate_token"
+      )}`
+    );
+    message.success(
+      "The link has been copied. Simply open it in a new device's browser to resume chatting."
+    );
+  };
+
   if (!jobId) {
     return <div>Apply job does not exist</div>;
   }
@@ -167,23 +177,15 @@ const ApplyJob: React.FC = () => {
           onClick={() => navigate("/")}
         />
         <div className={classnames(styles.headerRight, styles.desktopVisible)}>
-          <div
-            className={styles.buttonWrapper}
-            onClick={async () => {
-              await copy(
-                `${window.location.href}?candidate_token=${localStorage.getItem(
-                  "candidate_token"
-                )}`
-              );
-              message.success(originalT("copied"));
-            }}
-          >
-            <Button
-              icon={<Icon icon={<Copy />} className={styles.icon} />}
-              className={styles.button}
-            />
-            <span>Copy Link</span>
-          </div>
+          <Tooltip title="You can copy the current chat link and open it in a browser on another device to continue this conversation.">
+            <div className={styles.buttonWrapper} onClick={copyLink}>
+              <Button
+                icon={<Icon icon={<Copy />} className={styles.icon} />}
+                className={styles.button}
+              />
+              <span>Copy Link</span>
+            </div>
+          </Tooltip>
 
           {pageState === "conversation" && (
             <div
@@ -202,15 +204,32 @@ const ApplyJob: React.FC = () => {
           )}
         </div>
 
-        {(pageState === "basic" || pageState === "resume") && (
-          <div>
+        <div
+          className={styles.mobileVisible}
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
+          {(pageState === "basic" || pageState === "resume") && (
             <Step
               stepCount={2}
               currentIndex={currentIndex}
-              className={classnames(styles.stepContainer, styles.mobileVisible)}
+              className={styles.stepContainer}
             />
-          </div>
-        )}
+          )}
+
+          <Button
+            icon={<Icon icon={<Copy />} className={styles.icon} />}
+            className={styles.button}
+            onClick={copyLink}
+          />
+
+          {pageState === "conversation" && (
+            <Button
+              icon={<Icon icon={<Chat />} className={styles.icon} />}
+              className={styles.button}
+              onClick={() => setIsModalOpen(true)}
+            />
+          )}
+        </div>
       </div>
       <div className={styles.main}>
         {(() => {
@@ -265,7 +284,7 @@ const ApplyJob: React.FC = () => {
 
       <Modal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
         title="We have arranged a real recruitment staff for you."
         okText="Submit"
         okButtonProps={{
@@ -277,10 +296,10 @@ const ApplyJob: React.FC = () => {
           switchModeToHuman();
         }}
         centered
-        styles={{
-          content: {
-            width: "640px",
-          },
+        width="auto"
+        classNames={{
+          wrapper: styles.modalWrapper,
+          content: styles.modalContent,
         }}
       >
         <div className={styles.modalDescription}>

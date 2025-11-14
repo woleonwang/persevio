@@ -241,8 +241,8 @@ const useAssemblyOffline = ({
         const { code, data } = await Post("/api/stt/send", {
           payload: base64String,
         });
-        log("end send:" + JSON.stringify(data.result));
-        if (code === 0 && data.result) {
+        log("end send:" + JSON.stringify(data?.result));
+        if (code === 0 && data?.result) {
           onFinish(data.result ?? "", data.voice_payload_id);
         }
         setIsTranscribing(false);

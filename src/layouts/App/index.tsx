@@ -3,13 +3,10 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import {
   FileDoneOutlined,
   SettingOutlined,
-  DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
-import Job from "../../assets/icons/job";
-import Entry from "../../assets/icons/entry";
 import styles from "./style.module.less";
 import Icon from "../../components/Icon";
 import { ReactNode, useEffect, useState } from "react";
@@ -20,6 +17,15 @@ import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
 import CollapseIcon from "@/assets/icons/collaspe";
+import NewChat from "@/assets/icons/new-chat";
+import Jobs from "@/assets/icons/jobs";
+import CompanyInfo from "@/assets/icons/company-info";
+import Candidates from "@/assets/icons/candidates";
+import JobManagement from "@/assets/icons/job-management";
+import JobApplyManagement from "@/assets/icons/job-apply-management";
+import CandidateConnectionList from "@/assets/icons/candidate-connection-list";
+import CompanyList from "@/assets/icons/company-list";
+import Delete from "@/assets/icons/delete";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -76,13 +82,13 @@ const AppLayout = () => {
     {
       title: t("menu.newRole"),
       path: "/app/entry/create-job",
-      img: <Entry />,
+      img: <NewChat />,
     },
     {
       title: t("menu.jobs"),
       key: "jobs",
       // path: "/app/jobs",
-      img: <Job />,
+      img: <Jobs />,
       children: jobs
         .filter((job) => !searchKeyword || job.name.includes(searchKeyword))
         .map((job) => {
@@ -119,13 +125,13 @@ const AppLayout = () => {
     {
       title: t("menu.company"),
       path: "/app/company",
-      img: <FileDoneOutlined />,
+      img: <CompanyInfo />,
     },
 
     {
       title: t("menu.talents"),
       path: "/app/talents",
-      img: <FileDoneOutlined />,
+      img: <Candidates />,
       badge: unreadTalentsCount > 0 ? unreadTalentsCount : undefined,
     },
     {
@@ -137,31 +143,31 @@ const AppLayout = () => {
     {
       title: t("menu.job_management"),
       path: "/app/admin/jobs",
-      img: <FileDoneOutlined />,
+      img: <JobManagement />,
       requireAdmin: true,
     },
     {
       title: t("menu.job_apply_management"),
       path: "/app/admin/job-applies",
-      img: <FileDoneOutlined />,
+      img: <JobApplyManagement />,
       requireAdmin: true,
     },
     {
       title: t("menu.candidate_list"),
       path: "/app/admin/candidates",
-      img: <FileDoneOutlined />,
+      img: <CandidateConnectionList />,
       requireAdmin: true,
     },
     {
       title: t("menu.candidate_connection_list"),
       path: "/app/admin/candidate-connections",
-      img: <FileDoneOutlined />,
+      img: <CandidateConnectionList />,
       requireAdmin: true,
     },
     {
       title: t("menu.company_list"),
       path: "/app/admin/companies",
-      img: <FileDoneOutlined />,
+      img: <CompanyList />,
       requireAdmin: true,
     },
   ].filter(
@@ -280,7 +286,7 @@ const AppLayout = () => {
                         : undefined
                     }
                   >
-                    <Icon icon={item.img} style={{ fontSize: 20 }} />
+                    <Icon icon={item.img} />
                     {item.badge && (
                       <Badge
                         count={item.badge}
@@ -427,7 +433,7 @@ const AppLayout = () => {
                                   child.onRemove?.();
                                 }}
                               >
-                                <DeleteOutlined />
+                                <Icon icon={<Delete />} />
                               </div>
                             )}
                             {child.badge && (

@@ -155,7 +155,7 @@ export default {
   hello: "世界",
 
   menu: {
-    newRole: "创建职位",
+    newRole: "发布职位",
     jobs: "职位",
     company: "公司基本信息",
     interviewer: "面试官",
