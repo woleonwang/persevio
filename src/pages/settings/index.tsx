@@ -1,5 +1,6 @@
 import { Button, Form, Input, message, Select, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import classnames from "classnames";
 import { Get, Post } from "../../utils/request";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
@@ -171,43 +172,53 @@ const Settings = () => {
     <div className={styles.container}>
       <div className={styles.block}>
         <div className={styles.title}>{t("profile")}</div>
-        <div className={styles.item}>
-          <div className={styles.label}>{t("name")}:</div>
-          <div>{profile?.staff_name}</div>
-        </div>
-        <div className={styles.item}>
-          <div className={styles.label}>{t("email")}:</div>
-          <div>{profile?.email}</div>
-        </div>
-        <div className={styles.item}>
-          <Button type="primary" onClick={() => logout()}>
-            {t("logout")}
-          </Button>
-          {!!profile?.is_admin && (
-            <Button
-              type="primary"
-              onClick={() => navigate("/app/system_prompt")}
-              style={{ marginLeft: 10 }}
-            >
-              System Prompt Feedback
-            </Button>
-          )}
+        <div className={styles.panel}>
+          <div className={styles.left}>
+            <div className={styles.item}>
+              <div className={styles.label}>{t("name")}</div>
+              <div>{profile?.staff_name}</div>
+            </div>
+            <div className={styles.item}>
+              <div className={styles.label}>{t("email")}</div>
+              <div>{profile?.email}</div>
+            </div>
+          </div>
+
+          <div className={styles.right}>
+            <div className={styles.item}>
+              <Button type="default" onClick={() => logout()} size="large">
+                {t("logout")}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+
       <div className={styles.block}>
         <div className={styles.title}>{t("change_password")}</div>
-        <Form form={form}>
-          <Form.Item
-            label={t("password")}
-            name="password"
-            rules={[{ required: true }]}
-          >
-            <Input.Password style={{ width: 300 }} />
-          </Form.Item>
-          <Button type="primary" onClick={() => updatePassword()}>
-            {originalT("save")}
-          </Button>
-        </Form>
+        <div className={styles.panel} style={{ alignItems: "flex-start" }}>
+          <div className={classnames(styles.left, styles.formContainer)}>
+            <Form form={form}>
+              <Form.Item
+                label={t("password")}
+                name="password"
+                rules={[{ required: true }]}
+                colon={false}
+              >
+                <Input.Password style={{ width: 300 }} size="large" />
+              </Form.Item>
+            </Form>
+          </div>
+          <div className={styles.right}>
+            <Button
+              type="primary"
+              onClick={() => updatePassword()}
+              size="large"
+            >
+              {originalT("save")}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className={styles.block}>
@@ -225,56 +236,81 @@ const Settings = () => {
           </Tooltip>
         </div>
 
-        <Select
-          style={{ width: 300 }}
-          options={[
-            {
-              value: "en-US",
-              label: "English",
-            },
-            {
-              value: "zh-CN",
-              label: "中文",
-            },
-          ]}
-          value={profile?.lang}
-          onChange={(lang) => updateLang(lang)}
-        />
+        <div className={styles.panel}>
+          <div className={classnames(styles.left, styles.formContainer)}>
+            <div className={styles.label}>{t("language_label")}</div>
+            <Select
+              style={{ width: 300 }}
+              options={[
+                {
+                  value: "en-US",
+                  label: "English",
+                },
+                {
+                  value: "zh-CN",
+                  label: "中文",
+                },
+              ]}
+              value={profile?.lang}
+              onChange={(lang) => updateLang(lang)}
+              size="large"
+            />
+          </div>
+        </div>
       </div>
 
       {!!profile?.is_admin && (
         <div className={styles.block}>
           <div className={styles.title}>Login as staff of company</div>
 
-          <Select
-            style={{ width: 300 }}
-            options={allCompanies}
-            onChange={(staffId) => loginToStaff(staffId)}
-          />
+          <div className={styles.panel}>
+            <div className={classnames(styles.left, styles.formContainer)}>
+              <div className={styles.label}>Company</div>
+              <Select
+                style={{ width: 300 }}
+                options={allCompanies}
+                onChange={(staffId) => loginToStaff(staffId)}
+              />
+            </div>
+          </div>
         </div>
       )}
 
       {!!profile?.is_admin && (
         <div className={styles.block}>
           <div className={styles.title}>Customize Prompts</div>
-          <Form form={form}>
+
+          <Form form={form} layout="vertical">
             {profile.prompts.map((item) => {
               return (
-                <div key={item.prompt_type} style={{ marginBottom: 40 }}>
-                  <Form.Item
-                    labelCol={{ span: 5 }}
-                    label={promptTypeLabelMap[item.prompt_type]}
-                    name={item.prompt_type}
+                <div className={styles.panel}>
+                  <div
+                    className={classnames(styles.left, styles.formContainer)}
                   >
-                    <Input.TextArea rows={10} />
-                  </Form.Item>
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                      type="primary"
-                      onClick={() => updatePrompt(item.prompt_type, item.role)}
-                    >
-                      {originalT("save")}
-                    </Button>
+                    <div key={item.prompt_type} style={{ flex: "auto" }}>
+                      <Form.Item
+                        label={promptTypeLabelMap[item.prompt_type]}
+                        name={item.prompt_type}
+                      >
+                        <Input.TextArea rows={10} style={{ width: "100%" }} />
+                      </Form.Item>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          marginTop: 16,
+                        }}
+                      >
+                        <Button
+                          type="primary"
+                          onClick={() =>
+                            updatePrompt(item.prompt_type, item.role)
+                          }
+                        >
+                          {originalT("save")}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

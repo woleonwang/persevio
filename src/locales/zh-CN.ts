@@ -677,6 +677,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     update_lang_success: "语言更新成功",
     update_lang_error: "语言更新失败",
     language: "显示语言",
+    language_label: "语言",
     language_tooltip:
       "自定义显示语言：可随时切换当前个人账号的界面显示语言，以满足个人使用习惯。",
   },

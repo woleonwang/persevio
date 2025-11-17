@@ -714,6 +714,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     update_lang_success: "Language updated successfully",
     update_lang_error: "Failed to update language",
     language: "Display Language",
+    language_label: "Language",
     language_tooltip:
       "Customize display language: You can switch the display language of the current personal account interface at any time to meet your personal usage habits.",
   },

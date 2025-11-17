@@ -15,6 +15,7 @@ const AntdLocaleProvider = ({ children }: { children: React.ReactNode }) => {
           colorPrimary: "#3682fe",
           fontFamily:
             '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
+          borderRadius: 12,
         },
       }}
       locale={locale}
