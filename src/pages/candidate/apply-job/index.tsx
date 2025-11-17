@@ -61,18 +61,10 @@ const ApplyJob: React.FC = () => {
         return;
       }
 
-      setIsLoggedIn(true);
-
       const preRegisterInfo: IPreRegisterInfo = parseJSON(
         data1.candidate.pre_register_info ?? "{}"
       );
       setPreRegisterInfo(preRegisterInfo);
-
-      // 没上传简历
-      if (!data1.candidate.resume_path) {
-        setPageState("resume");
-        return;
-      }
 
       const { code, data } = await Get(
         `/api/candidate/jobs/${jobId}/job_apply`
@@ -80,7 +72,12 @@ const ApplyJob: React.FC = () => {
       if (code === 0) {
         const jobApply: IJobApply = data.job_apply;
         setJobApplyId(jobApply.id);
-        if (
+        setIsLoggedIn(true);
+
+        // 没上传简历
+        if (!data1.candidate.resume_path) {
+          setPageState("resume");
+        } else if (
           preRegisterInfo.mode === "human" ||
           !!jobApply.interview_finished_at
         ) {
@@ -89,7 +86,6 @@ const ApplyJob: React.FC = () => {
           setPageState("conversation");
         }
       } else {
-        localStorage.removeItem("candidate_token");
         setPageState("basic");
       }
     } catch {
