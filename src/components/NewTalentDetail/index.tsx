@@ -166,7 +166,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         width={1000}
       >
         <div>
-          <ChatMessagePreview messages={talentChatMessages ?? []} />
+          <ChatMessagePreview
+            messages={talentChatMessages ?? []}
+            talent={talent}
+          />
         </div>
       </Drawer>
     </div>

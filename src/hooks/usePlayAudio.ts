@@ -13,9 +13,7 @@ const usePlayAudio = () => {
 
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.src = "";
-        audioRef.current.pause();
+      if (urlRef.current) {
         URL.revokeObjectURL(urlRef.current);
       }
     };
@@ -79,10 +77,10 @@ const usePlayAudio = () => {
       };
 
       // 如果播放出错，也清理 URL
-      audio.onerror = () => {
+      audio.onerror = (e) => {
         console.log("playBase64Audio error");
         URL.revokeObjectURL(url);
-        message.error("音频播放出错");
+        console.error("音频播放出错: " + e.toString());
       };
 
       audioRef.current = audio;

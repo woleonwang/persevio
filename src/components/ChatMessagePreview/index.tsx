@@ -6,11 +6,14 @@ import { useRef, useState } from "react";
 import { parseJSON } from "@/utils";
 import { Button, Drawer } from "antd";
 import MarkdownContainer from "../MarkdownContainer";
+import AudioPlayer from "../AudioPlayer";
 const ChatMessagePreview = (props: {
   messages: TMessageFromApi[];
+  role?: "admin" | "staff";
   job?: IJob;
+  talent?: TTalent;
 }) => {
-  const { messages, job } = props;
+  const { messages, job, talent, role = "staff" } = props;
   const [sideDocumentDrawerVisible, setSideDocumentDrawerVisible] =
     useState(false);
   const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
@@ -40,6 +43,8 @@ const ChatMessagePreview = (props: {
           messageType: item.content.metadata.message_type || "normal",
           messageSubType: item.content.metadata.message_sub_type || "normal",
           extraTags: item.content.metadata.extra_tags || [],
+          payloadId: item.payload_id,
+          duration: item.payload?.duration,
         };
       });
   };
@@ -65,6 +70,8 @@ const ChatMessagePreview = (props: {
       <ChatMessageList
         messages={formatMessages()}
         renderTagsContent={(item) => {
+          const canPlayAudio = !!item.payloadId && item.duration;
+
           const visibleTags = (item.extraTags ?? [])
             .map((extraTag) => {
               return supportTags.find((tag) => tag.key === extraTag.name);
@@ -97,6 +104,18 @@ const ChatMessagePreview = (props: {
                     );
                   })}
                 </div>
+              )}
+              {canPlayAudio && (
+                <AudioPlayer
+                  duration={item.duration ?? 0}
+                  payloadUrl={
+                    role === "staff"
+                      ? `/api/jobs/${talent?.job_id}/talents/${talent?.id}/messages/${item.id}`
+                      : `/api/admin/messages/${item.id}`
+                  }
+                  onPlay={() => {}}
+                  onStop={() => {}}
+                />
               )}
             </>
           );

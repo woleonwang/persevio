@@ -313,7 +313,7 @@ const JobApplies = () => {
               onClose={() => setChatDrawerOpen(false)}
               width={800}
             >
-              <ChatMessagePreview messages={chatMessages} />
+              <ChatMessagePreview messages={chatMessages} role="admin" />
             </Drawer>
           </div>
         )}

@@ -82,7 +82,7 @@ const AudioPlayer = (props: IProps) => {
         tooltip={{ formatter: (value) => formatter(value ?? 0) }}
         value={sliderValue}
         max={SLIDER_COUNT}
-        disabled={!isPlaying}
+        disabled={!isLoaded}
         onChange={(value) => {
           pauseAudio();
           setCurrentTime((value / SLIDER_COUNT) * finalDuration);
@@ -92,6 +92,9 @@ const AudioPlayer = (props: IProps) => {
           playAudio();
         }}
       />
+      <div className={styles.time}>
+        {formatSeconds(currentSeconds)} / {formatSeconds(finalDuration)}
+      </div>
     </div>
   );
 };

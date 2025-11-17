@@ -370,6 +370,7 @@ type TTalent = {
   evaluate_result: TEvaluationResult;
   raw_evaluate_result: string;
   basic_info_json: string;
+  job_id: number;
 };
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
