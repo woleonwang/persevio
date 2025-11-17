@@ -134,3 +134,15 @@ export const downloadText = ({
   document.body.removeChild(link);
   URL.revokeObjectURL(link.href);
 };
+
+export const formatSeconds = (seconds: number) => {
+  return `${
+    seconds / 60 < 10
+      ? `0${Math.floor(seconds / 60)}`
+      : Math.floor(seconds / 60)
+  }:${
+    seconds % 60 < 10
+      ? `0${Math.floor(seconds % 60)}`
+      : Math.floor(seconds % 60)
+  }`;
+};

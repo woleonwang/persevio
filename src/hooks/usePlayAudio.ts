@@ -1,5 +1,5 @@
 import { message } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const WebmMimePrefix = "GkXfo59ChoEBQveBAULyg";
 
@@ -9,10 +9,35 @@ const usePlayAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>();
+  const urlRef = useRef<string>("");
 
-  const playBase64Audio = (base64String: string) => {
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.src = "";
+        audioRef.current.pause();
+        URL.revokeObjectURL(urlRef.current);
+      }
+    };
+  }, []);
+
+  const playAudio = () => {
+    if (isPlaying) return;
+    audioRef.current?.play();
+  };
+
+  const pauseAudio = () => {
+    if (!isPlaying) return;
+    audioRef.current?.pause();
+  };
+
+  const setCurrentTime = (seconds: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = seconds;
+  };
+
+  const initAudio = (base64String: string) => {
     try {
-      console.log("playBase64Audio", base64String.length);
       // 将 base64 字符串转换为二进制数据
       const binaryString = window.atob(base64String);
       const bytes = new Uint8Array(binaryString.length);
@@ -27,41 +52,40 @@ const usePlayAudio = () => {
           : "audio/mp4",
       });
       const url = URL.createObjectURL(blob);
+      urlRef.current = url;
 
-      if (audioRef.current) {
-        audioRef.current.src = url;
-      } else {
-        const audio = new Audio(url);
-        audio.onloadedmetadata = () => {
-          setTotalSeconds(audio.duration);
-        };
+      const audio = new Audio(url);
+      audio.onloadedmetadata = () => {
+        setTotalSeconds(audio.duration);
+      };
 
-        audio.ontimeupdate = () => {
-          setCurrentSeconds(audio.currentTime);
-        };
+      audio.ontimeupdate = () => {
+        setCurrentSeconds(audio.currentTime);
+      };
 
-        audio.onplaying = () => {
-          setIsPlaying(true);
-        };
+      audio.onplaying = () => {
+        setIsPlaying(true);
+      };
 
-        // 播放结束后清理 URL
-        audio.onended = () => {
-          console.log("playBase64Audio ended");
-          setIsPlaying(false);
-          URL.revokeObjectURL(url);
-        };
+      audio.onpause = () => {
+        setIsPlaying(false);
+      };
 
-        // 如果播放出错，也清理 URL
-        audio.onerror = () => {
-          console.log("playBase64Audio error");
-          URL.revokeObjectURL(url);
-          message.error("音频播放出错");
-        };
+      // 播放结束后清理 URL
+      audio.onended = () => {
+        console.log("playBase64Audio ended");
+        setIsPlaying(false);
+        audio.currentTime = 0;
+      };
 
-        audioRef.current = audio;
-      }
-      const audio = audioRef.current;
-      audio.play();
+      // 如果播放出错，也清理 URL
+      audio.onerror = () => {
+        console.log("playBase64Audio error");
+        URL.revokeObjectURL(url);
+        message.error("音频播放出错");
+      };
+
+      audioRef.current = audio;
     } catch (error) {
       console.error("解析 base64 音频失败:", error);
       message.error("解析音频失败");
@@ -69,9 +93,12 @@ const usePlayAudio = () => {
   };
 
   return {
-    playBase64Audio,
-    totalSeconds: Math.floor(totalSeconds),
-    currentSeconds: Math.floor(currentSeconds),
+    initAudio,
+    playAudio,
+    pauseAudio,
+    setCurrentTime,
+    totalSeconds: totalSeconds,
+    currentSeconds: currentSeconds,
     isPlaying,
   };
 };

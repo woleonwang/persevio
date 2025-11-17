@@ -13,8 +13,7 @@ import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import Icon from "../Icon";
 import Delete from "@/assets/icons/delete";
-import Chat from "@/assets/icons/chat";
-import usePlayAudio from "@/hooks/usePlayAudio";
+import AudioPlayer from "../AudioPlayer";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -51,7 +50,7 @@ const CandidateChat: React.FC<IProps> = (props) => {
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [playingAudioMessageId, setPlayingAudioMessageId] = useState<number>();
+  const [_, setPlayingAudioMessageId] = useState<number>(0);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -64,9 +63,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`chat.${key}`);
-
-  const { playBase64Audio, totalSeconds, currentSeconds, isPlaying } =
-    usePlayAudio();
 
   useEffect(() => {
     needScrollToBottom.current = true;
@@ -204,6 +200,7 @@ Shall we start now?`,
           messageSubType: item.content.metadata.message_sub_type || "normal",
           extraTags: item.content.metadata.extra_tags || [],
           payloadId: item.payload_id,
+          duration: item.payload?.duration,
         });
       }
     });
@@ -274,21 +271,6 @@ Shall we start now?`,
     }
   };
 
-  const playAudioById = async (messageId?: number) => {
-    if (!messageId) return;
-
-    const { code, data } = await Get(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
-        jobApplyId ? `/${jobApplyId}` : ""
-      }/messages/${messageId}`
-    );
-
-    if (code === 0) {
-      setPlayingAudioMessageId(messageId);
-      playBase64Audio(data.payload);
-    }
-  };
-
   return (
     <div className={styles.container}>
       <ChatMessageList
@@ -297,6 +279,8 @@ Shall we start now?`,
         className={styles.listArea}
         childrenFunctionsRef={childrenFunctionsRef}
         renderTagsContent={(item) => {
+          const canPlayAudio = !!item.payloadId && item.duration;
+
           const visibleTags = (item.extraTags ?? [])
             .map((extraTag) => {
               return supportTags.find(
@@ -305,35 +289,47 @@ Shall we start now?`,
             })
             .filter(Boolean) as TSupportTag[];
 
-          if (visibleTags.length === 0) return null;
-
           return (
-            <div
-              style={{
-                marginTop: 16,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 8,
-              }}
-            >
-              {visibleTags.map((tag) => {
-                return (
-                  <div style={{ marginBottom: 16 }} key={tag.key}>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        const extraTag = (item.extraTags ?? []).find(
-                          (extraTag) => extraTag.name === tag.key
-                        );
-                        tag.handler(extraTag);
-                      }}
-                    >
-                      {tag.title}
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
+            <>
+              {visibleTags.length > 0 && (
+                <div
+                  style={{
+                    marginTop: 16,
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
+                  {visibleTags.map((tag) => {
+                    return (
+                      <div style={{ marginBottom: 16 }} key={tag.key}>
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            const extraTag = (item.extraTags ?? []).find(
+                              (extraTag) => extraTag.name === tag.key
+                            );
+                            tag.handler(extraTag);
+                          }}
+                        >
+                          {tag.title}
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {canPlayAudio && (
+                <AudioPlayer
+                  duration={item.duration ?? 0}
+                  payloadUrl={`/api/candidate/chat/${
+                    ChatTypeMappings[chatType]
+                  }${jobApplyId ? `/${jobApplyId}` : ""}/messages/${item.id}`}
+                  onPlay={() => setPlayingAudioMessageId(parseInt(item.id))}
+                  onStop={() => setPlayingAudioMessageId(0)}
+                />
+              )}
+            </>
           );
         }}
         renderOperationContent={(item) => {
@@ -342,28 +338,9 @@ Shall we start now?`,
             item.messageType === "normal" &&
             !["fake_ai_id", "fake_user_id"].includes(item.id);
 
-          const canPlayAudio = !!item.payloadId;
-          const isCurrentMessage = playingAudioMessageId === parseInt(item.id);
-
           return (
             canDelete && (
               <div className={classnames(styles.operationArea, styles.user)}>
-                {canPlayAudio &&
-                  (isCurrentMessage && isPlaying ? (
-                    <div>
-                      {currentSeconds}/{totalSeconds}
-                    </div>
-                  ) : (
-                    <Tooltip title={originalT("play_audio")}>
-                      <div
-                        onClick={() => {
-                          playAudioById(parseInt(item.id));
-                        }}
-                      >
-                        <Icon icon={<Chat />} />
-                      </div>
-                    </Tooltip>
-                  ))}
                 <Tooltip title={originalT("delete")}>
                   <div
                     onClick={() => {

@@ -591,6 +591,9 @@ type TMessageFromApi = {
   };
   updated_at: string;
   payload_id?: number;
+  payload?: {
+    duration: number;
+  };
 };
 
 type TMessage = {
@@ -603,6 +606,7 @@ type TMessage = {
   messageSubType?: "normal" | "error";
   extraTags?: TExtraTag[];
   payloadId?: number;
+  duration?: number;
 };
 
 type TEditableDocumentType =

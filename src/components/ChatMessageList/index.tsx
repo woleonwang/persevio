@@ -151,8 +151,8 @@ const ChatMessageList = (props: IProps) => {
                           }
                         />
                       )}
+                      {renderTagsContent?.(item)}
                     </div>
-                    {renderTagsContent?.(item)}
                     {renderOperationContent?.(item, isLast, isFirst)}
                   </div>
                 }

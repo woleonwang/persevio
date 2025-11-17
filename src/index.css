@@ -167,3 +167,12 @@ img {
     border-radius: 16px;
   }
 }
+
+.ant-slider .ant-slider-track {
+  background: linear-gradient(90deg, #b3d0ff 0%, #3682fe 100%) !important;
+}
+
+.ant-slider .ant-slider-rail,
+.ant-slider:hover .ant-slider-rail {
+  background: white;
+}

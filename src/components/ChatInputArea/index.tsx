@@ -233,7 +233,7 @@ const ChatInputArea = (props: IProps) => {
                         key={index}
                         className={styles.volumeHistoryItem}
                         style={{
-                          height: 4 + Math.min(50, volume * 100),
+                          height: 4 + Math.min(40, volume * 100),
                         }}
                       />
                     );
