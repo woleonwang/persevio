@@ -71,12 +71,12 @@ div {
 
 a {
   font-weight: normal;
-  color: lightgreen;
+  color: #3682fe;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: lightgreen;
+  color: #3682fe;
 }
 
 body {
@@ -109,9 +109,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-a:hover {
-  color: lightgreen;
-}
 button {
   background-color: #f9f9f9;
 }
