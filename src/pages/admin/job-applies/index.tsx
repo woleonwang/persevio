@@ -235,7 +235,9 @@ const JobApplies = () => {
             <div className={styles.jobApplyDetail}>
               <div className={styles.jobApplyPanel}>
                 <div className={styles.jobApplyPanelTitle}>JD</div>
-                <MarkdownContainer content={jd} />
+                <div style={{ flex: "auto", overflow: "auto" }}>
+                  <MarkdownContainer content={jd} />
+                </div>
               </div>
               <div
                 className={styles.jobApplyPanel}
