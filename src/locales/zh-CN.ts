@@ -149,6 +149,21 @@ const CandidateResume = {
     upload_tips_2:
       "即使简历不是最新的也无需担心！这份文档不会发送给雇主。它只是为我们接下来的对话提供一个起点。聊天结束后，我们会为您特定的求职需求起草一份全新的、更完善的简历。",
   },
+
+  apply_job: {
+    title: "与我们先聊一聊，准备好您的申请",
+    hint: "在我们提交您的申请之前，我们的顾问【账号名-Viona-Ai Recruiter】将通过 Whatsapp 与您进行一次简短的沟通，以便更深入地了解您的经历、技能和职业偏好，帮助我们以最有利的方式向雇主介绍您。",
+    list_confidentiality:
+      "本次沟通仅用于为您提供更好的服务，不会涉及敏感隐私信息，绝不会泄露给第三方或用于营销目的。",
+    list_add_contact:
+      "为了在 WhatsApp 上为您提供专属服务，请将招聘顾问添加到您的 WhatsApp 联系人。",
+    whatsapp_label: "您的 Whatsapp 账号",
+    placeholder: "请输入您的账号",
+    required_message: "请输入您的 Whatsapp 账号",
+    pattern_message: "请输入有效的 Whatsapp 账号（仅数字）",
+    previous_step: "上一步",
+    next: "下一步",
+  },
 };
 
 export default {

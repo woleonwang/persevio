@@ -156,6 +156,21 @@ const CandidateResume = {
     upload_tips_2:
       "Don't worry if it's not perfectly up-to-date! This document is not sent to employers. It simply gives our recruiters a starting point for our upcoming conversation. After your chat, we'll draft a new, polished resume specifically for your job applications.",
   },
+
+  apply_job: {
+    title: "Let's Chat and Prepare Your Application",
+    hint: `Before we submit your application, our consultant 【Account: Viona-Ai Recruiter】 will reach out via WhatsApp for a short conversation to better understand your experience, skills, and career preferences so we can present you to employers in the best way.`,
+    list_confidentiality:
+      "This conversation is purely to provide better service. It will not involve sensitive personal information and will never be shared with third parties or used for marketing purposes.",
+    list_add_contact:
+      "To receive tailored support on WhatsApp, please add our recruiter so we can stay connected directly.",
+    whatsapp_label: "Your WhatsApp Number",
+    placeholder: "Please enter your number",
+    required_message: "Please enter your WhatsApp number",
+    pattern_message: "Please enter a valid WhatsApp number (digits only)",
+    previous_step: "Previous Step",
+    next: "Next",
+  },
 };
 
 export default {

@@ -1,5 +1,6 @@
 import { Button, Form, Input } from "antd";
 import { useEffect, useReducer } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 
 interface IProps {
@@ -16,6 +17,8 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
   const { whatsappContactNumber, onFinish, onBack } = props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [form] = Form.useForm<{ whatsappContactNumber: string }>();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
     form.setFieldsValue({ whatsappContactNumber });
@@ -34,20 +37,11 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>
-        Let's Chat and Prepare Your Application
-      </div>
-      <div className={styles.hint}>
-        在我们提交您的申请之前，我们的顾问【账号名-Viona-Ai
-        Recruiter】将通过Whatsapp与您进行一次简短的交谈，以便更深入地了解您的经历、技能和职业偏好，并确保我们能以最有利的方式向雇主介绍您
-      </div>
+      <div className={styles.title}>{t("title")}</div>
+      <div className={styles.hint}>{t("hint")}</div>
       <ul className={styles.list}>
-        <li className={styles.listItem}>
-          本次沟通旨在为您提供更好的服务，不会涉及敏感隐私信息，以及绝不会泄露给第三方或用于营销目的。
-        </li>
-        <li className={styles.listItem}>
-          为了在WhatsApp上为您提供专属服务，您可以将招聘顾问添加您的WhatsApps。
-        </li>
+        <li className={styles.listItem}>{t("list_confidentiality")}</li>
+        <li className={styles.listItem}>{t("list_add_contact")}</li>
       </ul>
 
       <Form
@@ -57,20 +51,20 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
         className={styles.form}
       >
         <Form.Item
-          label="您的 Whatsapp 账号"
+          label={t("whatsapp_label")}
           name="whatsappContactNumber"
           rules={[
             {
               required: true,
-              message: "请输入您的 Whatsapp 账号",
+              message: t("required_message"),
             },
             {
               pattern: /^[0-9]+$/,
-              message: "请输入有效的Whatsapp账号（仅数字）",
+              message: t("pattern_message"),
             },
           ]}
         >
-          <Input placeholder="Please fill in" size="large" />
+          <Input placeholder={t("placeholder")} size="large" />
         </Form.Item>
       </Form>
       <div
@@ -90,7 +84,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
             onBack();
           }}
         >
-          Previous Step
+          {t("previous_step")}
         </Button>
         <Button
           size="large"
@@ -102,7 +96,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
             onSubmit();
           }}
         >
-          Next
+          {t("next")}
         </Button>
       </div>
     </div>

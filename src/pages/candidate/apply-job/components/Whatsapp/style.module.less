@@ -32,3 +32,26 @@
   font-size: 14px;
   margin-bottom: 12px;
 }
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 16px;
+    background-color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .title {
+    font-size: 16px;
+    text-align: left;
+  }
+
+  .hint {
+    background-color: rgba(237, 242, 255, 1);
+    color: @primary-color;
+  }
+}
