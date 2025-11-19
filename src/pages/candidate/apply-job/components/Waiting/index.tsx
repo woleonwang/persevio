@@ -10,7 +10,7 @@ import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 interface IProps {
-  mode: "ai" | "human";
+  mode: "ai" | "human" | "whatsapp";
 }
 const Waiting = (props: IProps) => {
   const { mode } = props;
@@ -35,7 +35,7 @@ const Waiting = (props: IProps) => {
           className={classnames(styles.textWrapper)}
           dangerouslySetInnerHTML={{
             __html:
-              mode === "ai"
+              mode === "ai" || mode === "whatsapp"
                 ? "Excellent! <br/>We have everything we need for now and are preparing your application. <br/>We're now working to get you feedback as quickly as possible."
                 : "Thank you. <br/>A consultant will be calling you soon.",
           }}

@@ -16,8 +16,10 @@ import UploadResume from "./components/UploadResume";
 import Copy from "@/assets/icons/copy";
 import Icon from "@/components/Icon";
 import Chat from "@/assets/icons/chat";
+import WhatsappIcon from "@/assets/icons/whatsapp";
+import Whatsapp from "./components/Whatsapp";
 
-type TPageState = "basic" | "resume" | "conversation" | "waiting";
+type TPageState = "basic" | "resume" | "whatsapp" | "conversation" | "waiting";
 
 const ApplyJob: React.FC = () => {
   const [pageState, setPageState] = useState<TPageState>();
@@ -27,8 +29,11 @@ const ApplyJob: React.FC = () => {
     email: "",
     name: "",
     phone: "",
-    mode: "ai",
+    mode: "whatsapp",
   });
+  const [resumePath, setResumePath] = useState<string>("");
+  const [whatsappContactNumber, setWhatsappContactNumber] =
+    useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
@@ -65,6 +70,8 @@ const ApplyJob: React.FC = () => {
         data1.candidate.pre_register_info ?? "{}"
       );
       setPreRegisterInfo(preRegisterInfo);
+      setResumePath(data1.candidate.resume_path ?? "");
+      setWhatsappContactNumber(data1.candidate.whatsapp_contact_number ?? "");
 
       const { code, data } = await Get(
         `/api/candidate/jobs/${jobId}/job_apply`
@@ -77,6 +84,8 @@ const ApplyJob: React.FC = () => {
         // 没上传简历
         if (!data1.candidate.resume_path) {
           setPageState("resume");
+        } else if (!data1.candidate.whatsapp_contact_number) {
+          setPageState("whatsapp");
         } else if (
           preRegisterInfo.mode === "human" ||
           !!jobApply.interview_finished_at
@@ -86,6 +95,7 @@ const ApplyJob: React.FC = () => {
           setPageState("conversation");
         }
       } else {
+        // 申请其它职位，暂不考虑
         setPageState("basic");
       }
     } catch {
@@ -140,11 +150,22 @@ const ApplyJob: React.FC = () => {
 
     if (code === 0) {
       message.success("Save successful");
-      setPageState("conversation");
+      setPageState("whatsapp");
     } else {
       message.error("Save failed");
     }
     setIsSubmitting(false);
+  };
+
+  const onSubmitWhatsapp = async (whatsappContactNumber: string) => {
+    const { code } = await Post(`/api/candidate/whatsapp_contact_number`, {
+      whatsapp_contact_number: whatsappContactNumber,
+    });
+    if (code === 0) {
+      message.success("Save successful");
+      setWhatsappContactNumber(whatsappContactNumber);
+      setPageState("conversation");
+    }
   };
 
   const switchModeToHuman = async () => {
@@ -180,7 +201,8 @@ const ApplyJob: React.FC = () => {
     return <div>Apply job does not exist</div>;
   }
 
-  const currentIndex = pageState === "basic" ? 0 : 1;
+  const currentIndex =
+    pageState === "basic" ? 0 : pageState === "resume" ? 1 : 2;
 
   return (
     <div className={classnames(styles.container, styles.mobile)}>
@@ -226,9 +248,11 @@ const ApplyJob: React.FC = () => {
           className={styles.mobileVisible}
           style={{ display: "flex", alignItems: "center", gap: 4 }}
         >
-          {(pageState === "basic" || pageState === "resume") && (
+          {(pageState === "basic" ||
+            pageState === "resume" ||
+            pageState === "whatsapp") && (
             <Step
-              stepCount={2}
+              stepCount={3}
               currentIndex={currentIndex}
               className={styles.stepContainer}
             />
@@ -251,11 +275,15 @@ const ApplyJob: React.FC = () => {
       </div>
       <div className={styles.main}>
         {(() => {
-          if (pageState === "basic" || pageState === "resume") {
+          if (
+            pageState === "basic" ||
+            pageState === "resume" ||
+            pageState === "whatsapp"
+          ) {
             return (
               <>
                 <Step
-                  stepCount={2}
+                  stepCount={3}
                   currentIndex={currentIndex}
                   className={classnames(
                     styles.stepContainer,
@@ -274,12 +302,28 @@ const ApplyJob: React.FC = () => {
                   )}
                   {pageState === "resume" && (
                     <UploadResume
+                      initialResumePath={resumePath}
                       isSubmitting={isSubmitting}
-                      onFinish={(resumePath) => {
-                        onSubmitResume(resumePath);
+                      onFinish={(newResumePath) => {
+                        if (newResumePath !== resumePath) {
+                          onSubmitResume(resumePath);
+                        } else {
+                          setPageState("whatsapp");
+                        }
                       }}
                       onBack={() => {
                         setPageState("basic");
+                      }}
+                    />
+                  )}
+                  {pageState === "whatsapp" && (
+                    <Whatsapp
+                      whatsappContactNumber={whatsappContactNumber}
+                      onFinish={({ whatsappContactNumber }) => {
+                        onSubmitWhatsapp(whatsappContactNumber);
+                      }}
+                      onBack={() => {
+                        setPageState("resume");
                       }}
                     />
                   )}
@@ -289,13 +333,22 @@ const ApplyJob: React.FC = () => {
           } else if (pageState === "conversation") {
             return (
               <div className={styles.conversation}>
-                <CandidateChat
-                  chatType="job_interview"
-                  jobApplyId={jobApplyId}
-                  onFinish={() => {
-                    setPageState("waiting");
-                  }}
-                />
+                {preRegisterInfo.mode === "ai" ? (
+                  <CandidateChat
+                    chatType="job_interview"
+                    jobApplyId={jobApplyId}
+                    onFinish={() => {
+                      setPageState("waiting");
+                    }}
+                  />
+                ) : (
+                  <div className={styles.whatsappContainer}>
+                    <div className={styles.whatsappIcon}>
+                      <Icon icon={<WhatsappIcon />} style={{ fontSize: 90 }} />
+                    </div>
+                    <div>请去Whatsapp内与您的专属顾问进行交流</div>
+                  </div>
+                )}
               </div>
             );
           } else if (pageState === "waiting") {

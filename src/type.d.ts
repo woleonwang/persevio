@@ -156,7 +156,7 @@ interface IPreRegisterInfo {
   email: string;
   name: string;
   phone: string;
-  mode: "ai" | "human";
+  mode: "ai" | "human" | "whatsapp";
 }
 
 interface ICandidateSettings {
@@ -172,6 +172,7 @@ interface ICandidateSettings {
   approve_status: "pending" | "approved" | "rejected" | "init";
   lang: string;
   resume_content: string;
+  whatsapp_contact_number?: string;
 
   profile_doc: string;
   goals_doc: string;

@@ -10,13 +10,14 @@ import styles from "./style.module.less";
 
 interface IProps {
   isSubmitting: boolean;
+  initialResumePath: string;
   onFinish: (resumePath: string) => void;
   onBack: () => void;
 }
 
 const UploadResume = (props: IProps) => {
-  const { isSubmitting, onFinish, onBack } = props;
-  const [resumePath, setResumePath] = useState<string>();
+  const { isSubmitting, initialResumePath, onFinish, onBack } = props;
+  const [resumePath, setResumePath] = useState<string>(initialResumePath);
   const [resumeFileName, setResumeFileName] = useState<string>();
   const [isUploadingResume, setIsUploadingResume] = useState(false);
 
@@ -95,7 +96,7 @@ const UploadResume = (props: IProps) => {
           <Button
             size="large"
             style={{ flex: 1, height: 44, borderRadius: 12 }}
-            type="primary"
+            type="default"
             onClick={() => {
               onBack();
             }}
