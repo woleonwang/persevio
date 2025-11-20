@@ -15,6 +15,7 @@ import globalStore from "@/store/global";
 import classnames from "classnames";
 import Icon from "@/components/Icon";
 import logo from "../../assets/logo.png";
+import { deleteQuery, getQuery } from "@/utils";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
@@ -22,7 +23,7 @@ const CandidateLayout = () => {
   const navigate = useNavigate();
 
   const LayoutMapping = {
-    blank: [/\/apply-job/],
+    blank: [/\/apply-job/, /\/whatsapp-redirect/],
   };
 
   const layout =
@@ -84,16 +85,17 @@ const CandidateLayout = () => {
   ];
 
   const init = async () => {
+    const initToken = getQuery("candidate_token");
+    if (initToken) {
+      localStorage.setItem("candidate_token", initToken);
+      deleteQuery("candidate_token");
+    }
+
     // 校验 token
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setInited(true);
       i18n.changeLanguage(data.candidate.lang ?? "zh-CN");
-      if (
-        (data.candidate as ICandidateSettings).approve_status !== "approved"
-      ) {
-        navigate("/signin-candidate");
-      }
     } else {
       navigate("/signin-candidate");
     }

@@ -65,6 +65,7 @@ import ApplyJob from "./pages/candidate/apply-job/index.tsx";
 import LiveKit from "./pages/livekit-voice-chat/page.tsx";
 import TalentDetails from "./pages/job/talent-details/index.tsx";
 import PlayAudio from "./pages/play-audio/index.tsx";
+import WhatsappRedirect from "./pages/candidate/whatsapp-redirect/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -241,6 +242,10 @@ createRoot(document.getElementById("root")!).render(
               element={<CandidateConnections />}
             />
             <Route path="/candidate/apply-job" element={<ApplyJobTest />} />
+            <Route
+              path="/candidate/whatsapp-redirect"
+              element={<WhatsappRedirect />}
+            />
           </Route>
 
           <Route path="/signin-candidate" element={<SignInCandidate />} />

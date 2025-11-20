@@ -85,6 +85,7 @@ interface IJobApplyListItem {
   company_name: string;
   interview_finished_at: string;
   deliveried_at: string;
+  interview_mode: "ai" | "human" | "whatsapp";
 }
 
 // Enums
@@ -156,7 +157,6 @@ interface IPreRegisterInfo {
   email: string;
   name: string;
   phone: string;
-  mode: "ai" | "human" | "whatsapp";
 }
 
 interface ICandidateSettings {

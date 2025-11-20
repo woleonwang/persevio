@@ -30,13 +30,25 @@
 @media (max-width: 768px) {
   .stepContainer {
     padding: 0;
+    gap: 4px;
 
     .step {
+      border-radius: 4px;
       width: 60px;
       height: 24px;
       padding: 4px 0;
       font-size: 12px;
       background-color: #f6f6f6;
+
+      &:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+      }
+
+      &:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
     }
   }
 }

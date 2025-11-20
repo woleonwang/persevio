@@ -24,12 +24,11 @@ type TPageState = "basic" | "resume" | "whatsapp" | "conversation" | "waiting";
 const ApplyJob: React.FC = () => {
   const [pageState, setPageState] = useState<TPageState>();
 
-  const [jobApplyId, setJobApplyId] = useState<number>();
+  const [jobApply, setJobApply] = useState<IJobApply>();
   const [preRegisterInfo, setPreRegisterInfo] = useState<IPreRegisterInfo>({
     email: "",
     name: "",
     phone: "",
-    mode: "whatsapp",
   });
   const [resumePath, setResumePath] = useState<string>("");
   const [whatsappContactNumber, setWhatsappContactNumber] =
@@ -73,12 +72,9 @@ const ApplyJob: React.FC = () => {
       setResumePath(data1.candidate.resume_path ?? "");
       setWhatsappContactNumber(data1.candidate.whatsapp_contact_number ?? "");
 
-      const { code, data } = await Get(
-        `/api/candidate/jobs/${jobId}/job_apply`
-      );
-      if (code === 0) {
-        const jobApply: IJobApply = data.job_apply;
-        setJobApplyId(jobApply.id);
+      const jobApply = await fetchJobApply();
+      if (jobApply) {
+        setJobApply(jobApply);
         setIsLoggedIn(true);
 
         // 没上传简历
@@ -87,7 +83,7 @@ const ApplyJob: React.FC = () => {
         } else if (!data1.candidate.whatsapp_contact_number) {
           setPageState("whatsapp");
         } else if (
-          preRegisterInfo.mode === "human" ||
+          jobApply.interview_mode === "human" ||
           !!jobApply.interview_finished_at
         ) {
           setPageState("waiting");
@@ -101,6 +97,14 @@ const ApplyJob: React.FC = () => {
     } catch {
       setPageState("basic");
     }
+  };
+
+  const fetchJobApply = async (): Promise<IJobApply | undefined> => {
+    const { code, data } = await Get(`/api/candidate/jobs/${jobId}/job_apply`);
+    if (code === 0) {
+      return data.job_apply as IJobApply;
+    }
+    return undefined;
   };
 
   const onSubmitBasicInfo = async (basicInfo: TBaiscInfo) => {
@@ -128,11 +132,16 @@ const ApplyJob: React.FC = () => {
       const { code, data } = await Post(`/api/candidate/register`, params);
 
       if (code === 0) {
-        const { job_apply_id, token } = data;
+        const { token } = data;
         message.success("Save successful");
         localStorage.setItem("candidate_token", token);
-        setJobApplyId(job_apply_id);
-        setPageState("resume");
+        const jobApply = await fetchJobApply();
+        if (jobApply) {
+          setJobApply(jobApply);
+          setPageState("resume");
+        } else {
+          message.error("Create job apply failed");
+        }
       } else {
         message.error("Save failed");
       }
@@ -169,16 +178,23 @@ const ApplyJob: React.FC = () => {
   };
 
   const switchModeToHuman = async () => {
-    const { code } = await Post(`/api/candidate/conversation_mode`, {
-      mode: "human",
-      reasons: selectedReasons,
-      other_reason: selectedReasons.includes("others")
-        ? otherReason
-        : undefined,
-    });
+    const { code } = await Post(
+      `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
+      {
+        mode: "human",
+        reasons: selectedReasons,
+        other_reason: selectedReasons.includes("others")
+          ? otherReason
+          : undefined,
+      }
+    );
     if (code === 0) {
+      const newJobApply = await fetchJobApply();
+      if (newJobApply) {
+        setJobApply(newJobApply);
+      }
+
       message.success("Switch mode to human successful");
-      setPreRegisterInfo({ ...preRegisterInfo, mode: "human" });
       setPageState("waiting");
       setIsModalOpen(false);
     } else {
@@ -306,7 +322,7 @@ const ApplyJob: React.FC = () => {
                       isSubmitting={isSubmitting}
                       onFinish={(newResumePath) => {
                         if (newResumePath !== resumePath) {
-                          onSubmitResume(resumePath);
+                          onSubmitResume(newResumePath);
                         } else {
                           setPageState("whatsapp");
                         }
@@ -333,10 +349,10 @@ const ApplyJob: React.FC = () => {
           } else if (pageState === "conversation") {
             return (
               <div className={styles.conversation}>
-                {preRegisterInfo.mode === "ai" ? (
+                {jobApply?.interview_mode === "ai" ? (
                   <CandidateChat
                     chatType="job_interview"
-                    jobApplyId={jobApplyId}
+                    jobApplyId={jobApply?.id}
                     onFinish={() => {
                       setPageState("waiting");
                     }}
@@ -352,7 +368,7 @@ const ApplyJob: React.FC = () => {
               </div>
             );
           } else if (pageState === "waiting") {
-            return <Waiting mode={preRegisterInfo.mode ?? "ai"} />;
+            return <Waiting mode={jobApply?.interview_mode ?? "ai"} />;
           }
         })()}
       </div>
