@@ -217,6 +217,12 @@ type TMenu = {
   }[];
 };
 
+type TFooter = {
+  title: string;
+  path: string;
+  img: ReactNode;
+};
+
 interface IInterviewer {
   id: number;
   company_id: number;
