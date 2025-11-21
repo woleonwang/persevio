@@ -80,7 +80,10 @@ const ApplyJob: React.FC = () => {
         // 没上传简历
         if (!data1.candidate.resume_path) {
           setPageState("resume");
-        } else if (!data1.candidate.whatsapp_contact_number) {
+        } else if (
+          jobApply.interview_mode === "whatsapp" &&
+          !data1.candidate.whatsapp_contact_number
+        ) {
           setPageState("whatsapp");
         } else if (
           jobApply.interview_mode === "human" ||
@@ -148,6 +151,21 @@ const ApplyJob: React.FC = () => {
     }
   };
 
+  const onChooseInterviewMode = async (interviewMode: "ai" | "human") => {
+    const { code } = await Post(
+      `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
+      {
+        mode: interviewMode,
+      }
+    );
+    if (code === 0) {
+      if (interviewMode === "ai") {
+        setPageState("conversation");
+      } else {
+        setPageState("waiting");
+      }
+    }
+  };
   const onSubmitResume = async (resumePath: string) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -341,6 +359,7 @@ const ApplyJob: React.FC = () => {
                       onBack={() => {
                         setPageState("resume");
                       }}
+                      onChooseInterviewMode={onChooseInterviewMode}
                     />
                   )}
                 </div>

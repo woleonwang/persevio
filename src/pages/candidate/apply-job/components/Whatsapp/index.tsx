@@ -2,6 +2,7 @@ import { Button, Form, Input } from "antd";
 import { useEffect, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
+import { getQuery } from "@/utils";
 
 interface IProps {
   whatsappContactNumber: string;
@@ -11,13 +12,16 @@ interface IProps {
     whatsappContactNumber: string;
   }) => void;
   onBack: () => void;
+  onChooseInterviewMode: (interviewMode: "ai" | "human") => void;
 }
 
 const Whatsapp: React.FC<IProps> = (props: IProps) => {
-  const { whatsappContactNumber, onFinish, onBack } = props;
+  const { whatsappContactNumber, onFinish, onBack, onChooseInterviewMode } =
+    props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [form] = Form.useForm<{ whatsappContactNumber: string }>();
   const { t: originalT } = useTranslation();
+  const isDebug = getQuery("debug") === "1";
   const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
@@ -99,6 +103,12 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           {t("next")}
         </Button>
       </div>
+      {isDebug && (
+        <div>
+          <div onClick={() => onChooseInterviewMode("human")}>人工面试</div>
+          <div onClick={() => onChooseInterviewMode("ai")}>Web 面试</div>
+        </div>
+      )}
     </div>
   );
 };
