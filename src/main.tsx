@@ -68,6 +68,7 @@ import PlayAudio from "./pages/play-audio/index.tsx";
 import WhatsappRedirect from "./pages/candidate/whatsapp-redirect/index.tsx";
 import Jobs from "./pages/candidate/jobs/index.tsx";
 import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
+import ShortLink from "./pages/short-link/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -258,6 +259,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/apply" element={<Apply />} />
           <Route path="/livekit" element={<LiveKit />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/l/:shortLink" element={<ShortLink />} />
         </Routes>
       </BrowserRouter>
     </AntdLocaleProvider>
