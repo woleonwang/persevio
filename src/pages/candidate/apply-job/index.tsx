@@ -159,6 +159,10 @@ const ApplyJob: React.FC = () => {
       }
     );
     if (code === 0) {
+      const newJobApply = await fetchJobApply();
+      if (newJobApply) {
+        setJobApply(newJobApply);
+      }
       if (interviewMode === "ai") {
         setPageState("conversation");
       } else {

@@ -1,0 +1,42 @@
+@primary-color: #3682fe;
+
+.tabs {
+  display: flex;
+  background-color: rgba(246, 246, 246, 1);
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 396px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+
+  .tabIcon {
+    font-size: 20px;
+    color: #999999;
+  }
+
+  .tabLabel {
+    font-size: 16px;
+    color: #999999;
+  }
+
+  &.active {
+    background-color: white;
+
+    .tabLabel {
+      font-weight: bold;
+      color: #333333;
+    }
+
+    .tabIcon {
+      color: @primary-color;
+    }
+  }
+}

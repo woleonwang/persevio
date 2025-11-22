@@ -1,0 +1,93 @@
+import Tabs from "@/components/Tabs";
+import styles from "./style.module.less";
+import RecommendedJobs from "@/assets/icons/recommended-jobs";
+import JobApply from "@/assets/icons/job-apply";
+import { useEffect, useState } from "react";
+import { Get } from "@/utils/request";
+import EmptyImg from "@/assets/job-applies-empty.png";
+import { Empty } from "antd";
+import { getQuery, updateQuery } from "@/utils";
+import { useNavigate } from "react-router";
+import CompanyLogo from "../components/CompanyLogo";
+
+const Jobs = () => {
+  const tab = getQuery("tab");
+  const [activeKey, setActiveKey] = useState(tab || "recommend");
+  const [jobApplies, setJobApplies] = useState<IJobApplyListItem[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchJobApplies();
+  }, []);
+
+  const fetchJobApplies = async () => {
+    const { code, data } = await Get("/api/candidate/job_applies");
+    if (code === 0) {
+      setJobApplies(data.job_applies);
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Tabs
+          tabs={[
+            {
+              key: "recommend",
+              label: "Recommended Jobs for You",
+              icon: <RecommendedJobs />,
+            },
+            {
+              key: "apply",
+              label: "Jobs You Applied For",
+              icon: <JobApply />,
+            },
+          ]}
+          activeKey={activeKey}
+          onChange={(key) => {
+            setActiveKey(key);
+            updateQuery("tab", key);
+          }}
+        />
+      </div>
+      <div className={styles.body}>
+        {activeKey === "recommend" && <div>Recommended Jobs for You</div>}
+        {activeKey === "apply" &&
+          (jobApplies.length > 0 ? (
+            <div className={styles.jobApplies}>
+              {jobApplies.map((jobApply) => {
+                return (
+                  <div
+                    key={jobApply.id}
+                    className={styles.jobApplyCard}
+                    onClick={() => {
+                      navigate(`/candidate/job-applies/${jobApply.id}`);
+                    }}
+                  >
+                    <CompanyLogo logo={jobApply.company_logo} />
+                    <div>
+                      <div className={styles.jobName}>{jobApply.job_name}</div>
+                      <div className={styles.tags}>
+                        <div className={styles.companyName}>
+                          {jobApply.company_name}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <Empty
+              image={
+                <img src={EmptyImg} alt="empty" style={{ width: "auto" }} />
+              }
+              description="Viona is working hard to help you find the right job."
+            />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+export default Jobs;
