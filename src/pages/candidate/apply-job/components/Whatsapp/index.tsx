@@ -1,15 +1,18 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form } from "antd";
 import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import { getQuery } from "@/utils";
+import WhatsappContactNumber from "@/components/WhatsappContactNumber";
 
 interface IProps {
-  whatsappContactNumber: string;
-  onFinish: ({
-    whatsappContactNumber,
-  }: {
-    whatsappContactNumber: string;
+  whatsappContactNumber: {
+    whatsappCountryCode: string;
+    whatsappPhoneNumber: string;
+  };
+  onFinish: (whatsappContactNumber: {
+    whatsappCountryCode: string;
+    whatsappPhoneNumber: string;
   }) => void;
   onBack: () => void;
   onChooseInterviewMode: (interviewMode: "ai" | "human") => void;
@@ -20,34 +23,54 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
     props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [isAgreed, setIsAgreed] = useState(true);
-  const [form] = Form.useForm<{ whatsappContactNumber: string }>();
+  const [form] = Form.useForm<{
+    whatsappContactNumber: {
+      whatsappCountryCode: string;
+      whatsappPhoneNumber: string;
+    };
+  }>();
   const { t: originalT } = useTranslation();
   const isDebug = getQuery("debug") === "1";
+
   const t = (key: string) => originalT(`apply_job.${key}`);
 
   useEffect(() => {
-    form.setFieldsValue({ whatsappContactNumber });
+    form.setFieldsValue({
+      whatsappContactNumber,
+    });
   }, [whatsappContactNumber]);
 
   const onSubmit = () => {
     form.validateFields().then(async (values) => {
-      onFinish({ whatsappContactNumber: values.whatsappContactNumber });
+      onFinish(values.whatsappContactNumber);
     });
   };
 
   const canSubmit = () => {
     const { whatsappContactNumber } = form.getFieldsValue();
-    console.log(whatsappContactNumber, isAgreed);
-    return !!whatsappContactNumber && isAgreed;
+    return (
+      !!whatsappContactNumber?.whatsappCountryCode &&
+      !!whatsappContactNumber?.whatsappPhoneNumber &&
+      isAgreed
+    );
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t("title")}</div>
-      <div className={styles.hint}>{t("hint")}</div>
+      <div
+        className={styles.hint}
+        dangerouslySetInnerHTML={{ __html: t("hint") }}
+      />
       <ul className={styles.list}>
-        <li className={styles.listItem}>{t("list_confidentiality")}</li>
-        <li className={styles.listItem}>{t("list_add_contact")}</li>
+        <li
+          className={styles.listItem}
+          dangerouslySetInnerHTML={{ __html: t("list_confidentiality") }}
+        />
+        <li
+          className={styles.listItem}
+          dangerouslySetInnerHTML={{ __html: t("list_add_contact") }}
+        />
       </ul>
 
       <Form
@@ -61,16 +84,25 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           name="whatsappContactNumber"
           rules={[
             {
-              required: true,
-              message: t("required_message"),
-            },
-            {
-              pattern: /^[0-9]+$/,
-              message: t("pattern_message"),
+              validator: (_, value, callback) => {
+                if (
+                  !value?.whatsappCountryCode ||
+                  !value?.whatsappPhoneNumber
+                ) {
+                  callback(t("required_message"));
+                  return;
+                }
+                const reg = /^[0-9]+$/;
+                if (!(value.whatsappPhoneNumber as string).match(reg)) {
+                  callback(t("pattern_message"));
+                  return;
+                }
+                callback();
+              },
             },
           ]}
         >
-          <Input placeholder={t("placeholder")} size="large" />
+          <WhatsappContactNumber />
         </Form.Item>
         <Checkbox
           checked={isAgreed}

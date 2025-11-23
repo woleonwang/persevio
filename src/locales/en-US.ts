@@ -159,11 +159,12 @@ const CandidateResume = {
 
   apply_job: {
     title: "Let's Chat and Prepare Your Application",
-    hint: `Before we submit your application, our consultant 【Account: Viona-Ai Recruiter】 will reach out via WhatsApp for a short conversation to better understand your experience, skills, and career preferences so we can present you to employers in the best way.`,
+    hint: `Before we submit your application, our AI recruiter <b>Viona</b> will contact you on WhatsApp (from Whatsapp account "<b>Viona by Persevio</b>") for a short discovery conversation. 
+ This helps us verify your experience, clarify key details from your resume, and understand your career preferences so we can present you to employers accurately and effectively.`,
     list_confidentiality:
-      "This conversation is purely to provide better service. It will not involve sensitive personal information and will never be shared with third parties or used for marketing purposes.",
+      "This conversation is <b>strictly for your job application only</b>. It will not ask for sensitive personal information, and nothing you share will be used for marketing or shared with third parties without your permission.",
     list_add_contact:
-      "To receive tailored support on WhatsApp, please add our recruiter so we can stay connected directly.",
+      "To continue, please provide your WhatsApp number so Viona can guide you through the next steps.",
     whatsapp_label: "Your WhatsApp Number",
     placeholder: "Please enter your number",
     required_message: "Please enter your WhatsApp number",

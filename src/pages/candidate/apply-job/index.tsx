@@ -31,8 +31,13 @@ const ApplyJob: React.FC = () => {
     phone: "",
   });
   const [resumePath, setResumePath] = useState<string>("");
-  const [whatsappContactNumber, setWhatsappContactNumber] =
-    useState<string>("");
+  const [whatsappContactNumber, setWhatsappContactNumber] = useState<{
+    whatsappCountryCode: string;
+    whatsappPhoneNumber: string;
+  }>({
+    whatsappCountryCode: "+65",
+    whatsappPhoneNumber: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
@@ -70,7 +75,10 @@ const ApplyJob: React.FC = () => {
       );
       setPreRegisterInfo(preRegisterInfo);
       setResumePath(data1.candidate.resume_path ?? "");
-      setWhatsappContactNumber(data1.candidate.whatsapp_contact_number ?? "");
+      setWhatsappContactNumber({
+        whatsappCountryCode: data1.candidate.whatsapp_country_code || "+65",
+        whatsappPhoneNumber: data1.candidate.whatsapp_phone_number || "",
+      });
 
       const jobApply = await fetchJobApply();
       if (jobApply) {
@@ -82,7 +90,8 @@ const ApplyJob: React.FC = () => {
           setPageState("resume");
         } else if (
           jobApply.interview_mode === "whatsapp" &&
-          !data1.candidate.whatsapp_contact_number
+          (!data1.candidate.whatsapp_country_code ||
+            !data1.candidate.whatsapp_phone_number)
         ) {
           setPageState("whatsapp");
         } else if (
@@ -188,13 +197,20 @@ const ApplyJob: React.FC = () => {
     setIsSubmitting(false);
   };
 
-  const onSubmitWhatsapp = async (whatsappContactNumber: string) => {
+  const onSubmitWhatsapp = async (whatsappContactNumber: {
+    whatsappCountryCode: string;
+    whatsappPhoneNumber: string;
+  }) => {
     const { code } = await Post(`/api/candidate/whatsapp_contact_number`, {
-      whatsapp_contact_number: whatsappContactNumber,
+      whatsapp_country_code: whatsappContactNumber.whatsappCountryCode,
+      whatsapp_phone_number: whatsappContactNumber.whatsappPhoneNumber,
     });
     if (code === 0) {
       message.success("Save successful");
-      setWhatsappContactNumber(whatsappContactNumber);
+      setWhatsappContactNumber({
+        whatsappCountryCode: whatsappContactNumber.whatsappCountryCode,
+        whatsappPhoneNumber: whatsappContactNumber.whatsappPhoneNumber,
+      });
       setPageState("conversation");
     }
   };
@@ -357,7 +373,7 @@ const ApplyJob: React.FC = () => {
                   {pageState === "whatsapp" && (
                     <Whatsapp
                       whatsappContactNumber={whatsappContactNumber}
-                      onFinish={({ whatsappContactNumber }) => {
+                      onFinish={(whatsappContactNumber) => {
                         onSubmitWhatsapp(whatsappContactNumber);
                       }}
                       onBack={() => {
