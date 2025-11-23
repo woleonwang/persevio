@@ -1,5 +1,5 @@
-import { Button, Form, Input } from "antd";
-import { useEffect, useReducer } from "react";
+import { Button, Checkbox, Form, Input } from "antd";
+import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import { getQuery } from "@/utils";
@@ -19,6 +19,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
   const { whatsappContactNumber, onFinish, onBack, onChooseInterviewMode } =
     props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
+  const [isAgreed, setIsAgreed] = useState(true);
   const [form] = Form.useForm<{ whatsappContactNumber: string }>();
   const { t: originalT } = useTranslation();
   const isDebug = getQuery("debug") === "1";
@@ -36,7 +37,8 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
 
   const canSubmit = () => {
     const { whatsappContactNumber } = form.getFieldsValue();
-    return !!whatsappContactNumber;
+    console.log(whatsappContactNumber, isAgreed);
+    return !!whatsappContactNumber && isAgreed;
   };
 
   return (
@@ -70,6 +72,12 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
         >
           <Input placeholder={t("placeholder")} size="large" />
         </Form.Item>
+        <Checkbox
+          checked={isAgreed}
+          onChange={(e) => setIsAgreed(e.target.checked)}
+        >
+          I agree to be contacted on Whatsapp regarding my job application
+        </Checkbox>
       </Form>
       <div
         style={{
