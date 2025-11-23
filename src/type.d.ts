@@ -157,6 +157,7 @@ interface IPreRegisterInfo {
   email: string;
   name: string;
   phone: string;
+  country_code: string;
 }
 
 interface ICandidateSettings {

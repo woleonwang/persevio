@@ -3,23 +3,23 @@ import countryCodeOptions from "./countryCode";
 import styles from "./style.module.less";
 
 interface IValue {
-  whatsappCountryCode?: string;
-  whatsappPhoneNumber?: string;
+  countryCode?: string;
+  phoneNumber?: string;
 }
 
 interface IProps {
   value?: IValue;
   onChange?: (value: IValue) => void;
 }
-const WhatsappContactNumber = (props: IProps) => {
+const PhoneWithCountryCode = (props: IProps) => {
   const { value, onChange } = props;
 
   const handleCountryCodeChange = (countryCode: string) => {
-    onChange?.({ ...value, whatsappCountryCode: countryCode });
+    onChange?.({ ...value, countryCode: countryCode });
   };
 
   const handlePhoneNumberChange = (phoneNumber: string) => {
-    onChange?.({ ...value, whatsappPhoneNumber: phoneNumber });
+    onChange?.({ ...value, phoneNumber: phoneNumber });
   };
 
   return (
@@ -30,7 +30,7 @@ const WhatsappContactNumber = (props: IProps) => {
           value: item.dial_code,
           key: `${item.name}`,
         }))}
-        value={value?.whatsappCountryCode}
+        value={value?.countryCode}
         onChange={handleCountryCodeChange}
         size="large"
         className={styles.countryCodeSelect}
@@ -39,7 +39,7 @@ const WhatsappContactNumber = (props: IProps) => {
         showSearch
       />
       <Input
-        value={value?.whatsappPhoneNumber}
+        value={value?.phoneNumber}
         onChange={(e) => handlePhoneNumberChange(e.target.value)}
         size="large"
         className={styles.phoneNumberInput}
@@ -49,4 +49,4 @@ const WhatsappContactNumber = (props: IProps) => {
   );
 };
 
-export default WhatsappContactNumber;
+export default PhoneWithCountryCode;

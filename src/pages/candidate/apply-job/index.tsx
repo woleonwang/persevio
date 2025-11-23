@@ -4,7 +4,7 @@ import classnames from "classnames";
 import { useNavigate, useParams } from "react-router";
 
 import CandidateChat from "@/components/CandidateChat";
-import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
+import BasicInfo from "./components/BasicInfo";
 import Waiting from "./components/Waiting";
 
 import logo from "@/assets/logo.png";
@@ -29,6 +29,7 @@ const ApplyJob: React.FC = () => {
     email: "",
     name: "",
     phone: "",
+    country_code: "+65",
   });
   const [resumePath, setResumePath] = useState<string>("");
   const [whatsappContactNumber, setWhatsappContactNumber] = useState<{
@@ -76,8 +77,12 @@ const ApplyJob: React.FC = () => {
       setPreRegisterInfo(preRegisterInfo);
       setResumePath(data1.candidate.resume_path ?? "");
       setWhatsappContactNumber({
-        whatsappCountryCode: data1.candidate.whatsapp_country_code || "+65",
-        whatsappPhoneNumber: data1.candidate.whatsapp_phone_number || "",
+        whatsappCountryCode:
+          data1.candidate.whatsapp_country_code ||
+          preRegisterInfo.country_code ||
+          "+65",
+        whatsappPhoneNumber:
+          data1.candidate.whatsapp_phone_number || preRegisterInfo.phone || "",
       });
 
       const jobApply = await fetchJobApply();
@@ -119,7 +124,7 @@ const ApplyJob: React.FC = () => {
     return undefined;
   };
 
-  const onSubmitBasicInfo = async (basicInfo: TBaiscInfo) => {
+  const onSubmitBasicInfo = async (basicInfo: IPreRegisterInfo) => {
     setPreRegisterInfo({ ...preRegisterInfo, ...basicInfo });
     if (isLoggedIn) {
       const { code } = await Post(`/api/candidate/pre_register_info`, {
@@ -129,6 +134,10 @@ const ApplyJob: React.FC = () => {
       if (code === 0) {
         message.success("Update successful");
         setPageState("resume");
+        setWhatsappContactNumber({
+          whatsappCountryCode: basicInfo.country_code,
+          whatsappPhoneNumber: basicInfo.phone,
+        });
       } else {
         message.error("Update failed");
       }
@@ -401,7 +410,17 @@ const ApplyJob: React.FC = () => {
                     <div className={styles.whatsappIcon}>
                       <Icon icon={<WhatsappIcon />} style={{ fontSize: 90 }} />
                     </div>
-                    <div>请去Whatsapp内与您的专属顾问进行交流</div>
+                    <div style={{ maxWidth: 800, padding: "0 20px" }}>
+                      Thanks! Our AI recruiter <b>Viona</b> has just reached out
+                      to you on WhatsApp (you’ll see the message from{" "}
+                      <b>Viona by Persevio</b>).
+                      <br />
+                      <br />
+                      When you have a moment, please reply to her there and
+                      complete the discovery conversation with her. This helps
+                      us prepare your application accurately before submitting
+                      it to the employer.
+                    </div>
                   </div>
                 )}
               </div>

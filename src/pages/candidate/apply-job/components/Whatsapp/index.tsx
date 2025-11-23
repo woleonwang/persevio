@@ -3,7 +3,7 @@ import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import { getQuery } from "@/utils";
-import WhatsappContactNumber from "@/components/WhatsappContactNumber";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 
 interface IProps {
   whatsappContactNumber: {
@@ -25,8 +25,8 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
   const [isAgreed, setIsAgreed] = useState(true);
   const [form] = Form.useForm<{
     whatsappContactNumber: {
-      whatsappCountryCode: string;
-      whatsappPhoneNumber: string;
+      countryCode: string;
+      phoneNumber: string;
     };
   }>();
   const { t: originalT } = useTranslation();
@@ -36,21 +36,27 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     form.setFieldsValue({
-      whatsappContactNumber,
+      whatsappContactNumber: {
+        countryCode: whatsappContactNumber.whatsappCountryCode,
+        phoneNumber: whatsappContactNumber.whatsappPhoneNumber,
+      },
     });
   }, [whatsappContactNumber]);
 
   const onSubmit = () => {
     form.validateFields().then(async (values) => {
-      onFinish(values.whatsappContactNumber);
+      onFinish({
+        whatsappCountryCode: values.whatsappContactNumber.countryCode,
+        whatsappPhoneNumber: values.whatsappContactNumber.phoneNumber,
+      });
     });
   };
 
   const canSubmit = () => {
     const { whatsappContactNumber } = form.getFieldsValue();
     return (
-      !!whatsappContactNumber?.whatsappCountryCode &&
-      !!whatsappContactNumber?.whatsappPhoneNumber &&
+      !!whatsappContactNumber?.countryCode &&
+      !!whatsappContactNumber?.phoneNumber &&
       isAgreed
     );
   };
@@ -85,15 +91,12 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           rules={[
             {
               validator: (_, value, callback) => {
-                if (
-                  !value?.whatsappCountryCode ||
-                  !value?.whatsappPhoneNumber
-                ) {
+                if (!value?.countryCode || !value?.phoneNumber) {
                   callback(t("required_message"));
                   return;
                 }
                 const reg = /^[0-9]+$/;
-                if (!(value.whatsappPhoneNumber as string).match(reg)) {
+                if (!(value.phoneNumber as string).match(reg)) {
                   callback(t("pattern_message"));
                   return;
                 }
@@ -102,7 +105,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
             },
           ]}
         >
-          <WhatsappContactNumber />
+          <PhoneWithCountryCode />
         </Form.Item>
         <Checkbox
           checked={isAgreed}

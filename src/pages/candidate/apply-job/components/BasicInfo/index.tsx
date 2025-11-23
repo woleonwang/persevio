@@ -2,30 +2,42 @@ import { Button, Form, Input } from "antd";
 import React, { useEffect, useReducer } from "react";
 
 import styles from "./style.module.less";
-
-export interface TBaiscInfo {
-  name: string;
-  phone: string;
-  email: string;
-}
+import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
 
 interface IProps {
-  initValues: TBaiscInfo;
-  onFinish: (params: TBaiscInfo) => void;
+  initValues: IPreRegisterInfo;
+  onFinish: (params: IPreRegisterInfo) => void;
 }
+
+type TFormValues = {
+  name: string;
+  phone: {
+    countryCode: string;
+    phoneNumber: string;
+  };
+  email: string;
+};
 
 const BasicInfo: React.FC<IProps> = (props) => {
   const { initValues, onFinish } = props;
-  const [form] = Form.useForm<IPreRegisterInfo>();
+  const [form] = Form.useForm<TFormValues>();
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
   useEffect(() => {
-    form.setFieldsValue(initValues);
+    const { name, country_code, phone, email } = initValues;
+    form.setFieldsValue({
+      name,
+      phone: {
+        countryCode: country_code,
+        phoneNumber: phone,
+      },
+      email,
+    });
     forceUpdate();
   }, [initValues]);
   const canSubmit = () => {
     const { name, phone, email } = form.getFieldsValue();
-    return name && phone && email;
+    return name && phone?.countryCode && phone?.phoneNumber && email;
   };
 
   return (
@@ -45,7 +57,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
             <Input placeholder="Please fill in" />
           </Form.Item>
           <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
-            <Input placeholder="Please fill in" />
+            <WhatsappContactNumber />
           </Form.Item>
           <Form.Item label="Email" name="email" rules={[{ required: true }]}>
             <Input placeholder="Please fill in" />
@@ -60,10 +72,15 @@ const BasicInfo: React.FC<IProps> = (props) => {
             disabled={!canSubmit()}
             onClick={() => {
               form.validateFields().then(async (values) => {
-                const { name, phone, email } = values;
+                const {
+                  name,
+                  phone: { countryCode, phoneNumber },
+                  email,
+                } = values;
                 const params = {
                   name,
-                  phone,
+                  country_code: countryCode,
+                  phone: phoneNumber,
                   email,
                 };
                 onFinish(params);
