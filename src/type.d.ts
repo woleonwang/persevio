@@ -81,11 +81,13 @@ interface IJobApplyListItem {
   updated_at: string;
   recommend_doc_id: number;
   job_name: string;
+  job_posted_at: string;
   company_logo: string;
   company_name: string;
   interview_finished_at: string;
   deliveried_at: string;
   interview_mode: "ai" | "human" | "whatsapp";
+  talent_status: string;
 }
 
 // Enums
@@ -136,6 +138,7 @@ interface RoleOpportunityReport {
 interface IJobApply extends IJobApplyListItem {
   recommend_reason: RoleOpportunityReport;
   jd: string;
+  jdJson: Record<string, string>;
   talentStatus:
     | ""
     | "evaluate_succeed"

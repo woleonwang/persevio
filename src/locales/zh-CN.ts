@@ -110,12 +110,15 @@ const CandidateResume = {
     applied_jobs: "您的职位",
   },
   job_apply: {
+    title: "您的职位",
     applied: "已申请",
     apply_now: "立即申请",
     job_description: "职位描述",
     interview: "面试",
     finish_interview_hint: "面试已完成，您可以提交申请了！",
     waiting: "Viona 正在撰写中，请稍候...",
+    chat: "聊聊公司/职位",
+    posted_at: "发布于 {time}",
   },
   candidate_sign: {
     connect_google: "使用 Google 登录",

@@ -8,10 +8,10 @@
 }
 
 .header {
-  padding: 32px 20px;
+  padding: 15px 20px;
   font-size: 20px;
   font-weight: bold;
-  border-bottom: 1px solid rgba(234, 234, 234, 1);
+  border-bottom: 1px dashed rgba(234, 234, 234, 1);
   flex: none;
   display: flex;
   align-items: center;
@@ -21,7 +21,6 @@
 .main {
   flex: auto;
   overflow: auto;
-  padding: 20px 40px;
   display: flex;
   gap: 15px;
 }
@@ -42,6 +41,8 @@
   align-items: center;
   justify-content: space-between;
   flex: none;
+  border-bottom: 1px dashed rgba(234, 234, 234, 1);
+  padding-bottom: 20px;
 
   .basicInfo {
     display: flex;
@@ -56,31 +57,185 @@
   }
 
   .tags {
-    display: flex;
-    margin-top: 12px;
+    color: #999;
+    font-size: 16px;
+    margin-top: 8px;
   }
 
-  .companyName {
-    padding: 4px 16px;
-    background-color: rgba(252, 240, 255, 1);
-    border-radius: 44px;
-    color: rgba(146, 115, 163, 1);
+  .operation {
+    margin-top: 8px;
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.jd {
+  padding: 20px 0;
+  flex: auto;
+  overflow: auto;
+
+  .jobDescriptionSection {
+    margin-bottom: 24px;
+  }
+
+  .sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .greenBar {
+    width: 6px;
+    height: 6px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background-color: @primary-color;
+    outline: 3px solid rgba(54, 130, 254, 0.1);
+  }
+
+  .sectionTitle span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .sectionContent {
+    color: #666;
+    line-height: 1.7;
+    font-size: 15px;
   }
 }
 
 .right {
   flex: none;
-  width: 200px;
+  width: 540px;
+  background-color: rgba(246, 246, 246, 1);
   display: flex;
   overflow: hidden;
-  padding-left: 20px;
+  padding: 20px;
 }
 
-.jd {
-  margin-top: 24px;
-  padding: 20px 0;
+.rightBody {
+  background-color: white;
+  border: 1px solid rgba(38, 188, 93, 0.5);
+  border-radius: 4px;
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.stepTitle {
+  background-color: rgba(239, 252, 243, 1);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: rgba(38, 188, 93, 1);
+  padding: 20px 24px;
+  border-bottom: 1px dashed rgba(38, 188, 93, 0.5);
+}
+
+.stepContainer {
   flex: auto;
   overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 32px;
+
+  .step {
+    position: relative;
+    padding-bottom: 40px;
+    padding-left: 12px;
+    border-left: 2px solid transparent;
+    min-height: 34px;
+
+    &:not(:last-child) {
+      border-left: 2px solid #e6eaef;
+
+      &.done {
+        border-left-color: rgba(38, 188, 93, 1);
+      }
+    }
+
+    &.done {
+      .dot {
+        background-color: rgba(38, 188, 93, 1);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        left: -14px;
+        top: -7px;
+      }
+    }
+
+    &.active {
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: rgba(38, 188, 93, 1);
+        outline: 6px solid rgba(38, 188, 93, 0.2);
+      }
+
+      .stepContent {
+        color: rgba(38, 188, 93, 1);
+      }
+    }
+
+    &.disabled {
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: rgba(217, 217, 217, 1);
+        outline: 6px solid rgba(217, 217, 217, 0.2);
+      }
+
+      .stepContent,
+      .stepHint {
+        color: #999;
+      }
+    }
+
+    .dot {
+      position: absolute;
+      left: -8px;
+    }
+
+    .stepContentContainer {
+      position: relative;
+      top: -5px;
+      margin-left: 12px;
+    }
+
+    .stepContent {
+      font-size: 16px;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    .stepHint {
+      font-size: 14px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .stepTime {
+      font-size: 14px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .stepTimeValue {
+      color: @primary-color;
+    }
+  }
 }
 
 .interviewPanel {

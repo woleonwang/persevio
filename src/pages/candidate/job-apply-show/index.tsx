@@ -1,17 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
-import { Button, Drawer, message, Modal, Select, Spin, Steps } from "antd";
-import { LeftCircleOutlined } from "@ant-design/icons";
+import { CheckOutlined } from "@ant-design/icons";
+import { Button, Drawer, message, Modal, Select, Spin } from "antd";
+import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { formatInterviewMode, parseJd } from "@/utils";
+import {
+  formatInterviewMode,
+  getJobApplyStatus,
+  parseJd,
+  parseJSON,
+} from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
 import dayjs, { Dayjs } from "dayjs";
+import Icon from "@/components/Icon";
+import ArrowLeft from "@/assets/icons/arrow-left";
 
 type TimeSlot = { from: string; to: string };
 const JobApplyShow = () => {
@@ -23,24 +31,9 @@ const JobApplyShow = () => {
     Record<string, string>
   >({});
 
-  const applyStatus = ((): number => {
-    if (!jobApply) {
-      return 0;
-    }
-
-    if (
-      jobApply.talentStatus === "accepted" ||
-      jobApply.talentStatus === "rejected"
-    ) {
-      return 2;
-    }
-
-    if (!!jobApply.deliveried_at) {
-      return 1;
-    }
-
-    return 0;
-  })();
+  const applyStatus = useMemo(() => {
+    return getJobApplyStatus(jobApply);
+  }, [jobApply]);
 
   const { jobApplyId = "" } = useParams();
 
@@ -48,7 +41,8 @@ const JobApplyShow = () => {
 
   const { t: originalT } = useTranslation();
 
-  const t = (key: string) => originalT(`job_apply.${key}`);
+  const t = (key: string, params?: Record<string, string>) =>
+    originalT(`job_apply.${key}`, params);
 
   useEffect(() => {
     fetchApplyJob();
@@ -58,6 +52,7 @@ const JobApplyShow = () => {
       setInterviewChatDrawerOpen(true);
     }
   }, []);
+
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
       `/api/candidate/job_applies/${jobApplyId}`
@@ -66,21 +61,10 @@ const JobApplyShow = () => {
       setJobApply({
         ...data.job_apply,
         jd: parseJd(data.jd),
+        jdJson: parseJSON(data.jd_json),
         talentStatus: data.talent_status,
         interviews: data.interviews,
       });
-    }
-  };
-
-  const delivery = async () => {
-    const { code } = await Post(
-      `/api/candidate/job_applies/${jobApplyId}/delivery`
-    );
-    if (code === 0) {
-      message.success(originalT("submit_succeed"));
-      fetchApplyJob();
-    } else {
-      message.error(originalT("submit_failed"));
     }
   };
 
@@ -135,14 +119,59 @@ const JobApplyShow = () => {
     return <Spin />;
   }
 
+  const jdJson = jobApply.jdJson;
+
+  const steps: {
+    key: string;
+    title: string;
+    hint?: string;
+    status: "done" | "active" | "disabled";
+  }[] = [
+    {
+      key: "apply",
+      title: "Apply for Position",
+      status: "done",
+    },
+    {
+      key: "chat",
+      title: "Instant chat with AI Recruiter",
+      status: applyStatus === "chat" ? "active" : "done",
+      hint: "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
+    },
+    {
+      key: "screening",
+      title: "Resume Screening",
+      hint: "The recruitment department and the hiring department are screening resumes.",
+      status:
+        applyStatus === "chat"
+          ? "disabled"
+          : applyStatus === "screening"
+          ? "active"
+          : "done",
+    },
+    {
+      key: "processed",
+      title: "Resume Processed",
+      status:
+        applyStatus === "accepted" || applyStatus === "rejected"
+          ? "done"
+          : "disabled",
+    },
+  ];
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div>{originalT("job_applies.jobs")}</div>
-        <LeftCircleOutlined
-          style={{ color: "#3682fe", cursor: "pointer" }}
-          onClick={() => navigate("/candidate/job-applies")}
+        <Icon
+          icon={<ArrowLeft />}
+          style={{
+            color: "rgba(53, 64, 82, 1)",
+            cursor: "pointer",
+            fontSize: 24,
+          }}
+          onClick={() => navigate("/candidate/jobs?tab=apply")}
         />
+        <div>{t("title")}</div>
       </div>
       <div className={styles.main}>
         <div className={styles.left}>
@@ -152,67 +181,118 @@ const JobApplyShow = () => {
               <div>
                 <div className={styles.jobName}>{jobApply.job_name}</div>
                 <div className={styles.tags}>
-                  <div className={styles.companyName}>
-                    {jobApply.company_name}
-                  </div>
+                  {jobApply.company_name} -{" "}
+                  {t("posted_at", {
+                    time: dayjs(jobApply.job_posted_at).format("YYYY.MM.DD"),
+                  })}
+                </div>
+                <div className={styles.operation}>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    style={{ fontWeight: "bold" }}
+                    onClick={() => setChatDrawerOpen(true)}
+                  >
+                    {t("chat")}
+                  </Button>
+
+                  {(jobApply.interviews ?? []).length > 0 && (
+                    <Button
+                      type="primary"
+                      shape="round"
+                      onClick={() => setInterviewModalOpen(true)}
+                    >
+                      回应面试
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
-            <div>
-              {!jobApply.deliveried_at && (
-                <Button
-                  type="primary"
-                  shape="round"
-                  disabled={!!jobApply.deliveried_at}
-                  onClick={() => {
-                    if (jobApply.interview_finished_at) {
-                      delivery();
-                    } else {
-                      setInterviewChatDrawerOpen(true);
-                    }
-                  }}
-                >
-                  {t("apply_now")}
-                </Button>
-              )}
-
-              <Button
-                style={{ marginLeft: 10 }}
-                type="primary"
-                shape="round"
-                onClick={() => setChatDrawerOpen(true)}
-              >
-                {originalT("chat_with_viona")}
-              </Button>
-
-              {(jobApply.interviews ?? []).length > 0 && (
-                <Button
-                  style={{ marginLeft: 10 }}
-                  type="primary"
-                  shape="round"
-                  onClick={() => setInterviewModalOpen(true)}
-                >
-                  回应面试
-                </Button>
-              )}
-            </div>
           </div>
           <div className={styles.jd}>
-            <MarkdownContainer content={jobApply.jd} />
+            {!!jdJson.company_introduction && (
+              <div className={styles.jobDescriptionSection}>
+                <div className={styles.sectionTitle}>
+                  <div className={styles.greenBar}></div>
+                  <span>Company Overview</span>
+                </div>
+                <div className={styles.sectionContent}>
+                  <MarkdownContainer content={jdJson.company_introduction} />
+                </div>
+              </div>
+            )}
+            {!!jdJson.job_description ? (
+              <>
+                <div className={styles.jobDescriptionSection}>
+                  <div className={styles.sectionTitle}>
+                    <div className={styles.greenBar}></div>
+                    <span>Position Overview</span>
+                  </div>
+                  <div className={styles.sectionContent}>
+                    <MarkdownContainer content={jdJson.job_description} />
+                  </div>
+                </div>
+
+                <div className={styles.jobDescriptionSection}>
+                  <div className={styles.sectionTitle}>
+                    <div className={styles.greenBar}></div>
+                    <span>Basic Requirements</span>
+                  </div>
+                  <div className={styles.sectionContent}>
+                    <MarkdownContainer content={jdJson.basic_requirements} />
+                  </div>
+                </div>
+
+                <div className={styles.jobDescriptionSection}>
+                  <div className={styles.sectionTitle}>
+                    <div className={styles.greenBar}></div>
+                    <span>Bonus Points</span>
+                  </div>
+                  <div className={styles.sectionContent}>
+                    <MarkdownContainer content={jdJson.bonus_points} />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div>
+                <MarkdownContainer content={jobApply.jd} />
+              </div>
+            )}
           </div>
         </div>
         <div className={styles.right}>
-          <Steps
-            progressDot
-            direction="vertical"
-            size="small"
-            current={applyStatus}
-            items={[
-              { title: "Interview" },
-              { title: "Resume Submitted" },
-              { title: "Resume Processed" },
-            ]}
-          />
+          <div className={styles.rightBody}>
+            <div className={styles.stepTitle}>Job Application Progress</div>
+            <div className={styles.stepContainer}>
+              {steps.map((step) => {
+                return (
+                  <div
+                    key={step.key}
+                    className={classnames(styles.step, styles[step.status])}
+                  >
+                    <div className={styles.dot}>
+                      {step.status === "done" && <CheckOutlined />}
+                    </div>
+                    <div className={styles.stepContentContainer}>
+                      <div className={styles.stepContent}>{step.title}</div>
+                      {step.hint && (
+                        <div className={styles.stepHint}>{step.hint}</div>
+                      )}
+                      {step.key === "chat" && (
+                        <Button
+                          type="primary"
+                          onClick={() => setInterviewChatDrawerOpen(true)}
+                          style={{ marginTop: 20 }}
+                        >
+                          Chat
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 

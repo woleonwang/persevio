@@ -146,3 +146,19 @@ export const formatSeconds = (seconds: number) => {
       : Math.floor(seconds % 60)
   }`;
 };
+
+export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
+  if (!jobApply) {
+    return "chat";
+  }
+  if (jobApply.talent_status === "accepted") {
+    return "accepted";
+  }
+  if (jobApply.talent_status === "rejected") {
+    return "rejected";
+  }
+  if (jobApply.deliveried_at) {
+    return "screening";
+  }
+  return "chat";
+};

@@ -113,15 +113,18 @@ const CandidateResume = {
       "Help me understand your work experience in depth so I can better recommend suitable opportunities to you.",
   },
   job_applies: {
-    jobs: "Your jobs",
+    jobs: "Jobs You Applied For",
   },
   job_apply: {
+    title: "Jobs You Applied For",
     applied: "Applied",
     apply_now: "Apply Now",
     job_description: "Job Description",
     interview: "Interview",
     finish_interview_hint: "Interivew has finished, You can apply now!",
     waiting: "Viona is writing, please wait...",
+    chat: "Chat about Company/Position",
+    posted_at: "Posted at {{time}}",
   },
   candidate_sign: {
     connect_google: "Continue with Google",

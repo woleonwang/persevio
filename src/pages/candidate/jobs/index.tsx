@@ -6,8 +6,8 @@ import JobApply from "@/assets/icons/job-apply";
 import { useEffect, useState } from "react";
 import { Get } from "@/utils/request";
 import EmptyImg from "@/assets/job-applies-empty.png";
-import { Empty, Tag } from "antd";
-import { getQuery, updateQuery } from "@/utils";
+import { Empty } from "antd";
+import { getJobApplyStatus, getQuery, updateQuery } from "@/utils";
 import { useNavigate } from "react-router";
 import CompanyLogo from "../components/CompanyLogo";
 
@@ -26,21 +26,6 @@ const Jobs = () => {
     if (code === 0) {
       setJobApplies(data.job_applies);
     }
-  };
-
-  const getJobApplyStatus = (
-    jobApply: IJobApplyListItem
-  ): "chat" | "screening" | "accepted" | "rejected" => {
-    if (jobApply.status === "ACCEPTED") {
-      return "accepted";
-    }
-    if (jobApply.status === "REJECTED") {
-      return "rejected";
-    }
-    if (jobApply.deliveried_at) {
-      return "screening";
-    }
-    return "chat";
   };
 
   const genJobApplyStatusTag = (jobApply: IJobApplyListItem) => {
