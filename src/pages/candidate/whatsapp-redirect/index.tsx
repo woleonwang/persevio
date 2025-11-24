@@ -28,12 +28,26 @@ const WhatsappRedirect = () => {
     return undefined;
   };
 
+  const fetchCandidateSettings = async () => {
+    const { code, data } = await Get("/api/candidate/settings");
+    if (code === 0) {
+      return data.candidate as ICandidateSettings;
+    }
+    return undefined;
+  };
+
   const switchConversationMode = async (
     mode: "human" | "ai",
     jobId: string
   ) => {
     const jobApply = await fetchJobApply(jobId);
     if (!jobApply) {
+      setStatus("error");
+      return;
+    }
+
+    const candidateSettings = await fetchCandidateSettings();
+    if (!candidateSettings) {
       setStatus("error");
       return;
     }
@@ -46,7 +60,11 @@ const WhatsappRedirect = () => {
 
     if (code === 0) {
       message.success(`Switch successful`);
-      navigate(`/apply-job/${jobId}`, { replace: true });
+      if (candidateSettings.email.endsWith("@persevio.ai")) {
+        navigate(`/apply-job/${jobId}`, { replace: true });
+      } else {
+        navigate(`/candidate/jobs/applies/${jobApply.id}`, { replace: true });
+      }
     } else {
       setStatus("error");
     }
