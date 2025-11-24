@@ -173,3 +173,9 @@ img {
 .ant-slider:hover .ant-slider-rail {
   background: white;
 }
+
+@media (max-width: 768px) {
+  .ant-select-selection-search-input {
+    font-size: 16px !important;
+  }
+}
