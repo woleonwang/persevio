@@ -5,14 +5,16 @@ import styles from "./style.module.less";
 interface IValue {
   countryCode?: string;
   phoneNumber?: string;
+  readonly?: boolean;
 }
 
 interface IProps {
   value?: IValue;
+  readonly?: boolean;
   onChange?: (value: IValue) => void;
 }
 const PhoneWithCountryCode = (props: IProps) => {
-  const { value, onChange } = props;
+  const { value, onChange, readonly } = props;
 
   const handleCountryCodeChange = (countryCode: string) => {
     onChange?.({ ...value, countryCode: countryCode });
@@ -37,6 +39,7 @@ const PhoneWithCountryCode = (props: IProps) => {
         placeholder="Country Code"
         optionFilterProp="label"
         showSearch
+        disabled={readonly}
       />
       <Input
         value={value?.phoneNumber}
@@ -44,6 +47,7 @@ const PhoneWithCountryCode = (props: IProps) => {
         size="large"
         className={styles.phoneNumberInput}
         placeholder="Phone Number"
+        disabled={readonly}
       />
     </div>
   );

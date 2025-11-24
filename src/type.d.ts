@@ -88,6 +88,7 @@ interface IJobApplyListItem {
   deliveried_at: string;
   interview_mode: "ai" | "human" | "whatsapp";
   talent_status: string;
+  whatsapp_number_confirmed_at?: string;
 }
 
 // Enums
@@ -177,6 +178,8 @@ interface ICandidateSettings {
   lang: string;
   resume_content: string;
   whatsapp_contact_number?: string;
+  whatsapp_country_code?: string;
+  whatsapp_phone_number?: string;
 
   profile_doc: string;
   goals_doc: string;

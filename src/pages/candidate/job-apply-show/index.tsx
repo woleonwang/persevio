@@ -20,11 +20,18 @@ import ChatRoom from "@/components/ChatRoom";
 import dayjs, { Dayjs } from "dayjs";
 import Icon from "@/components/Icon";
 import ArrowLeft from "@/assets/icons/arrow-left";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import WhatsappIcon from "@/assets/icons/whatsapp";
+import Empty2 from "@/assets/empty2.png";
 
 type TimeSlot = { from: string; to: string };
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
+  const [candidateSettings, setCandidateSettings] =
+    useState<ICandidateSettings>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
+  const [whatsappModeOpen, setWhatsappModeOpen] = useState(false);
+  const [humanModeOpen, setHumanModeOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [interviewTimeValueMap, setInterviewTimeValueMap] = useState<
@@ -45,6 +52,7 @@ const JobApplyShow = () => {
     originalT(`job_apply.${key}`, params);
 
   useEffect(() => {
+    fetchCandidateSettings();
     fetchApplyJob();
     const urlParams = new URLSearchParams(window.location.search);
     const open = urlParams.get("open");
@@ -52,6 +60,13 @@ const JobApplyShow = () => {
       setInterviewChatDrawerOpen(true);
     }
   }, []);
+
+  const fetchCandidateSettings = async () => {
+    const { code, data } = await Get("/api/candidate/settings");
+    if (code === 0) {
+      setCandidateSettings(data.candidate);
+    }
+  };
 
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
@@ -68,7 +83,10 @@ const JobApplyShow = () => {
     }
   };
 
-  function splitTimeRanges(ranges: TimeSlot[], duration: number): TimeSlot[] {
+  const splitTimeRanges = (
+    ranges: TimeSlot[],
+    duration: number
+  ): TimeSlot[] => {
     if (!ranges.length) return [];
 
     const sortedRanges = ranges
@@ -113,7 +131,17 @@ const JobApplyShow = () => {
     }
 
     return result;
-  }
+  };
+
+  const onClickChat = () => {
+    if (jobApply?.interview_mode === "whatsapp") {
+      setWhatsappModeOpen(true);
+    } else if (jobApply?.interview_mode === "human") {
+      setHumanModeOpen(true);
+    } else {
+      setInterviewChatDrawerOpen(true);
+    }
+  };
 
   if (!jobApply) {
     return <Spin />;
@@ -281,7 +309,7 @@ const JobApplyShow = () => {
                       {step.key === "chat" && (
                         <Button
                           type="primary"
-                          onClick={() => setInterviewChatDrawerOpen(true)}
+                          onClick={() => onClickChat()}
                           style={{ marginTop: 20 }}
                         >
                           Chat
@@ -329,6 +357,107 @@ const JobApplyShow = () => {
           />
         </div>
       </Drawer>
+
+      <Modal
+        title="Let's Chat and Prepare Your Application"
+        open={whatsappModeOpen}
+        onCancel={() => setWhatsappModeOpen(false)}
+        cancelButtonProps={{
+          style: {
+            display: "none",
+          },
+        }}
+        onOk={async () => {
+          if (jobApply?.whatsapp_number_confirmed_at) {
+            setWhatsappModeOpen(false);
+            return;
+          } else {
+            const { code } = await Post(
+              `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
+            );
+            if (code === 0) {
+              fetchApplyJob();
+            } else {
+              message.success(originalT("submit_failed"));
+            }
+          }
+        }}
+        className={styles.whatsappModeModal}
+        centered
+        width={740}
+      >
+        {jobApply?.whatsapp_number_confirmed_at ? (
+          <div className={styles.whatsappContainer}>
+            <div className={styles.whatsappIcon}>
+              <Icon icon={<WhatsappIcon />} style={{ fontSize: 90 }} />
+            </div>
+            <div style={{ maxWidth: 800, padding: "0 20px" }}>
+              Thanks! Our AI recruiter <b>Viona</b> has just reached out to you
+              on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>
+              ).
+              <br />
+              <br />
+              When you have a moment, please reply to her there and complete the
+              discovery conversation with her. This helps us prepare your
+              application accurately before submitting it to the employer.
+            </div>
+          </div>
+        ) : (
+          <div className={styles.whatsappModeContent}>
+            <div
+              className={styles.hint}
+              dangerouslySetInnerHTML={{ __html: originalT("apply_job.hint") }}
+            />
+            <ul className={styles.list}>
+              <li
+                className={styles.listItem}
+                dangerouslySetInnerHTML={{
+                  __html: originalT("apply_job.list_confidentiality"),
+                }}
+              />
+              <li
+                className={styles.listItem}
+                dangerouslySetInnerHTML={{
+                  __html: originalT("apply_job.list_add_contact"),
+                }}
+              />
+            </ul>
+
+            <div style={{ marginBottom: 8 }}>您的 WhatsApp 账号</div>
+            <PhoneWithCountryCode
+              readonly
+              value={{
+                countryCode: candidateSettings?.whatsapp_country_code,
+                phoneNumber: candidateSettings?.whatsapp_phone_number,
+              }}
+            />
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        title="Let's Chat and Prepare Your Application"
+        open={humanModeOpen}
+        onCancel={() => setHumanModeOpen(false)}
+        cancelButtonProps={{
+          style: {
+            display: "none",
+          },
+        }}
+        onOk={() => {
+          setHumanModeOpen(false);
+        }}
+        centered
+        width={740}
+      >
+        <div className={styles.humanModeContent}>
+          <img src={Empty2} alt="empty" style={{ width: 140 }} />
+          <div className={styles.humanModeContentText}>
+            <b>Thank you.</b>
+            <br />A consultant will be calling you soon.
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         title="确认面试时间"
