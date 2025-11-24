@@ -22,7 +22,7 @@ const JobApplies = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const open = urlParams.get("open");
       if (open === "1" && data.job_applies.length > 0) {
-        navigate(`/candidate/job-applies/${data.job_applies[0].id}`);
+        navigate(`/candidate/jobs/applies/${data.job_applies[0].id}`);
       }
       setJobApplies(data.job_applies);
     }
@@ -38,7 +38,7 @@ const JobApplies = () => {
               key={jobApply.id}
               className={styles.jobApplyCard}
               onClick={() => {
-                navigate(`/candidate/job-applies/${jobApply.id}`);
+                navigate(`/candidate/jobs/applies/${jobApply.id}`);
               }}
             >
               <CompanyLogo logo={jobApply.company_logo} />

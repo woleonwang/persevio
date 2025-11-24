@@ -221,7 +221,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/candidate/job-applies" element={<JobApplies />} />
             {/* 申请职位详情 */}
             <Route
-              path="/candidate/job-applies/:jobApplyId"
+              path="/candidate/jobs/applies/:jobApplyId"
               element={<JobApplyShow />}
             />
             {/* 推荐职位详情 */}

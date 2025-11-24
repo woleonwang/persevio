@@ -51,7 +51,7 @@ const RecommendedJobShow = () => {
     if (code === 0) {
       message.success(originalT("submit_succeed"));
       if (action === "accept") {
-        navigate(`/candidate/job-applies/${data.job_apply_id}?open=1`);
+        navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`);
       } else {
         fetchRecommendedJob();
       }

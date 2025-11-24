@@ -161,13 +161,13 @@ const JobsShow = () => {
               `/api/candidate/jobs/${id}/job_apply`
             );
             if (code === 0) {
-              navigate(`/candidate/job-applies/${data.job_apply.id}`);
+              navigate(`/candidate/jobs/applies/${data.job_apply.id}`);
             } else {
               const { code, data } = await Post("/api/candidate/job_applies", {
                 job_id: parseInt(id as string),
               });
               if (code === 0) {
-                navigate(`/candidate/job-applies/${data.job_apply_id}`);
+                navigate(`/candidate/jobs/applies/${data.job_apply_id}`);
               } else {
                 message.error("Apply job failed");
               }

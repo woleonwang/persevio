@@ -77,7 +77,7 @@ const Jobs = () => {
                     key={jobApply.id}
                     className={styles.jobApplyCard}
                     onClick={() => {
-                      navigate(`/candidate/job-applies/${jobApply.id}`);
+                      navigate(`/candidate/jobs/applies/${jobApply.id}`);
                     }}
                   >
                     <div className={styles.jobApplyInfo}>
