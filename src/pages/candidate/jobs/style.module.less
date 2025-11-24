@@ -24,33 +24,74 @@
   height: 100%;
   flex: auto;
   overflow: auto;
-}
+  padding: 54px 0;
 
-.jobApplyCard {
-  background-color: #999999;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 20px;
-  cursor: pointer;
-  margin-bottom: 16px;
-}
+  .jobApplyCard {
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    border: 1px solid rgba(235, 236, 238, 1);
 
-.jobName {
-  font-size: 18px;
-  font-weight: bold;
-}
+    &:hover {
+      background-color: rgba(246, 246, 246, 1);
+    }
+  }
 
-.tags {
-  display: flex;
-  margin-top: 12px;
-}
+  .jobApplyInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-.companyName {
-  padding: 4px 16px;
-  background-color: rgba(252, 240, 255, 1);
-  border-radius: 44px;
-  color: rgba(146, 115, 163, 1);
+  .jobName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .tags {
+    display: flex;
+    margin-top: 12px;
+  }
+
+  .companyName {
+    padding: 4px 12px;
+    background-color: rgba(250, 244, 234, 1);
+    border-radius: 44px;
+    color: rgba(230, 153, 60, 1);
+  }
+
+  .jobApplyStatusTag {
+    border: 1px solid rgba(234, 234, 234, 1);
+    border-radius: 44px;
+    padding: 6px 24px;
+    font-size: 16px;
+
+    &.accepted {
+      background-color: rgba(242, 255, 234, 1);
+      color: rgba(38, 188, 93, 1);
+      border-color: rgba(38, 188, 93, 1);
+    }
+
+    &.rejected {
+      background-color: rgba(255, 240, 234, 1);
+      color: rgba(224, 61, 61, 1);
+      border-color: rgba(224, 61, 61, 1);
+    }
+
+    &.screening {
+      background-color: rgba(242, 255, 234, 1);
+      color: rgba(38, 188, 93, 1);
+      border-color: rgba(38, 188, 93, 1);
+    }
+
+    &.chat {
+      background-color: rgba(237, 242, 255, 1);
+      color: rgba(54, 130, 254, 1);
+      border-color: rgba(54, 130, 254, 1);
+    }
+  }
 }

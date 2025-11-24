@@ -251,7 +251,7 @@ const Settings = () => {
                   label: "中文",
                 },
               ]}
-              value={profile?.lang}
+              value={profile?.lang || "en-US"}
               onChange={(lang) => updateLang(lang)}
               size="large"
             />
