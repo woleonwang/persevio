@@ -41,6 +41,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
         phoneNumber: whatsappContactNumber.whatsappPhoneNumber,
       },
     });
+    forceUpdate()
   }, [whatsappContactNumber]);
 
   const onSubmit = () => {
