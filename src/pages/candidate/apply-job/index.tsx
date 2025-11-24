@@ -126,6 +126,10 @@ const ApplyJob: React.FC = () => {
 
   const onSubmitBasicInfo = async (basicInfo: IPreRegisterInfo) => {
     setPreRegisterInfo({ ...preRegisterInfo, ...basicInfo });
+    setWhatsappContactNumber({
+      whatsappCountryCode: basicInfo.country_code,
+      whatsappPhoneNumber: basicInfo.phone,
+    });
     if (isLoggedIn) {
       const { code } = await Post(`/api/candidate/pre_register_info`, {
         ...basicInfo,
@@ -134,10 +138,6 @@ const ApplyJob: React.FC = () => {
       if (code === 0) {
         message.success("Update successful");
         setPageState("resume");
-        setWhatsappContactNumber({
-          whatsappCountryCode: basicInfo.country_code,
-          whatsappPhoneNumber: basicInfo.phone,
-        });
       } else {
         message.error("Update failed");
       }
