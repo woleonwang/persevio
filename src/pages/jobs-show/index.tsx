@@ -7,7 +7,7 @@ import { ShareAltOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import ChatRoom from "@/components/ChatRoom";
-import { Get } from "@/utils/request";
+import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, getQuery, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
@@ -48,6 +48,7 @@ type TStatus = "loading" | "success" | "error";
 const JobsShow = () => {
   const { id } = useParams<{ id: string }>();
   const [company, setCompany] = useState<TCompany>();
+  const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [job, setJob] = useState<TJob>();
   const [status, setStatus] = useState<TStatus>("loading");
   const [chatModalVisible, setChatModalVisible] = useState(false);
@@ -63,6 +64,7 @@ const JobsShow = () => {
   const t = (key: string) => originalT(`jobs_show.${key}`);
 
   useEffect(() => {
+    fetchCandidateSettings();
     fetchJob();
     storeShareToken();
     setTimeout(() => {
@@ -89,6 +91,14 @@ const JobsShow = () => {
   const currentTime = useMemo(() => {
     return dayjs().format("YYYY/MM/DD HH:mm:ss");
   }, []);
+
+  const fetchCandidateSettings = async () => {
+    const { code, data } = await Get("/api/candidate/settings");
+    if (code === 0) {
+      setCandidate(data.candidate);
+    }
+  };
+
   const fetchJob = async () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`);
     if (code === 0) {
@@ -140,15 +150,32 @@ const JobsShow = () => {
       size="large"
       className={styles.applyButton}
       onClick={async () => {
-        // const { code } = await Post("/api/candidate/job_applies", {
-        //   job_id: id,
-        // });
-        // if (code === 10001) {
-        //   navigate(`/signin-candidate?job_id=${id}`);
-        // } else {
-        //   navigate(`/candidate/job-applies`);
-        // }
-        navigate(`/apply-job/${id}`);
+        if (candidate) {
+          if (candidate.email.endsWith("@persevio.ai") && !!candidate.job_id) {
+            message.info("Please complete the registration process first");
+            navigate(`/apply-job/${candidate.job_id}`);
+            // 没走完注册流程
+          } else {
+            // 是否已经创建职位申请
+            const { code, data } = await Get(
+              `/api/candidate/jobs/${id}/job_apply`
+            );
+            if (code === 0) {
+              navigate(`/candidate/job-applies/${data.job_apply.id}`);
+            } else {
+              const { code, data } = await Post("/api/candidate/job_applies", {
+                job_id: parseInt(id as string),
+              });
+              if (code === 0) {
+                navigate(`/candidate/job-applies/${data.job_apply_id}`);
+              } else {
+                message.error("Apply job failed");
+              }
+            }
+          }
+        } else {
+          navigate(`/apply-job/${id}`);
+        }
       }}
     >
       {t("apply_now")}

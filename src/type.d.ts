@@ -183,6 +183,7 @@ interface ICandidateSettings {
 
   network_profile_finished_at?: string;
   pre_register_info?: string;
+  job_id?: number;
 }
 
 interface IRecommendedJob {
