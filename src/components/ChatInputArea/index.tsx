@@ -340,6 +340,7 @@ const ChatInputArea = (props: IProps) => {
                 <div
                   className={classnames(styles.voiceInputButton, {
                     [styles.recording]: isRecording,
+                    [styles.transcribing]: isTranscribing,
                   })}
                   onClick={() => {
                     if (isRecording) {

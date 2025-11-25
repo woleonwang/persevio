@@ -207,9 +207,11 @@
 
       .voiceInputButton {
         position: relative;
+        height: 70px;
+        width: 70px;
         img {
-          height: 70px;
-          width: 70px;
+          height: 100%;
+          width: 100%;
         }
 
         &.recording {
@@ -250,6 +252,36 @@
               /* 结束状态：尺寸放大到最大，完全透明 */
               transform: scale(1.5); /* 放大倍数，可调整波纹扩散范围 */
               opacity: 0;
+            }
+          }
+        }
+
+        &.transcribing {
+          /* 创建转动的环形边框 */
+          &::before {
+            content: "";
+            position: absolute;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            border-radius: 50%;
+            top: -4px;
+            left: -4px;
+
+            /* 关键：创建透明边框，只在右上角有一个颜色块 */
+            border: 2px solid transparent;
+            border-top-color: #007bff; /* 顶部/开始颜色 */
+
+            /* 应用动画 */
+            animation: spin 1.5s linear infinite;
+          }
+
+          /* 定义旋转的关键帧动画 */
+          @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
             }
           }
         }
