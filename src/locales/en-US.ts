@@ -291,7 +291,8 @@ export default {
     viona_intro_staff: "AI recruiter",
 
     share_basic: "Click here to share basic information",
-    share_reference: "Upload JD",
+    share_reference:
+      "Click or drag and drop file to upload, or directly paste the JD text in the text input box below",
     share_team: "Click here to share team context",
     ideal_profile: "Click here to edit ideal profile",
     other_requirements: "Click here to provide other requirements",
@@ -408,6 +409,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     basic_information: "Basic information",
 
     // basic_info question texts
+    headcount_number_question:
+      "How many headcounts are we looking to fill for this role?",
     primary_driver_question:
       "What is the primary driver for opening this position?",
     archetypes_question:
@@ -1125,7 +1128,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   city_and_address_select: {
     city: "City",
-    address: "Address",
+    address: "Address(optional)",
   },
 
   manager_detail: {

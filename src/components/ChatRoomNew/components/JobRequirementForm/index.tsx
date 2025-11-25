@@ -180,6 +180,12 @@ const JobRequirementForm = (props: IProps) => {
       title: t("basic_information"),
       questions: [
         {
+          key: "headcount_number",
+          type: "number",
+          question: t("headcount_number_question"),
+          required: true,
+        },
+        {
           key: "primary_driver",
           type: "select",
           question: t("primary_driver_question"),
@@ -240,36 +246,6 @@ const JobRequirementForm = (props: IProps) => {
           required: true,
         },
         {
-          key: "visa_type_singapore",
-          type: "multiple_select",
-          question: t("visa_type"),
-          options: [
-            "singapore_citizen",
-            "singapore_pr",
-            "ep",
-            "sp",
-            "wp",
-            "dp",
-            "other_singapore_visa",
-          ].map((item) => ({
-            value: item,
-            label: t(`${item}`),
-          })),
-          required: true,
-        },
-        {
-          key: "visa_type_singapore_other",
-          type: "text",
-          question: t("visa_type_singapore_other"),
-          dependencies: [
-            {
-              questionKey: "visa_type_singapore",
-              valueKey: "other_singapore_visa",
-            },
-          ],
-          required: true,
-        },
-        {
           key: "remote",
           type: "select",
           question: t("remote_question"),
@@ -297,6 +273,35 @@ const JobRequirementForm = (props: IProps) => {
             {
               questionKey: "remote",
               valueKey: ["onsite", "hybrid"],
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "visa_type_singapore",
+          type: "multiple_select",
+          question: t("visa_type"),
+          options: [
+            "singapore_citizen",
+            "singapore_pr",
+            "ep",
+            "sp",
+            "wp",
+            "dp",
+            "other_singapore_visa",
+          ].map((item) => ({
+            value: item,
+            label: t(`${item}`),
+          })),
+        },
+        {
+          key: "visa_type_singapore_other",
+          type: "text",
+          question: t("visa_type_singapore_other"),
+          dependencies: [
+            {
+              questionKey: "visa_type_singapore",
+              valueKey: "other_singapore_visa",
             },
           ],
           required: true,
@@ -835,9 +840,7 @@ const JobRequirementForm = (props: IProps) => {
                 {
                   validator(_: any, value, callback: any) {
                     const typedValue = value as TValue[];
-                    if (
-                      typedValue.find((item) => item.cityId || item.addressId)
-                    ) {
+                    if (typedValue.find((item) => item.cityId)) {
                       callback();
                     } else {
                       callback(new Error());
@@ -885,7 +888,9 @@ const JobRequirementForm = (props: IProps) => {
             allowFile={question.allowFile}
           />
         )}
-        {question.type === "number" && <InputNumber disabled={deleted} />}
+        {question.type === "number" && (
+          <InputNumber style={{ width: "100%" }} disabled={deleted} min={0} />
+        )}
         {question.type === "select" && (
           <Select options={question.options} disabled={deleted} />
         )}

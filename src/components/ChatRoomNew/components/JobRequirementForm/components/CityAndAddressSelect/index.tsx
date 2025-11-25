@@ -114,6 +114,7 @@ const MultipleCityAndAddressSelect = (props: IMultiProps) => {
     </div>
   );
 };
+
 const CityAndAddressSelect = (props: IProps) => {
   const {
     cities,
@@ -265,6 +266,7 @@ const CityAndAddressSelect = (props: IProps) => {
         value={addressId}
         onChange={onAddressChange}
         placeholder={t("address")}
+        className={styles.addressSelect}
         dropdownRender={(list) => {
           return (
             <div>
@@ -307,7 +309,11 @@ const CityAndAddressSelect = (props: IProps) => {
         }}
       />
       {canDelete && (
-        <Button icon={<DeleteOutlined />} onClick={() => onDeleteRecord()} />
+        <Button
+          style={{ flex: "none" }}
+          icon={<DeleteOutlined />}
+          onClick={() => onDeleteRecord()}
+        />
       )}
     </div>
   );
