@@ -41,34 +41,6 @@
     background-color: rgba(235, 236, 238, 1);
   }
 
-  .volumeHistoryContainer {
-    // width: 290px;
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    padding: 0 16px;
-    border-radius: 12px;
-    height: 50px;
-    background-color: rgba(245, 246, 249, 1);
-    border: 1px solid rgba(191, 200, 215, 0.5);
-
-    .volumeHistoryItem {
-      width: 2px;
-      height: 4px;
-      background-color: rgba(187, 200, 222, 1);
-      transition: all 0.3s ease;
-    }
-
-    &.active {
-      background-color: @hover-button-bg-color;
-      border: 1px solid @primary-color;
-      .volumeHistoryItem {
-        background-color: #3682fe;
-        transition: none;
-      }
-    }
-  }
-
   .voiceInputHint {
     font-size: 14px;
     color: rgba(153, 153, 153, 1);
@@ -144,41 +116,157 @@
   }
 }
 
+.volumeHistoryContainer {
+  // width: 290px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 12px;
+  height: 50px;
+  background-color: rgba(245, 246, 249, 1);
+  border: 1px solid rgba(191, 200, 215, 0.5);
+
+  .volumeHistoryItem {
+    width: 2px;
+    height: 4px;
+    background-color: rgba(187, 200, 222, 1);
+    transition: all 0.3s ease;
+  }
+
+  &.active {
+    background-color: @hover-button-bg-color;
+    border: 1px solid @primary-color;
+    .volumeHistoryItem {
+      background-color: #3682fe;
+      transition: none;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .desktopVisible {
     display: none !important;
   }
 
-  .button {
-    margin: 0 8px 0 16px;
-    width: 20px;
-    height: 20px;
+  .mobileContainer {
+    position: relative;
   }
 
-  .voiceInputButton {
-    height: 42px;
-    flex: auto;
-    background-color: #f5f6f9;
-    color: #999999;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    border: 1px solid rgba(191, 200, 215, 0.5);
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-user-drag: none;
-    touch-action: manipulation;
+  .mobileVoiceContainer {
+    position: absolute;
+    left: -10px;
+    right: -10px;
+    bottom: -20px;
+    padding-bottom: 40px;
 
-    &.recording {
-      background-color: @hover-button-bg-color;
-      border-color: @primary-color;
-      color: @primary-color;
+    &.bg {
+      background: linear-gradient(
+        180deg,
+        rgba(195, 221, 255, 0) 0%,
+        #c9f1f8 39.78%,
+        #bbd6ff 100%
+      );
     }
+
+    .desc {
+      text-align: center;
+      margin-bottom: 10px;
+      margin-top: 80px;
+      color: rgba(95, 123, 152, 1);
+    }
+
+    .volumeHistoryContainer {
+      background-color: rgba(255, 255, 255, 0.6);
+      border: none;
+      margin: 0 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .voiceInputButtonContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      .mobileKeyboardButton {
+        position: absolute;
+        left: 0;
+        bottom: 25px;
+        color: @primary-color;
+        background-color: rgba(246, 246, 246, 0.8);
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        width: 50px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .voiceInputButton {
+        position: relative;
+        img {
+          height: 70px;
+          width: 70px;
+        }
+
+        &.recording {
+          &:before,
+          &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            /* 初始颜色，使用 rgba 使其透明 */
+            background-color: rgba(0, 123, 255, 0.7);
+            /* 应用动画 */
+            animation: ripple-spread 2s infinite ease-out;
+            z-index: 5;
+          }
+
+          &::before {
+            /* 动画延迟，使波纹错开 */
+            animation-delay: 0s;
+          }
+
+          &::after {
+            /* 动画延迟，使第二层波纹在第一层之后出现 */
+            animation-delay: 1s;
+          }
+
+          /* 定义波纹扩散的关键帧动画 */
+          @keyframes ripple-spread {
+            0% {
+              /* 初始状态：不透明，尺寸为中心圆大小 */
+              transform: scale(1);
+              opacity: 0.7;
+            }
+            100% {
+              /* 结束状态：尺寸放大到最大，完全透明 */
+              transform: scale(1.5); /* 放大倍数，可调整波纹扩散范围 */
+              opacity: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .textInputContainer {
+    padding: 0 20px;
+    border: 1px solid rgba(246, 246, 246, 1);
+    box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .button {
+    margin: 0 10px;
   }
 
   .textInputArea {

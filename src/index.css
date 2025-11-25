@@ -178,4 +178,8 @@ img {
   .ant-select-selection-search-input {
     font-size: 16px !important;
   }
+
+  .ant-input {
+    font-size: 16px !important;
+  }
 }

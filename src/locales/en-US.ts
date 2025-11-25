@@ -402,6 +402,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     icp: "Candidate Assessment Criteria",
     summary: "Job Requirement Document",
     jd: "Job Description Document",
+
+    recording: "Recording",
+    transcribing: "Transcribing",
   },
 
   job_requirement_form: {

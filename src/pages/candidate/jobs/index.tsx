@@ -67,7 +67,12 @@ const Jobs = () => {
         />
       </div>
       <div className={styles.body}>
-        {activeKey === "recommend" && <div>Recommended Jobs for You</div>}
+        {activeKey === "recommend" && (
+          <Empty
+            image={<img src={EmptyImg} alt="empty" style={{ width: "auto" }} />}
+            description="Viona is working hard to help you find the right job."
+          />
+        )}
         {activeKey === "apply" &&
           (jobApplies.length > 0 ? (
             <div className={styles.jobApplies}>

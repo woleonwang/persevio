@@ -9,9 +9,12 @@ import Send from "@/assets/icons/send";
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import Pause from "@/assets/icons/pause";
 import Edit from "@/assets/icons/edit";
+import RecordImg from "@/assets/record.png";
+import SendImg from "@/assets/send.png";
 
 import styles from "./style.module.less";
 import { getQuery } from "@/utils";
+import Keyboard from "@/assets/icons/keyboard";
 
 interface IProps {
   onSubmit: (
@@ -37,15 +40,12 @@ const getInitialVolumeHistory = () => {
   );
 };
 
-const LONG_PRESS_DURATION = 300; // 长按时间阈值（毫秒）
-
 const ChatInputArea = (props: IProps) => {
   const { onSubmit, isLoading = false, disabledVoiceInput = false } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
   const volumeRef = useRef(0);
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const isCompositingRef = useRef(false);
   const { t: originalT } = useTranslation();
@@ -102,24 +102,23 @@ const ChatInputArea = (props: IProps) => {
     setInputValue("");
   };
 
+  const isRecordingOrTranscribing = isRecording || isTranscribing;
+
   return (
-    <div className={classnames(styles.inputAreaContainer)}>
-      {isDebug && (
-        <div className={styles.debugContainer}>
-          {logs.map((log, index) => (
-            <div key={index}>{log}</div>
-          ))}
-        </div>
-      )}
-      <div className={styles.inputPanel}>
-        {textInputVisible ? (
-          <>
-            <div
-              className={classnames(
-                styles.textInputContainer,
-                styles.desktopVisible
-              )}
-            >
+    <>
+      <div
+        className={classnames(styles.inputAreaContainer, styles.desktopVisible)}
+      >
+        {isDebug && (
+          <div className={styles.debugContainer}>
+            {logs.map((log, index) => (
+              <div key={index}>{log}</div>
+            ))}
+          </div>
+        )}
+        <div className={styles.inputPanel}>
+          {textInputVisible ? (
+            <div className={classnames(styles.textInputContainer)}>
               <div className={styles.textInputLeft}>
                 <Input.TextArea
                   className={styles.textInputArea}
@@ -127,7 +126,7 @@ const ChatInputArea = (props: IProps) => {
                   onChange={(e) => {
                     setInputValue(e.target.value);
                   }}
-                  placeholder={t("reply_viona_directly_or_edit")}
+                  placeholder={t("reply_viona")}
                   onCompositionStartCapture={() =>
                     (isCompositingRef.current = true)
                   }
@@ -168,59 +167,8 @@ const ChatInputArea = (props: IProps) => {
                 </div>
               </Tooltip>
             </div>
-            <div
-              className={classnames(
-                styles.textInputContainer,
-                styles.mobileVisible
-              )}
-            >
-              <div className={styles.textInputLeft}>
-                <Input.TextArea
-                  className={styles.textInputArea}
-                  value={inputValue}
-                  onChange={(e) => {
-                    setInputValue(e.target.value);
-                  }}
-                  placeholder={t("reply_viona_directly_or_edit")}
-                  onCompositionStartCapture={() =>
-                    (isCompositingRef.current = true)
-                  }
-                  onCompositionEndCapture={() =>
-                    (isCompositingRef.current = false)
-                  }
-                  autoSize={{
-                    minRows: 1,
-                    maxRows: 6,
-                  }}
-                />
-                <div
-                  className={classnames(styles.sendButton, {
-                    [styles.disabled]: !canSubmit(),
-                  })}
-                  onClick={() => submit()}
-                >
-                  <Icon icon={<Send />} style={{ fontSize: 24 }} />
-                </div>
-              </div>
-
-              <Tooltip title={t("voice_input")}>
-                <div
-                  className={styles.button}
-                  onClick={() => setTextInputVisible(false)}
-                >
-                  <AudioOutlined style={{ fontSize: 24 }} />
-                </div>
-              </Tooltip>
-            </div>
-          </>
-        ) : (
-          <>
-            <div
-              className={classnames(
-                styles.audioInputContainer,
-                styles.desktopVisible
-              )}
-            >
+          ) : (
+            <div className={classnames(styles.audioInputContainer)}>
               <div className={styles.left}>
                 <div
                   className={classnames(styles.volumeHistoryContainer, {
@@ -312,61 +260,115 @@ const ChatInputArea = (props: IProps) => {
                 </div>
               </div>
             </div>
+          )}
+        </div>
+      </div>
+      <div className={classnames(styles.mobileContainer, styles.mobileVisible)}>
+        {textInputVisible ? (
+          <div className={classnames(styles.textInputContainer)}>
+            <div className={styles.textInputLeft}>
+              <Input.TextArea
+                className={styles.textInputArea}
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                }}
+                placeholder={t("reply_viona")}
+                onCompositionStartCapture={() =>
+                  (isCompositingRef.current = true)
+                }
+                onCompositionEndCapture={() =>
+                  (isCompositingRef.current = false)
+                }
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 6,
+                }}
+              />
+              <div
+                className={classnames(styles.sendButton, {
+                  [styles.disabled]: !canSubmit(),
+                })}
+                onClick={() => submit()}
+              >
+                <Icon icon={<Send />} style={{ fontSize: 24 }} />
+              </div>
+            </div>
+
             <div
-              className={classnames(
-                styles.audioInputContainer,
-                styles.mobileVisible
-              )}
+              className={styles.button}
+              onClick={() => setTextInputVisible(false)}
             >
-              <div className={classnames(styles.left, styles.mobileVisible)}>
+              <AudioOutlined style={{ fontSize: 24 }} />
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className={styles.placeholder} style={{ height: 100 }} />
+            <div
+              className={classnames(styles.mobileVoiceContainer, {
+                [styles.bg]: isRecordingOrTranscribing,
+              })}
+            >
+              <div className={styles.desc}>
+                {isRecording
+                  ? t("recording")
+                  : isTranscribing
+                  ? t("transcribing")
+                  : null}
+              </div>
+              {isRecordingOrTranscribing && (
+                <div
+                  className={classnames(styles.volumeHistoryContainer, {
+                    [styles.active]: isRecording,
+                  })}
+                >
+                  {volumeHistory.map((volume, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={styles.volumeHistoryItem}
+                        style={{
+                          height: 4 + Math.min(40, volume * 100),
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+              <div className={styles.voiceInputButtonContainer}>
                 <div
                   className={classnames(styles.voiceInputButton, {
                     [styles.recording]: isRecording,
                   })}
-                  onTouchStart={() => {
-                    longPressTimerRef.current = setTimeout(() => {
-                      startTranscription();
-                    }, LONG_PRESS_DURATION);
-                  }}
-                  onTouchEnd={() => {
-                    // 清除长按定时器
-                    if (longPressTimerRef.current) {
-                      clearTimeout(longPressTimerRef.current);
-                      longPressTimerRef.current = null;
-                    }
-
-                    // 如果正在录音，则停止
+                  onClick={() => {
                     if (isRecording) {
                       endTranscription();
+                    } else {
+                      startTranscription();
                     }
                   }}
                 >
                   {isRecording ? (
-                    t("release_to_stop_speaking")
+                    <img src={SendImg} alt="record" />
                   ) : isTranscribing ? (
-                    <LoadingOutlined
-                      style={{ fontSize: 24, color: "#3682fe" }}
-                    />
+                    <img src={SendImg} alt="record" />
                   ) : (
-                    t("press_and_hold_to_speak")
+                    <img src={RecordImg} alt="record" />
                   )}
                 </div>
-              </div>
-              <div className={styles.right}>
                 <div
-                  className={styles.button}
+                  className={styles.mobileKeyboardButton}
                   onClick={() => setTextInputVisible(true)}
                 >
-                  <Tooltip title={t("text_edit")}>
-                    <Icon icon={<Edit />} style={{ fontSize: 24 }} />
-                  </Tooltip>
+                  <Icon icon={<Keyboard />} style={{ fontSize: 24 }} />
                 </div>
               </div>
             </div>
           </>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

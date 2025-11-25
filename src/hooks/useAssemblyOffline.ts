@@ -130,16 +130,16 @@ const useAssemblyOffline = ({
       return;
     }
 
-    setIsRecording(true);
     try {
+      setIsRecording(true);
       await initConnection();
+      audioChunksRef.current = [];
+      mediaRecorderRef.current?.start();
+      onStartTranscription?.();
     } catch (error) {
+      setIsRecording(false);
       alert(error);
     }
-
-    audioChunksRef.current = [];
-    mediaRecorderRef.current?.start();
-    onStartTranscription?.();
   };
 
   const endTranscription = async () => {

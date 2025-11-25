@@ -387,6 +387,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     icp: "候选人画像",
     summary: "职位需求",
     jd: "职位描述",
+
+    recording: "正在录音",
+    transcribing: "正在转录",
   },
 
   job_requirement_form: {
