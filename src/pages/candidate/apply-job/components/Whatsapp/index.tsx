@@ -41,7 +41,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
         phoneNumber: whatsappContactNumber.whatsappPhoneNumber,
       },
     });
-    forceUpdate()
+    forceUpdate();
   }, [whatsappContactNumber]);
 
   const onSubmit = () => {
@@ -147,10 +147,17 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           {t("next")}
         </Button>
       </div>
+      <div className={styles.webInterview}>
+        <div
+          onClick={() => onChooseInterviewMode("ai")}
+          className={styles.webInterviewLink}
+        >
+          I don't have Whatsapp
+        </div>
+      </div>
       {isDebug && (
         <div>
           <div onClick={() => onChooseInterviewMode("human")}>人工面试</div>
-          <div onClick={() => onChooseInterviewMode("ai")}>Web 面试</div>
         </div>
       )}
     </div>
