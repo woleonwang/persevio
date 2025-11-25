@@ -64,7 +64,10 @@ const CompanyKnowledge = () => {
                 authorization: localStorage.getItem("token") || "",
               }}
               onChange={(info) => {
-                if (info.file.status === "done") {
+                if (
+                  info.file.status === "done" &&
+                  info.file.response?.code === 0
+                ) {
                   message.success(t("company.upload_logo_succeed"));
                   fetchCompany();
                 } else if (info.file.status === "error") {

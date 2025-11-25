@@ -891,22 +891,52 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                               <Upload.Dragger
                                 beforeUpload={() => false}
                                 onChange={async (fileInfo) => {
-                                  const formData = new FormData();
-                                  formData.append("file", fileInfo.file as any);
                                   setIsUploadingJd(true);
-                                  const { code, data } = await PostFormData(
-                                    `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                    formData
-                                  );
-                                  if (code === 0) {
-                                    sendMessage(data.resume);
-                                  } else {
-                                    message.error(t("upload_failed"));
+                                  // 根据文件类型处理上传文件
+                                  const fileExt = (fileInfo.file.name || "")
+                                    .split(".")
+                                    .pop()
+                                    ?.toLowerCase();
+
+                                  if (fileExt === "txt" || fileExt === "md") {
+                                    // 直接读取文本内容
+                                    const reader = new FileReader();
+                                    reader.onload = function (event) {
+                                      if (event.target?.result) {
+                                        sendMessage(
+                                          event.target.result as string
+                                        );
+                                      }
+                                    };
+                                    reader.readAsText(
+                                      fileInfo.file as unknown as Blob,
+                                      "UTF-8"
+                                    );
+                                  } else if (
+                                    fileExt === "docx" ||
+                                    fileExt === "pdf"
+                                  ) {
+                                    const formData = new FormData();
+                                    formData.append(
+                                      "file",
+                                      fileInfo.file as any
+                                    );
+
+                                    const { code, data } = await PostFormData(
+                                      `/api/jobs/${jobId}/upload_resume_for_interview_design`,
+                                      formData
+                                    );
+                                    if (code === 0) {
+                                      sendMessage(data.resume);
+                                    } else {
+                                      message.error(t("upload_failed"));
+                                    }
                                   }
+
                                   setIsUploadingJd(false);
                                 }}
                                 showUploadList={false}
-                                accept=".doc,.docx,.pdf"
+                                accept=".docx,.pdf,.txt,.md"
                                 multiple={false}
                                 className={styles.uploadJdButton}
                               >
