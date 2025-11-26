@@ -104,6 +104,10 @@ const ApplyJob: React.FC = () => {
           !!jobApply.interview_finished_at
         ) {
           setPageState("waiting");
+          const code = getQuery("code");
+          if (code === "10003") {
+            message.error("The email is already registered");
+          }
         } else {
           setPageState("conversation");
         }

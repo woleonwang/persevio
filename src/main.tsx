@@ -68,6 +68,7 @@ import WhatsappRedirect from "./pages/candidate/whatsapp-redirect/index.tsx";
 import Jobs from "./pages/candidate/jobs/index.tsx";
 import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
 import ShortLink from "./pages/short-link/index.tsx";
+import JobList from "./pages/job/list/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -116,6 +117,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/app/company/status" element={<CompanyStatus />} />
           {/* 创建职位 */}
           <Route path="/app/entry/create-job" element={<JobCreate />} />
+          {/* 职位列表 */}
+          <Route path="/app/jobs" element={<JobList />} />
           {/* 职位入口页 */}
           <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
           {/* 标准版职位入口页 */}

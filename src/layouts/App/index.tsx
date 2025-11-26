@@ -80,7 +80,7 @@ const AppLayout = () => {
     {
       title: t("menu.jobs"),
       key: "jobs",
-      // path: "/app/jobs",
+      path: "/app/jobs",
       img: <Jobs />,
       children: jobs
         .filter((job) => !searchKeyword || job.name.includes(searchKeyword))

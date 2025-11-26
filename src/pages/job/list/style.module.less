@@ -1,0 +1,41 @@
+.container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.isEmpty {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 20px;
+    border-bottom: 1px dashed rgba(235, 236, 238, 1);
+  }
+
+  .table {
+    width: 100%;
+    overflow: auto;
+    flex: auto;
+    padding: 20px;
+
+    :global {
+      table {
+        border-left: 1px solid #ebecee;
+        border-right: 1px solid #ebecee;
+      }
+
+      .ant-table-thead th {
+        background-color: #e9ecee !important;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 4px;
+    }
+  }
+}
