@@ -304,10 +304,9 @@ export default {
     to_speak: "说话",
     release_to_stop_speaking: "松开停止说话",
     press_and_hold_to_speak: "按住说话",
-    jrd_step_role_overview: "角色概览",
-    jrd_step_job_scope: "工作范围",
-    jrd_step_ideal_candidate_profile: "理想候选人画像",
-    jrd_step_other_info: "其他信息",
+    jrd_step_understand_role: "理解职位",
+    jrd_step_align_icp: "对齐理想候选人画像",
+    jrd_step_pitch_logistics: "职位介绍",
     jrd_step_left: "剩余",
 
     task: "任务",

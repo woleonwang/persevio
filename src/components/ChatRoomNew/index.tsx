@@ -499,10 +499,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
 
       if (chatType === "jobRequirementDoc") {
         const tagPrograss = {
-          "context-done": 1,
-          "responsibilities-done": 2,
-          "icp-done": 3,
-          "highlights-done": 3,
+          "cddreq-done": 1,
+          "sourcing-done": 2,
         };
 
         let progress = 0;

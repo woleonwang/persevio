@@ -10,24 +10,19 @@ const JrdSteps = (props: { current: number; collapse: boolean }) => {
 
   const steps = [
     {
-      key: "gatherRoleOverview",
-      title: t("jrd_step_role_overview"),
-      time: 20,
-    },
-    {
-      key: "keyResponsibilities",
-      title: t("jrd_step_job_scope"),
-      time: 15,
-    },
-    {
-      key: "dayToDayTasks",
-      title: t("jrd_step_ideal_candidate_profile"),
+      key: "understand_role",
+      title: t("jrd_step_understand_role"),
       time: 10,
     },
     {
-      key: "candidateAssessmentCriteria",
-      title: t("jrd_step_other_info"),
-      time: 5,
+      key: "align_icp",
+      title: t("jrd_step_align_icp"),
+      time: 6,
+    },
+    {
+      key: "pitch_logistics",
+      title: t("jrd_step_pitch_logistics"),
+      time: 2,
     },
   ];
 

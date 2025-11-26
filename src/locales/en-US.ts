@@ -146,7 +146,8 @@ const CandidateResume = {
     progress_title: "Job Application Progress",
     chat_cta_label: "Chat",
     whatsapp_confirmed_hint: `Thanks! Our AI recruiter <b>Viona</b> has just reached out to you on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>).<br /><br />When you have a moment, please reply to her there and complete the discovery conversation with her. This helps us prepare your application accurately before submitting it to the employer.`,
-    human_mode_hint: "<b>Thank you.</b><br />A consultant will be calling you soon.",
+    human_mode_hint:
+      "<b>Thank you.</b><br />A consultant will be calling you soon.",
     confirm_interview_title: "Confirm Interview Time",
     confirm_interview_success: "Interview time confirmed successfully.",
     interview_modal: {
@@ -313,10 +314,9 @@ export default {
     to_speak: "to speak",
     release_to_stop_speaking: "Release to stop speaking",
     press_and_hold_to_speak: "Press and hold to speak",
-    jrd_step_role_overview: "Role Overview",
-    jrd_step_job_scope: "Job Scope",
-    jrd_step_ideal_candidate_profile: "Ideal Candidate Profile",
-    jrd_step_other_info: "Other Info",
+    jrd_step_understand_role: "Understand the Role",
+    jrd_step_align_icp: "Align Ideal Candidate Profile",
+    jrd_step_pitch_logistics: "Pitch & Logistics",
     jrd_step_left: "Left",
 
     task: "Tasks",
