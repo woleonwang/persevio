@@ -400,6 +400,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     realities: "Realities",
     responsibilities: "Responsibilities",
     icp: "Candidate Assessment Criteria",
+    "role-essence": "Role Essence",
+    cddreq: "Candidate Requirements",
+    "cdd-profile": "Ideal Candidate Profile",
+    sourcing: "Sourcing Guide",
     summary: "Job Requirement Document",
     jd: "Job Description Document",
 

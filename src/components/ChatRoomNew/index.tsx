@@ -444,7 +444,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
             setSideDocumentContent(
               jrdContextDocumentJsonRef.current?.[key.split("-")[0]] ?? ""
             );
-            setSideDocumentType(key.split("-")[0] as TEditableDocumentType);
+            const words = key.split("-");
+            setSideDocumentType(
+              words
+                .slice(0, words.length - 1)
+                .join("-") as TEditableDocumentType
+            );
           });
         },
         autoTrigger: true,

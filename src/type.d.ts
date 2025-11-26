@@ -562,6 +562,10 @@ type TExtraTagName =
   | "icp-done"
   | "env-done"
   | "highlights-done"
+  | "role-essence-done"
+  | "cdd-requirement-done"
+  | "cdd-profile-done"
+  | "sourcing-done"
   | "summary-draft"
   | "jd-draft"
   | TDoneTag
@@ -631,6 +635,10 @@ type TEditableDocumentType =
   | "realities"
   | "responsibilities"
   | "icp"
+  | "role-essence"
+  | "cdd-requirement"
+  | "cdd-profile"
+  | "sourcing"
   | "jrd"
   | "jd";
 
