@@ -15,6 +15,7 @@ const useJob = () => {
   }, [jobId]);
 
   const fetchJob = async () => {
+    setJob(undefined);
     const { code, data } = await Get(`/api/jobs/${jobId}`);
 
     if (code === 0) {

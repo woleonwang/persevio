@@ -38,6 +38,8 @@ const JobBoard = () => {
         setJobState("jrd");
         setMenuCollapse(true);
       }
+    } else {
+      setJobState(undefined);
     }
   }, [job]);
 
