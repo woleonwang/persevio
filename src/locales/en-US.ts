@@ -233,7 +233,7 @@ const CandidateResume = {
     required_message: "Please enter your WhatsApp number",
     pattern_message: "Please enter a valid WhatsApp number (digits only)",
     previous_step: "Previous Step",
-    next: "Next",
+    next: "Start Chat on Whatsapp",
   },
 };
 

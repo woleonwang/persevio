@@ -225,7 +225,7 @@ const CandidateResume = {
     required_message: "请输入您的 Whatsapp 账号",
     pattern_message: "请输入有效的 Whatsapp 账号（仅数字）",
     previous_step: "上一步",
-    next: "下一步",
+    next: "在 WhatsApp 上聊天",
   },
 };
 
