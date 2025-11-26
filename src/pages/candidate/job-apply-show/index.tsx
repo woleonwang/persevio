@@ -149,6 +149,21 @@ const JobApplyShow = () => {
 
   const jdJson = jobApply.jdJson;
 
+  const chatStepTitle =
+    jobApply.interview_mode === "human"
+      ? t("steps.chat.title_human")
+      : t("steps.chat.title_ai");
+  const chatStepHint =
+    jobApply.interview_mode === "human"
+      ? t("steps.chat.hint_human")
+      : t("steps.chat.hint_ai");
+  const processedStepTitle =
+    applyStatus === "accepted"
+      ? t("steps.processed.accepted")
+      : applyStatus === "rejected"
+      ? t("steps.processed.rejected")
+      : t("steps.processed.default");
+
   const steps: {
     key: string;
     title: string;
@@ -157,25 +172,19 @@ const JobApplyShow = () => {
   }[] = [
     {
       key: "apply",
-      title: "Apply for Position",
+      title: t("steps.apply.title"),
       status: "done",
     },
     {
       key: "chat",
-      title:
-        jobApply.interview_mode === "human"
-          ? "Schedule a call with human recruiter"
-          : "Instant chat with AI Recruiter",
+      title: chatStepTitle,
       status: applyStatus === "chat" ? "active" : "done",
-      hint:
-        jobApply.interview_mode === "human"
-          ? "The human recruiter consultant will contact you promptly to have a brief conversation, aiming to further understand your background and career intentions."
-          : "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
+      hint: chatStepHint,
     },
     {
       key: "screening",
-      title: "Resume Screening",
-      hint: "The recruitment department and the hiring department are screening resumes.",
+      title: t("steps.screening.title"),
+      hint: t("steps.screening.hint"),
       status:
         applyStatus === "chat"
           ? "disabled"
@@ -185,12 +194,7 @@ const JobApplyShow = () => {
     },
     {
       key: "processed",
-      title:
-        applyStatus === "accepted"
-          ? "Resume Accepted"
-          : applyStatus === "rejected"
-          ? "Resume Rejected"
-          : "Resume Processed",
+      title: processedStepTitle,
       status:
         applyStatus === "accepted" || applyStatus === "rejected"
           ? "done"
@@ -241,7 +245,7 @@ const JobApplyShow = () => {
                       shape="round"
                       onClick={() => setInterviewModalOpen(true)}
                     >
-                      回应面试
+                      {t("respond_interview")}
                     </Button>
                   )}
                 </div>
@@ -253,7 +257,7 @@ const JobApplyShow = () => {
               <div className={styles.jobDescriptionSection}>
                 <div className={styles.sectionTitle}>
                   <div className={styles.greenBar}></div>
-                  <span>Company Overview</span>
+                      <span>{t("company_overview")}</span>
                 </div>
                 <div className={styles.sectionContent}>
                   <MarkdownContainer content={jdJson.company_introduction} />
@@ -265,7 +269,7 @@ const JobApplyShow = () => {
                 <div className={styles.jobDescriptionSection}>
                   <div className={styles.sectionTitle}>
                     <div className={styles.greenBar}></div>
-                    <span>Position Overview</span>
+                    <span>{t("position_overview")}</span>
                   </div>
                   <div className={styles.sectionContent}>
                     <MarkdownContainer content={jdJson.job_description} />
@@ -275,7 +279,7 @@ const JobApplyShow = () => {
                 <div className={styles.jobDescriptionSection}>
                   <div className={styles.sectionTitle}>
                     <div className={styles.greenBar}></div>
-                    <span>Basic Requirements</span>
+                    <span>{t("basic_requirements")}</span>
                   </div>
                   <div className={styles.sectionContent}>
                     <MarkdownContainer content={jdJson.basic_requirements} />
@@ -285,7 +289,7 @@ const JobApplyShow = () => {
                 <div className={styles.jobDescriptionSection}>
                   <div className={styles.sectionTitle}>
                     <div className={styles.greenBar}></div>
-                    <span>Bonus Points</span>
+                    <span>{t("bonus_points")}</span>
                   </div>
                   <div className={styles.sectionContent}>
                     <MarkdownContainer content={jdJson.bonus_points} />
@@ -301,7 +305,7 @@ const JobApplyShow = () => {
         </div>
         <div className={styles.right}>
           <div className={styles.rightBody}>
-            <div className={styles.stepTitle}>Job Application Progress</div>
+            <div className={styles.stepTitle}>{t("progress_title")}</div>
             <div className={styles.stepContainer}>
               {steps.map((step) => {
                 return (
@@ -323,7 +327,7 @@ const JobApplyShow = () => {
                           onClick={() => onClickChat()}
                           style={{ marginTop: 20 }}
                         >
-                          Chat
+                          {t("chat_cta_label")}
                         </Button>
                       )}
                     </div>
@@ -370,7 +374,7 @@ const JobApplyShow = () => {
       </Drawer>
 
       <Modal
-        title="Let's Chat and Prepare Your Application"
+        title={originalT("apply_job.title")}
         open={whatsappModeOpen}
         onCancel={() => setWhatsappModeOpen(false)}
         cancelButtonProps={{
@@ -402,16 +406,12 @@ const JobApplyShow = () => {
             <div className={styles.whatsappIcon}>
               <Icon icon={<WhatsappIcon />} style={{ fontSize: 90 }} />
             </div>
-            <div style={{ maxWidth: 800, padding: "0 20px" }}>
-              Thanks! Our AI recruiter <b>Viona</b> has just reached out to you
-              on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>
-              ).
-              <br />
-              <br />
-              When you have a moment, please reply to her there and complete the
-              discovery conversation with her. This helps us prepare your
-              application accurately before submitting it to the employer.
-            </div>
+            <div
+              style={{ maxWidth: 800, padding: "0 20px" }}
+              dangerouslySetInnerHTML={{
+                __html: t("whatsapp_confirmed_hint"),
+              }}
+            />
           </div>
         ) : (
           <div className={styles.whatsappModeContent}>
@@ -434,7 +434,9 @@ const JobApplyShow = () => {
               />
             </ul>
 
-            <div style={{ marginBottom: 8 }}>您的 WhatsApp 账号</div>
+            <div style={{ marginBottom: 8 }}>
+              {originalT("apply_job.whatsapp_label")}
+            </div>
             <PhoneWithCountryCode
               readonly
               value={{
@@ -447,7 +449,7 @@ const JobApplyShow = () => {
       </Modal>
 
       <Modal
-        title="Let's Chat and Prepare Your Application"
+        title={originalT("apply_job.title")}
         open={humanModeOpen}
         onCancel={() => setHumanModeOpen(false)}
         cancelButtonProps={{
@@ -463,15 +465,15 @@ const JobApplyShow = () => {
       >
         <div className={styles.humanModeContent}>
           <img src={Empty2} alt="empty" style={{ width: 140 }} />
-          <div className={styles.humanModeContentText}>
-            <b>Thank you.</b>
-            <br />A consultant will be calling you soon.
-          </div>
+          <div
+            className={styles.humanModeContentText}
+            dangerouslySetInnerHTML={{ __html: t("human_mode_hint") }}
+          />
         </div>
       </Modal>
 
       <Modal
-        title="确认面试时间"
+        title={t("confirm_interview_title")}
         open={interviewModalOpen}
         onCancel={() => setInterviewModalOpen(false)}
         onOk={async () => {
@@ -489,7 +491,7 @@ const JobApplyShow = () => {
             }
           }
 
-          message.success("面试时间确认成功");
+          message.success(t("confirm_interview_success"));
           setInterviewModalOpen(false);
           fetchApplyJob();
           setInterviewTimeValueMap({});
@@ -499,19 +501,21 @@ const JobApplyShow = () => {
           return (
             <div className={styles.interviewPanel}>
               <div className={styles.interviewItem}>
-                <div>面试名称:</div>
+                <div>{t("interview_modal.name")}:</div>
                 <div>{interview.name}</div>
               </div>
               <div className={styles.interviewItem}>
-                <div>面试类型:</div>
+                <div>{t("interview_modal.mode")}:</div>
                 <div>{formatInterviewMode(interview.mode)}</div>
               </div>
               <div className={styles.interviewItem}>
-                <div>面试时长:</div>
-                <div>{interview.duration} 分钟</div>
+                <div>{t("interview_modal.duration")}:</div>
+                <div>
+                  {interview.duration} {t("interview_modal.minutes")}
+                </div>
               </div>
               <div className={styles.interviewItem}>
-                <div>面试官:</div>
+                <div>{t("interview_modal.interviewer")}:</div>
                 <div>
                   {
                     interview.interview_members.find(
@@ -521,7 +525,7 @@ const JobApplyShow = () => {
                 </div>
               </div>
               <div className={styles.interviewItem}>
-                <div>面试时间:</div>
+                <div>{t("interview_modal.time")}:</div>
                 <div style={{ display: "flex", gap: 12 }}>
                   {interview.scheduled_at ? (
                     dayjs(interview.scheduled_at).format("YYYY-MM-DD HH:mm")

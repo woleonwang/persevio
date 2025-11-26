@@ -109,6 +109,19 @@ const CandidateResume = {
     jobs: "适合您的职位",
     applied_jobs: "您的职位",
   },
+  candidate_jobs: {
+    tabs: {
+      recommend: "为你推荐的职位",
+      apply: "你已申请的职位",
+    },
+    empty_description: "Viona 正在努力为你寻找合适的职位。",
+    status: {
+      accepted: "简历已通过",
+      rejected: "简历未通过",
+      screening: "简历筛选中",
+      ai_dialogue: "AI 对话",
+    },
+  },
   job_apply: {
     title: "您的职位",
     applied: "已申请",
@@ -119,6 +132,48 @@ const CandidateResume = {
     waiting: "Viona 正在撰写中，请稍候...",
     chat: "聊聊公司/职位",
     posted_at: "发布于 {{time}}",
+    respond_interview: "回应面试",
+    company_overview: "公司简介",
+    position_overview: "职位概览",
+    basic_requirements: "基本要求",
+    bonus_points: "加分项",
+    progress_title: "职位申请进度",
+    chat_cta_label: "开始沟通",
+    whatsapp_confirmed_hint:
+      "感谢您！我们的 AI 招聘官 <b>Viona</b> 已通过 WhatsApp 与您联系（消息会显示为 <b>Viona by Persevio</b>）。<br /><br />请在方便时回复她，完成初步沟通，以便我们在提交给雇主前准确完善您的申请资料。",
+    human_mode_hint: "<b>感谢您的配合。</b><br />顾问很快会致电与您沟通。",
+    confirm_interview_title: "确认面试时间",
+    confirm_interview_success: "面试时间确认成功。",
+    interview_modal: {
+      name: "面试名称",
+      mode: "面试类型",
+      duration: "面试时长",
+      minutes: "分钟",
+      interviewer: "面试官",
+      time: "面试时间",
+    },
+    steps: {
+      apply: {
+        title: "提交职位申请",
+      },
+      chat: {
+        title_human: "与人工顾问预约沟通",
+        title_ai: "与 AI 招聘官即时沟通",
+        hint_human:
+          "人工顾问会尽快与您电话联系，进一步了解您的背景和求职意向。",
+        hint_ai:
+          "在提交简历前，您将与 Viona 进行一次简短互动，确认岗位是否匹配您的背景与兴趣，确保投递更合适的机会。",
+      },
+      screening: {
+        title: "简历筛选",
+        hint: "招聘团队和用人部门正在筛选简历。",
+      },
+      processed: {
+        accepted: "简历已通过",
+        rejected: "简历未通过",
+        default: "简历已处理",
+      },
+    },
   },
   candidate_sign: {
     connect_google: "使用 Google 登录",

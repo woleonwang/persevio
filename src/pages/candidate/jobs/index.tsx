@@ -10,12 +10,16 @@ import { Empty } from "antd";
 import { getJobApplyStatus, getQuery, updateQuery } from "@/utils";
 import { useNavigate } from "react-router";
 import CompanyLogo from "../components/CompanyLogo";
+import { useTranslation } from "react-i18next";
 
 const Jobs = () => {
   const tab = getQuery("tab");
   const [activeKey, setActiveKey] = useState(tab || "recommend");
   const [jobApplies, setJobApplies] = useState<IJobApplyListItem[]>([]);
   const navigate = useNavigate();
+  const { t: originalT } = useTranslation();
+  const t = (key: string, params?: Record<string, string>) =>
+    originalT(`candidate_jobs.${key}`, params);
 
   useEffect(() => {
     fetchJobApplies();
@@ -30,15 +34,16 @@ const Jobs = () => {
 
   const genJobApplyStatusTag = (jobApply: IJobApplyListItem) => {
     const status = getJobApplyStatus(jobApply);
+    const statusLabelMap: Record<string, string> = {
+      accepted: t("status.accepted"),
+      rejected: t("status.rejected"),
+      screening: t("status.screening"),
+      default: t("status.ai_dialogue"),
+    };
+
     return (
       <div className={classnames(styles.jobApplyStatusTag, styles[status])}>
-        {status === "accepted"
-          ? "Resume approved"
-          : status === "rejected"
-          ? "Resume not approved"
-          : status === "screening"
-          ? "Resume is being screened"
-          : "AI dialogue"}
+        {statusLabelMap[status] || statusLabelMap.default}
       </div>
     );
   };
@@ -50,12 +55,12 @@ const Jobs = () => {
           tabs={[
             {
               key: "recommend",
-              label: "Recommended Jobs for You",
+              label: t("tabs.recommend"),
               icon: <RecommendedJobs />,
             },
             {
               key: "apply",
-              label: "Jobs You Applied For",
+              label: t("tabs.apply"),
               icon: <JobApply />,
             },
           ]}
@@ -70,7 +75,7 @@ const Jobs = () => {
         {activeKey === "recommend" && (
           <Empty
             image={<img src={EmptyImg} alt="empty" style={{ width: "auto" }} />}
-            description="Viona is working hard to help you find the right job."
+            description={t("empty_description")}
           />
         )}
         {activeKey === "apply" &&
@@ -110,7 +115,7 @@ const Jobs = () => {
               image={
                 <img src={EmptyImg} alt="empty" style={{ width: "auto" }} />
               }
-              description="Viona is working hard to help you find the right job."
+              description={t("empty_description")}
             />
           ))}
       </div>

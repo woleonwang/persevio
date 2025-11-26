@@ -115,6 +115,19 @@ const CandidateResume = {
   job_applies: {
     jobs: "Jobs You Applied For",
   },
+  candidate_jobs: {
+    tabs: {
+      recommend: "Recommended Jobs for You",
+      apply: "Jobs You Applied For",
+    },
+    empty_description: "Viona is working hard to help you find the right job.",
+    status: {
+      accepted: "Resume approved",
+      rejected: "Resume not approved",
+      screening: "Resume is being screened",
+      ai_dialogue: "AI dialogue",
+    },
+  },
   job_apply: {
     title: "Jobs You Applied For",
     applied: "Applied",
@@ -125,6 +138,47 @@ const CandidateResume = {
     waiting: "Viona is writing, please wait...",
     chat: "Chat about Company/Position",
     posted_at: "Posted at {{time}}",
+    respond_interview: "Respond to Interview",
+    company_overview: "Company Overview",
+    position_overview: "Position Overview",
+    basic_requirements: "Basic Requirements",
+    bonus_points: "Bonus Points",
+    progress_title: "Job Application Progress",
+    chat_cta_label: "Chat",
+    whatsapp_confirmed_hint: `Thanks! Our AI recruiter <b>Viona</b> has just reached out to you on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>).<br /><br />When you have a moment, please reply to her there and complete the discovery conversation with her. This helps us prepare your application accurately before submitting it to the employer.`,
+    human_mode_hint: "<b>Thank you.</b><br />A consultant will be calling you soon.",
+    confirm_interview_title: "Confirm Interview Time",
+    confirm_interview_success: "Interview time confirmed successfully.",
+    interview_modal: {
+      name: "Interview Name",
+      mode: "Interview Type",
+      duration: "Interview Duration",
+      minutes: "minutes",
+      interviewer: "Interviewer",
+      time: "Interview Time",
+    },
+    steps: {
+      apply: {
+        title: "Apply for Position",
+      },
+      chat: {
+        title_human: "Schedule a call with human recruiter",
+        title_ai: "Instant chat with AI Recruiter",
+        hint_human:
+          "The human recruiter consultant will contact you promptly to have a brief conversation, aiming to further understand your background and career intentions.",
+        hint_ai:
+          "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
+      },
+      screening: {
+        title: "Resume Screening",
+        hint: "The recruitment department and the hiring department are screening resumes.",
+      },
+      processed: {
+        accepted: "Resume Accepted",
+        rejected: "Resume Rejected",
+        default: "Resume Processed",
+      },
+    },
   },
   candidate_sign: {
     connect_google: "Continue with Google",
