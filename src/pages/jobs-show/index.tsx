@@ -337,56 +337,15 @@ const JobsShow = () => {
                   </div>
                 </div>
               )}
-              {!!job.job_description_json.job_description ? (
-                <>
-                  <div className={styles.jobDescriptionSection}>
-                    <div className={styles.sectionTitle}>
-                      <div className={styles.greenBar}></div>
-                      <span>{t("job_description_section")}</span>
-                    </div>
-                    <div className={styles.sectionContent}>
-                      <MarkdownContainer
-                        content={job.job_description_json.job_description}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.jobDescriptionSection}>
-                    <div className={styles.sectionTitle}>
-                      <div className={styles.greenBar}></div>
-                      <span>{t("basic_requirements")}</span>
-                    </div>
-                    <div className={styles.sectionContent}>
-                      <MarkdownContainer
-                        content={job.job_description_json.basic_requirements}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={styles.jobDescriptionSection}>
-                    <div className={styles.sectionTitle}>
-                      <div className={styles.greenBar}></div>
-                      <span>{t("bonus_points")}</span>
-                    </div>
-                    <div className={styles.sectionContent}>
-                      <MarkdownContainer
-                        content={job.job_description_json.bonus_points}
-                      />
-                    </div>
-                  </div>
-
-                  {!!job.posted_at && (
-                    <div className={styles.postedAt}>
-                      Updated at:{" "}
-                      {dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss")}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div>
+              <div className={styles.jobDescriptionSection}>
+                <div className={styles.sectionTitle}>
+                  <div className={styles.greenBar}></div>
+                  <span>{t("job_description_section")}</span>
+                </div>
+                <div className={styles.sectionContent}>
                   <MarkdownContainer content={job.job_description} />
                 </div>
-              )}
+              </div>
             </div>
 
             <div className={classnames(styles.right, styles.desktopVisible)}>

@@ -82,6 +82,7 @@ interface IJobApplyListItem {
   updated_at: string;
   recommend_doc_id: number;
   job_name: string;
+  job_basic_info: string;
   job_posted_at: string;
   company_logo: string;
   company_name: string;

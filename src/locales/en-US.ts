@@ -127,6 +127,11 @@ const CandidateResume = {
       screening: "Resume is being screened",
       ai_dialogue: "AI dialogue",
     },
+    role_type: {
+      onsite: "Fully onsite",
+      hybrid: "Hybrid",
+      remote: "Fully remote",
+    },
   },
   job_apply: {
     title: "Jobs You Applied For",

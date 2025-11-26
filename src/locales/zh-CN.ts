@@ -121,6 +121,11 @@ const CandidateResume = {
       screening: "简历筛选中",
       ai_dialogue: "AI 对话",
     },
+    role_type: {
+      onsite: "完全在办公室工作",
+      hybrid: "混合型",
+      remote: "完全在家工作",
+    },
   },
   job_apply: {
     title: "您的职位",

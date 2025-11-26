@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Get } from "@/utils/request";
 import EmptyImg from "@/assets/job-applies-empty.png";
 import { Empty } from "antd";
-import { getJobApplyStatus, getQuery, updateQuery } from "@/utils";
+import { getJobApplyStatus, getQuery, parseJSON, updateQuery } from "@/utils";
 import { useNavigate } from "react-router";
 import CompanyLogo from "../components/CompanyLogo";
 import { useTranslation } from "react-i18next";
@@ -82,6 +82,15 @@ const Jobs = () => {
           (jobApplies.length > 0 ? (
             <div className={styles.jobApplies}>
               {jobApplies.map((jobApply) => {
+                const basicInfo: TJobBasicInfo = parseJSON(
+                  jobApply.job_basic_info
+                );
+                const location = (basicInfo.location ?? [])
+                  .map((loc) => loc.city)
+                  .join(", ");
+                const roleType = basicInfo.role_type
+                  ? t(`role_type.${basicInfo.role_type}`)
+                  : "";
                 return (
                   <div
                     key={jobApply.id}
@@ -97,7 +106,11 @@ const Jobs = () => {
                         <div className={styles.jobName}>
                           {jobApply.job_name}
                         </div>
-                        <div className={styles.tags}></div>
+                        {(location || roleType) && (
+                          <div className={styles.tags}>
+                            {`${location ? `${location} - ` : ""} ${roleType}`}
+                          </div>
+                        )}
                         <div className={styles.companyName}>
                           {jobApply.company_name}
                         </div>
