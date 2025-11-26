@@ -440,16 +440,16 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         title: t("view_document"),
         handler: () => {
           setTimeout(() => {
+            const words = key.split("-");
+            const documentType = words
+              .slice(0, words.length - 1)
+              .join("-") as TEditableDocumentType;
             setSideDocumentVisible(true);
             setSideDocumentContent(
-              jrdContextDocumentJsonRef.current?.[key.split("-")[0]] ?? ""
+              jrdContextDocumentJsonRef.current?.[documentType] ?? ""
             );
-            const words = key.split("-");
-            setSideDocumentType(
-              words
-                .slice(0, words.length - 1)
-                .join("-") as TEditableDocumentType
-            );
+
+            setSideDocumentType(documentType);
           });
         },
         autoTrigger: true,
