@@ -39,6 +39,7 @@ interface IJob {
   faq_doc_id: number;
 
   jrd_survey_opened_at: string;
+  initial_posted_at: string;
   posted_at: string;
   status: number;
   created_at: string;

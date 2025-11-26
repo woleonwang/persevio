@@ -169,15 +169,19 @@ const JobDocument = (props: IProps) => {
                   style={{ marginLeft: 6 }}
                   onClick={() => {
                     confirmModal({
-                      title: t("unpost_job_title"),
-                      content: t("unpost_job_content"),
+                      title: job.posted_at
+                        ? t("unpost_job_title")
+                        : t("post_job_title"),
+                      content: job.posted_at
+                        ? t("unpost_job_content")
+                        : t("post_job_content"),
                       onOk: () => {
                         togglePostJob();
                       },
                     });
                   }}
                 >
-                  {t("unpost_job")}
+                  {job.posted_at ? t("unpost_job") : t("post_job")}
                 </Button>
 
                 <Button

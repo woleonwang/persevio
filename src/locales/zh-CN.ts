@@ -1316,6 +1316,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     unpost_job_content:
       "取消发布后，职位将不再对候选人可见。您可以随时重新发布。",
     unpost_job: "取消发布",
+    post_job_title: "发布职位？",
+    post_job_content: "发布后，职位将对候选人可见。您可以随时取消发布。",
+    post_job: "发布",
     job_posting: "职位页面",
     conversation_record: "对话记录",
   },

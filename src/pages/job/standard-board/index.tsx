@@ -27,7 +27,7 @@ const JobBoard = () => {
 
   useEffect(() => {
     if (job) {
-      if (job.posted_at) {
+      if (job.initial_posted_at) {
         setJobState("board");
       } else if (job.jd_doc_id) {
         setJobState("preview");
@@ -177,9 +177,7 @@ const JobBoard = () => {
             </div>
           </div>
         )}
-        {jobState === "board" && (
-          <JobDetails onStateChanged={() => fetchJob()} />
-        )}
+        {jobState === "board" && <JobDetails />}
       </div>
     </div>
   );

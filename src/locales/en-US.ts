@@ -1369,6 +1369,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     unpost_job_content:
       "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",
     unpost_job: "Delist",
+    post_job_title: "Post this Job?",
+    post_job_content:
+      "Once you post, this job will be visible to candidates. You can unpost it anytime.",
+    post_job: "Post",
     job_posting: "Go to Your Listing",
     conversation_record: "Conversation Record",
   },

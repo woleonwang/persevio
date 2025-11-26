@@ -13,9 +13,9 @@ import { copy, getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents";
-const JobDetails = ({ onStateChanged }: { onStateChanged: () => void }) => {
+const JobDetails = () => {
   const tab = getQuery("tab");
-  const { job } = useJob();
+  const { job, fetchJob } = useJob();
   const [chatType, setChatType] = useState<TMenu>(
     (tab as TMenu) || "jobDescription"
   );
@@ -41,7 +41,7 @@ const JobDetails = ({ onStateChanged }: { onStateChanged: () => void }) => {
 
     if (code === 0) {
       message.success(originalT("submit_succeed"));
-      onStateChanged();
+      fetchJob();
     }
   };
 
