@@ -118,7 +118,7 @@ const CandidateResume = {
     finish_interview_hint: "面试已完成，您可以提交申请了！",
     waiting: "Viona 正在撰写中，请稍候...",
     chat: "聊聊公司/职位",
-    posted_at: "发布于 {time}",
+    posted_at: "发布于 {{time}}",
   },
   candidate_sign: {
     connect_google: "使用 Google 登录",

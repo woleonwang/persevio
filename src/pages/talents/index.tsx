@@ -103,9 +103,7 @@ const Talents: React.FC = () => {
   };
 
   const handleViewDetails = (talent: ITalentListItem) => {
-    navigate(
-      `/app/jobs/${talent.job_id}/talents/${talent.id}/detail?tab=resume`
-    );
+    navigate(`/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`);
   };
 
   const columns: ColumnsType<ITalentListItem> = [

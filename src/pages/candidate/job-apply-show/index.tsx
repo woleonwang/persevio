@@ -162,9 +162,15 @@ const JobApplyShow = () => {
     },
     {
       key: "chat",
-      title: "Instant chat with AI Recruiter",
+      title:
+        jobApply.interview_mode === "human"
+          ? "Schedule a call with human recruiter"
+          : "Instant chat with AI Recruiter",
       status: applyStatus === "chat" ? "active" : "done",
-      hint: "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
+      hint:
+        jobApply.interview_mode === "human"
+          ? "The human recruiter consultant will contact you promptly to have a brief conversation, aiming to further understand your background and career intentions."
+          : "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
     },
     {
       key: "screening",
@@ -179,7 +185,12 @@ const JobApplyShow = () => {
     },
     {
       key: "processed",
-      title: "Resume Processed",
+      title:
+        applyStatus === "accepted"
+          ? "Resume Accepted"
+          : applyStatus === "rejected"
+          ? "Resume Rejected"
+          : "Resume Processed",
       status:
         applyStatus === "accepted" || applyStatus === "rejected"
           ? "done"
