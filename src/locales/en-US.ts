@@ -1489,6 +1489,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     post_job: "Post",
     job_posting: "Go to Your Listing",
     conversation_record: "Conversation Record",
+    publish_job_hint:
+      "Please unpost the job first, then edit the JD content, and then republish it.",
   },
 
   talent_details: {

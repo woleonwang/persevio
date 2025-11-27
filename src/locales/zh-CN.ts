@@ -1435,6 +1435,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     post_job: "发布",
     job_posting: "职位页面",
     conversation_record: "对话记录",
+    publish_job_hint:
+      "请先将职位取消发布，再编辑修改JD内容，修改完成后方可重新发布。",
   },
 
   talent_details: {

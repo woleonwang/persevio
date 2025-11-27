@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Drawer, message } from "antd";
+import { Button, Drawer, message, Tooltip } from "antd";
 import {
   CopyOutlined,
   DownloadOutlined,
@@ -149,21 +149,24 @@ const JobDocument = (props: IProps) => {
                 message.success(originalT("copied"));
               }}
             />
-            <EditOutlined
-              onClick={() => {
-                if (disabledEdit) return;
-                setEditingValue(documentContent);
-                setIsEditing(true);
-              }}
-              style={
-                disabledEdit
-                  ? {
-                      opacity: 0.5,
-                      cursor: "not-allowed",
-                    }
-                  : {}
-              }
-            />
+            <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
+              <EditOutlined
+                onClick={() => {
+                  if (disabledEdit) return;
+                  setEditingValue(documentContent);
+                  setIsEditing(true);
+                }}
+                style={
+                  disabledEdit
+                    ? {
+                        opacity: 0.5,
+                        cursor: "not-allowed",
+                      }
+                    : {}
+                }
+              />
+            </Tooltip>
+
             <Button
               variant="outlined"
               color="primary"
