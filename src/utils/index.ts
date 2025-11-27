@@ -164,5 +164,7 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
 };
 
 export const getJobChatbotUrl = (jobId: number, version: string) => {
-  return `${window.origin}/jobs/${jobId}/chat/${version}`;
+  return `${window.origin}/jobs/${jobId}/chat${
+    version === "0" ? "" : `/${version}`
+  }`;
 };

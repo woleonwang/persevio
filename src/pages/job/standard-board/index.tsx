@@ -139,7 +139,7 @@ const JobBoard = () => {
               {t("preview_description")}
             </div>
             <iframe
-              src={`/jobs/${job.id}/chat?preview=1`}
+              src={`/jobs/${job.id}/chat/${job.jd_version}?preview=1`}
               style={{
                 border: "1px solid #eee",
                 flex: "auto",
