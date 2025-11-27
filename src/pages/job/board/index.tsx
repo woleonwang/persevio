@@ -17,7 +17,12 @@ import {
   ShareAltOutlined,
 } from "@ant-design/icons";
 
-import { checkJobDotStatus, copy, setJobDotStatus } from "@/utils";
+import {
+  checkJobDotStatus,
+  copy,
+  getJobChatbotUrl,
+  setJobDotStatus,
+} from "@/utils";
 import useJob from "@/hooks/useJob";
 import { Get, Post, PostFormData } from "@/utils/request";
 
@@ -183,7 +188,9 @@ const JobBoard = () => {
             <Tooltip title={t("recruitment_chatbot")}>
               <ExportOutlined
                 onClick={async () => {
-                  window.open(`${window.origin}/jobs/${job.id}/chat`);
+                  window.open(
+                    getJobChatbotUrl(job.id, job.jd_version?.toString())
+                  );
                 }}
               />
             </Tooltip>

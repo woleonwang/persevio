@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Avatar, Button, Drawer, Input, message, Spin, Tooltip } from "antd";
+import {
+  Avatar,
+  Button,
+  Drawer,
+  Empty,
+  Input,
+  message,
+  Spin,
+  Tooltip,
+} from "antd";
 import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
 import { ShareAltOutlined } from "@ant-design/icons";
@@ -46,7 +55,7 @@ type TJob = {
 type TStatus = "loading" | "success" | "error";
 
 const JobsShow = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, version = "0" } = useParams<{ id: string; version: string }>();
   const [company, setCompany] = useState<TCompany>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [job, setJob] = useState<TJob>();
@@ -100,7 +109,7 @@ const JobsShow = () => {
   };
 
   const fetchJob = async () => {
-    const { code, data } = await Get(`/api/public/jobs/${id}`);
+    const { code, data } = await Get(`/api/public/jobs/${id}`, { version });
     if (code === 0) {
       setCompany(data.company);
       setJob({
@@ -140,6 +149,21 @@ const JobsShow = () => {
         }}
       >
         <Spin spinning />
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Empty description="Job not found" />
       </div>
     );
   }

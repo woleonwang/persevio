@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
-import { parseJSON } from "@/utils";
+import { getJobChatbotUrl, parseJSON } from "@/utils";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ interface JobPosting extends TJobBasicInfo {
   company_name: string;
   company_logo: string;
   posted_at: string;
+  version: number;
 }
 
 type TCompany = {
@@ -459,7 +460,7 @@ const PublicJobs: React.FC = () => {
 
   const handleJobClick = (job: JobPosting) => {
     if (job.id < 10000) {
-      window.open(`/jobs/${job.id}/chat`);
+      window.open(getJobChatbotUrl(job.id, job.version.toString()));
     }
   };
 

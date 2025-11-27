@@ -62,6 +62,7 @@ interface IJob {
   interview_design_for_interview_feedback: string;
 
   jrd_context_document_json: string;
+  jd_version: number;
 }
 
 type TPublicJob = {

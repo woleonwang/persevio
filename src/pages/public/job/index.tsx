@@ -7,6 +7,7 @@ import classnames from "classnames";
 import logo from "@/assets/logo.png";
 import { Collapse, Typography } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import { useTranslation } from "react-i18next";
 
 const levelTranslations = {
   internship: "实习生",
@@ -32,6 +33,8 @@ const PublicJobDetail = () => {
   const [activeTab, setActiveTab] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { t: originalT } = useTranslation();
+
   useEffect(() => {
     fetchJob();
   }, [id]);
@@ -45,16 +48,7 @@ const PublicJobDetail = () => {
       // 默认展示 show 参数对应的 tab
       const params = new URLSearchParams(search);
       const show = params.get("show");
-      if (
-        show &&
-        [
-          "requirement",
-          "jd",
-          "compensation_details",
-          "outreach_message",
-          "interview_plan",
-        ].includes(show)
-      ) {
+      if (show && ["requirement", "jd", "outreach_message"].includes(show)) {
         setActiveTab([show]);
       }
     }
@@ -68,15 +62,7 @@ const PublicJobDetail = () => {
     return <div className={styles.container}>未找到该职位</div>;
   }
 
-  const {
-    name,
-    basic_info,
-    jrd,
-    job_description,
-    interview_plan,
-    compensation_details,
-    outreach_message,
-  } = job;
+  const { name, basic_info, jrd, job_description, outreach_message } = job;
 
   return (
     <div className={classnames(styles.container, styles.v)}>
@@ -104,10 +90,10 @@ const PublicJobDetail = () => {
             </div>
             <div className={styles.item}>
               <div style={{ color: "#666", fontSize: 14, marginBottom: 4 }}>
-                职位所属部门
+                办公类型
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>
-                {basic_info?.team_name}
+                {originalT(`jobs_show.role_type.${basic_info?.role_type}`)}
               </div>
             </div>
             <div className={styles.item}>
@@ -144,19 +130,9 @@ const PublicJobDetail = () => {
                 children: <MarkdownContainer content={job_description} />,
               },
               {
-                key: "compensation_details",
-                label: "薪资结构",
-                children: <MarkdownContainer content={compensation_details} />,
-              },
-              {
                 key: "interview_plan",
                 label: "邮件内容",
                 children: <MarkdownContainer content={outreach_message} />,
-              },
-              {
-                key: "interview_plan",
-                label: "面试流程",
-                children: <MarkdownContainer content={interview_plan} />,
               },
             ]}
             activeKey={activeTab}

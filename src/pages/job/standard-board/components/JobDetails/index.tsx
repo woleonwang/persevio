@@ -101,6 +101,7 @@ const JobDetails = () => {
               chatType={chatType}
               key={chatType}
               togglePostJob={togglePostJob}
+              onUpdateDoc={fetchJob}
             />
           )}
         </div>

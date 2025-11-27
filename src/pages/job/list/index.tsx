@@ -8,6 +8,7 @@ import classnames from "classnames";
 import EmptyImg from "@/assets/job-applies-empty.png";
 import styles from "./style.module.less";
 import { useNavigate } from "react-router";
+import { getJobChatbotUrl } from "@/utils";
 
 interface IJobListItem extends IJob {
   total_candidates: number;
@@ -86,7 +87,9 @@ const JobList = () => {
               <Button
                 type="link"
                 onClick={() => {
-                  window.open(`/jobs/${record.id}/chat`);
+                  window.open(
+                    getJobChatbotUrl(record.id, record.jd_version?.toString())
+                  );
                 }}
               >
                 Go to your listing

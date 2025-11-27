@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
-import { confirmModal, copy } from "@/utils";
+import { confirmModal, copy, getJobChatbotUrl } from "@/utils";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
@@ -22,6 +22,7 @@ interface IProps {
   job: IJob;
   chatType: TChatType;
   togglePostJob: () => Promise<void>;
+  onUpdateDoc: () => Promise<void>;
 }
 
 const chatTypeMappings: Record<TChatType, string> = {
@@ -29,7 +30,7 @@ const chatTypeMappings: Record<TChatType, string> = {
   jobDescription: "jd",
 };
 const JobDocument = (props: IProps) => {
-  const { job, chatType, togglePostJob } = props;
+  const { job, chatType, togglePostJob, onUpdateDoc } = props;
 
   const [documentContent, setDocumentContent] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
@@ -80,6 +81,7 @@ const JobDocument = (props: IProps) => {
       message.success(originalT("submit_succeed"));
       setIsEditing(false);
       fetchDoc();
+      onUpdateDoc();
     } else {
       message.success(originalT("submit_failed"));
     }
@@ -106,6 +108,8 @@ const JobDocument = (props: IProps) => {
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
   };
+
+  const disabledEdit = chatType === "jobDescription" && !!job.posted_at;
 
   return (
     <div className={styles.container}>
@@ -147,9 +151,18 @@ const JobDocument = (props: IProps) => {
             />
             <EditOutlined
               onClick={() => {
+                if (disabledEdit) return;
                 setEditingValue(documentContent);
                 setIsEditing(true);
               }}
+              style={
+                disabledEdit
+                  ? {
+                      opacity: 0.5,
+                      cursor: "not-allowed",
+                    }
+                  : {}
+              }
             />
             <Button
               variant="outlined"
@@ -161,7 +174,7 @@ const JobDocument = (props: IProps) => {
             >
               {t("conversation_record")}
             </Button>
-            {chatType === "jobDescription" && (
+            {
               <>
                 <Button
                   variant="outlined"
@@ -184,17 +197,21 @@ const JobDocument = (props: IProps) => {
                   {job.posted_at ? t("unpost_job") : t("post_job")}
                 </Button>
 
-                <Button
-                  type="primary"
-                  style={{ marginLeft: 6 }}
-                  onClick={() => {
-                    window.open(`${window.origin}/jobs/${job.id}/chat`);
-                  }}
-                >
-                  {t("job_posting")}
-                </Button>
+                {chatType === "jobDescription" && !!job.posted_at && (
+                  <Button
+                    type="primary"
+                    style={{ marginLeft: 6 }}
+                    onClick={() => {
+                      window.open(
+                        getJobChatbotUrl(job.id, job.jd_version?.toString())
+                      );
+                    }}
+                  >
+                    {t("job_posting")}
+                  </Button>
+                )}
               </>
-            )}
+            }
           </div>
         )}
       </div>

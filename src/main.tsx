@@ -101,7 +101,11 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
         {/** 职位 chatbot */}
         <Route path="/jobs/:id/chat" element={<JobsShow />} />
-        <Route path="/jobs/:id/:companyName/:jobName" element={<JobsShow />} />
+        <Route path="/jobs/:id/chat/:version" element={<JobsShow />} />
+        <Route
+          path="/jobs/:id/:companyName/:jobName/:version"
+          element={<JobsShow />}
+        />
         {/** 分享候选人面试设计 & 面试反馈文档 */}
         <Route
           path="/jobs/:jobId/talents/:talentId/detail"
