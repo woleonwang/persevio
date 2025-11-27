@@ -1446,6 +1446,31 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     pending: "Pending",
   },
 
+  job_list: {
+    title: "Job listings",
+    create_job: "Create Job",
+    details: "Details",
+    go_to_listing: "Go to your listing",
+    columns: {
+      id: "ID",
+      job_title: "Job Title",
+      post_status: "Post status",
+      post_time: "Post Time",
+      total_candidates: "Total Candidates",
+      candidates_passed_screening: "Candidates Passed Screening",
+      actions: "Actions",
+    },
+    post_status: {
+      published: "Published",
+      unpublished: "Unpublished",
+    },
+    empty: {
+      description_line_1: "Post your first job here,",
+      description_line_2: "and we’ll match you with the perfect top talent",
+      alt_text: "empty job list",
+    },
+  },
+
   job_details: {
     updated_at: "Updated",
     job_requirement_table: "Job Requirement Document",

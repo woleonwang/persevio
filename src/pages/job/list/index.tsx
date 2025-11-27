@@ -21,8 +21,8 @@ const JobList = () => {
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
-  const t = (key: string, params: Record<string, string>) =>
-    originalT(`app_layout.${key}`, params);
+  const t = (key: string, params?: Record<string, string | number>) =>
+    originalT(`job_list.${key}`, params);
 
   useEffect(() => {
     fetchJobs();
@@ -37,45 +37,45 @@ const JobList = () => {
 
   const columns: ColumnsType<IJobListItem> = [
     {
-      title: "ID",
+      title: t("columns.id"),
       dataIndex: "id",
     },
     {
-      title: "Job Title",
+      title: t("columns.job_title"),
       dataIndex: "name",
     },
     {
-      title: "Post status",
+      title: t("columns.post_status"),
       dataIndex: "posted_at",
       render: (postedAt: string) => {
         return postedAt ? (
           <div className={classnames(styles.tag, styles.published)}>
-            Published
+            {t("post_status.published")}
           </div>
         ) : (
           <div className={classnames(styles.tag, styles.unpublished)}>
-            Unpublished
+            {t("post_status.unpublished")}
           </div>
         );
       },
     },
     {
-      title: "Post Time",
+      title: t("columns.post_time"),
       dataIndex: "posted_at",
       render: (postedAt: string) => {
         return dayjs(postedAt).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
-      title: "Total Candidates",
+      title: t("columns.total_candidates"),
       dataIndex: "total_candidates",
     },
     {
-      title: "Candidates Passed Screening",
+      title: t("columns.candidates_passed_screening"),
       dataIndex: "candidates_passed_screening",
     },
     {
-      title: "Actions",
+      title: t("columns.actions"),
       dataIndex: "action",
       render: (_, record) => {
         return (
@@ -102,7 +102,7 @@ const JobList = () => {
                 });
               }}
             >
-              Delete
+              {originalT("delete")}
             </Button>
             <Button
               type="link"
@@ -110,7 +110,7 @@ const JobList = () => {
                 navigate(`/app/jobs/${record.id}/standard-board`);
               }}
             >
-              Details
+              {t("details")}
             </Button>
             {record.posted_at && (
               <Button
@@ -121,7 +121,7 @@ const JobList = () => {
                   );
                 }}
               >
-                Go to your listing
+                {t("go_to_listing")}
               </Button>
             )}
           </div>
@@ -139,12 +139,12 @@ const JobList = () => {
       {jobs.length > 0 ? (
         <>
           <div className={styles.header}>
-            <div className={styles.title}>Job listings</div>
+            <div className={styles.title}>{t("title")}</div>
             <Button
               type="primary"
               onClick={() => navigate("/app/entry/create-job")}
             >
-              Create Job
+              {t("create_job")}
             </Button>
           </div>
           <div className={styles.table}>
@@ -153,11 +153,17 @@ const JobList = () => {
         </>
       ) : (
         <Empty
-          image={<img src={EmptyImg} alt="empty" style={{ width: "auto" }} />}
+          image={
+            <img
+              src={EmptyImg}
+              alt={t("empty.alt_text")}
+              style={{ width: "auto" }}
+            />
+          }
           description={
             <>
-              Post your first job here, <br /> and we’ll match you with the
-              perfect top talent
+              {t("empty.description_line_1")} <br />
+              {t("empty.description_line_2")}
             </>
           }
         />

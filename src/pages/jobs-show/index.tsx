@@ -27,6 +27,7 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
+import EmptyImg from "@/assets/empty2.png";
 
 type TCompany = {
   logo: string;
@@ -163,7 +164,21 @@ const JobsShow = () => {
           justifyContent: "center",
         }}
       >
-        <Empty description="Job not found" />
+        <Empty
+          styles={{
+            image: {
+              height: 140,
+            },
+          }}
+          image={<img src={EmptyImg} alt="empty" style={{ width: "auto" }} />}
+          description={
+            <div style={{ marginTop: 20 }}>
+              该职位目前已不再接受新的申请，您可以查看其他感兴趣的职位；
+              <br />
+              一旦有新的匹配职位，我们将第一时间通知您。
+            </div>
+          }
+        />
       </div>
     );
   }

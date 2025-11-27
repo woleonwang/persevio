@@ -1393,6 +1393,31 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     pending: "待审核",
   },
 
+  job_list: {
+    title: "职位列表",
+    create_job: "创建职位",
+    details: "详情",
+    go_to_listing: "查看职位页面",
+    columns: {
+      id: "ID",
+      job_title: "职位名称",
+      post_status: "发布状态",
+      post_time: "发布时间",
+      total_candidates: "候选人总数",
+      candidates_passed_screening: "通过筛选的候选人",
+      actions: "操作",
+    },
+    post_status: {
+      published: "已发布",
+      unpublished: "未发布",
+    },
+    empty: {
+      description_line_1: "在这里发布你的第一个职位，",
+      description_line_2: "我们会为你匹配最合适的顶尖人才",
+      alt_text: "职位列表为空",
+    },
+  },
+
   job_details: {
     updated_at: "更新",
     job_requirement_table: "职位需求表",
