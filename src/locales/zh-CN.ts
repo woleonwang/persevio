@@ -1397,6 +1397,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     updated_at: "更新",
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
+    job_requirement_hint:
+      "Viona 会参考这份文档向候选人介绍该职位。你可以在此编辑内容，以控制她与候选人沟通时的说法。",
     talents: "候选人",
     share_position: "分享职位",
     unpost_job_title: "取消发布职位？",

@@ -1450,6 +1450,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     updated_at: "Updated",
     job_requirement_table: "Job Requirement Document",
     job_description_jd: "Your Job Listing",
+    job_requirement_hint:
+      "When Viona introduces this role to candidates, she will reference the information in this document. You can edit the information here to control how Viona introduces this role to potential candidates.",
     talents: "Candidates",
     share_position: "Copy Link",
     unpost_job_title: "Unpost this Job?",

@@ -1,5 +1,5 @@
-import { Get } from "@/utils/request";
-import { Button, Empty, Table } from "antd";
+import { Get, Post } from "@/utils/request";
+import { Button, Empty, message, Modal, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import EmptyImg from "@/assets/job-applies-empty.png";
 import styles from "./style.module.less";
 import { useNavigate } from "react-router";
 import { getJobChatbotUrl } from "@/utils";
+import { useTranslation } from "react-i18next";
 
 interface IJobListItem extends IJob {
   total_candidates: number;
@@ -18,6 +19,10 @@ interface IJobListItem extends IJob {
 const JobList = () => {
   const [jobs, setJobs] = useState<IJobListItem[]>([]);
   const navigate = useNavigate();
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string, params: Record<string, string>) =>
+    originalT(`app_layout.${key}`, params);
 
   useEffect(() => {
     fetchJobs();
@@ -78,6 +83,30 @@ const JobList = () => {
             <Button
               type="link"
               onClick={() => {
+                Modal.confirm({
+                  title: originalT("app_layout.delete_job"),
+                  content: originalT("app_layout.delete_job_confirm", {
+                    jobName: record.name,
+                  }),
+                  onOk: async () => {
+                    const { code } = await Post(
+                      `/api/jobs/${record.id}/destroy`
+                    );
+                    if (code === 0) {
+                      message.success(originalT("submit_succeed"));
+                      fetchJobs();
+                    } else {
+                      message.error(originalT("submit_failed"));
+                    }
+                  },
+                });
+              }}
+            >
+              Delete
+            </Button>
+            <Button
+              type="link"
+              onClick={() => {
                 navigate(`/app/jobs/${record.id}/standard-board`);
               }}
             >
@@ -109,7 +138,15 @@ const JobList = () => {
     >
       {jobs.length > 0 ? (
         <>
-          <div className={styles.title}>Job listings</div>
+          <div className={styles.header}>
+            <div className={styles.title}>Job listings</div>
+            <Button
+              type="primary"
+              onClick={() => navigate("/app/entry/create-job")}
+            >
+              Create Job
+            </Button>
+          </div>
           <div className={styles.table}>
             <Table dataSource={jobs} columns={columns} rowKey="id" />
           </div>

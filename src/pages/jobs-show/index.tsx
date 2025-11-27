@@ -370,6 +370,13 @@ const JobsShow = () => {
                   <MarkdownContainer content={job.job_description} />
                 </div>
               </div>
+
+              {!!job.posted_at && (
+                <div className={styles.postedAt}>
+                  Updated at:{" "}
+                  {dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss")}
+                </div>
+              )}
             </div>
 
             <div className={classnames(styles.right, styles.desktopVisible)}>
