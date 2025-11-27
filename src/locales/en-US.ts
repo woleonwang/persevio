@@ -268,6 +268,30 @@ export default {
     talents: "Candidates",
   },
 
+  share_job: {
+    loading: "Loading...",
+    notFound: "Job not found",
+    listSeparator: ", ",
+    basicInfo: {
+      title: "Basic Information",
+      location: "Work Location",
+      roleType: "Work Mode",
+      level: "Seniority",
+    },
+    sections: {
+      requirement: "Detailed Job Information",
+      description: "Job Description",
+      email: "Outreach Message",
+    },
+    level: {
+      internship: "Intern",
+      no_experience: "New Grad / No Experience",
+      junior: "Junior / Limited Experience",
+      mid_level: "Mid-Level / Experienced",
+      senior: "Senior / Highly Experienced",
+    },
+  },
+
   chat: {
     tips: "Tips: You can directly edit my responses! Modify summaries, add information, or answer my questions right after or below them.",
     yes: "Yes.",

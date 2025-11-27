@@ -260,6 +260,30 @@ export default {
     talents: "候选人",
   },
 
+  share_job: {
+    loading: "加载中...",
+    notFound: "未找到该职位",
+    listSeparator: "、",
+    basicInfo: {
+      title: "基本信息",
+      location: "工作地点",
+      roleType: "办公类型",
+      level: "级别",
+    },
+    sections: {
+      requirement: "详细职位信息",
+      description: "职位描述",
+      email: "邮件内容",
+    },
+    level: {
+      internship: "实习生",
+      no_experience: "应届毕业生/无经验",
+      junior: "初级/少量经验",
+      mid_level: "中级/有一定经验",
+      senior: "高级/经验非常丰富",
+    },
+  },
+
   chat: {
     tips: "小贴士：你可以直接把你的回答写在我的问题后面/下面，或者直接在这里编辑我建议的草稿。",
     yes: "好的。",

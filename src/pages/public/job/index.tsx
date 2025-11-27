@@ -9,14 +9,6 @@ import { Collapse, Typography } from "antd";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { useTranslation } from "react-i18next";
 
-const levelTranslations = {
-  internship: "实习生",
-  no_experience: "应届毕业生/无经验",
-  junior: "初级/少量经验",
-  mid_level: "中级/有一定经验",
-  senior: "高级/经验非常丰富",
-};
-
 type TPublicJob = {
   id: number;
   name: string;
@@ -34,6 +26,7 @@ const PublicJobDetail = () => {
   const [loading, setLoading] = useState(true);
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`share_job.${key}`);
 
   useEffect(() => {
     fetchJob();
@@ -55,11 +48,13 @@ const PublicJobDetail = () => {
     setLoading(false);
   };
 
+  const listSeparator = t("listSeparator") || "、";
+
   if (loading) {
-    return <div className={styles.container}>加载中...</div>;
+    return <div className={styles.container}>{t("loading")}</div>;
   }
   if (!job) {
-    return <div className={styles.container}>未找到该职位</div>;
+    return <div className={styles.container}>{t("notFound")}</div>;
   }
 
   const { name, basic_info, jrd, job_description, outreach_message } = job;
@@ -77,20 +72,22 @@ const PublicJobDetail = () => {
         </div>
         <div style={{ padding: 20 }}>
           <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 8 }}>
-            基本信息
+            {t("basicInfo.title")}
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div className={styles.item}>
               <div style={{ color: "#666", fontSize: 14, marginBottom: 4 }}>
-                工作地点
+                {t("basicInfo.location")}
               </div>
               <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>
-                {basic_info?.location?.map((loc: any) => loc.city).join("、")}
+                {basic_info
+                  ?.location?.map((loc: any) => loc.city)
+                  .join(listSeparator)}
               </div>
             </div>
             <div className={styles.item}>
               <div style={{ color: "#666", fontSize: 14, marginBottom: 4 }}>
-                办公类型
+                {t("basicInfo.roleType")}
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>
                 {originalT(`jobs_show.role_type.${basic_info?.role_type}`)}
@@ -98,18 +95,13 @@ const PublicJobDetail = () => {
             </div>
             <div className={styles.item}>
               <div style={{ color: "#666", fontSize: 14, marginBottom: 4 }}>
-                级别
+                {t("basicInfo.level")}
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>
                 <span className={styles["experience-tag"]}>
                   {basic_info?.employee_level
-                    ?.map(
-                      (level: string) =>
-                        levelTranslations[
-                          level as keyof typeof levelTranslations
-                        ]
-                    )
-                    .join("、")}
+                    ?.map((level: string) => t(`level.${level}`))
+                    .join(listSeparator)}
                 </span>
               </div>
             </div>
@@ -121,17 +113,17 @@ const PublicJobDetail = () => {
             items={[
               {
                 key: "requirement",
-                label: "详细职位信息",
+                label: t("sections.requirement"),
                 children: <MarkdownContainer content={jrd} />,
               },
               {
                 key: "jd",
-                label: "职位描述",
+                label: t("sections.description"),
                 children: <MarkdownContainer content={job_description} />,
               },
               {
                 key: "interview_plan",
-                label: "邮件内容",
+                label: t("sections.email"),
                 children: <MarkdownContainer content={outreach_message} />,
               },
             ]}
