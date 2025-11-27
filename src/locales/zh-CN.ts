@@ -923,6 +923,15 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     basic_requirements: "基本要求",
     bonus_points: "加分项",
     ask_me_anything: "有任何问题都可以问我",
+    job_closed_description_line1:
+      "该职位目前已不再接受新的申请，您可以查看其他感兴趣的职位。",
+    job_closed_description_line2: "一旦有新的匹配职位，我们将第一时间通知您。",
+    complete_registration_first: "请先完成注册流程。",
+    apply_job_failed: "申请职位失败",
+    viona_intro_text:
+      "你好，我是 Viona，负责该职位的 AI 招聘官，对公司或岗位有疑问尽管问我！",
+    drawer_title: "Viona，您的求职副驾",
+    updated_at: "更新时间：{{date}}",
   },
 
   coworker: {

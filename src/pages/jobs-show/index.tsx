@@ -71,7 +71,8 @@ const JobsShow = () => {
   const isPreview = getQuery("preview") === "1";
 
   const { i18n, t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`jobs_show.${key}`);
+  const t = (key: string, options?: Record<string, unknown>) =>
+    originalT(`jobs_show.${key}`, options);
 
   useEffect(() => {
     fetchCandidateSettings();
@@ -173,9 +174,9 @@ const JobsShow = () => {
           image={<img src={EmptyImg} alt="empty" style={{ width: "auto" }} />}
           description={
             <div style={{ marginTop: 20 }}>
-              该职位目前已不再接受新的申请，您可以查看其他感兴趣的职位；
+              {t("job_closed_description_line1")}
               <br />
-              一旦有新的匹配职位，我们将第一时间通知您。
+              {t("job_closed_description_line2")}
             </div>
           }
         />
@@ -191,7 +192,7 @@ const JobsShow = () => {
       onClick={async () => {
         if (candidate) {
           if (candidate.email.endsWith("@persevio.ai") && !!candidate.job_id) {
-            message.info("Please complete the registration process first");
+            message.info(t("complete_registration_first"));
             navigate(`/apply-job/${candidate.job_id}`);
             // 没走完注册流程
           } else {
@@ -208,7 +209,7 @@ const JobsShow = () => {
               if (code === 0) {
                 navigate(`/candidate/jobs/applies/${data.job_apply_id}`);
               } else {
-                message.error("Apply job failed");
+                message.error(t("apply_job_failed"));
               }
             }
           }
@@ -335,8 +336,7 @@ const JobsShow = () => {
                   <span className={styles.timestamp}>{currentTime}</span>
                 </div>
                 <div className={styles.messageContainer}>
-                  Hi, I'm Viona, your AI recruiter for this role. Have questions
-                  about our company or this role? Ask me!
+                  {t("viona_intro_text")}
                 </div>
               </div>
             </div>
@@ -388,8 +388,9 @@ const JobsShow = () => {
 
               {!!job.posted_at && (
                 <div className={styles.postedAt}>
-                  Updated at:{" "}
-                  {dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss")}
+                  {t("updated_at", {
+                    date: dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss"),
+                  })}
                 </div>
               )}
             </div>
@@ -416,7 +417,7 @@ const JobsShow = () => {
           </Tooltip>
 
           <Drawer
-            title="Viona, your application copilot"
+            title={t("drawer_title")}
             open={chatModalVisible}
             onClose={() => setChatModalVisible(false)}
             placement="bottom"

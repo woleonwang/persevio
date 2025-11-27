@@ -966,6 +966,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     basic_requirements: "Basic Requirements",
     bonus_points: "Bonus Points",
     ask_me_anything: "Ask me anything",
+    job_closed_description_line1:
+      "This position is no longer accepting new applications. You can explore other roles you may be interested in.",
+    job_closed_description_line2:
+      "We will notify you as soon as a new matching opportunity becomes available.",
+    complete_registration_first: "Please complete the registration process first.",
+    apply_job_failed: "Apply job failed",
+    viona_intro_text:
+      "Hi, I'm Viona, your AI recruiter for this role. Have questions about our company or this role? Ask me!",
+    drawer_title: "Viona, your application copilot",
+    updated_at: "Updated at: {{date}}",
   },
 
   coworker: {
