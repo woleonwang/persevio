@@ -63,6 +63,7 @@ interface IJob {
 
   jrd_context_document_json: string;
   jd_version: number;
+  bonus_pool: number;
 }
 
 type TPublicJob = {
@@ -471,6 +472,8 @@ interface ITalentListItem {
   evaluate_result: TEvaluationResult;
   status: "accepted" | "rejected" | "pending";
   viewed_at: string;
+  share_token_id: number;
+  hire_status: "hired" | "not_hired";
   created_at: string;
   updated_at: string;
 }

@@ -183,3 +183,14 @@ img {
     font-size: 16px !important;
   }
 }
+
+.persevio-table {
+  table {
+    border-left: 1px solid #ebecee;
+    border-right: 1px solid #ebecee;
+  }
+
+  .ant-table-thead th {
+    background-color: #e9ecee !important;
+  }
+}

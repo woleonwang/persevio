@@ -140,6 +140,12 @@ const AppLayout = () => {
       requireAdmin: true,
     },
     {
+      title: t("menu.talent_management"),
+      path: "/app/admin/talents",
+      img: <Candidates />,
+      requireAdmin: true,
+    },
+    {
       title: t("menu.job_apply_management"),
       path: "/app/admin/job-applies",
       img: <JobApplyManagement />,

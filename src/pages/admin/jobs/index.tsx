@@ -1,10 +1,20 @@
 import { Get, Post } from "@/utils/request";
-import { Button, Drawer, message, Select, Table } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  InputNumber,
+  message,
+  Modal,
+  Select,
+  Table,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 
 import styles from "../style.module.less";
 import dayjs from "dayjs";
+import { getJobChatbotUrl } from "@/utils";
 
 const PAGE_SIZE = 10;
 
@@ -19,6 +29,7 @@ const Jobs = () => {
 
   const [selectedJob, setSelectedJob] = useState<IJob>();
   const [jobDetailDrawerOpen, setJobDetailDrawerOpen] = useState(false);
+  const [bonusPoolModalOpen, setBonusPoolModalOpen] = useState(false);
   const [recommendedCandidates, setRecommendedCandidates] = useState<
     TRecommendedCandidate[]
   >([]);
@@ -27,6 +38,8 @@ const Jobs = () => {
 
   const [candidates, setCandidates] = useState<ICandidateSettings[]>([]);
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]);
+
+  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchCompanies();
@@ -101,6 +114,10 @@ const Jobs = () => {
       dataIndex: "id",
     },
     {
+      title: "职位名称",
+      dataIndex: "name",
+    },
+    {
       title: "公司名称",
       dataIndex: "company_id",
       render: (companyId: number) => {
@@ -108,8 +125,58 @@ const Jobs = () => {
       },
     },
     {
-      title: "职位名称",
-      dataIndex: "name",
+      title: "是否发布",
+      dataIndex: "posted_at",
+      render: (postedAt: string) => {
+        return !!postedAt ? "是" : "否";
+      },
+    },
+    {
+      title: "奖金池",
+      dataIndex: "bonus_pool",
+      render: (bonusPool: number) => {
+        return bonusPool ? `$ ${bonusPool}` : "-";
+      },
+    },
+    {
+      title: "操作",
+      key: "actions",
+      width: 350,
+      render: (_, job: IJob) => {
+        return (
+          <div>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedJob(job);
+                setBonusPoolModalOpen(true);
+                form.setFieldsValue({
+                  bonus_pool: job.bonus_pool,
+                });
+              }}
+            >
+              Add Bonus Pool
+            </Button>
+            {job.posted_at && (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(
+                    getJobChatbotUrl(job.id, job.jd_version?.toString())
+                  );
+                }}
+                style={{ marginLeft: 12 }}
+              >
+                Go to Listing
+              </Button>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -154,6 +221,7 @@ const Jobs = () => {
       </div>
       <div className={styles.adminMain}>
         <Table<IJob>
+          className="persevio-table"
           style={{ height: "100%", overflow: "auto" }}
           rowKey="id"
           dataSource={jobs}
@@ -164,7 +232,6 @@ const Jobs = () => {
             total,
             onChange: (page) => setPage(page),
           }}
-          scroll={{ y: "100%" }}
           onRow={(job) => {
             return {
               onClick: () => {
@@ -218,6 +285,54 @@ const Jobs = () => {
           </div>
         )}
       </Drawer>
+
+      <Modal
+        open={bonusPoolModalOpen}
+        onClose={() => setBonusPoolModalOpen(false)}
+        title="Add Bonus Pool"
+        okText="Add"
+        cancelText="Cancel"
+        onOk={async () => {
+          form.validateFields().then(async (values) => {
+            const { code } = await Post(`/api/admin/jobs/${selectedJob?.id}`, {
+              bonus_pool: values.bonus_pool,
+            });
+            if (code === 0) {
+              message.success("Add bonus pool success");
+              fetchJobs();
+              setBonusPoolModalOpen(false);
+            } else {
+              message.error("Add bonus pool failed");
+            }
+          });
+        }}
+        onCancel={() => {
+          setBonusPoolModalOpen(false);
+        }}
+      >
+        <div className={styles.bonusPoolModalDescription}>
+           Once the bonus pool amount is confirmed, this job will become
+          eligible for recommendations. When a candidate is hired, all users in
+          the referral chain will share the bonus pool.
+        </div>
+        <Form
+          form={form}
+          layout="vertical"
+          className={styles.bonusPoolModalForm}
+        >
+          <Form.Item
+            label="Please enter the total bonus pool amount for the current job"
+            name="bonus_pool"
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              placeholder="Input total amount"
+              style={{ width: "100%" }}
+              prefix="$"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

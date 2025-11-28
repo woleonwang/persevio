@@ -241,6 +241,7 @@ export default {
     settings: "设置",
     account_management: "账号管理",
     job_management: "职位管理",
+    talent_management: "候选人管理",
     job_apply_management: "申请管理",
     candidate_list: "C端用户列表",
     candidate_connection_list: "匹配列表",
@@ -504,13 +505,15 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
     // 选项文案
     primary_driver_options: {
-      backfill: "**填补空缺**：替换已离职的员工。",
+      backfill: "**填补空缺**：替换已离职的员工以维持当前产出。",
       team_growth:
         "**团队增长/扩展**：为现有成功团队增加容量以处理更多工作量。",
       new_initiative:
-        "**新项目/计划**：此人将成为新产品、服务或业务领域的基础。",
+        "**新项目/计划**：为新团队、部门或业务领域引入第一个成员。",
       capability_gap:
-        "**能力缺口**：我们需要当前团队缺少的特定技能或专业知识。",
+        "**能力缺口**：为新战略产品线、业务单元或实验部门引入具有创业精神的高技能个人。",
+      specialized_expertise:
+        "**特殊专业技能**：引进具有高度专业知识的高技能个人，以推动创新和专业知识。",
       leadership: "**领导力/继任**：我们需要为现有团队或职能引入新领导。",
     },
 
@@ -1367,7 +1370,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   app_layout: {
     delete_job: "删除职位",
-    delete_job_confirm: "确定要删除【{{jobName}}】吗？",
+    delete_job_confirm:
+      "确定要删除【{{jobName}}】吗？ 删除后原有内容无法恢复。",
     search_placeholder: "请输入",
     loading: "加载中...",
   },
@@ -1384,7 +1388,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     details_button: "详情",
     delete_button: "删除",
     search_placeholder: "请输入候选人姓名进行搜索",
-    filter_placeholder: "请选择职位进行筛选",
+    filter_placeholder: "请选择进行筛选",
     active_delivery: "主动投递",
     system_upload: "系统上传",
     pagination_total: "第 {{rangeStart}}-{{rangeEnd}} 条，共 {{total}} 条",

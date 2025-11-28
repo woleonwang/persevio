@@ -10,6 +10,8 @@ import styles from "./style.module.less";
 import { useNavigate } from "react-router";
 import { getJobChatbotUrl } from "@/utils";
 import { useTranslation } from "react-i18next";
+import Flash from "@/assets/icons/flash";
+import Icon from "@/components/Icon";
 
 interface IJobListItem extends IJob {
   total_candidates: number;
@@ -143,6 +145,7 @@ const JobList = () => {
             <Button
               type="primary"
               onClick={() => navigate("/app/entry/create-job")}
+              icon={<Icon icon={<Flash />} />}
             >
               {t("create_job")}
             </Button>

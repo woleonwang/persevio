@@ -194,6 +194,7 @@ const JobRequirementForm = (props: IProps) => {
             "team_growth",
             "new_initiative",
             "capability_gap",
+            "specialized_expertise",
             "leadership",
           ].map((item) =>
             getOptions(item, t(`primary_driver_options.${item}`))
