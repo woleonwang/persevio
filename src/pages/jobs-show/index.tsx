@@ -389,7 +389,7 @@ const JobsShow = () => {
               {!!job.posted_at && (
                 <div className={styles.postedAt}>
                   {t("updated_at", {
-                    date: dayjs(job.posted_at).format("YYYY/MM/DD HH:mm:ss"),
+                    date: dayjs(job.posted_at).format("YYYY-MM-DD HH:mm:ss"),
                   })}
                 </div>
               )}
