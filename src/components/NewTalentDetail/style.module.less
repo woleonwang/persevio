@@ -78,6 +78,7 @@
   padding: 10px 20px;
   background-color: white;
   border-radius: 8px;
+  overflow: auto;
 
   :global {
     h1,
@@ -113,4 +114,19 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .main {
+    display: block;
+    overflow: auto;
+  }
+
+  .resumeContainer {
+    padding-right: 0;
+  }
+
+  .evaluateResultContainer {
+    width: 100%;
+  }
 }

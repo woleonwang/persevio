@@ -64,6 +64,9 @@ const AppLayout = () => {
 
   useEffect(() => {
     init();
+    if (window.innerWidth < 768) {
+      setMenuCollapse(true);
+    }
   }, []);
 
   useEffect(() => {
