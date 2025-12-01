@@ -310,7 +310,7 @@ const Jobs = () => {
           setBonusPoolModalOpen(false);
         }}
       >
-        <div className={styles.bonusPoolModalDescription}>
+        <div className={styles.modalDescription}>
            Once the bonus pool amount is confirmed, this job will become
           eligible for recommendations. When a candidate is hired, all users in
           the referral chain will share the bonus pool.

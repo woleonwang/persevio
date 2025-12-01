@@ -65,7 +65,7 @@ const JobList = () => {
       title: t("columns.post_time"),
       dataIndex: "posted_at",
       render: (postedAt: string) => {
-        return dayjs(postedAt).format("YYYY-MM-DD HH:mm:ss");
+        return !!postedAt ? dayjs(postedAt).format("YYYY-MM-DD HH:mm:ss") : "-";
       },
     },
     {
