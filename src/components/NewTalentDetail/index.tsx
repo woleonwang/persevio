@@ -4,7 +4,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { backOrDirect } from "@/utils";
+import { backOrDirect, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import globalStore from "@/store/global";
@@ -88,6 +88,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     return <Spin />;
   }
 
+  const basicInfo = parseJSON(talent.basic_info_json);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -112,31 +114,42 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       <div className={styles.main}>
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
+            {talent?.status === "accepted" ? (
+              <Tag color="green">{t("status_accepted")}</Tag>
+            ) : talent?.status === "rejected" ? (
+              <Tag color="red">{t("status_rejected")}</Tag>
+            ) : (
+              <>
+                <Button
+                  variant="outlined"
+                  color="danger"
+                  onClick={() => updateTalentStatus("reject")}
+                  style={{ flex: "auto" }}
+                  size="large"
+                >
+                  {t("action_reject")}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => updateTalentStatus("accept")}
+                  style={{ flex: "auto" }}
+                  size="large"
+                >
+                  {t("action_accept")}
+                </Button>
+              </>
+            )}
+          </div>
+          <div className={styles.basicInfoContainer}>
             <div>
-              {talent?.status === "accepted" ? (
-                <Tag color="green">{t("status_accepted")}</Tag>
-              ) : talent?.status === "rejected" ? (
-                <Tag color="red">{t("status_rejected")}</Tag>
-              ) : (
-                <div style={{ display: "flex", gap: 12 }}>
-                  <Button
-                    type="primary"
-                    onClick={() => updateTalentStatus("accept")}
-                  >
-                    {t("action_accept")}
-                  </Button>
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={() => updateTalentStatus("reject")}
-                  >
-                    {t("action_reject")}
-                  </Button>
-                </div>
-              )}
+              <div className={styles.jobTitle}>
+                {basicInfo.current_job_title}
+              </div>
+              <div className={styles.companyName}>
+                {basicInfo.current_company}
+              </div>
             </div>
-
-            <Button type="primary" onClick={downloadTalentResume}>
+            <Button type="primary" onClick={downloadTalentResume} size="large">
               {t("download_resume")}
             </Button>
           </div>
@@ -164,6 +177,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         open={isAIInterviewRecordDrawerOpen}
         onClose={() => setIsAIInterviewRecordDrawerOpen(false)}
         width={1000}
+        destroyOnClose
       >
         <div>
           <ChatMessagePreview
