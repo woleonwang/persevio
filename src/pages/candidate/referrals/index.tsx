@@ -58,6 +58,10 @@ const Referrals = () => {
       dataIndex: "talent_name",
     },
     {
+      title: "Referred Position  Name",
+      dataIndex: "job_name",
+    },
+    {
       title: "Referral Time",
       dataIndex: "referer_time",
       render: (referer_time: string) => {
