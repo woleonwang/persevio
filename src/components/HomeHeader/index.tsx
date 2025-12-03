@@ -11,6 +11,7 @@ interface IProps {
   className?: string;
   onlyLogo?: boolean;
   isPreview?: boolean;
+  rightContent?: React.ReactNode;
 }
 
 const menusConfigs = {
@@ -18,7 +19,8 @@ const menusConfigs = {
   jobs: "/jobs",
 };
 const HomeHeader = (props: IProps) => {
-  const { children, style, className, onlyLogo, isPreview } = props;
+  const { children, style, className, onlyLogo, isPreview, rightContent } =
+    props;
   const navigate = useNavigate();
 
   const isActive = (key: "home" | "jobs"): boolean => {
@@ -74,6 +76,9 @@ const HomeHeader = (props: IProps) => {
                 </Button>
               </Dropdown>
             </>
+          )}
+          {rightContent && (
+            <div className={styles.rightContent}>{rightContent}</div>
           )}
         </div>
       )}

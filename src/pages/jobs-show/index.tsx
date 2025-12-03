@@ -7,6 +7,7 @@ import {
   Empty,
   Input,
   message,
+  Modal,
   Spin,
   Tooltip,
 } from "antd";
@@ -18,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import ChatRoom from "@/components/ChatRoom";
 import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { copy, getQuery, parseJSON } from "@/utils";
+import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
 
 import styles from "./style.module.less";
@@ -28,6 +29,7 @@ import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
 import EmptyImg from "@/assets/empty2.png";
+import ShareToken from "./components/ShareToken";
 
 type TCompany = {
   logo: string;
@@ -42,7 +44,8 @@ type TJobDescription = {
   bonus_points: string; // 加分项，支持 markdown 格式
 };
 
-type TJob = {
+export type TJob = {
+  id: number;
   name: string;
   company_id: number;
   updated_at: string;
@@ -51,6 +54,7 @@ type TJob = {
   screening_questions: string;
   basic_info: TJobBasicInfo;
   posted_at?: string;
+  bonus_pool: number;
 };
 
 type TStatus = "loading" | "success" | "error";
@@ -63,6 +67,8 @@ const JobsShow = () => {
   const [status, setStatus] = useState<TStatus>("loading");
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
+  const [shareToken, setShareToken] = useState<string>();
+  const [referralModalVisible, setReferralModalVisible] = useState(false);
 
   const originalI18nRef = useRef<string>();
 
@@ -77,7 +83,7 @@ const JobsShow = () => {
   useEffect(() => {
     fetchCandidateSettings();
     fetchJob();
-    storeShareToken();
+    checkShareToken();
     setTimeout(() => {
       setTooltipVisible(false);
     }, 5000);
@@ -127,16 +133,23 @@ const JobsShow = () => {
     }
   };
 
-  const storeShareToken = () => {
-    const shareToken = getQuery("share_token");
-    if (!shareToken) return;
+  const checkShareToken = async () => {
+    if (!id) return;
 
+    const shareToken = getQuery("share_token");
     const shareTokenMapping = parseJSON(
       localStorage.getItem("share_token") ?? ""
     );
-    if (id) {
+
+    if (shareToken) {
       shareTokenMapping[id] = shareToken;
       localStorage.setItem("share_token", JSON.stringify(shareTokenMapping));
+    }
+
+    const token = shareTokenMapping[id];
+    if (token) {
+      setShareToken(token);
+      await Get(`/api/public/share_token/${token}`);
     }
   };
 
@@ -184,44 +197,6 @@ const JobsShow = () => {
     );
   }
 
-  const ApplyButton = (
-    <Button
-      type="primary"
-      size="large"
-      className={styles.applyButton}
-      onClick={async () => {
-        if (candidate) {
-          if (candidate.email.endsWith("@persevio.ai") && !!candidate.job_id) {
-            message.info(t("complete_registration_first"));
-            navigate(`/apply-job/${candidate.job_id}`);
-            // 没走完注册流程
-          } else {
-            // 是否已经创建职位申请
-            const { code, data } = await Get(
-              `/api/candidate/jobs/${id}/job_apply`
-            );
-            if (code === 0) {
-              navigate(`/candidate/jobs/applies/${data.job_apply.id}`);
-            } else {
-              const { code, data } = await Post("/api/candidate/job_applies", {
-                job_id: parseInt(id as string),
-              });
-              if (code === 0) {
-                navigate(`/candidate/jobs/applies/${data.job_apply_id}`);
-              } else {
-                message.error(t("apply_job_failed"));
-              }
-            }
-          }
-        } else {
-          navigate(`/apply-job/${id}`);
-        }
-      }}
-    >
-      {t("apply_now")}
-    </Button>
-  );
-
   const ChatRoomArea = (
     <ChatRoom
       userRole="candidate"
@@ -236,6 +211,11 @@ const JobsShow = () => {
       className={styles.headerContainer}
       onlyLogo
       isPreview={isPreview}
+      rightContent={
+        shareToken ? (
+          <div className={styles.referral}>Your friend referral</div>
+        ) : undefined
+      }
     >
       {status === "success" && company && job && (
         <div className={styles.container}>
@@ -312,7 +292,61 @@ const JobsShow = () => {
                 <div className={styles.companyName}>{company.name}</div>
               </div>
 
-              {!isPreview && <div>{ApplyButton}</div>}
+              {!isPreview && (
+                <div>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    className={styles.applyButton}
+                    onClick={() => setReferralModalVisible(true)}
+                  >
+                    Refer & earn
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="large"
+                    className={styles.applyButton}
+                    onClick={async () => {
+                      if (candidate) {
+                        if (isTempAccount(candidate) && !!candidate.job_id) {
+                          message.info(t("complete_registration_first"));
+                          navigate(`/apply-job/${candidate.job_id}`);
+                          // 没走完注册流程
+                        } else {
+                          // 是否已经创建职位申请
+                          const { code, data } = await Get(
+                            `/api/candidate/jobs/${id}/job_apply`
+                          );
+                          if (code === 0) {
+                            navigate(
+                              `/candidate/jobs/applies/${data.job_apply.id}`
+                            );
+                          } else {
+                            const { code, data } = await Post(
+                              "/api/candidate/job_applies",
+                              {
+                                job_id: parseInt(id as string),
+                              }
+                            );
+                            if (code === 0) {
+                              navigate(
+                                `/candidate/jobs/applies/${data.job_apply_id}`
+                              );
+                            } else {
+                              message.error(t("apply_job_failed"));
+                            }
+                          }
+                        }
+                      } else {
+                        navigate(`/apply-job/${id}`);
+                      }
+                    }}
+                  >
+                    {t("apply_now")}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -428,6 +462,22 @@ const JobsShow = () => {
             {ChatRoomArea}
           </Drawer>
 
+          <Modal
+            title=""
+            open={referralModalVisible}
+            onCancel={() => setReferralModalVisible(false)}
+            centered
+            footer={null}
+            closeIcon={null}
+            width={800}
+            destroyOnClose
+          >
+            <ShareToken
+              parentShareToken={shareToken}
+              job={job}
+              onClose={() => setReferralModalVisible(false)}
+            />
+          </Modal>
           {/* {!isPreview && (
             <Link className={styles.footer} to="/">
               {t("powered_by_persevio")}
