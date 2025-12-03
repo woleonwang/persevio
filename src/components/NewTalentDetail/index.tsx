@@ -248,7 +248,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   {t("ai_interview_record")}
                 </Button>
               </div>
-              <div className={styles.markdownContainer}>
+              <div
+                className={styles.markdownContainer}
+                style={{ padding: "10px 20px;" }}
+              >
                 <MarkdownContainer content={talent.raw_evaluate_result} />
               </div>
             </div>
