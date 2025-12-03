@@ -241,6 +241,7 @@ export default {
   hello: "world",
 
   menu: {
+    referrals: "Referrals",
     newRole: "Publish Job",
     jobs: "Jobs",
     company: "Company Info",

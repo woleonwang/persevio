@@ -55,7 +55,7 @@ const Talents = () => {
     );
 
     if (code === 0) {
-      setTalents((data.talents ?? []).reverse());
+      setTalents(data.talents ?? []);
       setTotal(data.total);
     }
   };
@@ -179,7 +179,6 @@ const Talents = () => {
 
       <Modal
         open={hireStatusModalOpen}
-        onClose={() => setHireStatusModalOpen(false)}
         title="Hire Status"
         cancelText="Cancel"
         onCancel={() => {
@@ -232,7 +231,7 @@ const Talents = () => {
 
       <Modal
         open={shareChainModalOpen}
-        onClose={() => setShareChainModalOpen(false)}
+        onCancel={() => setShareChainModalOpen(false)}
         title="Referral Chain Details"
         cancelButtonProps={{
           style: {

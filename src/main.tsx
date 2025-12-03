@@ -70,6 +70,7 @@ import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
 import ShortLink from "./pages/short-link/index.tsx";
 import JobList from "./pages/job/list/index.tsx";
 import AdminTalents from "./pages/admin/talents/index.tsx";
+import Referrals from "./pages/candidate/referrals/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -207,6 +208,7 @@ createRoot(document.getElementById("root")!).render(
             path="/candidate/aspirations"
             element={<CareerAspirations />}
           />
+          <Route path="/candidate/referrals" element={<Referrals />} />
           {/* 候选人深度职业规划对话 */}
           <Route
             path="/candidate/home/deep-aspirations"

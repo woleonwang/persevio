@@ -233,6 +233,7 @@ export default {
   hello: "世界",
 
   menu: {
+    referrals: "推荐",
     newRole: "发布职位",
     jobs: "职位",
     company: "公司基本信息",
