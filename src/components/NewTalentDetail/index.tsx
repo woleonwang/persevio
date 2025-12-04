@@ -188,11 +188,11 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             tabs={[
               {
                 key: "resume",
-                label: "Resume",
+                label: t("tab_resume"),
               },
               {
                 key: "report",
-                label: "Report",
+                label: t("tab_report"),
               },
             ]}
             activeKey={tabKey}

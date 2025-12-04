@@ -1520,6 +1520,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     ai_interview_record: "AI Interview Record",
     candidate_evaluation_report: "Candidate Evaluation Report",
     update_success: "Update successful",
+    tab_resume: "Resume",
+    tab_report: "Report",
+    no_report: "No report available",
   },
 
   new: "Create",

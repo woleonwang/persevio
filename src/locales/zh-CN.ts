@@ -1463,6 +1463,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     ai_interview_record: "AI 面试记录",
     candidate_evaluation_report: "候选人评估报告",
     update_success: "更新成功",
+    tab_resume: "简历",
+    tab_report: "报告",
+    no_report: "暂无报告",
   },
 
   new: "创建",
