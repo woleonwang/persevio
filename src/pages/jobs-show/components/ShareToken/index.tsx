@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import referrerGift from "@/assets/referrer-gift.png";
 import referrerLock from "@/assets/referrer-lock.png";
 import { TJob } from "../../index";
+import Icon from "@/components/Icon";
+import Link from "@/assets/icons/link";
 
 interface IProps {
   parentShareToken?: string;
@@ -147,6 +149,7 @@ const ShareToken: React.FC<IProps> = (props) => {
       <Input
         value={getShareUrl()}
         readOnly
+        prefix={<Icon icon={<Link />} className={styles.linkIcon} />}
         suffix={
           <Button
             type="primary"
