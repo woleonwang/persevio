@@ -1,3 +1,4 @@
+@import "@/mixin.module.less";
 @primary-color: #3682fe;
 
 .container {
@@ -29,7 +30,8 @@
   width: 100%;
   overflow: hidden;
   flex: none;
-  margin-top: 20px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
 .statusContainer {
@@ -67,31 +69,8 @@
     }
   }
 
-  :global {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-size: 16px;
-    }
-
-    ul,
-    ol {
-      background-color: #eff3fe;
-      border-radius: 16px;
-      padding: 16px 32px;
-    }
-
-    ul,
-    ol {
-      ul,
-      ol {
-        background-color: #e0e7fa;
-      }
-    }
-  }
+  .markdown-list();
+  .markdown-list-blue();
 }
 
 .evaluateResultContainer {
@@ -103,38 +82,14 @@
   overflow: auto;
 }
 
-.markdownContainer {
+.reportContainer {
   padding: 10px 20px;
   background-color: white;
   border-radius: 8px;
   overflow: auto;
 
-  :global {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-size: 16px;
-    }
-
-    ul,
-    ol {
-      background-color: #fefbec;
-      border-radius: 16px;
-
-      padding: 16px 24px;
-    }
-
-    ul,
-    ol {
-      ul,
-      ol {
-        background-color: #fbf4d5;
-      }
-    }
-  }
+  .markdown-list();
+  .markdown-list-yellow();
 }
 
 .evaluateResultTitle {
@@ -151,12 +106,20 @@
     display: none !important;
   }
 
+  .container {
+    padding: 12px;
+  }
+
   .main {
     flex-direction: column;
   }
 
   .resumeContainer {
     padding: 0;
+
+    .basicInfoContainer {
+      padding: 12px 0;
+    }
   }
 
   .statusContainer {
@@ -165,7 +128,7 @@
     border-bottom: none;
   }
 
-  .markdownContainer {
+  .reportContainer {
     flex: auto;
   }
 
@@ -177,23 +140,19 @@
   .evaluateResultContainer {
     width: 100%;
     flex: auto;
-    padding: 0;
-    background-color: #f6f6f6;
-    border-left: 1px dashed #ebecee;
-    overflow: auto;
-    margin-top: 20px;
-    padding: 12px;
+    background: none;
+    border: none;
+    padding: 12px 0;
     border-radius: 16px;
+
+    .reportContainer {
+      padding: 0;
+    }
   }
 
   .interviewRecordButton {
     width: 100%;
     height: 32px;
-  }
-
-  .markdownContainer {
-    margin-top: 20px;
-    padding: 0;
   }
 }
 
