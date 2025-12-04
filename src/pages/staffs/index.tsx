@@ -19,6 +19,7 @@ import { useNavigate } from "react-router";
 import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { copy } from "@/utils";
+import { useTranslation } from "react-i18next";
 
 const { Option } = Select;
 
@@ -43,6 +44,10 @@ const Staffs: React.FC = () => {
     password: string;
   }>();
 
+  const { t: originalT } = useTranslation();
+  const t = (key: string, params?: Record<string, string>) => {
+    return originalT(`staffs.${key}`, params);
+  };
   // 获取员工数据
   const fetchStaffs = async () => {
     setLoading(true);
@@ -138,10 +143,15 @@ const Staffs: React.FC = () => {
     if (!createdStaffInfo) return;
 
     const loginUrl = `${window.location.origin}/signin`;
-    const copyText = `登录链接: ${loginUrl}\n账号名称: ${createdStaffInfo.name}\n账号邮箱: ${createdStaffInfo.email}\n默认密码: ${createdStaffInfo.password}`;
+    const copyText = t("loginInfoTemplate", {
+      loginUrl,
+      name: createdStaffInfo.name,
+      email: createdStaffInfo.email,
+      password: createdStaffInfo.password,
+    });
 
     await copy(copyText);
-    message.success("账号信息已复制到剪贴板");
+    message.success(t("copySuccess"));
   };
 
   // 创建员工
@@ -174,9 +184,9 @@ const Staffs: React.FC = () => {
         // 刷新员工列表
         fetchStaffs();
       } else if (code === 10002) {
-        message.error("员工已存在");
+        message.error(t("staffExists"));
       } else {
-        message.error("员工创建失败");
+        message.error(t("createFailed"));
       }
     } catch (error) {
       console.error("表单验证失败:", error);
@@ -198,7 +208,7 @@ const Staffs: React.FC = () => {
       const { code } = await Post(`/api/staffs/${editingStaff.id}`, updateData);
 
       if (code === 0) {
-        message.success("员工信息更新成功");
+        message.success(t("updateSuccess"));
         setIsModalVisible(false);
         setIsEditMode(false);
         setEditingStaff(null);
@@ -207,7 +217,7 @@ const Staffs: React.FC = () => {
         // 刷新员工列表
         fetchStaffs();
       } else {
-        message.error("员工信息更新失败");
+        message.error(t("updateFailed"));
       }
     } catch (error) {
       console.error("表单验证失败:", error);
@@ -223,34 +233,34 @@ const Staffs: React.FC = () => {
   // 表格列定义
   const columns = [
     {
-      title: "ID",
+      title: t("id"),
       dataIndex: "id",
       key: "id",
       width: 80,
     },
     {
-      title: "姓名",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
       width: 120,
     },
     {
-      title: "邮箱",
+      title: t("email"),
       dataIndex: ["account", "username"],
       key: "email",
       width: 200,
     },
     {
-      title: "角色",
+      title: t("role"),
       dataIndex: "role",
       key: "role",
       width: 120,
       render: (role: string) => {
-        return role === "admin" ? "管理员" : "员工";
+        return role === "admin" ? t("admin") : t("normal");
       },
     },
     {
-      title: "操作",
+      title: t("action"),
       key: "action",
       width: 120,
       render: (_: any, record: IStaffWithAccount) => (
@@ -260,7 +270,7 @@ const Staffs: React.FC = () => {
             size="small"
             onClick={() => showEditModal(record)}
           >
-            编辑
+            {t("edit")}
           </Button>
         </Space>
       ),
@@ -276,7 +286,7 @@ const Staffs: React.FC = () => {
             className={styles.backArrow}
             onClick={handleBack}
           />
-          <h1 className={styles.pageTitle}>员工列表</h1>
+          <h1 className={styles.pageTitle}>{t("title")}</h1>
         </div>
       </div>
 
@@ -284,7 +294,7 @@ const Staffs: React.FC = () => {
       <div className={styles.filterSection}>
         <div className={styles.searchSection}>
           <Input
-            placeholder="员工姓名、账号邮箱"
+            placeholder={t("searchPlaceholder")}
             prefix={<SearchOutlined />}
             value={searchTerm}
             onChange={(e) => {
@@ -302,7 +312,7 @@ const Staffs: React.FC = () => {
             icon={<PlusOutlined />}
             onClick={showCreateModal}
           >
-            创建员工
+            {t("createStaff")}
           </Button>
         </div>
       </div>
@@ -320,7 +330,11 @@ const Staffs: React.FC = () => {
           pagination={{
             showQuickJumper: true,
             showTotal: (total, range) =>
-              `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+              originalT("pagination_total", {
+                rangeStart: String(range[0]),
+                rangeEnd: String(range[1]),
+                total: String(total),
+              }),
             pageSize: PAGE_SIZE,
             onChange: (page) => {
               setPage(page);
@@ -331,50 +345,50 @@ const Staffs: React.FC = () => {
 
       {/* 创建/编辑员工 Modal */}
       <Modal
-        title={isEditMode ? "编辑员工" : "创建员工"}
+        title={isEditMode ? t("editStaff") : t("createStaff")}
         open={isModalVisible}
         onOk={isEditMode ? handleUpdate : handleCreate}
         onCancel={handleCancel}
-        okText={isEditMode ? "更新" : "确认"}
-        cancelText="取消"
+        okText={isEditMode ? t("update") : t("confirm")}
+        cancelText={t("cancel")}
         width={500}
       >
         <Form form={form} layout="vertical" initialValues={{ role: "normal" }}>
           <Form.Item
-            label="姓名"
+            label={t("name")}
             name="name"
-            rules={[{ required: true, message: "请输入姓名" }]}
+            rules={[{ required: true, message: t("nameRequired") }]}
           >
-            <Input placeholder="请输入员工姓名" />
+            <Input placeholder={t("namePlaceholder")} />
           </Form.Item>
 
           <Form.Item
-            label="邮箱"
+            label={t("email")}
             name="email"
             rules={[
-              { required: true, message: "请输入邮箱" },
-              { type: "email", message: "请输入有效的邮箱格式" },
+              { required: true, message: t("emailRequired") },
+              { type: "email", message: t("emailInvalid") },
             ]}
           >
-            <Input placeholder="请输入员工邮箱" disabled={isEditMode} />
+            <Input placeholder={t("emailPlaceholder")} disabled={isEditMode} />
           </Form.Item>
 
           <Form.Item
-            label="角色"
+            label={t("role")}
             name="role"
-            rules={[{ required: true, message: "请选择角色" }]}
+            rules={[{ required: true, message: t("roleRequired") }]}
           >
-            <Select placeholder="请选择角色">
-              <Option value="normal">员工</Option>
-              <Option value="admin">管理员</Option>
+            <Select placeholder={t("rolePlaceholder")}>
+              <Option value="normal">{t("normal")}</Option>
+              <Option value="admin">{t("admin")}</Option>
             </Select>
           </Form.Item>
 
           {!isEditMode && (
             <Form.Item
-              label="默认密码"
+              label={t("passwordLabel")}
               name="password"
-              rules={[{ required: true, message: "密码不能为空" }]}
+              rules={[{ required: true, message: t("passwordRequired") }]}
             >
               <Input readOnly />
             </Form.Item>
@@ -389,14 +403,14 @@ const Staffs: React.FC = () => {
         onCancel={handleSuccessModalClose}
         footer={[
           <Button key="confirm" type="primary" onClick={copyToClipboard}>
-            复制登录信息
+            {t("copyLoginInfo")}
           </Button>,
           <Button
             key="confirm"
             type="primary"
             onClick={handleSuccessModalClose}
           >
-            确定
+            {t("confirm")}
           </Button>,
         ]}
         width={400}
@@ -412,7 +426,7 @@ const Staffs: React.FC = () => {
           />
           <div style={{ flex: 1 }}>
             <p style={{ margin: "0 0 16px 0", fontSize: "16px" }}>
-              账号创建成功。可复制登录信息，发送给用户登录。
+              {t("successMessage")}
             </p>
           </div>
         </div>
