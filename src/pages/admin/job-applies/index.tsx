@@ -141,6 +141,19 @@ const JobApplies = () => {
       },
     },
     {
+      title: "面试模式",
+      dataIndex: "interview_mode",
+      render: (interviewMode: "ai" | "human" | "whatsapp") => {
+        if (interviewMode === "whatsapp") {
+          return <div>WhatsApp</div>;
+        } else if (interviewMode === "human") {
+          return <div>人工</div>;
+        } else {
+          return <div>Web</div>;
+        }
+      },
+    },
+    {
       title: "申请时间",
       dataIndex: "deliveried_at",
       render: (deliveriedAt: string) => {
