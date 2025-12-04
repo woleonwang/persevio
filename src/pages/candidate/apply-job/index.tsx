@@ -178,6 +178,7 @@ const ApplyJob: React.FC = () => {
       `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
       {
         mode: interviewMode,
+        from: "web",
       }
     );
     if (code === 0) {
