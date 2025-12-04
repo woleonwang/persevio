@@ -1,4 +1,4 @@
-import { Get, Post } from "@/utils/request";
+import { Download, Get, Post } from "@/utils/request";
 import { Button, Drawer, message, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
@@ -99,6 +99,12 @@ const JobApplies = () => {
     }
   };
 
+  const downloadResume = async () => {
+    Download(
+      `/api/admin/job_applies/${selectedJobApplyId}/download_resume`,
+      `${jobApply?.candidate?.name ?? "Candidate"}`
+    );
+  };
   const closeDrawer = () => {
     setJobApplyDetailDrawerOpen(false);
     setSelectedJobApplyId(undefined);
@@ -137,6 +143,19 @@ const JobApplies = () => {
           } catch {
             return <div>N.A.</div>;
           }
+        }
+      },
+    },
+    {
+      title: "面试模式",
+      dataIndex: "interview_mode",
+      render: (interviewMode: "ai" | "human" | "whatsapp") => {
+        if (interviewMode === "whatsapp") {
+          return <div>WhatsApp</div>;
+        } else if (interviewMode === "human") {
+          return <div>人工</div>;
+        } else {
+          return <div>Web</div>;
         }
       },
     },
@@ -262,6 +281,9 @@ const JobApplies = () => {
                     >
                       查看简历
                     </Button>
+                    <Button type="primary" onClick={() => downloadResume()}>
+                      下载简历
+                    </Button>
                     {chatMessages.length > 0 && (
                       <Button
                         type="primary"
@@ -314,6 +336,7 @@ const JobApplies = () => {
               open={chatDrawerOpen}
               onClose={() => setChatDrawerOpen(false)}
               width={800}
+              destroyOnClose
             >
               <ChatMessagePreview messages={chatMessages} role="admin" />
             </Drawer>

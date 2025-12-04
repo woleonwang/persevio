@@ -1,4 +1,4 @@
-import { getQuery } from "@/utils";
+import { getQuery, isTempAccount } from "@/utils";
 import { useEffect, useState } from "react";
 import { message, Spin } from "antd";
 import { Get, Post } from "@/utils/request";
@@ -60,7 +60,7 @@ const WhatsappRedirect = () => {
 
     if (code === 0) {
       message.success(`Switch successful`);
-      if (candidateSettings.email.endsWith("@persevio.ai")) {
+      if (isTempAccount(candidateSettings)) {
         navigate(`/apply-job/${jobId}`, { replace: true });
       } else {
         navigate(`/candidate/jobs/applies/${jobApply.id}`, { replace: true });

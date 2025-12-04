@@ -15,6 +15,7 @@ const usePlayAudio = () => {
     return () => {
       if (urlRef.current) {
         URL.revokeObjectURL(urlRef.current);
+        audioRef.current?.pause();
       }
     };
   }, []);

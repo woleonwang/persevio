@@ -251,6 +251,7 @@ const JobDocument = (props: IProps) => {
         open={showConversationRecord}
         onClose={() => setShowConversationRecord(false)}
         width={1000}
+        destroyOnClose
       >
         <ChatMessagePreview messages={chatMessages} job={job} />
       </Drawer>

@@ -64,6 +64,9 @@ const AppLayout = () => {
 
   useEffect(() => {
     init();
+    if (window.innerWidth < 768) {
+      setMenuCollapse(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -137,6 +140,12 @@ const AppLayout = () => {
       title: t("menu.job_management"),
       path: "/app/admin/jobs",
       img: <JobManagement />,
+      requireAdmin: true,
+    },
+    {
+      title: t("menu.talent_management"),
+      path: "/app/admin/talents",
+      img: <Candidates />,
       requireAdmin: true,
     },
     {

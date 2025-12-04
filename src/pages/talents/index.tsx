@@ -23,7 +23,8 @@ const Talents: React.FC = () => {
   const { jobs } = globalStore;
 
   const { t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`company_talents.${key}`);
+  const t = (key: string, params?: Record<string, string>) =>
+    originalT(`company_talents.${key}`, params);
 
   useEffect(() => {
     fetchTalents();
@@ -83,7 +84,7 @@ const Talents: React.FC = () => {
   const handleDelete = (talent: ITalentListItem) => {
     Modal.confirm({
       title: t("delete_confirm_title"),
-      content: t("delete_confirm_content").replace("{{name}}", talent.name),
+      content: t("delete_confirm_content", { name: talent.name }),
       okText: t("confirm_button"),
       cancelText: t("cancel_button"),
       okType: "primary",
@@ -280,10 +281,11 @@ const Talents: React.FC = () => {
             showSizeChanger: false,
             showQuickJumper: true,
             showTotal: (total, range) =>
-              t("pagination_total")
-                .replace("{{rangeStart}}", String(range[0]))
-                .replace("{{rangeEnd}}", String(range[1]))
-                .replace("{{total}}", String(total)),
+              originalT("pagination_total", {
+                rangeStart: String(range[0]),
+                rangeEnd: String(range[1]),
+                total: String(total),
+              }),
           }}
           scroll={{ x: 1000 }}
         />

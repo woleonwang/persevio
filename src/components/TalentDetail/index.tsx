@@ -1024,6 +1024,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
         open={isAIInterviewRecordDrawerOpen}
         onClose={() => setIsAIInterviewRecordDrawerOpen(false)}
         width={1000}
+        destroyOnClose
       >
         <div>
           <ChatMessagePreview

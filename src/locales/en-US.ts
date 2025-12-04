@@ -241,6 +241,7 @@ export default {
   hello: "world",
 
   menu: {
+    referrals: "Referrals",
     newRole: "Publish Job",
     jobs: "Jobs",
     company: "Company Info",
@@ -249,6 +250,7 @@ export default {
     talents: "Candidates",
     account_management: "Account Management",
     job_management: "Job Management",
+    talent_management: "Talent Management",
     job_apply_management: "Job Apply Management",
     candidate_list: "Candidate List",
     candidate_connection_list: "Candidate Connection List",
@@ -580,13 +582,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
 
     primary_driver_options: {
-      backfill: "**Backfill**: Replacing an employee who has left.",
+      backfill:
+        "**Backfill**: Replacing a departing employee to maintain current output.",
       team_growth:
-        "**Team Growth / Scaling**: Adding capacity to an existing, successful team to handle more volume.",
+        "**Scaling an Existing Team**: Adding headcount to a successful team to handle increased volume or workload.",
       new_initiative:
-        "**New Initiative / Project**: This person will be foundational to a new product, service, or business area.",
+        "**First-in-Function / Greenfield**: The first hire for a new team, discipline, or department.",
       capability_gap:
-        "**Capability Gap**: We need a specific skill or expertise that the current team is missing.",
+        "**New Strategic Venture**: Launching a brand new product line, business unit, or experimental division requiring entrepreneurial energy.",
+      specialized_expertise:
+        "**Specialized Expertise**: Bringing in a niche skill set that the current team lacks.",
       leadership:
         "**Leadership / Succession**: We need to bring in a new leader for an existing team or function.",
     },
@@ -970,7 +975,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "This position is no longer accepting new applications. You can explore other roles you may be interested in.",
     job_closed_description_line2:
       "We will notify you as soon as a new matching opportunity becomes available.",
-    complete_registration_first: "Please complete the registration process first.",
+    complete_registration_first:
+      "Please complete the registration process first.",
     apply_job_failed: "Apply job failed",
     viona_intro_text:
       "Hi, I'm Viona, your AI recruiter for this role. Have questions about our company or this role? Ask me!",
@@ -1420,7 +1426,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   app_layout: {
     delete_job: "Delete Job",
-    delete_job_confirm: "Are you sure you want to delete【{{jobName}}】?",
+    delete_job_confirm:
+      "Confirm deletion of 【{{jobName}}】. Note: Deleted content cannot be restored.",
     search_placeholder: "Please enter",
     loading: "Loading...",
   },
@@ -1440,7 +1447,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     filter_placeholder: "Job",
     active_delivery: "Candidate application",
     system_upload: "System upload",
-    pagination_total: "{{rangeStart}}-{{rangeEnd}} of {{total}} items",
     delete_confirm_title: "Confirm",
     delete_confirm_content:
       "Are you sure you want to delete {{name}}? This action cannot be undone.",
@@ -1458,7 +1464,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   job_list: {
     title: "Job listings",
-    create_job: "Create Job",
+    create_job: "Post a job",
     details: "Details",
     go_to_listing: "Go to your listing",
     columns: {
@@ -1514,6 +1520,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     ai_interview_record: "AI Interview Record",
     candidate_evaluation_report: "Candidate Evaluation Report",
     update_success: "Update successful",
+    tab_resume: "Resume",
+    tab_report: "Report",
+    no_report: "No report available",
   },
 
   new: "Create",
@@ -1555,5 +1564,46 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   numberRange: {
     min: "Min",
     max: "Max",
+  },
+
+  pagination_total: "{{rangeStart}}-{{rangeEnd}} of {{total}} items",
+
+  staffs: {
+    title: "Staff List",
+    searchPlaceholder: "Staff name, account email",
+    createStaff: "Create Staff",
+    editStaff: "Edit Staff",
+    id: "ID",
+    name: "Name",
+    email: "Email",
+    role: "Role",
+    action: "Action",
+    edit: "Edit",
+    admin: "Admin",
+    normal: "Staff",
+    update: "Update",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    namePlaceholder: "Enter staff name",
+    nameRequired: "Please enter name",
+    emailPlaceholder: "Enter staff email",
+    emailRequired: "Please enter email",
+    emailInvalid: "Please enter a valid email format",
+    rolePlaceholder: "Please select role",
+    roleRequired: "Please select role",
+    passwordLabel: "Default Password",
+    passwordRequired: "Password cannot be empty",
+    copyLoginInfo: "Copy Login Info",
+    successTitle: "Account Created Successfully",
+    successMessage:
+      "Account created successfully. You can copy the login information and send it to the user for login.",
+    copySuccess: "Account information copied to clipboard",
+    staffExists: "Staff already exists",
+    createFailed: "Failed to create staff",
+    updateSuccess: "Staff information updated successfully",
+    updateFailed: "Failed to update staff information",
+    paginationTotal: "{{start}}-{{end}} of {{total}} items",
+    loginInfoTemplate:
+      "Login URL: {{loginUrl}}\nAccount Name: {{name}}\nAccount Email: {{email}}\nDefault Password: {{password}}",
   },
 };

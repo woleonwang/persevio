@@ -168,3 +168,7 @@ export const getJobChatbotUrl = (jobId: number, version: string) => {
     version === "0" ? "" : `/${version}`
   }`;
 };
+
+export const isTempAccount = (candidate: ICandidateSettings) => {
+  return candidate.email.endsWith("@persevio.ai");
+};

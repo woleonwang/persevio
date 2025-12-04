@@ -11,6 +11,8 @@ import classnames from "classnames";
 import logo from "@/assets/logo.png";
 import { deleteQuery, getQuery } from "@/utils";
 import Sidebar from "@/components/Sidebar";
+import Jobs from "@/assets/icons/jobs";
+import Referrals from "@/assets/icons/referrals";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
@@ -57,12 +59,17 @@ const CandidateLayout = () => {
     {
       title: t("menu.job_applies"),
       path: "/candidate/jobs",
-      img: <ProfileOutlined />,
+      img: <Jobs />,
     },
     {
       title: t("menu.profile"),
       path: "/candidate/profile",
       img: <ProfileOutlined />,
+    },
+    {
+      title: t("menu.referrals"),
+      path: "/candidate/referrals",
+      img: <Referrals />,
     },
     // {
     //   title: t("menu.connections"),

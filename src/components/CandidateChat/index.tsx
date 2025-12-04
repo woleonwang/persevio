@@ -221,27 +221,12 @@ Shall we start now?`,
     if (isLoading) return;
 
     const formattedMessage = rawMessage.trim();
-    needScrollToBottom.current = true;
-    setMessages([
-      ...messages,
-      {
-        id: "fake_user_id",
-        role: "user",
-        content: formattedMessage,
-        updated_at: dayjs().format(datetimeFormat),
-      },
-      {
-        id: "fake_ai_id",
-        role: "ai",
-        content: "",
-        updated_at: dayjs().format(datetimeFormat),
-      },
-    ]);
-    setIsLoading(true);
 
     const { voice_payload_id, metadata } = options ?? {};
 
-    Post(
+    setIsLoading(true);
+
+    const { code } = await Post(
       `/api/candidate/chat/${ChatTypeMappings[chatType]}${
         jobApplyId ? `/${jobApplyId}` : ""
       }/send`,
@@ -251,6 +236,26 @@ Shall we start now?`,
         metadata: metadata,
       }
     );
+    if (code === 0) {
+      needScrollToBottom.current = true;
+      setMessages([
+        ...messages,
+        {
+          id: "fake_user_id",
+          role: "user",
+          content: formattedMessage,
+          updated_at: dayjs().format(datetimeFormat),
+        },
+        {
+          id: "fake_ai_id",
+          role: "ai",
+          content: "",
+          updated_at: dayjs().format(datetimeFormat),
+        },
+      ]);
+    } else {
+      setIsLoading(false);
+    }
   };
 
   const deleteMessage = async (messageId: number) => {

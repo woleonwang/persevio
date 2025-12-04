@@ -69,6 +69,8 @@ import Jobs from "./pages/candidate/jobs/index.tsx";
 import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
 import ShortLink from "./pages/short-link/index.tsx";
 import JobList from "./pages/job/list/index.tsx";
+import AdminTalents from "./pages/admin/talents/index.tsx";
+import Referrals from "./pages/candidate/referrals/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -175,6 +177,8 @@ createRoot(document.getElementById("root")!).render(
 
           {/* 管理员职位列表：用于推荐给候选人 */}
           <Route path="/app/admin/jobs" element={<AdminJobs />} />
+          {/* 管理员职位列表：用于推荐给候选人 */}
+          <Route path="/app/admin/talents" element={<AdminTalents />} />
           {/* 管理员申请列表：用于审核候选人申请 */}
           <Route path="/app/admin/job-applies" element={<AdminJobApplies />} />
           {/* 管理员候选人列表：用于审核候选人 */}
@@ -204,6 +208,7 @@ createRoot(document.getElementById("root")!).render(
             path="/candidate/aspirations"
             element={<CareerAspirations />}
           />
+          <Route path="/candidate/referrals" element={<Referrals />} />
           {/* 候选人深度职业规划对话 */}
           <Route
             path="/candidate/home/deep-aspirations"
