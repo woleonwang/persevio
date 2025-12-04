@@ -294,15 +294,17 @@ const JobsShow = () => {
 
               {!isPreview && (
                 <div>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    className={styles.applyButton}
-                    onClick={() => setReferralModalVisible(true)}
-                  >
-                    Refer & earn
-                  </Button>
+                  {!!job.bonus_pool && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      size="large"
+                      className={styles.applyButton}
+                      onClick={() => setReferralModalVisible(true)}
+                    >
+                      Refer & earn
+                    </Button>
+                  )}
                   <Button
                     type="primary"
                     size="large"
