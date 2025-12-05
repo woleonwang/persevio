@@ -29,6 +29,7 @@ interface IProps {
   ) => void;
   isLoading?: boolean;
   disabledVoiceInput?: boolean;
+  isCollapsed?: boolean;
 }
 
 const RECORD_HISTORY_DURATION_SECONDS = 6;
@@ -41,7 +42,12 @@ const getInitialVolumeHistory = () => {
 };
 
 const ChatInputArea = (props: IProps) => {
-  const { onSubmit, isLoading = false, disabledVoiceInput = false } = props;
+  const {
+    onSubmit,
+    isLoading = false,
+    disabledVoiceInput = false,
+    isCollapsed = false,
+  } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
@@ -187,7 +193,10 @@ const ChatInputArea = (props: IProps) => {
                     );
                   })}
                 </div>
-                <div className={styles.voiceInputHint}>
+                <div
+                  className={styles.voiceInputHint}
+                  style={isCollapsed ? { display: "none" } : {}}
+                >
                   {isRecording ? (
                     isStartRecordingOutside ? (
                       <>{t("click_again_to_stop_recording")}</>

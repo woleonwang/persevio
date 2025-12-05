@@ -1092,6 +1092,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
                     selectOptionsModalOpen ||
                     !!markdownEditMessageId
                   }
+                  isCollapsed={sideDocumentVisible}
                 />
               </div>
             </>
