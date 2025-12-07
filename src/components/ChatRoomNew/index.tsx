@@ -18,7 +18,7 @@ import { Get, Post, PostFormData } from "../../utils/request";
 
 import styles from "./style.module.less";
 import { IProps, TChatType, TRoleOverviewType } from "./type";
-import { copy, downloadText, parseJSON } from "@/utils";
+import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -440,16 +440,12 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         title: t("view_document"),
         handler: () => {
           setTimeout(() => {
-            const words = key.split("-");
-            const documentType = words
-              .slice(0, words.length - 1)
-              .join("-") as TEditableDocumentType;
+            const documentType = getDocumentType(key);
             setSideDocumentVisible(true);
             setSideDocumentContent(
               jrdContextDocumentJsonRef.current?.[documentType] ?? ""
             );
-
-            setSideDocumentType(documentType);
+            setSideDocumentType(documentType as TEditableDocumentType);
           });
         },
         autoTrigger: true,

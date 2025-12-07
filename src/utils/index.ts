@@ -172,3 +172,11 @@ export const getJobChatbotUrl = (jobId: number, version: string) => {
 export const isTempAccount = (candidate: ICandidateSettings) => {
   return candidate.email.endsWith("@persevio.ai");
 };
+
+export const getDocumentType = (key: string): string => {
+  const words = key.split("-");
+  const documentType = words
+    .slice(0, words.length - 1)
+    .join("-") as TEditableDocumentType;
+  return documentType;
+};
