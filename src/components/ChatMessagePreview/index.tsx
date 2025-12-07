@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 import { useRef, useState } from "react";
-import { parseJSON } from "@/utils";
+import { getDocumentType, parseJSON } from "@/utils";
 import { Button, Drawer } from "antd";
 import MarkdownContainer from "../MarkdownContainer";
 import AudioPlayer from "../AudioPlayer";
@@ -55,9 +55,10 @@ const ChatMessagePreview = (props: {
         key: key,
         title: t("view_document"),
         handler: () => {
+          const documentType = getDocumentType(key);
           setSideDocumentDrawerVisible(true);
           setSideDocumentContent(
-            jrdContextDocumentJsonRef.current?.[key.split("-")[0]] ?? ""
+            jrdContextDocumentJsonRef.current?.[documentType] ?? ""
           );
         },
         autoTrigger: true,
@@ -127,7 +128,10 @@ const ChatMessagePreview = (props: {
         onClose={() => setSideDocumentDrawerVisible(false)}
         width={1000}
       >
-        <MarkdownContainer content={sideDocumentContent} />
+        <MarkdownContainer
+          className={styles.sideDocumentContent}
+          content={sideDocumentContent}
+        />
       </Drawer>
     </div>
   );

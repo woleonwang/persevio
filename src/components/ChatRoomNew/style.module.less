@@ -1,3 +1,5 @@
+@import "@/mixin.module.less";
+
 @primary-color: #3682fe;
 @hover-button-bg-color: #edf2ff;
 @main-width: 800px;
@@ -81,31 +83,8 @@
     border-radius: 4px;
     margin-top: 20px;
 
-    :global {
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-size: 16px;
-      }
-
-      ul,
-      ol {
-        background-color: #eff3fe;
-        border-radius: 16px;
-        padding: 16px 32px;
-      }
-
-      ul,
-      ol {
-        ul,
-        ol {
-          background-color: #e0e7fa;
-        }
-      }
-    }
+    .markdown-list();
+    .markdown-list-blue();
   }
 }
 
