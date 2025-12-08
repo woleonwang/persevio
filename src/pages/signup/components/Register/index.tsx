@@ -95,6 +95,10 @@ const Register: React.FC<IProps> = (props) => {
       if (code === 0) {
         message.success(t("verification_code_sent"));
         setCountdown(60); // 开始60秒倒计时
+      } else if (code === 100021) {
+        message.error("Email exists");
+      } else if (code === 100022) {
+        message.error("Personal email not support");
       } else {
         message.error(t("verification_code_failed"));
       }
