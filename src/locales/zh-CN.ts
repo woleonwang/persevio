@@ -1352,6 +1352,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     signup_succeed: "注册成功",
     signup_failed: "注册失败",
     email_exists: "邮箱已存在",
+    basic_info_title: "提供您的基本信息",
+    company_info_title: "提供您的公司信息",
+    recruitment_requirement_title: "提供您的招聘需求",
   },
 
   signin: {

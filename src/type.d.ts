@@ -154,11 +154,25 @@ interface IJobApply extends IJobApplyListItem {
 }
 
 interface ISettings {
-  staff_name: string;
   email: string;
+  staff_name: string;
+  country_code: string;
+  phone: string;
+  position: string;
+  company_name: string;
+  company_website: string;
+  company_size: string;
+  company_recruitment_requirements_json: string;
   prompts: TPrompt[];
   is_admin: number;
+  role: string;
   lang: string;
+  company_status: string;
+  company_mode: string;
+  company_recruitment_requirements?: {
+    role_type?: string[];
+    headcount_number?: string;
+  };
 }
 
 interface IPreRegisterInfo {

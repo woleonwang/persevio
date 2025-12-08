@@ -1407,6 +1407,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     signup_succeed: "Sign up succeed",
     signup_failed: "Sign up failed",
     email_exists: "Email already exists",
+    basic_info_title: "Provide Your Basic Information",
+    company_info_title: "Provide Your Company Information",
+    recruitment_requirement_title: "Provide Your Recruitment requirements",
   },
 
   signin: {
