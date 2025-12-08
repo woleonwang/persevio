@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Form, Input, Button, message } from "antd";
-import logo from "@/assets/logo.png";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Post } from "@/utils/request";
-import SignContainer from "@/components/SignContainer";
 import { useTranslation } from "react-i18next";
+import styles from "./style.module.less";
 
 interface SignupFormValues {
   username: string;
@@ -27,10 +27,11 @@ interface SigninResponse {
 }
 
 interface IProps {
+  onPrev: () => void;
   onNext: () => void;
 }
 const Register: React.FC<IProps> = (props) => {
-  const { onNext } = props;
+  const { onNext, onPrev } = props;
   const [countdown, setCountdown] = useState(0);
   const [isSendingCode, setIsSendingCode] = useState(false);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
@@ -140,8 +141,14 @@ const Register: React.FC<IProps> = (props) => {
   };
 
   return (
-    <div>
-      <h2 style={{ fontSize: 36 }}>{t("signup.title")}</h2>
+    <div className={styles.container}>
+      <Button
+        type="default"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => onPrev()}
+        size="large"
+        style={{ marginBottom: 16 }}
+      />
       <Form form={form} name="login" autoComplete="off" layout="vertical">
         <Form.Item
           label={t("signup.email")}
@@ -262,6 +269,7 @@ const Register: React.FC<IProps> = (props) => {
             block
             size="large"
             onClick={checkEmail}
+            style={{ marginTop: 80 }}
           >
             {t("signup.next_step")}
           </Button>

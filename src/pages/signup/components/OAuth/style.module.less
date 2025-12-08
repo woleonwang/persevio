@@ -1,15 +1,23 @@
 @primary-color: #3682fe;
 
 .container {
+  flex: auto;
   display: flex;
   flex-direction: column;
   overflow: auto;
   margin-top: 64px;
+  flex: auto;
 }
 
 .brand {
   width: 32px;
   height: 32px;
+}
+
+.buttons {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .button {
@@ -24,16 +32,11 @@
   margin-top: 16px;
   font-weight: bold;
   cursor: pointer;
+}
 
-  &.google {
-    border-color: @primary-color;
-    color: @primary-color;
-  }
-
-  &.linkedin {
-    border-color: rgba(11, 102, 194);
-    color: rgba(11, 102, 194);
-  }
+.signin {
+  text-align: center;
+  margin-top: 32px;
 }
 
 .hint {

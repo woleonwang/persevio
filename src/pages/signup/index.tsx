@@ -75,15 +75,14 @@ const Signup: React.FC = () => {
   }
 
   return status === "oauth" || status === "register" ? (
-    <SignContainer
-      title={
-        status === "oauth" ? "Sign up for an account" : "Sign up with email"
-      }
-    >
+    <SignContainer title={"Sign up for an account"}>
       {status === "oauth" ? (
         <OAuth onWithEmail={() => setStatus("register")} />
       ) : (
-        <Register onNext={() => setStatus("basicInfo")} />
+        <Register
+          onNext={() => setStatus("basicInfo")}
+          onPrev={() => setStatus("oauth")}
+        />
       )}
     </SignContainer>
   ) : (

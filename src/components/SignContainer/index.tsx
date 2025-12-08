@@ -16,7 +16,7 @@ const SignContainer = (props: { title: string; children: React.ReactNode }) => {
             <img src={NewLogo} style={{ width: 200 }} />
           </div>
           <div className={styles.title}>{title}</div>
-          {children}
+          <div className={styles.formWrapper}>{children}</div>
         </div>
       </div>
     </div>

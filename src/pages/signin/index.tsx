@@ -69,15 +69,14 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <SignContainer>
-      <img src={logo} style={{ width: 188 }} />
-      <h2 style={{ fontSize: 36 }}>{t("signin.title")}</h2>
+    <SignContainer title={t("signin.title")}>
       <Form
         form={form}
         name="login"
         onFinish={handleSignIn}
         autoComplete="off"
         layout="vertical"
+        style={{ marginTop: 40 }}
       >
         <Form.Item
           label={t("signin.email")}
@@ -90,9 +89,14 @@ const SignIn: React.FC = () => {
         <Form.Item
           label={t("signin.password")}
           name="password"
-          rules={[{ required: true, message: t("signin.please_enter_password") }]}
+          rules={[
+            { required: true, message: t("signin.please_enter_password") },
+          ]}
         >
-          <Input.Password placeholder={t("signin.password_placeholder")} size="large" />
+          <Input.Password
+            placeholder={t("signin.password_placeholder")}
+            size="large"
+          />
         </Form.Item>
 
         <Form.Item>
