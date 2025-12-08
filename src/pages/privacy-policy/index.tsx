@@ -1,5 +1,5 @@
 import MarkdownContainer from "@/components/MarkdownContainer";
-import privacyAgreement from "../candidate/apply-job/components/Waiting/privacyAgreement";
+import privacyAgreement from "@/utils/privacyAgreement";
 
 const PrivacyPolicy = () => {
   return (

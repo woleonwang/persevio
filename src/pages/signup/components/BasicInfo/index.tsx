@@ -36,7 +36,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
       const { code } = await Post("/api/basic_info", {
         name,
         position,
-        country_code: phone?.countryCode || "+65",
+        country_code: phone?.countryCode,
         phone: phone?.phoneNumber,
       });
 

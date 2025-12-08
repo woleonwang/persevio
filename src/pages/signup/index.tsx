@@ -64,7 +64,7 @@ const Signup: React.FC = () => {
         }
       }
     } else {
-      setStatus("oauth");
+      setStatus("register");
     }
   };
 
@@ -119,7 +119,7 @@ const Signup: React.FC = () => {
                   name: staff?.staff_name,
                   position: staff?.position,
                   phone: {
-                    countryCode: staff?.country_code,
+                    countryCode: staff?.country_code || "+65",
                     phoneNumber: staff?.phone,
                   },
                 }}
@@ -134,7 +134,7 @@ const Signup: React.FC = () => {
                 initialValues={{
                   name: staff?.company_name,
                   website: staff?.company_website,
-                  size: staff?.company_size,
+                  size: staff?.company_size || undefined,
                 }}
               />
             ) : (
@@ -145,9 +145,12 @@ const Signup: React.FC = () => {
                   setStatus("waiting");
                 }}
                 initialValues={{
-                  role_type: staff?.company_recruitment_requirements?.role_type,
+                  role_type:
+                    staff?.company_recruitment_requirements?.role_type ||
+                    undefined,
                   headcount_number:
-                    staff?.company_recruitment_requirements?.headcount_number,
+                    staff?.company_recruitment_requirements?.headcount_number ||
+                    undefined,
                 }}
               />
             )}

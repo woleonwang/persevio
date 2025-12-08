@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Checkbox, message, Modal } from "antd";
 import classnames from "classnames";
-import privacyAgreement from "./privacyAgreement";
-import terms from "./terms";
+import privacyAgreement from "@/utils/privacyAgreement";
+import terms from "@/utils/terms";
 import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import logo from "@/assets/logo.png";

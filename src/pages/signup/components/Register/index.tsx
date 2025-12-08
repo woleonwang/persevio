@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form, Input, Button, message } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Form, Input, Button, message, Checkbox, Modal } from "antd";
 import { Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
+import { Link } from "react-router";
+import MarkdownContainer from "@/components/MarkdownContainer";
+import privacyAgreement from "@/utils/privacyAgreement";
+import terms from "@/utils/terms";
 
 interface SignupFormValues {
   username: string;
@@ -31,13 +34,18 @@ interface IProps {
   onNext: () => void;
 }
 const Register: React.FC<IProps> = (props) => {
-  const { onNext, onPrev } = props;
+  const { onNext } = props;
   const [countdown, setCountdown] = useState(0);
   const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [termsType, setTermsType] = useState<"terms" | "privacy">();
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   const [form] = Form.useForm();
-  const { t } = useTranslation();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`signup.${key}`);
+  };
 
   // 清理倒计时定时器
   useEffect(() => {
@@ -75,7 +83,7 @@ const Register: React.FC<IProps> = (props) => {
     try {
       const email = form.getFieldValue("username");
       if (!email) {
-        message.error(t("signup.please_enter_email"));
+        message.error(t("please_enter_email"));
         return;
       }
 
@@ -85,19 +93,24 @@ const Register: React.FC<IProps> = (props) => {
       });
 
       if (code === 0) {
-        message.success(t("signup.verification_code_sent"));
+        message.success(t("verification_code_sent"));
         setCountdown(60); // 开始60秒倒计时
       } else {
-        message.error(t("signup.verification_code_failed"));
+        message.error(t("verification_code_failed"));
       }
     } catch (error) {
-      message.error(t("signup.verification_code_failed"));
+      message.error(t("verification_code_failed"));
     } finally {
       setIsSendingCode(false);
     }
   };
 
   const checkEmail = async () => {
+    if (!isTermsAgreed) {
+      message.warning(t("agree_terms_warning"));
+      return;
+    }
+
     form.validateFields().then(async (values: SignupFormValues) => {
       const { username, password, verify_code } = values;
       const { code } = await Post("/api/precheck_verify_code", {
@@ -106,7 +119,7 @@ const Register: React.FC<IProps> = (props) => {
       });
 
       if (code !== 0) {
-        message.error(t("signup.verification_code_incorrect"));
+        message.error(t("verification_code_incorrect"));
         return;
       }
 
@@ -123,18 +136,18 @@ const Register: React.FC<IProps> = (props) => {
         });
 
         if (code === 0 && data) {
-          message.success(t("signup.signup_succeed"));
+          message.success(t("signup_succeed"));
           localStorage.setItem("token", data.token);
           onNext();
         }
       } else {
         const errMeesageMapping = {
-          10002: t("signup.verification_code_incorrect"),
-          10003: t("signup.email_exists"),
+          10002: t("verification_code_incorrect"),
+          10003: t("email_exists"),
         };
         message.error(
           errMeesageMapping[signupCode as keyof typeof errMeesageMapping] ||
-            t("signup.signup_failed")
+            t("signup_failed")
         );
       }
     });
@@ -142,25 +155,25 @@ const Register: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.container}>
-      <Button
+      {/* <Button
         type="default"
         icon={<ArrowLeftOutlined />}
         onClick={() => onPrev()}
         size="large"
         style={{ marginBottom: 16 }}
-      />
+      /> */}
       <Form form={form} name="login" autoComplete="off" layout="vertical">
         <Form.Item
-          label={t("signup.email")}
+          label={t("email")}
           name="username"
-          rules={[{ required: true, message: t("signup.please_enter_email") }]}
+          rules={[{ required: true, message: t("please_enter_email") }]}
           preserve
         >
-          <Input placeholder={t("signup.email_placeholder")} size="large" />
+          <Input placeholder={t("email_placeholder")} size="large" />
         </Form.Item>
 
         <Form.Item
-          label={t("signup.password")}
+          label={t("password")}
           name="password"
           rules={[
             {
@@ -170,26 +183,26 @@ const Register: React.FC<IProps> = (props) => {
                 }
                 // 校验密码格式，8位以上，必须包含大小写字母，数字，特殊字符
                 if (!value) {
-                  return callback(t("signup.please_enter_password"));
+                  return callback(t("please_enter_password"));
                 }
                 if (value.length < 8) {
-                  return callback(t("signup.password_length_error"));
+                  return callback(t("password_length_error"));
                 }
                 if (!/[A-Z]/.test(value)) {
-                  return callback(t("signup.password_uppercase_error"));
+                  return callback(t("password_uppercase_error"));
                 }
                 if (!/[a-z]/.test(value)) {
-                  return callback(t("signup.password_lowercase_error"));
+                  return callback(t("password_lowercase_error"));
                 }
                 if (!/[0-9]/.test(value)) {
-                  return callback(t("signup.password_number_error"));
+                  return callback(t("password_number_error"));
                 }
                 if (
                   !/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·！#￥（——）：；“”‘、，|《。》？、【】]/.test(
                     value
                   )
                 ) {
-                  return callback(t("signup.password_special_error"));
+                  return callback(t("password_special_error"));
                 }
                 return callback();
               },
@@ -198,50 +211,50 @@ const Register: React.FC<IProps> = (props) => {
           preserve
         >
           <Input.Password
-            placeholder={t("signup.password_placeholder")}
+            placeholder={t("password_placeholder")}
             size="large"
           />
         </Form.Item>
 
         <Form.Item
-          label={t("signup.confirm_password")}
+          label={t("confirm_password")}
           name="confirm_password"
           rules={[
             {
               required: true,
-              message: t("signup.please_confirm_password"),
+              message: t("please_confirm_password"),
             },
             {
               validator(_, value, callback) {
                 if (!value || form.getFieldValue("password") === value) {
                   return callback();
                 }
-                callback(t("signup.confirm_password_error"));
+                callback(t("confirm_password_error"));
               },
-              message: t("signup.confirm_password_error"),
+              message: t("confirm_password_error"),
             },
           ]}
           preserve
         >
           <Input.Password
-            placeholder={t("signup.confirm_password_placeholder")}
+            placeholder={t("confirm_password_placeholder")}
             size="large"
           />
         </Form.Item>
 
         <Form.Item
-          label={t("signup.verification_code")}
+          label={t("verification_code")}
           name="verify_code"
           rules={[
             {
               required: true,
-              message: t("signup.please_enter_verification_code"),
+              message: t("please_enter_verification_code"),
             },
           ]}
           preserve
         >
           <Input
-            placeholder={t("signup.verification_code_placeholder")}
+            placeholder={t("verification_code_placeholder")}
             size="large"
             suffix={
               <Button
@@ -253,28 +266,78 @@ const Register: React.FC<IProps> = (props) => {
                 }}
               >
                 {countdown > 0
-                  ? `${countdown}${t("signup.countdown")}`
+                  ? `${countdown}${t("countdown")}`
                   : isSendingCode
-                  ? t("signup.sending")
-                  : t("signup.send_code")}
+                  ? t("sending")
+                  : t("send_code")}
               </Button>
             }
           />
         </Form.Item>
+        <div className={styles.signin}>
+          Already have an account? <Link to="/signin">{t("sign_in")}</Link>
+        </div>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            size="large"
-            onClick={checkEmail}
-            style={{ marginTop: 80 }}
+        <Button
+          type="primary"
+          block
+          size="large"
+          onClick={checkEmail}
+          style={{ marginTop: 80 }}
+        >
+          {t("next_step")}
+        </Button>
+        <div style={{ marginTop: 16 }}>
+          <Checkbox
+            checked={isTermsAgreed}
+            onChange={(e) => setIsTermsAgreed(e.target.checked)}
           >
-            {t("signup.next_step")}
-          </Button>
-        </Form.Item>
+            By signing in, you are agreeing to the{" "}
+            <span
+              className={styles.termsLink}
+              onClick={(e) => {
+                e.preventDefault();
+                setTermsType("terms");
+              }}
+            >
+              Terms of Service
+            </span>{" "}
+            and{" "}
+            <span
+              className={styles.termsLink}
+              onClick={(e) => {
+                e.preventDefault();
+                setTermsType("privacy");
+              }}
+            >
+              Privacy Policy
+            </span>
+          </Checkbox>
+        </div>
       </Form>
+      <Modal
+        open={!!termsType}
+        onCancel={() => setTermsType(undefined)}
+        onOk={() => setTermsType(undefined)}
+        title={termsType === "terms" ? "Terms of Service" : "Privacy Policy"}
+        centered
+        width={"80%"}
+        style={{ maxWidth: 1000, maxHeight: "90vh" }}
+        cancelButtonProps={{
+          style: {
+            display: "none",
+          },
+        }}
+      >
+        <div style={{ maxHeight: "70vh", overflow: "auto" }}>
+          <MarkdownContainer
+            content={(termsType === "terms"
+              ? terms
+              : privacyAgreement
+            ).replaceAll("\n", "\n\n")}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };
