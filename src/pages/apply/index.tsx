@@ -1,6 +1,5 @@
 import React from "react";
 import { Form, Input, Button, message } from "antd";
-import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
 import { Link } from "react-router";
 import SignContainer from "../../components/SignContainer";
@@ -33,9 +32,7 @@ const Apply: React.FC = () => {
   };
 
   return (
-    <SignContainer>
-      <img src={logo} style={{ width: 188 }} />
-      <h2 style={{ fontSize: 36 }}>Join the waitlist</h2>
+    <SignContainer title="Join the waitlist">
       <Form
         form={form}
         name="login"

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Input, Button, message } from "antd";
-import logo from "../../assets/logo.png";
 import { Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
