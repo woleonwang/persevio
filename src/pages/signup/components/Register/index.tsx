@@ -140,8 +140,7 @@ const Register: React.FC<IProps> = (props) => {
   };
 
   return (
-    <SignContainer>
-      <img src={logo} style={{ width: 188 }} />
+    <div>
       <h2 style={{ fontSize: 36 }}>{t("signup.title")}</h2>
       <Form form={form} name="login" autoComplete="off" layout="vertical">
         <Form.Item
@@ -268,7 +267,7 @@ const Register: React.FC<IProps> = (props) => {
           </Button>
         </Form.Item>
       </Form>
-    </SignContainer>
+    </div>
   );
 };
 

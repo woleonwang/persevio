@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Form, Input, Button, message, Select } from "antd";
-import logo from "@/assets/logo.png";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select } from "antd";
 import { Post } from "@/utils/request";
-import { Link, useNavigate } from "react-router";
-import SignContainer from "@/components/SignContainer";
 import { useTranslation } from "react-i18next";
 
+import styles from "../../style.module.less";
 interface CompanyInfoFormValues {
   name?: string;
   website?: string;
@@ -21,9 +19,10 @@ const CompanyInfo: React.FC<IProps> = (props) => {
   const { onPrev, onNext, initialValues } = props;
 
   const [form] = Form.useForm<CompanyInfoFormValues>();
-  const { t } = useTranslation();
-
-  const navigate = useNavigate();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`signup.${key}`);
+  };
 
   useEffect(() => {
     form.setFieldsValue(initialValues);
@@ -47,47 +46,46 @@ const CompanyInfo: React.FC<IProps> = (props) => {
   return (
     <Form form={form} name="login" autoComplete="off" layout="vertical">
       <Form.Item
-        label={t("signup.company_name")}
+        label={t("company_name")}
         name="name"
-        rules={[{ required: true, message: t("signup.please_enter_company") }]}
+        rules={[{ required: true, message: t("please_enter_company_name") }]}
       >
-        <Input placeholder={t("signup.company_placeholder")} size="large" />
+        <Input placeholder={originalT("please_enter")} size="large" />
       </Form.Item>
 
       <Form.Item
-        label={t("signup.website")}
+        label={t("website")}
         name="website"
-        rules={[{ required: true, message: t("signup.please_enter_website") }]}
+        rules={[{ required: true, message: t("please_enter_website") }]}
       >
-        <Input placeholder={t("signup.website_placeholder")} size="large" />
+        <Input placeholder={originalT("please_enter")} size="large" />
       </Form.Item>
 
       <Form.Item
-        label={t("signup.company_size")}
+        label={t("company_size")}
         name="size"
-        rules={[
-          { required: true, message: t("signup.please_enter_company_size") },
-        ]}
+        rules={[{ required: true, message: t("please_enter_company_size") }]}
       >
         <Select
+          placeholder={originalT("please_select")}
           options={[
-            { label: t("signup.company_size_1"), value: "lte_10" },
-            { label: t("signup.company_size_2"), value: "11_to_50" },
-            { label: t("signup.company_size_3"), value: "51_to_100" },
-            { label: t("signup.company_size_4"), value: "101_to_500" },
-            { label: t("signup.company_size_5"), value: "501_to_1000" },
-            { label: t("signup.company_size_6"), value: "gte_1001" },
+            { label: t("company_size_1"), value: "lte_10" },
+            { label: t("company_size_2"), value: "11_to_50" },
+            { label: t("company_size_3"), value: "51_to_100" },
+            { label: t("company_size_4"), value: "101_to_500" },
+            { label: t("company_size_5"), value: "501_to_1000" },
+            { label: t("company_size_6"), value: "gte_1001" },
           ]}
           size="large"
         />
       </Form.Item>
 
-      <div>
+      <div className={styles.footer}>
         <Button type="default" size="large" onClick={onPrev}>
-          {t("signup.prev")}
+          {t("prev")}
         </Button>
         <Button type="primary" size="large" onClick={submit}>
-          {t("signup.sign_up")}
+          {t("next_step")}
         </Button>
       </div>
     </Form>

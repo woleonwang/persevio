@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
-import logo from "@/assets/logo.png";
 import { Post } from "@/utils/request";
-import SignContainer from "@/components/SignContainer";
 import { useTranslation } from "react-i18next";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 
+import styles from "../../style.module.less";
 interface BasicInfoFormValues {
   name?: string;
   phone?: {
@@ -22,18 +21,22 @@ interface IProps {
 const BasicInfo: React.FC<IProps> = (props) => {
   const { onNext, initialValues } = props;
   const [form] = Form.useForm<BasicInfoFormValues>();
-  const { t } = useTranslation();
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => {
+    return originalT(`signup.${key}`);
+  };
 
   useEffect(() => {
     form.setFieldsValue(initialValues);
   }, [initialValues]);
+
   const handleSignup = async () => {
     form.validateFields().then(async (values) => {
       const { name, position, phone } = values;
       const { code } = await Post("/api/basic_info", {
         name,
         position,
-        country_code: phone?.countryCode,
+        country_code: phone?.countryCode || "+65",
         phone: phone?.phoneNumber,
       });
 
@@ -48,40 +51,49 @@ const BasicInfo: React.FC<IProps> = (props) => {
   return (
     <Form form={form} name="login" autoComplete="off" layout="vertical">
       <Form.Item
-        label={t("signup.your_name")}
+        label={t("your_name")}
         name="name"
-        rules={[{ required: true, message: t("signup.please_enter_name") }]}
+        rules={[{ required: true, message: t("please_enter_name") }]}
       >
-        <Input placeholder={t("signup.name_placeholder")} size="large" />
+        <Input placeholder={originalT("please_enter")} size="large" />
       </Form.Item>
 
       <Form.Item
-        label={t("signup.phone")}
+        label={t("phone")}
         name="phone"
-        rules={[{ required: true, message: t("signup.please_enter_phone") }]}
+        rules={[
+          {
+            validator: (_, value, callback) => {
+              if (!value?.countryCode || !value?.phoneNumber) {
+                callback(originalT("please_enter"));
+                return;
+              }
+              const reg = /^[0-9]+$/;
+              if (!(value.phoneNumber as string).match(reg)) {
+                callback(originalT("phone_not_valid"));
+                return;
+              }
+              callback();
+            },
+          },
+        ]}
       >
         <PhoneWithCountryCode />
       </Form.Item>
 
       <Form.Item
-        label={t("signup.position")}
+        label={t("position")}
         name="position"
-        rules={[{ required: true, message: t("signup.please_enter_position") }]}
+        rules={[{ required: true, message: t("please_enter_position") }]}
       >
-        <Input placeholder={t("signup.position_placeholder")} size="large" />
+        <Input placeholder={originalT("please_enter")} size="large" />
       </Form.Item>
 
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          block
-          size="large"
-          onClick={handleSignup}
-        >
-          {t("signup.sign_up")}
+      <div className={styles.footer}>
+        <Button type="primary" size="large" onClick={handleSignup}>
+          {t("next_step")}
         </Button>
-      </Form.Item>
+      </div>
     </Form>
   );
 };

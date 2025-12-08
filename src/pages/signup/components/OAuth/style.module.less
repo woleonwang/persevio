@@ -1,19 +1,10 @@
 @primary-color: #3682fe;
 
 .container {
-  flex: auto;
   display: flex;
-  width: 100%;
+  flex-direction: column;
   overflow: auto;
-}
-
-.body {
-  width: 1300px;
-  margin: 50px auto;
-}
-
-.logoWrapper {
-  padding-bottom: 32px;
+  margin-top: 64px;
 }
 
 .brand {
@@ -22,7 +13,7 @@
 }
 
 .button {
-  width: 60%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,16 +33,6 @@
   &.linkedin {
     border-color: rgba(11, 102, 194);
     color: rgba(11, 102, 194);
-  }
-}
-
-.title {
-  font-size: 48px;
-  font-weight: bold;
-  margin-top: 60px;
-  margin-bottom: 60px;
-  .primary {
-    color: @primary-color;
   }
 }
 

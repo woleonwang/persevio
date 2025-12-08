@@ -75,73 +75,89 @@ const Signup: React.FC = () => {
   }
 
   return status === "oauth" || status === "register" ? (
-    <SignContainer>
+    <SignContainer
+      title={
+        status === "oauth" ? "Sign up for an account" : "Sign up with email"
+      }
+    >
       {status === "oauth" ? (
         <OAuth onWithEmail={() => setStatus("register")} />
       ) : (
         <Register onNext={() => setStatus("basicInfo")} />
       )}
     </SignContainer>
-  ) : status === "basicInfo" ||
-    status === "companyInfo" ||
-    status === "recruitmentRequirement" ? (
+  ) : (
     <div className={styles.container}>
       <div className={styles.header}>
         <img src={logo} alt="logo" />
       </div>
-      <div className={styles.content}>
-        <Step
-          stepCount={3}
-          currentIndex={
-            status === "basicInfo" ? 0 : status === "companyInfo" ? 1 : 2
-          }
-        />
-        <div className={styles.title}>
-          {status === "basicInfo"
-            ? t("basic_info_title")
-            : status === "companyInfo"
-            ? t("company_info_title")
-            : t("recruitment_requirement_title")}
+
+      {status === "basicInfo" ||
+      status === "companyInfo" ||
+      status === "recruitmentRequirement" ? (
+        <div className={styles.content}>
+          <Step
+            stepCount={3}
+            currentIndex={
+              status === "basicInfo" ? 0 : status === "companyInfo" ? 1 : 2
+            }
+          />
+          <div className={styles.title}>
+            {status === "basicInfo"
+              ? t("basic_info_title")
+              : status === "companyInfo"
+              ? t("company_info_title")
+              : t("recruitment_requirement_title")}
+          </div>
+          <div className={styles.form}>
+            {status === "basicInfo" ? (
+              <BasicInfo
+                onNext={() => {
+                  fetchStaff();
+                  setStatus("companyInfo");
+                }}
+                initialValues={{
+                  name: staff?.staff_name,
+                  position: staff?.position,
+                  phone: {
+                    countryCode: staff?.country_code,
+                    phoneNumber: staff?.phone,
+                  },
+                }}
+              />
+            ) : status === "companyInfo" ? (
+              <CompanyInfo
+                onPrev={() => setStatus("basicInfo")}
+                onNext={() => {
+                  fetchStaff();
+                  setStatus("recruitmentRequirement");
+                }}
+                initialValues={{
+                  name: staff?.company_name,
+                  website: staff?.company_website,
+                  size: staff?.company_size,
+                }}
+              />
+            ) : (
+              <RecruitmentRequirement
+                onPrev={() => setStatus("companyInfo")}
+                onNext={() => {
+                  fetchStaff();
+                  setStatus("waiting");
+                }}
+                initialValues={{
+                  role_type: staff?.company_recruitment_requirements?.role_type,
+                  headcount_number:
+                    staff?.company_recruitment_requirements?.headcount_number,
+                }}
+              />
+            )}
+          </div>
         </div>
-        <div className={styles.form}>
-          {status === "basicInfo" ? (
-            <BasicInfo
-              onNext={() => setStatus("companyInfo")}
-              initialValues={{
-                name: staff?.staff_name,
-                position: staff?.position,
-                phone: {
-                  countryCode: staff?.country_code,
-                  phoneNumber: staff?.phone,
-                },
-              }}
-            />
-          ) : status === "companyInfo" ? (
-            <CompanyInfo
-              onPrev={() => setStatus("basicInfo")}
-              onNext={() => setStatus("recruitmentRequirement")}
-              initialValues={{
-                name: staff?.company_name,
-                website: staff?.company_website,
-                size: staff?.company_size,
-              }}
-            />
-          ) : (
-            <RecruitmentRequirement
-              onPrev={() => setStatus("companyInfo")}
-              onNext={() => setStatus("waiting")}
-              initialValues={{
-                role_type: staff?.company_recruitment_requirements?.role_type,
-                headcount_number:
-                  staff?.company_recruitment_requirements?.headcount_number,
-              }}
-            />
-          )}
-        </div>
-      </div>
+      ) : (
+        <Waiting status={staff?.company_status || "approving"} />
+      )}
     </div>
-  ) : (
-    <Waiting status={staff?.company_status || "approving"} />
   );
 };
 
