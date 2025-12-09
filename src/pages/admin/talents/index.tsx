@@ -111,7 +111,11 @@ const Talents = () => {
       title: "Hire Status",
       dataIndex: "hire_status",
       render: (hireStatus: string) => {
-        return hireStatus === "hired" ? "Hired" : "Not Hired";
+        return hireStatus === "hired"
+          ? "Hired"
+          : hireStatus === "not_hired"
+          ? "Not Hired"
+          : "-";
       },
     },
     {
@@ -209,10 +213,9 @@ const Talents = () => {
           className={commonStyles.bonusPoolModalForm}
         >
           <div className={commonStyles.modalDescription}>
-             If the referred person has been hired by the company, all users in
-            the referral chain will share 8000 S$; after confirmation, the
-            system will send an email notification to the users. Please contact
-            the users promptly.
+            If the referred person has been hired by the company, all users in
+            the referral chain will share {selectedTalent?.job?.bonus_pool} S$;
+            Please contact the users promptly.
           </div>
           <Form.Item
             label="Please select the current hiring status of the referred person"

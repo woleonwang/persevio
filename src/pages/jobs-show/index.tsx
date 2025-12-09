@@ -473,6 +473,12 @@ const JobsShow = () => {
             closeIcon={null}
             width={800}
             destroyOnClose
+            styles={{
+              mask: {
+                overflow: "hidden",
+                pointerEvents: "none",
+              },
+            }}
           >
             <ShareToken
               parentShareToken={shareToken}

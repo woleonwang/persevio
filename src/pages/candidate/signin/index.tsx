@@ -66,15 +66,16 @@ const CandidateSignIn: React.FC = () => {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
       i18n.changeLanguage(candidate.lang ?? "zh-CN");
-      if (!candidate.name) {
-        setPageState("basic");
-      } else if (!candidate.network_profile_finished_at) {
-        setPageState("conversation");
-      } else if (candidate.approve_status !== "approved") {
-        setPageState("approve");
-      } else {
-        navigate("/candidate/home");
-      }
+      // if (!candidate.name) {
+      //   setPageState("basic");
+      // } else if (!candidate.network_profile_finished_at) {
+      //   setPageState("conversation");
+      // } else if (candidate.approve_status !== "approved") {
+      //   setPageState("approve");
+      // } else {
+      // navigate("/candidate/jobs");
+      // }
+      navigate("/candidate/jobs");
     } else {
       setPageState("signin");
     }

@@ -69,12 +69,18 @@ const CompanyInfo: React.FC<IProps> = (props) => {
         <Select
           placeholder={originalT("please_select")}
           options={[
-            { label: t("company_size_1"), value: "lte_10" },
-            { label: t("company_size_2"), value: "11_to_50" },
-            { label: t("company_size_3"), value: "51_to_100" },
-            { label: t("company_size_4"), value: "101_to_500" },
-            { label: t("company_size_5"), value: "501_to_1000" },
-            { label: t("company_size_6"), value: "gte_1001" },
+            { label: t("company_size_options.lte_10"), value: "lte_10" },
+            { label: t("company_size_options.11_to_50"), value: "11_to_50" },
+            { label: t("company_size_options.51_to_100"), value: "51_to_100" },
+            {
+              label: t("company_size_options.101_to_500"),
+              value: "101_to_500",
+            },
+            {
+              label: t("company_size_options.501_to_1000"),
+              value: "501_to_1000",
+            },
+            { label: t("company_size_options.gte_1001"), value: "gte_1001" },
           ]}
           size="large"
         />

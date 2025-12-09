@@ -9,12 +9,22 @@ interface Window {
   SpeechRecognition: () => void;
 }
 
+type TCompanySize =
+  | "lte_10"
+  | "11_to_50"
+  | "51_to_100"
+  | "101_to_500"
+  | "501_to_1000"
+  | "gte_1001";
+
 interface ICompany {
   id: number;
   name: string;
   status: "approving" | "rejected" | "approved";
   website: string;
   register_info: string;
+  size: TCompanySize;
+  recruitment_requirements_json: string;
   created_at: string;
   updated_at: string;
 }

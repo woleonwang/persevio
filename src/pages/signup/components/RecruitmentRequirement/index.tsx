@@ -58,40 +58,43 @@ const RecruitmentRequirement: React.FC<IProps> = (props) => {
           placeholder={originalT("please_select")}
           options={[
             {
-              label: t("role_type_engineering_tech"),
+              label: t("role_type_options.engineering/tech"),
               value: "engineering/tech",
             },
-            { label: t("role_type_data_ai"), value: "data/ai" },
-            { label: t("role_type_product"), value: "product" },
-            { label: t("role_type_design_ux"), value: "design/ux" },
-            { label: t("role_type_sales"), value: "sales" },
+            { label: t("role_type_options.data/ai"), value: "data/ai" },
+            { label: t("role_type_options.product"), value: "product" },
+            { label: t("role_type_options.design/ux"), value: "design/ux" },
+            { label: t("role_type_options.sales"), value: "sales" },
             {
-              label: t("role_type_marketing_growth"),
+              label: t("role_type_options.marketing/growth"),
               value: "marketing/growth",
             },
             {
-              label: t("role_type_customer_success_support"),
+              label: t("role_type_options.customer success/support"),
               value: "customer success/support",
             },
-            { label: t("role_type_operations"), value: "operations" },
-            { label: t("role_type_finance"), value: "finance" },
-            { label: t("role_type_hr_people"), value: "hr/people" },
+            { label: t("role_type_options.operations"), value: "operations" },
+            { label: t("role_type_options.finance"), value: "finance" },
+            { label: t("role_type_options.hr/people"), value: "hr/people" },
             {
-              label: t("role_type_legal_compliance"),
+              label: t("role_type_options.legal/compliance"),
               value: "legal/compliance",
             },
-            { label: t("role_type_it_security"), value: "it/security" },
+            { label: t("role_type_options.it/security"), value: "it/security" },
             {
-              label: t("role_type_supply_chain_procurement"),
+              label: t("role_type_options.supply chain/procurement"),
               value: "supply chain/procurement",
             },
-            { label: t("role_type_manufacturing"), value: "manufacturing" },
-            { label: t("role_type_facilities"), value: "facilities" },
             {
-              label: t("role_type_medical_clinical"),
+              label: t("role_type_options.manufacturing"),
+              value: "manufacturing",
+            },
+            { label: t("role_type_options.facilities"), value: "facilities" },
+            {
+              label: t("role_type_options.medical/clinical"),
               value: "medical/clinical",
             },
-            { label: t("role_type_other"), value: "other" },
+            { label: t("role_type_options.other"), value: "other" },
           ]}
           size="large"
         />

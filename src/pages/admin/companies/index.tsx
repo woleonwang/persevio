@@ -3,6 +3,9 @@ import { Input, Select, Table, Button, Space, message, Modal } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
+import { useTranslation } from "react-i18next";
+import { parseJSON } from "@/utils";
+import { ColumnsType } from "antd/es/table";
 
 const { Option } = Select;
 
@@ -20,6 +23,7 @@ const AdminCompanies: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const { t: originalT } = useTranslation();
 
   useEffect(() => {
     fetchCompanies();
@@ -111,7 +115,7 @@ const AdminCompanies: React.FC = () => {
   };
 
   // 表格列定义
-  const columns = [
+  const columns: ColumnsType<ICompany> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -183,11 +187,49 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
+      title: "公司规模",
+      dataIndex: "size",
+      key: "size",
+      width: 150,
+      ellipsis: false,
+      render: (size: TCompanySize) =>
+        size ? originalT(`signup.company_size_options.${size}`) : "-",
+    },
+    {
+      title: "职位类型",
+      dataIndex: "recruitment_requirements_json",
+      key: "role_type",
+      width: 150,
+      ellipsis: false,
+      render: (recruitmentRequirements: string) => {
+        const requirements = parseJSON(recruitmentRequirements);
+        return (
+          (requirements.role_type ?? [])
+            .map((role: string) =>
+              originalT(`signup.role_type_options.${role}`)
+            )
+            .join(", ") || "-"
+        );
+      },
+    },
+    {
+      title: "招聘名额",
+      dataIndex: "recruitment_requirements_json",
+      key: "headcount_number",
+      width: 150,
+      ellipsis: false,
+      render: (recruitmentRequirements: string) => {
+        const requirements = parseJSON(recruitmentRequirements);
+        return requirements.headcount_number || "-";
+      },
+    },
+    {
       title: "审核状态",
       dataIndex: "status",
       key: "status",
       width: 120,
       ellipsis: false,
+      fixed: "right",
       render: (status: string) => getStatusTag(status),
     },
     {
@@ -195,6 +237,7 @@ const AdminCompanies: React.FC = () => {
       key: "action",
       width: 200,
       ellipsis: false,
+      fixed: "right",
       render: (_: any, record: ICompany) => {
         if (record.status === "approving") {
           return (
@@ -266,6 +309,7 @@ const AdminCompanies: React.FC = () => {
 
       <div className={styles.tableWrapper}>
         <Table
+          scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={visibleCompanies.slice(
             (currentPage - 1) * PAGE_SIZE,
