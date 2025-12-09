@@ -1,0 +1,89 @@
+@import "@/mixin.module.less";
+
+.header {
+  display: flex;
+  padding-left: 60px;
+  position: relative;
+
+  .dayItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .addAllDay {
+      margin-top: 20px;
+      height: 20px;
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      width: 100%;
+    }
+
+    &:not(:last-child) {
+      .addAllDay {
+        border-right: none;
+      }
+    }
+  }
+
+  .addAllDayLabel {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+.body {
+  display: flex;
+  padding-left: 60px;
+  position: relative;
+
+  .weekDay {
+    flex: 1;
+    position: relative;
+
+    &:not(:last-child) {
+      .timeSlot {
+        border-right: none;
+      }
+    }
+  }
+
+  .selectedTimeSlot {
+    position: absolute;
+    border: 1px solid @primary-color;
+    background-color: white;
+    border-left-width: 4px;
+    z-index: 1;
+  }
+
+  .timeSlot {
+    height: 50px;
+    border: 1px solid #eeeeee;
+    position: relative;
+    &:first-child {
+      border-top: none;
+    }
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+
+    .timeSlotLabel {
+      position: absolute;
+      left: -60px;
+      top: -10px;
+    }
+
+    .firstHourLabel {
+      top: 0;
+    }
+
+    .timeSlotLabelSuffix {
+      position: absolute;
+      left: -60px;
+      bottom: -10px;
+    }
+  }
+}

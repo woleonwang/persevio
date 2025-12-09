@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Spin, Tag, Drawer } from "antd";
+import { Button, message, Spin, Tag, Drawer, Modal } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
@@ -17,6 +17,7 @@ import usePublicJob from "@/hooks/usePublicJob";
 import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
+import InterviewForm from "./components/InterviewForm";
 
 interface IProps {
   isPreview?: boolean;
@@ -37,6 +38,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   const [talentChatMessages, setTalentChatMessages] = useState<
     TMessageFromApi[]
   >([]);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -122,7 +124,13 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
             {talent?.status === "accepted" ? (
-              <Tag color="green">{t("status_accepted")}</Tag>
+              <Button
+                type="primary"
+                onClick={() => setIsInterviewModalOpen(true)}
+                size="large"
+              >
+                Schedule Interview
+              </Button>
             ) : talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
@@ -296,6 +304,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
           />
         </div>
       </Drawer>
+
+      <Modal
+        open={isInterviewModalOpen}
+        onCancel={() => setIsInterviewModalOpen(false)}
+        width={1000}
+      >
+        <InterviewForm talent={talent} jobName={job.name} />
+      </Modal>
     </div>
   );
 };
