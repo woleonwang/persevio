@@ -222,7 +222,7 @@ const Talents: React.FC = () => {
         </div>
         <div className={styles.filterItem}>
           <Select
-            placeholder={t("filter_placeholder")}
+            placeholder={t("job_placeholder")}
             value={selectedJob}
             onChange={setSelectedJob}
             style={{ width: 200 }}
@@ -240,7 +240,7 @@ const Talents: React.FC = () => {
         </div>
         <div className={styles.filterItem}>
           <Select
-            placeholder={t("filter_placeholder")}
+            placeholder={t("status_placeholder")}
             value={selectedStatus}
             onChange={setSelectedStatus}
             style={{ width: 200 }}
