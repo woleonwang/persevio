@@ -1306,7 +1306,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   signup: {
     title: "注册账号",
-    email: "邮箱",
+    email: "公司邮箱",
     password: "密码",
     confirm_password: "确认密码",
     verification_code: "验证码",

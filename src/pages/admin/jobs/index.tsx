@@ -333,7 +333,7 @@ const Jobs = () => {
             <InputNumber
               placeholder="Input total amount"
               style={{ width: "100%" }}
-              prefix="$"
+              prefix="S$"
             />
           </Form.Item>
         </Form>

@@ -1360,7 +1360,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   signup: {
     title: "Sign up for an account",
-    email: "Email",
+    email: "Business Email",
     password: "Password",
     confirm_password: "Confirm Password",
     verification_code: "Verification Code",
