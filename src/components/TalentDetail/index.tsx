@@ -20,7 +20,7 @@ import {
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 import classnames from "classnames";
-import useTalent from "@/hooks/useTalent";
+import usePublicTalent from "@/hooks/usePublicTalent";
 import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import MarkdownEditor from "@/components/MarkdownEditor";
@@ -48,7 +48,7 @@ interface IProps {
 
 const TalentDetail: React.FC<IProps> = (props) => {
   const { job } = usePublicJob();
-  const { talent, fetchTalent } = useTalent();
+  const { talent, fetchTalent } = usePublicTalent();
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`talent.${key}`);
 

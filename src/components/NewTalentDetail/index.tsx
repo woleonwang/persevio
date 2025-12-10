@@ -25,7 +25,7 @@ interface IProps {
 
 const NewTalentDetail: React.FC<IProps> = (props) => {
   const { job } = usePublicJob();
-  const { talent, fetchTalent } = useTalent();
+  const { talent, interviews, fetchTalent } = useTalent();
   const { t: originalT, i18n } = useTranslation();
 
   const [tabKey, setTabKey] = useState<"resume" | "report">("resume");
@@ -126,13 +126,32 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
             {talent?.status === "accepted" ? (
-              <Button
-                type="primary"
-                onClick={() => setIsInterviewModalOpen(true)}
-                size="large"
-              >
-                Schedule Interview
-              </Button>
+              interviews.length === 0 ? (
+                <Button
+                  type="primary"
+                  onClick={() => setIsInterviewModalOpen(true)}
+                  size="large"
+                  block
+                >
+                  Schedule Interview
+                </Button>
+              ) : interviews[0].scheduled_at ? (
+                <Button
+                  size="large"
+                  block
+                  onClick={() => setIsInterviewModalOpen(true)}
+                >
+                  Interview Scheduled
+                </Button>
+              ) : (
+                <Button
+                  size="large"
+                  block
+                  onClick={() => setIsInterviewModalOpen(true)}
+                >
+                  Awaiting candidate's confirmation of interview details
+                </Button>
+              )
             ) : talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
@@ -313,12 +332,24 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         width={"fit-content"}
         centered
         title="Schedule Interview"
-        onOk={() => handlerRef.current?.submit?.()}
+        onOk={() =>
+          !!interviews[0]
+            ? setIsInterviewModalOpen(false)
+            : handlerRef.current?.submit?.()
+        }
+        cancelButtonProps={{
+          style: interviews[0]
+            ? {
+                display: "none",
+              }
+            : undefined,
+        }}
       >
         <InterviewForm
           talent={talent}
           jobName={job.name}
           handlerRef={handlerRef}
+          interview={interviews[0]}
         />
       </Modal>
     </div>

@@ -17,6 +17,15 @@ export const parseJSON = (jsonString?: string) => {
   }
 };
 
+export const parseJSONArray = (jsonString?: string) => {
+  if (!jsonString) return [];
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return [];
+  }
+};
+
 export const parseMarkdown = (markdownString?: string) => {
   if (!markdownString) return "";
 
