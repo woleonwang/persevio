@@ -5,21 +5,35 @@ import { useEffect, useState } from "react";
 import classnames from "classnames";
 
 import styles from "./style.module.less";
-import TimeRangePicker from "@/components/TimeRangePicker";
 
-type TValue = {
+export type TValue = {
   from: string;
   to: string;
 };
 
 interface IProps {
-  timeSlots?: TValue[];
+  value?: TValue[];
+  onChange?: (value: TValue[]) => void;
 }
 
-const AVAILABLE_WEEKDAYS = [1, 2, 3, 4, 5];
-const AVAILABLE_HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+const headers = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const AVAILABLE_HOURS = Array.from({ length: 24 }, (_, index) => index);
 const Calender: React.FC<IProps> = (props) => {
-  const { timeSlots } = props;
+  const { value: timeSlots, onChange } = props;
   const [value, setValue] = useState<TValue[]>([]);
 
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(
@@ -30,8 +44,6 @@ const Calender: React.FC<IProps> = (props) => {
   const [currentTimeRange, setCurrentTimeRange] = useState<
     [Dayjs | null, Dayjs | null] | null
   >();
-
-  const headers = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
   useEffect(() => {
     setValue(timeSlots ?? []);
@@ -45,49 +57,64 @@ const Calender: React.FC<IProps> = (props) => {
       const fromDayjs = dayjs(item.from);
       const toDayjs = dayjs(item.to);
       const isNotOverlapping =
+        !fromDayjs.isSame(currentTimeSlot.from, "day") ||
         fromDayjs.isAfter(currentTimeSlot.to) ||
         toDayjs.isBefore(currentTimeSlot.from);
+
       if (isNotOverlapping) {
         unOverlappingTimeSlots.push(item);
+      } else {
+        currentTimeSlot = {
+          from: fromDayjs.isBefore(currentTimeSlot.from)
+            ? fromDayjs
+            : currentTimeSlot.from,
+          to: toDayjs.isAfter(currentTimeSlot.to)
+            ? toDayjs
+            : currentTimeSlot.to,
+        };
       }
-
-      currentTimeSlot = {
-        from: fromDayjs.isBefore(currentTimeSlot.from)
-          ? fromDayjs
-          : currentTimeSlot.from,
-        to: toDayjs.isAfter(currentTimeSlot.to) ? toDayjs : currentTimeSlot.to,
-      };
     });
-    setValue([
+
+    const newTimeSlot = [
       ...unOverlappingTimeSlots,
       {
         from: currentTimeSlot.from.toISOString(),
         to: currentTimeSlot.to.toISOString(),
       },
-    ]);
+    ];
+
+    setValue(newTimeSlot);
+    onChange?.(newTimeSlot);
   };
 
   return (
     <div>
-      <div>
+      <div className={styles.weekSelector}>
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => setCurrentWeek(currentWeek.subtract(1, "week"))}
+          size="large"
         />
-        <div>{currentWeek.format("MM YYYY")}</div>
+        <div className={styles.monthYear}>
+          {MONTHS[currentWeek.month()]} {currentWeek.year()}
+        </div>
         <Button
           icon={<ArrowRightOutlined />}
           onClick={() => setCurrentWeek(currentWeek.add(1, "week"))}
+          size="large"
         />
       </div>
       <div>
         <div className={styles.header}>
           <div className={styles.addAllDayLabel}>All day</div>
           {headers.map((header, index) => {
+            const now = dayjs();
             const currentDay = currentWeek.add(index, "day");
+            const disabled = currentDay.isBefore(dayjs(), "day");
+
             return (
               <div key={header} className={styles.dayItem}>
-                <div>{header}</div>
+                <div className={styles.dayHeader}>{header}</div>
                 <div
                   className={classnames(styles.day, {
                     [styles.today]: currentDay.isSame(dayjs(), "day"),
@@ -97,21 +124,28 @@ const Calender: React.FC<IProps> = (props) => {
                 </div>
                 <div
                   onClick={() => {
+                    if (disabled) return;
                     setSelectedDay(currentDay);
                     setIsAddTimeModalOpen(true);
                   }}
+                  className={classnames(styles.addTimesButton, {
+                    [styles.disabled]: disabled,
+                  })}
                 >
                   Add times
                 </div>
                 <div
                   className={styles.addAllDay}
                   onClick={() => {
+                    if (disabled) return;
                     addNewTimeSlot(
-                      currentDay.set("hour", AVAILABLE_HOURS[0]),
                       currentDay.set(
                         "hour",
-                        AVAILABLE_HOURS[AVAILABLE_HOURS.length - 1]
-                      )
+                        now.isSame(currentDay, "day")
+                          ? now.hour() + 1
+                          : AVAILABLE_HOURS[0]
+                      ),
+                      currentDay.add(1, "day").set("hour", 0)
                     );
                   }}
                 />
@@ -129,46 +163,52 @@ const Calender: React.FC<IProps> = (props) => {
             return (
               <div key={header} className={styles.weekDay}>
                 {selectedTimeSlots.map((item) => {
+                  const endTime = dayjs(item.to).format("HH:mm");
                   return (
                     <div
                       key={item.from}
                       className={styles.selectedTimeSlot}
                       style={{
+                        left: 0,
+                        right: 4,
                         top:
-                          dayjs(item.from).diff(
+                          (dayjs(item.from).diff(
                             currentDay.set("hour", AVAILABLE_HOURS[0]),
-                            "hour"
-                          ) * 50,
+                            "minute"
+                          ) *
+                            50) /
+                          60,
                         height:
-                          dayjs(item.to).diff(dayjs(item.from), "hour") * 50,
+                          (dayjs(item.to).diff(dayjs(item.from), "minute") *
+                            50) /
+                          60,
                       }}
                     >
                       {dayjs(item.from).format("HH:mm")} ~{" "}
-                      {dayjs(item.to).format("HH:mm")}
+                      {endTime === "00:00" ? "24:00" : endTime}
                     </div>
                   );
                 })}
                 <div className={styles.timeSlotWrapper}>
-                  {AVAILABLE_HOURS.slice(0, AVAILABLE_HOURS.length - 1).map(
-                    (hour, hourIndex) => (
-                      <div key={hour} className={styles.timeSlot}>
-                        {index === 0 && (
-                          <>
-                            <div
-                              className={classnames(styles.timeSlotLabel, {
-                                [styles.firstHourLabel]: hourIndex === 0,
-                              })}
-                            >{`${hour}:00`}</div>
-                            {hourIndex === AVAILABLE_HOURS.length - 2 && (
-                              <div className={styles.timeSlotLabelSuffix}>{`${
-                                hour + 1
-                              }:00`}</div>
-                            )}
-                          </>
+                  {AVAILABLE_HOURS.map((hour, hourIndex) => {
+                    const startTime = currentDay.set("hour", hour);
+                    return (
+                      <div
+                        key={hour}
+                        className={classnames(styles.timeSlot, {
+                          [styles.shadow]: startTime.isBefore(dayjs()),
+                        })}
+                      >
+                        {index === 0 && hourIndex > 0 && (
+                          <div
+                            className={classnames(styles.timeSlotLabel, {
+                              [styles.firstHourLabel]: hourIndex === 0,
+                            })}
+                          >{`${hour}:00`}</div>
                         )}
                       </div>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -186,28 +226,50 @@ const Calender: React.FC<IProps> = (props) => {
           }
           setCurrentTimeRange(null);
         }}
+        centered
+        title="Add time"
       >
-        <TimePicker.RangePicker
-          value={currentTimeRange}
-          onChange={(timeRange) => {
-            if (timeRange && timeRange.length === 2 && selectedDay) {
-              const withSelectedDay = timeRange.map((tm) => {
-                if (!tm) return tm;
-                return selectedDay
-                  .hour(tm.hour())
-                  .minute(tm.minute())
-                  .second(0)
-                  .millisecond(0);
-              });
-              setCurrentTimeRange(
-                withSelectedDay as [dayjs.Dayjs, dayjs.Dayjs]
-              );
-            }
-          }}
-          format="HH:mm"
-          minuteStep={30}
-          inputReadOnly
-        />
+        <div style={{ margin: "20px 0" }}>
+          <TimePicker.RangePicker
+            needConfirm={false}
+            style={{ width: "100%" }}
+            value={currentTimeRange}
+            onChange={(timeRange) => {
+              if (
+                timeRange &&
+                timeRange.length === 2 &&
+                selectedDay &&
+                timeRange[0] &&
+                timeRange[1] &&
+                !timeRange[0].isSame(timeRange[1], "minute")
+              ) {
+                const withSelectedDay = timeRange.map((tm) => {
+                  if (!tm) return tm;
+                  return selectedDay
+                    .hour(tm.hour())
+                    .minute(tm.minute())
+                    .second(0)
+                    .millisecond(0);
+                });
+                setCurrentTimeRange(
+                  withSelectedDay as [dayjs.Dayjs, dayjs.Dayjs]
+                );
+              }
+            }}
+            format="HH:mm"
+            minuteStep={15}
+            inputReadOnly
+            disabledTime={() => {
+              const isToday = dayjs().isSame(selectedDay, "day");
+              return {
+                disabledHours: () =>
+                  isToday
+                    ? AVAILABLE_HOURS.filter((hour) => hour <= dayjs().hour())
+                    : [],
+              };
+            }}
+          />
+        </div>
       </Modal>
     </div>
   );

@@ -1,0 +1,78 @@
+@import "@/mixin.module.less";
+
+.interviewForm {
+  display: flex;
+  max-height: 80vh;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.formContainer {
+  flex: none;
+  width: 560px;
+  overflow: auto;
+  padding: 20px 0;
+
+  .radioGroup {
+    width: 100%;
+    display: flex;
+
+    & > label {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .timeSlotsDescription {
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: rgba(249, 169, 48, 1);
+    background-color: rgba(252, 249, 235, 1);
+  }
+
+  .timeSlotItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding: 6px;
+    border-radius: 12px;
+    background-color: rgba(242, 247, 255, 1);
+    border: 1px solid rgba(54, 130, 254, 0.2);
+  }
+
+  .timeSlotItemContent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 12px;
+
+    .timeSlotItemTime {
+      border-left: 2px solid rgba(54, 130, 254, 0.2);
+      padding-left: 12px;
+    }
+
+    .timeSlotItemIcon {
+      color: @primary-color;
+      font-size: 20px;
+    }
+  }
+
+  .timeSlotItemDelete {
+    width: 40px;
+    height: 40px;
+
+    .timeSlotItemDeleteIcon {
+      font-size: 20px;
+      color: #999;
+    }
+  }
+}
+
+.calendarContainer {
+  width: 1000px;
+  flex: none;
+  padding: 20px;
+  overflow: auto;
+  background-color: rgba(245, 247, 251, 1);
+}

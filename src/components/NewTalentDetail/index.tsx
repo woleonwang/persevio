@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, message, Spin, Tag, Drawer, Modal } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
@@ -39,6 +39,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     TMessageFromApi[]
   >([]);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
+  const handlerRef = useRef<{ submit?: () => void }>({});
 
   const navigate = useNavigate();
 
@@ -308,9 +310,16 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       <Modal
         open={isInterviewModalOpen}
         onCancel={() => setIsInterviewModalOpen(false)}
-        width={1000}
+        width={"fit-content"}
+        centered
+        title="Schedule Interview"
+        onOk={() => handlerRef.current?.submit?.()}
       >
-        <InterviewForm talent={talent} jobName={job.name} />
+        <InterviewForm
+          talent={talent}
+          jobName={job.name}
+          handlerRef={handlerRef}
+        />
       </Modal>
     </div>
   );
