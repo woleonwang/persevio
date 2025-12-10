@@ -2,7 +2,7 @@ import useCandidate from "@/hooks/useCandidate";
 import { Get, Post } from "@/utils/request";
 import { useEffect, useReducer, useState } from "react";
 import styles from "./style.module.less";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Spin } from "antd";
 import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
 import { copy } from "@/utils";
 import { useTranslation } from "react-i18next";
@@ -37,11 +37,12 @@ const ShareToken: React.FC<IProps> = (props) => {
     "init" | "basicInfo" | "copy" | "exists"
   >("init");
   const [shareToken, setShareToken] = useState<string>();
-  const { candidate } = useCandidate();
+  const { candidate, inited } = useCandidate();
   const [form] = Form.useForm<TFormValues>();
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`jobs_show.${key}`);
 
   useEffect(() => {
     if (candidate) {
@@ -111,16 +112,29 @@ const ShareToken: React.FC<IProps> = (props) => {
           <div>How it works:</div>
           <div className={styles.howItWorksContent}>
             <div className={styles.howItWorksContentPoints}>
-              {new Array(4).fill(0).map((_, index) => (
-                <div className={styles.point} key={index} />
-              ))}
+              {new Array(status === "exists" ? 3 : 4)
+                .fill(0)
+                .map((_, index) => (
+                  <div className={styles.point} key={index} />
+                ))}
             </div>
             <div className={styles.howItWorksContentText}>
+              {status !== "exists" && (
+                <div>
+                  Generate your <b>unique referral link</b> below.
+                </div>
+              )}
               <div>
-                Generate your <b>unique referral link</b> below.
-              </div>
-              <div>
-                <b>Share it</b> with anyone who might be a good fit.
+                {status === "exists" ? (
+                  <>
+                    <b>Share your referral link</b> with anyone who might be a
+                    good fit.
+                  </>
+                ) : (
+                  <>
+                    <b>Share it</b> with anyone who might be a good fit.
+                  </>
+                )}
               </div>
               <div>
                 <b>Your chain grows</b> — Recipients can create their own link
@@ -157,7 +171,7 @@ const ShareToken: React.FC<IProps> = (props) => {
               e.stopPropagation();
               if (shareToken) {
                 await copy(getShareUrl());
-                message.success(originalT("copied"));
+                message.success(t("share_token_copied"));
               }
             }}
             disabled={!shareToken}
@@ -168,6 +182,14 @@ const ShareToken: React.FC<IProps> = (props) => {
       />
     </div>
   );
+
+  if (!inited) {
+    return (
+      <div className="flex-center" style={{ height: 400 }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div>

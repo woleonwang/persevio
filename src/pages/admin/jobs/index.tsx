@@ -323,12 +323,17 @@ const Jobs = () => {
           <Form.Item
             label="Please enter the total bonus pool amount for the current job"
             name="bonus_pool"
-            rules={[{ required: true }]}
+            rules={[
+              {
+                required: true,
+                message: "Please enter the amount",
+              },
+            ]}
           >
             <InputNumber
               placeholder="Input total amount"
               style={{ width: "100%" }}
-              prefix="$"
+              prefix="S$"
             />
           </Form.Item>
         </Form>

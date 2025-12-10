@@ -25,7 +25,7 @@ const Referrals = () => {
 
   const fetchReferrals = async () => {
     const { code, data } = await Get("/api/candidate/referer_talents");
-    if (code === 0) {
+    if (code === 0 && data.referer_talents) {
       setRefererTalents(data.referer_talents);
     }
   };
