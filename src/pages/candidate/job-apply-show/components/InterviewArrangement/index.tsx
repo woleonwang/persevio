@@ -125,7 +125,10 @@ const InterviewArrangement: React.FC<IProps> = ({
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
-          <Form.Item label={originalT("interview_form.job_company_name")} required>
+          <Form.Item
+            label={originalT("interview_form.job_company_name")}
+            required
+          >
             <Input value={jobApply.company_name} disabled size="large" />
           </Form.Item>
 
@@ -133,7 +136,10 @@ const InterviewArrangement: React.FC<IProps> = ({
             <Input value={jobApply.job_name} disabled size="large" />
           </Form.Item>
 
-          <Form.Item label={originalT("interview_form.interview_mode")} required>
+          <Form.Item
+            label={originalT("interview_form.interview_mode")}
+            required
+          >
             <Input
               value={interviewModeOptions[interview?.mode]}
               disabled
@@ -142,14 +148,20 @@ const InterviewArrangement: React.FC<IProps> = ({
           </Form.Item>
 
           {mode === "written" && (
-            <Form.Item label={originalT("interview_form.written_test_link")} name="written_test_link">
+            <Form.Item
+              label={originalT("interview_form.written_test_link")}
+              name="written_test_link"
+            >
               <Input size="large" disabled />
             </Form.Item>
           )}
 
           {mode === "interview" && (
             <>
-              <Form.Item label={originalT("interview_form.interview_type")} required>
+              <Form.Item
+                label={originalT("interview_form.interview_type")}
+                required
+              >
                 <Input
                   value={interviewTypeOptions[interview?.interview_type]}
                   disabled
@@ -157,7 +169,10 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              <Form.Item label={originalT("interview_form.interview_duration")} name="duration">
+              <Form.Item
+                label={originalT("interview_form.interview_duration")}
+                name="duration"
+              >
                 <InputNumber
                   suffix="min"
                   size="large"
@@ -166,7 +181,10 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              <Form.Item label={originalT("interview_form.slots_gap")} name="slots_gap">
+              <Form.Item
+                label={originalT("interview_form.slots_gap")}
+                name="slots_gap"
+              >
                 <InputNumber
                   suffix="min"
                   size="large"
@@ -177,7 +195,10 @@ const InterviewArrangement: React.FC<IProps> = ({
 
               {!!interview.scheduled_at && (
                 <div>
-                  <Form.Item label={originalT("interview_form.interview_time_slots")} required>
+                  <Form.Item
+                    label={originalT("interview_form.interview_time_slots")}
+                    required
+                  >
                     <Input
                       value={(() => {
                         const startTime = dayjs(interview.scheduled_at);
@@ -197,19 +218,31 @@ const InterviewArrangement: React.FC<IProps> = ({
                 </div>
               )}
 
-              <Form.Item label={originalT("interview_form.interviewers")} name="interviewers">
+              <Form.Item
+                label={originalT("interview_form.interviewers")}
+                name="interviewers"
+              >
                 <Input size="large" disabled />
               </Form.Item>
 
-              <Form.Item label={originalT("interview_form.interview_focus")} name="focus">
+              <Form.Item
+                label={originalT("interview_form.interview_focus")}
+                name="focus"
+              >
                 <Input.TextArea rows={4} size="large" disabled />
               </Form.Item>
 
-              <Form.Item label={originalT("interview_form.contact_person")} name="contact_person">
+              <Form.Item
+                label={originalT("interview_form.contact_person")}
+                name="contact_person"
+              >
                 <Input size="large" disabled />
               </Form.Item>
 
-              <Form.Item label={originalT("interview_form.contact_number")} name="contact_number">
+              <Form.Item
+                label={originalT("interview_form.contact_number")}
+                name="contact_number"
+              >
                 <Input size="large" disabled />
               </Form.Item>
             </>
@@ -296,7 +329,11 @@ const InterviewArrangement: React.FC<IProps> = ({
                 id={`slot-item-${date}`}
               >
                 <div className={styles.slotsItemHeader}>
-                  <div>{t("interview_starting_on", { count: totalSlots.toString() })}</div>
+                  <div>
+                    {t("interview_starting_on", {
+                      count: totalSlots.toString(),
+                    })}
+                  </div>
                   <div className={styles.slotsItemHeaderDate}>
                     {dayjs(date).format(originalT("date_format.with_day"))}
                   </div>
@@ -305,13 +342,15 @@ const InterviewArrangement: React.FC<IProps> = ({
                   {[slots.morning, slots.afternoon].map((slots, index) => {
                     return (
                       <div key={index}>
-                        <div className={styles.slotsItemContentGroup}>
-                          <Icon
-                            icon={index === 0 ? <Sunrise /> : <Sunset />}
-                            className={styles.slotsItemContentIcon}
-                          />
-                          {index === 0 ? t("morning") : t("afternoon")}
-                        </div>
+                        {slots.length > 0 && (
+                          <div className={styles.slotsItemContentGroup}>
+                            <Icon
+                              icon={index === 0 ? <Sunrise /> : <Sunset />}
+                              className={styles.slotsItemContentIcon}
+                            />
+                            {index === 0 ? t("morning") : t("afternoon")}
+                          </div>
+                        )}
                         {slots.map((slot) => {
                           return (
                             <div
