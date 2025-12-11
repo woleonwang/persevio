@@ -339,10 +339,11 @@ const InterviewArrangement: React.FC<IProps> = ({
                   </div>
                 </div>
                 <div className={styles.slotsItemContent}>
-                  {[slots.morning, slots.afternoon].map((slots, index) => {
-                    return (
-                      <div key={index}>
-                        {slots.length > 0 && (
+                  {[slots.morning, slots.afternoon]
+                    .filter((slots) => slots.length > 0)
+                    .map((slots, index) => {
+                      return (
+                        <div key={index}>
                           <div className={styles.slotsItemContentGroup}>
                             <Icon
                               icon={index === 0 ? <Sunrise /> : <Sunset />}
@@ -350,32 +351,31 @@ const InterviewArrangement: React.FC<IProps> = ({
                             />
                             {index === 0 ? t("morning") : t("afternoon")}
                           </div>
-                        )}
-                        {slots.map((slot) => {
-                          return (
-                            <div
-                              key={slot.from.format("HH:mm")}
-                              onClick={() => setSelectedDate(slot.from)}
-                              className={classnames(styles.slotItem, {
-                                [styles.selected]: selectedDate?.isSame(
-                                  slot.from,
-                                  "minute"
-                                ),
-                              })}
-                            >
-                              <div className={styles.slotItemTime}>
-                                {dayjs(slot.from).format("HH:mm")} ~{" "}
-                                {dayjs(slot.to).format("HH:mm")}
+                          {slots.map((slot) => {
+                            return (
+                              <div
+                                key={slot.from.format("HH:mm")}
+                                onClick={() => setSelectedDate(slot.from)}
+                                className={classnames(styles.slotItem, {
+                                  [styles.selected]: selectedDate?.isSame(
+                                    slot.from,
+                                    "minute"
+                                  ),
+                                })}
+                              >
+                                <div className={styles.slotItemTime}>
+                                  {dayjs(slot.from).format("HH:mm")} ~{" "}
+                                  {dayjs(slot.to).format("HH:mm")}
+                                </div>
+                                <div className={styles.slotItemDuration}>
+                                  {interview.duration} m
+                                </div>
                               </div>
-                              <div className={styles.slotItemDuration}>
-                                {interview.duration} m
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             );
