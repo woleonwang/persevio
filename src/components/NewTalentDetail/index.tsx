@@ -43,7 +43,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   >([]);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
 
-  const handlerRef = useRef<{ submit?: () => void }>({});
+  const handlerRef = useRef<{ submit?: () => Promise<boolean> }>({});
 
   const navigate = useNavigate();
 

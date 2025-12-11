@@ -16,7 +16,7 @@ interface IProps {
   talent: TTalent;
   jobName: string;
   interview?: TInterview;
-  handlerRef: RefObject<{ submit?: () => void }>;
+  handlerRef: RefObject<{ submit?: () => Promise<boolean> }>;
 }
 const InterviewForm: React.FC<IProps> = (props) => {
   const { talent, jobName, interview, handlerRef } = props;
@@ -45,15 +45,20 @@ const InterviewForm: React.FC<IProps> = (props) => {
     }
   };
 
-  const submit = () => {
-    form.validateFields().then(async (values) => {
-      const { code } = await Post(
-        `/api/jobs/${talent.job_id}/talents/${talent.id}/interviews`,
-        values
-      );
-      if (code === 0) {
-        message.success(t("create_success"));
-      }
+  const submit = (): Promise<boolean> => {
+    return new Promise<boolean>(async (resolve, reject) => {
+      form.validateFields().then(async (values) => {
+        const { code } = await Post(
+          `/api/jobs/${talent.job_id}/talents/${talent.id}/interviews`,
+          values
+        );
+        if (code === 0) {
+          message.success(t("create_success"));
+          resolve(true);
+        } else {
+          reject(false);
+        }
+      });
     });
   };
 
