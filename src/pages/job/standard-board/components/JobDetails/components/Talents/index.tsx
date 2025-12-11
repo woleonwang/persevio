@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Table, Tag } from "antd";
+import { Button, Table, Tag, Tooltip } from "antd";
 import { useNavigate } from "react-router";
 import { ColumnsType } from "antd/es/table";
 
@@ -97,7 +97,11 @@ const Talents = (props: IProps) => {
           }
         }
         if (status === "rejected") {
-          return <Tag color="red">{t("status_rejected")}</Tag>;
+          return (
+            <Tooltip title={record.feedback}>
+              <Tag color="red">{t("status_rejected")}</Tag>
+            </Tooltip>
+          );
         }
         return <Tag color="default">{t("status_unfiltered")}</Tag>;
       },

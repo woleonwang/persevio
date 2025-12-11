@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, message, Spin, Tag, Drawer, Modal } from "antd";
+import { Button, message, Spin, Tag, Drawer, Modal, Form, Input } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
@@ -18,6 +18,7 @@ import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
+import TextAreaWithVoice from "../TextAreaWithVoice";
 
 interface IProps {
   isPreview?: boolean;
@@ -29,6 +30,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   const { t: originalT, i18n } = useTranslation();
 
   const [tabKey, setTabKey] = useState<"resume" | "report">("resume");
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [form] = Form.useForm<{ reason: string }>();
   const t = (key: string) => originalT(`talent_details.${key}`);
 
   const { isPreview } = props;
@@ -76,19 +79,22 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       `${talent.name}_resume`
     );
   };
-  const updateTalentStatus = async (action: "accept" | "reject") => {
-    if (
-      confirm(action === "accept" ? t("confirm_accept") : t("confirm_reject"))
-    ) {
+  const updateTalentStatus = async (
+    action: "accept" | "reject",
+    feedback?: string
+  ) => {
+    if (action === "reject" || confirm(t("confirm_accept"))) {
       const { code } = await Post(
         `/api/jobs/${job?.id}/talents/${talent?.id}`,
         {
           status: action === "accept" ? "accepted" : "rejected",
+          feedback,
         }
       );
 
       if (code === 0) {
         fetchTalent();
+        setIsRejectModalOpen(false);
         message.success(t("update_success"));
       }
     }
@@ -159,7 +165,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 <Button
                   variant="outlined"
                   color="danger"
-                  onClick={() => updateTalentStatus("reject")}
+                  onClick={() => {
+                    form.resetFields();
+                    setIsRejectModalOpen(true);
+                  }}
                   style={{ flex: "auto" }}
                   size="large"
                 >
@@ -294,7 +303,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               <Button
                 variant="outlined"
                 color="danger"
-                onClick={() => updateTalentStatus("reject")}
+                onClick={() => {
+                  form.resetFields();
+                  setIsRejectModalOpen(true);
+                }}
                 style={{ flex: "auto" }}
                 size="large"
               >
@@ -351,6 +363,29 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
           handlerRef={handlerRef}
           interview={interviews[0]}
         />
+      </Modal>
+
+      <Modal
+        open={isRejectModalOpen}
+        onCancel={() => setIsRejectModalOpen(false)}
+        onOk={() => {
+          form.validateFields().then((values) => {
+            updateTalentStatus("reject", values.reason);
+          });
+        }}
+        title="Reject Candidate"
+        width={600}
+        centered
+      >
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item
+            name="reason"
+            label="Tell us why this candidate is not a fit so we can calibrate our search"
+            rules={[{ required: true, message: "Please enter reason" }]}
+          >
+            <TextAreaWithVoice />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
