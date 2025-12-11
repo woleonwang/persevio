@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, message, Spin, Tag, Drawer, Modal, Form, Input } from "antd";
+import { Button, message, Spin, Tag, Drawer, Modal, Form } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
