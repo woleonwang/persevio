@@ -89,11 +89,11 @@ const Talents = (props: IProps) => {
       render: (status: string, record: TTalentItem) => {
         if (status === "accepted") {
           if (!record.interviews?.length) {
-            return <Tag color="green">待安排面试</Tag>;
+            return <Tag color="green">{t("status_pending_interview")}</Tag>;
           } else if (!record.interviews[0].scheduled_at) {
-            return <Tag color="green">待候选人确认面试</Tag>;
+            return <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>;
           } else {
-            return <Tag color="green">已安排面试</Tag>;
+            return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
           }
         }
         if (status === "rejected") {
