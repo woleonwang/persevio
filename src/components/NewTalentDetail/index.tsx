@@ -139,7 +139,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   size="large"
                   block
                 >
-                  Schedule Interview
+                  {t("schedule_interview")}
                 </Button>
               ) : interviews[0].scheduled_at ? (
                 <Button
@@ -147,7 +147,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   block
                   onClick={() => setIsInterviewModalOpen(true)}
                 >
-                  Interview Scheduled
+                  {t("interview_scheduled")}
                 </Button>
               ) : (
                 <Button
@@ -155,7 +155,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   block
                   onClick={() => setIsInterviewModalOpen(true)}
                 >
-                  Awaiting candidate's confirmation of interview details
+                  {t("awaiting_candidate_confirm")}
                 </Button>
               )
             ) : talent?.status === "rejected" ? (
@@ -343,7 +343,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         onCancel={() => setIsInterviewModalOpen(false)}
         width={"fit-content"}
         centered
-        title="Schedule Interview"
+        title={t("schedule_interview")}
         onOk={() =>
           !!interviews[0]
             ? setIsInterviewModalOpen(false)
@@ -373,15 +373,15 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             updateTalentStatus("reject", values.reason);
           });
         }}
-        title="Reject Candidate"
+        title={t("reject_candidate_title")}
         width={600}
         centered
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item
             name="reason"
-            label="Tell us why this candidate is not a fit so we can calibrate our search"
-            rules={[{ required: true, message: "Please enter reason" }]}
+            label={t("reject_reason_label")}
+            rules={[{ required: true, message: t("reject_reason_required") }]}
           >
             <TextAreaWithVoice />
           </Form.Item>

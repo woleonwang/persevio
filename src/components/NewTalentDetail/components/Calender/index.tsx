@@ -3,6 +3,7 @@ import { Button, Modal, TimePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 
@@ -16,24 +17,35 @@ interface IProps {
   onChange?: (value: TValue[]) => void;
 }
 
-const headers = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 const AVAILABLE_HOURS = Array.from({ length: 24 }, (_, index) => index);
 const Calender: React.FC<IProps> = (props) => {
   const { value: timeSlots, onChange } = props;
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`calendar.${key}`);
+
+  const headers = [
+    t("weekdays.sun"),
+    t("weekdays.mon"),
+    t("weekdays.tue"),
+    t("weekdays.wed"),
+    t("weekdays.thu"),
+    t("weekdays.fri"),
+    t("weekdays.sat"),
+  ];
+  const MONTHS = [
+    t("months.jan"),
+    t("months.feb"),
+    t("months.mar"),
+    t("months.apr"),
+    t("months.may"),
+    t("months.jun"),
+    t("months.jul"),
+    t("months.aug"),
+    t("months.sep"),
+    t("months.oct"),
+    t("months.nov"),
+    t("months.dec"),
+  ];
   const [value, setValue] = useState<TValue[]>([]);
 
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(
@@ -96,7 +108,7 @@ const Calender: React.FC<IProps> = (props) => {
           size="large"
         />
         <div className={styles.monthYear}>
-          {MONTHS[currentWeek.month()]} {currentWeek.year()}
+          {MONTHS[currentWeek.endOf("week").month()]} {currentWeek.year()}
         </div>
         <Button
           icon={<ArrowRightOutlined />}
@@ -106,7 +118,7 @@ const Calender: React.FC<IProps> = (props) => {
       </div>
       <div>
         <div className={styles.header}>
-          <div className={styles.addAllDayLabel}>All day</div>
+          <div className={styles.addAllDayLabel}>{t("all_day")}</div>
           {headers.map((header, index) => {
             const now = dayjs();
             const currentDay = currentWeek.add(index, "day");
@@ -132,10 +144,12 @@ const Calender: React.FC<IProps> = (props) => {
                     [styles.disabled]: disabled,
                   })}
                 >
-                  Add times
+                  {t("add_times")}
                 </div>
                 <div
-                  className={styles.addAllDay}
+                  className={classnames(styles.addAllDay, {
+                    [styles.disabled]: disabled,
+                  })}
                   onClick={() => {
                     if (disabled) return;
                     addNewTimeSlot(
@@ -227,7 +241,7 @@ const Calender: React.FC<IProps> = (props) => {
           setCurrentTimeRange(null);
         }}
         centered
-        title="Add time"
+        title={t("add_time_title")}
       >
         <div style={{ margin: "20px 0" }}>
           <TimePicker.RangePicker

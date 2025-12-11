@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import TimeSlot from "@/assets/icons/time-slot";
 import Delete from "@/assets/icons/delete";
+import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
 
@@ -19,6 +20,9 @@ interface IProps {
 }
 const InterviewForm: React.FC<IProps> = (props) => {
   const { talent, jobName, interview, handlerRef } = props;
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`interview_form.${key}`);
 
   const [form] = Form.useForm<TFormValue>();
   const [settings, setSettings] = useState<ISettings>();
@@ -48,7 +52,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
         values
       );
       if (code === 0) {
-        message.success("Interview created successfully");
+        message.success(t("create_success"));
       }
     });
   };
@@ -62,34 +66,32 @@ const InterviewForm: React.FC<IProps> = (props) => {
     (form.getFieldValue("time_slots") as TFormValue["time_slots"]) ?? [];
 
   const interviewModeOptions = {
-    written: "Written Test",
-    interview: "Interview",
+    written: t("mode_written"),
+    interview: t("mode_interview"),
   };
 
   const interviewTypeOptions = {
-    face_to_face: "Face to Face",
-    online: "Online",
-    phone: "Phone",
+    face_to_face: t("type_face_to_face"),
+    online: t("type_online"),
+    phone: t("type_phone"),
   };
 
   return (
     <div className={styles.interviewForm}>
       <div className={styles.formContainer}>
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
-          <Form.Item label="Job Company Name" required>
+          <Form.Item label={t("job_company_name")} required>
             <Input value={settings?.company_name} disabled size="large" />
           </Form.Item>
 
-          <Form.Item label="Job Title" required>
+          <Form.Item label={t("job_title")} required>
             <Input value={jobName} disabled size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Interview Mode"
+            label={t("interview_mode")}
             name={readonly ? undefined : "mode"}
-            rules={[
-              { required: true, message: "Please select interview mode" },
-            ]}
+            rules={[{ required: true, message: t("select_mode_required") }]}
             required
           >
             {readonly ? (
@@ -115,11 +117,9 @@ const InterviewForm: React.FC<IProps> = (props) => {
 
           {mode === "written" && (
             <Form.Item
-              label="Written Test Link"
+              label={t("written_test_link")}
               name="written_test_link"
-              rules={[
-                { required: true, message: "Please enter written test link" },
-              ]}
+              rules={[{ required: true, message: t("enter_link_required") }]}
             >
               <Input size="large" disabled={readonly} />
             </Form.Item>
@@ -128,10 +128,8 @@ const InterviewForm: React.FC<IProps> = (props) => {
           {mode === "interview" && (
             <>
               <Form.Item
-                label="Interview Type"
-                rules={[
-                  { required: true, message: "Please select interview type" },
-                ]}
+                label={t("interview_type")}
+                rules={[{ required: true, message: t("select_type_required") }]}
                 name={readonly ? undefined : "interview_type"}
                 required
               >
@@ -157,12 +155,12 @@ const InterviewForm: React.FC<IProps> = (props) => {
               </Form.Item>
 
               <Form.Item
-                label="Interview Duration"
+                label={t("interview_duration")}
                 name="duration"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter interview duration",
+                    message: t("enter_duration_required"),
                   },
                 ]}
               >
@@ -175,12 +173,12 @@ const InterviewForm: React.FC<IProps> = (props) => {
               </Form.Item>
 
               <Form.Item
-                label="Gap Between Slots"
+                label={t("slots_gap")}
                 name="slots_gap"
                 rules={[
                   {
                     required: true,
-                    message: "Please enter gap between slots",
+                    message: t("enter_gap_required"),
                   },
                 ]}
               >
@@ -194,7 +192,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
 
               {readonly && interview.scheduled_at ? (
                 <div>
-                  <Form.Item label="Interview time slots" required>
+                  <Form.Item label={t("interview_time_slots")} required>
                     <Input
                       value={(() => {
                         const startTime = dayjs(interview.scheduled_at);
@@ -214,19 +212,18 @@ const InterviewForm: React.FC<IProps> = (props) => {
                 </div>
               ) : (
                 <Form.Item
-                  label="Avaliable Interview Time Slots"
+                  label={t("available_time_slots")}
                   name="time_slots"
                   rules={[
                     {
                       required: true,
-                      message: "Please select available time slots",
+                      message: t("select_slots_required"),
                     },
                   ]}
                 >
                   {!readonly && (
                     <div className={styles.timeSlotsDescription}>
-                      Please select your available time slots on the right, and
-                      provide multiple options for the candidate to choose trom.
+                      {t("time_slots_description")}
                     </div>
                   )}
 
@@ -240,7 +237,10 @@ const InterviewForm: React.FC<IProps> = (props) => {
                         <div>{dayjs(item.from).format("YYYY-MM-DD")}</div>
                         <div className={styles.timeSlotItemTime}>
                           {dayjs(item.from).format("HH:mm")} ~{" "}
-                          {dayjs(item.to).format("HH:mm")}
+                          {(() => {
+                            const result = dayjs(item.to).format("HH:mm");
+                            return result === "00:00" ? "24:00" : result;
+                          })()}
                         </div>
                       </div>
                       {!readonly && (
@@ -267,25 +267,25 @@ const InterviewForm: React.FC<IProps> = (props) => {
                 </Form.Item>
               )}
 
-              <Form.Item label="Interviewers" name="interviewers">
+              <Form.Item label={t("interviewers")} name="interviewers">
                 <Input size="large" disabled={readonly} />
               </Form.Item>
 
-              <Form.Item label="Interview Focus" name="focus">
+              <Form.Item label={t("interview_focus")} name="focus">
                 <Input.TextArea rows={4} size="large" disabled={readonly} />
               </Form.Item>
 
-              <Form.Item label="Contact Person" name="contact_person">
+              <Form.Item label={t("contact_person")} name="contact_person">
                 <Input size="large" disabled={readonly} />
               </Form.Item>
 
-              <Form.Item label="Contact Number" name="contact_number">
+              <Form.Item label={t("contact_number")} name="contact_number">
                 <Input size="large" disabled={readonly} />
               </Form.Item>
             </>
           )}
 
-          <Form.Item label="Notes" name="notes">
+          <Form.Item label={t("notes")} name="notes">
             <Input.TextArea rows={4} disabled={readonly} />
           </Form.Item>
         </Form>

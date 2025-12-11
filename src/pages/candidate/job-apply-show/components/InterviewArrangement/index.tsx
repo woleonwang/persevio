@@ -53,8 +53,8 @@ const InterviewArrangement: React.FC<IProps> = ({
   const [form] = Form.useForm<TFormValue>();
 
   const { t: originalT } = useTranslation();
-  // const t = (key: string, params?: Record<string, string>) =>
-  //   originalT(`job_apply.${key}`, params);
+  const t = (key: string, params?: Record<string, string>) =>
+    originalT(`job_apply.interview_arrangement.${key}`, params);
 
   useEffect(() => {
     form.setFieldsValue(interview);
@@ -96,10 +96,10 @@ const InterviewArrangement: React.FC<IProps> = ({
       }
     );
     if (code === 0) {
-      message.success("Interview time confirmed successfully");
+      message.success(t("confirm_success"));
       return true;
     } else {
-      message.error("Interview time confirmation failed");
+      message.error(t("confirm_failed"));
       return false;
     }
   };
@@ -111,29 +111,29 @@ const InterviewArrangement: React.FC<IProps> = ({
   const mode = interview.mode;
 
   const interviewModeOptions = {
-    written: "Written Test",
-    interview: "Interview",
+    written: originalT("interview_form.mode_written"),
+    interview: originalT("interview_form.mode_interview"),
   };
 
   const interviewTypeOptions = {
-    face_to_face: "Face to Face",
-    online: "Online",
-    phone: "Phone",
+    face_to_face: originalT("interview_form.type_face_to_face"),
+    online: originalT("interview_form.type_online"),
+    phone: originalT("interview_form.type_phone"),
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
-          <Form.Item label="Job Company Name" required>
+          <Form.Item label={originalT("interview_form.job_company_name")} required>
             <Input value={jobApply.company_name} disabled size="large" />
           </Form.Item>
 
-          <Form.Item label="Job Title" required>
+          <Form.Item label={originalT("interview_form.job_title")} required>
             <Input value={jobApply.job_name} disabled size="large" />
           </Form.Item>
 
-          <Form.Item label="Interview Mode" required>
+          <Form.Item label={originalT("interview_form.interview_mode")} required>
             <Input
               value={interviewModeOptions[interview?.mode]}
               disabled
@@ -142,14 +142,14 @@ const InterviewArrangement: React.FC<IProps> = ({
           </Form.Item>
 
           {mode === "written" && (
-            <Form.Item label="Written Test Link" name="written_test_link">
+            <Form.Item label={originalT("interview_form.written_test_link")} name="written_test_link">
               <Input size="large" disabled />
             </Form.Item>
           )}
 
           {mode === "interview" && (
             <>
-              <Form.Item label="Interview Type" required>
+              <Form.Item label={originalT("interview_form.interview_type")} required>
                 <Input
                   value={interviewTypeOptions[interview?.interview_type]}
                   disabled
@@ -157,7 +157,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Interview Duration" name="duration">
+              <Form.Item label={originalT("interview_form.interview_duration")} name="duration">
                 <InputNumber
                   suffix="min"
                   size="large"
@@ -166,7 +166,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Gap Between Slots" name="slots_gap">
+              <Form.Item label={originalT("interview_form.slots_gap")} name="slots_gap">
                 <InputNumber
                   suffix="min"
                   size="large"
@@ -177,7 +177,7 @@ const InterviewArrangement: React.FC<IProps> = ({
 
               {!!interview.scheduled_at && (
                 <div>
-                  <Form.Item label="Interview time slots" required>
+                  <Form.Item label={originalT("interview_form.interview_time_slots")} required>
                     <Input
                       value={(() => {
                         const startTime = dayjs(interview.scheduled_at);
@@ -197,25 +197,25 @@ const InterviewArrangement: React.FC<IProps> = ({
                 </div>
               )}
 
-              <Form.Item label="Interviewers" name="interviewers">
+              <Form.Item label={originalT("interview_form.interviewers")} name="interviewers">
                 <Input size="large" disabled />
               </Form.Item>
 
-              <Form.Item label="Interview Focus" name="focus">
+              <Form.Item label={originalT("interview_form.interview_focus")} name="focus">
                 <Input.TextArea rows={4} size="large" disabled />
               </Form.Item>
 
-              <Form.Item label="Contact Person" name="contact_person">
+              <Form.Item label={originalT("interview_form.contact_person")} name="contact_person">
                 <Input size="large" disabled />
               </Form.Item>
 
-              <Form.Item label="Contact Number" name="contact_number">
+              <Form.Item label={originalT("interview_form.contact_number")} name="contact_number">
                 <Input size="large" disabled />
               </Form.Item>
             </>
           )}
 
-          <Form.Item label="Notes" name="notes">
+          <Form.Item label={originalT("interview_form.notes")} name="notes">
             <Input.TextArea rows={4} disabled />
           </Form.Item>
         </Form>
@@ -296,7 +296,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                 id={`slot-item-${date}`}
               >
                 <div className={styles.slotsItemHeader}>
-                  <div>{totalSlots} interview starting on</div>
+                  <div>{t("interview_starting_on", { count: totalSlots.toString() })}</div>
                   <div className={styles.slotsItemHeaderDate}>
                     {dayjs(date).format(originalT("date_format.with_day"))}
                   </div>
@@ -310,7 +310,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                             icon={index === 0 ? <Sunrise /> : <Sunset />}
                             className={styles.slotsItemContentIcon}
                           />
-                          {index === 0 ? "Morning" : "Afternoon"}
+                          {index === 0 ? t("morning") : t("afternoon")}
                         </div>
                         {slots.map((slot) => {
                           return (
