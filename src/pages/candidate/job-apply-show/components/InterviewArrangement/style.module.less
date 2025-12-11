@@ -1,0 +1,190 @@
+@import "@/mixin.module.less";
+
+.container {
+  display: flex;
+  max-height: 864px;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.formContainer {
+  flex: none;
+  width: 360px;
+  overflow: auto;
+  padding: 20px 0;
+}
+
+.calendarContainer {
+  width: 1000px;
+  flex: none;
+  background-color: rgba(245, 247, 251, 1);
+  padding: 50px 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .dateContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    .dateItemIcon {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .dateItems {
+      display: flex;
+      gap: 8px;
+      background-color: white;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(234, 234, 234, 1);
+    }
+
+    .dateItemBorder {
+      width: 1px;
+      margin-top: 24px;
+      background-color: rgba(0, 122, 255, 0.2);
+    }
+
+    .dateItem {
+      width: 40px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background-color: white;
+
+      .dateItemContent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        white-space: nowrap;
+        width: 40px;
+
+        .dateItemContentDay {
+          color: #999;
+        }
+
+        .dateItemContentDate {
+          margin-top: 8px;
+          color: #999;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        &.hasSlots {
+          background-color: @primary-color;
+          border-radius: 20px;
+          color: white;
+          cursor: pointer;
+
+          .dateItemContentDay {
+            color: white;
+          }
+
+          .dateItemContentDate {
+            color: white;
+            border: 1px solid white;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+
+  .slotsContainer {
+    flex: auto;
+    display: flex;
+    gap: 12px;
+    margin-top: 60px;
+    overflow-x: auto;
+
+    .slotsItem {
+      width: 284px;
+      height: 410px;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 16px;
+      background-color: white;
+      flex: none;
+    }
+
+    .slotsItemHeader {
+      padding: 20px;
+      background-color: @primary-color;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .slotsItemHeaderDate {
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 8px;
+        white-space: nowrap;
+      }
+    }
+
+    .slotsItemContent {
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow: auto;
+      width: 100%;
+
+      .slotsItemContentGroup {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+      }
+
+      .slotsItemContentIcon {
+        font-size: 24px;
+        color: @primary-color;
+      }
+
+      .slotItem {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        border-radius: 12px;
+        background-color: rgba(247, 249, 251, 1);
+        border: 1px solid rgba(54, 130, 254, 0.2);
+        margin-top: 8px;
+        cursor: pointer;
+
+        &.selected {
+          border-color: @primary-color;
+        }
+      }
+
+      .slotItemTime {
+        font-size: 16px;
+        font-weight: bold;
+        color: @primary-color;
+      }
+
+      .slotItemDuration {
+        color: #999;
+      }
+    }
+  }
+}

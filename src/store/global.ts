@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { Get } from "../utils/request";
+import dayjs from "dayjs";
 
 class GlobalStore {
   collapseForDrawer = false;
@@ -28,6 +29,7 @@ class GlobalStore {
 
   setAntdLocale = (locale: "zh-CN" | "en-US") => {
     this.antdLocale = locale as "zh-CN" | "en-US";
+    dayjs.locale(locale.toLowerCase());
   };
 
   fetchJobs = async () => {

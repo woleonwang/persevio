@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Table, Tag } from "antd";
+import { Button, Table, Tag, Tooltip } from "antd";
 import { useNavigate } from "react-router";
 import { ColumnsType } from "antd/es/table";
 
@@ -20,6 +20,7 @@ type TTalentItem = TTalent & {
   current_company: string;
   current_compensation: string;
   visa: string;
+  interviews: TInterview[];
 };
 
 const Talents = (props: IProps) => {
@@ -54,7 +55,7 @@ const Talents = (props: IProps) => {
     }
   };
 
-  const columns: ColumnsType<TTalent> = [
+  const columns: ColumnsType<TTalentItem> = [
     {
       title: t("candidate_name"),
       dataIndex: "name",
@@ -85,14 +86,34 @@ const Talents = (props: IProps) => {
     {
       title: t("screening_status"),
       dataIndex: "status",
-      render: (status: string) => {
+      render: (status: string, record: TTalentItem) => {
         if (status === "accepted") {
-          return <Tag color="green">{t("status_accepted")}</Tag>;
+          if (!record.interviews?.length) {
+            return <Tag color="green">{t("status_pending_interview")}</Tag>;
+          } else if (!record.interviews[0].scheduled_at) {
+            return <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>;
+          } else {
+            return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
+          }
         }
         if (status === "rejected") {
-          return <Tag color="red">{t("status_rejected")}</Tag>;
+          return (
+            <Tooltip title={record.feedback}>
+              <Tag color="red">{t("status_rejected")}</Tag>
+            </Tooltip>
+          );
         }
         return <Tag color="default">{t("status_unfiltered")}</Tag>;
+      },
+    },
+    {
+      title: t("schedule_time"),
+      dataIndex: "scheduled_at",
+      render: (_: string, record: TTalentItem) => {
+        const scheduled_at = record.interviews?.[0]?.scheduled_at;
+        return scheduled_at
+          ? dayjs(scheduled_at).format("YYYY-MM-DD HH:mm")
+          : "-";
       },
     },
     {

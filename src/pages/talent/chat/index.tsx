@@ -1,7 +1,7 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import ChatRoomNew from "@/components/ChatRoomNew";
 import useJob from "@/hooks/useJob";
-import useTalent from "@/hooks/useTalent";
+import usePublicTalent from "@/hooks/usePublicTalent";
 import { Get } from "@/utils/request";
 import { Button, Empty, Radio, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
@@ -15,10 +15,10 @@ import { parseJSON } from "@/utils";
 
 const TalentChat = () => {
   const { job } = useJob();
-  const { talent } = useTalent();
+  const { talent } = usePublicTalent();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent.${key}`);
-  
+
   const initChatType = (new URLSearchParams(window.location.search).get(
     "chatType"
   ) ?? "interview_designer") as TTalentChatType;

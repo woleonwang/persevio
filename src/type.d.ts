@@ -160,7 +160,7 @@ interface IJobApply extends IJobApplyListItem {
     | "evaluate_failed"
     | "accepted"
     | "rejected";
-  interviews: IInterview[];
+  interviews: TInterview[];
 }
 
 interface ISettings {
@@ -414,6 +414,27 @@ type TTalent = {
   raw_evaluate_result: string;
   basic_info_json: string;
   job_id: number;
+};
+
+type TInterview = {
+  id: number;
+  mode: "written" | "interview";
+  written_test_link: string;
+  interview_type: "face_to_face" | "online" | "phone";
+  duration: number;
+  slots_gap: number;
+  time_slots: {
+    from: string;
+    to: string;
+  }[];
+  interviewers?: string;
+  focus?: string;
+  contact_person?: string;
+  contact_number?: string;
+  notes?: string;
+  scheduled_at?: string;
+  created_at: string;
+  updated_at: string;
 };
 
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";

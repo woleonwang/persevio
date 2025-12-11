@@ -203,7 +203,7 @@ const AppLayout = () => {
     const { code, data } = await Get("/api/settings");
     if (code === 0) {
       // 设置 i18n 语言
-      const lang = data.lang ?? "en-US";
+      const lang = data.lang || "en-US";
       i18n.changeLanguage(lang);
 
       // 根据语言设置 antd locale

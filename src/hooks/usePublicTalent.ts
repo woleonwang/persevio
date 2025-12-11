@@ -1,10 +1,10 @@
-import { parseJSON, parseJSONArray } from "@/utils";
+import { parseJSON } from "@/utils";
 import { Get } from "@/utils/request";
 import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-const useTalent = () => {
+const usePublicTalent = () => {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
     talentId: string;
     jobId: string;
@@ -13,14 +13,15 @@ const useTalent = () => {
   const jobId = parseInt(jobIdStr ?? "0");
 
   const [talent, setTalent] = useState<TTalent>();
-  const [interviews, setInterviews] = useState<TInterview[]>([]);
 
   useEffect(() => {
     fetchTalent();
   }, []);
 
   const fetchTalent = async () => {
-    const { code, data } = await Get(`/api/jobs/${jobId}/talents/${talentId}`);
+    const { code, data } = await Get(
+      `/api/public/jobs/${jobId}/talents/${talentId}`
+    );
 
     if (code === 0) {
       const talent = data.talent;
@@ -29,20 +30,12 @@ const useTalent = () => {
         raw_evaluate_result: talent.evaluate_result,
         evaluate_result: parseJSON(talent.evaluate_result),
       });
-      setInterviews(
-        (data.interviews ?? []).map((item: any) => {
-          return {
-            ...item,
-            time_slots: parseJSONArray(item.time_slots),
-          };
-        })
-      );
     } else {
       message.error("Get talent failed");
     }
   };
 
-  return { talent, interviews, fetchTalent };
+  return { talent, fetchTalent };
 };
 
-export default useTalent;
+export default usePublicTalent;

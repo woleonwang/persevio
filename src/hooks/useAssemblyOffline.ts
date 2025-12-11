@@ -2,20 +2,32 @@ import { useEffect, useRef, useState } from "react";
 import { Post } from "@/utils/request";
 import { message } from "antd";
 
+const RECORD_HISTORY_DURATION_SECONDS = 6;
+const POINTS_PER_SECOND = 10;
+const getInitialVolumeHistory = () => {
+  return Array.from(
+    { length: RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND },
+    () => 0
+  );
+};
+
 const useAssemblyOffline = ({
   onFinish,
   disabled,
+  disableShortcuts,
   onStartTranscription,
 }: {
   onFinish: (text: string, payloadId: number) => void;
   disabled?: boolean;
+  disableShortcuts?: boolean;
   onStartTranscription?: () => void;
 }) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [volume, setVolume] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
 
+  const volumeRef = useRef(0);
   const isRecordingRef = useRef(false);
   isRecordingRef.current = isRecording;
 
@@ -56,6 +68,31 @@ const useAssemblyOffline = ({
   }, []);
 
   useEffect(() => {
+    if (!isTranscribing) {
+      setVolumeHistory(getInitialVolumeHistory());
+    }
+  }, [isTranscribing]);
+
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setVolumeHistory((prev) => [
+          ...prev.slice(
+            -(RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND - 1)
+          ),
+          volumeRef.current,
+        ]);
+      }, 1000 / POINTS_PER_SECOND);
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [isRecording]);
+
+  useEffect(() => {
+    if (disableShortcuts) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const state = recordingStateRef.current;
       const isRecording = isRecordingRef.current;
@@ -123,7 +160,7 @@ const useAssemblyOffline = ({
       window.removeEventListener("keydown", handleKeyDown, true);
       window.removeEventListener("keyup", handleKeyUp, true);
     };
-  }, [disabled, onFinish]);
+  }, [disabled, onFinish, disableShortcuts]);
 
   const startTranscription = async () => {
     if (disabled) {
@@ -276,7 +313,7 @@ const useAssemblyOffline = ({
       // RMS 值通常在 0 到 1 之间，0 表示没有声音，1 表示最大音量
 
       // 更新 ScaleLoading 的高度
-      setVolume(rms);
+      volumeRef.current = rms;
 
       // 持续监听音频数据
       volumeMonitorRef.current.animationFrameId =
@@ -305,8 +342,8 @@ const useAssemblyOffline = ({
     isRecording,
     isTranscribing,
     isStartRecordingOutside: recordingStateRef.current.isStartRecordingOutside,
-    volume,
     logs,
+    volumeHistory,
   };
 };
 

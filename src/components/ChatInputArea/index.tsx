@@ -32,15 +32,6 @@ interface IProps {
   isCollapsed?: boolean;
 }
 
-const RECORD_HISTORY_DURATION_SECONDS = 6;
-const POINTS_PER_SECOND = 10;
-const getInitialVolumeHistory = () => {
-  return Array.from(
-    { length: RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND },
-    () => 0
-  );
-};
-
 const ChatInputArea = (props: IProps) => {
   const {
     onSubmit,
@@ -50,8 +41,6 @@ const ChatInputArea = (props: IProps) => {
   } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const [volumeHistory, setVolumeHistory] = useState<number[]>([]);
-  const volumeRef = useRef(0);
 
   const isCompositingRef = useRef(false);
   const { t: originalT } = useTranslation();
@@ -61,7 +50,7 @@ const ChatInputArea = (props: IProps) => {
     startTranscription,
     endTranscription,
     isRecording,
-    volume,
+    volumeHistory,
     isTranscribing,
     isStartRecordingOutside,
     logs,
@@ -71,30 +60,11 @@ const ChatInputArea = (props: IProps) => {
     },
     disabled: disabledVoiceInput,
   });
-  volumeRef.current = volume;
   const t = (key: string) => originalT(`chat.${key}`);
-
-  useEffect(() => {
-    if (!isTranscribing) {
-      setVolumeHistory(getInitialVolumeHistory());
-    }
-  }, [isTranscribing]);
 
   useEffect(() => {
     if (isRecording) {
       setTextInputVisible(false);
-      const interval = setInterval(() => {
-        setVolumeHistory((prev) => [
-          ...prev.slice(
-            -(RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND - 1)
-          ),
-          volumeRef.current,
-        ]);
-      }, 1000 / POINTS_PER_SECOND);
-
-      return () => {
-        clearInterval(interval);
-      };
     }
   }, [isRecording]);
   // 聊天框是否能发送

@@ -1,0 +1,149 @@
+@import "@/mixin.module.less";
+
+.weekSelector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .monthYear {
+    font-size: 14px;
+    width: 130px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: white;
+  }
+}
+.header {
+  display: flex;
+  padding-left: 60px;
+  position: relative;
+  margin-top: 20px;
+
+  .dayItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .dayHeader {
+      font-size: 12px;
+      color: #999999;
+    }
+
+    .day {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+
+      &.today {
+        background-color: @primary-color;
+        color: white;
+        border-radius: 50%;
+      }
+    }
+
+    .addTimesButton {
+      cursor: pointer;
+      color: @primary-color;
+    }
+
+    .disabled {
+      color: rgba(0, 0, 0, 0.25);
+      cursor: not-allowed;
+    }
+
+    .addAllDay {
+      margin-top: 8px;
+      height: 20px;
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      width: 100%;
+      cursor: pointer;
+      &.disabled {
+        cursor: not-allowed;
+      }
+    }
+
+    &:not(:last-child) {
+      .addAllDay {
+        border-right: none;
+      }
+    }
+  }
+
+  .addAllDayLabel {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+.body {
+  display: flex;
+  padding-left: 60px;
+  position: relative;
+
+  .weekDay {
+    flex: 1;
+    position: relative;
+
+    &:not(:last-child) {
+      .timeSlot {
+        border-right: none;
+      }
+    }
+  }
+
+  .selectedTimeSlot {
+    position: absolute;
+    border: 1px solid @primary-color;
+    background-color: white;
+    border-left-width: 4px;
+    z-index: 1;
+    border-bottom-right-radius: 16px;
+    padding-left: 4px;
+  }
+
+  .timeSlot {
+    height: 50px;
+    border: 1px solid #eeeeee;
+    position: relative;
+    background-color: white;
+
+    &.shadow {
+      background: url("/shadow.png") no-repeat center center;
+    }
+
+    &:first-child {
+      border-top: none;
+    }
+    &:not(:last-child) {
+      border-bottom: none;
+    }
+
+    .timeSlotLabel {
+      position: absolute;
+      left: -60px;
+      top: -10px;
+    }
+
+    .firstHourLabel {
+      top: 0;
+    }
+
+    .timeSlotLabelSuffix {
+      position: absolute;
+      left: -60px;
+      bottom: -10px;
+    }
+  }
+}

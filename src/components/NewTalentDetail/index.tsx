@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, message, Spin, Tag, Drawer } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, message, Spin, Tag, Drawer, Modal, Form } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
@@ -17,6 +17,8 @@ import usePublicJob from "@/hooks/usePublicJob";
 import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
+import InterviewForm from "./components/InterviewForm";
+import TextAreaWithVoice from "../TextAreaWithVoice";
 
 interface IProps {
   isPreview?: boolean;
@@ -24,10 +26,12 @@ interface IProps {
 
 const NewTalentDetail: React.FC<IProps> = (props) => {
   const { job } = usePublicJob();
-  const { talent, fetchTalent } = useTalent();
+  const { talent, interviews, fetchTalent } = useTalent();
   const { t: originalT, i18n } = useTranslation();
 
   const [tabKey, setTabKey] = useState<"resume" | "report">("resume");
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [form] = Form.useForm<{ reason: string }>();
   const t = (key: string) => originalT(`talent_details.${key}`);
 
   const { isPreview } = props;
@@ -37,6 +41,9 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   const [talentChatMessages, setTalentChatMessages] = useState<
     TMessageFromApi[]
   >([]);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
+  const handlerRef = useRef<{ submit?: () => void }>({});
 
   const navigate = useNavigate();
 
@@ -72,19 +79,22 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       `${talent.name}_resume`
     );
   };
-  const updateTalentStatus = async (action: "accept" | "reject") => {
-    if (
-      confirm(action === "accept" ? t("confirm_accept") : t("confirm_reject"))
-    ) {
+  const updateTalentStatus = async (
+    action: "accept" | "reject",
+    feedback?: string
+  ) => {
+    if (action === "reject" || confirm(t("confirm_accept"))) {
       const { code } = await Post(
         `/api/jobs/${job?.id}/talents/${talent?.id}`,
         {
           status: action === "accept" ? "accepted" : "rejected",
+          feedback,
         }
       );
 
       if (code === 0) {
         fetchTalent();
+        setIsRejectModalOpen(false);
         message.success(t("update_success"));
       }
     }
@@ -122,7 +132,32 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
             {talent?.status === "accepted" ? (
-              <Tag color="green">{t("status_accepted")}</Tag>
+              interviews.length === 0 ? (
+                <Button
+                  type="primary"
+                  onClick={() => setIsInterviewModalOpen(true)}
+                  size="large"
+                  block
+                >
+                  {t("schedule_interview")}
+                </Button>
+              ) : interviews[0].scheduled_at ? (
+                <Button
+                  size="large"
+                  block
+                  onClick={() => setIsInterviewModalOpen(true)}
+                >
+                  {t("interview_scheduled")}
+                </Button>
+              ) : (
+                <Button
+                  size="large"
+                  block
+                  onClick={() => setIsInterviewModalOpen(true)}
+                >
+                  {t("awaiting_candidate_confirm")}
+                </Button>
+              )
             ) : talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
@@ -130,7 +165,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 <Button
                   variant="outlined"
                   color="danger"
-                  onClick={() => updateTalentStatus("reject")}
+                  onClick={() => {
+                    form.resetFields();
+                    setIsRejectModalOpen(true);
+                  }}
                   style={{ flex: "auto" }}
                   size="large"
                 >
@@ -265,7 +303,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               <Button
                 variant="outlined"
                 color="danger"
-                onClick={() => updateTalentStatus("reject")}
+                onClick={() => {
+                  form.resetFields();
+                  setIsRejectModalOpen(true);
+                }}
                 style={{ flex: "auto" }}
                 size="large"
               >
@@ -296,6 +337,56 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
           />
         </div>
       </Drawer>
+
+      <Modal
+        open={isInterviewModalOpen}
+        onCancel={() => setIsInterviewModalOpen(false)}
+        width={"fit-content"}
+        centered
+        title={t("schedule_interview")}
+        onOk={() =>
+          !!interviews[0]
+            ? setIsInterviewModalOpen(false)
+            : handlerRef.current?.submit?.()
+        }
+        cancelButtonProps={{
+          style: interviews[0]
+            ? {
+                display: "none",
+              }
+            : undefined,
+        }}
+      >
+        <InterviewForm
+          talent={talent}
+          jobName={job.name}
+          handlerRef={handlerRef}
+          interview={interviews[0]}
+        />
+      </Modal>
+
+      <Modal
+        open={isRejectModalOpen}
+        onCancel={() => setIsRejectModalOpen(false)}
+        onOk={() => {
+          form.validateFields().then((values) => {
+            updateTalentStatus("reject", values.reason);
+          });
+        }}
+        title={t("reject_candidate_title")}
+        width={600}
+        centered
+      >
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item
+            name="reason"
+            label={t("reject_reason_label")}
+            rules={[{ required: true, message: t("reject_reason_required") }]}
+          >
+            <TextAreaWithVoice />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
