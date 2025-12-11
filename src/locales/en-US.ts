@@ -143,7 +143,7 @@ const CandidateResume = {
     waiting: "Viona is writing, please wait...",
     chat: "Chat about Company/Position",
     posted_at: "Posted at {{time}}",
-    respond_interview: "Respond to Interview",
+    respond_interview: "Confirm first interview arrangement",
     company_overview: "Company Overview",
     position_overview: "Position Overview",
     basic_requirements: "Basic Requirements",
@@ -155,6 +155,8 @@ const CandidateResume = {
       "<b>Thank you.</b><br />A consultant will be calling you soon.",
     confirm_interview_title: "Confirm Interview Time",
     confirm_interview_success: "Interview time confirmed successfully.",
+    first_round_interview: "First Round Interview",
+    interview_time: "Interview Time",
     interview_modal: {
       name: "Interview Name",
       mode: "Interview Type",
@@ -1609,6 +1611,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   numberRange: {
     min: "Min",
     max: "Max",
+  },
+
+  date_format: {
+    with_day: "dddd, MMMM DD",
   },
 
   pagination_total: "{{rangeStart}}-{{rangeEnd}} of {{total}} items",

@@ -97,7 +97,9 @@ const CandidateLayout = () => {
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
       setInited(true);
-      i18n.changeLanguage(data.candidate.lang ?? "zh-CN");
+      const lang = data.candidate.lang || "en-US ";
+      i18n.changeLanguage(lang);
+      globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
     } else {
       navigate("/signin-candidate");
     }

@@ -160,7 +160,7 @@ interface IJobApply extends IJobApplyListItem {
     | "evaluate_failed"
     | "accepted"
     | "rejected";
-  interviews: IInterview[];
+  interviews: TInterview[];
 }
 
 interface ISettings {

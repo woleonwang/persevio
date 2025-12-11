@@ -137,7 +137,7 @@ const CandidateResume = {
     waiting: "Viona 正在撰写中，请稍候...",
     chat: "聊聊公司/职位",
     posted_at: "发布于 {{time}}",
-    respond_interview: "回应面试",
+    respond_interview: "确认第一轮面试安排",
     company_overview: "公司简介",
     position_overview: "职位概览",
     basic_requirements: "基本要求",
@@ -149,6 +149,8 @@ const CandidateResume = {
     human_mode_hint: "<b>感谢您的配合。</b><br />顾问很快会致电与您沟通。",
     confirm_interview_title: "确认面试时间",
     confirm_interview_success: "面试时间确认成功。",
+    first_round_interview: "第一轮面试",
+    interview_time: "面试时间",
     interview_modal: {
       name: "面试名称",
       mode: "面试类型",
@@ -1552,6 +1554,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   numberRange: {
     min: "最小值",
     max: "最大值",
+  },
+
+  date_format: {
+    with_day: "ddd, MM月DD日",
   },
 
   pagination_total: "第 {{rangeStart}}-{{rangeEnd}} 条，共 {{total}} 条",

@@ -1,30 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 import { CheckOutlined } from "@ant-design/icons";
-import { Button, Drawer, message, Modal, Select, Spin } from "antd";
+import { Button, Drawer, message, Modal, Spin } from "antd";
 import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import {
-  formatInterviewMode,
-  getJobApplyStatus,
-  parseJd,
-  parseJSON,
-} from "@/utils";
+import { getJobApplyStatus, parseJd, parseJSON, parseJSONArray } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import ChatRoom from "@/components/ChatRoom";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import WhatsappIcon from "@/assets/icons/whatsapp";
 import Empty2 from "@/assets/empty2.png";
+import InterviewArrangement from "./components/InterviewArrangement";
 
-type TimeSlot = { from: string; to: string };
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApply>();
   const [candidateSettings, setCandidateSettings] =
@@ -34,9 +29,9 @@ const JobApplyShow = () => {
   const [humanModeOpen, setHumanModeOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
-  const [interviewTimeValueMap, setInterviewTimeValueMap] = useState<
-    Record<string, string>
-  >({});
+  const handlerRef = useRef<{
+    submit?: () => Promise<boolean>;
+  }>({});
 
   const applyStatus = useMemo(() => {
     return getJobApplyStatus(jobApply);
@@ -78,59 +73,14 @@ const JobApplyShow = () => {
         jd: parseJd(data.jd),
         jdJson: parseJSON(data.jd_json),
         talentStatus: data.talent_status,
-        interviews: data.interviews,
+        interviews: data.interviews.map((item: any) => {
+          return {
+            ...item,
+            time_slots: parseJSONArray(item.time_slots),
+          };
+        }),
       });
     }
-  };
-
-  const splitTimeRanges = (
-    ranges: TimeSlot[],
-    duration: number
-  ): TimeSlot[] => {
-    if (!ranges.length) return [];
-
-    const sortedRanges = ranges
-      .map((range) => ({
-        from: dayjs(range.from),
-        to: dayjs(range.to),
-      }))
-      .sort((a, b) => a.from.diff(b.from));
-
-    const merged: { from: Dayjs; to: Dayjs }[] = [];
-    for (const range of sortedRanges) {
-      if (merged.length === 0) {
-        merged.push(range);
-      } else {
-        const last = merged[merged.length - 1];
-        if (range.from.isBefore(last.to)) {
-          // 有重叠，合并
-          merged[merged.length - 1] = {
-            from: last.from,
-            to: range.to.isAfter(last.to) ? range.to : last.to,
-          };
-        } else {
-          merged.push(range);
-        }
-      }
-    }
-
-    const result: TimeSlot[] = [];
-    for (const mergedRange of merged) {
-      let currentStart = mergedRange.from;
-
-      while (
-        currentStart.add(duration, "minute").isBefore(mergedRange.to) ||
-        currentStart.add(duration, "minute").isSame(mergedRange.to)
-      ) {
-        result.push({
-          from: currentStart.toISOString(),
-          to: currentStart.add(duration, "minute").toISOString(),
-        });
-        currentStart = currentStart.add(30, "minute"); // 粒度为半小时
-      }
-    }
-
-    return result;
   };
 
   const onClickChat = () => {
@@ -202,6 +152,16 @@ const JobApplyShow = () => {
     },
   ];
 
+  const interview = jobApply?.interviews?.[0];
+
+  if (applyStatus === "accepted") {
+    steps.push({
+      key: "interview",
+      title: t("first_round_interview"),
+      status: !!interview?.scheduled_at ? "done" : "active",
+    });
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -238,16 +198,6 @@ const JobApplyShow = () => {
                   >
                     {t("chat")}
                   </Button>
-
-                  {(jobApply.interviews ?? []).length > 0 && (
-                    <Button
-                      type="primary"
-                      shape="round"
-                      onClick={() => setInterviewModalOpen(true)}
-                    >
-                      {t("respond_interview")}
-                    </Button>
-                  )}
                 </div>
               </div>
             </div>
@@ -257,7 +207,7 @@ const JobApplyShow = () => {
               <div className={styles.jobDescriptionSection}>
                 <div className={styles.sectionTitle}>
                   <div className={styles.greenBar}></div>
-                      <span>{t("company_overview")}</span>
+                  <span>{t("company_overview")}</span>
                 </div>
                 <div className={styles.sectionContent}>
                   <MarkdownContainer content={jdJson.company_introduction} />
@@ -330,6 +280,24 @@ const JobApplyShow = () => {
                           {t("chat_cta_label")}
                         </Button>
                       )}
+                      {step.key === "interview" &&
+                        (interview?.scheduled_at ? (
+                          <div style={{ marginTop: 20 }}>
+                            {t("interview_time")}:{" "}
+                            {dayjs(interview.scheduled_at).format(
+                              "YYYY-MM-DD HH:mm"
+                            )}
+                          </div>
+                        ) : (
+                          <Button
+                            type="primary"
+                            shape="round"
+                            onClick={() => setInterviewModalOpen(true)}
+                            style={{ marginTop: 20 }}
+                          >
+                            {t("respond_interview")}
+                          </Button>
+                        ))}
                     </div>
                   </div>
                 );
@@ -477,93 +445,24 @@ const JobApplyShow = () => {
         open={interviewModalOpen}
         onCancel={() => setInterviewModalOpen(false)}
         onOk={async () => {
-          const keys = Object.keys(interviewTimeValueMap);
-          for (let interviewId of keys) {
-            const { code } = await Post(
-              `/api/candidate/job_applies/${jobApply.id}/interviews/${interviewId}/confirm_time`,
-              {
-                start_time: interviewTimeValueMap[interviewId],
-              }
-            );
-            if (code !== 0) {
-              message.success(originalT("submit_failed"));
-              return;
+          if (handlerRef.current.submit) {
+            const result = await handlerRef.current.submit();
+            if (result) {
+              setInterviewModalOpen(false);
+              fetchApplyJob();
             }
           }
-
-          message.success(t("confirm_interview_success"));
-          setInterviewModalOpen(false);
-          fetchApplyJob();
-          setInterviewTimeValueMap({});
         }}
+        width={"fit-content"}
+        centered
       >
-        {(jobApply?.interviews ?? []).map((interview) => {
-          return (
-            <div className={styles.interviewPanel}>
-              <div className={styles.interviewItem}>
-                <div>{t("interview_modal.name")}:</div>
-                <div>{interview.name}</div>
-              </div>
-              <div className={styles.interviewItem}>
-                <div>{t("interview_modal.mode")}:</div>
-                <div>{formatInterviewMode(interview.mode)}</div>
-              </div>
-              <div className={styles.interviewItem}>
-                <div>{t("interview_modal.duration")}:</div>
-                <div>
-                  {interview.duration} {t("interview_modal.minutes")}
-                </div>
-              </div>
-              <div className={styles.interviewItem}>
-                <div>{t("interview_modal.interviewer")}:</div>
-                <div>
-                  {
-                    interview.interview_members.find(
-                      (item) => item.interviewer_id != 0
-                    )?.interviewer?.name
-                  }
-                </div>
-              </div>
-              <div className={styles.interviewItem}>
-                <div>{t("interview_modal.time")}:</div>
-                <div style={{ display: "flex", gap: 12 }}>
-                  {interview.scheduled_at ? (
-                    dayjs(interview.scheduled_at).format("YYYY-MM-DD HH:mm")
-                  ) : (
-                    <Select
-                      value={interviewTimeValueMap[interview.id]}
-                      style={{ width: "100%" }}
-                      onChange={(v) =>
-                        setInterviewTimeValueMap({
-                          ...interviewTimeValueMap,
-                          [interview.id]: v,
-                        })
-                      }
-                      options={(() => {
-                        const timeSlots =
-                          interview.interview_members.find(
-                            (item) => item.interviewer_id != 0
-                          )?.time_slots?.scopes ?? [];
-
-                        const options = splitTimeRanges(
-                          timeSlots,
-                          interview.duration
-                        );
-
-                        return options.map((option) => ({
-                          value: option.from,
-                          label: `${dayjs(option.from).format(
-                            "YYYY-MM-DD HH:mm"
-                          )} ~ ${dayjs(option.to).format("YYYY-MM-DD HH:mm")}`,
-                        }));
-                      })()}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {interview && (
+          <InterviewArrangement
+            interview={interview}
+            jobApply={jobApply}
+            handlerRef={handlerRef}
+          />
+        )}
       </Modal>
     </div>
   );
