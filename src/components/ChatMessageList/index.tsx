@@ -16,6 +16,7 @@ interface IProps {
   }>;
   className?: string;
   style?: React.CSSProperties;
+  showUserTimestamp?: boolean;
   renderTagsContent?: (item: TMessage) => React.ReactNode;
   renderOperationContent?: (
     item: TMessage,
@@ -34,6 +35,7 @@ const ChatMessageList = (props: IProps) => {
     childrenFunctionsRef,
     renderTagsContent,
     renderOperationContent,
+    showUserTimestamp = false,
   } = props;
 
   const [loadingText, setLoadingText] = useState(".");
@@ -131,6 +133,14 @@ const ChatMessageList = (props: IProps) => {
                       [styles.user]: item.role === "user",
                     })}
                   >
+                    {showUserTimestamp && item.role === "user" && (
+                      <div
+                        className={styles.timestamp}
+                        style={{ textAlign: "right", marginBottom: 4 }}
+                      >
+                        {dayjs(item.updated_at).format(datetimeFormat)}
+                      </div>
+                    )}
                     <div className={styles.messageContent}>
                       {item.id === "fake_ai_id" ? (
                         <p>

@@ -121,6 +121,7 @@ const ChatMessagePreview = (props: {
             </>
           );
         }}
+        showUserTimestamp
       />
       <Drawer
         title={t("view_document")}
