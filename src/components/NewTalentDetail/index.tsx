@@ -344,11 +344,17 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         width={"fit-content"}
         centered
         title={t("schedule_interview")}
-        onOk={() =>
-          !!interviews[0]
-            ? setIsInterviewModalOpen(false)
-            : handlerRef.current?.submit?.()
-        }
+        onOk={async () => {
+          if (!!interviews[0]) {
+            setIsInterviewModalOpen(false);
+          } else {
+            const result = await handlerRef.current?.submit?.();
+            if (result) {
+              fetchTalent();
+              setIsInterviewModalOpen(false);
+            }
+          }
+        }}
         cancelButtonProps={{
           style: interviews[0]
             ? {
