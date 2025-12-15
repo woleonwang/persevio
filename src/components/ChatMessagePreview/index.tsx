@@ -106,7 +106,7 @@ const ChatMessagePreview = (props: {
                   })}
                 </div>
               )}
-              {canPlayAudio && (
+              {!!talent && canPlayAudio && (
                 <AudioPlayer
                   duration={item.duration ?? 0}
                   payloadUrl={
