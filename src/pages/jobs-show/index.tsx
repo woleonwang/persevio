@@ -84,6 +84,7 @@ const JobsShow = () => {
     fetchCandidateSettings();
     fetchJob();
     checkShareToken();
+    checkLinkedinProfile();
     setTimeout(() => {
       setTooltipVisible(false);
     }, 5000);
@@ -150,6 +151,13 @@ const JobsShow = () => {
     if (token) {
       setShareToken(token);
       await Get(`/api/public/share_token/${token}`);
+    }
+  };
+
+  const checkLinkedinProfile = async () => {
+    const profileId = getQuery("profile_id");
+    if (profileId) {
+      localStorage.setItem("linkedin_profile_id", profileId);
     }
   };
 

@@ -149,11 +149,16 @@ const ApplyJob: React.FC = () => {
       const shareToken = parseJSON(localStorage.getItem("share_token") ?? "")[
         jobId
       ];
+      const linkedinProfileId = localStorage.getItem("linkedin_profile_id");
       const params = {
         ...basicInfo,
         job_id: jobId,
         share_token: shareToken,
+        linkedin_profile_id: linkedinProfileId
+          ? parseInt(linkedinProfileId)
+          : undefined,
       };
+
       const { code, data } = await Post(`/api/candidate/register`, params);
 
       if (code === 0) {
