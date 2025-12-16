@@ -106,7 +106,7 @@ const ChatMessagePreview = (props: {
                   })}
                 </div>
               )}
-              {!!talent && canPlayAudio && (
+              {(role === "admin" || !!talent) && canPlayAudio && (
                 <AudioPlayer
                   duration={item.duration ?? 0}
                   payloadUrl={
