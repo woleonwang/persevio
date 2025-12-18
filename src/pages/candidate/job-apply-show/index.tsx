@@ -73,7 +73,7 @@ const JobApplyShow = () => {
         jd: parseJd(data.jd),
         jdJson: parseJSON(data.jd_json),
         talentStatus: data.talent_status,
-        interviews: data.interviews.map((item: any) => {
+        interviews: (data.interviews ?? []).map((item: any) => {
           return {
             ...item,
             time_slots: parseJSONArray(item.time_slots),
