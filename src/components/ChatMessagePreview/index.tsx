@@ -106,7 +106,7 @@ const ChatMessagePreview = (props: {
                   })}
                 </div>
               )}
-              {canPlayAudio && (
+              {(role === "admin" || !!talent) && canPlayAudio && (
                 <AudioPlayer
                   duration={item.duration ?? 0}
                   payloadUrl={
@@ -121,6 +121,7 @@ const ChatMessagePreview = (props: {
             </>
           );
         }}
+        showUserTimestamp
       />
       <Drawer
         title={t("view_document")}
