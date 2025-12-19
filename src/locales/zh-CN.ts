@@ -1637,7 +1637,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     interview_time_slots: "面试时间段",
     available_time_slots: "可用的面试时间段",
     select_slots_required: "请选择可用的时间段",
-    time_slots_description: "请在右侧选择您的可用时间段，并为候选人提供多个选择。",
+    time_slots_description:
+      "请在右侧选择您的可用时间段，并为候选人提供多个选择。",
     interviewers: "面试官",
     interview_focus: "面试重点",
     contact_person: "联系人",

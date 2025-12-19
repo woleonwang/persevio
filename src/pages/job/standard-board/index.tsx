@@ -9,7 +9,7 @@ import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import ChatRoomNew from "@/components/ChatRoomNew";
-import JobDetails from "./components/JobDetails";
+import JobDetails from "@/components/JobDetails";
 import globalStore from "@/store/global";
 import { infoModal } from "@/utils";
 

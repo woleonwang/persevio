@@ -71,6 +71,9 @@ import ShortLink from "./pages/short-link/index.tsx";
 import JobList from "./pages/job/list/index.tsx";
 import AdminTalents from "./pages/admin/talents/index.tsx";
 import Referrals from "./pages/candidate/referrals/index.tsx";
+import Admin from "./layouts/Admin/index.tsx";
+import JobDetailsPage from "./pages/admin/job-details/index.tsx";
+import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -191,6 +194,24 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/app/admin/companies" element={<AdminCompanies />} />
           {/* 候选人列表 */}
           <Route path="/app/talents" element={<Talents />} />
+        </Route>
+
+        <Route path="/admin" element={<Admin />}>
+          {/* 管理员职位列表：用于推荐给候选人 */}
+          <Route path="/admin/jobs" element={<AdminJobs />} />
+          <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
+          {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
+          <Route path="/admin/talents" element={<ScopedTalents />} />
+          {/* 管理员候选人列表：用于审核候选人 */}
+          {/* <Route path="/admin/candidates" element={<AdminCandidates />} /> */}
+          {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
+          {/* <Route
+            path="/app/candidate-connections"
+            element={<AdminCandidateConnections />}
+          />
+          <Route path="/app/companies" element={<AdminCompanies />} /> */}
+          {/* HR端设置 */}
+          <Route path="/admin/settings" element={<Settings />} />
         </Route>
 
         <Route path="/candidate" element={<CandidateApp />}>

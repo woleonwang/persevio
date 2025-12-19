@@ -260,7 +260,7 @@ export default {
     account_management: "Account Management",
     job_management: "Job Management",
     talent_management: "Talent Management",
-    job_apply_management: "Job Apply Management",
+    job_apply_management: "Application Management",
     candidate_list: "Candidate List",
     candidate_connection_list: "Candidate Connection List",
     company_list: "Company List",
@@ -1582,9 +1582,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     no_report: "No report available",
     schedule_interview: "Schedule Interview",
     interview_scheduled: "Interview Scheduled",
-    awaiting_candidate_confirm: "Awaiting candidate's confirmation of interview details",
+    awaiting_candidate_confirm:
+      "Awaiting candidate's confirmation of interview details",
     reject_candidate_title: "Reject Candidate",
-    reject_reason_label: "Tell us why this candidate is not a fit so we can calibrate our search",
+    reject_reason_label:
+      "Tell us why this candidate is not a fit so we can calibrate our search",
     reject_reason_required: "Please enter reason",
   },
 
@@ -1694,7 +1696,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     interview_time_slots: "Interview time slots",
     available_time_slots: "Avaliable Interview Time Slots",
     select_slots_required: "Please select available time slots",
-    time_slots_description: "Please select your available time slots on the right, and provide multiple options for the candidate to choose from.",
+    time_slots_description:
+      "Please select your available time slots on the right, and provide multiple options for the candidate to choose from.",
     interviewers: "Interviewers",
     interview_focus: "Interview Focus",
     contact_person: "Contact Person",

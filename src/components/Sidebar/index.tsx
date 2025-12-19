@@ -116,7 +116,7 @@ const Sidebar = (props: ISidebarProps) => {
         {footer.map((item) => {
           const isActive = currentPath.startsWith(item.path);
           return (
-            <div className={styles.menuItemContainer}>
+            <div className={styles.menuItemContainer} key={item.path}>
               <div
                 className={`${styles.menuItem} ${
                   isActive ? styles.active : ""
@@ -225,7 +225,7 @@ const Sidebar = (props: ISidebarProps) => {
         {footer.map((item) => {
           const isActive = currentPath.startsWith(item.path);
           return (
-            <div className={styles.menuItemContainer}>
+            <div className={styles.menuItemContainer} key={item.path}>
               <div
                 className={`${styles.menuItem} ${
                   isActive ? styles.active : ""

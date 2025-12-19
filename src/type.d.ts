@@ -242,6 +242,7 @@ type TMenu = {
   img: ReactNode;
   requireAdmin?: boolean;
   requireStaffAdmin?: boolean;
+  requireSuperAdmin?: boolean;
   key?: string;
   badge?: number;
   children?: {
@@ -406,6 +407,7 @@ type TEvaluation =
 
 type TTalent = {
   id: number;
+  candidate_id: number;
   name: string;
   status: string;
   feedback: string;
@@ -702,4 +704,17 @@ type TSupportTag = {
   }[];
   autoTrigger?: boolean;
   style?: "inline-button" | "block-button" | "button-with-text";
+};
+
+type TLinkedinProfile = {
+  id: number;
+  job_id: number;
+  name: string;
+  url: string;
+  match_score?: number;
+  profile_doc?: string;
+  outreach_message_doc?: string;
+  created_at: string;
+  updated_at: string;
+  candidate_id?: number;
 };

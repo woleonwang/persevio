@@ -11,9 +11,14 @@ import styles from "./style.module.less";
 import JobDocument from "./components/JobDocument";
 import { copy, getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
+import AdminTalents from "@/components/AdminTalents";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents";
-const JobDetails = () => {
+
+interface IProps {
+  role?: "admin" | "staff";
+}
+const JobDetails = ({ role = "staff" }: IProps) => {
   const tab = getQuery("tab");
   const { job, fetchJob } = useJob();
   const [chatType, setChatType] = useState<TMenu>(
@@ -53,25 +58,27 @@ const JobDetails = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>{job.name}</div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            cursor: "pointer",
-          }}
-          onClick={async () => {
-            await copy(
-              `${window.origin}/app/jobs/${
-                job.id
-              }/standard-board?token=${localStorage.getItem("token")}`
-            );
-            message.success(originalT("copied"));
-          }}
-        >
-          <ShareAltOutlined style={{ color: "#3682fe" }} />
-          <div style={{ fontSize: 14 }}>{t("share_position")}</div>
-        </div>
+        {role === "staff" && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              cursor: "pointer",
+            }}
+            onClick={async () => {
+              await copy(
+                `${window.origin}/app/jobs/${
+                  job.id
+                }/standard-board?token=${localStorage.getItem("token")}`
+              );
+              message.success(originalT("copied"));
+            }}
+          >
+            <ShareAltOutlined style={{ color: "#3682fe" }} />
+            <div style={{ fontSize: 14 }}>{t("share_position")}</div>
+          </div>
+        )}
       </div>
       <div className={styles.body}>
         <div className={styles.left}>
@@ -94,7 +101,11 @@ const JobDetails = () => {
         </div>
         <div className={styles.right}>
           {chatType === "talents" ? (
-            <Talents jobId={job.id} />
+            role === "staff" ? (
+              <Talents jobId={job.id} />
+            ) : (
+              <AdminTalents jobId={job.id} />
+            )
           ) : (
             <JobDocument
               job={job}
@@ -102,6 +113,7 @@ const JobDetails = () => {
               key={chatType}
               togglePostJob={togglePostJob}
               onUpdateDoc={fetchJob}
+              role={role}
             />
           )}
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Input, Button, message } from "antd";
-import { Post } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,7 @@ interface SigninResponse {
   staff: {
     staff_id: string;
     staff_name: string;
+    account_role: number;
   };
 }
 
@@ -31,10 +32,19 @@ const SignIn: React.FC = () => {
   const redirect = decodeURIComponent(urlParams.get("redirect") ?? "");
 
   useEffect(() => {
-    if (tokenFromUrl) {
-      signInSucceed(tokenFromUrl);
-    }
+    checkQueryToken();
   }, []);
+
+  const checkQueryToken = async () => {
+    if (tokenFromUrl) {
+      localStorage.setItem("token", tokenFromUrl);
+      const { code, data } = await Get(`/api/settings`);
+      if (code === 0) {
+        const settings: ISettings = data;
+        signInSucceed(settings.is_admin);
+      }
+    }
+  };
 
   const handleSignIn = async () => {
     if (loadingRef.current) {
@@ -53,7 +63,8 @@ const SignIn: React.FC = () => {
 
       if (code === 0 && data) {
         message.success(t("signin.signin_succeed"));
-        signInSucceed(data.token);
+        localStorage.setItem("token", data.token);
+        signInSucceed(data.staff.account_role);
       } else {
         message.error(t("signin.username_or_password_incorrect"));
       }
@@ -62,9 +73,13 @@ const SignIn: React.FC = () => {
     });
   };
 
-  const signInSucceed = (token: string) => {
-    localStorage.setItem("token", token);
-    navigate(redirect || "/app/entry/create-job", { replace: true });
+  const signInSucceed = async (role: number) => {
+    navigate(
+      redirect || (role === 0 ? "/app/entry/create-job" : "/admin/jobs"),
+      {
+        replace: true,
+      }
+    );
   };
 
   return (

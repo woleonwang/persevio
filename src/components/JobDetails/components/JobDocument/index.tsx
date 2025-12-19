@@ -21,6 +21,7 @@ type TChatType = "jobRequirement" | "jobDescription";
 interface IProps {
   job: IJob;
   chatType: TChatType;
+  role?: "admin" | "staff";
   togglePostJob: () => Promise<void>;
   onUpdateDoc: () => Promise<void>;
 }
@@ -30,7 +31,7 @@ const chatTypeMappings: Record<TChatType, string> = {
   jobDescription: "jd",
 };
 const JobDocument = (props: IProps) => {
-  const { job, chatType, togglePostJob, onUpdateDoc } = props;
+  const { job, chatType, togglePostJob, onUpdateDoc, role = "staff" } = props;
 
   const [documentContent, setDocumentContent] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");
@@ -149,23 +150,25 @@ const JobDocument = (props: IProps) => {
                 message.success(originalT("copied"));
               }}
             />
-            <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
-              <EditOutlined
-                onClick={() => {
-                  if (disabledEdit) return;
-                  setEditingValue(documentContent);
-                  setIsEditing(true);
-                }}
-                style={
-                  disabledEdit
-                    ? {
-                        opacity: 0.5,
-                        cursor: "not-allowed",
-                      }
-                    : {}
-                }
-              />
-            </Tooltip>
+            {role === "staff" && (
+              <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
+                <EditOutlined
+                  onClick={() => {
+                    if (disabledEdit) return;
+                    setEditingValue(documentContent);
+                    setIsEditing(true);
+                  }}
+                  style={
+                    disabledEdit
+                      ? {
+                          opacity: 0.5,
+                          cursor: "not-allowed",
+                        }
+                      : {}
+                  }
+                />
+              </Tooltip>
+            )}
 
             <Button
               variant="outlined"
@@ -179,27 +182,28 @@ const JobDocument = (props: IProps) => {
             </Button>
             {
               <>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  style={{ marginLeft: 6 }}
-                  onClick={() => {
-                    confirmModal({
-                      title: job.posted_at
-                        ? t("unpost_job_title")
-                        : t("post_job_title"),
-                      content: job.posted_at
-                        ? t("unpost_job_content")
-                        : t("post_job_content"),
-                      onOk: () => {
-                        togglePostJob();
-                      },
-                    });
-                  }}
-                >
-                  {job.posted_at ? t("unpost_job") : t("post_job")}
-                </Button>
-
+                {role === "staff" && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    style={{ marginLeft: 6 }}
+                    onClick={() => {
+                      confirmModal({
+                        title: job.posted_at
+                          ? t("unpost_job_title")
+                          : t("post_job_title"),
+                        content: job.posted_at
+                          ? t("unpost_job_content")
+                          : t("post_job_content"),
+                        onOk: () => {
+                          togglePostJob();
+                        },
+                      });
+                    }}
+                  >
+                    {job.posted_at ? t("unpost_job") : t("post_job")}
+                  </Button>
+                )}
                 {chatType === "jobDescription" && !!job.posted_at && (
                   <Button
                     type="primary"
@@ -218,7 +222,7 @@ const JobDocument = (props: IProps) => {
           </div>
         )}
       </div>
-      {chatType === "jobRequirement" && (
+      {chatType === "jobRequirement" && role === "staff" && (
         <div className={styles.hint}>{t("job_requirement_hint")}</div>
       )}
       <div className={styles.docContent}>

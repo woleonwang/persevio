@@ -1,0 +1,81 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tableContainer {
+  flex: auto;
+  overflow: auto;
+
+  :global {
+    table {
+      border-left: 1px solid #ebecee;
+      border-right: 1px solid #ebecee;
+    }
+
+    .ant-table-thead th {
+      background-color: #e9ecee !important;
+    }
+  }
+}
+
+.status {
+  padding: 4px 16px;
+  border-radius: 44px;
+
+  &.accepted {
+    background-color: rgba(229, 247, 247, 1);
+    color: rgba(31, 172, 106, 1);
+  }
+
+  &.rejected {
+    background-color: rgba(255, 246, 246, 1);
+    color: rgba(255, 102, 102, 1);
+  }
+}
+
+.jobApplyDetail {
+  display: flex;
+  flex: auto;
+  overflow: hidden;
+}
+
+.jobApplyPanel {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.jobApplyPanelTitle {
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalDescription {
+  padding: 14px 16px;
+  color: rgba(249, 169, 48, 1);
+  background-color: rgba(252, 249, 235, 1);
+  border-radius: 12px;
+}
+
+.bonusPoolModalForm {
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .jobApplyDetail {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .jobApplyPanel {
+    flex: none;
+  }
+}

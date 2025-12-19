@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import styles from "../style.module.less";
 import dayjs from "dayjs";
 import { getJobChatbotUrl } from "@/utils";
+import { useNavigate } from "react-router";
 
 const PAGE_SIZE = 10;
 
@@ -40,6 +41,7 @@ const Jobs = () => {
   const [selectedCandidates, setSelectedCandidates] = useState<number[]>([]);
 
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCompanies();
@@ -235,8 +237,9 @@ const Jobs = () => {
           onRow={(job) => {
             return {
               onClick: () => {
-                setSelectedJob(job);
-                setJobDetailDrawerOpen(true);
+                navigate(`/admin/jobs/${job.id}`);
+                // setSelectedJob(job);
+                // setJobDetailDrawerOpen(true);
               },
             };
           }}
