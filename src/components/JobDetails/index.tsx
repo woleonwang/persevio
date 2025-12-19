@@ -12,6 +12,7 @@ import JobDocument from "./components/JobDocument";
 import { copy, getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
+import useAdminJob from "@/hooks/useAdminJob";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents";
 
@@ -20,7 +21,7 @@ interface IProps {
 }
 const JobDetails = ({ role = "staff" }: IProps) => {
   const tab = getQuery("tab");
-  const { job, fetchJob } = useJob();
+  const { job, fetchJob } = role === "staff" ? useJob() : useAdminJob();
   const [chatType, setChatType] = useState<TMenu>(
     (tab as TMenu) || "jobDescription"
   );
