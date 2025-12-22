@@ -15,10 +15,6 @@ import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
 import CompanyInfo from "@/assets/icons/company-info";
 import Candidates from "@/assets/icons/candidates";
-import JobManagement from "@/assets/icons/job-management";
-import JobApplyManagement from "@/assets/icons/job-apply-management";
-import CandidateConnectionList from "@/assets/icons/candidate-connection-list";
-import CompanyList from "@/assets/icons/company-list";
 import Sidebar from "@/components/Sidebar";
 
 const AppLayout = () => {
@@ -136,47 +132,7 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
       requireStaffAdmin: true,
     },
-    {
-      title: t("menu.job_management"),
-      path: "/app/admin/jobs",
-      img: <JobManagement />,
-      requireAdmin: true,
-    },
-    {
-      title: t("menu.talent_management"),
-      path: "/app/admin/talents",
-      img: <Candidates />,
-      requireAdmin: true,
-    },
-    {
-      title: t("menu.job_apply_management"),
-      path: "/app/admin/job-applies",
-      img: <JobApplyManagement />,
-      requireAdmin: true,
-    },
-    {
-      title: t("menu.candidate_list"),
-      path: "/app/admin/candidates",
-      img: <CandidateConnectionList />,
-      requireAdmin: true,
-    },
-    {
-      title: t("menu.candidate_connection_list"),
-      path: "/app/admin/candidate-connections",
-      img: <CandidateConnectionList />,
-      requireAdmin: true,
-    },
-    {
-      title: t("menu.company_list"),
-      path: "/app/admin/companies",
-      img: <CompanyList />,
-      requireAdmin: true,
-    },
-  ].filter(
-    (item) =>
-      (!item.requireAdmin || isAdmin) &&
-      (!item.requireStaffAdmin || isStaffAdmin)
-  );
+  ].filter((item) => !item.requireStaffAdmin || isStaffAdmin);
 
   const FOOTER = [
     {
@@ -270,6 +226,8 @@ const AppLayout = () => {
         footer={FOOTER}
         searchKeyword={searchKeyword}
         setSearchKeyword={setSearchKeyword}
+        onSwitch={isAdmin ? () => navigate("/admin/jobs") : undefined}
+        switchTooltip={t("menu.switch_to_admin_mode")}
       />
       <div className={styles.main}>
         <Outlet />

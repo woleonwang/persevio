@@ -7,7 +7,7 @@ const ScopedTalents = () => {
       <div className={commonStyles.adminFilter}>
         <div className={commonStyles.adminFilterItem}></div>
       </div>
-      <div className={commonStyles.adminMain}>
+      <div className={commonStyles.adminMain} style={{ overflow: "auto" }}>
         <AdminTalents hideHeader={true} />
       </div>
     </div>

@@ -265,6 +265,8 @@ export default {
     deep_aspirations: "深度职业规划",
     job_applies: "职位申请",
     connections: "匹配/会面",
+    switch_to_admin_mode: "切换到猎头端",
+    switch_to_employer_mode: "切换到雇主端",
   },
 
   job: {

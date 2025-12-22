@@ -1,12 +1,12 @@
 import classnames from "classnames";
 import CollapseIcon from "@/assets/icons/collaspe";
 import logo from "@/assets/logo.png";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
 import { ReactNode, useState } from "react";
-import { Badge, Input, Popover } from "antd";
+import { Badge, Input, Popover, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import Delete from "@/assets/icons/delete";
 import { observer } from "mobx-react-lite";
@@ -18,6 +18,8 @@ interface ISidebarProps {
   footer: TFooter[];
   searchKeyword?: string;
   setSearchKeyword?: (searchKeyword: string) => void;
+  onSwitch?: () => void;
+  switchTooltip?: string;
 }
 const Sidebar = (props: ISidebarProps) => {
   const {
@@ -27,6 +29,8 @@ const Sidebar = (props: ISidebarProps) => {
     searchKeyword,
     setCollapsed,
     setSearchKeyword,
+    onSwitch,
+    switchTooltip,
   } = props;
 
   const [showSearch, setShowSearch] = useState(false);
@@ -225,7 +229,11 @@ const Sidebar = (props: ISidebarProps) => {
         {footer.map((item) => {
           const isActive = currentPath.startsWith(item.path);
           return (
-            <div className={styles.menuItemContainer} key={item.path}>
+            <div
+              className={styles.menuItemContainer}
+              key={item.path}
+              style={{ position: "relative" }}
+            >
               <div
                 className={`${styles.menuItem} ${
                   isActive ? styles.active : ""
@@ -236,6 +244,23 @@ const Sidebar = (props: ISidebarProps) => {
                 <Icon icon={item.img} style={{ fontSize: 20 }} />
                 <span style={{ marginLeft: 16 }}>{item.title}</span>
               </div>
+              {onSwitch && (
+                <Tooltip title={switchTooltip}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 20,
+                      top: 16,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <UserSwitchOutlined
+                      style={{ fontSize: 16 }}
+                      onClick={onSwitch}
+                    />
+                  </div>
+                </Tooltip>
+              )}
             </div>
           );
         })}

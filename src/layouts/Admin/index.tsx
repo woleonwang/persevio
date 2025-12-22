@@ -123,6 +123,8 @@ const AdminLayout = () => {
         setCollapsed={setMenuCollapse}
         menu={MENU}
         footer={FOOTER}
+        onSwitch={() => navigate("/app/jobs")}
+        switchTooltip={t("menu.switch_to_employer_mode")}
       />
       <div className={styles.main}>
         <Outlet />

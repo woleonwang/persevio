@@ -12,8 +12,9 @@ import JobDocument from "./components/JobDocument";
 import { copy, getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
+import JobSettings from "./components/JobSettings";
 
-type TMenu = "jobRequirement" | "jobDescription" | "talents";
+type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
 interface IProps {
   role?: "admin" | "staff";
@@ -28,14 +29,14 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
 
-  const chatTypeTitle: Record<TMenu, string> = useMemo(
-    () => ({
+  const chatTypeTitle: Partial<Record<TMenu, string>> = useMemo(() => {
+    return {
       jobDescription: t("job_description_jd"),
       jobRequirement: t("job_requirement_table"),
       talents: t("talents"),
-    }),
-    [t]
-  );
+      ...(role === "admin" ? { settings: "设置" } : {}),
+    };
+  }, [t, role]);
 
   const togglePostJob = async () => {
     if (!job) return;
@@ -100,22 +101,24 @@ const JobDetails = ({ role = "staff" }: IProps) => {
           })}
         </div>
         <div className={styles.right}>
-          {chatType === "talents" ? (
-            role === "staff" ? (
+          {chatType === "talents" &&
+            (role === "staff" ? (
               <Talents jobId={job.id} />
             ) : (
               <AdminTalents jobId={job.id} />
-            )
-          ) : (
-            <JobDocument
-              job={job}
-              chatType={chatType}
-              key={chatType}
-              togglePostJob={togglePostJob}
-              onUpdateDoc={fetchJob}
-              role={role}
-            />
-          )}
+            ))}
+          {chatType === "settings" && <JobSettings jobId={job.id} />}
+          {chatType === "jobRequirement" ||
+            (chatType === "jobDescription" && (
+              <JobDocument
+                job={job}
+                chatType={chatType}
+                key={chatType}
+                togglePostJob={togglePostJob}
+                onUpdateDoc={fetchJob}
+                role={role}
+              />
+            ))}
         </div>
       </div>
     </div>

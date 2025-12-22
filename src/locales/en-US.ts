@@ -273,6 +273,8 @@ export default {
     deep_aspirations: "Deep Aspirations",
     job_applies: "Your jobs",
     connections: "Matches/Meetings",
+    switch_to_admin_mode: "Switch to admin mode",
+    switch_to_employer_mode: "Switch to employer mode",
   },
 
   job: {

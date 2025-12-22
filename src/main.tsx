@@ -202,7 +202,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
           {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
           <Route path="/admin/talents" element={<ScopedTalents />} />
-          {/* 管理员候选人列表：用于审核候选人 */}
+          {/* 管理员企业审核列表 */}
+          <Route path="/admin/companies" element={<AdminCompanies />} />
           {/* <Route path="/admin/candidates" element={<AdminCandidates />} /> */}
           {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
           {/* <Route
