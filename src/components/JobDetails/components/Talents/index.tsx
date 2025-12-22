@@ -145,6 +145,7 @@ const Talents = (props: IProps) => {
     {
       title: t("action"),
       dataIndex: "action",
+      fixed: "right" as const,
       render: (_: any, record: TTalent) => {
         return (
           <Button
@@ -185,6 +186,7 @@ const Talents = (props: IProps) => {
           locale={{
             emptyText: <Empty style={{ margin: "60px 0" }} />,
           }}
+          scroll={{ x: "max-content" }}
         />
       </div>
     </div>

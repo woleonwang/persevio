@@ -108,17 +108,16 @@ const JobDetails = ({ role = "staff" }: IProps) => {
               <AdminTalents jobId={job.id} />
             ))}
           {chatType === "settings" && <JobSettings jobId={job.id} />}
-          {chatType === "jobRequirement" ||
-            (chatType === "jobDescription" && (
-              <JobDocument
-                job={job}
-                chatType={chatType}
-                key={chatType}
-                togglePostJob={togglePostJob}
-                onUpdateDoc={fetchJob}
-                role={role}
-              />
-            ))}
+          {(chatType === "jobRequirement" || chatType === "jobDescription") && (
+            <JobDocument
+              job={job}
+              chatType={chatType}
+              key={chatType}
+              togglePostJob={togglePostJob}
+              onUpdateDoc={fetchJob}
+              role={role}
+            />
+          )}
         </div>
       </div>
     </div>
