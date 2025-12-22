@@ -35,6 +35,8 @@ const Jobs = () => {
   const genJobApplyStatusTag = (jobApply: IJobApplyListItem) => {
     const status = getJobApplyStatus(jobApply);
     const statusLabelMap: Record<string, string> = {
+      interview_scheduled: t("status.interview_scheduled"),
+      interview_created: t("status.interview_created"),
       accepted: t("status.accepted"),
       rejected: t("status.rejected"),
       screening: t("status.screening"),

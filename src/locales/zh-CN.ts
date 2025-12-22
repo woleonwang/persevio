@@ -116,6 +116,8 @@ const CandidateResume = {
     },
     empty_description: "Viona 正在努力为你寻找合适的职位。",
     status: {
+      interview_scheduled: "已确认面试",
+      interview_created: "待确认面试",
       accepted: "简历已通过",
       rejected: "简历未通过",
       screening: "简历筛选中",
@@ -883,6 +885,10 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     candidate_name: "候选人姓名",
     screening_status: "筛选状态",
     schedule_time: "面试时间",
+    feedback: "拒绝原因",
+    interview_mode: "面试模式",
+    interview: "面试",
+    written: "笔试",
     status_accepted: "已通过",
     status_rejected: "未通过",
     status_unfiltered: "未筛选",
@@ -1458,9 +1464,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     refresh_unread_comment: "刷新未读候选人状态",
     empty_text: "暂无数据",
     status_column: "状态",
-    accepted: "已通过",
+    accepted: "待安排面试",
     rejected: "已拒绝",
     pending: "待审核",
+    interview_scheduled: "已安排面试",
+    interview_created: "待候选人确认面试",
   },
 
   job_list: {

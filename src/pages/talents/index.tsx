@@ -172,6 +172,13 @@ const Talents: React.FC = () => {
       key: "status",
       width: 180,
       render: (_, record) => {
+        if (record.interviews?.length) {
+          return t(
+            record.interviews[0].scheduled_at
+              ? "interview_scheduled"
+              : "interview_created"
+          );
+        }
         return t(record.status);
       },
     },

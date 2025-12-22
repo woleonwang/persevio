@@ -160,6 +160,12 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
   if (!jobApply) {
     return "chat";
   }
+  if (jobApply.interviews && jobApply.interviews.length > 0) {
+    return jobApply.interviews[0].scheduled_at
+      ? "interview_scheduled"
+      : "interview_created";
+  }
+
   if (jobApply.talent_status === "accepted") {
     return "accepted";
   }

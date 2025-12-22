@@ -91,19 +91,45 @@ const Talents = (props: IProps) => {
           if (!record.interviews?.length) {
             return <Tag color="green">{t("status_pending_interview")}</Tag>;
           } else if (!record.interviews[0].scheduled_at) {
-            return <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>;
+            return (
+              <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>
+            );
           } else {
             return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
           }
         }
         if (status === "rejected") {
-          return (
-            <Tooltip title={record.feedback}>
-              <Tag color="red">{t("status_rejected")}</Tag>
-            </Tooltip>
-          );
+          return <Tag color="red">{t("status_rejected")}</Tag>;
         }
         return <Tag color="default">{t("status_unfiltered")}</Tag>;
+      },
+    },
+    {
+      title: t("feedback"),
+      dataIndex: "feedback",
+      render: (feedback: string) => {
+        return (
+          <Tooltip title={feedback}>
+            <div
+              style={{
+                maxWidth: 100,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {feedback || "-"}
+            </div>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: t("interview_mode"),
+      dataIndex: "interview_mode",
+      render: (_: string, record: TTalentItem) => {
+        const interview = record.interviews?.[0];
+        return interview ? t(interview.mode) : "-";
       },
     },
     {

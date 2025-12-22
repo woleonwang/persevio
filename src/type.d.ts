@@ -91,8 +91,6 @@ interface IJobApplyListItem {
   job_id: number;
   status: TJobListStatus;
   created_at: string;
-  updated_at: string;
-  recommend_doc_id: number;
   job_name: string;
   job_basic_info: string;
   job_posted_at: string;
@@ -103,6 +101,7 @@ interface IJobApplyListItem {
   interview_mode: "ai" | "human" | "whatsapp";
   talent_status: string;
   whatsapp_number_confirmed_at?: string;
+  interviews?: TInterview[];
 }
 
 // Enums
@@ -521,6 +520,7 @@ interface ITalentListItem {
   viewed_at: string;
   share_token_id: number;
   hire_status: "hired" | "not_hired";
+  interviews?: TInterview[];
   created_at: string;
   updated_at: string;
 }
@@ -716,5 +716,7 @@ type TLinkedinProfile = {
   outreach_message_doc?: string;
   created_at: string;
   updated_at: string;
+  message_sent_at?: string;
+  message_read_at?: string;
   candidate_id?: number;
 };

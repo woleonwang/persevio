@@ -122,6 +122,8 @@ const CandidateResume = {
     },
     empty_description: "Viona is working hard to help you find the right job.",
     status: {
+      interview_scheduled: "Interview Scheduled",
+      interview_created: "Interview to be confirmed",
       accepted: "Resume approved",
       rejected: "Resume not approved",
       screening: "Resume is being screened",
@@ -927,6 +929,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     candidate_name: "Candidate Name",
     screening_status: "Status",
     schedule_time: "Schedule Time",
+    feedback: "Reason for rejection",
+    interview_mode: "Interview Mode",
+    interview: "Interview",
+    written: "Written Test",
     status_accepted: "Accepted",
     status_rejected: "Rejected",
     status_unfiltered: "Unfiltered",
@@ -1514,9 +1520,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     refresh_unread_comment: "Refresh unread candidate status",
     empty_text: "No data",
     status_column: "Status",
-    accepted: "Accepted",
+    accepted: "Interview to be scheduled",
     rejected: "Rejected",
     pending: "Pending",
+    interview_scheduled: "Interview Scheduled",
+    interview_created: "Interview to be confirmed by candidate",
   },
 
   job_list: {

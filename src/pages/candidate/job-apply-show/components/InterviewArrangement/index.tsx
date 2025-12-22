@@ -56,6 +56,8 @@ const InterviewArrangement: React.FC<IProps> = ({
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`job_apply.interview_arrangement.${key}`, params);
 
+  const readonly = !!interview.scheduled_at;
+
   useEffect(() => {
     form.setFieldsValue(interview);
   }, [interview]);
@@ -123,7 +125,11 @@ const InterviewArrangement: React.FC<IProps> = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.formContainer}>
+      <div
+        className={classnames(styles.formContainer, {
+          [styles.readonly]: readonly,
+        })}
+      >
         <Form form={form} layout="vertical" onFieldsChange={forceUpdate}>
           <Form.Item
             label={originalT("interview_form.job_company_name")}
@@ -253,95 +259,99 @@ const InterviewArrangement: React.FC<IProps> = ({
           </Form.Item>
         </Form>
       </div>
-      <div className={styles.calendarContainer}>
-        <div className={styles.dateContainer}>
-          <LeftOutlined
-            className={styles.dateItemIcon}
-            onClick={() => {
-              setCurrentStartDate(currentStartDate.subtract(14, "days"));
-            }}
-          />
-          <div className={styles.dateItems}>
-            {Array.from({ length: 14 }).map((_, index) => {
-              const currentDate = currentStartDate.add(index, "days");
-              const isShowBorder = index !== 0 && currentDate.get("date") === 1;
-              const isShowMonth = index === 0 || currentDate.get("date") === 1;
-              const hasSlots = interview.time_slots.some((slot) =>
-                dayjs(slot.from).isSame(currentDate, "day")
-              );
-              return (
-                <Fragment key={index}>
-                  {isShowBorder && <div className={styles.dateItemBorder} />}
-                  <div className={styles.dateItem}>
-                    <div
-                      style={{
-                        visibility: isShowMonth ? "visible" : "hidden",
-                        marginBottom: 4,
-                        color: "rgba(102, 102, 102, 1)",
-                      }}
-                    >
-                      {currentDate.format("MMM").toUpperCase()}
-                    </div>
-                    <div
-                      className={classnames(styles.dateItemContent, {
-                        [styles.hasSlots]: hasSlots,
-                      })}
-                      onClick={() => {
-                        if (hasSlots) {
-                          const slotItem = document.getElementById(
-                            `slot-item-${currentDate.format("YYYY-MM-DD")}`
-                          );
-                          if (slotItem) {
-                            slotItem.scrollIntoView({
-                              behavior: "smooth",
-                              inline: "center",
-                            });
+      {!readonly && (
+        <div className={styles.calendarContainer}>
+          <div className={styles.dateContainer}>
+            <LeftOutlined
+              className={styles.dateItemIcon}
+              onClick={() => {
+                setCurrentStartDate(currentStartDate.subtract(14, "days"));
+              }}
+            />
+            <div className={styles.dateItems}>
+              {Array.from({ length: 14 }).map((_, index) => {
+                const currentDate = currentStartDate.add(index, "days");
+                const isShowBorder =
+                  index !== 0 && currentDate.get("date") === 1;
+                const isShowMonth =
+                  index === 0 || currentDate.get("date") === 1;
+                const hasSlots = interview.time_slots.some((slot) =>
+                  dayjs(slot.from).isSame(currentDate, "day")
+                );
+                return (
+                  <Fragment key={index}>
+                    {isShowBorder && <div className={styles.dateItemBorder} />}
+                    <div className={styles.dateItem}>
+                      <div
+                        style={{
+                          visibility: isShowMonth ? "visible" : "hidden",
+                          marginBottom: 4,
+                          color: "rgba(102, 102, 102, 1)",
+                        }}
+                      >
+                        {currentDate.format("MMM").toUpperCase()}
+                      </div>
+                      <div
+                        className={classnames(styles.dateItemContent, {
+                          [styles.hasSlots]: hasSlots,
+                        })}
+                        onClick={() => {
+                          if (hasSlots) {
+                            const slotItem = document.getElementById(
+                              `slot-item-${currentDate.format("YYYY-MM-DD")}`
+                            );
+                            if (slotItem) {
+                              slotItem.scrollIntoView({
+                                behavior: "smooth",
+                                inline: "center",
+                              });
+                            }
                           }
-                        }
-                      }}
-                    >
-                      <div className={styles.dateItemContentDay}>
-                        {currentDate.format("ddd")}
-                      </div>
-                      <div className={styles.dateItemContentDate}>
-                        {currentDate.format("DD")}
+                        }}
+                      >
+                        <div className={styles.dateItemContentDay}>
+                          {currentDate.format("ddd")}
+                        </div>
+                        <div className={styles.dateItemContentDate}>
+                          {currentDate.format("DD")}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Fragment>
-              );
-            })}
+                  </Fragment>
+                );
+              })}
+            </div>
+            <RightOutlined
+              className={styles.dateItemIcon}
+              onClick={() => {
+                setCurrentStartDate(currentStartDate.add(14, "days"));
+              }}
+            />
           </div>
-          <RightOutlined
-            className={styles.dateItemIcon}
-            onClick={() => {
-              setCurrentStartDate(currentStartDate.add(14, "days"));
-            }}
-          />
-        </div>
-        <div className={styles.slotsContainer} ref={slotsContainerRef}>
-          {Object.entries(slots).map(([date, slots]) => {
-            const totalSlots = slots.morning.length + slots.afternoon.length;
-            return (
-              <div
-                key={date}
-                className={styles.slotsItem}
-                id={`slot-item-${date}`}
-              >
-                <div className={styles.slotsItemHeader}>
-                  <div>
-                    {t("interview_starting_on", {
-                      count: totalSlots.toString(),
-                    })}
+          <div className={styles.slotsContainer} ref={slotsContainerRef}>
+            {Object.entries(slots).map(([date, slots]) => {
+              const totalSlots = slots.morning.length + slots.afternoon.length;
+              return (
+                <div
+                  key={date}
+                  className={styles.slotsItem}
+                  id={`slot-item-${date}`}
+                >
+                  <div className={styles.slotsItemHeader}>
+                    <div>
+                      {t("interview_starting_on", {
+                        count: totalSlots.toString(),
+                      })}
+                    </div>
+                    <div className={styles.slotsItemHeaderDate}>
+                      {dayjs(date).format(originalT("date_format.with_day"))}
+                    </div>
                   </div>
-                  <div className={styles.slotsItemHeaderDate}>
-                    {dayjs(date).format(originalT("date_format.with_day"))}
-                  </div>
-                </div>
-                <div className={styles.slotsItemContent}>
-                  {[slots.morning, slots.afternoon]
-                    .filter((slots) => slots.length > 0)
-                    .map((slots, index) => {
+                  <div className={styles.slotsItemContent}>
+                    {[slots.morning, slots.afternoon].map((slots, index) => {
+                      if (slots.length === 0) {
+                        return null;
+                      }
                       return (
                         <div key={index}>
                           <div className={styles.slotsItemContentGroup}>
@@ -376,12 +386,13 @@ const InterviewArrangement: React.FC<IProps> = ({
                         </div>
                       );
                     })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

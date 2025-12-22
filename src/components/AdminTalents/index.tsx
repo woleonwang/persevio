@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Drawer, message, Table, Tag } from "antd";
+import { Button, Drawer, message, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import classnames from "classnames";
 import { Download, Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
-import { deleteQuery, getQuery, parseJSON, updateQuery } from "@/utils";
+import {
+  deleteQuery,
+  getQuery,
+  isTempAccount,
+  parseJSON,
+  updateQuery,
+} from "@/utils";
 import dayjs from "dayjs";
 import Empty from "@/components/Empty";
 import MarkdownContainer from "../MarkdownContainer";
@@ -49,6 +55,27 @@ interface IJobApplyListItemForAdmin extends IJobApplyListItem {
     pre_register_info: string;
   };
 }
+
+type TAccountStatus =
+  | "evaluated"
+  | "message_generated"
+  | "message_sent"
+  | "message_read"
+  | "registered"
+  | "resume_uploaded"
+  | "email_binded";
+
+type TApproveStatus =
+  | "initialize"
+  | "interviewing"
+  | "interview_finished"
+  | "hunter_rejected"
+  | "hunter_accepted"
+  | "staff_rejected"
+  | "staff_accepted"
+  | "interview_scheduled"
+  | "interview_confirmed";
+
 const AdminTalents = (props: IProps) => {
   const { jobId, hideHeader = false } = props;
   const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
@@ -202,6 +229,71 @@ const AdminTalents = (props: IProps) => {
     }
   };
 
+  const getAccountStatus = (talent: TAdminTalentItem): TAccountStatus => {
+    const candidate = talent.jobApply?.candidate;
+    const linkedinProfile = talent.linkedinProfile;
+    if (candidate) {
+      if (!isTempAccount(candidate)) {
+        return "email_binded";
+      }
+
+      if (candidate.resume_content) {
+        return "resume_uploaded";
+      }
+
+      return "registered";
+    } else if (linkedinProfile) {
+      if (linkedinProfile.message_read_at) {
+        return "message_read";
+      }
+      if (linkedinProfile.message_sent_at) {
+        return "message_sent";
+      }
+      if (linkedinProfile.outreach_message_doc) {
+        return "message_generated";
+      }
+    }
+    return "evaluated";
+  };
+
+  const getApproveStatus = (talentItem: TAdminTalentItem): TApproveStatus => {
+    const jobApply = talentItem.jobApply;
+    const talent = talentItem.talent;
+    const interview = talent?.interviews?.[0];
+
+    if (interview) {
+      if (interview.scheduled_at) {
+        return "interview_confirmed";
+      } else {
+        return "interview_scheduled";
+      }
+    }
+
+    if (talent) {
+      if (talent.status === "accepted") {
+        return "staff_accepted";
+      } else if (talent.status === "rejected") {
+        return "staff_rejected";
+      } else {
+        return "hunter_accepted";
+      }
+    }
+
+    if (jobApply) {
+      if (jobApply.status === "ACCEPTED") {
+        return "hunter_accepted";
+      } else if (jobApply.status === "REJECTED") {
+        return "hunter_rejected";
+      } else if (jobApply.interview_finished_at) {
+        return "interview_finished";
+      } else {
+        return "interviewing";
+      }
+    }
+
+    return "initialize";
+  };
+
   const feedback = async (action: "accept" | "reject") => {
     const { code } = await Post(
       `/api/admin/job_applies/${selectedJobApplyId}/feedback/${action}`
@@ -281,28 +373,20 @@ const AdminTalents = (props: IProps) => {
       width: 150,
     },
     {
+      title: t("account_status"),
+      dataIndex: "status",
+      render: (_: any, _record: TAdminTalentItem) => {
+        const status = getAccountStatus(_record);
+        return status;
+      },
+      width: 150,
+    },
+    {
       title: t("screening_status"),
       dataIndex: "status",
       render: (_: any, _record: TAdminTalentItem) => {
-        // if (status === "accepted") {
-        //   if (!record.interviews?.length) {
-        //     return <Tag color="green">{t("status_pending_interview")}</Tag>;
-        //   } else if (!record.interviews[0].scheduled_at) {
-        //     return (
-        //       <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>
-        //     );
-        //   } else {
-        //     return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
-        //   }
-        // }
-        // if (status === "rejected") {
-        //   return (
-        //     <Tooltip title={record.feedback}>
-        //       <Tag color="red">{t("status_rejected")}</Tag>
-        //     </Tooltip>
-        //   );
-        // }
-        return <Tag color="default">{t("status_unfiltered")}</Tag>;
+        const status = getApproveStatus(_record);
+        return status;
       },
       width: 150,
     },

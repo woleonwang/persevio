@@ -146,7 +146,9 @@ const JobApplyShow = () => {
       key: "processed",
       title: processedStepTitle,
       status:
-        applyStatus === "accepted" || applyStatus === "rejected"
+        applyStatus === "interview_created" ||
+        applyStatus === "interview_scheduled" ||
+        applyStatus === "rejected"
           ? "done"
           : "disabled",
     },
@@ -154,7 +156,10 @@ const JobApplyShow = () => {
 
   const interview = jobApply?.interviews?.[0];
 
-  if (applyStatus === "accepted") {
+  if (
+    applyStatus === "interview_created" ||
+    applyStatus === "interview_scheduled"
+  ) {
     steps.push({
       key: "interview",
       title: t("first_round_interview"),
@@ -283,10 +288,19 @@ const JobApplyShow = () => {
                       {step.key === "interview" &&
                         (interview?.scheduled_at ? (
                           <div style={{ marginTop: 20 }}>
-                            {t("interview_time")}:{" "}
-                            {dayjs(interview.scheduled_at).format(
-                              "YYYY-MM-DD HH:mm"
-                            )}
+                            <div>
+                              {t("interview_time")}:{" "}
+                              {dayjs(interview.scheduled_at).format(
+                                "YYYY-MM-DD HH:mm"
+                              )}
+                            </div>
+                            <Button
+                              type="primary"
+                              style={{ marginTop: 12 }}
+                              onClick={() => setInterviewModalOpen(true)}
+                            >
+                              Details
+                            </Button>
                           </div>
                         ) : (
                           <Button
