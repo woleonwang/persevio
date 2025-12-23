@@ -134,6 +134,20 @@ const Jobs = () => {
       },
     },
     {
+      title: "候选人总数",
+      dataIndex: "total_candidates",
+      render: (totalCandidates: number) => {
+        return totalCandidates ? totalCandidates : "-";
+      },
+    },
+    {
+      title: "通过筛选的候选人总数",
+      dataIndex: "candidates_passed_screening",
+      render: (candidatesPassedScreening: number) => {
+        return candidatesPassedScreening ? candidatesPassedScreening : "-";
+      },
+    },
+    {
       title: "奖金池",
       dataIndex: "bonus_pool",
       render: (bonusPool: number) => {
@@ -218,6 +232,8 @@ const Jobs = () => {
             value={companyId}
             onChange={(v) => setCompanyId(v)}
             placeholder="按公司筛选"
+            optionFilterProp="label"
+            showSearch
           />
         </div>
       </div>
