@@ -166,6 +166,7 @@ const Settings = () => {
     UTILS_MERGE_INTERVIEW_FEEDBACKS: "合并面试反馈",
     UTILS_GENERATE_JRD: "生成 JRD",
     CANDIDATE_NETWORK_PROFILE_CHAT: "候选人需求档案",
+    CANDIDATE_GENERATE_PRESCREENING_STRATEGY: "生成prescreening strategy",
   };
 
   return (
