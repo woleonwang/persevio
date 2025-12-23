@@ -326,7 +326,16 @@ const AdminTalents = (props: IProps) => {
       render: (_: string, record: TAdminTalentItem) => {
         return (
           record.jobApply?.candidate?.name ||
-          record.talent?.name ||
+          (() => {
+            try {
+              const info = JSON.parse(
+                record.jobApply?.candidate?.pre_register_info ?? "{}"
+              );
+              return info.name;
+            } catch {
+              return "";
+            }
+          })() ||
           record.linkedinProfile?.name ||
           "-"
         );
