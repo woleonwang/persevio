@@ -74,6 +74,7 @@ import Referrals from "./pages/candidate/referrals/index.tsx";
 import Admin from "./layouts/Admin/index.tsx";
 import JobDetailsPage from "./pages/admin/job-details/index.tsx";
 import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
+import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -139,6 +140,11 @@ createRoot(document.getElementById("root")!).render(
             path="/app/jobs/:jobId/standard-board/talents/:talentId"
             element={<TalentDetails />}
           />
+          <Route
+            path="/app/jobs/:jobId/standard-board/linkedin-profiles/:linkedinProfileId"
+            element={<LinkedinProfileDetail />}
+            key="linkedinProfileDetail"
+          />
           {/* 职位文档对话 */}
           <Route path="/app/jobs/:jobId/chat/:chatType" element={<JobChat />} />
           {/* 职位文档 */}
@@ -171,6 +177,7 @@ createRoot(document.getElementById("root")!).render(
             handle={{ layout: "blank" }}
             key="talent"
           />
+
           {/* 公司知识库 */}
           <Route path="/app/company" element={<CompanyKnowledge />} />
           {/* 面试官管理 */}

@@ -430,6 +430,7 @@ type TTalent = {
     name: string;
     bonus_pool: number;
   };
+  created_at: string;
 };
 
 type TInterview = {
