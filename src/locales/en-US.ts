@@ -1600,6 +1600,41 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     reject_reason_required: "Please enter reason",
   },
 
+  admin_talents: {
+    candidate_name: "Candidate Name",
+    company_name: "Company Name",
+    job_name: "Job Name",
+    current_job_title: "Current Job Title",
+    current_company: "Current Company",
+    current_compensation: "Current Compensation",
+    visa: "Visa",
+    received_on: "Received On",
+    account_status: "Account Status",
+    screening_status: "Screening Status",
+    schedule_time: "Schedule Time",
+    actions: "Actions",
+    account_status_options: {
+      evaluated: "Evaluated",
+      message_generated: "Message Generated",
+      message_sent: "Message Sent",
+      message_read: "Message Read",
+      registered: "Registered",
+      resume_uploaded: "Resume Uploaded",
+      email_binded: "Email Binded",
+    },
+    screening_status_options: {
+      initialize: "Not Applied",
+      interviewing: "Interviewing",
+      interview_finished: "Interview Finished",
+      hunter_rejected: "Hunter Rejected",
+      hunter_accepted: "Hunter Accepted",
+      staff_rejected: "Staff Rejected",
+      staff_accepted: "Staff Accepted",
+      interview_scheduled: "Interview Scheduled",
+      interview_confirmed: "Interview Confirmed",
+    },
+  },
+
   new: "Create",
   edit: "Edit",
   delete: "Delete",
@@ -1747,5 +1782,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       fri: "FRI",
       sat: "SAT",
     },
+  },
+
+  interview_mode_options: {
+    interview: "Interview",
+    written: "Written Test",
+  },
+
+  switch_mode_reason_options: {
+    dissatisfied_with_my_answer: "Dissatisfied with my answer",
+    want_to_consult_more_complex_questions:
+      "Want to consult some more complex questions",
+    want_to_chat_with_a_real_person:
+      "Want to chat with a real person for more reassurance",
+    others: "Others",
   },
 };

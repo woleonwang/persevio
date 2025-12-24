@@ -12,7 +12,7 @@ import { deleteQuery, getQuery, updateQuery } from "@/utils";
 
 const PAGE_SIZE = 10;
 
-interface IJobApplyListItemForAdmin extends IJobApplyListItem {
+interface IJobApplyListItemForAdmin extends IJobApply {
   job: {
     name: string;
     company: {

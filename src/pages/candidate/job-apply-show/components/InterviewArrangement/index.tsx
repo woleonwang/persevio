@@ -19,7 +19,7 @@ import { Post } from "@/utils/request";
 
 interface IProps {
   interview: TInterview;
-  jobApply: IJobApply;
+  jobApply: IJobApplyListItem;
   handlerRef: React.RefObject<{
     submit?: () => Promise<boolean>;
   }>;

@@ -85,7 +85,11 @@ const Referrals = () => {
       title: "Referred Person Hiring Status",
       dataIndex: "status",
       render: (status: string) => {
-        return status === "hired" ? "Hired" : "Not Hired";
+        return status === "hired"
+          ? "Hired"
+          : status === "not_hired"
+          ? "Not Hired"
+          : "-";
       },
     },
   ];

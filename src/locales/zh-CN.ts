@@ -1541,6 +1541,41 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     reject_reason_required: "请输入原因",
   },
 
+  admin_talents: {
+    candidate_name: "候选人姓名",
+    company_name: "公司名称",
+    job_name: "职位名称",
+    current_job_title: "当前职位",
+    current_company: "当前公司",
+    current_compensation: "当前薪资",
+    visa: "签证",
+    received_on: "收到时间",
+    account_status: "账号状态",
+    screening_status: "申请状态",
+    schedule_time: "面试时间",
+    actions: "操作",
+    account_status_options: {
+      evaluated: "已评估",
+      message_generated: "已生成消息",
+      message_sent: "已发送消息",
+      message_read: "已读消息",
+      registered: "已注册",
+      resume_uploaded: "已上传简历",
+      email_binded: "已绑定邮箱",
+    },
+    screening_status_options: {
+      initialize: "未申请",
+      interviewing: "面试中",
+      interview_finished: "猎头审核中",
+      hunter_rejected: "猎头已拒绝",
+      hunter_accepted: "雇主审核中",
+      staff_rejected: "雇主已拒绝",
+      staff_accepted: "雇主已通过",
+      interview_scheduled: "已安排面试",
+      interview_confirmed: "已确认面试",
+    },
+  },
+
   new: "创建",
   edit: "编辑",
   save: "保存",
@@ -1688,5 +1723,17 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       fri: "五",
       sat: "六",
     },
+  },
+
+  interview_mode_options: {
+    interview: "面试",
+    written: "笔试",
+  },
+
+  switch_mode_reason_options: {
+    dissatisfied_with_my_answer: "对我的回答不满意",
+    want_to_consult_more_complex_questions: "想咨询一些更复杂的问题",
+    want_to_chat_with_a_real_person: "想和真人聊天以获得更多确认",
+    others: "其他",
   },
 };

@@ -74,6 +74,13 @@ interface IJob {
   jrd_context_document_json: string;
   jd_version: number;
   bonus_pool: number;
+
+  admin_jobs?: {
+    admin: {
+      id: number;
+      name: string;
+    };
+  }[];
 }
 
 type TPublicJob = {
@@ -85,22 +92,35 @@ type TPublicJob = {
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
 
-interface IJobApplyListItem {
+interface IJobApply {
   id: number;
   candidate_id: number;
   job_id: number;
   status: TJobListStatus;
   created_at: string;
+  interview_finished_at: string;
+  deliveried_at: string;
+  interview_mode: "ai" | "human" | "whatsapp";
+  whatsapp_number_confirmed_at?: string;
+  switch_mode_reason?: string;
+}
+
+// 候选人侧
+// 接口返回的 + jdJSON
+interface IJobApplyListItem extends IJobApply {
   job_name: string;
   job_basic_info: string;
   job_posted_at: string;
   company_logo: string;
   company_name: string;
-  interview_finished_at: string;
-  deliveried_at: string;
-  interview_mode: "ai" | "human" | "whatsapp";
-  talent_status: string;
-  whatsapp_number_confirmed_at?: string;
+  jd: string;
+  jdJson: Record<string, string>;
+  talent_status:
+    | ""
+    | "evaluate_succeed"
+    | "evaluate_failed"
+    | "accepted"
+    | "rejected";
   interviews?: TInterview[];
 }
 
@@ -147,19 +167,6 @@ interface RoleOpportunityReport {
   competency_match: CompetencyMatch;
   career_aspirations_match: CareerAspirationsMatch;
   detailed_alignment_analysis: DetailedAlignmentAnalysis;
-}
-
-interface IJobApply extends IJobApplyListItem {
-  recommend_reason: RoleOpportunityReport;
-  jd: string;
-  jdJson: Record<string, string>;
-  talentStatus:
-    | ""
-    | "evaluate_succeed"
-    | "evaluate_failed"
-    | "accepted"
-    | "rejected";
-  interviews: TInterview[];
 }
 
 interface ISettings {
@@ -415,6 +422,14 @@ type TTalent = {
   raw_evaluate_result: string;
   basic_info_json: string;
   job_id: number;
+  hire_status: "hired" | "not_hired";
+  share_token_id?: number;
+  interviews?: TInterview[];
+  job?: {
+    id: number;
+    name: string;
+    bonus_pool: number;
+  };
 };
 
 type TInterview = {
@@ -719,4 +734,13 @@ type TLinkedinProfile = {
   message_sent_at?: string;
   message_read_at?: string;
   candidate_id?: number;
+
+  job: {
+    id: number;
+    name: string;
+    company: {
+      id: number;
+      name: string;
+    };
+  };
 };

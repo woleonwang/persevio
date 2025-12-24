@@ -21,7 +21,7 @@ import Empty2 from "@/assets/empty2.png";
 import InterviewArrangement from "./components/InterviewArrangement";
 
 const JobApplyShow = () => {
-  const [jobApply, setJobApply] = useState<IJobApply>();
+  const [jobApply, setJobApply] = useState<IJobApplyListItem>();
   const [candidateSettings, setCandidateSettings] =
     useState<ICandidateSettings>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);

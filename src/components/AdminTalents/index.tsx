@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Drawer, message, Table } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  message,
+  Modal,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import classnames from "classnames";
 import { Download, Get, Post } from "@/utils/request";
@@ -22,6 +31,10 @@ import ChatMessagePreview from "../ChatMessagePreview";
 interface IProps {
   jobId?: number;
   hideHeader?: boolean;
+  filterParams?: {
+    talentOrJobName?: string;
+    approveStatus?: TApproveStatus;
+  };
 }
 
 type TTalentItem = TTalent & {
@@ -29,11 +42,26 @@ type TTalentItem = TTalent & {
   current_company: string;
   current_compensation: string;
   visa: string;
-  interviews: TInterview[];
 };
 
-type TAdminJobApplyItem = IJobApplyListItem & {
+type TAdminJobApplyItem = {
+  id: number;
+  candidate_id: number;
+  job_id: number;
+  status: TJobListStatus;
+  created_at: string;
+  interview_finished_at: string;
+  deliveried_at: string;
+  interview_mode: "ai" | "human" | "whatsapp";
   candidate: ICandidateSettings;
+  job: {
+    id: number;
+    name: string;
+    company: {
+      id: number;
+      name: string;
+    };
+  };
 };
 
 type TAdminTalentItem = {
@@ -43,7 +71,7 @@ type TAdminTalentItem = {
   created_at: string;
 };
 
-interface IJobApplyListItemForAdmin extends IJobApplyListItem {
+interface IJobApplyForAdmin extends IJobApply {
   job: {
     name: string;
     company: {
@@ -65,7 +93,7 @@ type TAccountStatus =
   | "resume_uploaded"
   | "email_binded";
 
-type TApproveStatus =
+export type TApproveStatus =
   | "initialize"
   | "interviewing"
   | "interview_finished"
@@ -76,8 +104,14 @@ type TApproveStatus =
   | "interview_scheduled"
   | "interview_confirmed";
 
+interface IAdminTalentShareChain {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+}
 const AdminTalents = (props: IProps) => {
-  const { jobId, hideHeader = false } = props;
+  const { jobId, hideHeader = false, filterParams } = props;
   const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
     []
   );
@@ -85,7 +119,7 @@ const AdminTalents = (props: IProps) => {
   const [talents, setTalents] = useState<TTalentItem[]>([]);
 
   const [selectedJobApplyId, setSelectedJobApplyId] = useState<number>();
-  const [jobApply, setJobApply] = useState<IJobApplyListItemForAdmin>();
+  const [jobApply, setJobApply] = useState<IJobApplyForAdmin>();
   const [selectedLinkedinProfile, setSelectedLinkedinProfile] =
     useState<TLinkedinProfile>();
   const [jobApplyDetailDrawerOpen, setJobApplyDetailDrawerOpen] =
@@ -96,12 +130,22 @@ const AdminTalents = (props: IProps) => {
   const [jd, setJd] = useState("");
   const [resume, setResume] = useState("");
   const [recommendReport, setRecommendReport] = useState("");
+  const [talent, setTalent] = useState<TTalent>();
+
   const [chatMessages, setChatMessages] = useState<TMessageFromApi[]>([]);
   const [isEditingRecommendReport, setIsEditingRecommendReport] =
     useState(false);
+  const [selectedTalent, setSelectedTalent] = useState<TTalentItem>();
+  const [hireStatusModalOpen, setHireStatusModalOpen] = useState(false);
+  const [shareChainModalOpen, setShareChainModalOpen] = useState(false);
+  const [shareChainCandidates, setShareChainCandidates] = useState<
+    IAdminTalentShareChain[]
+  >([]);
+
+  const [form] = Form.useForm();
 
   const { t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`job_talents.${key}`);
+  const t = (key: string) => originalT(`admin_talents.${key}`);
 
   useEffect(() => {
     fetchTalents();
@@ -121,59 +165,11 @@ const AdminTalents = (props: IProps) => {
     }
   }, [selectedLinkedinProfile]);
 
-  const talentsList: TAdminTalentItem[] = useMemo(() => {
-    // 1. 只有 profile
-    // 2. 有 profile + jobApply, 刚注册
-    // 3. 有 profile + jobApply + talent，已投递
-    // 4. 只有 jobApply， 自己注册
-    // 5. jobApply + talent 自己注册，已投递
-    const result: TAdminTalentItem[] = [];
-    linkedinProfiles.forEach((linkedinProfile) => {
-      if (linkedinProfile.candidate_id) {
-        // 2 + 3
-        const jobApply = jobApplies.find(
-          (jobApply) => jobApply.candidate_id === linkedinProfile.candidate_id
-        );
-        const talent = talents.find(
-          (talent) => talent.candidate_id === linkedinProfile.candidate_id
-        );
-        result.push({
-          linkedinProfile,
-          jobApply,
-          talent,
-          created_at: jobApply?.created_at || linkedinProfile.created_at,
-        });
-      } else {
-        // 1
-        result.push({
-          linkedinProfile,
-          created_at: linkedinProfile.created_at,
-        });
-      }
-    });
-
-    jobApplies
-      .filter(
-        (jobApply) =>
-          !linkedinProfiles.find(
-            (linkedinProfile) =>
-              linkedinProfile.candidate_id === jobApply.candidate_id
-          )
-      )
-      .forEach((jobApply) => {
-        result.push({
-          jobApply,
-          talent: talents.find(
-            (talent) => talent.candidate_id === jobApply.candidate_id
-          ),
-          created_at: jobApply.created_at,
-        });
-      });
-
-    return result.sort((a, b) => {
-      return dayjs(b.created_at).diff(dayjs(a.created_at));
-    });
-  }, [jobApplies, linkedinProfiles, talents]);
+  useEffect(() => {
+    if (shareChainModalOpen && selectedTalent) {
+      fetchShareChain();
+    }
+  }, [shareChainModalOpen]);
 
   const fetchTalents = async () => {
     const { code, data } = await Get<{
@@ -201,17 +197,36 @@ const AdminTalents = (props: IProps) => {
 
       const openProfileId = getQuery("open-profile-id");
       if (openProfileId) {
-        console.log(
-          data.linkedin_profiles.find(
-            (linkedinProfile) => linkedinProfile.id === parseInt(openProfileId)
-          )
-        );
         setSelectedLinkedinProfile(
           data.linkedin_profiles.find(
             (linkedinProfile) => linkedinProfile.id === parseInt(openProfileId)
           )
         );
       }
+    }
+  };
+
+  const fetchShareChain = async () => {
+    const { code, data } = await Get(
+      `/api/admin/talents/${selectedTalent?.id}/share_chain`
+    );
+
+    if (code === 0) {
+      setShareChainCandidates(
+        (data.candidates ?? []).map((candidate: ICandidateSettings) => {
+          const preRegisterInfo = parseJSON(
+            candidate.pre_register_info ?? "{}"
+          );
+          return {
+            id: candidate.id,
+            name: candidate.name || preRegisterInfo.name,
+            email: candidate.email,
+            phone: `${preRegisterInfo.country_code ?? ""} ${
+              preRegisterInfo.phone ?? ""
+            }`,
+          };
+        })
+      );
     }
   };
 
@@ -226,6 +241,7 @@ const AdminTalents = (props: IProps) => {
       setRecommendReport(data.job_apply.evaluate_result);
       setChatMessages(data.messages ?? []);
       setJobApply(data.job_apply);
+      setTalent(data.talent);
     }
   };
 
@@ -284,7 +300,7 @@ const AdminTalents = (props: IProps) => {
         return "hunter_accepted";
       } else if (jobApply.status === "REJECTED") {
         return "hunter_rejected";
-      } else if (jobApply.interview_finished_at) {
+      } else if (jobApply.deliveried_at) {
         return "interview_finished";
       } else {
         return "interviewing";
@@ -319,28 +335,62 @@ const AdminTalents = (props: IProps) => {
     deleteQuery("open-id");
   };
 
+  const getName = (record: TAdminTalentItem): string => {
+    return (
+      record.jobApply?.candidate?.name ||
+      (() => {
+        try {
+          const info = JSON.parse(
+            record.jobApply?.candidate?.pre_register_info ?? "{}"
+          );
+          return info.name;
+        } catch {
+          return "";
+        }
+      })() ||
+      record.linkedinProfile?.name
+    );
+  };
+
+  const getJobName = (record: TAdminTalentItem): string => {
+    return (
+      record.jobApply?.job?.name || record.linkedinProfile?.job?.name || ""
+    );
+  };
+
+  const getCompanyName = (record: TAdminTalentItem): string => {
+    return (
+      record.jobApply?.job?.company?.name ||
+      record.linkedinProfile?.job?.company?.name ||
+      ""
+    );
+  };
+
   const columns: ColumnsType<TAdminTalentItem> = [
     {
       title: t("candidate_name"),
       dataIndex: "name",
       render: (_: string, record: TAdminTalentItem) => {
-        return (
-          record.jobApply?.candidate?.name ||
-          (() => {
-            try {
-              const info = JSON.parse(
-                record.jobApply?.candidate?.pre_register_info ?? "{}"
-              );
-              return info.name;
-            } catch {
-              return "";
-            }
-          })() ||
-          record.linkedinProfile?.name ||
-          "-"
-        );
+        return getName(record);
       },
       width: 150,
+      fixed: "left" as const,
+    },
+    {
+      title: t("company_name"),
+      dataIndex: "company_name",
+      render: (_: string, record: TAdminTalentItem) => {
+        return getCompanyName(record) || "-";
+      },
+      width: 150,
+    },
+    {
+      title: t("job_name"),
+      dataIndex: "job_name",
+      width: 150,
+      render: (_: string, record: TAdminTalentItem) => {
+        return getJobName(record) || "-";
+      },
     },
     {
       title: t("current_job_title"),
@@ -387,7 +437,7 @@ const AdminTalents = (props: IProps) => {
       dataIndex: "status",
       render: (_: any, _record: TAdminTalentItem) => {
         const status = getAccountStatus(_record);
-        return status;
+        return t(`account_status_options.${status}`);
       },
       width: 150,
     },
@@ -396,9 +446,47 @@ const AdminTalents = (props: IProps) => {
       dataIndex: "status",
       render: (_: any, _record: TAdminTalentItem) => {
         const status = getApproveStatus(_record);
-        return status;
+        return t(`screening_status_options.${status}`);
       },
       width: 150,
+    },
+    {
+      title: "拒绝原因",
+      dataIndex: "feedback",
+      render: (_: string, record: TAdminTalentItem) => {
+        const talent = record.talent;
+        if (!talent) {
+          return "-";
+        }
+
+        return (
+          <Tooltip title={talent.feedback}>
+            <div
+              style={{
+                maxWidth: 100,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {talent.feedback || "-"}
+            </div>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: "面试模式",
+      dataIndex: "interview_mode",
+      render: (_: string, record: TAdminTalentItem) => {
+        const interview = record.talent?.interviews?.[0];
+        if (!interview) {
+          return "-";
+        }
+        return interview
+          ? originalT(`interview_mode_options.${interview.mode}`)
+          : "-";
+      },
     },
     {
       title: t("schedule_time"),
@@ -411,6 +499,63 @@ const AdminTalents = (props: IProps) => {
       },
       width: 150,
     },
+    {
+      title: t("actions"),
+      key: "actions",
+      width: 100,
+      render: (_: string, record: TAdminTalentItem) => {
+        const talent = record.talent;
+
+        return (
+          <>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                if (record.jobApply) {
+                  setSelectedJobApplyId(record.jobApply.id);
+                } else {
+                  setSelectedLinkedinProfile(record.linkedinProfile);
+                }
+              }}
+            >
+              View Details
+            </Button>
+            {talent?.status === "accepted" && (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedTalent(talent);
+                  setHireStatusModalOpen(true);
+                  form.setFieldsValue({
+                    hire_status: talent.hire_status || "not_hired",
+                  });
+                }}
+                style={{ marginTop: 4 }}
+              >
+                Edit Hire Status
+              </Button>
+            )}
+            {!!talent?.share_token_id && (
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedTalent(talent);
+                  setShareChainModalOpen(true);
+                }}
+                style={{ marginTop: 4 }}
+              >
+                View Referral Link Details
+              </Button>
+            )}
+          </>
+        );
+      },
+    },
   ].map((item) => {
     return {
       ...item,
@@ -421,6 +566,75 @@ const AdminTalents = (props: IProps) => {
         }),
     };
   });
+
+  const talentsList: TAdminTalentItem[] = useMemo(() => {
+    // 1. 只有 profile
+    // 2. 有 profile + jobApply, 刚注册
+    // 3. 有 profile + jobApply + talent，已投递
+    // 4. 只有 jobApply， 自己注册
+    // 5. jobApply + talent 自己注册，已投递
+    let result: TAdminTalentItem[] = [];
+    linkedinProfiles.forEach((linkedinProfile) => {
+      if (linkedinProfile.candidate_id) {
+        // 2 + 3
+        const jobApply = jobApplies.find(
+          (jobApply) => jobApply.candidate_id === linkedinProfile.candidate_id
+        );
+        const talent = talents.find(
+          (talent) => talent.candidate_id === linkedinProfile.candidate_id
+        );
+        result.push({
+          linkedinProfile,
+          jobApply,
+          talent,
+          created_at: jobApply?.created_at || linkedinProfile.created_at,
+        });
+      } else {
+        // 1
+        result.push({
+          linkedinProfile,
+          created_at: linkedinProfile.created_at,
+        });
+      }
+    });
+
+    jobApplies
+      .filter(
+        (jobApply) =>
+          !linkedinProfiles.find(
+            (linkedinProfile) =>
+              linkedinProfile.candidate_id === jobApply.candidate_id
+          )
+      )
+      .forEach((jobApply) => {
+        result.push({
+          jobApply,
+          talent: talents.find(
+            (talent) => talent.candidate_id === jobApply.candidate_id
+          ),
+          created_at: jobApply.created_at,
+        });
+      });
+
+    if (filterParams?.talentOrJobName) {
+      result = result.filter((item) => {
+        return (
+          getName(item).includes(filterParams.talentOrJobName ?? "") ||
+          getJobName(item).includes(filterParams.talentOrJobName ?? "")
+        );
+      });
+    }
+
+    if (filterParams?.approveStatus) {
+      result = result.filter((item) => {
+        return getApproveStatus(item) === filterParams.approveStatus;
+      });
+    }
+
+    return result.sort((a, b) => {
+      return dayjs(b.created_at).diff(dayjs(a.created_at));
+    });
+  }, [jobApplies, linkedinProfiles, talents, filterParams]);
 
   return (
     <div className={styles.container}>
@@ -436,17 +650,6 @@ const AdminTalents = (props: IProps) => {
           }}
           locale={{
             emptyText: <Empty style={{ margin: "60px 0" }} />,
-          }}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                if (record.jobApply) {
-                  setSelectedJobApplyId(record.jobApply.id);
-                } else {
-                  setSelectedLinkedinProfile(record.linkedinProfile);
-                }
-              },
-            };
           }}
         />
       </div>
@@ -495,7 +698,74 @@ const AdminTalents = (props: IProps) => {
             </div>
             <div className={styles.jobApplyDetail}>
               <div className={styles.jobApplyPanel}>
-                <div className={styles.jobApplyPanelTitle}>JD</div>
+                <div className={styles.jobApplyPanelTitle}>基本信息</div>
+                <div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      面试模式:
+                    </div>
+                    <div>{jobApply.interview_mode || "-"}</div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      选择人工原因:
+                    </div>
+                    <div>
+                      {jobApply.switch_mode_reason
+                        ? (() => {
+                            const reason = parseJSON(
+                              jobApply.switch_mode_reason
+                            );
+                            return reason?.reasons
+                              ?.map((item: string) => {
+                                return item === "others"
+                                  ? reason.other_reason
+                                  : originalT(
+                                      `switch_mode_reason_options.${item}`
+                                    );
+                              })
+                              .join(", ");
+                          })()
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      雇主未通过原因:
+                    </div>
+                    <div>{talent?.feedback || "-"}</div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      雇主面试模式:
+                    </div>
+                    <div>
+                      {talent?.interviews?.[0]?.mode
+                        ? originalT(
+                            `interview_form.mode_${talent.interviews[0].mode}`
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      面试形式:
+                    </div>
+                    <div>
+                      {talent?.interviews?.[0]?.interview_type
+                        ? originalT(
+                            `interview_form.type_${talent.interviews[0].interview_type}`
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className={styles.jobApplyPanelTitle}
+                  style={{ marginTop: 24 }}
+                >
+                  JD
+                </div>
                 <div style={{ flex: "auto", overflow: "auto" }}>
                   <MarkdownContainer content={jd} />
                 </div>
@@ -639,6 +909,90 @@ const AdminTalents = (props: IProps) => {
           </div>
         </div>
       </Drawer>
+
+      <Modal
+        open={hireStatusModalOpen}
+        title="Hire Status"
+        cancelText="Cancel"
+        onCancel={() => {
+          setHireStatusModalOpen(false);
+        }}
+        onOk={async () => {
+          form.validateFields().then(async (values) => {
+            const { code } = await Post(
+              `/api/admin/talents/${selectedTalent?.id}`,
+              {
+                hire_status: values.hire_status,
+              }
+            );
+
+            if (code === 0) {
+              message.success("Update hire status success");
+              fetchTalents();
+              setHireStatusModalOpen(false);
+            } else {
+              message.error("Update hire status failed");
+            }
+          });
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          className={styles.bonusPoolModalForm}
+        >
+          <div className={styles.modalDescription}>
+            If the referred person has been hired by the company, all users in
+            the referral chain will share {selectedTalent?.job?.bonus_pool} S$;
+            Please contact the users promptly.
+          </div>
+          <Form.Item
+            label="Please select the current hiring status of the referred person"
+            name="hire_status"
+            rules={[{ required: true }]}
+          >
+            <Select
+              options={[
+                { value: "hired", label: "Hired" },
+                { value: "not_hired", label: "Not Hired" },
+              ]}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={shareChainModalOpen}
+        onCancel={() => setShareChainModalOpen(false)}
+        title="Referral Chain Details"
+        cancelButtonProps={{
+          style: {
+            display: "none",
+          },
+        }}
+        onOk={async () => {
+          setShareChainModalOpen(false);
+        }}
+        width={740}
+        centered
+      >
+        <div>
+          {shareChainCandidates.map((candidate, index) => {
+            return (
+              <div key={candidate.id} className={styles.shareChainCandidate}>
+                <div className={styles.index}>{index + 1}</div>
+                <div className={styles.candidateInfo}>
+                  <div className={styles.candidateName}>{candidate.name}</div>
+                  <div className={styles.candidateContactInfo}>
+                    <div>{candidate.email}</div>
+                    <div>{candidate.phone}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Modal>
     </div>
   );
 };

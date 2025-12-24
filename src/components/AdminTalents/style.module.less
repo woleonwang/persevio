@@ -1,3 +1,5 @@
+@import "@/mixin.module.less";
+
 .container {
   display: flex;
   flex-direction: column;
@@ -67,6 +69,59 @@
 
 .bonusPoolModalForm {
   margin-top: 24px;
+}
+
+.shareChainCandidate {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .index {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: @primary-color;
+    color: white;
+    border-radius: 50%;
+    font-size: 20px;
+  }
+
+  .candidateInfo {
+    margin-left: 25px;
+    background-color: rgba(246, 246, 246, 1);
+    flex: auto;
+    padding: 16px 20px;
+    border-radius: 20px;
+
+    .candidateName {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    .candidateContactInfo {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 14px;
+      color: #999;
+    }
+  }
+}
+
+.jobApplyPanelItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.jobApplyPanelItemLabel {
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {

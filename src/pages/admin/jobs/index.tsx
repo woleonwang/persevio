@@ -3,6 +3,7 @@ import {
   Button,
   Drawer,
   Form,
+  Input,
   InputNumber,
   message,
   Modal,
@@ -25,6 +26,13 @@ const Jobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
   const [allCompanies, setAllCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<number>();
+  const [jobName, setJobName] = useState<string>();
+  const [isPosted, setIsPosted] = useState<string>();
+  const [fetchParams, setFetchParams] = useState<{
+    companyId?: number;
+    jobName?: string;
+    isPosted?: string;
+  }>();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState();
 
@@ -50,9 +58,12 @@ const Jobs = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [companyId, page]);
+  }, [fetchParams, page]);
 
   useEffect(() => {
+    if (!selectedJob) {
+      return;
+    }
     fetchRecommendedCandidates();
   }, [selectedJob, candidatesPage]);
   const fetchCompanies = async () => {
@@ -71,9 +82,9 @@ const Jobs = () => {
 
   const fetchJobs = async () => {
     const { code, data } = await Get(
-      `/api/admin/jobs?company_id=${
-        companyId ?? ""
-      }&page=${page}&size=${PAGE_SIZE}`
+      `/api/admin/jobs?company_id=${companyId ?? ""}&job_name=${
+        jobName ?? ""
+      }&posted=${isPosted ?? ""}&page=${page}&size=${PAGE_SIZE}`
     );
 
     if (code === 0) {
@@ -134,17 +145,31 @@ const Jobs = () => {
       },
     },
     {
-      title: "候选人总数",
+      title: "申请数量",
+      dataIndex: "total_job_applies",
+      render: (totalJobApplies: number) => {
+        return totalJobApplies ? totalJobApplies : "-";
+      },
+    },
+    {
+      title: "雇主候选人数量",
       dataIndex: "total_candidates",
       render: (totalCandidates: number) => {
         return totalCandidates ? totalCandidates : "-";
       },
     },
     {
-      title: "通过筛选的候选人总数",
+      title: "雇主筛选通过数量",
       dataIndex: "candidates_passed_screening",
       render: (candidatesPassedScreening: number) => {
         return candidatesPassedScreening ? candidatesPassedScreening : "-";
+      },
+    },
+    {
+      title: "已确认面试数量",
+      dataIndex: "candidates_confirm_interview",
+      render: (candidatesConfirmInterview: number) => {
+        return candidatesConfirmInterview ? candidatesConfirmInterview : "-";
       },
     },
     {
@@ -155,10 +180,24 @@ const Jobs = () => {
       },
     },
     {
+      title: "分配人",
+      dataIndex: "admins",
+      render: (_: string, job: IJob) => {
+        return (
+          (job.admin_jobs ?? []).map((item) => item.admin.name).join("、") ||
+          "-"
+        );
+      },
+    },
+    {
       title: "操作",
       key: "actions",
       width: 350,
       render: (_, job: IJob) => {
+        if (!job.posted_at) {
+          return null;
+        }
+
         return (
           <div>
             <Button
@@ -175,21 +214,20 @@ const Jobs = () => {
             >
               Add Bonus Pool
             </Button>
-            {job.posted_at && (
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(
-                    getJobChatbotUrl(job.id, job.jd_version?.toString())
-                  );
-                }}
-                style={{ marginLeft: 12 }}
-              >
-                Go to Listing
-              </Button>
-            )}
+
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(
+                  getJobChatbotUrl(job.id, job.jd_version?.toString())
+                );
+              }}
+              style={{ marginLeft: 12 }}
+            >
+              Go to Listing
+            </Button>
           </div>
         );
       },
@@ -227,7 +265,7 @@ const Jobs = () => {
             style={{ width: 200 }}
             options={allCompanies.map((c) => ({
               value: c.id,
-              label: `${c.name} (id: ${c.id})`,
+              label: c.name,
             }))}
             value={companyId}
             onChange={(v) => setCompanyId(v)}
@@ -235,6 +273,53 @@ const Jobs = () => {
             optionFilterProp="label"
             showSearch
           />
+        </div>
+        <div className={styles.adminFilterItem}>
+          <div>职位名称: </div>
+          <Input
+            style={{ width: 200 }}
+            value={jobName}
+            onChange={(e) => setJobName(e.target.value)}
+            placeholder="按职位名称筛选"
+          />
+        </div>
+        <div className={styles.adminFilterItem}>
+          <div>是否发布: </div>
+          <Select
+            style={{ width: 200 }}
+            options={["1", "0"].map((c) => ({
+              value: c,
+              label: c === "1" ? "是" : "否",
+            }))}
+            value={isPosted}
+            onChange={(v) => setIsPosted(v)}
+            placeholder="筛选是否发布"
+          />
+        </div>
+        <div className={styles.adminFilterItem}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setFetchParams({
+                companyId,
+                jobName,
+                isPosted,
+              });
+            }}
+          >
+            筛选
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setCompanyId(undefined);
+              setJobName(undefined);
+              setIsPosted(undefined);
+              setFetchParams(undefined);
+            }}
+          >
+            清空
+          </Button>
         </div>
       </div>
       <div className={styles.adminMain}>
