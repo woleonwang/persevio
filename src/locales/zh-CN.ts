@@ -242,7 +242,99 @@ const CandidateResume = {
 
 export default {
   hello: "世界",
+  new: "创建",
+  edit: "编辑",
+  save: "保存",
+  delete: "删除",
+  retry: "重试",
+  cancel: "取消",
+  submit: "提交",
+  submitting: "提交中...",
+  submit_succeed: "提交成功",
+  submit_failed: "提交失败",
+  close: "关闭",
+  add: "添加",
+  create_succeed: "创建成功",
+  create: "创建",
+  update_succeed: "编辑成功",
+  back: "返回",
+  chat_with_viona: "和 Viona 聊聊",
+  created_at: "创建时间",
+  chat_title: "对话",
 
+  accept: "通过",
+  reject: "拒绝",
+  accepted: "已通过",
+  rejected: "已拒绝",
+
+  copy: "复制",
+  copied: "复制成功",
+
+  loading: "加载中...",
+  uploading: "上传中...",
+
+  year: "年",
+  empty_text: "暂无数据",
+
+  download: "下载",
+
+  numberRange: {
+    min: "最小值",
+    max: "最大值",
+  },
+
+  date_format: {
+    with_day: "ddd, MM月DD日",
+  },
+
+  pagination_total: "第 {{rangeStart}}-{{rangeEnd}} 条，共 {{total}} 条",
+
+  please_select: "请选择",
+  please_enter: "请输入",
+  phone_not_valid: "请输入有效的手机号",
+
+  calendar: {
+    all_day: "全天",
+    add_times: "添加时间",
+    add_time_title: "添加时间",
+    months: {
+      jan: "一月",
+      feb: "二月",
+      mar: "三月",
+      apr: "四月",
+      may: "五月",
+      jun: "六月",
+      jul: "七月",
+      aug: "八月",
+      sep: "九月",
+      oct: "十月",
+      nov: "十一月",
+      dec: "十二月",
+    },
+    weekdays: {
+      sun: "日",
+      mon: "一",
+      tue: "二",
+      wed: "三",
+      thu: "四",
+      fri: "五",
+      sat: "六",
+    },
+  },
+
+  interview_mode_options: {
+    interview: "面试",
+    written: "笔试",
+  },
+
+  switch_mode_reason_options: {
+    dissatisfied_with_my_answer: "对我的回答不满意",
+    want_to_consult_more_complex_questions: "想咨询一些更复杂的问题",
+    want_to_chat_with_a_real_person: "想和真人聊天以获得更多确认",
+    others: "其他",
+  },
+
+  // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "推荐",
     newRole: "发布职位",
@@ -1576,57 +1668,6 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     },
   },
 
-  new: "创建",
-  edit: "编辑",
-  save: "保存",
-  delete: "删除",
-  retry: "重试",
-  cancel: "取消",
-  submit: "提交",
-  submitting: "提交中...",
-  submit_succeed: "提交成功",
-  submit_failed: "提交失败",
-  close: "关闭",
-  add: "添加",
-  create_succeed: "创建成功",
-  create: "创建",
-  update_succeed: "编辑成功",
-  back: "返回",
-  chat_with_viona: "和 Viona 聊聊",
-  created_at: "创建时间",
-  chat_title: "对话",
-
-  accept: "通过",
-  reject: "拒绝",
-  accepted: "已通过",
-  rejected: "已拒绝",
-
-  copy: "复制",
-  copied: "复制成功",
-
-  loading: "加载中...",
-  uploading: "上传中...",
-
-  year: "年",
-  empty_text: "暂无数据",
-
-  download: "下载",
-
-  numberRange: {
-    min: "最小值",
-    max: "最大值",
-  },
-
-  date_format: {
-    with_day: "ddd, MM月DD日",
-  },
-
-  pagination_total: "第 {{rangeStart}}-{{rangeEnd}} 条，共 {{total}} 条",
-
-  please_select: "请选择",
-  please_enter: "请输入",
-  phone_not_valid: "请输入有效的手机号",
-
   staffs: {
     title: "员工列表",
     searchPlaceholder: "员工姓名、账号邮箱",
@@ -1694,46 +1735,5 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     type_face_to_face: "面对面",
     type_online: "在线",
     type_phone: "电话",
-  },
-
-  calendar: {
-    all_day: "全天",
-    add_times: "添加时间",
-    add_time_title: "添加时间",
-    months: {
-      jan: "一月",
-      feb: "二月",
-      mar: "三月",
-      apr: "四月",
-      may: "五月",
-      jun: "六月",
-      jul: "七月",
-      aug: "八月",
-      sep: "九月",
-      oct: "十月",
-      nov: "十一月",
-      dec: "十二月",
-    },
-    weekdays: {
-      sun: "日",
-      mon: "一",
-      tue: "二",
-      wed: "三",
-      thu: "四",
-      fri: "五",
-      sat: "六",
-    },
-  },
-
-  interview_mode_options: {
-    interview: "面试",
-    written: "笔试",
-  },
-
-  switch_mode_reason_options: {
-    dissatisfied_with_my_answer: "对我的回答不满意",
-    want_to_consult_more_complex_questions: "想咨询一些更复杂的问题",
-    want_to_chat_with_a_real_person: "想和真人聊天以获得更多确认",
-    others: "其他",
   },
 };

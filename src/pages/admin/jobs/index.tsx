@@ -17,6 +17,7 @@ import styles from "../style.module.less";
 import dayjs from "dayjs";
 import { getJobChatbotUrl } from "@/utils";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 10;
 
@@ -50,6 +51,9 @@ const Jobs = () => {
 
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`admin_jobs.${key}`);
 
   useEffect(() => {
     fetchCompanies();
@@ -125,10 +129,12 @@ const Jobs = () => {
     {
       title: "ID",
       dataIndex: "id",
+      fixed: "left" as const,
     },
     {
       title: "职位名称",
       dataIndex: "name",
+      fixed: "left" as const,
     },
     {
       title: "公司名称",
@@ -188,6 +194,7 @@ const Jobs = () => {
           "-"
         );
       },
+      width: 150,
     },
     {
       title: "操作",
@@ -344,6 +351,7 @@ const Jobs = () => {
               },
             };
           }}
+          scroll={{ x: "max-content" }}
         />
       </div>
 

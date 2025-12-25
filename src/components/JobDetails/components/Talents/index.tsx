@@ -61,7 +61,7 @@ const Talents = (props: IProps) => {
           };
         })
       );
-      setLinkedinProfiles(data.linkedin_profiles);
+      setLinkedinProfiles(data.linkedin_profiles ?? []);
     }
   };
 

@@ -251,6 +251,100 @@ const CandidateResume = {
 export default {
   hello: "world",
 
+  new: "Create",
+  edit: "Edit",
+  delete: "Delete",
+  retry: "Retry",
+  save: "Save",
+  cancel: "Cancel",
+  submit: "Submit",
+  submitting: "Submitting...",
+  submit_succeed: "Submit succeed!",
+  submit_failed: "Submit failed!",
+  close: "Close",
+  add: "Add",
+  create_succeed: "Create succeed!",
+  create: "Create",
+  update_succeed: "Update Succeed!",
+  back: "Back",
+  chat_with_viona: "Chat with Viona",
+  created_at: "Created At",
+  chat_title: "Chat",
+
+  accept: "Accept",
+  reject: "Reject",
+  accepted: "Accepted",
+  rejected: "Rejected",
+
+  copy: "Copy",
+  copied: "Copied",
+
+  loading: "Loading...",
+  uploading: "Uploading...",
+
+  year: "year(s)",
+  empty_text: "No data",
+
+  download: "Download",
+
+  numberRange: {
+    min: "Min",
+    max: "Max",
+  },
+
+  date_format: {
+    with_day: "dddd, MMMM DD",
+  },
+
+  pagination_total: "{{rangeStart}}-{{rangeEnd}} of {{total}} items",
+  please_select: "Please select",
+  please_enter: "Please enter",
+  phone_not_valid: "Please enter a valid phone number",
+
+  calendar: {
+    all_day: "All day",
+    add_times: "Add times",
+    add_time_title: "Add time",
+    months: {
+      jan: "Jan",
+      feb: "Feb",
+      mar: "Mar",
+      apr: "Apr",
+      may: "May",
+      jun: "Jun",
+      jul: "Jul",
+      aug: "Aug",
+      sep: "Sep",
+      oct: "Oct",
+      nov: "Nov",
+      dec: "Dec",
+    },
+    weekdays: {
+      sun: "SUN",
+      mon: "MON",
+      tue: "TUE",
+      wed: "WED",
+      thu: "THU",
+      fri: "FRI",
+      sat: "SAT",
+    },
+  },
+
+  interview_mode_options: {
+    interview: "Interview",
+    written: "Written Test",
+  },
+
+  switch_mode_reason_options: {
+    dissatisfied_with_my_answer: "Dissatisfied with my answer",
+    want_to_consult_more_complex_questions:
+      "Want to consult some more complex questions",
+    want_to_chat_with_a_real_person:
+      "Want to chat with a real person for more reassurance",
+    others: "Others",
+  },
+
+  // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "Referrals",
     newRole: "Publish Job",
@@ -1635,56 +1729,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
-  new: "Create",
-  edit: "Edit",
-  delete: "Delete",
-  retry: "Retry",
-  save: "Save",
-  cancel: "Cancel",
-  submit: "Submit",
-  submitting: "Submitting...",
-  submit_succeed: "Submit succeed!",
-  submit_failed: "Submit failed!",
-  close: "Close",
-  add: "Add",
-  create_succeed: "Create succeed!",
-  create: "Create",
-  update_succeed: "Update Succeed!",
-  back: "Back",
-  chat_with_viona: "Chat with Viona",
-  created_at: "Created At",
-  chat_title: "Chat",
-
-  accept: "Accept",
-  reject: "Reject",
-  accepted: "Accepted",
-  rejected: "Rejected",
-
-  copy: "Copy",
-  copied: "Copied",
-
-  loading: "Loading...",
-  uploading: "Uploading...",
-
-  year: "year(s)",
-  empty_text: "No data",
-
-  download: "Download",
-
-  numberRange: {
-    min: "Min",
-    max: "Max",
-  },
-
-  date_format: {
-    with_day: "dddd, MMMM DD",
-  },
-
-  pagination_total: "{{rangeStart}}-{{rangeEnd}} of {{total}} items",
-  please_select: "Please select",
-  please_enter: "Please enter",
-  phone_not_valid: "Please enter a valid phone number",
-
   staffs: {
     title: "Staff List",
     searchPlaceholder: "Staff name, account email",
@@ -1753,48 +1797,5 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     type_face_to_face: "Face to Face",
     type_online: "Online",
     type_phone: "Phone",
-  },
-
-  calendar: {
-    all_day: "All day",
-    add_times: "Add times",
-    add_time_title: "Add time",
-    months: {
-      jan: "Jan",
-      feb: "Feb",
-      mar: "Mar",
-      apr: "Apr",
-      may: "May",
-      jun: "Jun",
-      jul: "Jul",
-      aug: "Aug",
-      sep: "Sep",
-      oct: "Oct",
-      nov: "Nov",
-      dec: "Dec",
-    },
-    weekdays: {
-      sun: "SUN",
-      mon: "MON",
-      tue: "TUE",
-      wed: "WED",
-      thu: "THU",
-      fri: "FRI",
-      sat: "SAT",
-    },
-  },
-
-  interview_mode_options: {
-    interview: "Interview",
-    written: "Written Test",
-  },
-
-  switch_mode_reason_options: {
-    dissatisfied_with_my_answer: "Dissatisfied with my answer",
-    want_to_consult_more_complex_questions:
-      "Want to consult some more complex questions",
-    want_to_chat_with_a_real_person:
-      "Want to chat with a real person for more reassurance",
-    others: "Others",
   },
 };
