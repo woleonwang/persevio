@@ -1729,6 +1729,52 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     },
   },
 
+  admin_companies: {
+    pageTitle: "公司列表",
+    searchPlaceholder: "公司名称",
+    fetchFailed: "获取公司列表失败",
+    operationFailed: "操作失败",
+    table: {
+      id: "ID",
+      companyName: "公司名称",
+      registerEmail: "注册邮箱",
+      website: "公司网址",
+      registrantName: "注册人姓名",
+      position: "职位名称",
+      phone: "电话号码",
+      companySize: "公司规模",
+      roleType: "职位类型",
+      headcount: "招聘名额",
+      status: "审核状态",
+      actions: "操作",
+    },
+    status: {
+      approving: "审核中",
+      rejected: "未通过",
+      approved: "已通过",
+    },
+    buttons: {
+      reject: "不通过",
+      approve: "通过",
+    },
+    filters: {
+      all: "所有",
+      approving: "审核中",
+      approved: "已通过",
+      rejected: "未通过",
+    },
+    audit: {
+      title: "审核企业",
+      confirmApprove: "确定要通过该企业吗？",
+      confirmReject: "确定要拒绝该企业吗？",
+      approveSuccess: "已通过该公司",
+      rejectSuccess: "已拒绝该公司",
+    },
+    pagination: {
+      total: "第 {{start}}-{{end}} 条，共 {{total}} 条",
+    },
+  },
+
   staffs: {
     title: "员工列表",
     searchPlaceholder: "员工姓名、账号邮箱",

@@ -1790,6 +1790,52 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
+  admin_companies: {
+    pageTitle: "Company List",
+    searchPlaceholder: "Company Name",
+    fetchFailed: "Failed to fetch company list",
+    operationFailed: "Operation failed",
+    table: {
+      id: "ID",
+      companyName: "Company Name",
+      registerEmail: "Register Email",
+      website: "Website",
+      registrantName: "Registrant Name",
+      position: "Position",
+      phone: "Phone Number",
+      companySize: "Company Size",
+      roleType: "Role Type",
+      headcount: "Headcount",
+      status: "Status",
+      actions: "Actions",
+    },
+    status: {
+      approving: "Approving",
+      rejected: "Rejected",
+      approved: "Approved",
+    },
+    buttons: {
+      reject: "Reject",
+      approve: "Approve",
+    },
+    filters: {
+      all: "All",
+      approving: "Approving",
+      approved: "Approved",
+      rejected: "Rejected",
+    },
+    audit: {
+      title: "Audit Company",
+      confirmApprove: "Are you sure you want to approve this company?",
+      confirmReject: "Are you sure you want to reject this company?",
+      approveSuccess: "Company approved",
+      rejectSuccess: "Company rejected",
+    },
+    pagination: {
+      total: "{{start}}-{{end}} of {{total}} items",
+    },
+  },
+
   staffs: {
     title: "Staff List",
     searchPlaceholder: "Staff name, account email",

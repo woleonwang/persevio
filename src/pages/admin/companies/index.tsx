@@ -24,6 +24,7 @@ const AdminCompanies: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`admin_companies.${key}`);
 
   useEffect(() => {
     fetchCompanies();
@@ -41,7 +42,7 @@ const AdminCompanies: React.FC = () => {
     if (code === 0) {
       setCompanies(data.companies.reverse());
     } else {
-      message.error("获取公司列表失败");
+      message.error(t("fetchFailed"));
     }
 
     setLoading(false);
@@ -63,18 +64,25 @@ const AdminCompanies: React.FC = () => {
     action: "approve" | "reject"
   ) => {
     Modal.confirm({
-      title: `审核企业`,
-      content: `确定要${action === "approve" ? "通过" : "拒绝"}该企业吗？`,
+      title: t("audit.title"),
+      content:
+        action === "approve"
+          ? t("audit.confirmApprove")
+          : t("audit.confirmReject"),
       onOk: async () => {
         const { code } = await Post(
           `/api/admin/companies/${companyId}/audit/${action}`
         );
         if (code === 0) {
-          message.success(`已${action === "approve" ? "通过" : "拒绝"}该公司`);
+          message.success(
+            action === "approve"
+              ? t("audit.approveSuccess")
+              : t("audit.rejectSuccess")
+          );
           // 重新获取数据
           fetchCompanies();
         } else {
-          message.error("操作失败");
+          message.error(t("operationFailed"));
         }
       },
     });
@@ -97,15 +105,15 @@ const AdminCompanies: React.FC = () => {
     switch (status) {
       case "approving":
         className = styles.statusPending;
-        statusText = "审核中";
+        statusText = t("status.approving");
         break;
       case "rejected":
         className = styles.statusRejected;
-        statusText = "未通过";
+        statusText = t("status.rejected");
         break;
       case "approved":
         className = styles.statusApproved;
-        statusText = "已通过";
+        statusText = t("status.approved");
         break;
       default:
         statusText = status;
@@ -117,21 +125,21 @@ const AdminCompanies: React.FC = () => {
   // 表格列定义
   const columns: ColumnsType<ICompany> = [
     {
-      title: "ID",
+      title: t("table.id"),
       dataIndex: "id",
       key: "id",
       width: 80,
       ellipsis: false,
     },
     {
-      title: "公司名称",
+      title: t("table.companyName"),
       dataIndex: "name",
       key: "name",
       width: 200,
       ellipsis: false,
     },
     {
-      title: "注册邮箱",
+      title: t("table.registerEmail"),
       dataIndex: "register_info",
       key: "email",
       width: 200,
@@ -142,7 +150,7 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "公司网址",
+      title: t("table.website"),
       dataIndex: "website",
       key: "website",
       width: 200,
@@ -154,7 +162,7 @@ const AdminCompanies: React.FC = () => {
       ),
     },
     {
-      title: "注册人姓名",
+      title: t("table.registrantName"),
       dataIndex: "register_info",
       key: "registrantName",
       width: 150,
@@ -165,7 +173,7 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "职位名称",
+      title: t("table.position"),
       dataIndex: "register_info",
       key: "position",
       width: 150,
@@ -176,7 +184,7 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "电话号码",
+      title: t("table.phone"),
       dataIndex: "register_info",
       key: "phone",
       width: 150,
@@ -187,7 +195,7 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "公司规模",
+      title: t("table.companySize"),
       dataIndex: "size",
       key: "size",
       width: 150,
@@ -196,7 +204,7 @@ const AdminCompanies: React.FC = () => {
         size ? originalT(`signup.company_size_options.${size}`) : "-",
     },
     {
-      title: "职位类型",
+      title: t("table.roleType"),
       dataIndex: "recruitment_requirements_json",
       key: "role_type",
       width: 150,
@@ -213,7 +221,7 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "招聘名额",
+      title: t("table.headcount"),
       dataIndex: "recruitment_requirements_json",
       key: "headcount_number",
       width: 150,
@@ -224,16 +232,16 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
-      title: "审核状态",
+      title: t("table.status"),
       dataIndex: "status",
       key: "status",
-      width: 120,
+      width: 150,
       ellipsis: false,
       fixed: "right",
       render: (status: string) => getStatusTag(status),
     },
     {
-      title: "操作",
+      title: t("table.actions"),
       key: "action",
       width: 200,
       ellipsis: false,
@@ -248,14 +256,14 @@ const AdminCompanies: React.FC = () => {
                 size="small"
                 onClick={() => handleAudit(record.id, "reject")}
               >
-                不通过
+                {t("buttons.reject")}
               </Button>
               <Button
                 type="primary"
                 size="small"
                 onClick={() => handleAudit(record.id, "approve")}
               >
-                通过
+                {t("buttons.approve")}
               </Button>
             </Space>
           );
@@ -272,7 +280,11 @@ const AdminCompanies: React.FC = () => {
     total: visibleCompanies.length,
     showQuickJumper: true,
     showTotal: (total: number, range: [number, number]) =>
-      `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
+      originalT("admin_companies.pagination.total", {
+        start: range[0],
+        end: range[1],
+        total,
+      }),
     onChange: (page: number) => {
       setCurrentPage(page);
     },
@@ -283,13 +295,13 @@ const AdminCompanies: React.FC = () => {
       <div className={styles.pageHeader}>
         <div className={styles.headerLeft}>
           <ArrowLeftOutlined className={styles.backIcon} />
-          <h1 className={styles.pageTitle}>公司列表</h1>
+          <h1 className={styles.pageTitle}>{t("pageTitle")}</h1>
         </div>
       </div>
 
       <div className={styles.filterSection}>
         <Input.Search
-          placeholder="公司名称"
+          placeholder={t("searchPlaceholder")}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className={styles.searchInput}
@@ -300,10 +312,10 @@ const AdminCompanies: React.FC = () => {
           onChange={setStatusFilter}
           style={{ width: 200 }}
         >
-          <Option value="all">所有</Option>
-          <Option value="approving">审核中</Option>
-          <Option value="approved">已通过</Option>
-          <Option value="rejected">未通过</Option>
+          <Option value="all">{t("filters.all")}</Option>
+          <Option value="approving">{t("filters.approving")}</Option>
+          <Option value="approved">{t("filters.approved")}</Option>
+          <Option value="rejected">{t("filters.rejected")}</Option>
         </Select>
       </div>
 
