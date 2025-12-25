@@ -14,22 +14,23 @@ const ScopedTalents = () => {
   }>();
 
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`scoped_talents.${key}`);
 
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminPageHeader}>候选人列表</div>
+      <div className={styles.adminPageHeader}>{t("pageTitle")}</div>
       <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
-          <div>候选人/职位名称: </div>
+          <div>{t("filters.talentOrJobName")}</div>
           <Input
             style={{ width: 200 }}
             value={talentOrJobName}
             onChange={(e) => setTalentOrJobName(e.target.value)}
-            placeholder="按候选人/职位名称筛选"
+            placeholder={t("filters.talentOrJobNamePlaceholder")}
           />
         </div>
         <div className={styles.adminFilterItem}>
-          <div>申请状态: </div>
+          <div>{t("filters.approveStatus")}</div>
           <Select
             style={{ width: 200 }}
             options={[
@@ -48,7 +49,7 @@ const ScopedTalents = () => {
             }))}
             value={approveStatus}
             onChange={(v) => setApproveStatus(v)}
-            placeholder="筛选申请状态"
+            placeholder={t("filters.approveStatusPlaceholder")}
           />
         </div>
         <div className={styles.adminFilterItem}>
@@ -61,7 +62,7 @@ const ScopedTalents = () => {
               });
             }}
           >
-            筛选
+            {t("filters.filter")}
           </Button>
           <Button
             type="primary"
@@ -71,7 +72,7 @@ const ScopedTalents = () => {
               setFilterParams(undefined);
             }}
           >
-            清空
+            {t("filters.clear")}
           </Button>
         </div>
       </div>

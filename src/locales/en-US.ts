@@ -1778,6 +1778,18 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
+  scoped_talents: {
+    pageTitle: "Candidate List",
+    filters: {
+      talentOrJobName: "Candidate/Job Name:",
+      talentOrJobNamePlaceholder: "Filter by candidate/job name",
+      approveStatus: "Application Status:",
+      approveStatusPlaceholder: "Filter by application status",
+      filter: "Filter",
+      clear: "Clear",
+    },
+  },
+
   staffs: {
     title: "Staff List",
     searchPlaceholder: "Staff name, account email",

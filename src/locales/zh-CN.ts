@@ -1717,6 +1717,18 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     },
   },
 
+  scoped_talents: {
+    pageTitle: "候选人列表",
+    filters: {
+      talentOrJobName: "候选人/职位名称:",
+      talentOrJobNamePlaceholder: "按候选人/职位名称筛选",
+      approveStatus: "申请状态:",
+      approveStatusPlaceholder: "筛选申请状态",
+      filter: "筛选",
+      clear: "清空",
+    },
+  },
+
   staffs: {
     title: "员工列表",
     searchPlaceholder: "员工姓名、账号邮箱",
