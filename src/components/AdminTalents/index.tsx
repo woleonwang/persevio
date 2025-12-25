@@ -315,11 +315,11 @@ const AdminTalents = (props: IProps) => {
       `/api/admin/job_applies/${selectedJobApplyId}/feedback/${action}`
     );
     if (code === 0) {
-      message.success("操作成功");
+      message.success(t("operationSuccess"));
       fetchTalents();
       closeDrawer();
     } else {
-      message.error("操作失败");
+      message.error(t("operationFailed"));
     }
   };
 
@@ -451,7 +451,7 @@ const AdminTalents = (props: IProps) => {
       width: 150,
     },
     {
-      title: "拒绝原因",
+      title: t("rejectReason"),
       dataIndex: "feedback",
       render: (_: string, record: TAdminTalentItem) => {
         const talent = record.talent;
@@ -476,7 +476,7 @@ const AdminTalents = (props: IProps) => {
       },
     },
     {
-      title: "面试模式",
+      title: t("interviewMode"),
       dataIndex: "interview_mode",
       render: (_: string, record: TAdminTalentItem) => {
         const interview = record.talent?.interviews?.[0];
@@ -519,7 +519,7 @@ const AdminTalents = (props: IProps) => {
                 }
               }}
             >
-              View Details
+              {t("viewDetails")}
             </Button>
             {talent?.status === "accepted" && (
               <Button
@@ -535,7 +535,7 @@ const AdminTalents = (props: IProps) => {
                 }}
                 style={{ marginTop: 4 }}
               >
-                Edit Hire Status
+                {t("editHireStatus")}
               </Button>
             )}
             {!!talent?.share_token_id && (
@@ -549,7 +549,7 @@ const AdminTalents = (props: IProps) => {
                 }}
                 style={{ marginTop: 4 }}
               >
-                View Referral Link Details
+                {t("viewReferralLinkDetails")}
               </Button>
             )}
           </>
@@ -638,7 +638,7 @@ const AdminTalents = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      {!hideHeader && <h3 className={styles.header}>候选人</h3>}
+      {!hideHeader && <h3 className={styles.header}>{t("header")}</h3>}
       <div className={styles.tableContainer}>
         <Table<TAdminTalentItem>
           scroll={{ x: "max-content" }}
@@ -673,7 +673,7 @@ const AdminTalents = (props: IProps) => {
               {jobApply.status === "INITIAL" && (
                 <>
                   <Button type="primary" onClick={() => feedback("accept")}>
-                    Accept
+                    {t("drawer.accept")}
                   </Button>
                   <Button
                     type="primary"
@@ -681,34 +681,36 @@ const AdminTalents = (props: IProps) => {
                     onClick={() => feedback("reject")}
                     style={{ marginLeft: 12 }}
                   >
-                    Reject
+                    {t("drawer.reject")}
                   </Button>
                 </>
               )}
               {jobApply.status === "ACCEPTED" && (
                 <div className={classnames(styles.status, styles.accepted)}>
-                  Accepted
+                  {t("drawer.accepted")}
                 </div>
               )}
               {jobApply.status === "REJECTED" && (
                 <div className={classnames(styles.status, styles.rejected)}>
-                  Rejected
+                  {t("drawer.rejected")}
                 </div>
               )}
             </div>
             <div className={styles.jobApplyDetail}>
               <div className={styles.jobApplyPanel}>
-                <div className={styles.jobApplyPanelTitle}>基本信息</div>
+                <div className={styles.jobApplyPanelTitle}>
+                  {t("drawer.basicInfo")}
+                </div>
                 <div>
                   <div className={styles.jobApplyPanelItem}>
                     <div className={styles.jobApplyPanelItemLabel}>
-                      面试模式:
+                      {t("drawer.interviewModeLabel")}
                     </div>
                     <div>{jobApply.interview_mode || "-"}</div>
                   </div>
                   <div className={styles.jobApplyPanelItem}>
                     <div className={styles.jobApplyPanelItemLabel}>
-                      选择人工原因:
+                      {t("drawer.selectHumanReasonLabel")}
                     </div>
                     <div>
                       {jobApply.switch_mode_reason
@@ -731,13 +733,13 @@ const AdminTalents = (props: IProps) => {
                   </div>
                   <div className={styles.jobApplyPanelItem}>
                     <div className={styles.jobApplyPanelItemLabel}>
-                      雇主未通过原因:
+                      {t("drawer.employerRejectReasonLabel")}
                     </div>
                     <div>{talent?.feedback || "-"}</div>
                   </div>
                   <div className={styles.jobApplyPanelItem}>
                     <div className={styles.jobApplyPanelItemLabel}>
-                      雇主面试模式:
+                      {t("drawer.employerInterviewModeLabel")}
                     </div>
                     <div>
                       {talent?.interviews?.[0]?.mode
@@ -749,7 +751,7 @@ const AdminTalents = (props: IProps) => {
                   </div>
                   <div className={styles.jobApplyPanelItem}>
                     <div className={styles.jobApplyPanelItemLabel}>
-                      面试形式:
+                      {t("drawer.interviewTypeLabel")}
                     </div>
                     <div>
                       {talent?.interviews?.[0]?.interview_type
@@ -764,7 +766,7 @@ const AdminTalents = (props: IProps) => {
                   className={styles.jobApplyPanelTitle}
                   style={{ marginTop: 24 }}
                 >
-                  JD
+                  {t("drawer.jd")}
                 </div>
                 <div style={{ flex: "auto", overflow: "auto" }}>
                   <MarkdownContainer content={jd} />
@@ -778,30 +780,30 @@ const AdminTalents = (props: IProps) => {
                   className={styles.jobApplyPanelTitle}
                   style={{ marginBottom: 12 }}
                 >
-                  <div>推荐报告</div>
+                  <div>{t("drawer.recommendReport")}</div>
 
                   <div style={{ display: "flex", gap: 12 }}>
                     <Button
                       type="primary"
                       onClick={() => setIsEditingRecommendReport(true)}
                     >
-                      编辑报告
+                      {t("drawer.editReport")}
                     </Button>
                     <Button
                       type="primary"
                       onClick={() => setJobApplyResumeDrawerOpen(true)}
                     >
-                      查看简历
+                      {t("drawer.viewResume")}
                     </Button>
                     <Button type="primary" onClick={() => downloadResume()}>
-                      下载简历
+                      {t("drawer.downloadResume")}
                     </Button>
                     {chatMessages.length > 0 && (
                       <Button
                         type="primary"
                         onClick={() => setChatDrawerOpen(true)}
                       >
-                        查看对话
+                        {t("drawer.viewChat")}
                       </Button>
                     )}
                   </div>
@@ -820,23 +822,23 @@ const AdminTalents = (props: IProps) => {
                       );
 
                       if (code === 0) {
-                        message.success("操作成功");
+                        message.success(t("operationSuccess"));
                         fetchJobApply();
                         setIsEditingRecommendReport(false);
                       } else {
-                        message.error("操作失败");
+                        message.error(t("operationFailed"));
                       }
                     }}
                     onCancel={() => setIsEditingRecommendReport(false)}
                   />
                 ) : (
-                  <div>暂无报告</div>
+                  <div>{t("drawer.noReport")}</div>
                 )}
               </div>
             </div>
 
             <Drawer
-              title="简历"
+              title={t("drawer.resume")}
               open={jobApplyResumeDrawerOpen}
               onClose={() => setJobApplyResumeDrawerOpen(false)}
               width={800}
@@ -845,7 +847,7 @@ const AdminTalents = (props: IProps) => {
             </Drawer>
 
             <Drawer
-              title="对话"
+              title={t("drawer.chat")}
               open={chatDrawerOpen}
               onClose={() => setChatDrawerOpen(false)}
               width={800}
@@ -876,7 +878,9 @@ const AdminTalents = (props: IProps) => {
         >
           <div className={styles.jobApplyDetail}>
             <div className={styles.jobApplyPanel}>
-              <div className={styles.jobApplyPanelTitle}>简历</div>
+              <div className={styles.jobApplyPanelTitle}>
+                {t("drawer.resume")}
+              </div>
               <div
                 className={styles.jobApplyPanelContent}
                 style={{ flex: "auto", overflow: "auto" }}
@@ -890,7 +894,9 @@ const AdminTalents = (props: IProps) => {
               className={styles.jobApplyPanel}
               style={{ borderLeft: "1px solid #f2f2f2" }}
             >
-              <div className={styles.jobApplyPanelTitle}>Outreach Message</div>
+              <div className={styles.jobApplyPanelTitle}>
+                {t("drawer.outreachMessage")}
+              </div>
               <div
                 className={styles.jobApplyPanelContent}
                 style={{ flex: "auto", overflow: "auto" }}
@@ -902,7 +908,10 @@ const AdminTalents = (props: IProps) => {
                     }
                   />
                 ) : (
-                  <Empty style={{ margin: "60px 0" }} description="未生成" />
+                  <Empty
+                    style={{ margin: "60px 0" }}
+                    description={t("drawer.notGenerated")}
+                  />
                 )}
               </div>
             </div>
@@ -912,8 +921,8 @@ const AdminTalents = (props: IProps) => {
 
       <Modal
         open={hireStatusModalOpen}
-        title="Hire Status"
-        cancelText="Cancel"
+        title={t("hireStatusModal.title")}
+        cancelText={t("hireStatusModal.cancel")}
         onCancel={() => {
           setHireStatusModalOpen(false);
         }}
@@ -927,11 +936,11 @@ const AdminTalents = (props: IProps) => {
             );
 
             if (code === 0) {
-              message.success("Update hire status success");
+              message.success(t("hireStatusModal.updateSuccess"));
               fetchTalents();
               setHireStatusModalOpen(false);
             } else {
-              message.error("Update hire status failed");
+              message.error(t("hireStatusModal.updateFailed"));
             }
           });
         }}
@@ -942,19 +951,22 @@ const AdminTalents = (props: IProps) => {
           className={styles.bonusPoolModalForm}
         >
           <div className={styles.modalDescription}>
-            If the referred person has been hired by the company, all users in
-            the referral chain will share {selectedTalent?.job?.bonus_pool} S$;
-            Please contact the users promptly.
+            {originalT("admin_talents.hireStatusModal.description", {
+              bonusPool: selectedTalent?.job?.bonus_pool,
+            })}
           </div>
           <Form.Item
-            label="Please select the current hiring status of the referred person"
+            label={t("hireStatusModal.label")}
             name="hire_status"
             rules={[{ required: true }]}
           >
             <Select
               options={[
-                { value: "hired", label: "Hired" },
-                { value: "not_hired", label: "Not Hired" },
+                { value: "hired", label: t("hireStatusModal.hired") },
+                {
+                  value: "not_hired",
+                  label: t("hireStatusModal.notHired"),
+                },
               ]}
             />
           </Form.Item>
@@ -964,7 +976,7 @@ const AdminTalents = (props: IProps) => {
       <Modal
         open={shareChainModalOpen}
         onCancel={() => setShareChainModalOpen(false)}
-        title="Referral Chain Details"
+        title={t("referralChainModal.title")}
         cancelButtonProps={{
           style: {
             display: "none",

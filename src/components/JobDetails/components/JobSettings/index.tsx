@@ -1,6 +1,7 @@
 import { Get, Post } from "@/utils/request";
 import { Button, message, Select } from "antd";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   jobId: number;
@@ -26,6 +27,9 @@ const JobSettings = (props: IProps) => {
     fetchAdmins();
   }, [jobId]);
 
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`job_details.${key}`);
+
   const fetchJobSettings = async () => {
     const { code, data } = await Get(`/api/admin/jobs/${jobId}/settings`);
     if (code === 0) {
@@ -47,14 +51,14 @@ const JobSettings = (props: IProps) => {
       hunter_ids: selectedHunters,
     });
     if (code === 0) {
-      message.success("保存成功");
+      message.success(t("saveSuccess"));
     }
   };
 
   return (
     <div>
       <div>
-        <div>分配猎头</div>
+        <div>{t("assignHunters")}</div>
         <div style={{ marginTop: 12, display: "flex", gap: 12 }}>
           <Select
             mode="multiple"
@@ -74,7 +78,7 @@ const JobSettings = (props: IProps) => {
               distributeHunter();
             }}
           >
-            保存
+            {t("save")}
           </Button>
         </div>
       </div>

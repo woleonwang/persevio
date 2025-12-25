@@ -1655,6 +1655,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_requirement_hint:
       "When Viona introduces this role to candidates, she will reference the information in this document. You can edit the information here to control how Viona introduces this role to potential candidates.",
     talents: "Candidates",
+    settings: "Settings",
     share_position: "Copy Link",
     unpost_job_title: "Unpost this Job?",
     unpost_job_content:
@@ -1668,6 +1669,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     conversation_record: "Conversation Record",
     publish_job_hint:
       "Please unpost the job first, then edit the JD content, and then republish it.",
+    assignHunters: "Assign Hunters",
+    save: "Save",
+    saveSuccess: "Save successful",
   },
 
   talent_details: {
@@ -1707,6 +1711,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     screening_status: "Screening Status",
     schedule_time: "Schedule Time",
     actions: "Actions",
+    header: "Candidates",
+    rejectReason: "Reject Reason",
+    interviewMode: "Interview Mode",
+    viewDetails: "View Details",
+    editHireStatus: "Edit Hire Status",
+    viewReferralLinkDetails: "View Referral Link Details",
+    operationSuccess: "Operation successful",
+    operationFailed: "Operation failed",
     account_status_options: {
       evaluated: "Evaluated",
       message_generated: "Message Generated",
@@ -1726,6 +1738,43 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       staff_accepted: "Staff Accepted",
       interview_scheduled: "Interview Scheduled",
       interview_confirmed: "Interview Confirmed",
+    },
+    drawer: {
+      accept: "Accept",
+      reject: "Reject",
+      accepted: "Accepted",
+      rejected: "Rejected",
+      basicInfo: "Basic Info",
+      interviewModeLabel: "Interview Mode:",
+      selectHumanReasonLabel: "Select Human Reason:",
+      employerRejectReasonLabel: "Employer Reject Reason:",
+      employerInterviewModeLabel: "Employer Interview Mode:",
+      interviewTypeLabel: "Interview Type:",
+      jd: "JD",
+      recommendReport: "Recommend Report",
+      editReport: "Edit Report",
+      viewResume: "View Resume",
+      downloadResume: "Download Resume",
+      viewChat: "View Chat",
+      noReport: "No Report",
+      resume: "Resume",
+      chat: "Chat",
+      outreachMessage: "Outreach Message",
+      notGenerated: "Not Generated",
+    },
+    hireStatusModal: {
+      title: "Hire Status",
+      cancel: "Cancel",
+      updateSuccess: "Update hire status success",
+      updateFailed: "Update hire status failed",
+      description:
+        "If the referred person has been hired by the company, all users in the referral chain will share {{bonusPool}} S$; Please contact the users promptly.",
+      label: "Please select the current hiring status of the referred person",
+      hired: "Hired",
+      notHired: "Not Hired",
+    },
+    referralChainModal: {
+      title: "Referral Chain Details",
     },
   },
 

@@ -1597,6 +1597,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     job_requirement_hint:
       "Viona 会参考这份文档向候选人介绍该职位。你可以在此编辑内容，以控制她与候选人沟通时的说法。",
     talents: "候选人",
+    settings: "设置",
     share_position: "分享职位",
     unpost_job_title: "取消发布职位？",
     unpost_job_content:
@@ -1609,6 +1610,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     conversation_record: "对话记录",
     publish_job_hint:
       "请先将职位取消发布，再编辑修改JD内容，修改完成后方可重新发布。",
+    assignHunters: "分配猎头",
+    save: "保存",
+    saveSuccess: "保存成功",
   },
 
   talent_details: {
@@ -1646,6 +1650,14 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     screening_status: "申请状态",
     schedule_time: "面试时间",
     actions: "操作",
+    header: "候选人",
+    rejectReason: "拒绝原因",
+    interviewMode: "面试模式",
+    viewDetails: "查看详情",
+    editHireStatus: "编辑雇佣状态",
+    viewReferralLinkDetails: "查看推荐链接详情",
+    operationSuccess: "操作成功",
+    operationFailed: "操作失败",
     account_status_options: {
       evaluated: "已评估",
       message_generated: "已生成消息",
@@ -1665,6 +1677,43 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       staff_accepted: "雇主已通过",
       interview_scheduled: "已安排面试",
       interview_confirmed: "已确认面试",
+    },
+    drawer: {
+      accept: "接受",
+      reject: "拒绝",
+      accepted: "已接受",
+      rejected: "已拒绝",
+      basicInfo: "基本信息",
+      interviewModeLabel: "面试模式:",
+      selectHumanReasonLabel: "选择人工原因:",
+      employerRejectReasonLabel: "雇主未通过原因:",
+      employerInterviewModeLabel: "雇主面试模式:",
+      interviewTypeLabel: "面试形式:",
+      jd: "JD",
+      recommendReport: "推荐报告",
+      editReport: "编辑报告",
+      viewResume: "查看简历",
+      downloadResume: "下载简历",
+      viewChat: "查看对话",
+      noReport: "暂无报告",
+      resume: "简历",
+      chat: "对话",
+      outreachMessage: "Outreach Message",
+      notGenerated: "未生成",
+    },
+    hireStatusModal: {
+      title: "雇佣状态",
+      cancel: "取消",
+      updateSuccess: "更新雇佣状态成功",
+      updateFailed: "更新雇佣状态失败",
+      description:
+        "如果被推荐人已被公司雇佣，推荐链中的所有用户将分享 {{bonusPool}} S$；请及时联系用户。",
+      label: "请选择被推荐人当前的雇佣状态",
+      hired: "已雇佣",
+      notHired: "未雇佣",
+    },
+    referralChainModal: {
+      title: "推荐链详情",
     },
   },
 

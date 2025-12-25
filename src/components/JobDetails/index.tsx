@@ -34,7 +34,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
       jobDescription: t("job_description_jd"),
       jobRequirement: t("job_requirement_table"),
       talents: t("talents"),
-      ...(role === "admin" ? { settings: "设置" } : {}),
+      ...(role === "admin" ? { settings: t("settings") } : {}),
     };
   }, [t, role]);
 
