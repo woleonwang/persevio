@@ -12,7 +12,7 @@ export const parseJSON = (jsonString?: string) => {
   try {
     return JSON.parse(jsonString.slice(startIndex, lastIndex + 1));
   } catch (error) {
-    console.log("parse json error:", jsonString);
+    // console.log("parse json error:", jsonString);
     return {};
   }
 };

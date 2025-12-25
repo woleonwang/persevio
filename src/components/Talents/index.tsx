@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Table, Tag, Tooltip } from "antd";
 import { useNavigate } from "react-router";
 import { ColumnsType } from "antd/es/table";
-
+import classnames from "classnames";
 import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
@@ -11,8 +11,21 @@ import { parseJSON } from "@/utils";
 import dayjs from "dayjs";
 import Empty from "@/components/Empty";
 
+export type TApproveStatus =
+  | "not_applied"
+  | "pending"
+  | "staff_rejected"
+  | "staff_accepted"
+  | "interview_scheduled"
+  | "interview_confirmed";
+
 interface IProps {
-  jobId: number;
+  jobId?: number;
+  filterParams?: {
+    talentName?: string;
+    jobId?: number;
+    approveStatus?: TApproveStatus;
+  };
 }
 
 type TDataSourceItem = {
@@ -29,7 +42,7 @@ type TTalentItem = TTalent & {
 };
 
 const Talents = (props: IProps) => {
-  const { jobId } = props;
+  const { jobId, filterParams } = props;
   const [talents, setTalents] = useState<TTalentItem[]>([]);
   const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
     []
@@ -41,16 +54,14 @@ const Talents = (props: IProps) => {
   const t = (key: string) => originalT(`job_talents.${key}`);
 
   useEffect(() => {
-    if (jobId) {
-      fetchTalents();
-    }
+    fetchTalents();
   }, [jobId]);
 
   const fetchTalents = async () => {
     const { code, data } = await Get<{
       talents: TTalent[];
       linkedin_profiles: TLinkedinProfile[];
-    }>(`/api/jobs/${jobId}/talents`);
+    }>(`/api/talents?job_id=${jobId ?? ""}`);
 
     if (code === 0) {
       setTalents(
@@ -65,6 +76,35 @@ const Talents = (props: IProps) => {
     }
   };
 
+  const getApproveStatus = (talentItem: TDataSourceItem): TApproveStatus => {
+    const talent = talentItem.talent;
+    const interview = talent?.interviews?.[0];
+
+    if (interview) {
+      if (interview.scheduled_at) {
+        return "interview_confirmed";
+      } else {
+        return "interview_scheduled";
+      }
+    }
+
+    if (talent) {
+      if (talent.status === "accepted") {
+        return "staff_accepted";
+      } else if (talent.status === "rejected") {
+        return "staff_rejected";
+      } else {
+        return "pending";
+      }
+    }
+
+    return "not_applied";
+  };
+
+  const getName = (talentItem: TDataSourceItem): string => {
+    return talentItem.talent?.name || talentItem.linkedinProfile?.name || "";
+  };
+
   const columns: ColumnsType<TDataSourceItem> = [
     {
       title: t("candidate_name"),
@@ -73,12 +113,29 @@ const Talents = (props: IProps) => {
         return record.talent?.name || record.linkedinProfile?.name || "-";
       },
     },
+    ...(!jobId
+      ? [
+          {
+            title: t("job_name"),
+            dataIndex: "job_name",
+            render: (_: string, record: TDataSourceItem) => {
+              return (
+                (record.talent
+                  ? record.talent?.job?.name
+                  : record.linkedinProfile?.job?.name) || "-"
+              );
+            },
+            width: 150,
+          },
+        ]
+      : []),
     {
       title: t("current_job_title"),
       dataIndex: "current_job_title",
       render: (_: string, record: TDataSourceItem) => {
         return record.talent?.current_job_title || "-";
       },
+      width: 150,
     },
     {
       title: t("current_company"),
@@ -86,6 +143,7 @@ const Talents = (props: IProps) => {
       render: (_: string, record: TDataSourceItem) => {
         return record.talent?.current_company || "-";
       },
+      width: 150,
     },
     {
       title: t("current_compensation"),
@@ -93,6 +151,7 @@ const Talents = (props: IProps) => {
       render: (_: string, record: TDataSourceItem) => {
         return record.talent?.current_compensation || "-";
       },
+      width: 150,
     },
     {
       title: t("visa"),
@@ -100,6 +159,7 @@ const Talents = (props: IProps) => {
       render: (_: string, record: TDataSourceItem) => {
         return record.talent?.visa || "-";
       },
+      width: 150,
     },
     {
       title: t("received_on"),
@@ -114,27 +174,20 @@ const Talents = (props: IProps) => {
       title: t("screening_status"),
       dataIndex: "status",
       render: (_: string, record: TDataSourceItem) => {
-        const talent = record.talent;
-        if (!talent) {
-          return "-";
+        const status = getApproveStatus(record);
+        if (status === "pending") {
+          return <Tag color="default">{t("status_pending")}</Tag>;
+        } else if (status === "staff_accepted") {
+          return <Tag color="green">{t("status_staff_accepted")}</Tag>;
+        } else if (status === "staff_rejected") {
+          return <Tag color="red">{t("status_staff_rejected")}</Tag>;
+        } else if (status === "interview_scheduled") {
+          return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
+        } else if (status === "interview_confirmed") {
+          return <Tag color="green">{t("status_interview_confirmed")}</Tag>;
+        } else {
+          return <Tag color="default">{t("status_not_applied")}</Tag>;
         }
-
-        const status = talent?.status;
-        if (status === "accepted") {
-          if (!talent.interviews?.length) {
-            return <Tag color="green">{t("status_pending_interview")}</Tag>;
-          } else if (!talent.interviews[0].scheduled_at) {
-            return (
-              <Tag color="green">{t("status_pending_candidate_confirm")}</Tag>
-            );
-          } else {
-            return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
-          }
-        }
-        if (status === "rejected") {
-          return <Tag color="red">{t("status_rejected")}</Tag>;
-        }
-        return <Tag color="default">{t("status_unfiltered")}</Tag>;
       },
     },
     {
@@ -190,7 +243,7 @@ const Talents = (props: IProps) => {
             type="link"
             onClick={() => {
               navigate(
-                `/app/jobs/${jobId}/standard-board/talents/${record.talent?.id}`
+                `/app/jobs/${record.talent?.job_id}/standard-board/talents/${record.talent?.id}`
               );
             }}
           >
@@ -201,7 +254,7 @@ const Talents = (props: IProps) => {
             type="link"
             onClick={() => {
               navigate(
-                `/app/jobs/${jobId}/standard-board/linkedin-profiles/${record.linkedinProfile?.id}`
+                `/app/jobs/${record.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${record.linkedinProfile?.id}`
               );
             }}
           >
@@ -210,19 +263,10 @@ const Talents = (props: IProps) => {
         );
       },
     },
-  ].map((item) => {
-    return {
-      ...item,
-      render:
-        item.render ??
-        ((data) => {
-          return data ?? "--";
-        }),
-    };
-  });
+  ];
 
   const dataSource: TDataSourceItem[] = useMemo(() => {
-    const result: TDataSourceItem[] = [];
+    let result: TDataSourceItem[] = [];
     linkedinProfiles.forEach((linkedinProfile) => {
       // 1. 只有 profile，没有 talent
       // 2. 有 profile + talent, 刚注册
@@ -249,6 +293,7 @@ const Talents = (props: IProps) => {
         (talent) =>
           !linkedinProfiles.find(
             (linkedinProfile) =>
+              linkedinProfile.candidate_id !== 0 &&
               linkedinProfile.candidate_id === talent.candidate_id
           )
       )
@@ -258,20 +303,44 @@ const Talents = (props: IProps) => {
         });
       });
 
+    if (filterParams?.talentName) {
+      result = result.filter((item) => {
+        return getName(item).includes(filterParams.talentName ?? "");
+      });
+    }
+
+    if (filterParams?.approveStatus) {
+      result = result.filter((item) => {
+        return getApproveStatus(item) === filterParams.approveStatus;
+      });
+    }
+
+    if (filterParams?.jobId) {
+      result = result.filter((item) => {
+        return item.talent
+          ? item.talent?.job_id === filterParams.jobId
+          : item.linkedinProfile?.job_id === filterParams.jobId;
+      });
+    }
+
     return result.sort((a, b) => {
       return dayjs(b.talent?.created_at || b.linkedinProfile?.created_at).diff(
         dayjs(a.talent?.created_at || a.linkedinProfile?.created_at)
       );
     });
-  }, [talents, linkedinProfiles]);
+  }, [talents, linkedinProfiles, filterParams]);
 
   return (
-    <div className={styles.container}>
-      <h3>{t("candidate_list")}</h3>
+    <div
+      className={classnames(styles.container, { [styles.noPadding]: !jobId })}
+    >
+      {jobId && <h3>{t("candidate_list")}</h3>}
       <div className={styles.tableContainer}>
         <Table
           columns={columns}
-          rowKey="id"
+          rowKey={(record) => {
+            return record.talent?.id || record.linkedinProfile?.id || "";
+          }}
           dataSource={dataSource}
           pagination={{
             pageSize: 10,

@@ -429,6 +429,10 @@ type TTalent = {
     id: number;
     name: string;
     bonus_pool: number;
+    company?: {
+      id: number;
+      name: string;
+    };
   };
   created_at: string;
 };

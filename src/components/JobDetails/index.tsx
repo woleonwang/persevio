@@ -5,14 +5,14 @@ import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 
 import useJob from "@/hooks/useJob";
-
-import Talents from "./components/Talents";
-import styles from "./style.module.less";
-import JobDocument from "./components/JobDocument";
+import Talents from "@/components/Talents";
 import { copy, getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
+
 import JobSettings from "./components/JobSettings";
+import JobDocument from "./components/JobDocument";
+import styles from "./style.module.less";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
