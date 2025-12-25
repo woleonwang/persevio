@@ -1,44 +1,8 @@
-.companiesPage {
-  flex: auto;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.pageHeader {
-  display: flex;
-  align-items: center;
-  padding: 20px 24px;
-  flex: none;
-
-  .headerLeft {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .backIcon {
-    font-size: 18px;
-    color: #666;
-    cursor: pointer;
-  }
-
-  .pageTitle {
-    margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: #262626;
-  }
-}
-
 .filterSection {
-  flex: none;
+  margin-top: 20px;
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  background: white;
-  padding: 0 24px;
-  border-radius: 8px;
+  flex: none;
+  gap: 12px;
 
   .searchInput {
     width: 300px;
@@ -46,12 +10,9 @@
 }
 
 .tableWrapper {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 0 24px;
+  margin-top: 20px;
   flex: auto;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .companiesTable {
@@ -60,13 +21,13 @@
       white-space: nowrap;
       word-break: keep-all;
     }
-    
+
     .ant-table-tbody > tr > td {
       white-space: normal;
       word-break: break-word;
       vertical-align: top;
     }
-    
+
     .ant-table-cell {
       padding: 12px 8px;
     }

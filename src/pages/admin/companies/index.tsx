@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Input, Select, Table, Button, Space, message, Modal } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import { parseJSON } from "@/utils";
 import { ColumnsType } from "antd/es/table";
+
+import commonStyles from "../style.module.less";
 
 const { Option } = Select;
 
@@ -55,7 +56,7 @@ const AdminCompanies: React.FC = () => {
     .filter(
       (company) =>
         !searchText ||
-        company.name.toLowerCase().includes(searchText.toLowerCase())
+        company.name?.toLowerCase().includes(searchText.toLowerCase())
     );
 
   // 处理审核操作
@@ -291,13 +292,8 @@ const AdminCompanies: React.FC = () => {
   };
 
   return (
-    <div className={styles.companiesPage}>
-      <div className={styles.pageHeader}>
-        <div className={styles.headerLeft}>
-          <ArrowLeftOutlined className={styles.backIcon} />
-          <h1 className={styles.pageTitle}>{t("pageTitle")}</h1>
-        </div>
-      </div>
+    <div className={commonStyles.adminContainer}>
+      <div className={commonStyles.adminPageHeader}>{t("pageTitle")}</div>
 
       <div className={styles.filterSection}>
         <Input.Search
