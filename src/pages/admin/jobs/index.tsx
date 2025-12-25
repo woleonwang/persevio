@@ -119,7 +119,7 @@ const Jobs = () => {
       }
     );
     if (code === 0) {
-      message.success("推荐成功");
+      message.success(t("recommendedCandidates.recommendSuccess"));
       fetchRecommendedCandidates();
       setSelectedCandidates([]);
     }
@@ -127,66 +127,66 @@ const Jobs = () => {
 
   const jobTableColumns: ColumnsType<IJob> = [
     {
-      title: "ID",
+      title: t("table.id"),
       dataIndex: "id",
       fixed: "left" as const,
     },
     {
-      title: "职位名称",
+      title: t("table.jobName"),
       dataIndex: "name",
       fixed: "left" as const,
     },
     {
-      title: "公司名称",
+      title: t("table.companyName"),
       dataIndex: "company_id",
       render: (companyId: number) => {
         return <div>{allCompanies.find((c) => c.id === companyId)?.name}</div>;
       },
     },
     {
-      title: "是否发布",
+      title: t("table.isPosted"),
       dataIndex: "posted_at",
       render: (postedAt: string) => {
-        return !!postedAt ? "是" : "否";
+        return !!postedAt ? t("table.yes") : t("table.no");
       },
     },
     {
-      title: "申请数量",
+      title: t("table.applicationCount"),
       dataIndex: "total_job_applies",
       render: (totalJobApplies: number) => {
         return totalJobApplies ? totalJobApplies : "-";
       },
     },
     {
-      title: "雇主候选人数量",
+      title: t("table.employerCandidateCount"),
       dataIndex: "total_candidates",
       render: (totalCandidates: number) => {
         return totalCandidates ? totalCandidates : "-";
       },
     },
     {
-      title: "雇主筛选通过数量",
+      title: t("table.passedScreeningCount"),
       dataIndex: "candidates_passed_screening",
       render: (candidatesPassedScreening: number) => {
         return candidatesPassedScreening ? candidatesPassedScreening : "-";
       },
     },
     {
-      title: "已确认面试数量",
+      title: t("table.confirmedInterviewCount"),
       dataIndex: "candidates_confirm_interview",
       render: (candidatesConfirmInterview: number) => {
         return candidatesConfirmInterview ? candidatesConfirmInterview : "-";
       },
     },
     {
-      title: "奖金池",
+      title: t("table.bonusPool"),
       dataIndex: "bonus_pool",
       render: (bonusPool: number) => {
         return bonusPool ? `$ ${bonusPool}` : "-";
       },
     },
     {
-      title: "分配人",
+      title: t("table.assignee"),
       dataIndex: "admins",
       render: (_: string, job: IJob) => {
         return (
@@ -197,7 +197,7 @@ const Jobs = () => {
       width: 150,
     },
     {
-      title: "操作",
+      title: t("table.actions"),
       key: "actions",
       width: 350,
       render: (_, job: IJob) => {
@@ -219,7 +219,7 @@ const Jobs = () => {
                 });
               }}
             >
-              Add Bonus Pool
+              {t("table.addBonusPool")}
             </Button>
 
             <Button
@@ -233,7 +233,7 @@ const Jobs = () => {
               }}
               style={{ marginLeft: 12 }}
             >
-              Go to Listing
+              {t("table.goToListing")}
             </Button>
           </div>
         );
@@ -243,18 +243,18 @@ const Jobs = () => {
 
   const recommendedTalentTableColumns: ColumnsType<TRecommendedCandidate> = [
     {
-      title: "ID",
+      title: t("recommendedCandidates.id"),
       dataIndex: "id",
     },
     {
-      title: "候选人",
+      title: t("recommendedCandidates.candidate"),
       dataIndex: "candidate",
       render: (candidate: ICandidateSettings) => {
         return <div>{candidate.name}</div>;
       },
     },
     {
-      title: "推送时间",
+      title: t("recommendedCandidates.pushTime"),
       dataIndex: "created_at",
       render: (datetime: string) => {
         return dayjs(datetime).format("YYYY-MM-DD HH:mm:ss");
@@ -264,10 +264,10 @@ const Jobs = () => {
 
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminPageHeader}>职位列表</div>
+      <div className={styles.adminPageHeader}>{t("pageTitle")}</div>
       <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
-          <div>公司: </div>
+          <div>{t("filters.company")}: </div>
           <Select
             style={{ width: 200 }}
             options={allCompanies.map((c) => ({
@@ -276,31 +276,31 @@ const Jobs = () => {
             }))}
             value={companyId}
             onChange={(v) => setCompanyId(v)}
-            placeholder="按公司筛选"
+            placeholder={t("filters.companyPlaceholder")}
             optionFilterProp="label"
             showSearch
           />
         </div>
         <div className={styles.adminFilterItem}>
-          <div>职位名称: </div>
+          <div>{t("filters.jobName")}: </div>
           <Input
             style={{ width: 200 }}
             value={jobName}
             onChange={(e) => setJobName(e.target.value)}
-            placeholder="按职位名称筛选"
+            placeholder={t("filters.jobNamePlaceholder")}
           />
         </div>
         <div className={styles.adminFilterItem}>
-          <div>是否发布: </div>
+          <div>{t("filters.isPosted")}: </div>
           <Select
             style={{ width: 200 }}
             options={["1", "0"].map((c) => ({
               value: c,
-              label: c === "1" ? "是" : "否",
+              label: c === "1" ? t("table.yes") : t("table.no"),
             }))}
             value={isPosted}
             onChange={(v) => setIsPosted(v)}
-            placeholder="筛选是否发布"
+            placeholder={t("filters.isPostedPlaceholder")}
           />
         </div>
         <div className={styles.adminFilterItem}>
@@ -314,7 +314,7 @@ const Jobs = () => {
               });
             }}
           >
-            筛选
+            {t("filters.filter")}
           </Button>
           <Button
             type="primary"
@@ -325,7 +325,7 @@ const Jobs = () => {
               setFetchParams(undefined);
             }}
           >
-            清空
+            {t("filters.clear")}
           </Button>
         </div>
       </div>
@@ -379,7 +379,7 @@ const Jobs = () => {
                 onClick={createRecommendedJob}
                 style={{ marginLeft: 12 }}
               >
-                推荐给候选人
+                {t("recommendedCandidates.recommendToCandidate")}
               </Button>
             </div>
             <Table
@@ -401,20 +401,20 @@ const Jobs = () => {
       <Modal
         open={bonusPoolModalOpen}
         onClose={() => setBonusPoolModalOpen(false)}
-        title="Add Bonus Pool"
-        okText="Add"
-        cancelText="Cancel"
+        title={t("bonusPoolModal.title")}
+        okText={t("bonusPoolModal.add")}
+        cancelText={t("bonusPoolModal.cancel")}
         onOk={async () => {
           form.validateFields().then(async (values) => {
             const { code } = await Post(`/api/admin/jobs/${selectedJob?.id}`, {
               bonus_pool: values.bonus_pool,
             });
             if (code === 0) {
-              message.success("Add bonus pool success");
+              message.success(t("bonusPoolModal.addSuccess"));
               fetchJobs();
               setBonusPoolModalOpen(false);
             } else {
-              message.error("Add bonus pool failed");
+              message.error(t("bonusPoolModal.addFailed"));
             }
           });
         }}
@@ -423,9 +423,7 @@ const Jobs = () => {
         }}
       >
         <div className={styles.modalDescription}>
-           Once the bonus pool amount is confirmed, this job will become
-          eligible for recommendations. When a candidate is hired, all users in
-          the referral chain will share the bonus pool.
+          {t("bonusPoolModal.description")}
         </div>
         <Form
           form={form}
@@ -433,17 +431,17 @@ const Jobs = () => {
           className={styles.bonusPoolModalForm}
         >
           <Form.Item
-            label="Please enter the total bonus pool amount for the current job"
+            label={t("bonusPoolModal.label")}
             name="bonus_pool"
             rules={[
               {
                 required: true,
-                message: "Please enter the amount",
+                message: t("bonusPoolModal.amountRequired"),
               },
             ]}
           >
             <InputNumber
-              placeholder="Input total amount"
+              placeholder={t("bonusPoolModal.placeholder")}
               style={{ width: "100%" }}
               prefix="S$"
             />
