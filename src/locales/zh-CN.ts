@@ -252,6 +252,7 @@ export default {
   submitting: "提交中...",
   submit_succeed: "提交成功",
   submit_failed: "提交失败",
+  confirm: "确认",
   close: "关闭",
   add: "添加",
   create_succeed: "创建成功",

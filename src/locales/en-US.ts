@@ -261,6 +261,7 @@ export default {
   submitting: "Submitting...",
   submit_succeed: "Submit succeed!",
   submit_failed: "Submit failed!",
+  confirm: "Confirm",
   close: "Close",
   add: "Add",
   create_succeed: "Create succeed!",

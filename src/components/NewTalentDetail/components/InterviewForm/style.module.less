@@ -29,43 +29,43 @@
     color: rgba(249, 169, 48, 1);
     background-color: rgba(252, 249, 235, 1);
   }
+}
 
-  .timeSlotItem {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-    padding: 6px;
-    border-radius: 12px;
-    background-color: rgba(242, 247, 255, 1);
-    border: 1px solid rgba(54, 130, 254, 0.2);
+.timeSlotItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 6px;
+  border-radius: 12px;
+  background-color: rgba(242, 247, 255, 1);
+  border: 1px solid rgba(54, 130, 254, 0.2);
+}
+
+.timeSlotItemContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+
+  .timeSlotItemTime {
+    border-left: 2px solid rgba(54, 130, 254, 0.2);
+    padding-left: 12px;
   }
 
-  .timeSlotItemContent {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: 12px;
-
-    .timeSlotItemTime {
-      border-left: 2px solid rgba(54, 130, 254, 0.2);
-      padding-left: 12px;
-    }
-
-    .timeSlotItemIcon {
-      color: @primary-color;
-      font-size: 20px;
-    }
+  .timeSlotItemIcon {
+    color: @primary-color;
+    font-size: 20px;
   }
+}
 
-  .timeSlotItemDelete {
-    width: 40px;
-    height: 40px;
+.timeSlotItemDelete {
+  width: 40px;
+  height: 40px;
 
-    .timeSlotItemDeleteIcon {
-      font-size: 20px;
-      color: #999;
-    }
+  .timeSlotItemDeleteIcon {
+    font-size: 20px;
+    color: #999;
   }
 }
 
@@ -77,8 +77,59 @@
   background-color: rgba(245, 247, 251, 1);
 }
 
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.calendarFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
 @media (max-width: 768px) {
   .formContainer {
     width: calc(100vw - 64px);
+  }
+
+  .desktopVisible {
+    display: none !important;
+  }
+
+  .timeSlotsListTitle {
+    color: @primary-color;
+  }
+
+  .timeSlotsList {
+    width: calc(100vw - 80px);
+  }
+
+  .timeSlotItemContent {
+    gap: 8px;
+    margin-left: 8px;
+
+    .timeSlotItemTime {
+      border-left: 2px solid rgba(54, 130, 254, 0.2);
+      padding-left: 12px;
+    }
+  }
+
+  .timeSlotItemDelete {
+    width: 30px;
+    height: 30px;
+
+    .timeSlotItemDeleteIcon {
+      font-size: 16px;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
   }
 }

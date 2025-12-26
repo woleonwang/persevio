@@ -43,8 +43,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   >([]);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
 
-  const handlerRef = useRef<{ submit?: () => Promise<boolean> }>({});
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -339,30 +337,21 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         width={"fit-content"}
         centered
         title={t("schedule_interview")}
-        onOk={async () => {
-          if (!!interviews[0]) {
-            setIsInterviewModalOpen(false);
-          } else {
-            const result = await handlerRef.current?.submit?.();
-            if (result) {
-              fetchTalent();
-              setIsInterviewModalOpen(false);
-            }
-          }
-        }}
-        cancelButtonProps={{
-          style: interviews[0]
-            ? {
-                display: "none",
-              }
-            : undefined,
-        }}
+        footer={null}
       >
         <InterviewForm
           talent={talent}
           jobName={job.name}
-          handlerRef={handlerRef}
           interview={interviews[0]}
+          onClose={() => setIsInterviewModalOpen(false)}
+          onSubmit={() => {
+            if (!!interviews[0]) {
+              setIsInterviewModalOpen(false);
+            } else {
+              fetchTalent();
+              setIsInterviewModalOpen(false);
+            }
+          }}
         />
       </Modal>
 
