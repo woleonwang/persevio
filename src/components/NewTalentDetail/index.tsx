@@ -106,6 +106,26 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
 
   const basicInfo = parseJSON(talent.basic_info_json);
 
+  const interviewButtonArea =
+    interviews.length === 0 ? (
+      <Button
+        type="primary"
+        onClick={() => setIsInterviewModalOpen(true)}
+        size="large"
+        block
+      >
+        {t("schedule_interview")}
+      </Button>
+    ) : interviews[0].mode === "written" || interviews[0].scheduled_at ? (
+      <Button size="large" block onClick={() => setIsInterviewModalOpen(true)}>
+        {t("interview_scheduled")}
+      </Button>
+    ) : (
+      <Button size="large" block onClick={() => setIsInterviewModalOpen(true)}>
+        {t("awaiting_candidate_confirm")}
+      </Button>
+    );
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -132,32 +152,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
             {talent?.status === "accepted" ? (
-              interviews.length === 0 ? (
-                <Button
-                  type="primary"
-                  onClick={() => setIsInterviewModalOpen(true)}
-                  size="large"
-                  block
-                >
-                  {t("schedule_interview")}
-                </Button>
-              ) : interviews[0].scheduled_at ? (
-                <Button
-                  size="large"
-                  block
-                  onClick={() => setIsInterviewModalOpen(true)}
-                >
-                  {t("interview_scheduled")}
-                </Button>
-              ) : (
-                <Button
-                  size="large"
-                  block
-                  onClick={() => setIsInterviewModalOpen(true)}
-                >
-                  {t("awaiting_candidate_confirm")}
-                </Button>
-              )
+              interviewButtonArea
             ) : talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
@@ -295,7 +290,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
           ))}
         <div className={styles.statusContainer}>
           {talent?.status === "accepted" ? (
-            <Tag color="green">{t("status_accepted")}</Tag>
+            interviewButtonArea
           ) : talent?.status === "rejected" ? (
             <Tag color="red">{t("status_rejected")}</Tag>
           ) : (

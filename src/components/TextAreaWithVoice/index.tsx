@@ -38,7 +38,7 @@ const TextAreaWithVoice: React.FC<IProps> = (props) => {
         className={styles.textArea}
       />
       <div className={styles.voiceContainer}>
-        {(isRecording || isTranscribing) && (
+        {(true || isRecording || isTranscribing) && (
           <div
             className={classnames(styles.volumeHistoryContainer, {
               [styles.active]: isRecording,
