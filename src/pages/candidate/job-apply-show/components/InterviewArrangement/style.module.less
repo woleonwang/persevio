@@ -191,3 +191,40 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .formContainer,
+  .formContainer.readonly {
+    width: calc(100vw - 64px);
+  }
+
+  .mobileCalendarContainer {
+    width: 100%;
+
+    .calendarContainer {
+      width: 100%;
+      padding: 18px 10px;
+    }
+
+    .dateContainer {
+      overflow-x: auto;
+      justify-content: flex-start;
+      gap: 10px;
+      padding-bottom: 10px;
+    }
+
+    .slotsContainer {
+      margin-top: 10px;
+    }
+  }
+
+  .desktopVisible {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
+  }
+}

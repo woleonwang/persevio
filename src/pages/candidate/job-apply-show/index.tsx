@@ -19,6 +19,7 @@ import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import WhatsappIcon from "@/assets/icons/whatsapp";
 import Empty2 from "@/assets/empty2.png";
 import InterviewArrangement from "./components/InterviewArrangement";
+import Tabs from "@/components/Tabs";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApplyListItem>();
@@ -29,6 +30,8 @@ const JobApplyShow = () => {
   const [humanModeOpen, setHumanModeOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
+  const [tabKey, setTabKey] = useState<"jd" | "progress">("jd");
+
   const handlerRef = useRef<{
     submit?: () => Promise<boolean>;
   }>({});
@@ -177,12 +180,33 @@ const JobApplyShow = () => {
             cursor: "pointer",
             fontSize: 24,
           }}
+          className={styles.desktopVisible}
           onClick={() => navigate("/candidate/jobs?tab=apply")}
         />
         <div>{t("title")}</div>
       </div>
+      <div className={classnames(styles.tabsContainer, styles.mobileVisible)}>
+        <Tabs
+          tabs={[
+            {
+              key: "jd",
+              label: t("jd"),
+            },
+            {
+              key: "progress",
+              label: t("progress"),
+            },
+          ]}
+          activeKey={tabKey}
+          onChange={(key) => setTabKey(key as "jd" | "progress")}
+        />
+      </div>
       <div className={styles.main}>
-        <div className={styles.left}>
+        <div
+          className={classnames(styles.left, {
+            [styles.desktopVisible]: tabKey !== "jd",
+          })}
+        >
           <div className={styles.jobApplyCard}>
             <div className={styles.basicInfo}>
               <CompanyLogo logo={jobApply.company_logo} />
@@ -258,7 +282,11 @@ const JobApplyShow = () => {
             )}
           </div>
         </div>
-        <div className={styles.right}>
+        <div
+          className={classnames(styles.right, {
+            [styles.desktopVisible]: tabKey !== "progress",
+          })}
+        >
           <div className={styles.rightBody}>
             <div className={styles.stepTitle}>{t("progress_title")}</div>
             <div className={styles.stepContainer}>

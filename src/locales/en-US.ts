@@ -137,6 +137,8 @@ const CandidateResume = {
   },
   job_apply: {
     title: "Jobs You Applied For",
+    jd: "JD",
+    progress: "Progress",
     applied: "Applied",
     apply_now: "Apply Now",
     job_description: "Job Description",

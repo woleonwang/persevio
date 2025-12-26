@@ -123,6 +123,139 @@ const InterviewArrangement: React.FC<IProps> = ({
     phone: originalT("interview_form.type_phone"),
   };
 
+  const timeslotsSelector = (
+    <div className={classnames(styles.calendarContainer)}>
+      <div className={styles.dateContainer}>
+        <LeftOutlined
+          className={styles.dateItemIcon}
+          onClick={() => {
+            setCurrentStartDate(currentStartDate.subtract(14, "days"));
+          }}
+        />
+        <div className={styles.dateItems}>
+          {Array.from({ length: 14 }).map((_, index) => {
+            const currentDate = currentStartDate.add(index, "days");
+            const isShowBorder = index !== 0 && currentDate.get("date") === 1;
+            const isShowMonth = index === 0 || currentDate.get("date") === 1;
+            const hasSlots = interview.time_slots.some((slot) =>
+              dayjs(slot.from).isSame(currentDate, "day")
+            );
+            return (
+              <Fragment key={index}>
+                {isShowBorder && <div className={styles.dateItemBorder} />}
+                <div className={styles.dateItem}>
+                  <div
+                    style={{
+                      visibility: isShowMonth ? "visible" : "hidden",
+                      marginBottom: 4,
+                      color: "rgba(102, 102, 102, 1)",
+                    }}
+                  >
+                    {currentDate.format("MMM").toUpperCase()}
+                  </div>
+                  <div
+                    className={classnames(styles.dateItemContent, {
+                      [styles.hasSlots]: hasSlots,
+                    })}
+                    onClick={() => {
+                      if (hasSlots) {
+                        const slotItem = document.getElementById(
+                          `slot-item-${currentDate.format("YYYY-MM-DD")}`
+                        );
+                        if (slotItem) {
+                          slotItem.scrollIntoView({
+                            behavior: "smooth",
+                            inline: "center",
+                          });
+                        }
+                      }
+                    }}
+                  >
+                    <div className={styles.dateItemContentDay}>
+                      {currentDate.format("ddd")}
+                    </div>
+                    <div className={styles.dateItemContentDate}>
+                      {currentDate.format("DD")}
+                    </div>
+                  </div>
+                </div>
+              </Fragment>
+            );
+          })}
+        </div>
+        <RightOutlined
+          className={styles.dateItemIcon}
+          onClick={() => {
+            setCurrentStartDate(currentStartDate.add(14, "days"));
+          }}
+        />
+      </div>
+      <div className={styles.slotsContainer} ref={slotsContainerRef}>
+        {Object.entries(slots).map(([date, slots]) => {
+          const totalSlots = slots.morning.length + slots.afternoon.length;
+          return (
+            <div
+              key={date}
+              className={styles.slotsItem}
+              id={`slot-item-${date}`}
+            >
+              <div className={styles.slotsItemHeader}>
+                <div>
+                  {t("interview_starting_on", {
+                    count: totalSlots.toString(),
+                  })}
+                </div>
+                <div className={styles.slotsItemHeaderDate}>
+                  {dayjs(date).format(originalT("date_format.with_day"))}
+                </div>
+              </div>
+              <div className={styles.slotsItemContent}>
+                {[slots.morning, slots.afternoon].map((slots, index) => {
+                  if (slots.length === 0) {
+                    return null;
+                  }
+                  return (
+                    <div key={index}>
+                      <div className={styles.slotsItemContentGroup}>
+                        <Icon
+                          icon={index === 0 ? <Sunrise /> : <Sunset />}
+                          className={styles.slotsItemContentIcon}
+                        />
+                        {index === 0 ? t("morning") : t("afternoon")}
+                      </div>
+                      {slots.map((slot) => {
+                        return (
+                          <div
+                            key={slot.from.format("HH:mm")}
+                            onClick={() => setSelectedDate(slot.from)}
+                            className={classnames(styles.slotItem, {
+                              [styles.selected]: selectedDate?.isSame(
+                                slot.from,
+                                "minute"
+                              ),
+                            })}
+                          >
+                            <div className={styles.slotItemTime}>
+                              {dayjs(slot.from).format("HH:mm")} ~{" "}
+                              {dayjs(slot.to).format("HH:mm")}
+                            </div>
+                            <div className={styles.slotItemDuration}>
+                              {interview.duration} m
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles.container}>
       <div
@@ -199,7 +332,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              {!!interview.scheduled_at && (
+              {!!interview.scheduled_at ? (
                 <div>
                   <Form.Item
                     label={originalT("interview_form.interview_time_slots")}
@@ -222,6 +355,20 @@ const InterviewArrangement: React.FC<IProps> = ({
                     />
                   </Form.Item>
                 </div>
+              ) : (
+                <Form.Item
+                  label={originalT("interview_form.interview_time_slots")}
+                  required
+                >
+                  <div
+                    className={classnames(
+                      styles.mobileVisible,
+                      styles.mobileCalendarContainer
+                    )}
+                  >
+                    {timeslotsSelector}
+                  </div>
+                </Form.Item>
               )}
 
               <Form.Item
@@ -260,138 +407,7 @@ const InterviewArrangement: React.FC<IProps> = ({
         </Form>
       </div>
       {!readonly && (
-        <div className={styles.calendarContainer}>
-          <div className={styles.dateContainer}>
-            <LeftOutlined
-              className={styles.dateItemIcon}
-              onClick={() => {
-                setCurrentStartDate(currentStartDate.subtract(14, "days"));
-              }}
-            />
-            <div className={styles.dateItems}>
-              {Array.from({ length: 14 }).map((_, index) => {
-                const currentDate = currentStartDate.add(index, "days");
-                const isShowBorder =
-                  index !== 0 && currentDate.get("date") === 1;
-                const isShowMonth =
-                  index === 0 || currentDate.get("date") === 1;
-                const hasSlots = interview.time_slots.some((slot) =>
-                  dayjs(slot.from).isSame(currentDate, "day")
-                );
-                return (
-                  <Fragment key={index}>
-                    {isShowBorder && <div className={styles.dateItemBorder} />}
-                    <div className={styles.dateItem}>
-                      <div
-                        style={{
-                          visibility: isShowMonth ? "visible" : "hidden",
-                          marginBottom: 4,
-                          color: "rgba(102, 102, 102, 1)",
-                        }}
-                      >
-                        {currentDate.format("MMM").toUpperCase()}
-                      </div>
-                      <div
-                        className={classnames(styles.dateItemContent, {
-                          [styles.hasSlots]: hasSlots,
-                        })}
-                        onClick={() => {
-                          if (hasSlots) {
-                            const slotItem = document.getElementById(
-                              `slot-item-${currentDate.format("YYYY-MM-DD")}`
-                            );
-                            if (slotItem) {
-                              slotItem.scrollIntoView({
-                                behavior: "smooth",
-                                inline: "center",
-                              });
-                            }
-                          }
-                        }}
-                      >
-                        <div className={styles.dateItemContentDay}>
-                          {currentDate.format("ddd")}
-                        </div>
-                        <div className={styles.dateItemContentDate}>
-                          {currentDate.format("DD")}
-                        </div>
-                      </div>
-                    </div>
-                  </Fragment>
-                );
-              })}
-            </div>
-            <RightOutlined
-              className={styles.dateItemIcon}
-              onClick={() => {
-                setCurrentStartDate(currentStartDate.add(14, "days"));
-              }}
-            />
-          </div>
-          <div className={styles.slotsContainer} ref={slotsContainerRef}>
-            {Object.entries(slots).map(([date, slots]) => {
-              const totalSlots = slots.morning.length + slots.afternoon.length;
-              return (
-                <div
-                  key={date}
-                  className={styles.slotsItem}
-                  id={`slot-item-${date}`}
-                >
-                  <div className={styles.slotsItemHeader}>
-                    <div>
-                      {t("interview_starting_on", {
-                        count: totalSlots.toString(),
-                      })}
-                    </div>
-                    <div className={styles.slotsItemHeaderDate}>
-                      {dayjs(date).format(originalT("date_format.with_day"))}
-                    </div>
-                  </div>
-                  <div className={styles.slotsItemContent}>
-                    {[slots.morning, slots.afternoon].map((slots, index) => {
-                      if (slots.length === 0) {
-                        return null;
-                      }
-                      return (
-                        <div key={index}>
-                          <div className={styles.slotsItemContentGroup}>
-                            <Icon
-                              icon={index === 0 ? <Sunrise /> : <Sunset />}
-                              className={styles.slotsItemContentIcon}
-                            />
-                            {index === 0 ? t("morning") : t("afternoon")}
-                          </div>
-                          {slots.map((slot) => {
-                            return (
-                              <div
-                                key={slot.from.format("HH:mm")}
-                                onClick={() => setSelectedDate(slot.from)}
-                                className={classnames(styles.slotItem, {
-                                  [styles.selected]: selectedDate?.isSame(
-                                    slot.from,
-                                    "minute"
-                                  ),
-                                })}
-                              >
-                                <div className={styles.slotItemTime}>
-                                  {dayjs(slot.from).format("HH:mm")} ~{" "}
-                                  {dayjs(slot.to).format("HH:mm")}
-                                </div>
-                                <div className={styles.slotItemDuration}>
-                                  {interview.duration} m
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <div className={styles.desktopVisible}>{timeslotsSelector}</div>
       )}
     </div>
   );

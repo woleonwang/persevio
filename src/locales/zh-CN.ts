@@ -131,6 +131,8 @@ const CandidateResume = {
   },
   job_apply: {
     title: "您的职位",
+    jd: "职位描述",
+    progress: "职位申请进度",
     applied: "已申请",
     apply_now: "立即申请",
     job_description: "职位描述",
