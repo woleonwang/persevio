@@ -61,6 +61,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
       <Form.Item
         label={t("phone")}
         name="phone"
+        required
         rules={[
           {
             validator: (_, value, callback) => {

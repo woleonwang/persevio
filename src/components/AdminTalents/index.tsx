@@ -7,7 +7,6 @@ import {
   Modal,
   Select,
   Table,
-  Tooltip,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import classnames from "classnames";
