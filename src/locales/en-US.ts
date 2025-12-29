@@ -338,6 +338,12 @@ export default {
     written: "Written Test",
   },
 
+  job_apply_mode_options: {
+    ai: "AI",
+    human: "Human",
+    whatsapp: "Whatsapp",
+  },
+
   switch_mode_reason_options: {
     dissatisfied_with_my_answer: "Dissatisfied with my answer",
     want_to_consult_more_complex_questions:
@@ -1032,12 +1038,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     interview_mode: "Interview Mode",
     interview: "Interview",
     written: "Written Test",
+    status_message_sent: "Message Sent",
+    status_message_read: "Message Read",
+    status_pending: "Pending",
     status_staff_accepted: "Pending Interview",
     status_staff_rejected: "Rejected",
     status_interview_scheduled: "Interview Scheduled",
     status_interview_confirmed: "Interview Confirmed",
-    status_not_applied: "Not Applied",
-    status_pending: "Pending",
     action: "Action",
     view: "View",
     candidate_list: "Candidate List",
@@ -1729,7 +1736,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       message_generated: "Message Generated",
       message_sent: "Message Sent",
       message_read: "Message Read",
-      registered: "Registered",
+      registered: "Basic Info Filled",
       resume_uploaded: "Resume Uploaded",
       email_binded: "Email Binded",
     },
@@ -1754,6 +1761,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       selectHumanReasonLabel: "Select Human Reason:",
       employerRejectReasonLabel: "Employer Reject Reason:",
       employerInterviewModeLabel: "Employer Interview Mode:",
+      employerInterviewTimeLabel: "Employer Interview Time:",
       interviewTypeLabel: "Interview Type:",
       jd: "JD",
       recommendReport: "Recommend Report",

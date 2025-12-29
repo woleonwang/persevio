@@ -65,7 +65,8 @@ const Talents: React.FC = () => {
             style={{ width: 200 }}
             allowClear
             options={[
-              "not_applied",
+              "message_sent",
+              "message_read",
               "pending",
               "staff_rejected",
               "staff_accepted",

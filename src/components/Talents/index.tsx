@@ -12,7 +12,8 @@ import dayjs from "dayjs";
 import Empty from "@/components/Empty";
 
 export type TApproveStatus =
-  | "not_applied"
+  | "message_read"
+  | "message_sent"
   | "pending"
   | "staff_rejected"
   | "staff_accepted"
@@ -79,6 +80,7 @@ const Talents = (props: IProps) => {
   const getApproveStatus = (talentItem: TDataSourceItem): TApproveStatus => {
     const talent = talentItem.talent;
     const interview = talent?.interviews?.[0];
+    const linkedinProfile = talentItem.linkedinProfile;
 
     if (interview) {
       if (interview.scheduled_at) {
@@ -98,7 +100,11 @@ const Talents = (props: IProps) => {
       }
     }
 
-    return "not_applied";
+    if (linkedinProfile?.message_read_at) {
+      return "message_read";
+    } else {
+      return "message_sent";
+    }
   };
 
   const getName = (talentItem: TDataSourceItem): string => {
@@ -115,19 +121,19 @@ const Talents = (props: IProps) => {
     },
     ...(!jobId
       ? [
-          {
-            title: t("job_name"),
-            dataIndex: "job_name",
-            render: (_: string, record: TDataSourceItem) => {
-              return (
-                (record.talent
-                  ? record.talent?.job?.name
-                  : record.linkedinProfile?.job?.name) || "-"
-              );
-            },
-            width: 150,
+        {
+          title: t("job_name"),
+          dataIndex: "job_name",
+          render: (_: string, record: TDataSourceItem) => {
+            return (
+              (record.talent
+                ? record.talent?.job?.name
+                : record.linkedinProfile?.job?.name) || "-"
+            );
           },
-        ]
+          width: 150,
+        },
+      ]
       : []),
     {
       title: t("current_job_title"),
@@ -175,7 +181,11 @@ const Talents = (props: IProps) => {
       dataIndex: "status",
       render: (_: string, record: TDataSourceItem) => {
         const status = getApproveStatus(record);
-        if (status === "pending") {
+        if (status === "message_sent") {
+          return <Tag color="default">{t("status_message_sent")}</Tag>;
+        } else if (status === "message_read") {
+          return <Tag color="default">{t("status_message_read")}</Tag>;
+        } else if (status === "pending") {
           return <Tag color="default">{t("status_pending")}</Tag>;
         } else if (status === "staff_accepted") {
           return <Tag color="green">{t("status_staff_accepted")}</Tag>;
@@ -186,7 +196,7 @@ const Talents = (props: IProps) => {
         } else if (status === "interview_confirmed") {
           return <Tag color="green">{t("status_interview_confirmed")}</Tag>;
         } else {
-          return <Tag color="default">{t("status_not_applied")}</Tag>;
+          return "-";
         }
       },
     },

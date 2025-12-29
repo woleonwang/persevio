@@ -221,9 +221,8 @@ const AdminTalents = (props: IProps) => {
             id: candidate.id,
             name: candidate.name || preRegisterInfo.name,
             email: candidate.email,
-            phone: `${preRegisterInfo.country_code ?? ""} ${
-              preRegisterInfo.phone ?? ""
-            }`,
+            phone: `${preRegisterInfo.country_code ?? ""} ${preRegisterInfo.phone ?? ""
+              }`,
           };
         })
       );
@@ -451,53 +450,15 @@ const AdminTalents = (props: IProps) => {
       width: 150,
     },
     {
-      title: t("rejectReason"),
-      dataIndex: "feedback",
-      render: (_: string, record: TAdminTalentItem) => {
-        const talent = record.talent;
-        if (!talent) {
-          return "-";
-        }
-
-        return (
-          <Tooltip title={talent.feedback}>
-            <div
-              style={{
-                maxWidth: 100,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {talent.feedback || "-"}
-            </div>
-          </Tooltip>
-        );
-      },
-    },
-    {
       title: t("interviewMode"),
       dataIndex: "interview_mode",
       render: (_: string, record: TAdminTalentItem) => {
-        const interview = record.talent?.interviews?.[0];
-        if (!interview) {
+        const interviewMode = record.jobApply?.interview_mode;
+        if (!interviewMode) {
           return "-";
         }
-        return interview
-          ? originalT(`interview_mode_options.${interview.mode}`)
-          : "-";
+        return originalT(`job_apply_mode_options.${interviewMode}`);
       },
-    },
-    {
-      title: t("schedule_time"),
-      dataIndex: "scheduled_at",
-      render: (_: string, record: TAdminTalentItem) => {
-        const scheduled_at = record.talent?.interviews?.[0]?.scheduled_at;
-        return scheduled_at
-          ? dayjs(scheduled_at).format("YYYY-MM-DD HH:mm")
-          : "-";
-      },
-      width: 150,
     },
     {
       title: t("actions"),
@@ -715,19 +676,19 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {jobApply.switch_mode_reason
                         ? (() => {
-                            const reason = parseJSON(
-                              jobApply.switch_mode_reason
-                            );
-                            return reason?.reasons
-                              ?.map((item: string) => {
-                                return item === "others"
-                                  ? reason.other_reason
-                                  : originalT(
-                                      `switch_mode_reason_options.${item}`
-                                    );
-                              })
-                              .join(", ");
-                          })()
+                          const reason = parseJSON(
+                            jobApply.switch_mode_reason
+                          );
+                          return reason?.reasons
+                            ?.map((item: string) => {
+                              return item === "others"
+                                ? reason.other_reason
+                                : originalT(
+                                  `switch_mode_reason_options.${item}`
+                                );
+                            })
+                            .join(", ");
+                        })()
                         : "-"}
                     </div>
                   </div>
@@ -744,8 +705,20 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.mode
                         ? originalT(
-                            `interview_form.mode_${talent.interviews[0].mode}`
-                          )
+                          `interview_form.mode_${talent.interviews[0].mode}`
+                        )
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      {t("drawer.employerInterviewTimeLabel")}
+                    </div>
+                    <div>
+                      {talent?.interviews?.[0]?.scheduled_at
+                        ? dayjs(talent.interviews[0].scheduled_at).format(
+                          "YYYY-MM-DD HH:mm"
+                        )
                         : "-"}
                     </div>
                   </div>
@@ -756,8 +729,8 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.interview_type
                         ? originalT(
-                            `interview_form.type_${talent.interviews[0].interview_type}`
-                          )
+                          `interview_form.type_${talent.interviews[0].interview_type}`
+                        )
                         : "-"}
                     </div>
                   </div>
