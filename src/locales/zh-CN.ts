@@ -1668,6 +1668,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     viewDetails: "查看详情",
     editHireStatus: "编辑雇佣状态",
     viewReferralLinkDetails: "查看推荐链接详情",
+    hire_status: "雇佣状态",
+    hire_status_options: {
+      hired: "已雇佣",
+      not_hired: "未雇佣",
+    },
     operationSuccess: "操作成功",
     operationFailed: "操作失败",
     account_status_options: {

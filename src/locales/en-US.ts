@@ -1729,6 +1729,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     viewDetails: "View Details",
     editHireStatus: "Edit Hire Status",
     viewReferralLinkDetails: "View Referral Link Details",
+    hire_status: "Hire Status",
+    hire_status_options: {
+      hired: "Hired",
+      not_hired: "Not Hired",
+    },
     operationSuccess: "Operation successful",
     operationFailed: "Operation failed",
     account_status_options: {
