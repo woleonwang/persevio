@@ -10,6 +10,7 @@ import globalStore from "@/store/global";
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
 import { deleteQuery, getQuery } from "@/utils";
+import { tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
 import Referrals from "@/assets/icons/referrals";
@@ -89,7 +90,7 @@ const CandidateLayout = () => {
   const init = async () => {
     const initToken = getQuery("candidate_token");
     if (initToken) {
-      localStorage.setItem("candidate_token", initToken);
+      tokenStorage.setToken(initToken, "candidate");
       deleteQuery("candidate_token");
     }
 

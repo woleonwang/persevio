@@ -52,16 +52,24 @@ export const formatInterviewMode = (mode: "ONSITE" | "ONLINE") => {
   return mode === "ONSITE" ? "现场面试" : "远程面试";
 };
 
+import { storage, StorageKey } from "./storage";
+
 export const checkJobDotStatus = (jobId: number, type: string): boolean => {
-  const dotStatus = JSON.parse(localStorage.getItem(`job_dot`) ?? "{}");
+  const dotStatus = storage.get<Record<number, Record<string, number>>>(
+    StorageKey.JOB_DOT,
+    {}
+  );
   return !!dotStatus[jobId]?.[type];
 };
 
 export const setJobDotStatus = (jobId: number, type: string) => {
-  const dotStatus = JSON.parse(localStorage.getItem(`job_dot`) ?? "{}");
+  const dotStatus = storage.get<Record<number, Record<string, number>>>(
+    StorageKey.JOB_DOT,
+    {}
+  );
   dotStatus[jobId] = dotStatus[jobId] ?? {};
   dotStatus[jobId][type] = Date.now();
-  localStorage.setItem(`job_dot`, JSON.stringify(dotStatus));
+  storage.set(StorageKey.JOB_DOT, dotStatus);
 };
 
 export const getQuery = (key: string): string => {

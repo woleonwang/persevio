@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Get, Post } from "@/utils/request";
+import { tokenStorage } from "@/utils/storage";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
@@ -84,7 +85,7 @@ const NetworkProfile = () => {
                   showUploadList={false}
                   headers={{
                     authorization:
-                      localStorage.getItem("candidate_token") || "",
+                      tokenStorage.getToken("candidate") || "",
                   }}
                   onChange={async (info) => {
                     if (info.file.status === "done") {

@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
+import { tokenStorage } from "@/utils/storage";
 
 interface SignupFormValues {
   username: string;
@@ -149,7 +150,7 @@ const Register: React.FC<IProps> = (props) => {
 
         if (code === 0 && data) {
           message.success(t("signup_succeed"));
-          localStorage.setItem("token", data.token);
+          tokenStorage.setToken(data.token, "staff");
           onNext();
         }
       } else {

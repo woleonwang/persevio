@@ -22,6 +22,7 @@ import { PostFormData } from "@/utils/request";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import CommunicationLanguage from "../CommunicationLanguage";
+import { tokenStorage } from "@/utils/storage";
 
 export interface TWorkExperience {
   company_name: string;
@@ -132,7 +133,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
               listType="picture-card"
               showUploadList={false}
               headers={{
-                authorization: localStorage.getItem("candidate_token") || "",
+                authorization: tokenStorage.getToken("candidate") || "",
               }}
               onChange={(info) => {
                 if (info.file.status === "done") {

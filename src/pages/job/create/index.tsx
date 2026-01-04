@@ -10,6 +10,7 @@ import VionaVideo from "@/assets/banner-video.mp4";
 
 import styles from "./style.module.less";
 import { copy } from "@/utils";
+import { tokenStorage } from "@/utils/storage";
 import Share from "@/assets/icons/share";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
@@ -77,9 +78,7 @@ const JobCreate = () => {
             onClick={async () => {
               const url = `${
                 window.origin
-              }/app/entry/create-job?token=${localStorage.getItem(
-                "token"
-              )}&share=1`;
+              }/app/entry/create-job?token=${tokenStorage.getToken("staff") || ""}&share=1`;
               await copy(url);
               message.success(t("copy_success"));
             }}

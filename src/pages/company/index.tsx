@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import TextAreaWithHint from "./components/TextAreaWithHint";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
+import { tokenStorage } from "@/utils/storage";
 
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
@@ -61,7 +62,7 @@ const CompanyKnowledge = () => {
               listType="picture-card"
               showUploadList={false}
               headers={{
-                authorization: localStorage.getItem("token") || "",
+                authorization: tokenStorage.getToken("staff") || "",
               }}
               onChange={(info) => {
                 if (

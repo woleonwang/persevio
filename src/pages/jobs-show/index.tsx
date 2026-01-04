@@ -21,6 +21,7 @@ import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
+import { storage, StorageKey, tokenStorage } from "@/utils/storage";
 
 import styles from "./style.module.less";
 
@@ -97,10 +98,10 @@ const JobsShow = () => {
   }, []);
 
   const sessionId = useMemo(() => {
-    let value = localStorage.getItem("sessionId");
+    let value = storage.get<string>(StorageKey.SESSION_ID);
     if (!value) {
       value = uuidV4();
-      localStorage.setItem("sessionId", value);
+      storage.set(StorageKey.SESSION_ID, value);
     }
 
     return value;
@@ -138,13 +139,14 @@ const JobsShow = () => {
     if (!id) return;
 
     const shareToken = getQuery("share_token");
-    const shareTokenMapping = parseJSON(
-      localStorage.getItem("share_token") ?? ""
+    const shareTokenMapping = storage.get<Record<string, string>>(
+      StorageKey.SHARE_TOKEN,
+      {}
     );
 
     if (shareToken) {
       shareTokenMapping[id] = shareToken;
-      localStorage.setItem("share_token", JSON.stringify(shareTokenMapping));
+      storage.set(StorageKey.SHARE_TOKEN, shareTokenMapping);
     }
 
     const token = shareTokenMapping[id];
@@ -157,7 +159,7 @@ const JobsShow = () => {
   const checkLinkedinProfile = async () => {
     const profileId = getQuery("profile_id");
     if (profileId) {
-      localStorage.setItem("linkedin_profile_id", profileId);
+      storage.set(StorageKey.LINKEDIN_PROFILE_ID, profileId);
     }
   };
 

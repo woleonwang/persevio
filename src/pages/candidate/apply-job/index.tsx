@@ -14,6 +14,7 @@ import Step from "@/components/Step";
 import { copy, deleteQuery, getQuery, parseJSON } from "@/utils";
 import UploadResume from "./components/UploadResume";
 import Copy from "@/assets/icons/copy";
+import { tokenStorage, storage, StorageKey } from "@/utils/storage";
 import Icon from "@/components/Icon";
 import Chat from "@/assets/icons/chat";
 import WhatsappIcon from "@/assets/icons/whatsapp";
@@ -56,7 +57,7 @@ const ApplyJob: React.FC = () => {
   useEffect(() => {
     const token = getQuery("candidate_token");
     if (token) {
-      localStorage.setItem("candidate_token", token);
+      tokenStorage.setToken(token, "candidate");
       deleteQuery("candidate_token");
     }
     init();
@@ -146,10 +147,14 @@ const ApplyJob: React.FC = () => {
         message.error("Update failed");
       }
     } else {
-      const shareToken = parseJSON(localStorage.getItem("share_token") ?? "")[
-        jobId
-      ];
-      const linkedinProfileId = localStorage.getItem("linkedin_profile_id");
+      const shareTokenMapping = storage.get<Record<string, string>>(
+        StorageKey.SHARE_TOKEN,
+        {}
+      ) || {};
+      const shareToken = shareTokenMapping[jobId];
+      const linkedinProfileId = storage.get<string>(
+        StorageKey.LINKEDIN_PROFILE_ID
+      );
       const params = {
         ...basicInfo,
         job_id: jobId,
@@ -164,7 +169,7 @@ const ApplyJob: React.FC = () => {
       if (code === 0) {
         const { token } = data;
         message.success("Save successful");
-        localStorage.setItem("candidate_token", token);
+        tokenStorage.setToken(token, "candidate");
         const jobApply = await fetchJobApply();
         if (jobApply) {
           setJobApply(jobApply);
@@ -261,9 +266,7 @@ const ApplyJob: React.FC = () => {
 
   const copyLink = async () => {
     await copy(
-      `${window.location.href}?candidate_token=${localStorage.getItem(
-        "candidate_token"
-      )}`
+      `${window.location.href}?candidate_token=${tokenStorage.getToken("candidate") || ""}`
     );
     message.success(
       "The link has been copied. Simply open it in a new device's browser to resume chatting."
