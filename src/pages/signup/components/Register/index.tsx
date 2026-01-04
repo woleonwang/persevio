@@ -52,28 +52,36 @@ const Register: React.FC<IProps> = (props) => {
     return () => {
       if (countdownRef.current) {
         clearInterval(countdownRef.current);
+        countdownRef.current = null;
       }
     };
   }, []);
 
-  // 倒计时逻辑
+  // 倒计时逻辑 - 优化：只在开始时创建一次 interval
   useEffect(() => {
-    if (countdown > 0) {
+    if (countdown > 0 && !countdownRef.current) {
       countdownRef.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
             if (countdownRef.current) {
               clearInterval(countdownRef.current);
+              countdownRef.current = null;
             }
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
+    } else if (countdown === 0 && countdownRef.current) {
+      // 当 countdown 变为 0 时，清理 interval
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
     }
+    
     return () => {
       if (countdownRef.current) {
         clearInterval(countdownRef.current);
+        countdownRef.current = null;
       }
     };
   }, [countdown]);
