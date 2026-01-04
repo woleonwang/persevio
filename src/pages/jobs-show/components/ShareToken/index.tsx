@@ -11,6 +11,7 @@ import referrerLock from "@/assets/referrer-lock.png";
 import { TJob } from "../../index";
 import Icon from "@/components/Icon";
 import Link from "@/assets/icons/link";
+import { tokenStorage } from "@/utils/storage";
 
 interface IProps {
   parentShareToken?: string;

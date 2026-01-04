@@ -58,7 +58,7 @@ export const checkJobDotStatus = (jobId: number, type: string): boolean => {
   const dotStatus = storage.get<Record<number, Record<string, number>>>(
     StorageKey.JOB_DOT,
     {}
-  );
+  ) as Record<number, Record<string, number>>;
   return !!dotStatus[jobId]?.[type];
 };
 
@@ -66,7 +66,7 @@ export const setJobDotStatus = (jobId: number, type: string) => {
   const dotStatus = storage.get<Record<number, Record<string, number>>>(
     StorageKey.JOB_DOT,
     {}
-  );
+  ) as Record<number, Record<string, number>>;
   dotStatus[jobId] = dotStatus[jobId] ?? {};
   dotStatus[jobId][type] = Date.now();
   storage.set(StorageKey.JOB_DOT, dotStatus);

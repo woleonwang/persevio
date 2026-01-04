@@ -21,7 +21,7 @@ import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
 import HomeHeader from "@/components/HomeHeader";
-import { storage, StorageKey, tokenStorage } from "@/utils/storage";
+import { storage, StorageKey } from "@/utils/storage";
 
 import styles from "./style.module.less";
 
@@ -61,7 +61,7 @@ export type TJob = {
 type TStatus = "loading" | "success" | "error";
 
 const JobsShow = () => {
-  const { id, version = "0" } = useParams<{ id: string; version: string }>();
+  const { id, version = "0" } = useParams<{ id: string; version: string; }>();
   const [company, setCompany] = useState<TCompany>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [job, setJob] = useState<TJob>();
@@ -142,7 +142,7 @@ const JobsShow = () => {
     const shareTokenMapping = storage.get<Record<string, string>>(
       StorageKey.SHARE_TOKEN,
       {}
-    );
+    ) as Record<string, string>;
 
     if (shareToken) {
       shareTokenMapping[id] = shareToken;
