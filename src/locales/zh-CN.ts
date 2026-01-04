@@ -500,6 +500,7 @@ export default {
     draft_job_description_btn: "写职位描述（JD）",
 
     viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
+    viona_is_thinking_first_message: "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
     edit_profiles_hint:
       "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
     reply_viona_directly_or_edit: "回复 Viona 的消息",
