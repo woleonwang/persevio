@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { ShareAltOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { message, Spin, Button } from "antd";
+import { message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
