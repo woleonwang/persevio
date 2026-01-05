@@ -23,6 +23,7 @@ export interface IProps {
   jobInterviewFeedbackId?: number;
   hideSidebar?: boolean;
   viewDoc?: (docType: string) => void;
+  newVersion?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

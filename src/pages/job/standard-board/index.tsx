@@ -122,6 +122,7 @@ const JobBoard = () => {
             onNextTask={() => setJobState("jd")}
             allowEditMessage={true}
             key={`jrd-${job.id}`}
+            newVersion
           />
         )}
         {jobState === "jd" && (
@@ -131,6 +132,7 @@ const JobBoard = () => {
             onNextTask={() => setJobState("preview")}
             allowEditMessage={true}
             key={`jd-${job.id}`}
+            newVersion
           />
         )}
         {jobState === "preview" && (

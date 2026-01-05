@@ -55,6 +55,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     jobInterviewFeedbackId,
     viewDoc,
     onNextTask,
+    newVersion = false,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -179,7 +180,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
-  const apiMapping: Record<TChatType, { get: string; send: string }> = {
+  const apiMapping: Record<TChatType, { get: string; send: string; }> = {
     jobRequirementDoc: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/send`),
@@ -308,7 +309,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           {t("share_reference")}
         </div>
       ),
-      handler: () => {},
+      handler: () => { },
       style: "block-button",
     },
     {
@@ -395,11 +396,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       handler: async (tag) => {
         if (tag) {
           await copy(
-            `${
-              window.origin
-            }/app/jobs/${jobId}/board?token=${localStorage.getItem(
-              "token"
-            )}&share=1`
+            `${window.origin
+            }/app/jobs/${jobId}/${newVersion ? "standard-board" : "board"}?token=${localStorage.getItem("token") || ""}&share=1`
           );
           message.success(t("copied"));
         }
@@ -472,7 +470,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
     }
   };
 
-  const updateJob = async (job: { jd_language?: IJob["jd_language"] }) => {
+  const updateJob = async (job: { jd_language?: IJob["jd_language"]; }) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), job);
     return code === 0;
   };
@@ -760,8 +758,8 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       chatType === "jobInterviewDesign"
         ? `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/clear_messages`
         : chatType === "jobInterviewFeedback"
-        ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
-        : `/api/jobs/${jobId}/messages`;
+          ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
+          : `/api/jobs/${jobId}/messages`;
 
     const { code } = await Post(url, {
       message_id: messageId,
