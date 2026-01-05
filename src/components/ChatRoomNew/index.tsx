@@ -22,6 +22,7 @@ import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { storage, StorageKey, tokenStorage } from "@/utils/storage";
 import MarkdownEditor from "../MarkdownEditor";
 
 import SelectOptionsForm from "./components/SelectOptionsForm";
@@ -42,7 +43,6 @@ import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 
-const EditMessageGuideKey = "edit_message_guide_timestamp";
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
 const ChatRoomNew: React.FC<IProps> = (props) => {
@@ -142,7 +142,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
       needScrollToBottom.current = false;
     }
 
-    if (!localStorage.getItem(EditMessageGuideKey) && allowEditMessage) {
+    if (!storage.get<string>(StorageKey.EDIT_MESSAGE_GUIDE) && allowEditMessage) {
       setTimeout(() => {
         setEditMessageTourOpen(true);
       }, 500);
@@ -397,7 +397,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
         if (tag) {
           await copy(
             `${window.origin
-            }/app/jobs/${jobId}/${newVersion ? "standard-board" : "board"}?token=${localStorage.getItem("token") || ""}&share=1`
+            }/app/jobs/${jobId}/${newVersion ? "standard-board" : "board"}?token=${tokenStorage.getToken("staff") || ""}&share=1`
           );
           message.success(t("copied"));
         }
@@ -1211,7 +1211,7 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
           <Tour
             open={editMessageTourOpen}
             onClose={() => {
-              localStorage.setItem(EditMessageGuideKey, Date.now().toString());
+              storage.set(StorageKey.EDIT_MESSAGE_GUIDE, Date.now().toString());
               setEditMessageTourOpen(false);
             }}
             steps={EditMessageTourSteps}

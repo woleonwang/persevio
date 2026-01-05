@@ -513,6 +513,8 @@ export default {
 
     viona_is_thinking:
       "Viona is thinking hard! Hang tight, your answer is coming...",
+    viona_is_thinking_first_message:
+      "Viona is reviewing your resume carefully so she can tailor the conversation to your experience. This may take 1-5 minutes...",
     edit_profiles_hint:
       "I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content",
     reply_viona_directly_or_edit:
@@ -1890,7 +1892,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     updateFailed: "Failed to update staff information",
     paginationTotal: "{{start}}-{{end}} of {{total}} items",
     loginInfoTemplate:
-      "Login URL: {{loginUrl}}\nAccount Name: {{name}}\nAccount Email: {{email}}\nDefault Password: {{password}}",
+      "Login URL: {{- loginUrl}}\nAccount Name: {{- name}}\nAccount Email: {{- email}}\nDefault Password: {{- password}}",
   },
 
   admin_jobs: {

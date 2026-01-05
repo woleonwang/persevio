@@ -6,6 +6,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import styles from "./index.module.css";
+import { storage, StorageKey } from "@/utils/storage";
 
 const { Title, Text } = Typography;
 
@@ -39,7 +40,7 @@ const SnakeGame: React.FC = () => {
     isGameOver: false,
     isPaused: false,
     score: 0,
-    highScore: parseInt(localStorage.getItem("snakeHighScore") || "0"),
+    highScore: parseInt(storage.get<string>(StorageKey.SNAKE_HIGH_SCORE) || "0"),
   });
 
   const gameLoopRef = useRef<NodeJS.Timeout>();
@@ -134,7 +135,7 @@ const SnakeGame: React.FC = () => {
         newScore += 10;
         if (newScore > newHighScore) {
           newHighScore = newScore;
-          localStorage.setItem("snakeHighScore", newHighScore.toString());
+          storage.set(StorageKey.SNAKE_HIGH_SCORE, newHighScore.toString());
         }
       } else {
         newSnake.pop();

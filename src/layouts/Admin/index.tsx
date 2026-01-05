@@ -9,6 +9,7 @@ import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
+import { tokenStorage } from "../../utils/storage";
 import JobManagement from "@/assets/icons/job-management";
 import JobApplyManagement from "@/assets/icons/job-apply-management";
 import CompanyList from "@/assets/icons/company-list";
@@ -81,7 +82,7 @@ const AdminLayout = () => {
   const init = async () => {
     const initToken = getQuery("token");
     if (initToken) {
-      localStorage.setItem("token", initToken);
+      tokenStorage.setToken(initToken, "staff");
       deleteQuery("token");
     }
 

@@ -364,180 +364,181 @@ const AdminTalents = (props: IProps) => {
     );
   };
 
-  const columns: ColumnsType<TAdminTalentItem> = [
-    {
-      title: t("candidate_name"),
-      dataIndex: "name",
-      render: (_: string, record: TAdminTalentItem) => {
-        return getName(record);
+  const columns: ColumnsType<TAdminTalentItem> = useMemo(() => {
+    const allColumns: ColumnsType<TAdminTalentItem> = [
+      {
+        title: t("candidate_name"),
+        dataIndex: "name",
+        render: (_: string, record: TAdminTalentItem) => {
+          return getName(record);
+        },
+        width: 150,
+        fixed: "left" as const,
       },
-      width: 150,
-      fixed: "left" as const,
-    },
-    {
-      title: t("company_name"),
-      dataIndex: "company_name",
-      render: (_: string, record: TAdminTalentItem) => {
-        return getCompanyName(record) || "-";
+      {
+        title: t("company_name"),
+        dataIndex: "company_name",
+        render: (_: string, record: TAdminTalentItem) => {
+          return getCompanyName(record) || "-";
+        },
+        width: 150,
       },
-      width: 150,
-    },
-    {
-      title: t("job_name"),
-      dataIndex: "job_name",
-      width: 150,
-      render: (_: string, record: TAdminTalentItem) => {
-        return getJobName(record) || "-";
+      {
+        title: t("job_name"),
+        dataIndex: "job_name",
+        width: 150,
+        render: (_: string, record: TAdminTalentItem) => {
+          return getJobName(record) || "-";
+        },
       },
-    },
-    {
-      title: t("current_job_title"),
-      dataIndex: "current_job_title",
-      width: 150,
-      render: (_: string, record: TAdminTalentItem) => {
-        return record.talent?.current_job_title || "-";
+      {
+        title: t("current_job_title"),
+        dataIndex: "current_job_title",
+        width: 150,
+        render: (_: string, record: TAdminTalentItem) => {
+          return record.talent?.current_job_title || "-";
+        },
       },
-    },
-    {
-      title: t("current_company"),
-      dataIndex: "current_company",
-      width: 150,
-      render: (_: string, record: TAdminTalentItem) => {
-        return record.talent?.current_company || "-";
+      {
+        title: t("current_company"),
+        dataIndex: "current_company",
+        width: 150,
+        render: (_: string, record: TAdminTalentItem) => {
+          return record.talent?.current_company || "-";
+        },
       },
-    },
-    {
-      title: t("current_compensation"),
-      dataIndex: "current_compensation",
-      width: 150,
-      render: (_: string, record: TAdminTalentItem) => {
-        return record.talent?.current_compensation || "-";
+      {
+        title: t("current_compensation"),
+        dataIndex: "current_compensation",
+        width: 150,
+        render: (_: string, record: TAdminTalentItem) => {
+          return record.talent?.current_compensation || "-";
+        },
       },
-    },
-    {
-      title: t("visa"),
-      dataIndex: "visa",
-      width: 150,
-      render: (_: string, record: TAdminTalentItem) => {
-        return record.talent?.visa || "-";
+      {
+        title: t("visa"),
+        dataIndex: "visa",
+        width: 150,
+        render: (_: string, record: TAdminTalentItem) => {
+          return record.talent?.visa || "-";
+        },
       },
-    },
-    {
-      title: t("received_on"),
-      dataIndex: "created_at",
-      render: (created_at: string) => {
-        return dayjs(created_at).format("YYYY-MM-DD HH:mm:ss");
+      {
+        title: t("received_on"),
+        dataIndex: "created_at",
+        render: (created_at: string) => {
+          return dayjs(created_at).format("YYYY-MM-DD HH:mm:ss");
+        },
+        width: 150,
       },
-      width: 150,
-    },
-    {
-      title: t("account_status"),
-      dataIndex: "status",
-      render: (_: any, _record: TAdminTalentItem) => {
-        const status = getAccountStatus(_record);
-        return t(`account_status_options.${status}`);
+      {
+        title: t("account_status"),
+        dataIndex: "status",
+        render: (_: any, _record: TAdminTalentItem) => {
+          const status = getAccountStatus(_record);
+          return t(`account_status_options.${status}`);
+        },
+        width: 150,
       },
-      width: 150,
-    },
-    {
-      title: t("screening_status"),
-      dataIndex: "status",
-      render: (_: any, _record: TAdminTalentItem) => {
-        const status = getApproveStatus(_record);
-        return t(`screening_status_options.${status}`);
+      {
+        title: t("screening_status"),
+        dataIndex: "status",
+        render: (_: any, _record: TAdminTalentItem) => {
+          const status = getApproveStatus(_record);
+          return t(`screening_status_options.${status}`);
+        },
+        width: 150,
       },
-      width: 150,
-    },
-    {
-      title: t("interviewMode"),
-      dataIndex: "interview_mode",
-      render: (_: string, record: TAdminTalentItem) => {
-        const interviewMode = record.jobApply?.interview_mode;
-        if (!interviewMode) {
-          return "-";
-        }
-        return originalT(`job_apply_mode_options.${interviewMode}`);
+      {
+        title: t("interviewMode"),
+        dataIndex: "interview_mode",
+        render: (_: string, record: TAdminTalentItem) => {
+          const interviewMode = record.jobApply?.interview_mode;
+          if (!interviewMode) {
+            return "-";
+          }
+          return originalT(`job_apply_mode_options.${interviewMode}`);
+        },
       },
-    },
-    {
-      title: t("hire_status"),
-      dataIndex: "hire_status",
-      render: (_: string, record: TAdminTalentItem) => {
-        const hireStatus = record.talent?.hire_status;
-        return hireStatus === "hired"
-          ? t("hire_status_options.hired")
-          : hireStatus === "not_hired"
-            ? t("hire_status_options.not_hired")
-            : "-";
-      },
-    },
-    {
-      title: t("actions"),
-      key: "actions",
-      width: 100,
-      render: (_: string, record: TAdminTalentItem) => {
-        const talent = record.talent;
+      {
+        title: t("actions"),
+        key: "actions",
+        width: 100,
+        render: (_: string, record: TAdminTalentItem) => {
+          const talent = record.talent;
 
-        return (
-          <>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => {
-                if (record.jobApply) {
-                  setSelectedJobApplyId(record.jobApply.id);
-                } else {
-                  setSelectedLinkedinProfile(record.linkedinProfile);
-                }
-              }}
-            >
-              {t("viewDetails")}
-            </Button>
-            {talent?.status === "accepted" && (
+          return (
+            <>
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTalent(talent);
-                  setHireStatusModalOpen(true);
-                  form.setFieldsValue({
-                    hire_status: talent.hire_status || "not_hired",
-                  });
+                onClick={() => {
+                  if (record.jobApply) {
+                    setSelectedJobApplyId(record.jobApply.id);
+                  } else {
+                    setSelectedLinkedinProfile(record.linkedinProfile);
+                  }
                 }}
-                style={{ marginTop: 4 }}
               >
-                {t("editHireStatus")}
+                {t("viewDetails")}
               </Button>
-            )}
-            {!!talent?.share_token_id && (
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTalent(talent);
-                  setShareChainModalOpen(true);
-                }}
-                style={{ marginTop: 4 }}
-              >
-                {t("viewReferralLinkDetails")}
-              </Button>
-            )}
-          </>
-        );
+              {talent?.status === "accepted" && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTalent(talent);
+                    setHireStatusModalOpen(true);
+                    form.setFieldsValue({
+                      hire_status: talent.hire_status || "not_hired",
+                    });
+                  }}
+                  style={{ marginTop: 4 }}
+                >
+                  {t("editHireStatus")}
+                </Button>
+              )}
+              {!!talent?.share_token_id && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTalent(talent);
+                    setShareChainModalOpen(true);
+                  }}
+                  style={{ marginTop: 4 }}
+                >
+                  {t("viewReferralLinkDetails")}
+                </Button>
+              )}
+            </>
+          );
+        },
       },
-    },
-  ].map((item) => {
-    return {
-      ...item,
-      render:
-        item.render ??
-        ((data) => {
-          return data ?? "--";
-        }),
-    };
-  });
+    ];
+
+    // 如果 jobId 存在，过滤掉公司名称和职位名称列
+    const filteredColumns = jobId
+      ? allColumns.filter(
+        (col) =>
+          !("dataIndex" in col) ||
+          (col.dataIndex !== "company_name" && col.dataIndex !== "job_name")
+      )
+      : allColumns;
+
+    return filteredColumns.map((item) => {
+      return {
+        ...item,
+        render:
+          item.render ??
+          ((data) => {
+            return data ?? "--";
+          }),
+      };
+    });
+  }, [jobId, t, originalT]);
 
   const talentsList: TAdminTalentItem[] = useMemo(() => {
     // 1. 只有 profile

@@ -51,7 +51,7 @@ const Staffs: React.FC = () => {
   // 获取员工数据
   const fetchStaffs = async () => {
     setLoading(true);
-    const { code, data } = await Get<{ staffs: IStaffWithAccount[] }>(
+    const { code, data } = await Get<{ staffs: IStaffWithAccount[]; }>(
       "/api/staffs"
     );
     if (code === 0) {

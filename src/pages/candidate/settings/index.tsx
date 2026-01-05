@@ -4,6 +4,7 @@ import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import { tokenStorage } from "@/utils/storage";
 
 const Settings = () => {
   const [profile, setProfile] = useState<ICandidateSettings>();
@@ -44,14 +45,14 @@ const Settings = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("candidate_token");
+    tokenStorage.removeToken("candidate");
     navigate("/signin-candidate");
   };
 
   const clear = async () => {
     const { code } = await Post("/api/candidate/clear");
     if (code === 0) {
-      localStorage.removeItem("candidate_token");
+      tokenStorage.removeToken("candidate");
       navigate("/signin-candidate");
     }
   };

@@ -8,6 +8,7 @@ import Linkedin from "@/assets/linkedin.png";
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import { tokenStorage } from "@/utils/storage";
 
 interface IProps {
   mode: "ai" | "human" | "whatsapp";
@@ -23,9 +24,7 @@ const Waiting = (props: IProps) => {
       return;
     }
 
-    window.location.href = `/api/auth/${type}/login?role=candidate&candidate_token=${localStorage.getItem(
-      "candidate_token"
-    )}&referrer=${window.location.href}`;
+    window.location.href = `/api/auth/${type}/login?role=candidate&candidate_token=${tokenStorage.getToken("candidate") || ""}&referrer=${window.location.href}`;
   };
 
   return (

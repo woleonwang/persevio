@@ -8,6 +8,7 @@ import { observer } from "mobx-react-lite";
 import { Spin } from "antd";
 import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
+import { tokenStorage } from "../../utils/storage";
 
 const ShareLayout = () => {
   const currentUrl = encodeURIComponent(location.pathname + location.search);
@@ -26,7 +27,7 @@ const ShareLayout = () => {
     const url = new URL(window.location.href);
     const token = url.searchParams.get("token");
     if (token) {
-      localStorage.setItem("token", token);
+      tokenStorage.setToken(token, "staff");
       url.searchParams.delete("token");
       window.history.replaceState({}, "", url.pathname + url.search);
 

@@ -8,6 +8,7 @@ import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
 import OAuth from "./components/OAuth";
 import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
+import { tokenStorage } from "@/utils/storage";
 
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
@@ -56,7 +57,7 @@ const ApplyJobTest: React.FC = () => {
         }`
       );
 
-      localStorage.setItem("candidate_token", tokenFromUrl);
+      tokenStorage.setToken(tokenFromUrl, "candidate");
     }
 
     fetchProfile();

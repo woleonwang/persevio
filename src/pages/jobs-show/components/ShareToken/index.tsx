@@ -11,6 +11,7 @@ import referrerLock from "@/assets/referrer-lock.png";
 import { TJob } from "../../index";
 import Icon from "@/components/Icon";
 import Link from "@/assets/icons/link";
+import { tokenStorage } from "@/utils/storage";
 
 interface IProps {
   parentShareToken?: string;
@@ -86,7 +87,7 @@ const ShareToken: React.FC<IProps> = (props) => {
     if (code === 0) {
       const { token } = data;
       message.success("Save successful");
-      localStorage.setItem("candidate_token", token);
+      tokenStorage.setToken(token, "candidate");
       createShareToken();
     } else {
       message.error("Save failed");

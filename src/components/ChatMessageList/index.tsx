@@ -23,6 +23,7 @@ interface IProps {
     isLast: boolean,
     isFirst: boolean
   ) => React.ReactNode;
+  showCustomThinkingText?: boolean;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -36,6 +37,7 @@ const ChatMessageList = (props: IProps) => {
     renderTagsContent,
     renderOperationContent,
     showUserTimestamp = false,
+    showCustomThinkingText = false,
   } = props;
 
   const [loadingText, setLoadingText] = useState(".");
@@ -78,6 +80,9 @@ const ChatMessageList = (props: IProps) => {
     }
   };
 
+
+  const isResponseFirstMessage = () => messages.filter(item => item.role === "user").length === 1;
+
   return (
     <div
       className={classnames(styles.listArea, className)}
@@ -90,15 +95,16 @@ const ChatMessageList = (props: IProps) => {
         renderItem={(item, index) => {
           const isLast = index === messages.length - 1;
           const isFirst = index === 0;
+
           return (
             <List.Item
               style={{
                 ...(isLast
                   ? {
-                      minHeight:
-                        (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
-                      alignItems: "flex-start",
-                    }
+                    minHeight:
+                      (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
+                    alignItems: "flex-start",
+                  }
                   : {}),
               }}
             >
@@ -148,8 +154,11 @@ const ChatMessageList = (props: IProps) => {
                           {dayjs().diff(
                             loadingStartedAtRef.current ?? dayjs(),
                             "second"
-                          ) > 30
-                            ? `(${t("viona_is_thinking")})`
+                          ) > 1
+                            ? `(${(showCustomThinkingText && isResponseFirstMessage())
+                              ? t("viona_is_thinking_first_message")
+                              : t("viona_is_thinking")
+                            })`
                             : ""}
                         </p>
                       ) : (

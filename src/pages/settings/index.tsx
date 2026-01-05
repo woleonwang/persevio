@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import globalStore from "@/store/global";
+import { tokenStorage } from "../../utils/storage";
 
 const Settings = () => {
   const [form] = Form.useForm();
@@ -125,7 +126,7 @@ const Settings = () => {
       staff_id: parseInt(staffId),
     });
     if (code === 0) {
-      localStorage.setItem("token", data.token);
+      tokenStorage.setToken(data.token, "staff");
       window.location.reload();
     } else {
       message.error("login failed");
@@ -133,7 +134,7 @@ const Settings = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    tokenStorage.removeToken("staff");
     navigate("/signin");
   };
 

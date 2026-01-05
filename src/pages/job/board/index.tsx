@@ -25,6 +25,7 @@ import {
 } from "@/utils";
 import useJob from "@/hooks/useJob";
 import { Get, Post, PostFormData } from "@/utils/request";
+import { tokenStorage } from "@/utils/storage";
 
 import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
@@ -202,7 +203,7 @@ const JobBoard = () => {
                 await copy(
                   `${window.origin}/app/jobs/${
                     job.id
-                  }/board?token=${localStorage.getItem("token")}&share=1`
+                  }/board?token=${tokenStorage.getToken("staff") || ""}&share=1`
                 );
                 message.success(t("link_copied"));
               }}

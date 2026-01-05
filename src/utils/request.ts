@@ -1,23 +1,25 @@
 import axios from "axios";
+import { tokenStorage } from "./storage";
 
 const instance = axios.create({
   baseURL: "/",
   timeout: 300000,
 });
 
-const getTokenKey = (url: string): string => {
-  const tokenKey = {
-    "/api/coworker": "coworker_token",
-    "/api/trial_user": "trial_user_uuid",
-    "/api/candidate": "candidate_token",
-  };
-  let key = "token";
-  Object.keys(tokenKey).forEach((suffix) => {
-    if (url.startsWith(suffix)) {
-      key = tokenKey[suffix as keyof typeof tokenKey];
-    }
-  });
-  return key;
+/**
+ * 根据 URL 获取对应的 token
+ */
+const getTokenByUrl = (url: string): string | null => {
+  if (url.startsWith("/api/coworker")) {
+    return tokenStorage.getToken("coworker");
+  }
+  if (url.startsWith("/api/trial_user")) {
+    return tokenStorage.getToken("trial_user");
+  }
+  if (url.startsWith("/api/candidate")) {
+    return tokenStorage.getToken("candidate");
+  }
+  return tokenStorage.getToken("staff");
 };
 
 export const Get = async <T = any>(
@@ -29,7 +31,7 @@ export const Get = async <T = any>(
       params,
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem(getTokenKey(url)),
+        Authorization: getTokenByUrl(url) || "",
       },
     });
     return response.data;
@@ -43,7 +45,7 @@ export const Download = async (url: string, fileName: string) => {
   try {
     const response = await instance.get(url, {
       headers: {
-        Authorization: localStorage.getItem(getTokenKey(url)),
+        Authorization: getTokenByUrl(url) || "",
       },
     });
     if (response.data?.code === 0) {
@@ -79,7 +81,7 @@ export const Post = async <T = any>(
     response = await instance.post<{ code: number; data?: T }>(url, data, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: localStorage.getItem(getTokenKey(url)),
+        Authorization: getTokenByUrl(url) || "",
       },
     });
     return response.data;
@@ -94,7 +96,7 @@ export const PostFormData = async <T = any>(url: string, data: FormData) => {
   try {
     response = await instance.post<{ code: number; data?: T }>(url, data, {
       headers: {
-        Authorization: localStorage.getItem(getTokenKey(url)),
+        Authorization: getTokenByUrl(url) || "",
       },
     });
     return response.data;

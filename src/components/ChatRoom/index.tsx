@@ -72,7 +72,7 @@ const ChatRoom: React.FC<IProps> = (props) => {
     return originalT(`chat.${key}`);
   };
 
-  const apiMapping: { get: string; send: string } = {
+  const apiMapping: { get: string; send: string; } = {
     get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
     send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
   };

@@ -15,6 +15,7 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import { checkIsAdmin } from "@/utils";
 import Approve from "./components/Approve";
 import { targetsOptions } from "../network-pofile/components/EditableTargets";
+import { tokenStorage } from "@/utils/storage";
 
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
@@ -54,7 +55,7 @@ const CandidateSignIn: React.FC = () => {
         }`
       );
 
-      localStorage.setItem("candidate_token", tokenFromUrl);
+      tokenStorage.setToken(tokenFromUrl, "candidate");
     }
 
     fetchProfile();

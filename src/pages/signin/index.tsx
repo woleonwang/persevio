@@ -4,6 +4,7 @@ import { Get, Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
 import SignContainer from "../../components/SignContainer";
 import { useTranslation } from "react-i18next";
+import { tokenStorage } from "../../utils/storage";
 
 interface SigninFormValues {
   username: string;
@@ -37,7 +38,7 @@ const SignIn: React.FC = () => {
 
   const checkQueryToken = async () => {
     if (tokenFromUrl) {
-      localStorage.setItem("token", tokenFromUrl);
+      tokenStorage.setToken(tokenFromUrl, "staff");
       const { code, data } = await Get(`/api/settings`);
       if (code === 0) {
         const settings: ISettings = data;
@@ -63,7 +64,7 @@ const SignIn: React.FC = () => {
 
       if (code === 0 && data) {
         message.success(t("signin.signin_succeed"));
-        localStorage.setItem("token", data.token);
+        tokenStorage.setToken(data.token, "staff");
         signInSucceed(data.staff.account_role);
       } else {
         message.error(t("signin.username_or_password_incorrect"));
