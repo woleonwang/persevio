@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { ShareAltOutlined } from "@ant-design/icons";
-import { message, Spin } from "antd";
+import { ShareAltOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { message, Spin, Button } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 import useJob from "@/hooks/useJob";
 import Talents from "@/components/Talents";
@@ -26,6 +27,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const [chatType, setChatType] = useState<TMenu>(
     (tab as TMenu) || "jobDescription"
   );
+  const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
@@ -59,7 +61,12 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.title}>{job.name}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {role === "admin" && (
+            <ArrowLeftOutlined onClick={() => navigate("/admin/jobs")} />
+          )}
+          <div className={styles.title}>{job.name}</div>
+        </div>
         {role === "staff" && (
           <div
             style={{
@@ -70,8 +77,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
             }}
             onClick={async () => {
               await copy(
-                `${window.origin}/app/jobs/${
-                  job.id
+                `${window.origin}/app/jobs/${job.id
                 }/standard-board?token=${tokenStorage.getToken("staff") || ""}`
               );
               message.success(originalT("copied"));
