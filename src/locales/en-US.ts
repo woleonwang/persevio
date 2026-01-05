@@ -1887,7 +1887,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     updateFailed: "Failed to update staff information",
     paginationTotal: "{{start}}-{{end}} of {{total}} items",
     loginInfoTemplate:
-      "Login URL: {{loginUrl}}\nAccount Name: {{name}}\nAccount Email: {{email}}\nDefault Password: {{password}}",
+      "Login URL: {{- loginUrl}}\nAccount Name: {{- name}}\nAccount Email: {{- email}}\nDefault Password: {{- password}}",
   },
 
   admin_jobs: {
