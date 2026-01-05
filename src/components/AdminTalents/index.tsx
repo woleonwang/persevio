@@ -461,6 +461,18 @@ const AdminTalents = (props: IProps) => {
         },
       },
       {
+        title: t("hire_status"),
+        dataIndex: "hire_status",
+        render: (_: string, record: TAdminTalentItem) => {
+          const hireStatus = record.talent?.hire_status;
+          return hireStatus === "hired"
+            ? t("hire_status_options.hired")
+            : hireStatus === "not_hired"
+              ? t("hire_status_options.not_hired")
+              : "-";
+        },
+      },
+      {
         title: t("actions"),
         key: "actions",
         width: 100,
