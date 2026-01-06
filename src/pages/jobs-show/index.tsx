@@ -61,7 +61,7 @@ export type TJob = {
 type TStatus = "loading" | "success" | "error";
 
 const JobsShow = () => {
-  const { id, version = "0" } = useParams<{ id: string; version: string; }>();
+  const { id, version = "0" } = useParams<{ id: string; version: string }>();
   const [company, setCompany] = useState<TCompany>();
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [job, setJob] = useState<TJob>();
@@ -159,6 +159,7 @@ const JobsShow = () => {
   const checkLinkedinProfile = async () => {
     const profileId = getQuery("profile_id");
     if (profileId) {
+      Post(`/api/public/linkedin_profiles/${profileId}/message_read`);
       storage.set(StorageKey.LINKEDIN_PROFILE_ID, profileId);
     }
   };
