@@ -500,7 +500,8 @@ export default {
     draft_job_description_btn: "写职位描述（JD）",
 
     viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
-    viona_is_thinking_first_message: "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
+    viona_is_thinking_first_message:
+      "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
     edit_profiles_hint:
       "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
     reply_viona_directly_or_edit: "回复 Viona 的消息",
@@ -1714,6 +1715,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       chat: "对话",
       outreachMessage: "Outreach Message",
       notGenerated: "未生成",
+      messageSentTime: "消息发送时间",
+      messageReadTime: "消息已读时间",
+      recommendationReport: "推荐报告",
     },
     hireStatusModal: {
       title: "雇佣状态",

@@ -1776,6 +1776,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       chat: "Chat",
       outreachMessage: "Outreach Message",
       notGenerated: "Not Generated",
+      messageSentTime: "Message Sent Time",
+      messageReadTime: "Message Read Time",
+      recommendationReport: "Recommendation Report",
     },
     hireStatusModal: {
       title: "Hire Status",
