@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Drawer,
-  Form,
-  message,
-  Modal,
-  Select,
-  Table,
-} from "antd";
+import { Button, Drawer, Form, message, Modal, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import classnames from "classnames";
 import { Download, Get, Post } from "@/utils/request";
@@ -140,6 +132,8 @@ const AdminTalents = (props: IProps) => {
   const [shareChainCandidates, setShareChainCandidates] = useState<
     IAdminTalentShareChain[]
   >([]);
+  const [outreachMessageDrawerOpen, setOutreachMessageDrawerOpen] =
+    useState(false);
 
   const [form] = Form.useForm();
 
@@ -220,8 +214,9 @@ const AdminTalents = (props: IProps) => {
             id: candidate.id,
             name: candidate.name || preRegisterInfo.name,
             email: candidate.email,
-            phone: `${preRegisterInfo.country_code ?? ""} ${preRegisterInfo.phone ?? ""
-              }`,
+            phone: `${preRegisterInfo.country_code ?? ""} ${
+              preRegisterInfo.phone ?? ""
+            }`,
           };
         })
       );
@@ -534,10 +529,10 @@ const AdminTalents = (props: IProps) => {
     // 如果 jobId 存在，过滤掉公司名称和职位名称列
     const filteredColumns = jobId
       ? allColumns.filter(
-        (col) =>
-          !("dataIndex" in col) ||
-          (col.dataIndex !== "company_name" && col.dataIndex !== "job_name")
-      )
+          (col) =>
+            !("dataIndex" in col) ||
+            (col.dataIndex !== "company_name" && col.dataIndex !== "job_name")
+        )
       : allColumns;
 
     return filteredColumns.map((item) => {
@@ -700,19 +695,19 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {jobApply.switch_mode_reason
                         ? (() => {
-                          const reason = parseJSON(
-                            jobApply.switch_mode_reason
-                          );
-                          return reason?.reasons
-                            ?.map((item: string) => {
-                              return item === "others"
-                                ? reason.other_reason
-                                : originalT(
-                                  `switch_mode_reason_options.${item}`
-                                );
-                            })
-                            .join(", ");
-                        })()
+                            const reason = parseJSON(
+                              jobApply.switch_mode_reason
+                            );
+                            return reason?.reasons
+                              ?.map((item: string) => {
+                                return item === "others"
+                                  ? reason.other_reason
+                                  : originalT(
+                                      `switch_mode_reason_options.${item}`
+                                    );
+                              })
+                              .join(", ");
+                          })()
                         : "-"}
                     </div>
                   </div>
@@ -729,8 +724,8 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.mode
                         ? originalT(
-                          `interview_form.mode_${talent.interviews[0].mode}`
-                        )
+                            `interview_form.mode_${talent.interviews[0].mode}`
+                          )
                         : "-"}
                     </div>
                   </div>
@@ -741,8 +736,8 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.scheduled_at
                         ? dayjs(talent.interviews[0].scheduled_at).format(
-                          "YYYY-MM-DD HH:mm"
-                        )
+                            "YYYY-MM-DD HH:mm"
+                          )
                         : "-"}
                     </div>
                   </div>
@@ -753,8 +748,8 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.interview_type
                         ? originalT(
-                          `interview_form.type_${talent.interviews[0].interview_type}`
-                        )
+                            `interview_form.type_${talent.interviews[0].interview_type}`
+                          )
                         : "-"}
                     </div>
                   </div>
@@ -875,6 +870,37 @@ const AdminTalents = (props: IProps) => {
         >
           <div className={styles.jobApplyDetail}>
             <div className={styles.jobApplyPanel}>
+              <div style={{ marginBottom: 20 }}>
+                <div className={styles.jobApplyPanelTitle}>
+                  {t("drawer.basicInfo")}
+                </div>
+                <div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      {t("drawer.messageSentTime")}:
+                    </div>
+                    <div>
+                      {selectedLinkedinProfile?.message_sent_at
+                        ? dayjs(selectedLinkedinProfile.message_sent_at).format(
+                            "YYYY-MM-DD HH:mm"
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                  <div className={styles.jobApplyPanelItem}>
+                    <div className={styles.jobApplyPanelItemLabel}>
+                      {t("drawer.messageReadTime")}:
+                    </div>
+                    <div>
+                      {selectedLinkedinProfile?.message_read_at
+                        ? dayjs(selectedLinkedinProfile.message_read_at).format(
+                            "YYYY-MM-DD HH:mm"
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className={styles.jobApplyPanelTitle}>
                 {t("drawer.resume")}
               </div>
@@ -891,18 +917,26 @@ const AdminTalents = (props: IProps) => {
               className={styles.jobApplyPanel}
               style={{ borderLeft: "1px solid #f2f2f2" }}
             >
-              <div className={styles.jobApplyPanelTitle}>
-                {t("drawer.outreachMessage")}
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div className={styles.jobApplyPanelTitle}>
+                  {t("drawer.recommendationReport")}
+                </div>
+                {selectedLinkedinProfile?.outreach_message_doc ? (
+                  <Button
+                    type="primary"
+                    onClick={() => setOutreachMessageDrawerOpen(true)}
+                  >
+                    {t("drawer.outreachMessage")}
+                  </Button>
+                ) : null}
               </div>
               <div
                 className={styles.jobApplyPanelContent}
                 style={{ flex: "auto", overflow: "auto" }}
               >
-                {selectedLinkedinProfile?.outreach_message_doc ? (
+                {selectedLinkedinProfile?.recommendation_doc ? (
                   <MarkdownContainer
-                    content={
-                      selectedLinkedinProfile?.outreach_message_doc ?? ""
-                    }
+                    content={selectedLinkedinProfile?.recommendation_doc ?? ""}
                   />
                 ) : (
                   <Empty
@@ -912,6 +946,17 @@ const AdminTalents = (props: IProps) => {
                 )}
               </div>
             </div>
+            <Drawer
+              title={t("drawer.outreachMessage")}
+              open={outreachMessageDrawerOpen}
+              onClose={() => setOutreachMessageDrawerOpen(false)}
+              width={400}
+              destroyOnClose
+            >
+              <MarkdownContainer
+                content={selectedLinkedinProfile?.outreach_message_doc ?? ""}
+              />
+            </Drawer>
           </div>
         </div>
       </Drawer>

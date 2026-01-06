@@ -20,7 +20,7 @@ import ChatMessageList from "../ChatMessageList";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
-const ChatRoom: React.FC<IProps> = (props) => {
+const JobChatBot: React.FC<IProps> = (props) => {
   const { jobId, sessionId, enableFullscreen = false } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -362,4 +362,4 @@ const ChatRoom: React.FC<IProps> = (props) => {
   );
 };
 
-export default observer(ChatRoom);
+export default observer(JobChatBot);

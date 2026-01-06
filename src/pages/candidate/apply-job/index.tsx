@@ -45,6 +45,7 @@ const ApplyJob: React.FC = () => {
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [otherReason, setOtherReason] = useState<string>();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
 
   const { jobId: jobIdStr } = useParams();
   const jobId = parseInt(jobIdStr ?? "0");
@@ -225,6 +226,7 @@ const ApplyJob: React.FC = () => {
     whatsappCountryCode: string;
     whatsappPhoneNumber: string;
   }) => {
+    setIsSubmittingWhatsapp(true);
     const { code } = await Post(`/api/candidate/whatsapp_contact_number`, {
       whatsapp_country_code: whatsappContactNumber.whatsappCountryCode,
       whatsapp_phone_number: whatsappContactNumber.whatsappPhoneNumber,
@@ -237,6 +239,7 @@ const ApplyJob: React.FC = () => {
       });
       setPageState("conversation");
     }
+    setIsSubmittingWhatsapp(false);
   };
 
   const switchModeToHuman = async () => {
@@ -327,12 +330,12 @@ const ApplyJob: React.FC = () => {
           {(pageState === "basic" ||
             pageState === "resume" ||
             pageState === "whatsapp") && (
-            <Step
-              stepCount={3}
-              currentIndex={currentIndex}
-              className={styles.stepContainer}
-            />
-          )}
+              <Step
+                stepCount={3}
+                currentIndex={currentIndex}
+                className={styles.stepContainer}
+              />
+            )}
 
           <Button
             icon={<Icon icon={<Copy />} className={styles.icon} />}
@@ -402,6 +405,7 @@ const ApplyJob: React.FC = () => {
                         setPageState("resume");
                       }}
                       onChooseInterviewMode={onChooseInterviewMode}
+                      isSubmitting={isSubmittingWhatsapp}
                     />
                   )}
                 </div>

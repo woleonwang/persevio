@@ -11,7 +11,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
-import ChatRoom from "@/components/ChatRoom";
+import JobChatBot from "@/components/JobChatBot";
 import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import ArrowLeft from "@/assets/icons/arrow-left";
@@ -356,7 +356,7 @@ const JobApplyShow = () => {
         title={originalT("chat_with_viona")}
       >
         <div style={{ height: "100%", display: "flex" }}>
-          <ChatRoom
+          <JobChatBot
             userRole="candidate"
             jobId={jobApply.job_id}
             sessionId={`${jobApply.candidate_id}`}

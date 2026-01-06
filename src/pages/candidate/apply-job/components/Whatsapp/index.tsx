@@ -16,10 +16,11 @@ interface IProps {
   }) => void;
   onBack: () => void;
   onChooseInterviewMode: (interviewMode: "ai" | "human") => void;
+  isSubmitting: boolean;
 }
 
 const Whatsapp: React.FC<IProps> = (props: IProps) => {
-  const { whatsappContactNumber, onFinish, onBack, onChooseInterviewMode } =
+  const { whatsappContactNumber, onFinish, onBack, onChooseInterviewMode, isSubmitting } =
     props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [isAgreed, setIsAgreed] = useState(true);
@@ -56,6 +57,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
   const canSubmit = () => {
     const { whatsappContactNumber } = form.getFieldsValue();
     return (
+      !isSubmitting &&
       !!whatsappContactNumber?.countryCode &&
       !!whatsappContactNumber?.phoneNumber &&
       isAgreed

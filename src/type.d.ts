@@ -733,6 +733,7 @@ type TLinkedinProfile = {
   url: string;
   match_score?: number;
   profile_doc?: string;
+  recommendation_doc?: string;
   outreach_message_doc?: string;
   created_at: string;
   updated_at: string;

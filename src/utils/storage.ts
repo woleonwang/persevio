@@ -7,16 +7,19 @@ export enum StorageKey {
   CANDIDATE_TOKEN = "candidate_token",
   COWORKER_TOKEN = "coworker_token",
   TRIAL_USER_UUID = "trial_user_uuid",
-  
+
   // 会话相关
   SESSION_ID = "sessionId",
   SHARE_TOKEN = "share_token",
   LINKEDIN_PROFILE_ID = "linkedin_profile_id",
-  
+
   // 业务数据
   JOB_DOT = "job_dot",
   SNAKE_HIGH_SCORE = "snakeHighScore",
   EDIT_MESSAGE_GUIDE = "edit_message_guide",
+
+  // 是否是测试账号
+  INTERNAL_ACCOUNT = "internal_account",
 }
 
 /**
@@ -94,7 +97,7 @@ class Storage {
       // 检查是否为新格式
       if (isNewFormat(item)) {
         const data: StorageData<T> = JSON.parse(item);
-        
+
         // 检查是否过期
         if (data.expiresAt && Date.now() > data.expiresAt) {
           this.remove(key);
@@ -131,7 +134,7 @@ class Storage {
       // 如果是新格式，提取 value
       if (isNewFormat(item)) {
         const data: StorageData<unknown> = JSON.parse(item);
-        
+
         // 检查是否过期
         if (data.expiresAt && Date.now() > data.expiresAt) {
           this.remove(key);
@@ -271,4 +274,3 @@ export const tokenStorage = {
     storage.remove(StorageKey.TRIAL_USER_UUID);
   },
 };
-

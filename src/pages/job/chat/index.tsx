@@ -6,8 +6,8 @@ import { Spin } from "antd";
 import { useTranslation } from "react-i18next";
 
 import globalStore from "@/store/global";
-import ChatRoomNew from "@/components/ChatRoomNew";
-import { TChatType } from "@/components/ChatRoomNew/type";
+import StaffChat from "@/components/StaffChat";
+import { TChatType } from "@/components/StaffChat/type";
 import useJob from "@/hooks/useJob";
 
 import styles from "./style.module.less";
@@ -82,7 +82,7 @@ const JobChat = () => {
           {chatTypeTitle[chatType]}
         </div>
         <div className={styles.chatWrapper}>
-          <ChatRoomNew
+          <StaffChat
             key={chatType}
             jobId={job.id}
             allowEditMessage

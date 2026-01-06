@@ -1,5 +1,5 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import ChatRoomNew from "@/components/ChatRoomNew";
+import StaffChat from "@/components/StaffChat";
 import useJob from "@/hooks/useJob";
 import usePublicTalent from "@/hooks/usePublicTalent";
 import { Get } from "@/utils/request";
@@ -174,7 +174,7 @@ const TalentChat = () => {
                   />
                 )
               ) : (
-                <ChatRoomNew
+                <StaffChat
                   key={`${chatType}-${round}`}
                   jobId={job.id}
                   allowEditMessage

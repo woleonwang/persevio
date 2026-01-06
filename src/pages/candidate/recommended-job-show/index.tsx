@@ -11,7 +11,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
-import ChatRoom from "@/components/ChatRoom";
+import JobChatBot from "@/components/JobChatBot";
 import RecommendReason from "@/components/RecommendReason";
 
 const RecommendedJobShow = () => {
@@ -147,7 +147,7 @@ const RecommendedJobShow = () => {
         title={originalT("chat_with_viona")}
       >
         <div style={{ height: "100%", display: "flex" }}>
-          <ChatRoom
+          <JobChatBot
             userRole="candidate"
             jobId={recommendedJob.job_id}
             sessionId={`${recommendedJob.candidate_id}`}
