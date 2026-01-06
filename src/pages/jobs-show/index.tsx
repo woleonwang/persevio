@@ -16,7 +16,7 @@ import classnames from "classnames";
 import { ShareAltOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
-import ChatRoom from "@/components/ChatRoom";
+import JobChatBot from "@/components/JobChatBot";
 import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
@@ -208,7 +208,7 @@ const JobsShow = () => {
   }
 
   const ChatRoomArea = (
-    <ChatRoom
+    <JobChatBot
       userRole="candidate"
       jobId={parseInt(id ?? "0")}
       sessionId={sessionId}

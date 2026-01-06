@@ -4,7 +4,7 @@ import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { tokenStorage } from "@/utils/storage";
+import { storage, StorageKey, tokenStorage } from "@/utils/storage";
 
 const Settings = () => {
   const [profile, setProfile] = useState<ICandidateSettings>();
@@ -74,13 +74,16 @@ const Settings = () => {
             {t("logout")}
           </Button>
 
-          <Button
-            type="primary"
-            onClick={() => clear()}
-            style={{ marginLeft: 10 }}
-          >
-            注销
-          </Button>
+          {
+            storage.get(StorageKey.INTERNAL_ACCOUNT) === "1" &&
+            (<Button
+              type="primary"
+              onClick={() => clear()}
+              style={{ marginLeft: 10 }}
+            >
+              注销
+            </Button>)
+          }
         </div>
       </div>
 

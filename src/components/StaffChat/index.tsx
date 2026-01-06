@@ -45,7 +45,7 @@ import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
-const ChatRoomNew: React.FC<IProps> = (props) => {
+const StaffChat: React.FC<IProps> = (props) => {
   const {
     chatType,
     jobId,
@@ -1272,4 +1272,4 @@ const ChatRoomNew: React.FC<IProps> = (props) => {
   );
 };
 
-export default observer(ChatRoomNew);
+export default observer(StaffChat);

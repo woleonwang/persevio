@@ -8,7 +8,7 @@ import useJob from "@/hooks/useJob";
 import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
-import ChatRoomNew from "@/components/ChatRoomNew";
+import StaffChat from "@/components/StaffChat";
 import JobDetails from "@/components/JobDetails";
 import globalStore from "@/store/global";
 import { infoModal } from "@/utils";
@@ -116,7 +116,7 @@ const JobBoard = () => {
       )}
       <div className={styles.body}>
         {jobState === "jrd" && (
-          <ChatRoomNew
+          <StaffChat
             chatType="jobRequirementDoc"
             jobId={job.id}
             onNextTask={() => setJobState("jd")}
@@ -125,7 +125,7 @@ const JobBoard = () => {
           />
         )}
         {jobState === "jd" && (
-          <ChatRoomNew
+          <StaffChat
             chatType="jobDescription"
             jobId={job.id}
             onNextTask={() => setJobState("preview")}
