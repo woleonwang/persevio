@@ -6,7 +6,13 @@ import { Button, Drawer, message, Modal, Spin } from "antd";
 import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
-import { getJobApplyStatus, parseJd, parseJSON, parseJSONArray } from "@/utils";
+import {
+  getJobApplyStatus,
+  getQuery,
+  parseJd,
+  parseJSON,
+  parseJSONArray,
+} from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 import styles from "./style.module.less";
@@ -52,9 +58,15 @@ const JobApplyShow = () => {
   useEffect(() => {
     fetchCandidateSettings();
     fetchApplyJob();
-    const urlParams = new URLSearchParams(window.location.search);
-    const open = urlParams.get("open");
+    const open = getQuery("open");
     if (open === "1") {
+      setInterviewChatDrawerOpen(true);
+    }
+
+    const switchMode = getQuery("switch_mode");
+    if (switchMode === "human") {
+      setHumanModeOpen(true);
+    } else if (switchMode === "ai") {
       setInterviewChatDrawerOpen(true);
     }
   }, []);

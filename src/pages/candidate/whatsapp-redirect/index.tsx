@@ -63,7 +63,9 @@ const WhatsappRedirect = () => {
       if (isTempAccount(candidateSettings)) {
         navigate(`/apply-job/${jobId}`, { replace: true });
       } else {
-        navigate(`/candidate/jobs/applies/${jobApply.id}`, { replace: true });
+        navigate(`/candidate/jobs/applies/${jobApply.id}?switch_mode=${mode}`, {
+          replace: true,
+        });
       }
     } else {
       setStatus("error");
