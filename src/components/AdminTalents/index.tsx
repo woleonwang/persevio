@@ -28,14 +28,16 @@ interface IProps {
   };
 }
 
-type TTalentItem = TTalent & {
+interface IBasicInfo {
   current_job_title: string;
   current_company: string;
   current_compensation: string;
   visa: string;
-};
+}
 
-type TAdminJobApplyItem = {
+type TTalentItem = TTalent & IBasicInfo;
+
+type TAdminJobApplyItem = IBasicInfo & {
   id: number;
   candidate_id: number;
   job_id: number;
@@ -45,6 +47,7 @@ type TAdminJobApplyItem = {
   deliveried_at: string;
   interview_mode: "ai" | "human" | "whatsapp";
   candidate: ICandidateSettings;
+  candidate_basic_info_json: string;
   job: {
     id: number;
     name: string;
@@ -57,7 +60,7 @@ type TAdminJobApplyItem = {
 
 type TAdminTalentItem = {
   talent?: TTalentItem;
-  linkedinProfile?: TLinkedinProfile;
+  linkedinProfile?: IAdminLinkedinProfile;
   jobApply?: TAdminJobApplyItem;
   created_at: string;
 };
@@ -101,11 +104,13 @@ interface IAdminTalentShareChain {
   email: string;
   phone: string;
 }
+
+interface IAdminLinkedinProfile extends TLinkedinProfile, IBasicInfo {}
 const AdminTalents = (props: IProps) => {
   const { jobId, hideHeader = false, filterParams } = props;
-  const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
-    []
-  );
+  const [linkedinProfiles, setLinkedinProfiles] = useState<
+    IAdminLinkedinProfile[]
+  >([]);
   const [jobApplies, setJobApplies] = useState<TAdminJobApplyItem[]>([]);
   const [talents, setTalents] = useState<TTalentItem[]>([]);
 
@@ -172,8 +177,22 @@ const AdminTalents = (props: IProps) => {
     }>(`/api/admin/scoped_talents?job_id=${jobId ?? ""}`);
 
     if (code === 0) {
-      setLinkedinProfiles(data.linkedin_profiles);
-      setJobApplies(data.job_applies);
+      setLinkedinProfiles(
+        data.linkedin_profiles.map((linkedinProfile) => {
+          return {
+            ...linkedinProfile,
+            ...parseJSON(linkedinProfile.basic_info_json),
+          };
+        })
+      );
+      setJobApplies(
+        data.job_applies.map((jobApply) => {
+          return {
+            ...jobApply,
+            ...parseJSON(jobApply.candidate_basic_info_json),
+          };
+        })
+      );
       setTalents(
         data.talents.map((talent) => {
           return {
@@ -391,7 +410,12 @@ const AdminTalents = (props: IProps) => {
         dataIndex: "current_job_title",
         width: 150,
         render: (_: string, record: TAdminTalentItem) => {
-          return record.talent?.current_job_title || "-";
+          return (
+            record.talent?.current_job_title ||
+            record.jobApply?.current_job_title ||
+            record.linkedinProfile?.current_job_title ||
+            "-"
+          );
         },
       },
       {
@@ -399,7 +423,12 @@ const AdminTalents = (props: IProps) => {
         dataIndex: "current_company",
         width: 150,
         render: (_: string, record: TAdminTalentItem) => {
-          return record.talent?.current_company || "-";
+          return (
+            record.talent?.current_company ||
+            record.jobApply?.current_company ||
+            record.linkedinProfile?.current_company ||
+            "-"
+          );
         },
       },
       {
@@ -407,7 +436,12 @@ const AdminTalents = (props: IProps) => {
         dataIndex: "current_compensation",
         width: 150,
         render: (_: string, record: TAdminTalentItem) => {
-          return record.talent?.current_compensation || "-";
+          return (
+            record.talent?.current_compensation ||
+            record.jobApply?.current_compensation ||
+            record.linkedinProfile?.current_compensation ||
+            "-"
+          );
         },
       },
       {
@@ -415,7 +449,12 @@ const AdminTalents = (props: IProps) => {
         dataIndex: "visa",
         width: 150,
         render: (_: string, record: TAdminTalentItem) => {
-          return record.talent?.visa || "-";
+          return (
+            record.talent?.visa ||
+            record.jobApply?.visa ||
+            record.linkedinProfile?.visa ||
+            "-"
+          );
         },
       },
       {
@@ -463,8 +502,8 @@ const AdminTalents = (props: IProps) => {
           return hireStatus === "hired"
             ? t("hire_status_options.hired")
             : hireStatus === "not_hired"
-              ? t("hire_status_options.not_hired")
-              : "-";
+            ? t("hire_status_options.not_hired")
+            : "-";
         },
       },
       {

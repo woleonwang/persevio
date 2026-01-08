@@ -735,6 +735,7 @@ type TLinkedinProfile = {
   profile_doc?: string;
   recommendation_doc?: string;
   outreach_message_doc?: string;
+  basic_info_json: string;
   created_at: string;
   updated_at: string;
   message_sent_at?: string;

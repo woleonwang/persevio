@@ -31,7 +31,7 @@ interface IProps {
 
 type TDataSourceItem = {
   talent?: TTalentItem;
-  linkedinProfile?: TLinkedinProfile;
+  linkedinProfile?: TLinkedinProfileItem;
 };
 
 type TTalentItem = TTalent & {
@@ -42,12 +42,18 @@ type TTalentItem = TTalent & {
   interviews: TInterview[];
 };
 
+type TLinkedinProfileItem = TLinkedinProfile & {
+  current_job_title: string;
+  current_company: string;
+  current_compensation: string;
+  visa: string;
+};
 const Talents = (props: IProps) => {
   const { jobId, filterParams } = props;
   const [talents, setTalents] = useState<TTalentItem[]>([]);
-  const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
-    []
-  );
+  const [linkedinProfiles, setLinkedinProfiles] = useState<
+    TLinkedinProfileItem[]
+  >([]);
 
   const navigate = useNavigate();
 
@@ -73,7 +79,14 @@ const Talents = (props: IProps) => {
           };
         })
       );
-      setLinkedinProfiles(data.linkedin_profiles ?? []);
+      setLinkedinProfiles(
+        (data.linkedin_profiles ?? []).map((linkedinProfile) => {
+          return {
+            ...linkedinProfile,
+            ...parseJSON(linkedinProfile.basic_info_json),
+          };
+        })
+      );
     }
   };
 
@@ -121,25 +134,29 @@ const Talents = (props: IProps) => {
     },
     ...(!jobId
       ? [
-        {
-          title: t("job_name"),
-          dataIndex: "job_name",
-          render: (_: string, record: TDataSourceItem) => {
-            return (
-              (record.talent
-                ? record.talent?.job?.name
-                : record.linkedinProfile?.job?.name) || "-"
-            );
+          {
+            title: t("job_name"),
+            dataIndex: "job_name",
+            render: (_: string, record: TDataSourceItem) => {
+              return (
+                (record.talent
+                  ? record.talent?.job?.name
+                  : record.linkedinProfile?.job?.name) || "-"
+              );
+            },
+            width: 150,
           },
-          width: 150,
-        },
-      ]
+        ]
       : []),
     {
       title: t("current_job_title"),
       dataIndex: "current_job_title",
       render: (_: string, record: TDataSourceItem) => {
-        return record.talent?.current_job_title || "-";
+        return (
+          record.talent?.current_job_title ||
+          record.linkedinProfile?.current_job_title ||
+          "-"
+        );
       },
       width: 150,
     },
@@ -147,7 +164,11 @@ const Talents = (props: IProps) => {
       title: t("current_company"),
       dataIndex: "current_company",
       render: (_: string, record: TDataSourceItem) => {
-        return record.talent?.current_company || "-";
+        return (
+          record.talent?.current_company ||
+          record.linkedinProfile?.current_company ||
+          "-"
+        );
       },
       width: 150,
     },
@@ -155,7 +176,11 @@ const Talents = (props: IProps) => {
       title: t("current_compensation"),
       dataIndex: "current_compensation",
       render: (_: string, record: TDataSourceItem) => {
-        return record.talent?.current_compensation || "-";
+        return (
+          record.talent?.current_compensation ||
+          record.linkedinProfile?.current_compensation ||
+          "-"
+        );
       },
       width: 150,
     },
@@ -163,7 +188,7 @@ const Talents = (props: IProps) => {
       title: t("visa"),
       dataIndex: "visa",
       render: (_: string, record: TDataSourceItem) => {
-        return record.talent?.visa || "-";
+        return record.talent?.visa || record.linkedinProfile?.visa || "-";
       },
       width: 150,
     },
