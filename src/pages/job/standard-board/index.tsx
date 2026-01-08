@@ -149,7 +149,6 @@ const JobBoard = () => {
             />
             <div
               style={{
-                padding: 12,
                 display: "flex",
                 justifyContent: "flex-end",
               }}

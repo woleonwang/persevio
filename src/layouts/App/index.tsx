@@ -169,7 +169,7 @@ const AppLayout = () => {
       setInited(true);
 
       if (data.company_status !== "approved") {
-        navigate("/app/company/status");
+        navigate("/signup");
       } else {
         // 获取职位
         fetchJobs();

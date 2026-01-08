@@ -54,7 +54,6 @@ import TalentDetail from "./pages/talent/detail";
 import PublicJobs from "./pages/public/jobs";
 import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
-import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
 import CandidateConnections from "./pages/candidate/connections";
@@ -125,8 +124,6 @@ createRoot(document.getElementById("root")!).render(
           </Route> */}
 
         <Route path="/app" element={<App />}>
-          {/* 公司审核状态 */}
-          <Route path="/app/company/status" element={<CompanyStatus />} />
           {/* 创建职位 */}
           <Route path="/app/entry/create-job" element={<JobCreate />} />
           {/* 职位列表 */}

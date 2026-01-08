@@ -229,7 +229,10 @@ const JobsShow = () => {
       }
     >
       {status === "success" && company && job && (
-        <div className={styles.container}>
+        <div
+          className={styles.container}
+          style={isPreview ? { margin: 0 } : undefined}
+        >
           {/* Banner 区域 */}
           <div className={styles.banner}>
             <div className={styles.bannerLeft}>

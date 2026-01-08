@@ -6,17 +6,16 @@ import { useTranslation } from "react-i18next";
 
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
+import { checkIsAdmin, deleteQuery, getQuery, isTempAccount } from "@/utils";
+import { tokenStorage } from "@/utils/storage";
+import logo from "@/assets/logo.png";
+import VionaAvatar from "@/assets/viona-avatar.png";
+
 import OAuth from "./components/OAuth";
 import BasicInfo, { TBaiscInfo } from "./components/BasicInfo";
-
-import logo from "@/assets/logo.png";
-import styles from "./style.module.less";
-import VionaAvatar from "@/assets/viona-avatar.png";
-import { checkIsAdmin } from "@/utils";
 import Approve from "./components/Approve";
 import { targetsOptions } from "../network-pofile/components/EditableTargets";
-import { tokenStorage } from "@/utils/storage";
-
+import styles from "./style.module.less";
 const CandidateSignIn: React.FC = () => {
   const [pageState, setPageState] = useState<
     "signin" | "basic" | "targets" | "conversation" | "approve"
@@ -37,24 +36,15 @@ const CandidateSignIn: React.FC = () => {
   const t = (key: string) => originalT(`candidate_sign.${key}`);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get("error");
-    const code = urlParams.get("code");
+    const error = getQuery("error");
+    const code = getQuery("code");
     if (error === "google_login_failed" && code === "10001") {
       message.error(t("email_exists"));
     }
 
-    const tokenFromUrl = urlParams.get("token");
+    const tokenFromUrl = getQuery("token");
     if (tokenFromUrl) {
-      urlParams.delete("token");
-      window.history.replaceState(
-        {},
-        "",
-        `${window.location.pathname}${
-          urlParams.toString() ? `?${urlParams.toString()}` : ""
-        }`
-      );
-
+      deleteQuery("token");
       tokenStorage.setToken(tokenFromUrl, "candidate");
     }
 
@@ -67,6 +57,11 @@ const CandidateSignIn: React.FC = () => {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
       i18n.changeLanguage(candidate.lang ?? "zh-CN");
+      if (isTempAccount(candidate) && !!candidate.job_id) {
+        navigate(`/apply-job/${candidate.job_id}`, { replace: true });
+      } else {
+        navigate("/candidate/jobs", { replace: true });
+      }
       // if (!candidate.name) {
       //   setPageState("basic");
       // } else if (!candidate.network_profile_finished_at) {
@@ -76,7 +71,6 @@ const CandidateSignIn: React.FC = () => {
       // } else {
       // navigate("/candidate/jobs");
       // }
-      navigate("/candidate/jobs");
     } else {
       setPageState("signin");
     }
