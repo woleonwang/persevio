@@ -23,16 +23,17 @@ const PAGE_SIZE = 10;
 
 type TRecommendedCandidate = {};
 
+type TStatus = "creating" | "published" | "unpublished";
 const Jobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
   const [allCompanies, setAllCompanies] = useState<ICompany[]>([]);
   const [companyId, setCompanyId] = useState<number>();
   const [jobName, setJobName] = useState<string>();
-  const [isPosted, setIsPosted] = useState<string>();
+  const [status, setStatus] = useState<TStatus>();
   const [fetchParams, setFetchParams] = useState<{
     companyId?: number;
     jobName?: string;
-    isPosted?: string;
+    status?: TStatus;
   }>();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState();
@@ -88,7 +89,7 @@ const Jobs = () => {
     const { code, data } = await Get(
       `/api/admin/jobs?company_id=${companyId ?? ""}&job_name=${
         jobName ?? ""
-      }&posted=${isPosted ?? ""}&page=${page}&size=${PAGE_SIZE}`
+      }&status=${status ?? ""}&page=${page}&size=${PAGE_SIZE}`
     );
 
     if (code === 0) {
@@ -146,8 +147,14 @@ const Jobs = () => {
     {
       title: t("table.isPosted"),
       dataIndex: "posted_at",
-      render: (postedAt: string) => {
-        return !!postedAt ? t("table.yes") : t("table.no");
+      render: (_: string, record: IJob) => {
+        if (record.posted_at) {
+          return t("table.published");
+        } else if (record.initial_posted_at) {
+          return t("table.unpublished");
+        } else {
+          return t("table.creating");
+        }
       },
     },
     {
@@ -294,12 +301,12 @@ const Jobs = () => {
           <div>{t("filters.isPosted")}: </div>
           <Select
             style={{ width: 200 }}
-            options={["1", "0"].map((c) => ({
+            options={["creating", "published", "unpublished"].map((c) => ({
               value: c,
-              label: c === "1" ? t("table.yes") : t("table.no"),
+              label: t(`table.${c}`),
             }))}
-            value={isPosted}
-            onChange={(v) => setIsPosted(v)}
+            value={status}
+            onChange={(v) => setStatus(v)}
             placeholder={t("filters.isPostedPlaceholder")}
           />
         </div>
@@ -307,10 +314,11 @@ const Jobs = () => {
           <Button
             type="primary"
             onClick={() => {
+              setPage(1);
               setFetchParams({
                 companyId,
                 jobName,
-                isPosted,
+                status,
               });
             }}
           >
@@ -321,7 +329,7 @@ const Jobs = () => {
             onClick={() => {
               setCompanyId(undefined);
               setJobName(undefined);
-              setIsPosted(undefined);
+              setStatus(undefined);
               setFetchParams(undefined);
             }}
           >

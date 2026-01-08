@@ -1701,6 +1701,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       interview_confirmed: "已确认面试",
     },
     drawer: {
+      outreachMessageReport: "外推消息报告",
       accept: "接受",
       reject: "拒绝",
       accepted: "已接受",
@@ -1863,10 +1864,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       bonusPool: "奖金池",
       assignee: "分配人",
       actions: "操作",
-      yes: "是",
-      no: "否",
-      addBonusPool: "Add Bonus Pool",
-      goToListing: "Go to Listing",
+      published: "已发布",
+      unpublished: "未发布",
+      creating: "创建中",
+      addBonusPool: "添加奖金池",
+      goToListing: "查看职位页面",
     },
     recommendedCandidates: {
       id: "ID",

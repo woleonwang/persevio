@@ -919,7 +919,7 @@ const AdminTalents = (props: IProps) => {
             >
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div className={styles.jobApplyPanelTitle}>
-                  {t("drawer.recommendationReport")}
+                  {t("drawer.outreachMessageReport")}
                 </div>
                 {selectedLinkedinProfile?.outreach_message_doc ? (
                   <Button
