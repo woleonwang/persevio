@@ -99,7 +99,9 @@ const StaffChat: React.FC<IProps> = (props) => {
   jrdContextDocumentJsonRef.current = parseJSON(job?.jrd_context_document_json);
   const childrenFunctionsRef = useRef<{
     scrollToBottom?: () => void;
+    scrollToMessage?: (messageId: string) => void;
   }>({});
+  const sideDocumentTriggerMessageIdRef = useRef<string>();
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -142,7 +144,10 @@ const StaffChat: React.FC<IProps> = (props) => {
       needScrollToBottom.current = false;
     }
 
-    if (!storage.get<string>(StorageKey.EDIT_MESSAGE_GUIDE) && allowEditMessage) {
+    if (
+      !storage.get<string>(StorageKey.EDIT_MESSAGE_GUIDE) &&
+      allowEditMessage
+    ) {
       setTimeout(() => {
         setEditMessageTourOpen(true);
       }, 500);
@@ -156,6 +161,18 @@ const StaffChat: React.FC<IProps> = (props) => {
       );
     }
   }, [job]);
+
+  // 当 sideDocument 打开时，滚动到触发打开的消息
+  useEffect(() => {
+    if (sideDocumentVisible && sideDocumentTriggerMessageIdRef.current) {
+      // 延迟执行，确保布局已经更新
+      setTimeout(() => {
+        childrenFunctionsRef.current.scrollToMessage?.(
+          sideDocumentTriggerMessageIdRef.current!
+        );
+      }, 100);
+    }
+  }, [sideDocumentVisible]);
 
   const t = (key: string) => {
     return originalT(`chat.${key}`);
@@ -180,7 +197,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
-  const apiMapping: Record<TChatType, { get: string; send: string; }> = {
+  const apiMapping: Record<TChatType, { get: string; send: string }> = {
     jobRequirementDoc: {
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/send`),
@@ -309,7 +326,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           {t("share_reference")}
         </div>
       ),
-      handler: () => { },
+      handler: () => {},
       style: "block-button",
     },
     {
@@ -396,8 +413,9 @@ const StaffChat: React.FC<IProps> = (props) => {
       handler: async (tag) => {
         if (tag) {
           await copy(
-            `${window.origin
-            }/app/jobs/${jobId}/${newVersion ? "standard-board" : "board"}?token=${tokenStorage.getToken("staff") || ""}&share=1`
+            `${window.origin}/app/jobs/${jobId}/${
+              newVersion ? "standard-board" : "board"
+            }?token=${tokenStorage.getToken("staff") || ""}&share=1`
           );
           message.success(t("copied"));
         }
@@ -470,7 +488,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   };
 
-  const updateJob = async (job: { jd_language?: IJob["jd_language"]; }) => {
+  const updateJob = async (job: { jd_language?: IJob["jd_language"] }) => {
     const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), job);
     return code === 0;
   };
@@ -758,8 +776,8 @@ const StaffChat: React.FC<IProps> = (props) => {
       chatType === "jobInterviewDesign"
         ? `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/clear_messages`
         : chatType === "jobInterviewFeedback"
-          ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
-          : `/api/jobs/${jobId}/messages`;
+        ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
+        : `/api/jobs/${jobId}/messages`;
 
     const { code } = await Post(url, {
       message_id: messageId,
@@ -959,6 +977,13 @@ const StaffChat: React.FC<IProps> = (props) => {
                                   color: "#3682fe",
                                 }}
                                 onClick={() => {
+                                  // 如果是打开 sideDocument 的操作，记录消息 ID
+                                  if (
+                                    SIDE_DOCUMENT_TYPES.includes(tag.key as any)
+                                  ) {
+                                    sideDocumentTriggerMessageIdRef.current =
+                                      item.id;
+                                  }
                                   const extraTag = (item.extraTags ?? []).find(
                                     (extraTag) => extraTag.name === tag.key
                                   );
