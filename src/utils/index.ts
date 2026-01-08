@@ -1,4 +1,5 @@
 import { Modal, ModalFuncProps } from "antd";
+import html2pdf from "html2pdf.js";
 
 export const copy = async (text: string) => {
   await navigator.clipboard.writeText(text);
@@ -150,6 +151,39 @@ export const downloadText = ({
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(link.href);
+};
+
+export const downloadMarkdownAsPDF = async ({
+  name,
+  element,
+}: {
+  name: string;
+  element: HTMLElement;
+}) => {
+  try {
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: `${name}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+      },
+    };
+
+    await html2pdf()
+      .set(opt as any)
+      .from(element)
+      .save();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const formatSeconds = (seconds: number) => {

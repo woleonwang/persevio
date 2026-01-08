@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, message, Spin, Tag, Drawer, Modal, Form } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { backOrDirect, downloadText, parseJSON } from "@/utils";
+import { backOrDirect, downloadMarkdownAsPDF, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import classnames from "classnames";
@@ -33,7 +33,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [form] = Form.useForm<{ reason: string }>();
   const t = (key: string) => originalT(`talent_details.${key}`);
-
+  const reportContainerRef = useRef<HTMLDivElement>(null);
   const { isPreview } = props;
 
   const [isAIInterviewRecordDrawerOpen, setIsAIInterviewRecordDrawerOpen] =
@@ -203,14 +203,18 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               <div className={styles.evaluateResultTitleButtons}>
                 <Button
                   type="primary"
-                  onClick={() =>
-                    downloadText({
+                  onClick={() => {
+                    if (!reportContainerRef.current) {
+                      return;
+                    }
+
+                    downloadMarkdownAsPDF({
                       name: `${talent.name}_${t(
                         "candidate_evaluation_report"
-                      )}.md`,
-                      content: talent.raw_evaluate_result,
-                    })
-                  }
+                      )}`,
+                      element: reportContainerRef.current,
+                    });
+                  }}
                 >
                   {originalT("download")}
                 </Button>
@@ -222,7 +226,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 </Button>
               </div>
             </div>
-            <div className={styles.reportContainer}>
+            <div className={styles.reportContainer} ref={reportContainerRef}>
               <MarkdownContainer content={talent.raw_evaluate_result} />
             </div>
           </div>
