@@ -3,7 +3,7 @@ import logo from "../../assets/logo.png";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Button, Dropdown } from "antd";
+import { Button } from "antd";
 
 interface IProps {
   children?: React.ReactNode;
