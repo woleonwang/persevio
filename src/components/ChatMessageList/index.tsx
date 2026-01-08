@@ -89,17 +89,18 @@ const ChatMessageList = (props: IProps) => {
       const container = listContainerRef.current;
       const containerRect = container.getBoundingClientRect();
       const messageRect = messageElement.getBoundingClientRect();
-      
+
       // 计算消息相对于容器的位置
-      const relativeTop = messageRect.top - containerRect.top + container.scrollTop;
-      
+      const relativeTop =
+        messageRect.top - containerRect.top + container.scrollTop;
+
       // 滚动到消息位置，保持一些偏移以便更好地查看
       container.scrollTop = relativeTop - 100;
     }
   };
 
-
-  const isResponseFirstMessage = () => messages.filter(item => item.role === "user").length === 1;
+  const isResponseFirstMessage = () =>
+    messages.filter((item) => item.role === "user").length === 1;
 
   return (
     <div
@@ -126,10 +127,10 @@ const ChatMessageList = (props: IProps) => {
               style={{
                 ...(isLast
                   ? {
-                    minHeight:
-                      (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
-                    alignItems: "flex-start",
-                  }
+                      minHeight:
+                        (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
+                      alignItems: "flex-start",
+                    }
                   : {}),
               }}
             >
@@ -180,10 +181,12 @@ const ChatMessageList = (props: IProps) => {
                             loadingStartedAtRef.current ?? dayjs(),
                             "second"
                           ) > 1
-                            ? `(${(showCustomThinkingText && isResponseFirstMessage())
-                              ? t("viona_is_thinking_first_message")
-                              : t("viona_is_thinking")
-                            })`
+                            ? `(${
+                                showCustomThinkingText &&
+                                isResponseFirstMessage()
+                                  ? t("viona_is_thinking_first_message")
+                                  : t("viona_is_thinking")
+                              })`
                             : ""}
                         </p>
                       ) : (

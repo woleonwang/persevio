@@ -878,6 +878,14 @@ const StaffChat: React.FC<IProps> = (props) => {
                                     type="primary"
                                     className={styles.inlineButton}
                                     onClick={() => {
+                                      if (
+                                        SIDE_DOCUMENT_TYPES.includes(
+                                          tag.key as any
+                                        )
+                                      ) {
+                                        sideDocumentTriggerMessageIdRef.current =
+                                          item.id;
+                                      }
                                       const extraTag = (
                                         item.extraTags ?? []
                                       ).find(
@@ -977,13 +985,6 @@ const StaffChat: React.FC<IProps> = (props) => {
                                   color: "#3682fe",
                                 }}
                                 onClick={() => {
-                                  // 如果是打开 sideDocument 的操作，记录消息 ID
-                                  if (
-                                    SIDE_DOCUMENT_TYPES.includes(tag.key as any)
-                                  ) {
-                                    sideDocumentTriggerMessageIdRef.current =
-                                      item.id;
-                                  }
                                   const extraTag = (item.extraTags ?? []).find(
                                     (extraTag) => extraTag.name === tag.key
                                   );
