@@ -13,6 +13,7 @@ interface IProps {
   isLoading?: boolean;
   childrenFunctionsRef?: React.RefObject<{
     scrollToBottom?: (() => void) | undefined;
+    scrollToMessage?: ((messageId: string) => void) | undefined;
   }>;
   className?: string;
   style?: React.CSSProperties;
@@ -45,6 +46,7 @@ const ChatMessageList = (props: IProps) => {
   const loadingStartedAtRef = useRef<Dayjs>();
   const listContainerRef = useRef<HTMLDivElement | null>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messageRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`chat.${key}`);
@@ -52,6 +54,7 @@ const ChatMessageList = (props: IProps) => {
   useEffect(() => {
     if (childrenFunctionsRef?.current) {
       childrenFunctionsRef.current.scrollToBottom = scrollToBottom;
+      childrenFunctionsRef.current.scrollToMessage = scrollToMessage;
     }
   }, [messages]);
 
@@ -80,6 +83,21 @@ const ChatMessageList = (props: IProps) => {
     }
   };
 
+  const scrollToMessage = (messageId: string) => {
+    const messageElement = messageRefsRef.current.get(messageId);
+    if (messageElement && listContainerRef.current) {
+      const container = listContainerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const messageRect = messageElement.getBoundingClientRect();
+      
+      // 计算消息相对于容器的位置
+      const relativeTop = messageRect.top - containerRect.top + container.scrollTop;
+      
+      // 滚动到消息位置，保持一些偏移以便更好地查看
+      container.scrollTop = relativeTop - 100;
+    }
+  };
+
 
   const isResponseFirstMessage = () => messages.filter(item => item.role === "user").length === 1;
 
@@ -98,6 +116,13 @@ const ChatMessageList = (props: IProps) => {
 
           return (
             <List.Item
+              ref={(node) => {
+                if (node) {
+                  messageRefsRef.current.set(item.id, node);
+                } else {
+                  messageRefsRef.current.delete(item.id);
+                }
+              }}
               style={{
                 ...(isLast
                   ? {
