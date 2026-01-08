@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { Form, Input, Button, message } from "antd";
-import { Get, Post } from "../../utils/request";
 import { Link, useNavigate } from "react-router";
-import SignContainer from "../../components/SignContainer";
 import { useTranslation } from "react-i18next";
-import { tokenStorage } from "../../utils/storage";
 
+import { Get, Post } from "@/utils/request";
+import { tokenStorage } from "@/utils/storage";
+import { deleteQuery, getQuery } from "@/utils";
+import SignContainer from "@/components/SignContainer";
 interface SigninFormValues {
   username: string;
   password: string;
@@ -28,22 +29,22 @@ const SignIn: React.FC = () => {
   const { t } = useTranslation();
 
   const navigate = useNavigate();
-  const urlParams = new URLSearchParams(window.location.search);
-  const tokenFromUrl = urlParams.get("token");
-  const redirect = decodeURIComponent(urlParams.get("redirect") ?? "");
 
   useEffect(() => {
-    checkQueryToken();
+    checkToken();
   }, []);
 
-  const checkQueryToken = async () => {
+  const checkToken = async () => {
+    const tokenFromUrl = getQuery("token");
     if (tokenFromUrl) {
       tokenStorage.setToken(tokenFromUrl, "staff");
-      const { code, data } = await Get(`/api/settings`);
-      if (code === 0) {
-        const settings: ISettings = data;
-        signInSucceed(settings.is_admin);
-      }
+      deleteQuery("token");
+    }
+
+    const { code, data } = await Get(`/api/settings`);
+    if (code === 0) {
+      const settings: ISettings = data;
+      signInSucceed(settings.is_admin);
     }
   };
 
@@ -75,6 +76,7 @@ const SignIn: React.FC = () => {
   };
 
   const signInSucceed = async (role: number) => {
+    const redirect = decodeURIComponent(getQuery("redirect") ?? "");
     navigate(
       redirect || (role === 0 ? "/app/entry/create-job" : "/admin/jobs"),
       {

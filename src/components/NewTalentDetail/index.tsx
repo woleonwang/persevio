@@ -4,7 +4,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { backOrDirect, parseJSON } from "@/utils";
+import { backOrDirect, downloadText, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import classnames from "classnames";
@@ -200,12 +200,27 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
           <div className={styles.evaluateResultContainer}>
             <div className={styles.evaluateResultTitle}>
               {t("candidate_evaluation_report")}
-              <Button
-                type="primary"
-                onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
-              >
-                {t("ai_interview_record")}
-              </Button>
+              <div className={styles.evaluateResultTitleButtons}>
+                <Button
+                  type="primary"
+                  onClick={() =>
+                    downloadText({
+                      name: `${talent.name}_${t(
+                        "candidate_evaluation_report"
+                      )}.md`,
+                      content: talent.raw_evaluate_result,
+                    })
+                  }
+                >
+                  {originalT("download")}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
+                >
+                  {t("ai_interview_record")}
+                </Button>
+              </div>
             </div>
             <div className={styles.reportContainer}>
               <MarkdownContainer content={talent.raw_evaluate_result} />

@@ -960,8 +960,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     viona_title: "AI Recruiter",
     ready_message:
       "I'm ready to get this search started. To begin, what is the <span>job title</span> for the role we're hiring for?",
-    share_message:
-      "Invite your co-workers to collaborate on this role by sharing the link to this page.",
+    share_message: "Invite your co-workers to this page by sharing this link.",
     share_link: "Share the link",
     copy_success: "Copied successfully",
     reply_placeholder: "Reply to Viona",
@@ -1485,6 +1484,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   home_header: {
     home: "Home",
     jobs: "Jobs",
+    recruit: "I want to recruit",
+    jobseeker: "I want to find talent",
+    login_register: "Sign Up/Login",
   },
 
   signup: {

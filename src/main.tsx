@@ -54,7 +54,6 @@ import TalentDetail from "./pages/talent/detail";
 import PublicJobs from "./pages/public/jobs";
 import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
-import CompanyStatus from "./pages/company/status";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
 import CandidateConnections from "./pages/candidate/connections";
@@ -75,6 +74,7 @@ import Admin from "./layouts/Admin/index.tsx";
 import JobDetailsPage from "./pages/admin/job-details/index.tsx";
 import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
+import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -103,6 +103,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/play-audio" element={<PlayAudio />} />
         {/** 职位列表 */}
         <Route path="/jobs" element={<PublicJobs />} />
+        <Route path="/linkedin-apply" element={<LinkedinApply />} />
         {/** 分享职位详情文档 */}
         <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
         {/** 职位 chatbot */}
@@ -123,8 +124,6 @@ createRoot(document.getElementById("root")!).render(
           </Route> */}
 
         <Route path="/app" element={<App />}>
-          {/* 公司审核状态 */}
-          <Route path="/app/company/status" element={<CompanyStatus />} />
           {/* 创建职位 */}
           <Route path="/app/entry/create-job" element={<JobCreate />} />
           {/* 职位列表 */}
