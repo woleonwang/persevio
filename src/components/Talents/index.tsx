@@ -132,6 +132,18 @@ const Talents = (props: IProps) => {
         return record.talent?.name || record.linkedinProfile?.name || "-";
       },
     },
+    {
+      title: t("evaluate_result"),
+      dataIndex: "evaluate_result",
+      render: (_: string, record: TDataSourceItem) => {
+        const regex = /Overall Recommendation\n*\*\*(.*?)\*\*/;
+        const match = (
+          (record.talent?.evaluate_result as unknown as string) ?? ""
+        ).match(regex);
+        return match ? match[1] : "-";
+      },
+      width: 150,
+    },
     ...(!jobId
       ? [
           {

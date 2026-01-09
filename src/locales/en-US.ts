@@ -1033,6 +1033,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     status_extracting: "Extracting",
     status_extracted: "Extracted",
     candidate_name: "Candidate Name",
+    evaluate_result: "Match Level",
     screening_status: "Status",
     schedule_time: "Schedule Time",
     feedback: "Reason for rejection",

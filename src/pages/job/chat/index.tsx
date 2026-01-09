@@ -85,7 +85,6 @@ const JobChat = () => {
           <StaffChat
             key={chatType}
             jobId={job.id}
-            allowEditMessage
             userRole="staff"
             chatType={chatTypeMappings[chatType] as TChatType}
             viewDoc={(docType: string) => {

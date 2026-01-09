@@ -148,10 +148,8 @@ const ApplyJob: React.FC = () => {
         message.error("Update failed");
       }
     } else {
-      const shareTokenMapping = storage.get<Record<string, string>>(
-        StorageKey.SHARE_TOKEN,
-        {}
-      ) || {};
+      const shareTokenMapping =
+        storage.get<Record<string, string>>(StorageKey.SHARE_TOKEN, {}) || {};
       const shareToken = shareTokenMapping[jobId];
       const linkedinProfileId = storage.get<string>(
         StorageKey.LINKEDIN_PROFILE_ID
@@ -269,7 +267,9 @@ const ApplyJob: React.FC = () => {
 
   const copyLink = async () => {
     await copy(
-      `${window.location.href}?candidate_token=${tokenStorage.getToken("candidate") || ""}`
+      `${window.location.href}?candidate_token=${
+        tokenStorage.getToken("candidate") || ""
+      }`
     );
     message.success(
       "The link has been copied. Simply open it in a new device's browser to resume chatting."
@@ -330,12 +330,12 @@ const ApplyJob: React.FC = () => {
           {(pageState === "basic" ||
             pageState === "resume" ||
             pageState === "whatsapp") && (
-              <Step
-                stepCount={3}
-                currentIndex={currentIndex}
-                className={styles.stepContainer}
-              />
-            )}
+            <Step
+              stepCount={3}
+              currentIndex={currentIndex}
+              className={styles.stepContainer}
+            />
+          )}
 
           <Button
             icon={<Icon icon={<Copy />} className={styles.icon} />}

@@ -1,15 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import {
-  Button,
-  message,
-  Tour,
-  TourStepProps,
-  Modal,
-  FloatButton,
-  Upload,
-  Tooltip,
-} from "antd";
+import { Button, message, Modal, FloatButton, Upload, Tooltip } from "antd";
 import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -22,8 +13,7 @@ import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { storage, StorageKey, tokenStorage } from "@/utils/storage";
-import MarkdownEditor from "../MarkdownEditor";
+import { tokenStorage } from "@/utils/storage";
 
 import SelectOptionsForm from "./components/SelectOptionsForm";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
@@ -49,7 +39,6 @@ const StaffChat: React.FC<IProps> = (props) => {
   const {
     chatType,
     jobId,
-    allowEditMessage = false,
     share = false,
     jobInterviewDesignerId,
     jobInterviewFeedbackId,
@@ -71,11 +60,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     useState(false);
   const [jobRequirementFormType, setJobRequirementFormType] =
     useState<TRoleOverviewType>();
-  const [editMessageTourOpen, setEditMessageTourOpen] = useState(false);
-  // 编辑消息
-  const [markdownEditMessageId, setMarkdownEditMessageId] = useState<string>();
-  const [markdownEditMessageContent, setMarkdownEditMessageContent] =
-    useState<string>("");
   const [selectOptionsType, setSelectOptionsType] = useState<
     "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
@@ -90,9 +74,6 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
-  const editMessageTourElementRef = useRef<
-    HTMLButtonElement | HTMLAnchorElement | HTMLElement | null
-  >();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
   const jrdContextDocumentJsonRef = useRef();
@@ -143,15 +124,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       childrenFunctionsRef.current.scrollToBottom?.();
       needScrollToBottom.current = false;
     }
-
-    if (
-      !storage.get<string>(StorageKey.EDIT_MESSAGE_GUIDE) &&
-      allowEditMessage
-    ) {
-      setTimeout(() => {
-        setEditMessageTourOpen(true);
-      }, 500);
-    }
   }, [messages]);
 
   useEffect(() => {
@@ -177,17 +149,6 @@ const StaffChat: React.FC<IProps> = (props) => {
   const t = (key: string) => {
     return originalT(`chat.${key}`);
   };
-
-  const EditMessageTourSteps: TourStepProps[] = [
-    {
-      title: t("edit_message"),
-      description: t("edit_message_desc"),
-      nextButtonProps: {
-        children: t("ok"),
-      },
-      target: () => editMessageTourElementRef.current ?? document.body,
-    },
-  ];
 
   const formatUrl = (url: string) => {
     return url;
@@ -762,15 +723,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   };
 
-  const canMessageEdit = (item: TMessage) => {
-    return (
-      allowEditMessage &&
-      item.messageType === "normal" &&
-      item.role === "ai" &&
-      item.id !== "fake_ai_id"
-    );
-  };
-
   const deleteMessage = async (messageId: number) => {
     const url =
       chatType === "jobInterviewDesign"
@@ -790,10 +742,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       message.error(t("delete_message_failed"));
     }
   };
-
-  const maxIdOfAIMessage = [...messages]
-    .reverse()
-    .find((item) => item.role === "ai" && item.id !== "fake_ai_id")?.id;
 
   const genPredefinedButton = () => {
     return (
@@ -1023,8 +971,6 @@ const StaffChat: React.FC<IProps> = (props) => {
                   );
                 }}
                 renderOperationContent={(item, isLast) => {
-                  const canEditing = canMessageEdit(item);
-
                   const canDelete =
                     !!profile?.is_admin &&
                     item.role === "user" &&
@@ -1034,41 +980,13 @@ const StaffChat: React.FC<IProps> = (props) => {
 
                   const canRetry = isLast && item.messageSubType === "error";
 
-                  return canEditing || canDelete || canRetry ? (
+                  return canDelete || canRetry ? (
                     <div
                       className={classnames(
                         styles.operationArea,
                         styles[item.role]
                       )}
                     >
-                      {canEditing && (
-                        <>
-                          <Tooltip title={originalT("edit")}>
-                            <div
-                              ref={(e) => {
-                                if (maxIdOfAIMessage === item.id)
-                                  editMessageTourElementRef.current = e;
-                              }}
-                              onClick={() => {
-                                setMarkdownEditMessageId(item.id);
-                                setMarkdownEditMessageContent(item.content);
-                              }}
-                            >
-                              <Icon icon={<Pen />} />
-                            </div>
-                          </Tooltip>
-                          <Tooltip title={originalT("copy")}>
-                            <div
-                              onClick={async () => {
-                                await copy(item.content);
-                                message.success(originalT("copied"));
-                              }}
-                            >
-                              <Icon icon={<Copy />} />
-                            </div>
-                          </Tooltip>
-                        </>
-                      )}
                       {canDelete && (
                         <Tooltip title={originalT("delete")}>
                           <div
@@ -1109,8 +1027,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                   disabledVoiceInput={
                     isLoading ||
                     showJobRequirementFormDrawer ||
-                    selectOptionsModalOpen ||
-                    !!markdownEditMessageId
+                    selectOptionsModalOpen
                   }
                   isCollapsed={sideDocumentVisible}
                 />
@@ -1180,69 +1097,6 @@ const StaffChat: React.FC<IProps> = (props) => {
               </div>
             )}
           </Modal>
-
-          <Modal
-            open={!!markdownEditMessageId}
-            onCancel={() => {
-              setMarkdownEditMessageId(undefined);
-            }}
-            width={"80vw"}
-            getContainer={document.body}
-            destroyOnClose
-            centered
-            footer={[
-              <Button
-                key="cancel"
-                onClick={() => setMarkdownEditMessageId(undefined)}
-              >
-                {originalT("cancel")}
-              </Button>,
-              <Button
-                key="no_edit"
-                type="primary"
-                onClick={() => {
-                  setMarkdownEditMessageId(undefined);
-                  sendMessage(t("no_edits"));
-                }}
-              >
-                {t("no_edits")}
-              </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                onClick={() => {
-                  setMarkdownEditMessageId(undefined);
-                  sendMessage(markdownEditMessageContent, {
-                    metadata: {
-                      before_text: `#### ${t("edit_message_hint")}\n\n`,
-                    },
-                  });
-                }}
-              >
-                {originalT("submit")}
-              </Button>,
-            ]}
-          >
-            <>
-              <div style={{ color: "#3682fe", marginBottom: 12, fontSize: 16 }}>
-                {t("tips")}
-              </div>
-              <MarkdownEditor
-                value={markdownEditMessageContent}
-                onChange={(md) => setMarkdownEditMessageContent(md)}
-              />
-            </>
-          </Modal>
-
-          <Tour
-            open={editMessageTourOpen}
-            onClose={() => {
-              storage.set(StorageKey.EDIT_MESSAGE_GUIDE, Date.now().toString());
-              setEditMessageTourOpen(false);
-            }}
-            steps={EditMessageTourSteps}
-            closable={false}
-          />
         </div>
       </div>
 

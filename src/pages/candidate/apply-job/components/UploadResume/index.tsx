@@ -114,7 +114,7 @@ const UploadResume = (props: IProps) => {
             }}
             loading={isSubmitting}
           >
-            Next
+            {isSubmitting ? "Analyzing resume..." : "Next"}
           </Button>
         </div>
       </div>

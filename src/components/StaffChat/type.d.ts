@@ -14,7 +14,6 @@ export interface IProps {
   chatType: TChatType;
   jobId: number;
   sessionId?: string;
-  allowEditMessage?: boolean;
   userRole?: TUserRole;
   share?: boolean;
   onChangeTab?: onChangeTabFunction;

@@ -177,7 +177,7 @@ const TalentChat = () => {
                 <StaffChat
                   key={`${chatType}-${round}`}
                   jobId={job.id}
-                  allowEditMessage
+                  newVersion
                   userRole="staff"
                   chatType={
                     chatType === "interview_designer"

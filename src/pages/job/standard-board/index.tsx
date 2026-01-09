@@ -120,7 +120,6 @@ const JobBoard = () => {
             chatType="jobRequirementDoc"
             jobId={job.id}
             onNextTask={() => setJobState("jd")}
-            allowEditMessage={true}
             key={`jrd-${job.id}`}
             newVersion
           />
@@ -130,7 +129,6 @@ const JobBoard = () => {
             chatType="jobDescription"
             jobId={job.id}
             onNextTask={() => setJobState("preview")}
-            allowEditMessage={true}
             key={`jd-${job.id}`}
             newVersion
           />

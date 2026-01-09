@@ -1,7 +1,6 @@
 export interface IProps {
   jobId: number;
   sessionId?: string;
-  allowEditMessage?: boolean;
   userRole?: TUserRole;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;

@@ -988,6 +988,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     status_extracting: "提取中",
     status_extracted: "已提取",
     candidate_name: "候选人姓名",
+    evaluate_result: "匹配度",
     screening_status: "筛选状态",
     schedule_time: "面试时间",
     feedback: "拒绝原因",

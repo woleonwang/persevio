@@ -9,9 +9,6 @@ import globalStore from "@/store/global";
 import VionaVideo from "@/assets/banner-video.mp4";
 
 import styles from "./style.module.less";
-import { copy } from "@/utils";
-import { tokenStorage } from "@/utils/storage";
-import Share from "@/assets/icons/share";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
 
@@ -70,22 +67,6 @@ const JobCreate = () => {
             className={styles.readyMessage}
             dangerouslySetInnerHTML={{ __html: t("ready_message") }}
           />
-
-          <div className={styles.shareMessage}>{t("share_message")}</div>
-
-          <div
-            className={styles.shareLink}
-            onClick={async () => {
-              const url = `${
-                window.origin
-              }/app/entry/create-job?token=${tokenStorage.getToken("staff") || ""}&share=1`;
-              await copy(url);
-              message.success(t("copy_success"));
-            }}
-          >
-            {t("share_link")}
-            <Icon icon={<Share />} className={styles.shareLinkIcon} />
-          </div>
         </div>
       </div>
 
