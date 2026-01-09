@@ -50,6 +50,13 @@ const JobList = () => {
       dataIndex: "name",
     },
     {
+      title: t("columns.creator"),
+      dataIndex: "creator",
+      render: (_: string, record: IJobListItem) => {
+        return staffs.find((staff) => staff.id === record.staff_id)?.name;
+      },
+    },
+    {
       title: t("columns.post_status"),
       dataIndex: "posted_at",
       render: (postedAt: string) => {
@@ -62,13 +69,6 @@ const JobList = () => {
             {t("post_status.unpublished")}
           </div>
         );
-      },
-    },
-    {
-      title: t("columns.creator"),
-      dataIndex: "creator",
-      render: (_: string, record: IJobListItem) => {
-        return staffs.find((staff) => staff.id === record.staff_id)?.name;
       },
     },
     {
