@@ -12,6 +12,7 @@ import { getJobChatbotUrl } from "@/utils";
 import { useTranslation } from "react-i18next";
 import Flash from "@/assets/icons/flash";
 import Icon from "@/components/Icon";
+import useStaffs from "@/hooks/useStaffs";
 
 interface IJobListItem extends IJob {
   total_candidates: number;
@@ -20,6 +21,8 @@ interface IJobListItem extends IJob {
 
 const JobList = () => {
   const [jobs, setJobs] = useState<IJobListItem[]>([]);
+  const { staffs } = useStaffs();
+
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
@@ -59,6 +62,13 @@ const JobList = () => {
             {t("post_status.unpublished")}
           </div>
         );
+      },
+    },
+    {
+      title: t("columns.creator"),
+      dataIndex: "creator",
+      render: (_: string, record: IJobListItem) => {
+        return staffs.find((staff) => staff.id === record.staff_id)?.name;
       },
     },
     {

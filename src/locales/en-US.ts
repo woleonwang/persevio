@@ -1651,6 +1651,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       id: "ID",
       job_title: "Job Title",
       post_status: "Post status",
+      creator: "Creator",
       post_time: "Post Time",
       total_candidates: "Total Candidates",
       candidates_passed_screening: "Candidates Passed Screening",

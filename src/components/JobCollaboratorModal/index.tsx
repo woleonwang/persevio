@@ -3,6 +3,7 @@ import { Modal, Select, Button, message } from "antd";
 import { Get, Post } from "@/utils/request";
 import { copy } from "@/utils";
 import { useTranslation } from "react-i18next";
+import useStaffs from "@/hooks/useStaffs";
 
 interface IProps {
   open: boolean;
@@ -11,9 +12,9 @@ interface IProps {
 }
 
 const JobCollaboratorModal = ({ open, onCancel, jobId }: IProps) => {
-  const [allStaffs, setAllStaffs] = useState<IStaffWithAccount[]>([]);
   const [selectedStaffIds, setSelectedStaffIds] = useState<number[]>([]);
   const [updating, setUpdating] = useState(false);
+  const { staffs } = useStaffs();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) =>
@@ -21,19 +22,9 @@ const JobCollaboratorModal = ({ open, onCancel, jobId }: IProps) => {
 
   useEffect(() => {
     if (open && jobId) {
-      fetchStaffs();
       fetchCollaborators();
     }
   }, [open, jobId]);
-
-  const fetchStaffs = async () => {
-    const { code, data } = await Get<{ staffs: IStaffWithAccount[] }>(
-      "/api/staffs"
-    );
-    if (code === 0) {
-      setAllStaffs(data.staffs);
-    }
-  };
 
   const fetchCollaborators = async () => {
     const { code, data } = await Get<{ job_collaborators: TJobCollaborator[] }>(
@@ -67,7 +58,7 @@ const JobCollaboratorModal = ({ open, onCancel, jobId }: IProps) => {
     message.success(originalT("copied"));
   };
 
-  const staffOptions = allStaffs.map((staff) => ({
+  const staffOptions = staffs.map((staff) => ({
     value: staff.id,
     label: staff.name,
   }));
