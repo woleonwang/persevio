@@ -259,6 +259,8 @@ export default {
   add: "添加",
   create_succeed: "创建成功",
   create: "创建",
+  update: "更新",
+  update_failed: "更新失败",
   update_succeed: "编辑成功",
   back: "返回",
   chat_with_viona: "和 Viona 聊聊",
@@ -1631,6 +1633,13 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     assignHunters: "分配猎头",
     save: "保存",
     saveSuccess: "保存成功",
+    job_collaborator_modal: {
+      title: "职位协作者",
+      select_collaborators: "选择协作者",
+      select_placeholder: "请选择协作者",
+      update: "更新",
+      copy_link: "复制职位链接",
+    },
   },
 
   talent_details: {

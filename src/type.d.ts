@@ -751,3 +751,9 @@ type TLinkedinProfile = {
     };
   };
 };
+
+type TJobCollaborator = {
+  id: number;
+  job_id: number;
+  staff_id: number;
+};

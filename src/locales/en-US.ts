@@ -268,7 +268,9 @@ export default {
   add: "Add",
   create_succeed: "Create succeed!",
   create: "Create",
-  update_succeed: "Update Succeed!",
+  update: "Update",
+  update_failed: "Update failed",
+  update_succeed: "Update Succeed",
   back: "Back",
   chat_with_viona: "Chat with Viona",
   created_at: "Created At",
@@ -1689,6 +1691,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     assignHunters: "Assign Hunters",
     save: "Save",
     saveSuccess: "Save successful",
+    job_collaborator_modal: {
+      title: "Job Collaborators",
+      select_collaborators: "Select Collaborators",
+      select_placeholder: "Please select collaborators",
+      update: "Update",
+      copy_link: "Copy Job Link",
+    },
   },
 
   talent_details: {

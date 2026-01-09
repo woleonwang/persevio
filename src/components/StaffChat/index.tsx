@@ -32,6 +32,7 @@ import Close from "@/assets/icons/close";
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
+import JobCollaboratorModal from "../JobCollaboratorModal";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -71,6 +72,8 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
   const [isEditingSideDocument, setIsEditingSideDocument] = useState(false);
+
+  const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -373,12 +376,16 @@ const StaffChat: React.FC<IProps> = (props) => {
       title: t("copy_link"),
       handler: async (tag) => {
         if (tag) {
-          await copy(
-            `${window.origin}/app/jobs/${jobId}/${
-              newVersion ? "standard-board" : "board"
-            }?token=${tokenStorage.getToken("staff") || ""}&share=1`
-          );
-          message.success(t("copied"));
+          if (newVersion) {
+            setIsCollaboratorModalOpen(true);
+          } else {
+            await copy(
+              `${window.origin}/app/jobs/${jobId}/board?token=${
+                tokenStorage.getToken("staff") || ""
+              }&share=1`
+            );
+            message.success(t("copied"));
+          }
         }
       },
     },
@@ -1149,6 +1156,12 @@ const StaffChat: React.FC<IProps> = (props) => {
           />
         </div>
       )}
+
+      <JobCollaboratorModal
+        open={isCollaboratorModalOpen}
+        onCancel={() => setIsCollaboratorModalOpen(false)}
+        jobId={jobId}
+      />
     </div>
   );
 };

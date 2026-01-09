@@ -7,14 +7,14 @@ import { useNavigate } from "react-router";
 
 import useJob from "@/hooks/useJob";
 import Talents from "@/components/Talents";
-import { copy, getQuery, updateQuery } from "@/utils";
+import { getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
-import { tokenStorage } from "@/utils/storage";
 
 import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
 import styles from "./style.module.less";
+import JobCollaboratorModal from "../JobCollaboratorModal";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
@@ -27,6 +27,8 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const [chatType, setChatType] = useState<TMenu>(
     (tab as TMenu) || "jobDescription"
   );
+  const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
@@ -75,13 +77,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
               gap: 10,
               cursor: "pointer",
             }}
-            onClick={async () => {
-              await copy(
-                `${window.origin}/app/jobs/${job.id
-                }/standard-board?token=${tokenStorage.getToken("staff") || ""}`
-              );
-              message.success(originalT("copied"));
-            }}
+            onClick={async () => setIsCollaboratorModalOpen(true)}
           >
             <ShareAltOutlined style={{ color: "#3682fe" }} />
             <div style={{ fontSize: 14 }}>{t("share_position")}</div>
@@ -127,6 +123,12 @@ const JobDetails = ({ role = "staff" }: IProps) => {
           )}
         </div>
       </div>
+
+      <JobCollaboratorModal
+        open={isCollaboratorModalOpen}
+        onCancel={() => setIsCollaboratorModalOpen(false)}
+        jobId={job.id}
+      />
     </div>
   );
 };
