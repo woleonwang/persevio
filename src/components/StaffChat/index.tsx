@@ -547,6 +547,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             return !!extraTag;
           });
           autoTriggerTag?.handler?.(extraTag);
+          sideDocumentTriggerMessageIdRef.current = lastMessage.id;
         }
         lastMessageIdRef.current = lastMessage.id;
       }
