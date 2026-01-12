@@ -3,13 +3,15 @@ import { Button, Table, Tag, Tooltip } from "antd";
 import { useNavigate } from "react-router";
 import { ColumnsType } from "antd/es/table";
 import classnames from "classnames";
+import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
+
 import { Get } from "@/utils/request";
+import { parseJSON } from "@/utils";
+import Empty from "@/components/Empty";
+import useStaffs from "@/hooks/useStaffs";
 
 import styles from "./style.module.less";
-import { useTranslation } from "react-i18next";
-import { parseJSON } from "@/utils";
-import dayjs from "dayjs";
-import Empty from "@/components/Empty";
 
 export type TApproveStatus =
   | "message_read"
@@ -54,6 +56,7 @@ const Talents = (props: IProps) => {
   const [linkedinProfiles, setLinkedinProfiles] = useState<
     TLinkedinProfileItem[]
   >([]);
+  const { staffs } = useStaffs();
 
   const navigate = useNavigate();
 
@@ -155,6 +158,19 @@ const Talents = (props: IProps) => {
                   ? record.talent?.job?.name
                   : record.linkedinProfile?.job?.name) || "-"
               );
+            },
+            width: 150,
+          },
+          {
+            title: t("creator"),
+            dataIndex: "creator",
+            render: (_: string, record: TDataSourceItem) => {
+              const staffId =
+                record.talent?.job?.staff_id ||
+                record.linkedinProfile?.job?.staff_id;
+              return staffId
+                ? staffs.find((staff) => staff.id === staffId)?.name
+                : "-";
             },
             width: 150,
           },

@@ -428,6 +428,7 @@ type TTalent = {
   job?: {
     id: number;
     name: string;
+    staff_id: number;
     bonus_pool: number;
     company?: {
       id: number;
@@ -745,6 +746,7 @@ type TLinkedinProfile = {
   job: {
     id: number;
     name: string;
+    staff_id: number;
     company: {
       id: number;
       name: string;
