@@ -11,6 +11,7 @@ export enum StorageKey {
   // 会话相关
   SESSION_ID = "sessionId",
   SHARE_TOKEN = "share_token",
+  SOURCE_CHANNEL = "source_channel",
   LINKEDIN_PROFILE_ID = "linkedin_profile_id",
 
   // 业务数据

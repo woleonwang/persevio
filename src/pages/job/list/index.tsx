@@ -132,7 +132,11 @@ const JobList = () => {
                 type="link"
                 onClick={() => {
                   window.open(
-                    getJobChatbotUrl(record.id, record.jd_version?.toString())
+                    getJobChatbotUrl(
+                      record.id,
+                      record.jd_version?.toString(),
+                      "customer"
+                    )
                   );
                 }}
               >

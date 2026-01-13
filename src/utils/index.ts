@@ -220,10 +220,14 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
   return "chat";
 };
 
-export const getJobChatbotUrl = (jobId: number, version: string) => {
+export const getJobChatbotUrl = (
+  jobId: number,
+  version: string,
+  sourceChannel?: string
+) => {
   return `${window.origin}/jobs/${jobId}/chat${
     version === "0" ? "" : `/${version}`
-  }`;
+  }${sourceChannel ? `?source_channel=${sourceChannel}` : ""}`;
 };
 
 export const isTempAccount = (candidate: ICandidateSettings) => {

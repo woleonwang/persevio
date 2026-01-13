@@ -86,6 +86,7 @@ const JobsShow = () => {
     fetchJob();
     checkShareToken();
     checkLinkedinProfile();
+    checkSourceChannel();
     setTimeout(() => {
       setTooltipVisible(false);
     }, 5000);
@@ -161,6 +162,23 @@ const JobsShow = () => {
     if (profileId) {
       Post(`/api/public/linkedin_profiles/${profileId}/message_read`);
       storage.set(StorageKey.LINKEDIN_PROFILE_ID, profileId);
+    }
+  };
+
+  const checkSourceChannel = () => {
+    if (!id) return;
+
+    const sourceChannel = getQuery("source_channel");
+    if (sourceChannel) {
+      const sourceChannelMapping = storage.get<Record<string, string>>(
+        StorageKey.SOURCE_CHANNEL,
+        {}
+      ) as Record<string, string>;
+
+      if (sourceChannel) {
+        sourceChannelMapping[id] = sourceChannel;
+        storage.set(StorageKey.SOURCE_CHANNEL, sourceChannelMapping);
+      }
     }
   };
 

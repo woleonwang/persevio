@@ -190,7 +190,11 @@ const JobBoard = () => {
               <ExportOutlined
                 onClick={async () => {
                   window.open(
-                    getJobChatbotUrl(job.id, job.jd_version?.toString())
+                    getJobChatbotUrl(
+                      job.id,
+                      job.jd_version?.toString(),
+                      "customer"
+                    )
                   );
                 }}
               />
@@ -201,9 +205,9 @@ const JobBoard = () => {
             <ShareAltOutlined
               onClick={async () => {
                 await copy(
-                  `${window.origin}/app/jobs/${
-                    job.id
-                  }/board?token=${tokenStorage.getToken("staff") || ""}&share=1`
+                  `${window.origin}/app/jobs/${job.id}/board?token=${
+                    tokenStorage.getToken("staff") || ""
+                  }&share=1`
                 );
                 message.success(t("link_copied"));
               }}

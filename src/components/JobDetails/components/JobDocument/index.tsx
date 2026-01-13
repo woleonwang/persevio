@@ -210,7 +210,11 @@ const JobDocument = (props: IProps) => {
                     style={{ marginLeft: 6 }}
                     onClick={() => {
                       window.open(
-                        getJobChatbotUrl(job.id, job.jd_version?.toString())
+                        getJobChatbotUrl(
+                          job.id,
+                          job.jd_version?.toString(),
+                          "customer"
+                        )
                       );
                     }}
                   >

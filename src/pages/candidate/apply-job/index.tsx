@@ -154,6 +154,11 @@ const ApplyJob: React.FC = () => {
       const linkedinProfileId = storage.get<string>(
         StorageKey.LINKEDIN_PROFILE_ID
       );
+      const sourceChannelMapping =
+        storage.get<Record<string, string>>(StorageKey.SOURCE_CHANNEL, {}) ||
+        {};
+      const sourceChannel = sourceChannelMapping[jobId];
+
       const params = {
         ...basicInfo,
         job_id: jobId,
@@ -161,6 +166,7 @@ const ApplyJob: React.FC = () => {
         linkedin_profile_id: linkedinProfileId
           ? parseInt(linkedinProfileId)
           : undefined,
+        source_channel: sourceChannel,
       };
 
       const { code, data } = await Post(`/api/candidate/register`, params);
