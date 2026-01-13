@@ -15,6 +15,10 @@ class GlobalStore {
 
   antdLocale: "zh-CN" | "en-US" = "en-US";
 
+  staffRole: "normal" | "admin" = "normal";
+
+  isAdmin = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -52,6 +56,14 @@ class GlobalStore {
 
   setMode = (mode: "standard" | "utils") => {
     this.mode = mode;
+  };
+
+  setStaffRole = (role: "normal" | "admin") => {
+    this.staffRole = role;
+  };
+
+  setIsAdmin = (isAdmin: boolean) => {
+    this.isAdmin = isAdmin;
   };
 }
 

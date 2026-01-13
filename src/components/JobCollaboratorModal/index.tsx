@@ -73,6 +73,7 @@ const JobCollaboratorModal = ({ open, onCancel, jobId }: IProps) => {
       centered
     >
       <div style={{ marginTop: 24 }}>
+        <div style={{ marginBottom: 8, color: "#666" }}>{t("description")}</div>
         <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
           <Select
             mode="multiple"

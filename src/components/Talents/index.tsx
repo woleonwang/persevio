@@ -28,6 +28,7 @@ interface IProps {
     talentName?: string;
     jobId?: number;
     approveStatus?: TApproveStatus;
+    creatorId?: number;
   };
 }
 
@@ -383,6 +384,15 @@ const Talents = (props: IProps) => {
         return item.talent
           ? item.talent?.job_id === filterParams.jobId
           : item.linkedinProfile?.job_id === filterParams.jobId;
+      });
+    }
+
+    if (filterParams?.creatorId) {
+      result = result.filter((item) => {
+        return (
+          item.talent?.job?.staff_id === filterParams.creatorId ||
+          item.linkedinProfile?.job?.staff_id === filterParams.creatorId
+        );
       });
     }
 

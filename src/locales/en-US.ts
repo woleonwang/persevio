@@ -464,7 +464,7 @@ export default {
     release_to_stop_speaking: "Release to stop speaking",
     press_and_hold_to_speak: "Press and hold to speak",
     jrd_step_understand_role: "Understand the Role",
-    jrd_step_align_icp: "Align Ideal Candidate Profile",
+    jrd_step_align_icp: "Align Ideal Candidate <br/> Profile",
     jrd_step_pitch_logistics: "Pitch & Logistics",
     jrd_step_left: "Left",
 
@@ -1624,6 +1624,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     search_placeholder: "Candidate name",
     status_placeholder: "Status",
     job_placeholder: "Job",
+    creator_placeholder: "Creator",
     active_delivery: "Candidate application",
     system_upload: "System upload",
     delete_confirm_title: "Confirm",
@@ -1645,6 +1646,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   job_list: {
     title: "Job listings",
+    search_placeholder: "Search job name",
+    creator_placeholder: "Creator",
     create_job: "Post a job",
     details: "Details",
     go_to_listing: "Go to your listing",
@@ -1695,6 +1698,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     saveSuccess: "Save successful",
     job_collaborator_modal: {
       title: "Job Collaborators",
+      description:
+        "Please select the collaborators of the current job, click the [Update] button to confirm, then click the [Copy Job Link] button to send the link to the collaborators.",
       select_collaborators: "Select Collaborators",
       select_placeholder: "Please select collaborators",
       update: "Update",

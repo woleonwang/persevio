@@ -45,7 +45,10 @@ const JrdSteps = (props: { current: number; collapse: boolean }) => {
             </Popover>
             {!collapse && (
               <div className={styles.stepContentContainer}>
-                <div className={styles.stepContent}>{step.title}</div>
+                <div
+                  className={styles.stepContent}
+                  dangerouslySetInnerHTML={{ __html: step.title }}
+                />
                 {status === "active" && (
                   <div className={styles.stepTime}>
                     <span

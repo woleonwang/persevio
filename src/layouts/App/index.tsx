@@ -20,8 +20,6 @@ import Sidebar from "@/components/Sidebar";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isStaffAdmin, setIsStaffAdmin] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
 
   const getCurrentUrl = () =>
@@ -57,7 +55,16 @@ const AppLayout = () => {
     setMode,
   } = globalStore;
 
-  const { menuCollapse, collapseForDrawer, setMenuCollapse } = globalStore;
+  const {
+    menuCollapse,
+    collapseForDrawer,
+    staffRole,
+    isAdmin,
+    setMenuCollapse,
+    setStaffRole,
+    setIsAdmin,
+    setAntdLocale,
+  } = globalStore;
 
   useEffect(() => {
     init();
@@ -133,7 +140,7 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
       requireStaffAdmin: true,
     },
-  ].filter((item) => !item.requireStaffAdmin || isStaffAdmin);
+  ].filter((item) => !item.requireStaffAdmin || staffRole === "admin");
 
   const FOOTER = [
     {
@@ -164,7 +171,7 @@ const AppLayout = () => {
       i18n.changeLanguage(lang);
 
       // 根据语言设置 antd locale
-      globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
+      setAntdLocale(lang as "zh-CN" | "en-US");
 
       setInited(true);
 
@@ -173,8 +180,8 @@ const AppLayout = () => {
       } else {
         // 获取职位
         fetchJobs();
-        setIsAdmin(data.is_admin);
-        setIsStaffAdmin(data.role === "admin");
+        setStaffRole(data.role);
+        setIsAdmin(data.is_admin === 1);
         setMode(data.company_mode);
       }
     } else {

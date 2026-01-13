@@ -64,9 +64,11 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {role === "admin" && (
-            <ArrowLeftOutlined onClick={() => navigate("/admin/jobs")} />
-          )}
+          <ArrowLeftOutlined
+            onClick={() =>
+              role === "admin" ? navigate("/admin/jobs") : navigate("/app/jobs")
+            }
+          />
           <div className={styles.title}>{job.name}</div>
         </div>
         {role === "staff" && (

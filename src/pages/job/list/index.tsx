@@ -1,9 +1,9 @@
-import { Get, Post } from "@/utils/request";
-import { Button, Empty, message, Modal, Table } from "antd";
+import { Button, Empty, Input, message, Modal, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
+import { SearchOutlined } from "@ant-design/icons";
 
 import EmptyImg from "@/assets/job-applies-empty.png";
 import styles from "./style.module.less";
@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import Flash from "@/assets/icons/flash";
 import Icon from "@/components/Icon";
 import useStaffs from "@/hooks/useStaffs";
-
+import { Get, Post } from "@/utils/request";
 interface IJobListItem extends IJob {
   total_candidates: number;
   candidates_passed_screening: number;
@@ -21,6 +21,9 @@ interface IJobListItem extends IJob {
 
 const JobList = () => {
   const [jobs, setJobs] = useState<IJobListItem[]>([]);
+  const [searchName, setSearchName] = useState<string>();
+  const [selectedCreatorId, setSelectedCreatorId] = useState<number>();
+
   const { staffs } = useStaffs();
 
   const navigate = useNavigate();
@@ -160,8 +163,51 @@ const JobList = () => {
               {t("create_job")}
             </Button>
           </div>
+          <div className={styles.filterSection}>
+            <div className={styles.filterItem}>
+              <Input
+                placeholder={t("search_placeholder")}
+                prefix={<SearchOutlined />}
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                style={{ width: 200 }}
+                allowClear
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <Select
+                placeholder={t("creator_placeholder")}
+                value={selectedCreatorId}
+                onChange={setSelectedCreatorId}
+                style={{ width: 200 }}
+                allowClear
+                options={staffs.map((staff) => ({
+                  label: staff.name,
+                  value: staff.id,
+                }))}
+                autoClearSearchValue
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </div>
+          </div>
           <div className={styles.table}>
-            <Table dataSource={jobs} columns={columns} rowKey="id" />
+            <Table
+              dataSource={jobs.filter((job) => {
+                return (
+                  job.name.includes(searchName ?? "") &&
+                  (selectedCreatorId
+                    ? job.staff_id === selectedCreatorId
+                    : true)
+                );
+              })}
+              columns={columns}
+              rowKey="id"
+            />
           </div>
         </>
       ) : (

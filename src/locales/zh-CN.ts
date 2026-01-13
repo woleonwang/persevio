@@ -1567,6 +1567,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     delete_button: "删除",
     search_placeholder: "请输入候选人姓名进行搜索",
     status_placeholder: "状态",
+    creator_placeholder: "创建者",
     job_placeholder: "职位",
     active_delivery: "主动投递",
     system_upload: "系统上传",
@@ -1588,6 +1589,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   job_list: {
     title: "职位列表",
+    search_placeholder: "请输入职位名称进行搜索",
+    creator_placeholder: "创建者",
     create_job: "创建职位",
     details: "详情",
     go_to_listing: "查看职位页面",
@@ -1636,6 +1639,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     save: "保存",
     saveSuccess: "保存成功",
     job_collaborator_modal: {
+      description:
+        "请先选择当前职位的协作者，点击【更新】按钮确认，再点击【复制职位链接】，将链接发给对应的协作者。",
       title: "职位协作者",
       select_collaborators: "选择协作者",
       select_placeholder: "请选择协作者",
