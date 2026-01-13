@@ -191,67 +191,71 @@ const InterviewArrangement: React.FC<IProps> = ({
         />
       </div>
       <div className={styles.slotsContainer} ref={slotsContainerRef}>
-        {Object.entries(slots).map(([date, slots]) => {
-          const totalSlots = slots.morning.length + slots.afternoon.length;
-          return (
-            <div
-              key={date}
-              className={styles.slotsItem}
-              id={`slot-item-${date}`}
-            >
-              <div className={styles.slotsItemHeader}>
-                <div>
-                  {t("interview_starting_on", {
-                    count: totalSlots.toString(),
+        {Object.entries(slots)
+          .sort((a, b) => {
+            return dayjs(a[0]).diff(dayjs(b[0]));
+          })
+          .map(([date, slots]) => {
+            const totalSlots = slots.morning.length + slots.afternoon.length;
+            return (
+              <div
+                key={date}
+                className={styles.slotsItem}
+                id={`slot-item-${date}`}
+              >
+                <div className={styles.slotsItemHeader}>
+                  <div>
+                    {t("interview_starting_on", {
+                      count: totalSlots.toString(),
+                    })}
+                  </div>
+                  <div className={styles.slotsItemHeaderDate}>
+                    {dayjs(date).format(originalT("date_format.with_day"))}
+                  </div>
+                </div>
+                <div className={styles.slotsItemContent}>
+                  {[slots.morning, slots.afternoon].map((slots, index) => {
+                    if (slots.length === 0) {
+                      return null;
+                    }
+                    return (
+                      <div key={index}>
+                        <div className={styles.slotsItemContentGroup}>
+                          <Icon
+                            icon={index === 0 ? <Sunrise /> : <Sunset />}
+                            className={styles.slotsItemContentIcon}
+                          />
+                          {index === 0 ? t("morning") : t("afternoon")}
+                        </div>
+                        {slots.map((slot) => {
+                          return (
+                            <div
+                              key={slot.from.format("HH:mm")}
+                              onClick={() => setSelectedDate(slot.from)}
+                              className={classnames(styles.slotItem, {
+                                [styles.selected]: selectedDate?.isSame(
+                                  slot.from,
+                                  "minute"
+                                ),
+                              })}
+                            >
+                              <div className={styles.slotItemTime}>
+                                {dayjs(slot.from).format("HH:mm")} ~{" "}
+                                {dayjs(slot.to).format("HH:mm")}
+                              </div>
+                              <div className={styles.slotItemDuration}>
+                                {interview.duration} m
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
                   })}
                 </div>
-                <div className={styles.slotsItemHeaderDate}>
-                  {dayjs(date).format(originalT("date_format.with_day"))}
-                </div>
               </div>
-              <div className={styles.slotsItemContent}>
-                {[slots.morning, slots.afternoon].map((slots, index) => {
-                  if (slots.length === 0) {
-                    return null;
-                  }
-                  return (
-                    <div key={index}>
-                      <div className={styles.slotsItemContentGroup}>
-                        <Icon
-                          icon={index === 0 ? <Sunrise /> : <Sunset />}
-                          className={styles.slotsItemContentIcon}
-                        />
-                        {index === 0 ? t("morning") : t("afternoon")}
-                      </div>
-                      {slots.map((slot) => {
-                        return (
-                          <div
-                            key={slot.from.format("HH:mm")}
-                            onClick={() => setSelectedDate(slot.from)}
-                            className={classnames(styles.slotItem, {
-                              [styles.selected]: selectedDate?.isSame(
-                                slot.from,
-                                "minute"
-                              ),
-                            })}
-                          >
-                            <div className={styles.slotItemTime}>
-                              {dayjs(slot.from).format("HH:mm")} ~{" "}
-                              {dayjs(slot.to).format("HH:mm")}
-                            </div>
-                            <div className={styles.slotItemDuration}>
-                              {interview.duration} m
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
