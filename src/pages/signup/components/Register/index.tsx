@@ -78,7 +78,7 @@ const Register: React.FC<IProps> = (props) => {
       clearInterval(countdownRef.current);
       countdownRef.current = null;
     }
-    
+
     return () => {
       if (countdownRef.current) {
         clearInterval(countdownRef.current);
@@ -190,6 +190,9 @@ const Register: React.FC<IProps> = (props) => {
           name="password"
           rules={[
             {
+              required: true,
+            },
+            {
               validator(_, value, callback) {
                 if (process.env.NODE_ENV === "development") {
                   return callback();
@@ -296,7 +299,7 @@ const Register: React.FC<IProps> = (props) => {
           block
           size="large"
           onClick={checkEmail}
-          style={{ marginTop: 80 }}
+          style={{ marginTop: 40 }}
         >
           {t("next_step")}
         </Button>

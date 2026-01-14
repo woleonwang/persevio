@@ -1,7 +1,7 @@
 import React from "react";
 import banner from "@/assets/login/banner.png";
 import styles from "./style.module.less";
-import NewLogo from "@/assets/new-logo.png";
+import NewLogo from "@/assets/logo.png";
 
 const SignContainer = (props: { title: string; children: React.ReactNode }) => {
   const { title, children } = props;

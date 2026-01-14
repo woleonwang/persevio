@@ -1,5 +1,6 @@
 .loginContainer {
   display: flex;
+  gap: 20px;
   height: 100vh;
   padding: 20px;
   background-color: white;
@@ -9,6 +10,7 @@
 .imgContainer {
   overflow: hidden;
   height: 100%;
+  flex: none;
   img {
     height: 100%;
     width: auto;
@@ -28,7 +30,8 @@
   display: flex;
   flex: auto;
   flex-direction: column;
-  width: 570px;
+  max-width: 570px;
+  width: 100%;
 }
 
 .title {
@@ -43,4 +46,10 @@
   flex: auto;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .imgContainer {
+    display: none;
+  }
 }
