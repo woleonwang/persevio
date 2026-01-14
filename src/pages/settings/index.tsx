@@ -284,9 +284,9 @@ const Settings = () => {
           <div className={styles.title}>Customize Prompts</div>
 
           <Form form={form} layout="vertical">
-            {profile.prompts.map((item) => {
+            {profile.prompts.map((item, index) => {
               return (
-                <div className={styles.panel}>
+                <div className={styles.panel} key={index}>
                   <div
                     className={classnames(styles.left, styles.formContainer)}
                   >

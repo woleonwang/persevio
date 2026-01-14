@@ -1,5 +1,5 @@
 import { Download, Get, Post } from "@/utils/request";
-import { Button, Drawer, message, Select, Table } from "antd";
+import { Button, Drawer, message, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
@@ -27,7 +27,6 @@ interface IJobApplyListItemForAdmin extends IJobApply {
 const JobApplies = () => {
   const [jobApplies, setJobApplies] = useState<IJobApplyListItemForAdmin[]>([]);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<TJobListStatus>("INITIAL");
   const [total, setTotal] = useState();
 
   const [selectedJobApplyId, setSelectedJobApplyId] = useState<number>();
@@ -46,7 +45,7 @@ const JobApplies = () => {
 
   useEffect(() => {
     fetchJobApplies();
-  }, [status, page]);
+  }, [page]);
 
   useEffect(() => {
     if (selectedJobApplyId) {
@@ -58,7 +57,7 @@ const JobApplies = () => {
 
   const fetchJobApplies = async () => {
     const { code, data } = await Get(
-      `/api/admin/job_applies?status=${status}&page=${page}&size=${PAGE_SIZE}`
+      `/api/admin/job_applies?page=${page}&size=${PAGE_SIZE}`
     );
 
     if (code === 0) {
@@ -160,10 +159,19 @@ const JobApplies = () => {
       },
     },
     {
-      title: "申请时间",
-      dataIndex: "deliveried_at",
-      render: (deliveriedAt: string) => {
-        return dayjs(deliveriedAt).format("YYYY-MM-DD HH:mm:ss");
+      title: "创建时间",
+      dataIndex: "created_at",
+      render: (createdAt: string) => {
+        return dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss");
+      },
+    },
+    {
+      title: "面试完成时间",
+      dataIndex: "interview_finished_at",
+      render: (interviewFinishedAt: string) => {
+        return interviewFinishedAt
+          ? dayjs(interviewFinishedAt).format("YYYY-MM-DD HH:mm:ss")
+          : "-";
       },
     },
   ];
@@ -171,7 +179,7 @@ const JobApplies = () => {
   return (
     <div className={styles.adminContainer}>
       <div className={styles.adminPageHeader}>候选人申请列表</div>
-      <div className={styles.adminFilter}>
+      {/* <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
           <div>状态: </div>
           <Select
@@ -185,7 +193,7 @@ const JobApplies = () => {
             placeholder="按状态筛选"
           />
         </div>
-      </div>
+      </div> */}
       <div className={styles.adminMain}>
         <Table<IJobApplyListItemForAdmin>
           style={{ height: "100%", overflow: "auto" }}

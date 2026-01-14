@@ -37,9 +37,6 @@ import JobApplyShow from "./pages/candidate/job-apply-show";
 import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
-import AdminJobApplies from "./pages/admin/job-applies";
-import AdminCandidates from "./pages/admin/candidates";
-import AdminCandidateConnections from "./pages/admin/candidate-connections";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -68,7 +65,6 @@ import Jobs from "./pages/candidate/jobs/index.tsx";
 import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
 import ShortLink from "./pages/short-link/index.tsx";
 import JobList from "./pages/job/list/index.tsx";
-import AdminTalents from "./pages/admin/talents/index.tsx";
 import Referrals from "./pages/candidate/referrals/index.tsx";
 import Admin from "./layouts/Admin/index.tsx";
 import JobDetailsPage from "./pages/admin/job-details/index.tsx";
@@ -183,21 +179,6 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/app/staffs" element={<Staffs />} />
           {/* HR端设置 */}
           <Route path="/app/settings" element={<Settings />} />
-
-          {/* 管理员职位列表：用于推荐给候选人 */}
-          <Route path="/app/admin/jobs" element={<AdminJobs />} />
-          {/* 管理员职位列表：用于推荐给候选人 */}
-          <Route path="/app/admin/talents" element={<AdminTalents />} />
-          {/* 管理员申请列表：用于审核候选人申请 */}
-          <Route path="/app/admin/job-applies" element={<AdminJobApplies />} />
-          {/* 管理员候选人列表：用于审核候选人 */}
-          <Route path="/app/admin/candidates" element={<AdminCandidates />} />
-          {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
-          <Route
-            path="/app/admin/candidate-connections"
-            element={<AdminCandidateConnections />}
-          />
-          <Route path="/app/admin/companies" element={<AdminCompanies />} />
           {/* 候选人列表 */}
           <Route path="/app/talents" element={<Talents />} />
         </Route>
