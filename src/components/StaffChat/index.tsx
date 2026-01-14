@@ -17,13 +17,7 @@ import { Get, Post, PostFormData } from "../../utils/request";
 
 import styles from "./style.module.less";
 import { IProps, TChatType, TRoleOverviewType } from "./type";
-import {
-  checkIsAdmin,
-  copy,
-  downloadText,
-  getDocumentType,
-  parseJSON,
-} from "@/utils";
+import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
