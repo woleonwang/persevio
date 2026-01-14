@@ -60,6 +60,7 @@ interface IJob {
   icp_json: string;
   interview_plan_json: string;
   success_metrics_json: string;
+  job_requirement_strategy_doc: string;
 
   chatbot_options: {
     allow_salary: string;

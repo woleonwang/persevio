@@ -1,6 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import { Button, message, Modal, FloatButton, Upload, Tooltip } from "antd";
+import {
+  Button,
+  message,
+  Modal,
+  FloatButton,
+  Upload,
+  Tooltip,
+  Drawer,
+} from "antd";
 import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -9,7 +17,13 @@ import { Get, Post, PostFormData } from "../../utils/request";
 
 import styles from "./style.module.less";
 import { IProps, TChatType, TRoleOverviewType } from "./type";
-import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
+import {
+  checkIsAdmin,
+  copy,
+  downloadText,
+  getDocumentType,
+  parseJSON,
+} from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -33,6 +47,7 @@ import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 import JobCollaboratorModal from "../JobCollaboratorModal";
+import MarkdownContainer from "../MarkdownContainer";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -74,6 +89,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [isEditingSideDocument, setIsEditingSideDocument] = useState(false);
 
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
+  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -90,7 +106,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const { mode } = globalStore;
+  const { mode, isAdmin } = globalStore;
 
   const SurveyLink =
     i18n.language === "zh-CN"
@@ -1043,7 +1059,37 @@ const StaffChat: React.FC<IProps> = (props) => {
             </>
           )}
 
-          <FloatButton onClick={() => openSurvey()} type="primary" />
+          <FloatButton.Group>
+            <FloatButton onClick={() => openSurvey()} type="primary" />
+            {isAdmin && (
+              <>
+                <FloatButton
+                  onClick={() => {
+                    setIsStrategyDrawerOpen(true);
+                  }}
+                  type="primary"
+                  description="查看策略"
+                />
+
+                <FloatButton
+                  onClick={async () => {
+                    if (confirm("确定要重置状态吗？")) {
+                      const { code } = await Post(`/api/jobs/${jobId}`, {
+                        is_jd_exsits: "",
+                      });
+                      if (code === 0) {
+                        alert("状态重置成功. 请删除上传 jd 的消息并重新上传");
+                      } else {
+                        message.error("重置失败");
+                      }
+                    }
+                  }}
+                  type="primary"
+                  description="重置状态"
+                />
+              </>
+            )}
+          </FloatButton.Group>
 
           {mode === "utils" && (
             <JobRequirementFormDrawer
@@ -1163,6 +1209,15 @@ const StaffChat: React.FC<IProps> = (props) => {
         onCancel={() => setIsCollaboratorModalOpen(false)}
         jobId={jobId}
       />
+
+      <Drawer
+        open={isStrategyDrawerOpen}
+        onClose={() => setIsStrategyDrawerOpen(false)}
+        title="职位需求对话策略"
+        width={800}
+      >
+        <MarkdownContainer content={job?.job_requirement_strategy_doc || ""} />
+      </Drawer>
     </div>
   );
 };
