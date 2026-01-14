@@ -1486,6 +1486,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   home_header: {
+    candidates: "For Candidates",
+    employers: "For Employers",
     home: "Home",
     jobs: "Jobs",
     recruit: "I want to recruit",

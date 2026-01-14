@@ -1431,6 +1431,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
   },
 
   home_header: {
+    candidates: "我要找人",
+    employers: "我要招聘",
     home: "首页",
     jobs: "职位",
     recruit: "我要招聘",

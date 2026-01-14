@@ -1,0 +1,229 @@
+@import "@/mixin.module.less";
+@inner-width: 1340px;
+
+.container {
+  width: 100%;
+  min-width: @inner-width;
+
+  .heroSection {
+    background: url("/hero-bg.png") no-repeat top center;
+    background-size: cover;
+    overflow: hidden;
+    padding: 0 20px;
+
+    .header {
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: @inner-width;
+      margin: 40px auto 0;
+      background-color: white;
+      border-radius: 16px;
+
+      .logo {
+        width: 156px;
+      }
+
+      .bannderMenuGroup {
+        display: flex;
+        gap: 20px;
+        background-color: rgba(246, 246, 246, 1);
+        border-radius: 12px;
+        padding: 6px;
+
+        & > div {
+          width: 204px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          position: relative;
+          color: #999;
+          border-radius: 10px;
+
+          &.active {
+            color: #333;
+            background-color: white;
+            font-weight: bold;
+          }
+        }
+      }
+
+      .joinBtn {
+        padding: 18px 24px;
+        display: flex;
+        gap: 12px;
+      }
+    }
+
+    .heroSectionContent {
+      width: @inner-width;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    .heroContent {
+      flex: none;
+      margin-top: 200px;
+      margin-bottom: 240px;
+
+      .heroTitle {
+        width: 610px;
+        font-size: 58px;
+        line-height: 1.2;
+        font-weight: bold;
+        color: #333;
+
+        .heroTitleHighlight {
+          color: @primary-color;
+        }
+      }
+
+      .heroSubtitle {
+        width: 590px;
+        margin-top: 32px;
+        font-size: 24px;
+        color: #666;
+      }
+
+      .ctaButton {
+        height: 62px;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 32px;
+        border-radius: 16px;
+        width: 270px;
+      }
+    }
+
+    .bannerTalk {
+      position: absolute;
+      width: 100px;
+      z-index: 1;
+    }
+
+    .bannerTalk1 {
+      top: 134px;
+      left: 0;
+      width: 190px;
+    }
+
+    .bannerTalk2 {
+      top: 64px;
+      right: 275px;
+      width: 345px;
+    }
+
+    .bannerTalk3 {
+      bottom: 90px;
+      right: 511px;
+      width: 218px;
+    }
+
+    .bannerTalk4 {
+      bottom: 296px;
+      right: 0;
+      width: 218px;
+    }
+
+    .bannerVideo {
+      position: absolute;
+      top: 20px;
+      width: 750px;
+      right: 20px;
+    }
+  }
+}
+
+.testimonialsSection {
+  margin: 100px 0;
+
+  .testimonialRow {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .testimonialRowInner {
+    display: flex;
+    gap: 20px;
+    animation: testimonialScroll 10s linear infinite;
+    will-change: transform;
+    width: fit-content;
+  }
+
+  .testimonialRowReverse {
+    margin-top: 20px;
+    justify-content: flex-end;
+    .testimonialRowInner {
+      animation: testimonialScrollReverse 10s linear infinite;
+    }
+  }
+
+  .testimonialCard {
+    background-color: rgba(251, 252, 253, 1);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid rgba(235, 236, 238, 1);
+    height: 332px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .testimonialQuote {
+    font-size: 28px;
+  }
+
+  .testimonialAuthor {
+    font-size: 20px;
+  }
+
+  .testimonialPosition {
+    font-size: 16px;
+    color: #999;
+  }
+}
+
+@keyframes testimonialScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes testimonialScrollReverse {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    .header {
+      padding: 13px 8px;
+      .logo {
+        width: 115px;
+      }
+
+      .bannderMenuGroup {
+        display: none;
+      }
+    }
+
+    .joinBtn {
+      font-size: 12px;
+    }
+  }
+}
