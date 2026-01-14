@@ -11,7 +11,12 @@ import dayjs from "dayjs";
 
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
-import { confirmModal, copy, getJobChatbotUrl } from "@/utils";
+import {
+  confirmModal,
+  copy,
+  downloadMarkdownAsPDF,
+  getJobChatbotUrl,
+} from "@/utils";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
@@ -88,28 +93,6 @@ const JobDocument = (props: IProps) => {
     }
   };
 
-  const downloadAsType = (type: "txt" | "markdown") => {
-    // 根据 type 下载 documentContent，txt 需去除 markdown 格式，md 直接下载
-    let fileName = job?.name || "document";
-    if (type === "txt") {
-      fileName += ".txt";
-    } else {
-      fileName += ".md";
-    }
-
-    // 创建 blob 并下载
-    const blob = new Blob([documentContent], {
-      type: "text/plain;charset=utf-8",
-    });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  };
-
   const disabledEdit = chatType === "jobDescription" && !!job.posted_at;
 
   return (
@@ -133,7 +116,10 @@ const JobDocument = (props: IProps) => {
           <div className={styles.operations}>
             <DownloadOutlined
               onClick={() => {
-                downloadAsType("markdown");
+                downloadMarkdownAsPDF({
+                  name: job.name,
+                  element: document.getElementById("docContent") as HTMLElement,
+                });
               }}
             />
             <ShareAltOutlined
@@ -236,7 +222,7 @@ const JobDocument = (props: IProps) => {
             onChange={(md) => setEditingValue(md)}
           />
         ) : (
-          <MarkdownContainer content={documentContent} />
+          <MarkdownContainer content={documentContent} id="docContent" />
         )}
       </div>
       {isEditing && (

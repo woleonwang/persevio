@@ -175,6 +175,9 @@ export const downloadMarkdownAsPDF = async ({
         format: "a4",
         orientation: "portrait",
       },
+      pagebreak: {
+        mode: "avoid-all",
+      },
     };
 
     await html2pdf()

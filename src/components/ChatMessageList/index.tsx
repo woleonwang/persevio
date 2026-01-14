@@ -133,6 +133,7 @@ const ChatMessageList = (props: IProps) => {
                     }
                   : {}),
               }}
+              key={item.id}
             >
               <List.Item.Meta
                 avatar={
@@ -207,6 +208,7 @@ const ChatMessageList = (props: IProps) => {
             </List.Item>
           );
         }}
+        rowKey={(item) => item.id}
       />
       <div ref={messagesEndRef} />
     </div>

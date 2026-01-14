@@ -720,6 +720,7 @@ type TSupportTag = {
   title?: React.ReactNode;
   handler?: (tag?: { name: string; content: string }) => void;
   children?: {
+    key: string;
     title: React.ReactNode;
     handler: () => void;
   }[];

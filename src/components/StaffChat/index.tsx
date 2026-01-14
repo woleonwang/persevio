@@ -226,6 +226,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       key: "jrd-language",
       children: [
         {
+          key: "jrd-language-zh-CN",
           title: (
             <div className={styles.languageButton}>
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
@@ -237,6 +238,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             ),
         },
         {
+          key: "jrd-language-en-US",
           title: (
             <div className={styles.languageButton}>
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English
@@ -251,6 +253,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       key: "jd-language",
       children: [
         {
+          key: "jd-language-zh-CN",
           title: (
             <div className={styles.languageButton}>
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
@@ -268,6 +271,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           },
         },
         {
+          key: "jd-language-en-US",
           title: (
             <div className={styles.languageButton}>
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English

@@ -4,19 +4,24 @@ import Markdown, { Options } from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 interface IProps extends Options {
+  id?: string;
   onClick?: () => void;
   content: string;
 }
 
 const MarkdownContainer = (props: IProps) => {
-  const { content, onClick, ...restProps } = props;
+  const { content, onClick, id, ...restProps } = props;
 
   if (!content) {
     return null;
   }
 
   return (
-    <div className={classnames(styles.markdownContainer)} onClick={onClick}>
+    <div
+      className={classnames(styles.markdownContainer)}
+      onClick={onClick}
+      id={id}
+    >
       <Markdown
         rehypePlugins={[rehypeRaw]}
         remarkPlugins={[remarkGfm]}

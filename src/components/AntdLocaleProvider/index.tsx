@@ -18,6 +18,8 @@ const AntdLocaleProvider = ({ children }: { children: React.ReactNode }) => {
           borderRadius: 12,
           colorBgContainerDisabled: "rgba(0,0,0,0.01)",
           colorTextDisabled: "rgba(0,0,0,0.5)",
+          borderRadiusLG: 12,
+          controlHeightLG: 44,
         },
       }}
       locale={locale}

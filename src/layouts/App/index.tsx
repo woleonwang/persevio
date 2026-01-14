@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { FileDoneOutlined, SettingOutlined } from "@ant-design/icons";
+import { FileDoneOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import styles from "./style.module.less";
@@ -17,6 +17,7 @@ import Jobs from "@/assets/icons/jobs";
 import CompanyInfo from "@/assets/icons/company-info";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
+import Settings from "@/assets/icons/settings";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -146,7 +147,7 @@ const AppLayout = () => {
     {
       title: t("menu.settings"),
       path: "/app/settings",
-      img: <SettingOutlined />,
+      img: <Settings />,
     },
   ];
 
