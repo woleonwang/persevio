@@ -155,6 +155,7 @@ const Settings = () => {
     JOB_CANDIDATE_CHAT: "职位 Chatbot",
     JOB_INTERVIEW_DESIGN: "面试设计",
     JOB_INTERVIEW_FEEDBACK: "面试反馈",
+    JOB_REQUIREMENT_GENERATE_STRATEGY: "生成职位需求对话策略",
     CANDIDATE_INTERVIEW_WITH_JOB_CHAT: "注册流程候选人面试（有职位）",
     CANDIDATE_INTERVIEW_WITHOUT_JOB_CHAT: "注册流程候选人面试（无职位）",
     CANDIDATE_RESUME_CHAT: "生成简历",
