@@ -166,7 +166,6 @@ export const downloadMarkdownAsPDF = async ({
     const wrapper = document.createElement("div");
     wrapper.style.width = "210mm";
     wrapper.style.backgroundColor = "#fff";
-    wrapper.style.position = "absolute";
 
     // 创建 logo 容器
     const logoContainer = document.createElement("div");
