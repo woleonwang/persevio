@@ -127,6 +127,7 @@ const AppLayout = () => {
       title: t("menu.company"),
       path: "/app/company",
       img: <CompanyInfo />,
+      requireStaffAdmin: true,
     },
 
     {
