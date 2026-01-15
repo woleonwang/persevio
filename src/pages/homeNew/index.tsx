@@ -48,8 +48,32 @@ const Speeches = [
       position: "CEO & Co-Founder at Radar",
       width: 464,
     },
+    {
+      text: "“Serra closed 20 interviews in the first week. We were going to hire an additional recruiter but didn't end up having to. Now all we have to do is interview candidates.“",
+      author: "Nick Patrick",
+      position: "CEO & Co-Founder at Radar",
+      width: 816,
+    },
+    {
+      text: "“Serra closed 20 interviews in the first week.”",
+      author: "Nick Patrick",
+      position: "CEO & Co-Founder at Radar",
+      width: 464,
+    },
   ],
   [
+    {
+      text: "“Serra closed 20 interviews in the first week.”",
+      author: "Nick Patrick",
+      position: "CEO & Co-Founder at Radar",
+      width: 464,
+    },
+    {
+      text: "“I've seen candidates get more than 10 offers in a single day, and they were all from Viona. I've also seen candidates get offers from companies they never even applied to. It's truly magic.“",
+      author: "Nick Patrick",
+      position: "CEO & Co-Founder at Radar",
+      width: 816,
+    },
     {
       text: "“Serra closed 20 interviews in the first week.”",
       author: "Nick Patrick",
