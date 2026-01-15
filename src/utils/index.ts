@@ -164,8 +164,7 @@ export const downloadMarkdownAsPDF = async ({
   try {
     // 创建一个临时的包装容器
     const wrapper = document.createElement("div");
-    wrapper.style.width = "210mm";
-    wrapper.style.backgroundColor = "#fff";
+    wrapper.style.width = "190mm";
 
     // 创建 logo 容器
     const logoContainer = document.createElement("div");
@@ -200,7 +199,7 @@ export const downloadMarkdownAsPDF = async ({
     // 将包装容器添加到 DOM（但不可见）
     document.body.appendChild(wrapper);
 
-    const opt = {
+    const opt: html2pdf.Options = {
       margin: [10, 10, 10, 10],
       filename: `${name}.pdf`,
       image: { type: "jpeg", quality: 0.98 },
