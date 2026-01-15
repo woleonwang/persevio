@@ -1,5 +1,6 @@
 import { Modal, ModalFuncProps } from "antd";
 import html2pdf from "html2pdf.js";
+import logo from "@/assets/logo.png";
 
 export const copy = async (text: string) => {
   await navigator.clipboard.writeText(text);
@@ -161,6 +162,45 @@ export const downloadMarkdownAsPDF = async ({
   element: HTMLElement;
 }) => {
   try {
+    // 创建一个临时的包装容器
+    const wrapper = document.createElement("div");
+    wrapper.style.width = "210mm";
+    wrapper.style.backgroundColor = "#fff";
+    wrapper.style.position = "absolute";
+
+    // 创建 logo 容器
+    const logoContainer = document.createElement("div");
+    logoContainer.style.paddingBottom = "20px";
+    logoContainer.style.borderBottom = "1px solid #e8e8e8";
+    logoContainer.style.marginBottom = "20px";
+
+    // 创建 logo 图片元素
+    const logoImg = document.createElement("img");
+    logoImg.src = logo;
+    logoImg.style.maxWidth = "200px";
+    logoImg.style.height = "auto";
+
+    // 等待 logo 图片加载完成
+    await new Promise<void>((resolve, reject) => {
+      logoImg.onload = () => resolve();
+      logoImg.onerror = () => reject(new Error("Failed to load logo"));
+      // 如果图片已经在缓存中，可能不会触发 onload
+      if (logoImg.complete) {
+        resolve();
+      }
+    });
+
+    // 组装结构
+    logoContainer.appendChild(logoImg);
+    wrapper.appendChild(logoContainer);
+
+    // 克隆原始元素并添加到包装容器
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+    wrapper.appendChild(clonedElement);
+
+    // 将包装容器添加到 DOM（但不可见）
+    document.body.appendChild(wrapper);
+
     const opt = {
       margin: [10, 10, 10, 10],
       filename: `${name}.pdf`,
@@ -182,8 +222,11 @@ export const downloadMarkdownAsPDF = async ({
 
     await html2pdf()
       .set(opt as any)
-      .from(element)
+      .from(wrapper)
       .save();
+
+    // 清理：移除临时包装容器
+    document.body.removeChild(wrapper);
   } catch (error) {
     console.error(error);
   }
