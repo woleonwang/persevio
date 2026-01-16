@@ -120,10 +120,10 @@ const HomeNew = () => {
         })
     );
   };
-  const isActive = (key: "candidates" | "employers"): boolean => {
-    const path = window.location.pathname;
-    return menusConfigs[key] === path;
-  };
+  // const isActive = (key: "candidates" | "employers"): boolean => {
+  //   const path = window.location.pathname;
+  //   return menusConfigs[key] === path;
+  // };
 
   const { t } = useTranslation();
   const originalT = (key: string) => t(`home_header.${key}`);
