@@ -24,7 +24,7 @@ interface IProps {
     isLast: boolean,
     isFirst: boolean
   ) => React.ReactNode;
-  showCustomThinkingText?: boolean;
+  showCustomThinkingText?: () => string;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -38,7 +38,7 @@ const ChatMessageList = (props: IProps) => {
     renderTagsContent,
     renderOperationContent,
     showUserTimestamp = false,
-    showCustomThinkingText = false,
+    showCustomThinkingText,
   } = props;
 
   const [loadingText, setLoadingText] = useState(".");
@@ -98,9 +98,6 @@ const ChatMessageList = (props: IProps) => {
       container.scrollTop = relativeTop - 100;
     }
   };
-
-  const isResponseFirstMessage = () =>
-    messages.filter((item) => item.role === "user").length === 1;
 
   return (
     <div
@@ -176,20 +173,21 @@ const ChatMessageList = (props: IProps) => {
                     )}
                     <div className={styles.messageContent}>
                       {item.id === "fake_ai_id" ? (
-                        <p>
-                          {loadingText}
-                          {dayjs().diff(
-                            loadingStartedAtRef.current ?? dayjs(),
-                            "second"
-                          ) > 1
-                            ? `(${
-                                showCustomThinkingText &&
-                                isResponseFirstMessage()
-                                  ? t("viona_is_thinking_first_message")
-                                  : t("viona_is_thinking")
-                              })`
-                            : ""}
-                        </p>
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: `${loadingText}${
+                              dayjs().diff(
+                                loadingStartedAtRef.current ?? dayjs(),
+                                "second"
+                              ) > 1
+                                ? `(${
+                                    showCustomThinkingText?.() ||
+                                    t("viona_is_thinking")
+                                  })`
+                                : ""
+                            }`,
+                          }}
+                        />
                       ) : (
                         <MarkdownContainer
                           content={

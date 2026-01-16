@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 20px;
+
+  &.noPadding {
+    padding: 0;
+  }
+}
+
+.tableContainer {
+  flex: auto;
+  overflow: auto;
+
+  :global {
+    table {
+      border-left: 1px solid #ebecee;
+      border-right: 1px solid #ebecee;
+    }
+
+    .ant-table-thead th {
+      background-color: #e9ecee !important;
+    }
+  }
+}

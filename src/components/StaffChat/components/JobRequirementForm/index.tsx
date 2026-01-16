@@ -212,15 +212,12 @@ const JobRequirementForm = (props: IProps) => {
           type: "multiple_select",
           question: t("employee_type_question"),
           options: [
-            t("employee_level.internship"),
-            t("employee_level.no_experience"),
-            t("employee_level.junior"),
-            t("employee_level.mid_level"),
-            t("employee_level.senior"),
-          ].map((item) => ({
-            value: item,
-            label: item,
-          })),
+            "internship",
+            "no_experience",
+            "junior",
+            "mid_level",
+            "senior",
+          ].map((item) => getOptions(item, t(`employee_level.${item}`))),
           required: true,
         },
         {
@@ -236,6 +233,7 @@ const JobRequirementForm = (props: IProps) => {
           options: [
             "individual_contributor",
             "people_manager",
+            "ic_and_pm",
             "business_function_owner",
           ].map((item) => getOptions(item, t(`archetypes_options.${item}`))),
           required: true,
@@ -280,32 +278,8 @@ const JobRequirementForm = (props: IProps) => {
         },
         {
           key: "visa_type_singapore",
-          type: "multiple_select",
+          type: "textarea",
           question: t("visa_type"),
-          options: [
-            "singapore_citizen",
-            "singapore_pr",
-            "ep",
-            "sp",
-            "wp",
-            "dp",
-            "other_singapore_visa",
-          ].map((item) => ({
-            value: item,
-            label: t(`${item}`),
-          })),
-        },
-        {
-          key: "visa_type_singapore_other",
-          type: "text",
-          question: t("visa_type_singapore_other"),
-          dependencies: [
-            {
-              questionKey: "visa_type_singapore",
-              valueKey: "other_singapore_visa",
-            },
-          ],
-          required: true,
         },
       ],
     },
@@ -883,8 +857,8 @@ const JobRequirementForm = (props: IProps) => {
         {question.type === "text" && <Input disabled={deleted} />}
         {question.type === "textarea" && (
           <TextAreaWithUploader
-            rows={2}
-            autoSize={{ minRows: 2, maxRows: 8 }}
+            rows={3}
+            autoSize={{ minRows: 3, maxRows: 8 }}
             disabled={deleted}
             allowFile={question.allowFile}
           />

@@ -59,6 +59,9 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
+    ""
+  );
   const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
@@ -489,6 +492,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
       const messageHistory = formatMessages(data.messages, job);
       const isLoading = data.is_invoking === 1;
+      setWaitingType(data.waiting_type);
       setIsLoading(isLoading);
 
       if (chatType === "jobRequirementDoc") {
@@ -817,6 +821,11 @@ const StaffChat: React.FC<IProps> = (props) => {
                 isLoading={isLoading}
                 className={styles.listArea}
                 childrenFunctionsRef={childrenFunctionsRef}
+                showCustomThinkingText={() => {
+                  return waitingType === "generate_jrd_strategy"
+                    ? originalT("chat.viona_is_generating_jrd_strategy")
+                    : "";
+                }}
                 renderTagsContent={(item) => {
                   const visibleTags = (item.extraTags ?? [])
                     .map((extraTag) => {

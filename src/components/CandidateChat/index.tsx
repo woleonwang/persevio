@@ -20,17 +20,17 @@ const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 type TSupportTag = {
   key: TExtraTagName;
   title: string;
-  handler: (tag?: { name: string; content: string; }) => void;
+  handler: (tag?: { name: string; content: string }) => void;
   autoTrigger?: boolean;
 };
 
 interface IProps {
   chatType:
-  | "profile"
-  | "deep_aspirations"
-  | "job_interview"
-  | "work_experience"
-  | "network_profile";
+    | "profile"
+    | "deep_aspirations"
+    | "job_interview"
+    | "work_experience"
+    | "network_profile";
   jobApplyId?: number;
   onFinish?: () => void;
   workExperienceCompanyName?: string;
@@ -142,7 +142,8 @@ Shall we start now?`,
     }
 
     const { code, data } = await Get(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}${jobApplyId ? `/${jobApplyId}` : ""
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
       }/messages`
     );
 
@@ -226,7 +227,8 @@ Shall we start now?`,
     setIsLoading(true);
 
     const { code } = await Post(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}${jobApplyId ? `/${jobApplyId}` : ""
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
       }/send`,
       {
         content: formattedMessage,
@@ -258,7 +260,8 @@ Shall we start now?`,
 
   const deleteMessage = async (messageId: number) => {
     const { code } = await Post(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}${jobApplyId ? `/${jobApplyId}` : ""
+      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
+        jobApplyId ? `/${jobApplyId}` : ""
       }/clear_messages`,
       {
         message_id: messageId,
@@ -280,7 +283,12 @@ Shall we start now?`,
         isLoading={isLoading}
         className={styles.listArea}
         childrenFunctionsRef={childrenFunctionsRef}
-        showCustomThinkingText={chatType === "job_interview"}
+        showCustomThinkingText={() => {
+          return chatType === "job_interview" &&
+            messages.filter((item) => item.role === "user").length === 1
+            ? originalT("chat.viona_is_thinking_first_message")
+            : "";
+        }}
         renderTagsContent={(item) => {
           const canPlayAudio = !!item.payloadId && item.duration;
 
@@ -325,8 +333,9 @@ Shall we start now?`,
               {canPlayAudio && (
                 <AudioPlayer
                   duration={item.duration ?? 0}
-                  payloadUrl={`/api/candidate/chat/${ChatTypeMappings[chatType]
-                    }${jobApplyId ? `/${jobApplyId}` : ""}/messages/${item.id}`}
+                  payloadUrl={`/api/candidate/chat/${
+                    ChatTypeMappings[chatType]
+                  }${jobApplyId ? `/${jobApplyId}` : ""}/messages/${item.id}`}
                   onPlay={() => setPlayingAudioMessageId(parseInt(item.id))}
                   onStop={() => setPlayingAudioMessageId(0)}
                 />

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
 import useJob from "@/hooks/useJob";
-import Talents from "@/components/Talents";
 import { getQuery, updateQuery } from "@/utils";
 import { Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
@@ -15,6 +14,8 @@ import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
+import TalentCards from "../TalentCards";
+import Talents from "../Talents";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
@@ -108,7 +109,11 @@ const JobDetails = ({ role = "staff" }: IProps) => {
         <div className={styles.right}>
           {chatType === "talents" &&
             (role === "staff" ? (
-              <Talents jobId={job.id} />
+              process.env.NODE_ENV === "development" ? (
+                <TalentCards jobId={job.id} />
+              ) : (
+                <Talents jobId={job.id} />
+              )
             ) : (
               <AdminTalents jobId={job.id} />
             ))}

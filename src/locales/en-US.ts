@@ -517,6 +517,8 @@ export default {
       "Viona is thinking hard! Hang tight, your answer is coming...",
     viona_is_thinking_first_message:
       "Viona is reviewing your resume carefully so she can tailor the conversation to your experience. This may take 1-5 minutes...",
+    viona_is_generating_jrd_strategy:
+      "<b>Viona is analyzing the provided job details so she can ask the most relevant questions. This usually takes 30–90 seconds</b>",
     edit_profiles_hint:
       "I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content",
     reply_viona_directly_or_edit:
@@ -647,11 +649,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
     // option texts
     employee_level: {
-      internship: "Internship",
-      no_experience: "Fresh Graduate/Entry-Level/No prior experience required",
-      junior: "Junior/Some experience required",
-      mid_level: "Mid-level/Solid experience required",
-      senior: "Senior/Extensive experience and proven expertise required",
+      internship: "**Internship**",
+      no_experience:
+        "**Fresh Graduate/Entry-Level**: No prior experience required",
+      junior: "**Junior**: Some experience required",
+      mid_level: "**Mid-level**: Solid experience required",
+      senior: "**Senior**: Extensive experience and proven expertise required",
     },
 
     role_type_options: {
@@ -718,9 +721,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
     archetypes_options: {
       individual_contributor:
-        "**Individual contributor**: The primary responsibility is the hands-on creation, building, or delivery of work. Success is measured by individual output and craft excellence.",
+        "**Individual Contributor**: The primary responsibility is the hands-on creation, building, or delivery of work. Success is measured by individual output and craft excellence.",
       people_manager:
         "**People Manager**: The primary responsibility is managing, coaching, and developing a team of direct reports. Success is measured by the team's overall performance, health, and output.",
+      ic_and_pm:
+        "**Individual Contributor + People Manager**: The primary responsibility is leading by example through both direct execution and team development. Success is measured by high-quality individual output alongside the team's collective delivery and growth.",
       business_function_owner:
         "**Business/Function Owner**: The primary responsibility is owning a broad business outcome, P&L, product, or strategic initiative.Success is measured by business impact and achieving strategic goals.",
     },
