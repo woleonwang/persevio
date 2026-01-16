@@ -54,25 +54,37 @@ const Speeches = [
       position: "Head of Sales",
       width: 920,
     },
-  ],
-  [
     {
       text: "“Viona’s recommendation was shockingly accurate and personalized.”",
       author: "Jin",
       position: "Trader",
       width: 464,
     },
+  ],
+  [
     {
       text: "“One conversation with Viona and she immediately sent me jobs I was actually interested in. So much better than endless scrolling on job boards.”",
       author: "Kashif",
       position: "HR manager",
+      width: 700,
+    },
+    {
+      text: "“Viona didn’t just passively listen; she challenged me to dig deeper. She actually helped me uncover core strengths I hadn't realized were my biggest assets.”",
+      author: "Lai",
+      position: "Product Manager",
       width: 900,
     },
     {
-      text: "“I've seen candidates get more than 10 offers in a single day, and they were all from Viona. I've also seen candidates get offers from companies they never even applied to. It's truly magic.”",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 816,
+      text: "“Viona acted as my advocate from the very start, focusing entirely on how to champion my profile and highlight my best self to employers.”",
+      author: "Yang",
+      position: "Community Manager",
+      width: 600,
+    },
+    {
+      text: "“I loved that I could chat with Viona late at night, just lying on my couch. It didn't feel like a high-pressure interview, just a relaxed conversation, and she handled all the prep work for my application automatically.”",
+      author: "Lim",
+      position: "Data Engineer",
+      width: 900,
     },
   ],
 ];
