@@ -29,10 +29,10 @@ import { Get } from "@/utils/request";
 import PublicJobCard from "@/components/PublicJobCard";
 import { parseJSON } from "@/utils";
 
-const menusConfigs = {
-  candidates: "/",
-  employers: "/employers",
-};
+// const menusConfigs = {
+//   candidates: "/",
+//   employers: "/employers",
+// };
 
 const Speeches = [
   [
