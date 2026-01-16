@@ -135,14 +135,13 @@
   .bannerVideo {
     position: absolute;
     top: 20px;
-    width: 750px;
+    width: 700px;
     right: 20px;
   }
 }
 
 .testimonialsSection {
   margin: 100px 0;
-  border-bottom: 4px solid @primary-color;
 
   .testimonialRow {
     position: relative;
@@ -227,18 +226,24 @@
   }
 
   .stepsContainer {
-    background: url("/how-it-works-bg.png") no-repeat top center;
+    padding-top: 100px;
+    background: url("/how-it-works-bg.png") no-repeat center 310px;
     background-size: 585px auto;
-    margin-top: 60px;
-    overflow: hidden;
   }
 
   .step {
     height: 566px;
-    margin-top: 340px;
     display: flex;
     align-items: center;
     gap: 80px;
+
+    &:nth-child(2) {
+      margin-top: 190px;
+    }
+
+    &:nth-child(3) {
+      margin-top: 210px;
+    }
   }
 
   .stepContent {

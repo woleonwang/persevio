@@ -37,51 +37,39 @@ const menusConfigs = {
 const Speeches = [
   [
     {
-      text: "“Serra closed 20 interviews in the first week. We were going to hire an additional recruiter but didn't end up having to. Now all we have to do is interview candidates.“",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 816,
+      text: "“Most platforms just match keywords. Viona understood the context of my experience and my soft skills. She helped me articulate my value in a way that got me straight to the interview stage with the hiring manager.”",
+      author: "Marvin",
+      position: "Technical Team Lead",
+      width: 900,
     },
     {
-      text: "“Serra closed 20 interviews in the first week.”",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 464,
+      text: "“The most efficient hiring process of my life. From the first chat with Viona to the final offer took less than 10 days.”",
+      author: "Mingjie",
+      position: "Software Engineer",
+      width: 600,
     },
     {
-      text: "“Serra closed 20 interviews in the first week. We were going to hire an additional recruiter but didn't end up having to. Now all we have to do is interview candidates.“",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 816,
-    },
-    {
-      text: "“Serra closed 20 interviews in the first week.”",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 464,
+      text: "“I was skeptical about AI, but Viona asked deeper questions than most human recruiters. She understood my career pivot instantly and matched me with a role that I truly wanted.”",
+      author: "Sean",
+      position: "Head of Sales",
+      width: 920,
     },
   ],
   [
     {
-      text: "“Serra closed 20 interviews in the first week.”",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
+      text: "“Viona’s recommendation was shockingly accurate and personalized.”",
+      author: "Jin",
+      position: "Trader",
       width: 464,
     },
     {
-      text: "“I've seen candidates get more than 10 offers in a single day, and they were all from Viona. I've also seen candidates get offers from companies they never even applied to. It's truly magic.“",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 816,
+      text: "“One conversation with Viona and she immediately sent me jobs I was actually interested in. So much better than endless scrolling on job boards.”",
+      author: "Kashif",
+      position: "HR manager",
+      width: 900,
     },
     {
-      text: "“Serra closed 20 interviews in the first week.”",
-      author: "Nick Patrick",
-      position: "CEO & Co-Founder at Radar",
-      width: 464,
-    },
-    {
-      text: "“I've seen candidates get more than 10 offers in a single day, and they were all from Viona. I've also seen candidates get offers from companies they never even applied to. It's truly magic.“",
+      text: "“I've seen candidates get more than 10 offers in a single day, and they were all from Viona. I've also seen candidates get offers from companies they never even applied to. It's truly magic.”",
       author: "Nick Patrick",
       position: "CEO & Co-Founder at Radar",
       width: 816,
@@ -148,7 +136,7 @@ const HomeNew = () => {
         <div className={styles.header}>
           <img src={logo} className={styles.logo} />
           <div className={styles.bannderMenuGroup}>
-            <div
+            {/* <div
               className={classnames({
                 [styles.active]: isActive("candidates"),
               })}
@@ -161,7 +149,7 @@ const HomeNew = () => {
               onClick={() => navigate(menusConfigs["employers"])}
             >
               {originalT("employers")}
-            </div>
+            </div> */}
           </div>
           <Button
             type="primary"
@@ -222,6 +210,12 @@ const HomeNew = () => {
 
       {/* Testimonials Section */}
       <div className={styles.testimonialsSection}>
+        <div className={styles.testimonialWrapper}>
+          <div className={styles.title}>
+            Join thousands of candidates that discovered their ideal role with
+            the help from Viona.
+          </div>
+        </div>
         <div>
           {Speeches.map((speechItems, index) => (
             <div
@@ -251,12 +245,6 @@ const HomeNew = () => {
               </div>
             </div>
           ))}
-        </div>
-        <div className={styles.testimonialWrapper}>
-          <div className={styles.title}>
-            “Join thousands of candidates that discovered their ideal role with
-            the help from Viona.”
-          </div>
         </div>
       </div>
 
