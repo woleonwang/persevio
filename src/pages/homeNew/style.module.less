@@ -7,10 +7,18 @@
 }
 
 .heroSection {
-  background: url("/hero-bg.png") no-repeat top center;
-  background-size: cover;
   overflow: hidden;
   padding: 0 20px;
+  position: relative;
+
+  .bannerVideo {
+    position: absolute;
+    left: calc(50% - 1800px);
+    top: 0;
+    height: 1000px;
+    overflow: hidden;
+    z-index: -1;
+  }
 
   .header {
     padding: 14px 24px;
@@ -130,13 +138,6 @@
     bottom: 296px;
     right: 0;
     width: 218px;
-  }
-
-  .bannerVideo {
-    position: absolute;
-    top: 20px;
-    width: 700px;
-    right: 20px;
   }
 }
 
