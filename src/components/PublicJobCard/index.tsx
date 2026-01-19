@@ -178,10 +178,6 @@ const PublicJobCard = ({ job }: { job: JobPosting }) => {
         <div className={styles["job-info"]}>
           <h3 className={styles["job-title"]}>{job.name}</h3>
           <div className={styles["job-meta"]}>
-            <span className={styles["job-department"]}>{job.team_name}</span>
-            <span className={styles["job-language"]}>
-              {t("job_card.team_language")} {job.team_lanugage}
-            </span>
             <span className={styles["job-mode"]}>
               {roleTypeTranslations[job.role_type] &&
                 t(`job_card.role_type.${roleTypeTranslations[job.role_type]}`)}

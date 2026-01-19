@@ -33,7 +33,7 @@
       border-radius: 12px;
       padding: 6px;
 
-      & > div {
+      &>div {
         width: 204px;
         height: 40px;
         display: flex;
@@ -160,6 +160,7 @@
   .testimonialRowReverse {
     margin-top: 20px;
     justify-content: flex-end;
+
     .testimonialRowInner {
       animation: testimonialScrollReverse 30s linear infinite;
     }
@@ -193,7 +194,7 @@
   .testimonialWrapper {
     width: @inner-width;
     margin: 0 auto;
-    padding: 110px 20px;
+    padding: 60px 20px;
     text-align: center;
     background: url("/feedback-bg.png") no-repeat center center;
     background-size: contain;
@@ -433,6 +434,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -442,6 +444,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(50%);
   }
@@ -451,6 +454,7 @@
   .container {
     .header {
       padding: 13px 8px;
+
       .logo {
         width: 115px;
       }

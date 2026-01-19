@@ -6,7 +6,7 @@ import { Button } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 
 import logo from "@/assets/logo.png";
-import bannerVideo from "@/assets/banner-video.mp4";
+import bannerVideo from "@/assets/banner-video-trans.webm";
 import bannerTalk1 from "@/assets/banner-talk-1.png";
 import bannerTalk2 from "@/assets/banner-talk-2.png";
 import bannerTalk3 from "@/assets/banner-talk-3.png";
@@ -191,16 +191,15 @@ const HomeNew = () => {
               Chat with Viona now
             </Button>
           </div>
-          <div className={styles.heroIllustration}>
-            {/* Placeholder for 3D character illustration */}
-            <video
-              src={bannerVideo}
-              autoPlay
-              loop
-              className={styles.bannerVideo}
-              muted
-            />
-          </div>
+          {/* Placeholder for 3D character illustration */}
+          <video
+            src={bannerVideo}
+            autoPlay
+            loop
+            className={styles.bannerVideo}
+            muted
+          />
+
           <img
             src={bannerTalk1}
             className={classnames(styles.bannerTalk, styles.bannerTalk1)}
