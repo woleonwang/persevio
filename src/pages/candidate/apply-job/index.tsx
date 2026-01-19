@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Input, message, Modal, Tooltip } from "antd";
+import { Button, message, Tooltip } from "antd";
 import classnames from "classnames";
 import { useNavigate, useParams } from "react-router";
 
@@ -16,7 +16,6 @@ import UploadResume from "./components/UploadResume";
 import Copy from "@/assets/icons/copy";
 import { tokenStorage, storage, StorageKey } from "@/utils/storage";
 import Icon from "@/components/Icon";
-import Chat from "@/assets/icons/chat";
 import WhatsappIcon from "@/assets/icons/whatsapp";
 import Whatsapp from "./components/Whatsapp";
 
@@ -41,9 +40,6 @@ const ApplyJob: React.FC = () => {
     whatsappPhoneNumber: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
-  const [otherReason, setOtherReason] = useState<string>();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
 
@@ -246,31 +242,6 @@ const ApplyJob: React.FC = () => {
     setIsSubmittingWhatsapp(false);
   };
 
-  const switchModeToHuman = async () => {
-    const { code } = await Post(
-      `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
-      {
-        mode: "human",
-        reasons: selectedReasons,
-        other_reason: selectedReasons.includes("others")
-          ? otherReason
-          : undefined,
-      }
-    );
-    if (code === 0) {
-      const newJobApply = await fetchJobApply();
-      if (newJobApply) {
-        setJobApply(newJobApply);
-      }
-
-      message.success("Switch mode to human successful");
-      setPageState("waiting");
-      setIsModalOpen(false);
-    } else {
-      message.error("Switch mode to human failed");
-    }
-  };
-
   const copyLink = async () => {
     await copy(
       `${window.location.href}?candidate_token=${
@@ -311,22 +282,6 @@ const ApplyJob: React.FC = () => {
               <span>Copy Link</span>
             </div>
           </Tooltip>
-
-          {pageState === "conversation" && (
-            <div
-              className={styles.buttonWrapper}
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Button
-                icon={<Icon icon={<Chat />} className={styles.icon} />}
-                className={styles.button}
-              />
-              <span>
-                Schedule <br />
-                human recruiter
-              </span>
-            </div>
-          )}
         </div>
 
         <div
@@ -348,14 +303,6 @@ const ApplyJob: React.FC = () => {
             className={styles.button}
             onClick={copyLink}
           />
-
-          {pageState === "conversation" && (
-            <Button
-              icon={<Icon icon={<Chat />} className={styles.icon} />}
-              className={styles.button}
-              onClick={() => setIsModalOpen(true)}
-            />
-          )}
         </div>
       </div>
       <div className={styles.main}>
@@ -453,55 +400,6 @@ const ApplyJob: React.FC = () => {
           }
         })()}
       </div>
-
-      <Modal
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        title="We have arranged a real recruitment staff for you."
-        okText="Submit"
-        okButtonProps={{
-          disabled:
-            selectedReasons.length === 0 ||
-            (selectedReasons.includes("others") && !otherReason),
-        }}
-        onOk={() => {
-          switchModeToHuman();
-        }}
-        centered
-        width="auto"
-        classNames={{
-          wrapper: styles.modalWrapper,
-          content: styles.modalContent,
-        }}
-      >
-        <div className={styles.modalDescription}>
-          May I briefly understand the reason why you hope to communicate with a
-          real person? This can help us serve you better.
-        </div>
-        <div className={styles.form}>
-          <Checkbox.Group value={selectedReasons} onChange={setSelectedReasons}>
-            <Checkbox value="dissatisfied_with_my_answer">
-              Dissatisfied with my answer
-            </Checkbox>
-            <Checkbox value="want_to_consult_more_complex_questions">
-              Want to consult some more complex questions
-            </Checkbox>
-            <Checkbox value="want_to_chat_with_a_real_person">
-              Just want to chat with a real person for more reassurance
-            </Checkbox>
-            <Checkbox value="others">Others</Checkbox>
-          </Checkbox.Group>
-          <div className={styles.otherReasonInput}>
-            <Input.TextArea
-              placeholder="Please enter other reasons"
-              rows={4}
-              disabled={!selectedReasons.includes("others")}
-              value={otherReason}
-              onChange={(e) => setOtherReason(e.target.value)}
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };
