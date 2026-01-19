@@ -13,6 +13,8 @@ import Icon from "../Icon";
 import Stars from "@/assets/icons/stars";
 import Light from "@/assets/icons/light";
 import Ghost from "@/assets/icons/ghost";
+import { useNavigate } from "react-router";
+import Tabs from "../Tabs";
 
 export type TApproveStatus =
   | "message_read"
@@ -79,15 +81,25 @@ type TLinkedinProfileItem = TLinkedinProfile & {
   parsedEvaluateResult: TExtractEvaluateResult;
 };
 
+type TTabKey =
+  | "interview_ready"
+  | "accepted"
+  | "rejected"
+  | "linked_in_profiles"
+  | "all";
+
 const Talents = (props: IProps) => {
-  const { jobId, filterParams } = props;
+  const { jobId } = props;
   const [talents, setTalents] = useState<TTalentItem[]>([]);
   const [linkedinProfiles, setLinkedinProfiles] = useState<
     TLinkedinProfileItem[]
   >([]);
+  const [activeTab, setActiveTab] = useState<TTabKey>("interview_ready");
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTalents();
@@ -210,32 +222,27 @@ const Talents = (props: IProps) => {
         });
       });
 
-    if (filterParams?.talentName) {
+    if (activeTab === "interview_ready") {
       result = result.filter((item) => {
-        return getName(item).includes(filterParams.talentName ?? "");
+        return item.talent?.status === "pending";
       });
     }
 
-    if (filterParams?.approveStatus) {
+    if (activeTab === "accepted") {
       result = result.filter((item) => {
-        return getApproveStatus(item) === filterParams.approveStatus;
+        return item.talent?.status === "accepted";
       });
     }
 
-    if (filterParams?.jobId) {
+    if (activeTab === "rejected") {
       result = result.filter((item) => {
-        return item.talent
-          ? item.talent?.job_id === filterParams.jobId
-          : item.linkedinProfile?.job_id === filterParams.jobId;
+        return item.talent?.status === "rejected";
       });
     }
 
-    if (filterParams?.creatorId) {
+    if (activeTab === "linked_in_profiles") {
       result = result.filter((item) => {
-        return (
-          item.talent?.job?.staff_id === filterParams.creatorId ||
-          item.linkedinProfile?.job?.staff_id === filterParams.creatorId
-        );
+        return !item.talent;
       });
     }
 
@@ -244,13 +251,29 @@ const Talents = (props: IProps) => {
         dayjs(a.talent?.created_at || a.linkedinProfile?.created_at)
       );
     });
-  }, [talents, linkedinProfiles, filterParams]);
+  }, [talents, linkedinProfiles, activeTab]);
 
   return (
     <div
       className={classnames(styles.container, { [styles.noPadding]: !jobId })}
     >
       {jobId && <h3>{t("candidate_list")}</h3>}
+      <div>
+        <Tabs
+          tabs={[
+            {
+              key: "all",
+              label: "All",
+            },
+            {
+              key: "interview_scheduled",
+              label: "Interview Scheduled",
+            },
+          ]}
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key as TTabKey)}
+        />
+      </div>
       <div className={styles.cardContainer}>
         {dataSource.map((item) => {
           const basicInfo = getBasicInfo(item);
@@ -262,7 +285,14 @@ const Talents = (props: IProps) => {
             >
               <div className={styles.cardHeader}>
                 <div className={styles.cardTitle}>
-                  <div className={styles.cardTitleName}>
+                  <div
+                    className={styles.cardTitleName}
+                    onClick={() => {
+                      navigate(
+                        `/app/jobs/${jobId}/standard-board/talents/${item.talent?.id}`
+                      );
+                    }}
+                  >
                     {getName(item) || "-"}
                   </div>
                   <div className={styles.cardTitleResult}>
@@ -403,15 +433,29 @@ const Talents = (props: IProps) => {
                     // 等待筛选
                     // 抓取简历、未投递
                     const status = getApproveStatus(item);
-                    if (
-                      status === "interview_confirmed" ||
-                      status === "interview_scheduled"
-                    ) {
-                      const interview = item.talent?.interviews?.[0];
-                      return (
-                        <>
+                    const interview = item.talent?.interviews?.[0];
+                    const createdAt =
+                      item.talent?.created_at ||
+                      item.linkedinProfile?.created_at;
+                    return (
+                      <>
+                        <div className={styles.left}>
                           <div>
-                            <div>Interview Scheduled</div>
+                            {status === "interview_confirmed" ||
+                            status === "interview_scheduled" ? (
+                              <div>Interview Scheduled</div>
+                            ) : status === "pending" ? (
+                              <div>Waiting for screening</div>
+                            ) : status === "staff_rejected" ? (
+                              <div>Reject</div>
+                            ) : status === "staff_accepted" ? (
+                              <div>Accept</div>
+                            ) : (
+                              <div>Waiting for screening</div>
+                            )}
+                          </div>
+                          {(status === "interview_confirmed" ||
+                            status === "interview_scheduled") && (
                             <div>
                               <div>
                                 <div>Interview Mode:</div>
@@ -419,30 +463,29 @@ const Talents = (props: IProps) => {
                               </div>
                               <div>
                                 <div>Schedule Time:</div>
-                                <div>{interview?.created_at}</div>
+                                <div>
+                                  {dayjs(createdAt).format("YYYY-MM-DD HH:mm")}
+                                </div>
                               </div>
                             </div>
+                          )}
+                        </div>
+                        <div className={styles.right}>
+                          <div>
+                            {item.talent?.created_at
+                              ? dayjs(item.talent.created_at).format(
+                                  "YYYY-MM-DD HH:mm"
+                                )
+                              : ""}
                           </div>
                           <div>
-                            <div>
-                              {interview?.scheduled_at
-                                ? dayjs(interview.scheduled_at).format(
-                                    "YYYY-MM-DD HH:mm"
-                                  )
-                                : ""}
-                            </div>
-                            {/* <div>{item.talent?.source_channel}</div> */}
+                            {item.talent?.source_channel === "custimer"
+                              ? "Your own channel"
+                              : "From Viona"}
                           </div>
-                        </>
-                      );
-                    } else if (status === "pending") {
-                      return <div>Pending</div>;
-                    } else if (status === "staff_rejected") {
-                      return <div>Staff Rejected</div>;
-                    } else if (status === "staff_accepted") {
-                      return <div>Staff Accepted</div>;
-                    }
-                    return null;
+                        </div>
+                      </>
+                    );
                   })()}
                 </div>
               </div>

@@ -423,6 +423,7 @@ type TTalent = {
   basic_info_json: string;
   evaluate_json: string;
   job_id: number;
+  source_channel: "system" | "custimer";
   hire_status: "hired" | "not_hired";
   share_token_id?: number;
   interviews: TInterview[];
@@ -530,27 +531,6 @@ type TJobBasicInfo = {
     | "senior"
   )[];
 };
-
-interface ITalentListItem {
-  id: number;
-  name: string;
-  job_id: number;
-  job_name: string;
-  source_channel: "delivery" | "upload";
-  evaluate_result: TEvaluationResult;
-  status: "accepted" | "rejected" | "pending";
-  viewed_at: string;
-  share_token_id: number;
-  hire_status: "hired" | "not_hired";
-  interviews?: TInterview[];
-  created_at: string;
-  updated_at: string;
-}
-
-interface ITalentListResponse {
-  candidates: ITalentListItem[];
-}
-
 // Staff 相关类型定义
 interface IAccount {
   id: number;
