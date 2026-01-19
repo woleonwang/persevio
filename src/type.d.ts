@@ -421,10 +421,11 @@ type TTalent = {
   evaluate_result: TEvaluationResult;
   raw_evaluate_result: string;
   basic_info_json: string;
+  evaluate_json: string;
   job_id: number;
   hire_status: "hired" | "not_hired";
   share_token_id?: number;
-  interviews?: TInterview[];
+  interviews: TInterview[];
   job?: {
     id: number;
     name: string;
@@ -743,6 +744,7 @@ type TLinkedinProfile = {
   message_sent_at?: string;
   message_read_at?: string;
   candidate_id?: number;
+  evaluate_json?: string;
 
   job: {
     id: number;

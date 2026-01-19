@@ -1060,11 +1060,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     candidate_list: "Candidate List",
     company_name: "Company Name",
     job_name: "Job Name",
+    years_of_experience: "Years of Work Experience",
     current_job_title: "Current Job Title",
     current_company: "Current Company",
-    current_compensation: "Current Compensation",
-    visa: "Visa",
+    current_compensation: "Compensation",
+    visa: "Visa Status",
     received_on: "Received On",
+    evaluate_result_options: {
+      ideal_candidate: "Ideal Candidate",
+      good_fit: "Good Fit",
+      not_a_fit: "Not a Fit",
+      recommend_with_reservations: "Recommend with Reservations",
+    },
+    work_experiences: "Work Experiences",
   },
 
   job_document: {

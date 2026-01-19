@@ -1014,11 +1014,19 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     candidate_list: "候选人列表",
     company_name: "公司名称",
     job_name: "职位名称",
+    years_of_experience: "工作经验",
     current_job_title: "当前职位",
     current_company: "当前公司",
     current_compensation: "当前薪资",
     visa: "签证",
     received_on: "申请时间",
+    evaluate_result_options: {
+      ideal_candidate: "理想候选人",
+      good_fit: "匹配",
+      not_a_fit: "不匹配",
+      recommend_with_reservations: "推荐",
+    },
+    work_experiences: "工作经历",
   },
 
   job_document: {

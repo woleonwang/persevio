@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Table, Tag, Tooltip } from "antd";
-import { useNavigate } from "react-router";
-import { ColumnsType } from "antd/es/table";
+import { Button, Tooltip } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
 import { Get } from "@/utils/request";
 import { parseJSON } from "@/utils";
-import Empty from "@/components/Empty";
-import useStaffs from "@/hooks/useStaffs";
 
 import styles from "./style.module.less";
+import EvaluateResultBadge from "../EvaluateResultBadge";
+import Icon from "../Icon";
+import Stars from "@/assets/icons/stars";
+import Light from "@/assets/icons/light";
+import Ghost from "@/assets/icons/ghost";
 
 export type TApproveStatus =
   | "message_read"
@@ -42,6 +43,7 @@ type TExtractBasicInfo = {
   current_company: string;
   current_compensation: string;
   visa: string;
+  years_of_experience: string;
   work_experiences: {
     company_name: string;
     job_title: string;
@@ -52,21 +54,37 @@ type TExtractBasicInfo = {
   summary: string;
 };
 
-type TTalentItem = TTalent &
-  TExtractBasicInfo & {
-    interviews: TInterview[];
-  };
+type TExtractEvaluateResult = {
+  result:
+    | "ideal_candidate"
+    | "good_fit"
+    | "recommend_with_reservations"
+    | "not_a_fit";
+  summary: string;
+  strength?: {
+    content: "string";
+  }[];
+  gap?: {
+    content: string;
+  }[];
+};
 
-type TLinkedinProfileItem = TLinkedinProfile & TExtractBasicInfo;
+type TTalentItem = TTalent & {
+  basicInfo: TExtractBasicInfo;
+  parsedEvaluateResult: TExtractEvaluateResult;
+};
+
+type TLinkedinProfileItem = TLinkedinProfile & {
+  basicInfo: TExtractBasicInfo;
+  parsedEvaluateResult: TExtractEvaluateResult;
+};
+
 const Talents = (props: IProps) => {
   const { jobId, filterParams } = props;
   const [talents, setTalents] = useState<TTalentItem[]>([]);
   const [linkedinProfiles, setLinkedinProfiles] = useState<
     TLinkedinProfileItem[]
   >([]);
-  const { staffs } = useStaffs();
-
-  const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
@@ -86,7 +104,8 @@ const Talents = (props: IProps) => {
         data.talents.map((talent) => {
           return {
             ...talent,
-            ...parseJSON(talent.basic_info_json),
+            basicInfo: parseJSON(talent.basic_info_json),
+            parsedEvaluateResult: parseJSON(talent.evaluate_json),
           };
         })
       );
@@ -94,7 +113,8 @@ const Talents = (props: IProps) => {
         (data.linkedin_profiles ?? []).map((linkedinProfile) => {
           return {
             ...linkedinProfile,
-            ...parseJSON(linkedinProfile.basic_info_json),
+            basicInfo: parseJSON(linkedinProfile.basic_info_json),
+            parsedEvaluateResult: parseJSON(linkedinProfile.evaluate_json),
           };
         })
       );
@@ -135,206 +155,22 @@ const Talents = (props: IProps) => {
     return talentItem.talent?.name || talentItem.linkedinProfile?.name || "";
   };
 
-  const columns: ColumnsType<TDataSourceItem> = [
-    {
-      title: t("candidate_name"),
-      dataIndex: "name",
-      render: (_: string, record: TDataSourceItem) => {
-        return getName(record) || "-";
-      },
-    },
-    {
-      title: t("evaluate_result"),
-      dataIndex: "evaluate_result",
-      render: (_: string, record: TDataSourceItem) => {
-        const regex = /Overall Recommendation\n*\*\*(.*?)\*\*/;
-        const match = (
-          (record.talent?.evaluate_result as unknown as string) ?? ""
-        ).match(regex);
-        return match ? match[1] : "-";
-      },
-      width: 150,
-    },
-    ...(!jobId
-      ? [
-          {
-            title: t("job_name"),
-            dataIndex: "job_name",
-            render: (_: string, record: TDataSourceItem) => {
-              return (
-                (record.talent
-                  ? record.talent?.job?.name
-                  : record.linkedinProfile?.job?.name) || "-"
-              );
-            },
-            width: 150,
-          },
-          {
-            title: t("creator"),
-            dataIndex: "creator",
-            render: (_: string, record: TDataSourceItem) => {
-              const staffId =
-                record.talent?.job?.staff_id ||
-                record.linkedinProfile?.job?.staff_id;
-              return staffId
-                ? staffs.find((staff) => staff.id === staffId)?.name
-                : "-";
-            },
-            width: 150,
-          },
-        ]
-      : []),
-    {
-      title: t("current_job_title"),
-      dataIndex: "current_job_title",
-      render: (_: string, record: TDataSourceItem) => {
-        return (
-          record.talent?.current_job_title ||
-          record.linkedinProfile?.current_job_title ||
-          "-"
-        );
-      },
-      width: 150,
-    },
-    {
-      title: t("current_company"),
-      dataIndex: "current_company",
-      render: (_: string, record: TDataSourceItem) => {
-        return (
-          record.talent?.current_company ||
-          record.linkedinProfile?.current_company ||
-          "-"
-        );
-      },
-      width: 150,
-    },
-    {
-      title: t("current_compensation"),
-      dataIndex: "current_compensation",
-      render: (_: string, record: TDataSourceItem) => {
-        return (
-          record.talent?.current_compensation ||
-          record.linkedinProfile?.current_compensation ||
-          "-"
-        );
-      },
-      width: 150,
-    },
-    {
-      title: t("visa"),
-      dataIndex: "visa",
-      render: (_: string, record: TDataSourceItem) => {
-        return record.talent?.visa || record.linkedinProfile?.visa || "-";
-      },
-      width: 150,
-    },
-    {
-      title: t("received_on"),
-      dataIndex: "created_at",
-      render: (_: string, record: TDataSourceItem) => {
-        return dayjs(
-          record.talent?.created_at || record.linkedinProfile?.created_at
-        ).format("YYYY-MM-DD HH:mm:ss");
-      },
-    },
-    {
-      title: t("screening_status"),
-      dataIndex: "status",
-      render: (_: string, record: TDataSourceItem) => {
-        const status = getApproveStatus(record);
-        if (status === "message_sent") {
-          return <Tag color="default">{t("status_message_sent")}</Tag>;
-        } else if (status === "message_read") {
-          return <Tag color="default">{t("status_message_read")}</Tag>;
-        } else if (status === "pending") {
-          return <Tag color="default">{t("status_pending")}</Tag>;
-        } else if (status === "staff_accepted") {
-          return <Tag color="green">{t("status_staff_accepted")}</Tag>;
-        } else if (status === "staff_rejected") {
-          return <Tag color="red">{t("status_staff_rejected")}</Tag>;
-        } else if (status === "interview_scheduled") {
-          return <Tag color="green">{t("status_interview_scheduled")}</Tag>;
-        } else if (status === "interview_confirmed") {
-          return <Tag color="green">{t("status_interview_confirmed")}</Tag>;
-        } else {
-          return "-";
-        }
-      },
-    },
-    {
-      title: t("feedback"),
-      dataIndex: "feedback",
-      render: (_: string, record: TDataSourceItem) => {
-        const feedback = record.talent?.feedback;
-        if (!feedback) {
-          return "-";
-        }
+  const getEvaluateResult = (
+    talentItem: TDataSourceItem
+  ): TExtractEvaluateResult | undefined => {
+    return (
+      talentItem.talent?.parsedEvaluateResult ||
+      talentItem.linkedinProfile?.parsedEvaluateResult
+    );
+  };
 
-        return (
-          <Tooltip title={feedback}>
-            <div
-              style={{
-                maxWidth: 100,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {feedback || "-"}
-            </div>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: t("interview_mode"),
-      dataIndex: "interview_mode",
-      render: (_: string, record: TDataSourceItem) => {
-        const interview = record.talent?.interviews?.[0];
-        return interview ? t(interview.mode) : "-";
-      },
-    },
-    {
-      title: t("schedule_time"),
-      dataIndex: "scheduled_at",
-      render: (_: string, record: TDataSourceItem) => {
-        const scheduled_at = record.talent?.interviews?.[0]?.scheduled_at;
-        return scheduled_at
-          ? dayjs(scheduled_at).format("YYYY-MM-DD HH:mm")
-          : "-";
-      },
-    },
-    {
-      title: t("action"),
-      dataIndex: "action",
-      fixed: "right" as const,
-      render: (_: any, record: TDataSourceItem) => {
-        return record.talent ? (
-          <Button
-            type="link"
-            onClick={() => {
-              navigate(
-                `/app/jobs/${record.talent?.job_id}/standard-board/talents/${record.talent?.id}`
-              );
-            }}
-          >
-            {t("view")}
-          </Button>
-        ) : (
-          <Button
-            type="link"
-            onClick={() => {
-              navigate(
-                `/app/jobs/${record.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${record.linkedinProfile?.id}`
-              );
-            }}
-          >
-            {t("view")}
-          </Button>
-        );
-      },
-    },
-  ];
+  const getBasicInfo = (
+    talentItem: TDataSourceItem
+  ): TExtractBasicInfo | undefined => {
+    return (
+      talentItem.talent?.basicInfo || talentItem.linkedinProfile?.basicInfo
+    );
+  };
 
   const dataSource: TDataSourceItem[] = useMemo(() => {
     let result: TDataSourceItem[] = [];
@@ -417,38 +253,202 @@ const Talents = (props: IProps) => {
       {jobId && <h3>{t("candidate_list")}</h3>}
       <div className={styles.cardContainer}>
         {dataSource.map((item) => {
+          const basicInfo = getBasicInfo(item);
+          const evaluateResult = getEvaluateResult(item);
           return (
-            <div key={item.talent?.id || item.linkedinProfile?.id}>
+            <div
+              key={item.talent?.id || item.linkedinProfile?.id}
+              className={styles.card}
+            >
               <div className={styles.cardHeader}>
-                <div className={styles.cardTitle}>{getName(item) || "-"}</div>
+                <div className={styles.cardTitle}>
+                  <div className={styles.cardTitleName}>
+                    {getName(item) || "-"}
+                  </div>
+                  <div className={styles.cardTitleResult}>
+                    <EvaluateResultBadge result={evaluateResult?.result} />
+                  </div>
+                </div>
+                <div>
+                  <Button type="primary">Schedule Interview</Button>
+                </div>
               </div>
 
               <div className={styles.cardContent}>
-                <div className={styles.cardItem}>
-                  <div className={styles.cardItemTitle}>
-                    {t("current_job_title")}
+                <div className={styles.basicInfo}>
+                  <div>
+                    <div>{t("years_of_experience")}</div>
+                    <Tooltip title={basicInfo?.years_of_experience}>
+                      <div>{basicInfo?.years_of_experience || "-"}</div>
+                    </Tooltip>
                   </div>
+                  <div>
+                    <div>{t("current_job_title")}</div>
+                    <Tooltip title={basicInfo?.current_job_title}>
+                      <div>{basicInfo?.current_job_title || "-"}</div>
+                    </Tooltip>
+                  </div>
+                  <div>
+                    <div>{t("visa")}</div>
+                    <Tooltip title={basicInfo?.visa}>
+                      <div>{basicInfo?.visa || "-"}</div>
+                    </Tooltip>
+                  </div>
+                  <div>
+                    <div>{t("current_compensation")}</div>
+                    <Tooltip title={basicInfo?.current_compensation}>
+                      <div>{basicInfo?.current_compensation || "-"}</div>
+                    </Tooltip>
+                  </div>
+                </div>
+
+                <div className={styles.workExperiences}>
+                  <div className={styles.workExperiencesTitle}>
+                    {t("work_experiences")}
+                  </div>
+                  {(basicInfo?.work_experiences ?? []).map(
+                    (workExperience, index) => {
+                      return (
+                        <div key={index} className={styles.workExperienceItem}>
+                          <div>
+                            <span>{workExperience.job_title || "-"}</span>
+                            <span
+                              className={styles.workExperienceItemSeparator}
+                            >
+                              {" "}
+                              at{" "}
+                            </span>
+                            <span
+                              className={styles.workExperienceItemCompanyName}
+                            >
+                              {workExperience.company_name || "-"}
+                            </span>
+                          </div>
+                          <div className={styles.workExperienceItemDuration}>
+                            {workExperience.start_year || "-"} -{" "}
+                            {workExperience.is_present
+                              ? "Present"
+                              : workExperience.end_year || "-"}
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+
+                <div className={styles.evaluateSummary}>
+                  <Icon icon={<Stars />} />
+                  {evaluateResult?.summary || "-"}
+                </div>
+
+                <div className={styles.evaluateDetails}>
+                  <div
+                    className={classnames(
+                      styles.evaluateDetailsItem,
+                      styles.strengths
+                    )}
+                  >
+                    <div className={styles.evaluateDetailsItemTitle}>
+                      <Icon
+                        icon={<Light />}
+                        className={styles.evaluateDetailsItemIcon}
+                      />
+                      Strengths
+                    </div>
+                    <div>
+                      {(evaluateResult?.strength ?? []).map(
+                        (strength, index) => (
+                          <div
+                            className={styles.evaluateDetailsItemContent}
+                            key={index}
+                          >
+                            {strength.content}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className={classnames(
+                      styles.evaluateDetailsItem,
+                      styles.gaps
+                    )}
+                  >
+                    <div className={styles.evaluateDetailsItemTitle}>
+                      <Icon
+                        icon={<Ghost />}
+                        className={styles.evaluateDetailsItemIcon}
+                      />
+                      Potential Gaps
+                    </div>
+                    {(evaluateResult?.gap ?? []).map((gap, index) => (
+                      <div
+                        className={styles.evaluateDetailsItemContent}
+                        key={index}
+                      >
+                        {gap.content}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div>
+                  {(() => {
+                    // 候选人已确认面试
+                    // 已安排面试、等待候选人确认
+                    // 通过筛选、等待安排面试
+                    // 拒绝
+                    // 等待筛选
+                    // 抓取简历、未投递
+                    const status = getApproveStatus(item);
+                    if (
+                      status === "interview_confirmed" ||
+                      status === "interview_scheduled"
+                    ) {
+                      const interview = item.talent?.interviews?.[0];
+                      return (
+                        <>
+                          <div>
+                            <div>Interview Scheduled</div>
+                            <div>
+                              <div>
+                                <div>Interview Mode:</div>
+                                <div>{interview?.mode}</div>
+                              </div>
+                              <div>
+                                <div>Schedule Time:</div>
+                                <div>{interview?.created_at}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <div>
+                              {interview?.scheduled_at
+                                ? dayjs(interview.scheduled_at).format(
+                                    "YYYY-MM-DD HH:mm"
+                                  )
+                                : ""}
+                            </div>
+                            {/* <div>{item.talent?.source_channel}</div> */}
+                          </div>
+                        </>
+                      );
+                    } else if (status === "pending") {
+                      return <div>Pending</div>;
+                    } else if (status === "staff_rejected") {
+                      return <div>Staff Rejected</div>;
+                    } else if (status === "staff_accepted") {
+                      return <div>Staff Accepted</div>;
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
             </div>
           );
         })}
-      </div>
-      <div className={styles.tableContainer}>
-        <Table
-          columns={columns}
-          rowKey={(record) => {
-            return record.talent?.id || record.linkedinProfile?.id || "";
-          }}
-          dataSource={dataSource}
-          pagination={{
-            pageSize: 10,
-          }}
-          locale={{
-            emptyText: <Empty style={{ margin: "60px 0" }} />,
-          }}
-          scroll={{ x: "max-content" }}
-        />
       </div>
     </div>
   );

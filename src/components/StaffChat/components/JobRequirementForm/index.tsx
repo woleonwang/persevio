@@ -585,11 +585,12 @@ const JobRequirementForm = (props: IProps) => {
 
           if (question.type === "multiple_select") {
             formattedValue = value
-              .map(
-                (optionValue: string) =>
-                  question.options?.find((item) => item.value === optionValue)
-                    ?.label ?? ""
-              )
+              .map((optionValue: string) => {
+                const option = question.options?.find(
+                  (item) => item.value === optionValue
+                );
+                return option?.text ?? option?.label ?? "";
+              })
               .join(",");
           }
 
