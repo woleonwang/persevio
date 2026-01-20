@@ -191,14 +191,25 @@ const HomeNew = () => {
               Have a conversation with Viona about your career goals. She'll
               deliver hand-picked opportunities that match who you truly are.
             </div>
-            <Button
-              type="primary"
-              size="large"
-              className={styles.ctaButton}
-              onClick={() => navigate("/signin")}
-            >
-              Chat with Viona now
-            </Button>
+            <div>
+              <Button
+                type="primary"
+                size="large"
+                className={styles.ctaButton}
+                onClick={() => navigate("/signin-candidate")}
+              >
+                Chat with Viona now
+              </Button>
+
+              <Button
+                type="default"
+                size="large"
+                className={classnames(styles.ctaButton, styles.staff)}
+                onClick={() => navigate("/signin")}
+              >
+                Hiring? Talk to Viona too
+              </Button>
+            </div>
           </div>
 
           <img
@@ -424,7 +435,7 @@ const HomeNew = () => {
             </div>
             <div style={{ textAlign: "center" }}>
               <Button
-                onClick={() => navigate("/signin")}
+                onClick={() => navigate("/signin-candidate")}
                 size="large"
                 className={styles.ctaButton}
               >
