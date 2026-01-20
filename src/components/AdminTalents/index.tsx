@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Drawer, Form, message, Modal, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
+import classnames from "classnames";
 import { Download, Get, Post } from "@/utils/request";
 
 import styles from "./style.module.less";
@@ -43,6 +44,7 @@ type TAdminJobApplyItem = IBasicInfo & {
   status: TJobListStatus;
   created_at: string;
   interview_finished_at: string;
+  deliveried_at: string;
   interview_mode: "ai" | "human" | "whatsapp";
   candidate: ICandidateSettings;
   candidate_basic_info_json: string;
@@ -310,7 +312,7 @@ const AdminTalents = (props: IProps) => {
         return "hunter_accepted";
       } else if (jobApply.status === "REJECTED") {
         return "hunter_rejected";
-      } else if (jobApply.interview_finished_at) {
+      } else if (jobApply.deliveried_at) {
         return "interview_finished";
       } else {
         return "interviewing";
@@ -319,6 +321,20 @@ const AdminTalents = (props: IProps) => {
 
     return "initialize";
   };
+
+  const feedback = async (action: "accept" | "reject") => {
+    const { code } = await Post(
+      `/api/admin/job_applies/${selectedJobApplyId}/feedback/${action}`
+    );
+    if (code === 0) {
+      message.success(t("operationSuccess"));
+      fetchTalents();
+      closeDrawer();
+    } else {
+      message.error(t("operationFailed"));
+    }
+  };
+
   const downloadResume = async () => {
     Download(
       `/api/admin/job_applies/${selectedJobApplyId}/download_resume`,
@@ -672,6 +688,33 @@ const AdminTalents = (props: IProps) => {
               height: "100%",
             }}
           >
+            <div style={{ display: "flex", flex: "none" }}>
+              {jobApply.status === "INITIAL" && (
+                <>
+                  <Button type="primary" onClick={() => feedback("accept")}>
+                    {t("drawer.accept")}
+                  </Button>
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => feedback("reject")}
+                    style={{ marginLeft: 12 }}
+                  >
+                    {t("drawer.reject")}
+                  </Button>
+                </>
+              )}
+              {jobApply.status === "ACCEPTED" && (
+                <div className={classnames(styles.status, styles.accepted)}>
+                  {t("drawer.accepted")}
+                </div>
+              )}
+              {jobApply.status === "REJECTED" && (
+                <div className={classnames(styles.status, styles.rejected)}>
+                  {t("drawer.rejected")}
+                </div>
+              )}
+            </div>
             <div className={styles.jobApplyDetail}>
               <div className={styles.jobApplyPanel}>
                 <div className={styles.jobApplyPanelTitle}>

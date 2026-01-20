@@ -258,7 +258,7 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
   if (jobApply.talent_status === "rejected") {
     return "rejected";
   }
-  if (jobApply.interview_finished_at) {
+  if (jobApply.deliveried_at) {
     return "screening";
   }
   return "chat";
