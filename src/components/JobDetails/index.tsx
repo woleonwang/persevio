@@ -109,11 +109,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
         <div className={styles.right}>
           {chatType === "talents" &&
             (role === "staff" ? (
-              process.env.NODE_ENV === "development" ? (
-                <TalentCards jobId={job.id} />
-              ) : (
-                <Talents jobId={job.id} />
-              )
+              <TalentCards jobId={job.id} />
             ) : (
               <AdminTalents jobId={job.id} />
             ))}
