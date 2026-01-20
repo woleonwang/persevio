@@ -8,6 +8,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
 import { tokenStorage } from "@/utils/storage";
+import { deleteQuery, getQuery } from "@/utils";
 
 interface SignupFormValues {
   username: string;
@@ -40,6 +41,7 @@ const Register: React.FC<IProps> = (props) => {
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [termsType, setTermsType] = useState<"terms" | "privacy">();
+  const [isInternal, setIsInternal] = useState(false);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   const [form] = Form.useForm();
@@ -50,6 +52,9 @@ const Register: React.FC<IProps> = (props) => {
 
   // 清理倒计时定时器
   useEffect(() => {
+    setIsInternal(getQuery("internal") === "1");
+    deleteQuery("internal");
+
     return () => {
       if (countdownRef.current) {
         clearInterval(countdownRef.current);
@@ -126,20 +131,24 @@ const Register: React.FC<IProps> = (props) => {
 
     form.validateFields().then(async (values: SignupFormValues) => {
       const { username, password, verify_code } = values;
-      const { code } = await Post("/api/precheck_verify_code", {
-        verify_key: values.username,
-        verify_code: values.verify_code,
-      });
 
-      if (code !== 0) {
-        message.error(t("verification_code_incorrect"));
-        return;
+      if (!isInternal) {
+        const { code } = await Post("/api/precheck_verify_code", {
+          verify_key: values.username,
+          verify_code: values.verify_code,
+        });
+
+        if (code !== 0) {
+          message.error(t("verification_code_incorrect"));
+          return;
+        }
       }
 
       const { code: signupCode } = await Post("/api/register", {
         username,
         password,
         verify_code,
+        is_internal: isInternal,
       });
 
       if (signupCode === 0) {
@@ -258,38 +267,40 @@ const Register: React.FC<IProps> = (props) => {
           />
         </Form.Item>
 
-        <Form.Item
-          label={t("verification_code")}
-          name="verify_code"
-          rules={[
-            {
-              required: true,
-              message: t("please_enter_verification_code"),
-            },
-          ]}
-          preserve
-        >
-          <Input
-            placeholder={t("verification_code_placeholder")}
-            size="large"
-            suffix={
-              <Button
-                type="primary"
-                disabled={countdown > 0 || isSendingCode}
-                onClick={sendVerificationCode}
-                style={{
-                  color: countdown > 0 || isSendingCode ? "#3682fe" : "white",
-                }}
-              >
-                {countdown > 0
-                  ? `${countdown}${t("countdown")}`
-                  : isSendingCode
-                  ? t("sending")
-                  : t("send_code")}
-              </Button>
-            }
-          />
-        </Form.Item>
+        {!isInternal && (
+          <Form.Item
+            label={t("verification_code")}
+            name="verify_code"
+            rules={[
+              {
+                required: true,
+                message: t("please_enter_verification_code"),
+              },
+            ]}
+            preserve
+          >
+            <Input
+              placeholder={t("verification_code_placeholder")}
+              size="large"
+              suffix={
+                <Button
+                  type="primary"
+                  disabled={countdown > 0 || isSendingCode}
+                  onClick={sendVerificationCode}
+                  style={{
+                    color: countdown > 0 || isSendingCode ? "#3682fe" : "white",
+                  }}
+                >
+                  {countdown > 0
+                    ? `${countdown}${t("countdown")}`
+                    : isSendingCode
+                    ? t("sending")
+                    : t("send_code")}
+                </Button>
+              }
+            />
+          </Form.Item>
+        )}
         <div className={styles.signin}>
           Already have an account? <Link to="/signin">{t("sign_in")}</Link>
         </div>
