@@ -19,22 +19,10 @@
   flex: none;
 }
 
-.filterSection {
-  display: flex;
-  gap: 16px;
-  margin: 24px 0;
-  flex-wrap: wrap;
-}
-
-.filterItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .pageBody {
   overflow: auto;
   flex: auto;
+  margin-top: 20px;
 }
 
 .candidateNameWrapper {
@@ -42,33 +30,9 @@
   display: inline-block;
 }
 
-.unreadDot {
-  position: absolute;
-  top: 0px;
-  right: -10px;
-  width: 8px;
-  height: 8px;
-  background-color: #ff4d4f;
-  border-radius: 50%;
-}
-
 // 响应式设计
 @media (max-width: 768px) {
   .candidatesContainer {
     padding: 12px;
-  }
-
-  .filterSection {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .filterItem {
-    width: 100%;
-
-    .ant-input,
-    .ant-select {
-      width: 100% !important;
-    }
   }
 }
