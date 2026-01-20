@@ -5,6 +5,12 @@ import { useTranslation } from "react-i18next";
 import { Button } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 
+import { Get } from "@/utils/request";
+import PublicJobCard from "@/components/PublicJobCard";
+import { parseJSON } from "@/utils";
+import Icon from "@/components/Icon";
+import ArrowRight from "@/assets/icons/arrow-right";
+
 import logo from "@/assets/logo.png";
 import bannerVideo from "@/assets/banner-1.mp4";
 import bannerTalk1 from "@/assets/banner-talk-1.png";
@@ -24,9 +30,6 @@ import different2detail from "@/assets/different-2-detail.png";
 import different3detail from "@/assets/different-3-detail.png";
 
 import styles from "./style.module.less";
-import { Get } from "@/utils/request";
-import PublicJobCard from "@/components/PublicJobCard";
-import { parseJSON } from "@/utils";
 
 // const menusConfigs = {
 //   candidates: "/",
@@ -175,7 +178,7 @@ const HomeNew = () => {
             onClick={() => navigate("/signin")}
           >
             <span>{originalT("login_register")}</span>
-            <span>→</span>
+            <Icon icon={<ArrowRight />} style={{ fontSize: 24 }} />
           </Button>
         </div>
         <div className={styles.heroSectionContent}>
@@ -382,16 +385,14 @@ const HomeNew = () => {
                 </div>
               </div>
             </div>
-            <div className={styles.reinventForm}>
-              <img
-                src={
-                  [different1detail, different2detail, different3detail][
-                    hoverStep
-                  ]
-                }
-                className={styles.reinventDetail}
-              />
-            </div>
+            <img
+              src={
+                [different1detail, different2detail, different3detail][
+                  hoverStep
+                ]
+              }
+              className={styles.reinventDetail}
+            />
           </div>
         </div>
       </div>
@@ -416,18 +417,20 @@ const HomeNew = () => {
 
       {/* Bottom CTA Section */}
       <div className={styles.bottomCtaSection}>
-        <div className={styles.bottomCtaSectionContent}>
-          <div className={styles.ctaTitle}>
-            Ready to meet your AI Career Agent?
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <Button
-              onClick={() => navigate("/signin")}
-              size="large"
-              className={styles.ctaButton}
-            >
-              Speak with Viona now
-            </Button>
+        <div className={styles.bottomCtaSectionBg}>
+          <div className={styles.bottomCtaSectionContent}>
+            <div className={styles.ctaTitle}>
+              Ready to meet your AI Career Agent?
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => navigate("/signin")}
+                size="large"
+                className={styles.ctaButton}
+              >
+                Speak with Viona now
+              </Button>
+            </div>
           </div>
         </div>
       </div>
