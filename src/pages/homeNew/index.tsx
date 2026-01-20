@@ -175,7 +175,7 @@ const HomeNew = () => {
           <Button
             type="primary"
             className={styles.joinBtn}
-            onClick={() => navigate("/signin")}
+            // onClick={() => navigate("/signin")}
           >
             <span>{originalT("login_register")}</span>
             <Icon icon={<ArrowRight />} style={{ fontSize: 24 }} />
@@ -196,7 +196,7 @@ const HomeNew = () => {
                 type="primary"
                 size="large"
                 className={styles.ctaButton}
-                onClick={() => navigate("/signin-candidate")}
+                // onClick={() => navigate("/signin-candidate")}
               >
                 Chat with Viona now
               </Button>
@@ -435,7 +435,7 @@ const HomeNew = () => {
             </div>
             <div style={{ textAlign: "center" }}>
               <Button
-                onClick={() => navigate("/signin-candidate")}
+                // onClick={() => navigate("/signin-candidate")}
                 size="large"
                 className={styles.ctaButton}
               >
