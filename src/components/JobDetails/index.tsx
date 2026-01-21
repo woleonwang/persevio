@@ -15,7 +15,6 @@ import JobDocument from "./components/JobDocument";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import TalentCards from "../TalentCards";
-import Talents from "../Talents";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
