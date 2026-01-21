@@ -318,7 +318,9 @@ const TalentCards = (props: IProps) => {
                 className={styles.card}
                 onClick={() => {
                   navigate(
-                    `/app/jobs/${jobId}/standard-board/talents/${item.talent?.id}`
+                    item.talent
+                      ? `/app/jobs/${item.talent.job_id}/standard-board/talents/${item.talent.id}`
+                      : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`
                   );
                 }}
               >
