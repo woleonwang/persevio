@@ -266,6 +266,7 @@ const TalentCards = (props: IProps) => {
       {jobId && <h3>{t("candidate_list")}</h3>}
       <div>
         <Tabs
+          size="small"
           tabs={[
             {
               key: "screened",
@@ -331,6 +332,7 @@ const TalentCards = (props: IProps) => {
                         {talent?.interviews?.length === 0 && (
                           <Button
                             type="primary"
+                            danger
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedTalent(item.talent);
@@ -550,7 +552,7 @@ const TalentCards = (props: IProps) => {
                             <div className={styles.cardFooterSourceChannel}>
                               {item.talent?.source_channel === "customer"
                                 ? "Your own channel"
-                                : "From Viona"}
+                                : "Persevio"}
                             </div>
                           </div>
                         </>

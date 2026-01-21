@@ -58,6 +58,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       fetchTalentChatMessages();
     }
   }, [job, talent]);
+
   const fetchTalentChatMessages = async () => {
     if (!job || !talent) return;
 
@@ -211,12 +212,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 >
                   {originalT("download")}
                 </Button>
-                <Button
-                  type="primary"
-                  onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
-                >
-                  {t("ai_interview_record")}
-                </Button>
+                {(talentChatMessages ?? []).length > 0 && (
+                  <Button
+                    type="primary"
+                    onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
+                  >
+                    {t("ai_interview_record")}
+                  </Button>
+                )}
               </div>
             </div>
             <div className={styles.reportContainer} ref={reportContainerRef}>
