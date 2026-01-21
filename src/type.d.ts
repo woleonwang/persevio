@@ -100,7 +100,6 @@ interface IJobApply {
   status: TJobListStatus;
   created_at: string;
   interview_finished_at: string;
-  deliveried_at: string;
   interview_mode: "ai" | "human" | "whatsapp";
   whatsapp_number_confirmed_at?: string;
   switch_mode_reason?: string;
