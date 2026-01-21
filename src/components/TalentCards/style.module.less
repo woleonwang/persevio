@@ -14,12 +14,28 @@
 .cardContainer {
   flex: auto;
   overflow: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
   .card {
     border: 1px solid rgba(235, 236, 238, 1);
     border-radius: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     background-color: white;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    border-color: @primary-color;
+    transition: all 0.3s ease;
+
+    .cardHeader {
+      border-bottom-color: @primary-color;
+    }
+
+    .cardFooter {
+      border-top-color: @primary-color;
+    }
   }
 
   .cardHeader {
@@ -44,6 +60,11 @@
       font-size: 14px;
       color: rgba(102, 102, 102, 1);
       margin-left: 12px;
+    }
+
+    .cardHeaderActions {
+      display: flex;
+      gap: 12px;
     }
   }
 
@@ -97,6 +118,7 @@
           content: "";
           width: 6px;
           height: 6px;
+          flex: none;
           border-radius: 50%;
           outline: 3px solid rgba(54, 130, 254, 0.1);
           background-color: @primary-color;
@@ -116,6 +138,7 @@
           width: 4px;
           height: 4px;
           background-color: black;
+          flex: none;
         }
 
         .workExperienceItemSeparator {
@@ -199,12 +222,85 @@
 
           &:before {
             content: "";
+            flex: none;
             width: 4px;
             height: 4px;
             background-color: black;
             margin-top: 10px;
           }
         }
+      }
+    }
+  }
+
+  .cardFooter {
+    border-top: 1px dashed rgba(235, 236, 238, 1);
+    padding: 20px;
+
+    .cardFooterContent {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cardFooterStatus {
+      padding: 4px 16px;
+      border-radius: 16px;
+      width: fit-content;
+      font-size: 14px;
+
+      &.rejected {
+        color: rgba(224, 61, 61, 1);
+        background-color: rgba(255, 242, 242, 1);
+      }
+
+      &.interview_scheduled,
+      &.waiting_for_screening {
+        background-color: rgba(237, 242, 255, 1);
+        color: @primary-color;
+      }
+    }
+
+    .cardFooterInterviewInfo {
+      display: flex;
+      gap: 24px;
+      margin-top: 12px;
+
+      .cardFooterInterviewInfoItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+
+        >div:first-child {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .right {
+      display: flex;
+      font-size: 14px;
+
+      .cardFooterSourceChannel {
+        margin-left: 24px;
+        padding-left: 24px;
+        border-left: 1px solid rgba(235, 236, 238, 1);
+        color: @primary-color;
+      }
+    }
+
+    .cardFooterFeedback {
+      margin-top: 20px;
+      background-color: rgba(255, 242, 242, 1);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+
+      >span {
+        color: rgba(224, 61, 61, 1);
+        font-weight: bold;
+        margin-right: 8px;
       }
     }
   }

@@ -423,7 +423,7 @@ type TTalent = {
   basic_info_json: string;
   evaluate_json: string;
   job_id: number;
-  source_channel: "system" | "custimer";
+  source_channel: "system" | "customer";
   hire_status: "hired" | "not_hired";
   share_token_id?: number;
   interviews: TInterview[];

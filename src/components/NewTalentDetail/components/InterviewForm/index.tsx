@@ -45,12 +45,14 @@ const InterviewForm: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     init();
-  }, []);
+  }, [talent]);
 
   const readonly = !!interview;
   const init = async () => {
     if (interview) {
       form.setFieldsValue(interview);
+    } else {
+      form.resetFields();
     }
 
     const { code, data } = await Get(`/api/settings`);
