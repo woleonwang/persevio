@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Empty, Form, message, Modal, Pagination, Tooltip } from "antd";
+import {
+  Button,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Pagination,
+  Select,
+  Tooltip,
+} from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
 import { getQuery, parseJSON, parseJSONArray, updateQuery } from "@/utils";
@@ -17,6 +28,9 @@ import { useNavigate } from "react-router";
 import Tabs from "../Tabs";
 import InterviewForm from "../NewTalentDetail/components/InterviewForm";
 import TextAreaWithVoice from "../TextAreaWithVoice";
+import globalStore from "@/store/global";
+import { observer } from "mobx-react-lite";
+import useStaffs from "@/hooks/useStaffs";
 
 interface IProps {
   jobId?: number;
@@ -93,6 +107,13 @@ const TalentCards = (props: IProps) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedTalent, setSelectedTalent] = useState<TTalentItem>();
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
+  const [searchName, setSearchName] = useState<string>();
+  const [selectedJob, setSelectedJob] = useState<number>();
+
+  const { staffs } = useStaffs();
+
+  const { jobs } = globalStore;
 
   const [form] = Form.useForm<{ reason: string }>();
 
@@ -187,6 +208,10 @@ const TalentCards = (props: IProps) => {
     );
   };
 
+  const getJobId = (talentItem: TDataSourceItem): number | undefined => {
+    return talentItem.talent?.job_id || talentItem.linkedinProfile?.job_id;
+  };
+
   const updateTalentStatus = async (feedback?: string) => {
     if (selectedTalent) {
       const { code } = await Post(
@@ -247,12 +272,18 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return activeTab === "all" || getStatus(item) === activeTab;
       })
+      .filter((item) => {
+        return !searchName || getName(item).includes(searchName);
+      })
+      .filter((item) => {
+        return !selectedJob || getJobId(item) === selectedJob;
+      })
       .sort((a, b) => {
         return dayjs(
           b.talent?.created_at || b.linkedinProfile?.created_at
         ).diff(dayjs(a.talent?.created_at || a.linkedinProfile?.created_at));
       });
-  }, [talents, linkedinProfiles, activeTab]);
+  }, [talents, linkedinProfiles, activeTab, searchName, selectedJob]);
 
   const currentPageDataSource = dataSource.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -263,7 +294,47 @@ const TalentCards = (props: IProps) => {
     <div
       className={classnames(styles.container, { [styles.noPadding]: !jobId })}
     >
-      {jobId && <h3>{t("candidate_list")}</h3>}
+      <div className={styles.pageTitle}>
+        <div
+          className={classnames(styles.pageTitleText, { [styles.lg]: !jobId })}
+        >
+          {t("candidate_list")}
+        </div>
+        {!jobId && (
+          <div className={styles.filterSection}>
+            <div className={styles.filterItem}>
+              <Input
+                placeholder={t("search_placeholder")}
+                prefix={<SearchOutlined />}
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+                style={{ width: 200 }}
+                allowClear
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <Select
+                placeholder={t("job_placeholder")}
+                value={selectedJob}
+                onChange={setSelectedJob}
+                style={{ width: 200 }}
+                allowClear
+                options={jobs.map((job) => ({
+                  label: job.name,
+                  value: job.id,
+                }))}
+                showSearch
+                autoClearSearchValue
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </div>
+          </div>
+        )}
+      </div>
       <div>
         <Tabs
           size="small"
@@ -305,6 +376,12 @@ const TalentCards = (props: IProps) => {
             const basicInfo = getBasicInfo(item);
             const evaluateResult = getEvaluateResult(item);
             const talent = item.talent;
+            const interview = talent?.interviews?.[0];
+            const job = jobs.find(
+              (job) =>
+                job.id === (talent?.job_id || item.linkedinProfile?.job_id)
+            );
+
             return (
               <div
                 key={item.talent?.id || item.linkedinProfile?.id}
@@ -352,7 +429,9 @@ const TalentCards = (props: IProps) => {
                             setIsInterviewModalOpen(true);
                           }}
                         >
-                          Schedule Interview
+                          {interview
+                            ? "Interview Information"
+                            : "Schedule Interview"}
                         </Button>
                       </>
                     )}
@@ -429,56 +508,58 @@ const TalentCards = (props: IProps) => {
                     {evaluateResult?.summary || "-"}
                   </div>
 
-                  <div className={styles.evaluateDetails}>
-                    <div
-                      className={classnames(
-                        styles.evaluateDetailsItem,
-                        styles.strengths
-                      )}
-                    >
-                      <div className={styles.evaluateDetailsItemTitle}>
-                        <Icon
-                          icon={<Light />}
-                          className={styles.evaluateDetailsItemIcon}
-                        />
-                        Strengths
-                      </div>
-                      <div>
-                        {(evaluateResult?.strength ?? []).map(
-                          (strength, index) => (
-                            <div
-                              className={styles.evaluateDetailsItemContent}
-                              key={index}
-                            >
-                              {strength.content}
-                            </div>
-                          )
+                  {item.talent && (
+                    <div className={styles.evaluateDetails}>
+                      <div
+                        className={classnames(
+                          styles.evaluateDetailsItem,
+                          styles.strengths
                         )}
-                      </div>
-                    </div>
-                    <div
-                      className={classnames(
-                        styles.evaluateDetailsItem,
-                        styles.gaps
-                      )}
-                    >
-                      <div className={styles.evaluateDetailsItemTitle}>
-                        <Icon
-                          icon={<Ghost />}
-                          className={styles.evaluateDetailsItemIcon}
-                        />
-                        Potential Gaps
-                      </div>
-                      {(evaluateResult?.gap ?? []).map((gap, index) => (
-                        <div
-                          className={styles.evaluateDetailsItemContent}
-                          key={index}
-                        >
-                          {gap.content}
+                      >
+                        <div className={styles.evaluateDetailsItemTitle}>
+                          <Icon
+                            icon={<Light />}
+                            className={styles.evaluateDetailsItemIcon}
+                          />
+                          Strengths
                         </div>
-                      ))}
+                        <div>
+                          {(evaluateResult?.strength ?? []).map(
+                            (strength, index) => (
+                              <div
+                                className={styles.evaluateDetailsItemContent}
+                                key={index}
+                              >
+                                {strength.content}
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                      <div
+                        className={classnames(
+                          styles.evaluateDetailsItem,
+                          styles.gaps
+                        )}
+                      >
+                        <div className={styles.evaluateDetailsItemTitle}>
+                          <Icon
+                            icon={<Ghost />}
+                            className={styles.evaluateDetailsItemIcon}
+                          />
+                          Potential Gaps
+                        </div>
+                        {(evaluateResult?.gap ?? []).map((gap, index) => (
+                          <div
+                            className={styles.evaluateDetailsItemContent}
+                            key={index}
+                          >
+                            {gap.content}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className={styles.cardFooter}>
@@ -504,7 +585,7 @@ const TalentCards = (props: IProps) => {
                       return (
                         <>
                           <div className={styles.left}>
-                            {item.talent && (
+                            {item.talent ? (
                               <div
                                 className={classnames(
                                   styles.cardFooterStatus,
@@ -516,6 +597,17 @@ const TalentCards = (props: IProps) => {
                                   : tagType === "interview_scheduled"
                                   ? "Interview Scheduled"
                                   : "Waiting for screening"}
+                              </div>
+                            ) : (
+                              <div
+                                className={classnames(
+                                  styles.cardFooterStatus,
+                                  styles.interview_scheduled
+                                )}
+                              >
+                                {item.linkedinProfile?.message_read_at
+                                  ? "JD read"
+                                  : "Outreach message sent"}
                               </div>
                             )}
                             {tagType === "interview_scheduled" && (
@@ -546,6 +638,18 @@ const TalentCards = (props: IProps) => {
                             )}
                           </div>
                           <div className={styles.right}>
+                            {!jobId && !!job && (
+                              <>
+                                <div className={styles.border}>{job.name}</div>
+                                <div className={styles.border}>
+                                  {
+                                    staffs.find(
+                                      (staff) => staff.id === job.staff_id
+                                    )?.name
+                                  }
+                                </div>
+                              </>
+                            )}
                             <div>
                               {dayjs(createdAt).format("YYYY-MM-DD HH:mm")}
                             </div>
@@ -636,4 +740,4 @@ const TalentCards = (props: IProps) => {
   );
 };
 
-export default TalentCards;
+export default observer(TalentCards);

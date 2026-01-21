@@ -11,6 +11,35 @@
   }
 }
 
+.pageTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .pageTitleText {
+    font-size: 18px;
+    font-weight: bold;
+
+    &.lg {
+      font-size: 24px;
+      flex: none;
+    }
+  }
+
+  .filterSection {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .filterItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
 .cardContainer {
   flex: auto;
   overflow: auto;
@@ -281,6 +310,12 @@
     .right {
       display: flex;
       font-size: 14px;
+
+      .border {
+        margin-right: 24px;
+        padding-right: 24px;
+        border-right: 1px solid rgba(235, 236, 238, 1);
+      }
 
       .cardFooterSourceChannel {
         margin-left: 24px;
