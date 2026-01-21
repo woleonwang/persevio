@@ -149,32 +149,25 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       <div className={classnames(styles.main, styles.desktopVisible)}>
         <div className={styles.resumeContainer}>
           <div className={styles.statusContainer}>
-            {talent?.status === "accepted" ? (
-              interviewButtonArea
-            ) : talent?.status === "rejected" ? (
+            {talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
               <>
-                <Button
-                  variant="outlined"
-                  color="danger"
-                  onClick={() => {
-                    form.resetFields();
-                    setIsRejectModalOpen(true);
-                  }}
-                  style={{ flex: "auto" }}
-                  size="large"
-                >
-                  {t("action_reject")}
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={() => updateTalentStatus("accept")}
-                  style={{ flex: "auto" }}
-                  size="large"
-                >
-                  {t("action_accept")}
-                </Button>
+                {interviewButtonArea}
+                {interviews?.length === 0 && (
+                  <Button
+                    variant="outlined"
+                    color="danger"
+                    onClick={() => {
+                      form.resetFields();
+                      setIsRejectModalOpen(true);
+                    }}
+                    style={{ flex: "auto" }}
+                    size="large"
+                  >
+                    {t("action_reject")}
+                  </Button>
+                )}
               </>
             )}
           </div>

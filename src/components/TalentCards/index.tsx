@@ -1,14 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Pagination,
-  Tooltip,
-} from "antd";
+import { Button, Empty, Form, message, Modal, Pagination, Tooltip } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -25,6 +16,7 @@ import Ghost from "@/assets/icons/ghost";
 import { useNavigate } from "react-router";
 import Tabs from "../Tabs";
 import InterviewForm from "../NewTalentDetail/components/InterviewForm";
+import TextAreaWithVoice from "../TextAreaWithVoice";
 
 interface IProps {
   jobId?: number;
@@ -336,17 +328,19 @@ const TalentCards = (props: IProps) => {
                   <div className={styles.cardHeaderActions}>
                     {talent && talent.status !== "rejected" && (
                       <>
-                        <Button
-                          type="primary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTalent(item.talent);
-                            setIsRejectModalOpen(true);
-                            form.resetFields();
-                          }}
-                        >
-                          Reject
-                        </Button>
+                        {talent?.interviews?.length === 0 && (
+                          <Button
+                            type="primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTalent(item.talent);
+                              setIsRejectModalOpen(true);
+                              form.resetFields();
+                            }}
+                          >
+                            Reject
+                          </Button>
+                        )}
 
                         <Button
                           type="primary"
@@ -606,7 +600,7 @@ const TalentCards = (props: IProps) => {
               { required: true, message: "Reason for rejection is required" },
             ]}
           >
-            <Input.TextArea rows={4} />
+            <TextAreaWithVoice />
           </Form.Item>
         </Form>
       </Modal>
