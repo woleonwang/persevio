@@ -580,7 +580,9 @@ const TalentCards = (props: IProps) => {
                         status === "rejected"
                           ? "rejected"
                           : !!interview
-                          ? "interview_scheduled"
+                          ? interview.scheduled_at
+                            ? "interview_scheduled"
+                            : "interview_created"
                           : "waiting_for_screening";
                       return (
                         <>
@@ -596,6 +598,8 @@ const TalentCards = (props: IProps) => {
                                   ? "Reject"
                                   : tagType === "interview_scheduled"
                                   ? "Interview Scheduled"
+                                  : tagType === "interview_created"
+                                  ? "Awaiting Candidate's Confirmation"
                                   : "Waiting for screening"}
                               </div>
                             ) : (
@@ -610,7 +614,8 @@ const TalentCards = (props: IProps) => {
                                   : "Outreach message sent"}
                               </div>
                             )}
-                            {tagType === "interview_scheduled" && (
+                            {(tagType === "interview_scheduled" ||
+                              tagType === "interview_created") && (
                               <div className={styles.cardFooterInterviewInfo}>
                                 <div
                                   className={styles.cardFooterInterviewInfoItem}
