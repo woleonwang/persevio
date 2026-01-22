@@ -1,0 +1,170 @@
+@primary-color: #3682fe;
+
+.container {
+  height: 100vh;
+  height: 100svh;
+  min-width: 1300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.mobile {
+    min-width: 0;
+  }
+}
+
+.header {
+  flex: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #eeeeee;
+
+  .banner {
+    height: 40px;
+    width: auto;
+    cursor: pointer;
+    margin: 24px 0;
+  }
+
+  .headerRight {
+    position: absolute;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .buttonWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .button {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: @primary-color;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+}
+
+.main {
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f6f6f6;
+}
+
+.body {
+  flex: auto;
+  overflow: auto;
+  width: 100%;
+}
+
+.modalDescription {
+  margin-top: 24px;
+  color: #666;
+  font-size: 16px;
+}
+
+.form {
+  margin-top: 24px;
+
+  :global {
+    .ant-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+  }
+
+  .otherReasonInput {
+    margin-top: 24px;
+    margin-left: 24px;
+  }
+}
+
+.conversation {
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .whatsappContainer {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .whatsappIcon {
+    background-color: white;
+    width: 130px;
+    height: 130px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.modalContent {
+  width: 640px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    justify-content: space-between;
+    padding: 12px 16px;
+    .banner {
+      height: 30px;
+      margin: 0;
+    }
+  }
+
+  .desktopVisible {
+    display: none !important;
+  }
+
+  .header {
+    .button {
+      background-color: #edf2ff;
+      border: 1px solid @primary-color;
+      color: @primary-color;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex: none;
+
+      &:hover {
+        background-color: #edf2ff !important;
+      }
+    }
+    .icon {
+      font-size: 16px;
+    }
+  }
+
+  .modalContent {
+    width: 80vw;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
+  }
+}

@@ -1,0 +1,155 @@
+@primary-color: #3682fe;
+@error-color: #ff4d4f;
+
+.container {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: auto;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+  justify-content: center;
+  width: 640px;
+  margin: 50px auto;
+  position: relative;
+}
+
+.textWrapper {
+  padding: 20px 40px;
+  font-size: 24px;
+  font-weight: bold;
+
+  &.rejected {
+    border: 1px solid @error-color;
+    color: @error-color;
+    background-color: #fff1f0;
+  }
+}
+
+.buttonWrapper {
+  width: 100%;
+  background-color: white;
+  padding: 32px 40px;
+  border-radius: 16px;
+  border: 1px solid #ebecee;
+
+  .logoWrapper {
+    border-bottom: 1px solid #ebecee;
+    padding-bottom: 32px;
+    img {
+      width: 156px;
+    }
+  }
+
+  .listTitle {
+    font-size: 16px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+
+  .listItem {
+    font-size: 16px;
+    position: relative;
+    color: #666666;
+    padding-left: 24px;
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      background-color: #666666;
+    }
+  }
+
+  .buttonGroup {
+    margin-top: 48px;
+  }
+
+  .brand {
+    width: 32px;
+    height: 32px;
+  }
+
+  .button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    margin-top: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: @primary-color;
+    }
+  }
+}
+
+.termsWrapper {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  .termsLink {
+    text-decoration: underline;
+    cursor: pointer;
+    color: @primary-color;
+  }
+}
+
+@media (max-width: 768px) {
+  .body {
+    width: 100%;
+    margin: 0;
+    padding: 16px 32px;
+    background-color: white;
+    display: block;
+    overflow: auto;
+  }
+
+  .textWrapper {
+    padding: 0;
+  }
+
+  .buttonWrapper {
+    background-color: #edf2ff;
+    margin-top: 15px;
+    padding: 16px 12px;
+
+    .listTitle {
+      margin-top: 0;
+      color: @primary-color;
+    }
+
+    .button {
+      background-color: white;
+      border: none;
+    }
+  }
+
+  .desktopVisible {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
+  }
+}

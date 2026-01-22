@@ -57,8 +57,8 @@ const CandidateSignIn: React.FC = () => {
       const candidate: ICandidateSettings = data.candidate;
       setCandidate(candidate);
       i18n.changeLanguage(candidate.lang ?? "zh-CN");
-      if (isTempAccount(candidate) && !!candidate.job_id) {
-        navigate(`/apply-job/${candidate.job_id}`, { replace: true });
+      if (isTempAccount(candidate)) {
+        navigate(`/signup-candidate`, { replace: true });
       } else {
         navigate("/candidate/jobs", { replace: true });
       }
