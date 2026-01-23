@@ -406,26 +406,49 @@ const JobApplyShow = () => {
         title={originalT("apply_job.title")}
         open={whatsappModeOpen}
         onCancel={() => setWhatsappModeOpen(false)}
-        cancelButtonProps={{
-          style: {
-            display: "none",
-          },
-        }}
-        onOk={async () => {
-          if (jobApply?.whatsapp_number_confirmed_at) {
-            setWhatsappModeOpen(false);
-            return;
-          } else {
-            const { code } = await Post(
-              `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
-            );
-            if (code === 0) {
-              fetchApplyJob();
-            } else {
-              message.success(originalT("submit_failed"));
-            }
-          }
-        }}
+        footer={
+          <div>
+            {jobApply?.whatsapp_number_confirmed_at && (
+              <Button
+                onClick={async () => {
+                  const { code } = await Post(
+                    `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
+                    {
+                      mode: "ai",
+                    }
+                  );
+                  if (code === 0) {
+                    setWhatsappModeOpen(false);
+                    fetchApplyJob();
+                  }
+                }}
+              >
+                Chat on Website
+              </Button>
+            )}
+            <Button
+              type="primary"
+              style={{ marginLeft: 12 }}
+              onClick={async () => {
+                if (jobApply?.whatsapp_number_confirmed_at) {
+                  setWhatsappModeOpen(false);
+                  return;
+                } else {
+                  const { code } = await Post(
+                    `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
+                  );
+                  if (code === 0) {
+                    fetchApplyJob();
+                  } else {
+                    message.success(originalT("submit_failed"));
+                  }
+                }
+              }}
+            >
+              OK
+            </Button>
+          </div>
+        }
         className={styles.whatsappModeModal}
         centered
         width={740}

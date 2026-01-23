@@ -9,7 +9,7 @@ import styles from "./style.module.less";
 import globalStore from "@/store/global";
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
-import { deleteQuery, getQuery } from "@/utils";
+import { deleteQuery, getQuery, isTempAccount } from "@/utils";
 import { tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
@@ -97,10 +97,14 @@ const CandidateLayout = () => {
     // 校验 token
     const { code, data } = await Get("/api/candidate/settings");
     if (code === 0) {
-      setInited(true);
-      const lang = data.candidate.lang || "en-US ";
-      i18n.changeLanguage(lang);
-      globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
+      if (isTempAccount(data.candidate)) {
+        navigate("/signup-candidate");
+      } else {
+        setInited(true);
+        const lang = data.candidate.lang || "en-US ";
+        i18n.changeLanguage(lang);
+        globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
+      }
     } else {
       navigate("/signin-candidate");
     }

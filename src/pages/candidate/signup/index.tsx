@@ -40,9 +40,7 @@ const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
-
-  const jobIdStr: string = getQuery("job_id");
-  const jobId = parseInt(jobIdStr ?? "0");
+  const [jobId, setJobId] = useState<number>(0);
 
   const navigate = useNavigate();
 
@@ -84,6 +82,7 @@ const Signup: React.FC = () => {
         data1.candidate.whatsapp_phone_number || preRegisterInfo.phone || "",
     });
     setIsLoggedIn(true);
+    setJobId(candidate.job_id ?? 0);
 
     // 如果没简历，跳到 resume
     // 如果没绑定邮箱，跳到 binding
@@ -99,7 +98,7 @@ const Signup: React.FC = () => {
     ) {
       setPageState("whatsapp");
     } else if (candidate.job_id) {
-      const jobApply = await fetchJobApply();
+      const jobApply = await fetchJobApply(candidate.job_id);
       if (jobApply) {
         navigate(`/candidate/jobs/applies/${jobApply.id}`, {
           replace: true,
@@ -112,7 +111,9 @@ const Signup: React.FC = () => {
     }
   };
 
-  const fetchJobApply = async (): Promise<IJobApply | undefined> => {
+  const fetchJobApply = async (
+    jobId: number
+  ): Promise<IJobApply | undefined> => {
     if (!jobId) {
       return undefined;
     }
@@ -145,6 +146,9 @@ const Signup: React.FC = () => {
       let params: Record<string, unknown> = {
         ...basicInfo,
       };
+
+      const jobIdStr: string = getQuery("job_id");
+      const jobId = parseInt(jobIdStr ?? "0");
 
       if (jobId) {
         const shareTokenMapping =
@@ -228,7 +232,7 @@ const Signup: React.FC = () => {
   };
 
   const redirectToDashboard = async () => {
-    const jobApply = jobId ? await fetchJobApply() : undefined;
+    const jobApply = jobId ? await fetchJobApply(jobId) : undefined;
     if (jobApply) {
       navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, {
         replace: true,
