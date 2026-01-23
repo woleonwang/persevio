@@ -222,6 +222,7 @@ const CandidateResume = {
     next: "Next",
 
     email_exists: "Email exists",
+    email_not_exists: "Email not exists",
     upload_resume: "Upload Resume",
     career_dive: "Career Deep Dive",
 

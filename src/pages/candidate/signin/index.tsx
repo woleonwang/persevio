@@ -39,7 +39,7 @@ const CandidateSignIn: React.FC = () => {
     const error = getQuery("error");
     const code = getQuery("code");
     if (error === "google_login_failed" && code === "10001") {
-      message.error(t("email_exists"));
+      message.error(t("email_not_exists"));
     }
 
     const tokenFromUrl = getQuery("token");

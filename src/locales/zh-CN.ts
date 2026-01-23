@@ -216,6 +216,7 @@ const CandidateResume = {
     next: "下一步",
 
     email_exists: "邮箱已存在",
+    email_not_exists: "邮箱不存在",
     upload_resume: "上传简历",
     career_dive: "深入职业探索",
 

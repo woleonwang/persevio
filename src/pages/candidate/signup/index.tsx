@@ -47,6 +47,12 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const error = getQuery("error");
+    const code = getQuery("code");
+    if (error === "google_login_failed" && code === "10003") {
+      message.error("The email is already exists");
+    }
+
     const token = getQuery("candidate_token");
     if (token) {
       tokenStorage.setToken(token, "candidate");
