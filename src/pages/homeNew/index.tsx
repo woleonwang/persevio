@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
-import { Button } from "antd";
+import { Button, Dropdown } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 
 import { Get } from "@/utils/request";
@@ -134,6 +134,7 @@ const HomeNew = () => {
         })
     );
   };
+
   // const isActive = (key: "candidates" | "employers"): boolean => {
   //   const path = window.location.pathname;
   //   return menusConfigs[key] === path;
@@ -172,14 +173,28 @@ const HomeNew = () => {
               {originalT("employers")}
             </div> */}
           </div>
-          <Button
-            type="primary"
-            className={styles.joinBtn}
-            // onClick={() => navigate("/signin")}
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "candidate",
+                  label: originalT("jobseeker"),
+                  onClick: () => navigate("/signup-candidate"),
+                },
+                {
+                  key: "recruiter",
+                  label: originalT("recruit"),
+                  onClick: () => navigate("/signup"),
+                },
+              ],
+            }}
+            placement="bottomRight"
+            trigger={["hover"]}
           >
-            <span>{originalT("login_register")}</span>
-            <Icon icon={<ArrowRight />} style={{ fontSize: 24 }} />
-          </Button>
+            <Button type="primary" className={styles.joinBtn}>
+              <span>{originalT("login_register")}</span>
+            </Button>
+          </Dropdown>
         </div>
         <div className={styles.heroSectionContent}>
           <div className={styles.heroContent}>
@@ -196,7 +211,7 @@ const HomeNew = () => {
                 type="primary"
                 size="large"
                 className={styles.ctaButton}
-                // onClick={() => navigate("/signin-candidate")}
+                onClick={() => navigate("/signup-candidate")}
               >
                 Chat with Viona now
               </Button>
@@ -205,7 +220,7 @@ const HomeNew = () => {
                 type="default"
                 size="large"
                 className={classnames(styles.ctaButton, styles.staff)}
-                onClick={() => navigate("/signin")}
+                onClick={() => navigate("/signup")}
               >
                 Hiring? Talk to Viona too
               </Button>
@@ -435,7 +450,7 @@ const HomeNew = () => {
             </div>
             <div style={{ textAlign: "center" }}>
               <Button
-                // onClick={() => navigate("/signin-candidate")}
+                onClick={() => navigate("/signup-candidate")}
                 size="large"
                 className={styles.ctaButton}
               >

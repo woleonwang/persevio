@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Tooltip } from "antd";
+import { Button, message, Spin, Tooltip } from "antd";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 
@@ -245,6 +245,10 @@ const Signup: React.FC = () => {
   const currentIndex = ["basic", "resume", "binding", "whatsapp"].indexOf(
     pageState || "basic"
   );
+
+  if (!pageState) {
+    return null;
+  }
 
   return (
     <div className={classnames(styles.container, styles.mobile)}>

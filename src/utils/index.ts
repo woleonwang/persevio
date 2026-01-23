@@ -82,10 +82,11 @@ export const getQuery = (key: string): string => {
 export const deleteQuery = (key: string) => {
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.delete(key);
+  const query = urlParams.toString();
   window.history.replaceState(
     {},
     "",
-    `${window.location.pathname}?${urlParams.toString()}`
+    `${window.location.pathname}${query ? `?${query}` : ""}`
   );
 };
 

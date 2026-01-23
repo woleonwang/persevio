@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Spin } from "antd";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Get } from "@/utils/request";
@@ -71,7 +70,7 @@ const Signup: React.FC = () => {
   const navigate = useNavigate();
 
   if (!status) {
-    return <Spin />;
+    return null;
   }
 
   return status === "oauth" || status === "register" ? (
