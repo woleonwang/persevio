@@ -84,6 +84,7 @@ const CandidateResume = {
     awards_and_honors: "获得奖项/荣誉",
     resume: "简历",
     biography: "个人传记",
+    discovery_chat_done: "对话已完成，简历正在生成中，请稍候...",
   },
   candidate_aspirations: {
     career_aspirations: "职业目标",

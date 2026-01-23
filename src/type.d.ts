@@ -221,6 +221,7 @@ interface ICandidateSettings {
   network_profile_finished_at?: string;
   pre_register_info?: string;
   job_id?: number;
+  interview_finished_at?: string;
 }
 
 interface IRecommendedJob {
@@ -641,7 +642,8 @@ type TExtraTagName =
   //candiate
   | "interview-done"
   | "conversation-done"
-  | "job-interview-done";
+  | "job-interview-done"
+  | "discovery-chat-done";
 
 type TExtraTag = {
   name: TExtraTagName;

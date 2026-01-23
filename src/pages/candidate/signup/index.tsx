@@ -224,11 +224,11 @@ const Signup: React.FC = () => {
   const redirectToDashboard = async () => {
     const jobApply = jobId ? await fetchJobApply() : undefined;
     if (jobApply) {
-      navigate(`/candidate/jobs/applies/${jobApply.id}`, {
+      navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, {
         replace: true,
       });
     } else {
-      navigate("/candidate/jobs", { replace: true });
+      navigate("/candidate/profile", { replace: true });
     }
   };
 

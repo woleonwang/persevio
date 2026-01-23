@@ -90,6 +90,7 @@ const CandidateResume = {
     awards_and_honors: "Awards & Honors",
     resume: "Resume",
     biography: "Professional Biography",
+    discovery_chat_done: "Conversation completed, resume is generating...",
   },
   candidate_aspirations: {
     career_aspirations: "Career Aspiration",
@@ -143,7 +144,7 @@ const CandidateResume = {
     apply_now: "Apply Now",
     job_description: "Job Description",
     interview: "Interview",
-    finish_interview_hint: "Interivew has finished, You can apply now!",
+    finish_interview_hint: "Interview has finished, You can apply now!",
     waiting: "Viona is writing, please wait...",
     chat: "Chat about Company/Position",
     posted_at: "Posted at {{time}}",

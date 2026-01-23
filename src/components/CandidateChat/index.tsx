@@ -97,31 +97,25 @@ const CandidateChat: React.FC<IProps> = (props) => {
     {
       key: "interview-done",
       title: "",
-      handler: () => {
-        message.success(
-          "This conversation has been finished, redirect to dashboard in 5 seconds",
-          5,
-          () => onFinish?.()
-        );
-      },
+      handler: () => onFinish?.(),
       autoTrigger: true,
     },
     {
       key: "job-interview-done",
       title: "",
-      handler: () => {
-        message.success(
-          "This conversation has been finished, redirect to dashboard in 5 seconds",
-          5,
-          () => onFinish?.()
-        );
-      },
+      handler: () => onFinish?.(),
       autoTrigger: true,
     },
     {
       key: "conversation-done",
       title: t("finish_conversation"),
       handler: () => onFinish?.(),
+    },
+    {
+      key: "discovery-chat-done",
+      title: "",
+      handler: () => onFinish?.(),
+      autoTrigger: true,
     },
   ];
 

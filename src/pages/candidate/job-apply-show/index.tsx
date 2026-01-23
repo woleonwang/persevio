@@ -58,10 +58,6 @@ const JobApplyShow = () => {
   useEffect(() => {
     fetchCandidateSettings();
     fetchApplyJob();
-    const open = getQuery("open");
-    if (open === "1") {
-      setInterviewChatDrawerOpen(true);
-    }
 
     const switchMode = getQuery("switch_mode");
     if (switchMode === "human") {
@@ -70,6 +66,15 @@ const JobApplyShow = () => {
       setInterviewChatDrawerOpen(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (jobApply) {
+      const open = getQuery("open");
+      if (open === "1") {
+        onClickChat();
+      }
+    }
+  }, [jobApply]);
 
   const fetchCandidateSettings = async () => {
     const { code, data } = await Get("/api/candidate/settings");
@@ -388,8 +393,10 @@ const JobApplyShow = () => {
             chatType="job_interview"
             jobApplyId={parseInt(jobApplyId)}
             onFinish={() => {
-              fetchApplyJob();
-              message.success(t("finish_interview_hint"));
+              if (!jobApply.interview_finished_at) {
+                fetchApplyJob();
+                message.success(t("finish_interview_hint"));
+              }
             }}
           />
         </div>
