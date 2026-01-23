@@ -22,7 +22,7 @@ const Binding = () => {
 
     window.location.href = `/api/auth/${type}/login?role=candidate&candidate_token=${
       tokenStorage.getToken("candidate") || ""
-    }&referrer=${window.location.href}`;
+    }&referrer=${window.location.origin + window.location.pathname}`;
   };
 
   return (
