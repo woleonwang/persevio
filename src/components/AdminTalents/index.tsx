@@ -30,8 +30,6 @@ interface IProps {
 interface IBasicInfo {
   current_job_title: string;
   current_company: string;
-  current_compensation: string;
-  visa: string;
 }
 
 type TTalentItem = TTalent & IBasicInfo;
@@ -415,32 +413,32 @@ const AdminTalents = (props: IProps) => {
           );
         },
       },
-      {
-        title: t("current_compensation"),
-        dataIndex: "current_compensation",
-        width: 150,
-        render: (_: string, record: TAdminTalentItem) => {
-          return (
-            record.talent?.current_compensation ||
-            record.jobApply?.current_compensation ||
-            record.linkedinProfile?.current_compensation ||
-            "-"
-          );
-        },
-      },
-      {
-        title: t("visa"),
-        dataIndex: "visa",
-        width: 150,
-        render: (_: string, record: TAdminTalentItem) => {
-          return (
-            record.talent?.visa ||
-            record.jobApply?.visa ||
-            record.linkedinProfile?.visa ||
-            "-"
-          );
-        },
-      },
+      // {
+      //   title: t("current_compensation"),
+      //   dataIndex: "current_compensation",
+      //   width: 150,
+      //   render: (_: string, record: TAdminTalentItem) => {
+      //     return (
+      //       record.talent?.current_compensation ||
+      //       record.jobApply?.current_compensation ||
+      //       record.linkedinProfile?.current_compensation ||
+      //       "-"
+      //     );
+      //   },
+      // },
+      // {
+      //   title: t("visa"),
+      //   dataIndex: "visa",
+      //   width: 150,
+      //   render: (_: string, record: TAdminTalentItem) => {
+      //     return (
+      //       record.talent?.visa ||
+      //       record.jobApply?.visa ||
+      //       record.linkedinProfile?.visa ||
+      //       "-"
+      //     );
+      //   },
+      // },
       {
         title: t("received_on"),
         dataIndex: "created_at",

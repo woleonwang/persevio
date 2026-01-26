@@ -42,10 +42,6 @@ type TDataSourceItem = {
 };
 
 type TExtractBasicInfo = {
-  current_job_title: string;
-  current_company: string;
-  current_compensation: string;
-  visa: string;
   years_of_experience: string;
   work_experiences: {
     company_name: string;
@@ -54,7 +50,6 @@ type TExtractBasicInfo = {
     end_year: string;
     is_present: boolean;
   }[];
-  summary: string;
 };
 
 type TExtractEvaluateResult = {
@@ -64,6 +59,9 @@ type TExtractEvaluateResult = {
     | "recommend_with_reservations"
     | "not_a_fit";
   summary: string;
+  current_compensation: string;
+  target_compensation: string;
+  visa: string;
   strength?: {
     content: "string";
   }[];
@@ -447,21 +445,21 @@ const TalentCards = (props: IProps) => {
                       </Tooltip>
                     </div>
                     <div>
-                      <div>{t("current_job_title")}</div>
-                      <Tooltip title={basicInfo?.current_job_title}>
-                        <div>{basicInfo?.current_job_title || "-"}</div>
-                      </Tooltip>
-                    </div>
-                    <div>
                       <div>{t("visa")}</div>
-                      <Tooltip title={basicInfo?.visa}>
-                        <div>{basicInfo?.visa || "-"}</div>
+                      <Tooltip title={evaluateResult?.visa}>
+                        <div>{evaluateResult?.visa || "-"}</div>
                       </Tooltip>
                     </div>
                     <div>
                       <div>{t("current_compensation")}</div>
-                      <Tooltip title={basicInfo?.current_compensation}>
-                        <div>{basicInfo?.current_compensation || "-"}</div>
+                      <Tooltip title={evaluateResult?.current_compensation}>
+                        <div>{evaluateResult?.current_compensation || "-"}</div>
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <div>{t("target_compensation")}</div>
+                      <Tooltip title={evaluateResult?.target_compensation}>
+                        <div>{evaluateResult?.target_compensation || "-"}</div>
                       </Tooltip>
                     </div>
                   </div>
