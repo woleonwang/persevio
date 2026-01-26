@@ -8,8 +8,6 @@ import { RightOutlined } from "@ant-design/icons";
 import { Get } from "@/utils/request";
 import PublicJobCard from "@/components/PublicJobCard";
 import { parseJSON } from "@/utils";
-import Icon from "@/components/Icon";
-import ArrowRight from "@/assets/icons/arrow-right";
 
 import logo from "@/assets/logo.png";
 import bannerVideo from "@/assets/banner-1.mp4";
