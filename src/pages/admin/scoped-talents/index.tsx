@@ -36,8 +36,6 @@ const ScopedTalents = () => {
             options={[
               "initialize",
               "interviewing",
-              "interview_finished",
-              "hunter_rejected",
               "hunter_accepted",
               "staff_rejected",
               "staff_accepted",

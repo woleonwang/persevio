@@ -263,7 +263,7 @@ const AdminTalents = (props: IProps) => {
         return "email_binded";
       }
 
-      if (candidate.resume_content) {
+      if (!!candidate.resume_path) {
         return "resume_uploaded";
       }
 
@@ -283,7 +283,7 @@ const AdminTalents = (props: IProps) => {
   };
 
   const getApproveStatus = (talentItem: TAdminTalentItem): TApproveStatus => {
-    const jobApply = talentItem.jobApply;
+    // const jobApply = talentItem.jobApply;
     const talent = talentItem.talent;
     const interview = talent?.interviews?.[0];
 
@@ -305,17 +305,17 @@ const AdminTalents = (props: IProps) => {
       }
     }
 
-    if (jobApply) {
-      if (jobApply.status === "ACCEPTED") {
-        return "hunter_accepted";
-      } else if (jobApply.status === "REJECTED") {
-        return "hunter_rejected";
-      } else if (jobApply.interview_finished_at) {
-        return "interview_finished";
-      } else {
-        return "interviewing";
-      }
-    }
+    // if (jobApply) {
+    //   if (jobApply.status === "ACCEPTED") {
+    //     return "hunter_accepted";
+    //   } else if (jobApply.status === "REJECTED") {
+    //     return "hunter_rejected";
+    //   } else if (jobApply.interview_finished_at) {
+    //     return "interview_finished";
+    //   } else {
+    //     return "interviewing";
+    //   }
+    // }
 
     return "initialize";
   };
@@ -471,6 +471,14 @@ const AdminTalents = (props: IProps) => {
         title: t("interviewMode"),
         dataIndex: "interview_mode",
         render: (_: string, record: TAdminTalentItem) => {
+          const accountStatus = getAccountStatus(record);
+          if (
+            accountStatus !== "resume_uploaded" &&
+            accountStatus !== "email_binded"
+          ) {
+            return "-";
+          }
+
           const interviewMode = record.jobApply?.interview_mode;
           if (!interviewMode) {
             return "-";
