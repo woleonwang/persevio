@@ -1063,7 +1063,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     company_name: "Company Name",
     job_name: "Job Name",
     years_of_experience: "Total Experience",
-    current_compensation: "Compensation",
+    current_compensation: "Current Compensation",
     expected_compensation: "Expected Compensation",
     visa: "Visa Status",
     received_on: "Received On",
