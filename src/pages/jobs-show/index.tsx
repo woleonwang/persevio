@@ -345,10 +345,9 @@ const JobsShow = () => {
                       if (candidate) {
                         if (isTempAccount(candidate) && !!candidate.job_id) {
                           message.info(t("complete_registration_first"));
-                          navigate(`/apply-job/${candidate.job_id}`);
-                          // navigate(`/signup-candidate?job_id=${id}`, {
-                          //   replace: true,
-                          // });
+                          navigate(`/signup-candidate?job_id=${id}`, {
+                            replace: true,
+                          });
                           // 没走完注册流程
                         } else {
                           // 是否已经创建职位申请
@@ -376,10 +375,9 @@ const JobsShow = () => {
                           }
                         }
                       } else {
-                        navigate(`/apply-job/${id}`);
-                        // navigate(`/signup-candidate?job_id=${id}`, {
-                        //   replace: true,
-                        // });
+                        navigate(`/signup-candidate?job_id=${id}`, {
+                          replace: true,
+                        });
                       }
                     }}
                   >
