@@ -617,12 +617,12 @@ const TalentCards = (props: IProps) => {
                                 )}
                               >
                                 {tagType === "rejected"
-                                  ? "Reject"
+                                  ? "Rejected"
                                   : tagType === "interview_scheduled"
                                   ? "Interview Scheduled"
                                   : tagType === "interview_created"
-                                  ? "Awaiting Candidate's Confirmation"
-                                  : "Waiting for screening"}
+                                  ? "Pending Candidate Interview Confirmation"
+                                  : "Pending Resume Review"}
                               </div>
                             ) : (
                               <div
@@ -632,8 +632,8 @@ const TalentCards = (props: IProps) => {
                                 )}
                               >
                                 {item.linkedinProfile?.message_read_at
-                                  ? "JD read"
-                                  : "Outreach message sent"}
+                                  ? "Job Information Viewed"
+                                  : "Outreach Sent"}
                               </div>
                             )}
                             {(tagType === "interview_scheduled" ||
