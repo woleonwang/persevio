@@ -9,14 +9,9 @@ import {
   useSensor,
   useSensors,
   closestCenter,
-  useDroppable,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { useSortable } from "@dnd-kit/sortable";
 
+import Card from "./components/Card";
 import styles from "./style.module.less";
 
 // 记录项类型
@@ -26,194 +21,35 @@ export interface DragDropRecord {
   description: string;
 }
 
-// 卡片类型
-export type CardType = "p0" | "p1" | "p2";
-
-// 卡片配置
-interface CardConfig {
-  type: CardType;
-  title: string;
-  description: string;
-}
-
 // 组件Props
-interface DragDropCardsProps {
-  initialData?: {
+interface DragDropCardsProps<CardType extends string, CardConfig> {
+  initialData: {
     [key in CardType]: DragDropRecord[];
   };
+  cardConfigs: CardConfig[];
   onDataChange?: (data: {
     [key in CardType]: DragDropRecord[];
   }) => void;
+  renderHeader: (config: CardConfig) => React.ReactNode;
 }
 
-// 卡片配置
-const cardConfigs: CardConfig[] = [
-  {
-    type: "p0",
-    title: "P0 Dealbreaker",
-    description: "必须满足的条件",
-  },
-  {
-    type: "p1",
-    title: "P1 Highly Desired",
-    description: "高优先级需求",
-  },
-  {
-    type: "p2",
-    title: "P2 Nice-to-have",
-    description: "加分项",
-  },
-];
-
-// 默认数据
-const getDefaultData = (): {
-  [key in CardType]: DragDropRecord[];
-} => ({
-  p0: [
-    {
-      id: "p0-1",
-      title: "记录标题 1",
-      description: "记录描述 1",
-    },
-    {
-      id: "p0-2",
-      title: "记录标题 2",
-      description: "记录描述 2",
-    },
-  ],
-  p1: [
-    {
-      id: "p1-1",
-      title: "记录标题 3",
-      description: "记录描述 3",
-    },
-    {
-      id: "p1-2",
-      title: "记录标题 4",
-      description: "记录描述 4",
-    },
-  ],
-  p2: [
-    {
-      id: "p2-1",
-      title: "记录标题 5",
-      description: "记录描述 5",
-    },
-    {
-      id: "p2-2",
-      title: "记录标题 6",
-      description: "记录描述 6",
-    },
-  ],
-});
-
-// 预览位置类型
-interface PreviewPosition {
-  cardType: CardType;
-  recordId: string | null; // null 表示卡片底部
-  position: "before" | "after"; // 在记录上方还是下方
-}
-
-// 可拖拽记录项组件
-interface SortableRecordItemProps {
-  record: DragDropRecord;
-  cardType: CardType;
-}
-
-const SortableRecordItem = ({ record, cardType }: SortableRecordItemProps) => {
-  const { attributes, listeners, setNodeRef, isDragging } = useSortable({
-    id: record.id,
-    data: {
-      type: "record",
-      record,
-      cardType,
-    },
-  });
-
-  const style = {
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={styles.recordItem}
-      {...attributes}
-    >
-      <div className={styles.dragHandler} {...listeners}>
-        <div className={styles.dragHandlerDots}>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div className={styles.recordContent}>
-        <div className={styles.recordTitle}>{record.title}</div>
-        <div className={styles.recordDescription}>{record.description}</div>
-      </div>
-    </div>
-  );
-};
-
-// 卡片组件
-interface CardProps {
-  config: CardConfig;
-  records: DragDropRecord[];
-  allRecords: DragDropRecord[];
-  previewPosition?: PreviewPosition | null;
-  activeRecord?: DragDropRecord | null;
-  isActive?: boolean;
-}
-
-const Card = ({ config, records, isActive }: CardProps) => {
-  const recordIds = records.map((r) => r.id);
-  const { setNodeRef } = useDroppable({
-    id: `card-${config.type}`,
-    data: {
-      type: "card",
-      cardType: config.type,
-    },
-  });
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={styles.card}
-      data-card-type={config.type}
-      data-is-over={isActive}
-    >
-      <div className={styles.cardHeader}>
-        <div className={styles.cardTitle}>{config.title}</div>
-        <div className={styles.cardDescription}>{config.description}</div>
-        <div className={styles.cardAddButton}>+</div>
-      </div>
-      <SortableContext items={recordIds} strategy={verticalListSortingStrategy}>
-        <div className={styles.cardContent}>
-          {records.map((record) => (
-            <SortableRecordItem
-              key={record.id}
-              record={record}
-              cardType={config.type}
-            />
-          ))}
-        </div>
-      </SortableContext>
-    </div>
-  );
-};
-
-// 主组件
-const DragDropCards = ({ initialData, onDataChange }: DragDropCardsProps) => {
+const DragDropCards = <
+  CardType extends string,
+  CardConfig extends { type: CardType }
+>({
+  initialData,
+  cardConfigs,
+  onDataChange,
+  renderHeader,
+}: DragDropCardsProps<CardType, CardConfig>) => {
   const [data, setData] = useState<{
     [key in CardType]: DragDropRecord[];
-  }>(initialData || getDefaultData());
+  }>(initialData);
 
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeCardType, setActiveCardType] = useState<CardType | null>(null);
+  // 当前挪动的记录
+  const [activeId, setActiveId] = useState<string>();
+  // 当前的目标卡片类型
+  const [activeCardType, setActiveCardType] = useState<CardType>();
 
   const mousePositionRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -248,7 +84,7 @@ const DragDropCards = ({ initialData, onDataChange }: DragDropCardsProps) => {
 
   // 根据ID查找记录
   const findRecordById = (id: string): DragDropRecord | undefined => {
-    for (const records of Object.values(data)) {
+    for (const records of Object.values(data) as DragDropRecord[][]) {
       const record = records.find((r) => r.id === id);
       if (record) return record;
     }
@@ -257,7 +93,10 @@ const DragDropCards = ({ initialData, onDataChange }: DragDropCardsProps) => {
 
   // 根据ID查找记录所在的卡片类型
   const findCardTypeByRecordId = (id: string): CardType | undefined => {
-    for (const [cardType, records] of Object.entries(data)) {
+    for (const [cardType, records] of Object.entries(data) as [
+      CardType,
+      DragDropRecord[]
+    ][]) {
       if (records.find((r) => r.id === id)) {
         return cardType as CardType;
       }
@@ -356,16 +195,16 @@ const DragDropCards = ({ initialData, onDataChange }: DragDropCardsProps) => {
     const { over } = event;
 
     if (!over) {
-      setActiveId(null);
+      setActiveId(undefined);
       return;
     }
 
     onDataChange?.(data);
-    setActiveId(null);
-    setActiveCardType(null);
+    setActiveId(undefined);
+    setActiveCardType(undefined);
   };
 
-  const activeRecord = activeId ? findRecordById(activeId) : null;
+  const activeRecord = activeId ? findRecordById(activeId) : undefined;
 
   return (
     <DndContext
@@ -381,9 +220,8 @@ const DragDropCards = ({ initialData, onDataChange }: DragDropCardsProps) => {
             key={config.type}
             config={config}
             records={data[config.type]}
-            allRecords={Object.values(data).flat()}
-            activeRecord={activeRecord}
             isActive={activeCardType === config.type}
+            renderHeader={renderHeader}
           />
         ))}
       </div>

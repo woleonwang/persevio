@@ -73,7 +73,7 @@ import JobDetailsPage from "./pages/admin/job-details/index.tsx";
 import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
-import DragDropCards from "./components/DragDropCards/index.tsx";
+import DragCardDemo from "./pages/drag-card-demo/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -102,7 +102,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/play-audio" element={<PlayAudio />} />
         {/** 职位列表 */}
         <Route path="/jobs" element={<PublicJobs />} />
-        <Route path="/drag-drop-cards" element={<DragDropCards />} />
+        <Route path="/drag-drop-cards" element={<DragCardDemo />} />
         <Route path="/linkedin-apply" element={<LinkedinApply />} />
         {/** 分享职位详情文档 */}
         <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
