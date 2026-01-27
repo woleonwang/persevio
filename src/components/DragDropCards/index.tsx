@@ -170,7 +170,9 @@ const DragDropCards = <
       newData[currentType] = newData[currentType].filter(
         (r) => r.id !== activeId
       );
-      const targetIndex = newData[targetType].findIndex((r) => r.id === overId);
+      const targetIndex = (newData[targetType] ?? []).findIndex(
+        (r) => r.id === overId
+      );
 
       if (targetIndex !== -1) {
         if (position === "before") {

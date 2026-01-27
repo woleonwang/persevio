@@ -9,11 +9,15 @@ export interface ItemRecord {
 
 export interface SortableRecordItemProps {
   record: ItemRecord;
+  cardType: string;
 }
 
-const Item = ({ record }: SortableRecordItemProps) => {
+const Item = ({ record, cardType }: SortableRecordItemProps) => {
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({
     id: record.id,
+    data: {
+      cardType,
+    },
   });
 
   const style = {

@@ -32,7 +32,7 @@ const Card = <T extends { type: string }>({
       </div>
       <div className={styles.cardContent}>
         {records.map((record) => (
-          <Item key={record.id} record={record} />
+          <Item key={record.id} record={record} cardType={config.type} />
         ))}
       </div>
     </div>
