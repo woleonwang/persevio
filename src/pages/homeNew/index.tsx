@@ -209,7 +209,7 @@ const HomeNew = () => {
                 type="primary"
                 size="large"
                 className={styles.ctaButton}
-                // onClick={() => navigate("/signin-candidate")}
+                onClick={() => navigate("/signin-candidate")}
               >
                 Chat with Viona now
               </Button>
@@ -448,7 +448,7 @@ const HomeNew = () => {
             </div>
             <div style={{ textAlign: "center" }}>
               <Button
-                // onClick={() => navigate("/signin-candidate")}
+                onClick={() => navigate("/signin-candidate")}
                 size="large"
                 className={styles.ctaButton}
               >
