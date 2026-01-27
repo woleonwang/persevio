@@ -16,14 +16,16 @@ const CompanyKnowledge = () => {
     fetchCompany();
   }, []);
 
-  const fetchCompany = async () => {
+  const fetchCompany = async (logoOnly = false) => {
     const { code, data } = await Get("/api/companies");
     if (code === 0) {
-      form.setFieldsValue({
-        content: data.content,
-        name: data.name,
-        website: data.website,
-      });
+      if (!logoOnly) {
+        form.setFieldsValue({
+          content: data.content,
+          name: data.name,
+          website: data.website,
+        });
+      }
       setLogo(data.logo);
     }
   };
@@ -70,7 +72,7 @@ const CompanyKnowledge = () => {
                   info.file.response?.code === 0
                 ) {
                   message.success(t("company.upload_logo_succeed"));
-                  fetchCompany();
+                  fetchCompany(true);
                 } else if (info.file.status === "error") {
                   message.error(t("company.upload_logo_failed"));
                 }

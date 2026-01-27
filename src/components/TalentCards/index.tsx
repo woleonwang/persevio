@@ -43,6 +43,9 @@ type TDataSourceItem = {
 
 type TExtractBasicInfo = {
   years_of_experience: string;
+  current_compensation: string;
+  expected_compensation: string;
+  visa: string;
   work_experiences: {
     company_name: string;
     job_title: string;
@@ -60,10 +63,17 @@ type TExtractEvaluateResult = {
     | "not_a_fit";
   summary: string;
   current_compensation: string;
-  target_compensation: string;
+  expected_compensation: string;
   visa: string;
+  strengths?: {
+    content: string;
+  }[];
+  gaps?: {
+    content: string;
+  }[];
+  // 兼容老数据
   strength?: {
-    content: "string";
+    content: string;
   }[];
   gap?: {
     content: string;
@@ -379,6 +389,13 @@ const TalentCards = (props: IProps) => {
               (job) =>
                 job.id === (talent?.job_id || item.linkedinProfile?.job_id)
             );
+            const visa = evaluateResult?.visa || basicInfo?.visa;
+            const currentCompensation =
+              evaluateResult?.current_compensation ||
+              basicInfo?.current_compensation;
+            const expectedCompensation =
+              evaluateResult?.expected_compensation ||
+              basicInfo?.expected_compensation;
 
             return (
               <div
@@ -446,20 +463,20 @@ const TalentCards = (props: IProps) => {
                     </div>
                     <div>
                       <div>{t("visa")}</div>
-                      <Tooltip title={evaluateResult?.visa}>
-                        <div>{evaluateResult?.visa || "-"}</div>
+                      <Tooltip title={visa}>
+                        <div>{visa || "-"}</div>
                       </Tooltip>
                     </div>
                     <div>
                       <div>{t("current_compensation")}</div>
-                      <Tooltip title={evaluateResult?.current_compensation}>
-                        <div>{evaluateResult?.current_compensation || "-"}</div>
+                      <Tooltip title={currentCompensation}>
+                        <div>{currentCompensation || "-"}</div>
                       </Tooltip>
                     </div>
                     <div>
-                      <div>{t("target_compensation")}</div>
-                      <Tooltip title={evaluateResult?.target_compensation}>
-                        <div>{evaluateResult?.target_compensation || "-"}</div>
+                      <div>{t("expected_compensation")}</div>
+                      <Tooltip title={expectedCompensation}>
+                        <div>{expectedCompensation || "-"}</div>
                       </Tooltip>
                     </div>
                   </div>
@@ -468,8 +485,9 @@ const TalentCards = (props: IProps) => {
                     <div className={styles.workExperiencesTitle}>
                       {t("work_experiences")}
                     </div>
-                    {(basicInfo?.work_experiences ?? []).map(
-                      (workExperience, index) => {
+                    {(basicInfo?.work_experiences ?? [])
+                      .slice(0, 3)
+                      .map((workExperience, index) => {
                         return (
                           <div
                             key={index}
@@ -497,8 +515,7 @@ const TalentCards = (props: IProps) => {
                             </div>
                           </div>
                         );
-                      }
-                    )}
+                      })}
                   </div>
 
                   <div className={styles.evaluateSummary}>
@@ -522,16 +539,18 @@ const TalentCards = (props: IProps) => {
                           Strengths
                         </div>
                         <div>
-                          {(evaluateResult?.strength ?? []).map(
-                            (strength, index) => (
-                              <div
-                                className={styles.evaluateDetailsItemContent}
-                                key={index}
-                              >
-                                {strength.content}
-                              </div>
-                            )
-                          )}
+                          {(
+                            evaluateResult?.strengths ||
+                            evaluateResult?.strength ||
+                            []
+                          ).map((strength, index) => (
+                            <div
+                              className={styles.evaluateDetailsItemContent}
+                              key={index}
+                            >
+                              {strength.content}
+                            </div>
+                          ))}
                         </div>
                       </div>
                       <div
@@ -547,7 +566,11 @@ const TalentCards = (props: IProps) => {
                           />
                           Potential Gaps
                         </div>
-                        {(evaluateResult?.gap ?? []).map((gap, index) => (
+                        {(
+                          evaluateResult?.gaps ||
+                          evaluateResult?.gap ||
+                          []
+                        ).map((gap, index) => (
                           <div
                             className={styles.evaluateDetailsItemContent}
                             key={index}
