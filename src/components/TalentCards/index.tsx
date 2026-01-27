@@ -601,7 +601,8 @@ const TalentCards = (props: IProps) => {
                         status === "rejected"
                           ? "rejected"
                           : !!interview
-                          ? interview.scheduled_at
+                          ? interview.mode === "written" ||
+                            interview.scheduled_at
                             ? "interview_scheduled"
                             : "interview_created"
                           : "waiting_for_screening";
