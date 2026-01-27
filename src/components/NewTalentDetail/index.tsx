@@ -173,14 +173,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             )}
           </div>
           <div className={styles.basicInfoContainer}>
-            <div>
-              <div className={styles.jobTitle}>
-                {basicInfo.current_job_title}
-              </div>
-              <div className={styles.companyName}>
-                {basicInfo.current_company}
-              </div>
-            </div>
             <Button type="primary" onClick={downloadTalentResume} size="large">
               {t("download_resume")}
             </Button>
