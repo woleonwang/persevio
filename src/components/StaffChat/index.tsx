@@ -42,6 +42,7 @@ import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import MarkdownContainer from "../MarkdownContainer";
+import JrdRealRequirementForm from "./components/JrdRealRequirementForm";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -73,6 +74,9 @@ const StaffChat: React.FC<IProps> = (props) => {
     useState(false);
   const [jobRequirementFormType, setJobRequirementFormType] =
     useState<TRoleOverviewType>();
+  const [showJrdRealRequirementForm, setShowJrdRealRequirementForm] =
+    useState(true);
+
   const [selectOptionsType, setSelectOptionsType] = useState<
     "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
   >();
@@ -791,6 +795,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     );
   };
 
+  const basicFormVisible = mode === "standard" && showJobRequirementFormDrawer;
+  const realRequirementFormVisible =
+    mode === "standard" && showJrdRealRequirementForm;
+
   return (
     <div className={styles.container}>
       <div
@@ -803,7 +811,7 @@ const StaffChat: React.FC<IProps> = (props) => {
         )}
 
         <div className={styles.chatArea}>
-          {mode === "standard" && showJobRequirementFormDrawer ? (
+          {basicFormVisible ? (
             <JobRequirementForm
               group={jobRequirementFormType}
               onOk={(result: string) => {
@@ -814,6 +822,8 @@ const StaffChat: React.FC<IProps> = (props) => {
               }}
               userRole="staff"
             />
+          ) : realRequirementFormVisible ? (
+            <JrdRealRequirementForm />
           ) : (
             <>
               <ChatMessageList

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
+  padding: 16px 0;
 }
 
 .card {
@@ -161,11 +161,13 @@
 }
 
 @keyframes previewBorderPulse {
+
   0%,
   100% {
     opacity: 0.6;
     border-color: #3682fe;
   }
+
   50% {
     opacity: 1;
     border-color: #5a9cff;
@@ -177,6 +179,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

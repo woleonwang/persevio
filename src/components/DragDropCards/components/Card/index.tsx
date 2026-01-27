@@ -26,10 +26,8 @@ const Card = <T extends { type: string }>({
       data-card-type={config.type}
       data-is-over={isActive}
     >
-      <div className={styles.cardHeader}>
-        {renderHeader(config)}
-        <div className={styles.cardAddButton}>+</div>
-      </div>
+      <div className={styles.cardAddButton}>+</div>
+      <div className={styles.cardHeader}>{renderHeader(config)}</div>
       <div className={styles.cardContent}>
         {records.map((record) => (
           <Item key={record.id} record={record} cardType={config.type} />
