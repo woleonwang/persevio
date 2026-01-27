@@ -1018,7 +1018,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     job_name: "职位名称",
     years_of_experience: "工作经验",
     current_compensation: "当前薪资",
-    target_compensation: "期望薪资",
+    expected_compensation: "期望薪资",
     visa: "签证",
     received_on: "申请时间",
     evaluate_result_options: {
@@ -1660,7 +1660,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     company_name: "公司名称",
     job_name: "职位名称",
     current_compensation: "当前薪资",
-    target_compensation: "期望薪资",
+    expected_compensation: "期望薪资",
     visa: "签证",
     received_on: "申请时间",
     account_status: "账号状态",

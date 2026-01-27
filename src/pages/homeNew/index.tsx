@@ -177,12 +177,12 @@ const HomeNew = () => {
                 {
                   key: "candidate",
                   label: originalT("jobseeker"),
-                  onClick: () => navigate("/signup-candidate"),
+                  onClick: () => navigate("/signin-candidate"),
                 },
                 {
                   key: "recruiter",
                   label: originalT("recruit"),
-                  onClick: () => navigate("/signup"),
+                  onClick: () => navigate("/signin"),
                 },
               ],
             }}
@@ -209,7 +209,7 @@ const HomeNew = () => {
                 type="primary"
                 size="large"
                 className={styles.ctaButton}
-                onClick={() => navigate("/signup-candidate")}
+                onClick={() => navigate("/signin-candidate")}
               >
                 Chat with Viona now
               </Button>
@@ -218,7 +218,7 @@ const HomeNew = () => {
                 type="default"
                 size="large"
                 className={classnames(styles.ctaButton, styles.staff)}
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/signin")}
               >
                 Hiring? Talk to Viona too
               </Button>
@@ -448,7 +448,7 @@ const HomeNew = () => {
             </div>
             <div style={{ textAlign: "center" }}>
               <Button
-                onClick={() => navigate("/signup-candidate")}
+                onClick={() => navigate("/signin-candidate")}
                 size="large"
                 className={styles.ctaButton}
               >

@@ -1064,7 +1064,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_name: "Job Name",
     years_of_experience: "Total Experience",
     current_compensation: "Compensation",
-    target_compensation: "Target Compensation",
+    expected_compensation: "Expected Compensation",
     visa: "Visa Status",
     received_on: "Received On",
     evaluate_result_options: {
@@ -1506,8 +1506,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     employers: "For Employers",
     home: "Home",
     jobs: "Jobs",
-    recruit: "I want to recruit",
-    jobseeker: "I want to find job",
+    recruit: "As Employer",
+    jobseeker: "As Candidate",
     login_register: "Sign Up/Login",
   },
 
@@ -1720,7 +1720,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     company_name: "Company Name",
     job_name: "Job Name",
     current_compensation: "Current Compensation",
-    target_compensation: "Target Compensation",
+    expected_compensation: "Expected Compensation",
     visa: "Visa",
     received_on: "Received On",
     account_status: "Account Status",

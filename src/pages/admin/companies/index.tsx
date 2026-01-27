@@ -133,13 +133,6 @@ const AdminCompanies: React.FC = () => {
       ellipsis: false,
     },
     {
-      title: t("table.companyName"),
-      dataIndex: "name",
-      key: "name",
-      width: 200,
-      ellipsis: false,
-    },
-    {
       title: t("table.registerEmail"),
       dataIndex: "register_info",
       key: "email",
@@ -149,6 +142,13 @@ const AdminCompanies: React.FC = () => {
         const info = parseRegisterInfo(registerInfo);
         return info.email;
       },
+    },
+    {
+      title: t("table.companyName"),
+      dataIndex: "name",
+      key: "name",
+      width: 200,
+      ellipsis: false,
     },
     {
       title: t("table.website"),
