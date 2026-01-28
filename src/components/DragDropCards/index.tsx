@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   DndContext,
   DragEndEvent,
@@ -13,6 +14,7 @@ import {
 
 import Card from "./components/Card";
 import styles from "./style.module.less";
+import Item, { ItemRecord } from "./components/Item";
 
 // 记录项类型
 export interface DragDropRecord {
@@ -35,7 +37,7 @@ interface DragDropCardsProps<CardType extends string, CardConfig> {
 
 const DragDropCards = <
   CardType extends string,
-  CardConfig extends { type: CardType }
+  CardConfig extends { type: CardType; color?: "red" | "green" | "yellow" }
 >({
   initialData,
   cardConfigs,
@@ -206,6 +208,28 @@ const DragDropCards = <
     setActiveCardType(undefined);
   };
 
+  const onAdd = (cardType: CardType) => {
+    const newData = { ...data };
+    newData[cardType].push({ id: uuidv4(), title: "", description: "" });
+    setData(newData);
+  };
+
+  const onDelete = (cardType: CardType, recordId: string) => {
+    const newData = { ...data };
+    newData[cardType] = newData[cardType].filter((r) => r.id !== recordId);
+    setData(newData);
+  };
+
+  const onChange = (cardType: CardType, record: ItemRecord) => {
+    setData((data) => {
+      const newData = { ...data };
+      newData[cardType] = newData[cardType].map((r) =>
+        r.id === record.id ? record : r
+      );
+      return newData;
+    });
+  };
+
   const activeRecord = activeId ? findRecordById(activeId) : undefined;
 
   return (
@@ -224,30 +248,21 @@ const DragDropCards = <
             records={data[config.type]}
             isActive={activeCardType === config.type}
             renderHeader={renderHeader}
+            onAdd={() => onAdd(config.type)}
+            onDelete={(recordId) => onDelete(config.type, recordId)}
+            onChange={(record) => onChange(config.type, record)}
           />
         ))}
       </div>
       <DragOverlay>
         {activeRecord ? (
           <div className={styles.dragOverlay}>
-            <div className={styles.recordItem}>
-              <div className={styles.dragHandler}>
-                <div className={styles.dragHandlerDots}>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-              <div className={styles.recordContent}>
-                <div className={styles.recordTitle}>{activeRecord.title}</div>
-                <div className={styles.recordDescription}>
-                  {activeRecord.description}
-                </div>
-              </div>
-            </div>
+            <Item
+              record={activeRecord}
+              cardType="overlay"
+              onDelete={() => {}}
+              onChange={() => {}}
+            />
           </div>
         ) : null}
       </DragOverlay>

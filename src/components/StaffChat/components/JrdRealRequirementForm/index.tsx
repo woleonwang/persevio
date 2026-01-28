@@ -1,17 +1,49 @@
+import classnames from "classnames";
 import DragDropCards from "@/components/DragDropCards";
 import styles from "./style.module.less";
+import Icon from "@/components/Icon";
+import Stars from "@/assets/icons/stars";
 
 type CardType = "p0" | "p1" | "p2";
 type CardConfig = {
   type: CardType;
-  title: string;
-  hint: string;
+  color: "red" | "green" | "yellow";
 };
 
 const JrdRealRequirementForm = () => {
+  const cardTextMap: Record<
+    CardType,
+    {
+      title: string;
+      subTitle: string;
+      hint: string;
+      note?: string;
+      color: "red" | "green" | "yellow";
+    }
+  > = {
+    p0: {
+      title: "P0",
+      subTitle: "Dealbreaker",
+      hint: "The candidate must possess these on Day 1. Even if only one is not met, the candidate is immediately disqualified. ",
+      note: "Keep this list short to avoid shrinking your talent pool.",
+      color: "red",
+    },
+    p1: {
+      title: "P1",
+      subTitle: "Highly Desired",
+      hint: `Important skills that separate a "capable" candidate from a "top" choice. These significantly boost a candidate’s rank but are not pass/fail.`,
+      color: "green",
+    },
+    p2: {
+      title: "P2",
+      subTitle: "Nice-to-have",
+      hint: `Useful skills that can be easily learned on the job. These are "bonuses" and should never be used to screen a candidate out.`,
+      color: "yellow",
+    },
+  };
   return (
     <div className={styles.container}>
-      <div>The Real Requirement</div>
+      <div className={styles.title}>The Real Requirement</div>
       <DragDropCards<CardType, CardConfig>
         initialData={{
           p0: [
@@ -57,25 +89,38 @@ const JrdRealRequirementForm = () => {
         cardConfigs={[
           {
             type: "p0",
-            title: "P0",
-            hint: "Dealbreaker",
+            color: "red",
           },
           {
             type: "p1",
-            title: "P1",
-            hint: "Important",
+            color: "green",
           },
           {
             type: "p2",
-            title: "P2",
-            hint: "Nice to Have",
+            color: "yellow",
           },
         ]}
-        renderHeader={(config) => (
-          <div>
-            {config.title} ({config.hint})
-          </div>
-        )}
+        renderHeader={(config) => {
+          const cardText = cardTextMap[config.type];
+          return (
+            <div
+              className={classnames(styles.cardHeader, styles[config.color])}
+            >
+              <div className={styles.cardTitleContainer}>
+                <div className={styles.cardTitle}>{cardText.title}</div>
+                <div className={styles.cardTitleSeparator} />
+                <div className={styles.cardSubTitle}>{cardText.subTitle}</div>
+              </div>
+              <div className={styles.cardHint}>{cardText.hint}</div>
+              {cardText.note && (
+                <div className={styles.cardNote}>
+                  <Icon icon={<Stars />} />
+                  {cardText.note}
+                </div>
+              )}
+            </div>
+          );
+        }}
       />
     </div>
   );

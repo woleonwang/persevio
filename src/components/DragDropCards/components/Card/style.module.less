@@ -7,7 +7,34 @@
 
     .cardAddButton {
         position: absolute;
-        right: 20px;
+        right: 10px;
         top: 10px;
+        font-size: 12px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    }
+
+    &.red {
+        border-color: rgba(243, 219, 219, 1);
+        background-color: rgba(255, 245, 245, 1);
+    }
+
+    &.green {
+        border-color: rgba(203, 228, 197, 1);
+        background-color: rgba(246, 249, 247, 1);
+    }
+
+    &.yellow {
+        border-color: rgba(241, 232, 223, 1);
+        background-color: rgba(250, 248, 246, 1);
     }
 }
