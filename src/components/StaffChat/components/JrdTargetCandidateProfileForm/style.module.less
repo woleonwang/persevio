@@ -1,0 +1,125 @@
+@main-width: 800px;
+
+.container {
+  padding: 20px calc((100% - @main-width) / 2);
+  flex: auto;
+  overflow: auto;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.cardHeader {
+  .cardTitleContainer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+
+  .cardTitle {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .subTitle {
+    margin-top: 16px;
+    margin-right: 20px;
+  }
+
+  .cardHint {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .cardFeatures {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .recordDescriptionContainer {
+    margin-top: 8px;
+  }
+
+  &.red {
+
+    .cardTitle {
+      color: rgba(62, 19, 19, 1)
+    }
+
+    .cardHint {
+      color: rgba(162, 89, 89, 1);
+    }
+
+    .cardFeatures {
+      border-color: rgba(243, 219, 219, 1);
+    }
+  }
+
+  &.green {
+
+    .cardTitle {
+      color: rgba(62, 91, 37, 1);
+    }
+
+    .cardHint {
+      color: rgba(102, 156, 116, 1);
+    }
+
+    .cardFeatures {
+      border-color: rgba(203, 228, 197, 1);
+    }
+  }
+
+  &.yellow {
+
+    .cardTitle {
+      color: rgba(91, 72, 59, 1);
+    }
+
+    .cardHint {
+      color: rgba(188, 147, 114, 1);
+    }
+
+    .cardFeatures {
+      border-color: rgba(244, 224, 208, 1);
+    }
+  }
+
+  &.blue {
+    .cardTitle {
+      color: rgba(37, 68, 91, 1);
+    }
+
+    .cardHint {
+      color: rgba(102, 133, 156, 1);
+    }
+
+    .cardFeatures {
+      border-color: rgba(215, 231, 246, 1);
+    }
+  }
+
+  .cardAddButton {
+    position: absolute;
+    right: 7px;
+    top: 20px;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+}

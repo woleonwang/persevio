@@ -3,12 +3,15 @@
     border: 1px solid rgba(235, 236, 238, 1);
     padding: 20px;
     background-color: white;
-    position: relative;
+
+    .cardMainContent {
+        position: relative;
+    }
 
     .cardAddButton {
         position: absolute;
-        right: 10px;
-        top: 10px;
+        right: 7px;
+        top: 0;
         font-size: 12px;
         width: 20px;
         height: 20px;
@@ -36,5 +39,10 @@
     &.yellow {
         border-color: rgba(241, 232, 223, 1);
         background-color: rgba(250, 248, 246, 1);
+    }
+
+    &.blue {
+        border-color: rgba(215, 231, 246, 1);
+        background-color: rgba(243, 249, 253, 1);
     }
 }

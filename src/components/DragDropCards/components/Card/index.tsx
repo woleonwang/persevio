@@ -10,16 +10,20 @@ interface CardProps<T> {
   records: ItemRecord[];
   isActive?: boolean;
   renderHeader: (config: T) => React.ReactNode;
+  renderExtraHeader?: (config: T) => React.ReactNode;
   onAdd: () => void;
   onDelete: (recordId: string) => void;
   onChange: (record: ItemRecord) => void;
 }
 
-const Card = <T extends { type: string; color?: "red" | "green" | "yellow" }>({
+const Card = <
+  T extends { type: string; color?: "red" | "green" | "yellow" | "blue" }
+>({
   config,
   records,
   isActive,
   renderHeader,
+  renderExtraHeader,
   onAdd,
   onDelete,
   onChange,
@@ -35,21 +39,24 @@ const Card = <T extends { type: string; color?: "red" | "green" | "yellow" }>({
       data-card-type={config.type}
       data-is-over={isActive}
     >
-      <div className={styles.cardAddButton} onClick={onAdd}>
-        <PlusOutlined />
-      </div>
-      <div className={styles.cardHeader}>{renderHeader(config)}</div>
-      <div className={styles.cardContent}>
-        {records.map((record) => (
-          <Item
-            key={record.id}
-            record={record}
-            cardType={config.type}
-            color={config.color}
-            onDelete={() => onDelete(record.id)}
-            onChange={(record) => onChange(record)}
-          />
-        ))}
+      {renderExtraHeader?.(config)}
+      <div className={styles.cardMainContent}>
+        <div className={styles.cardAddButton} onClick={onAdd}>
+          <PlusOutlined />
+        </div>
+        <div className={styles.cardHeader}>{renderHeader(config)}</div>
+        <div className={styles.cardContent}>
+          {records.map((record) => (
+            <Item
+              key={record.id}
+              record={record}
+              cardType={config.type}
+              color={config.color}
+              onDelete={() => onDelete(record.id)}
+              onChange={(record) => onChange(record)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

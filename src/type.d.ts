@@ -599,6 +599,8 @@ type TExtraTagName =
   | "jd-language" // 选择 jd 语言
   | "talent-evaluate-result"
   | "huoqujibenxinxi-jindu-one"
+  | "real-requirement-form"
+  | "target-candidate-profile-form"
   | "upload-jd"
   | "salary-structure-request"
   | "shaixuanbiaozhun"

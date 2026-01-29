@@ -1,0 +1,56 @@
+.recordItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recordDescriptionContainer {
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+
+  &.red {
+    border-color: rgba(243, 222, 222, 1);
+    background-color: rgba(250, 237, 237, 1);
+  }
+
+  &.green {
+    border-color: rgba(203, 228, 197, 1);
+    background-color: rgba(237, 243, 239, 1);
+  }
+
+  &.yellow {
+    border-color: rgba(238, 228, 222, 1);
+    background-color: rgba(244, 241, 237, 1);
+  }
+
+  &.blue {
+    border-color: rgba(215, 231, 246, 1);
+    background-color: rgba(232, 243, 251, 1);
+  }
+}
+
+.recordDescription {
+  width: 100%;
+  font-size: 14px;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.recordDeleteButton {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #666;
+  flex: none;
+
+  &:hover {
+    background-color: white;
+    border-color: rgba(235, 236, 238, 1);
+  }
+
+}

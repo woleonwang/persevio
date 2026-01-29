@@ -43,6 +43,7 @@ import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import MarkdownContainer from "../MarkdownContainer";
 import JrdRealRequirementForm from "./components/JrdRealRequirementForm";
+import JrdTargetCandidateProfileForm from "./components/JrdTargetCandidateProfileForm";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -74,8 +75,18 @@ const StaffChat: React.FC<IProps> = (props) => {
     useState(false);
   const [jobRequirementFormType, setJobRequirementFormType] =
     useState<TRoleOverviewType>();
+  const [jrdRealRequirementFormValue, setJrdRealRequirementFormValue] =
+    useState<string>();
   const [showJrdRealRequirementForm, setShowJrdRealRequirementForm] =
-    useState(true);
+    useState(false);
+  const [
+    jrdTargetCandidateProfileFormValue,
+    setJrdTargetCandidateProfileFormValue,
+  ] = useState<string>();
+  const [
+    showJrdTargetCandidateProfileForm,
+    setShowJrdTargetCandidateProfileForm,
+  ] = useState(false);
 
   const [selectOptionsType, setSelectOptionsType] = useState<
     "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
@@ -103,6 +114,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     scrollToMessage?: (messageId: string) => void;
   }>({});
   const sideDocumentTriggerMessageIdRef = useRef<string>();
+  const messageListScrollTopRef = useRef<number>(0);
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -121,6 +133,16 @@ const StaffChat: React.FC<IProps> = (props) => {
   useEffect(() => {
     initConversation();
   }, [jobId]);
+
+  useEffect(() => {
+    if (!showJrdRealRequirementForm) {
+      const listNode = document.querySelector("." + styles.listArea);
+      if (listNode && messageListScrollTopRef.current) {
+        listNode.scrollTop = messageListScrollTopRef.current;
+        messageListScrollTopRef.current = 0;
+      }
+    }
+  }, [showJrdRealRequirementForm]);
 
   useEffect(() => {
     if (isLoading) {
@@ -437,6 +459,28 @@ const StaffChat: React.FC<IProps> = (props) => {
         sendMessage(t("confirm"));
       },
       style: "button-with-text",
+    },
+
+    {
+      key: "real-requirement-form",
+      title: "Edit Real Requirement",
+      handler: (tag) => {
+        setJrdRealRequirementFormValue(tag?.content);
+        setShowJrdRealRequirementForm(true);
+        messageListScrollTopRef.current =
+          document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
+      },
+    },
+
+    {
+      key: "target-candidate-profile-form",
+      title: "Edit Target Candidate Profile",
+      handler: (tag) => {
+        setJrdTargetCandidateProfileFormValue(tag?.content);
+        setShowJrdTargetCandidateProfileForm(true);
+        messageListScrollTopRef.current =
+          document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
+      },
     },
 
     ...(SIDE_DOCUMENT_TYPES as TExtraTagName[]).map((key) => {
@@ -798,6 +842,8 @@ const StaffChat: React.FC<IProps> = (props) => {
   const basicFormVisible = mode === "standard" && showJobRequirementFormDrawer;
   const realRequirementFormVisible =
     mode === "standard" && showJrdRealRequirementForm;
+  const targetCandidateProfileFormVisible =
+    mode === "standard" && showJrdTargetCandidateProfileForm;
 
   return (
     <div className={styles.container}>
@@ -823,7 +869,31 @@ const StaffChat: React.FC<IProps> = (props) => {
               userRole="staff"
             />
           ) : realRequirementFormVisible ? (
-            <JrdRealRequirementForm />
+            <JrdRealRequirementForm
+              onSubmit={(result: string) => {
+                if (!isLoading) {
+                  sendMessage(result);
+                  setShowJrdRealRequirementForm(false);
+                }
+              }}
+              onBack={() => {
+                setShowJrdRealRequirementForm(false);
+              }}
+              initialValue={jrdRealRequirementFormValue ?? ""}
+            />
+          ) : targetCandidateProfileFormVisible ? (
+            <JrdTargetCandidateProfileForm
+              initialValue={jrdTargetCandidateProfileFormValue ?? ""}
+              onSubmit={(result: string) => {
+                if (!isLoading) {
+                  sendMessage(result);
+                  setShowJrdTargetCandidateProfileForm(false);
+                }
+              }}
+              onBack={() => {
+                setShowJrdTargetCandidateProfileForm(false);
+              }}
+            />
           ) : (
             <>
               <ChatMessageList

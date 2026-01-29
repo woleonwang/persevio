@@ -23,31 +23,32 @@ export interface DragDropRecord {
   description: string;
 }
 
-// 组件Props
+export type TValue<CardType extends string> = {
+  [key in CardType]: DragDropRecord[];
+};
+
 interface DragDropCardsProps<CardType extends string, CardConfig> {
-  initialData: {
-    [key in CardType]: DragDropRecord[];
-  };
+  value: TValue<CardType>;
   cardConfigs: CardConfig[];
-  onDataChange?: (data: {
-    [key in CardType]: DragDropRecord[];
-  }) => void;
+  onChange: (value: TValue<CardType>) => void;
   renderHeader: (config: CardConfig) => React.ReactNode;
+  renderExtraHeader?: (config: CardConfig) => React.ReactNode;
 }
 
 const DragDropCards = <
   CardType extends string,
-  CardConfig extends { type: CardType; color?: "red" | "green" | "yellow" }
+  CardConfig extends {
+    type: CardType;
+    color?: "red" | "green" | "yellow" | "blue";
+  }
 >({
-  initialData,
+  value: propsValue,
   cardConfigs,
-  onDataChange,
+  onChange,
   renderHeader,
+  renderExtraHeader,
 }: DragDropCardsProps<CardType, CardConfig>) => {
-  const [data, setData] = useState<{
-    [key in CardType]: DragDropRecord[];
-  }>(initialData);
-
+  const [value, setValue] = useState<TValue<CardType>>(propsValue);
   // 当前挪动的记录
   const [activeId, setActiveId] = useState<string>();
   // 当前的目标卡片类型
@@ -59,6 +60,8 @@ const DragDropCards = <
     [key in CardType]: DragDropRecord[];
   }>();
 
+  const needTriggerChange = useRef(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -66,6 +69,17 @@ const DragDropCards = <
       },
     })
   );
+
+  useEffect(() => {
+    setValue(propsValue);
+  }, [propsValue]);
+
+  useEffect(() => {
+    if (needTriggerChange.current) {
+      onChange(value);
+      needTriggerChange.current = false;
+    }
+  }, [needTriggerChange.current]);
 
   // 跟踪鼠标位置
   useEffect(() => {
@@ -86,7 +100,7 @@ const DragDropCards = <
 
   // 根据ID查找记录
   const findRecordById = (id: string): DragDropRecord | undefined => {
-    for (const records of Object.values(data) as DragDropRecord[][]) {
+    for (const records of Object.values(value) as DragDropRecord[][]) {
       const record = records.find((r) => r.id === id);
       if (record) return record;
     }
@@ -95,7 +109,7 @@ const DragDropCards = <
 
   // 根据ID查找记录所在的卡片类型
   const findCardTypeByRecordId = (id: string): CardType | undefined => {
-    for (const [cardType, records] of Object.entries(data) as [
+    for (const [cardType, records] of Object.entries(value) as [
       CardType,
       DragDropRecord[]
     ][]) {
@@ -108,7 +122,7 @@ const DragDropCards = <
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-    originalDataRef.current = { ...data };
+    originalDataRef.current = { ...value };
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -134,13 +148,14 @@ const DragDropCards = <
     if (isOverCard) {
       const targetType = overId.replace("card-", "") as CardType;
       setActiveCardType(targetType);
-      if (data[targetType].length === 0) {
-        const newData = { ...data };
+      if (value[targetType].length === 0) {
+        const newData = { ...value };
         newData[currentType] = newData[currentType].filter(
           (r) => r.id !== activeId
         );
         newData[targetType].push(activeRecord as DragDropRecord);
-        setData(newData);
+        setValue(newData);
+        needTriggerChange.current = true;
       }
     } else {
       const targetType = over.data.current?.cardType as CardType;
@@ -167,7 +182,7 @@ const DragDropCards = <
       // 如果鼠标在目标记录的上半部分（鼠标Y < 目标中心Y），插入到前面
       // 如果鼠标在目标记录的下半部分（鼠标Y >= 目标中心Y），插入到后面
       const position = mouseY < overCenterY ? "before" : "after";
-      const newData = { ...data };
+      const newData = { ...value };
 
       newData[currentType] = newData[currentType].filter(
         (r) => r.id !== activeId
@@ -190,7 +205,8 @@ const DragDropCards = <
             activeRecord as DragDropRecord
           );
         }
-        setData(newData);
+        setValue(newData);
+        needTriggerChange.current = true;
       }
     }
   };
@@ -203,31 +219,33 @@ const DragDropCards = <
       return;
     }
 
-    onDataChange?.(data);
     setActiveId(undefined);
     setActiveCardType(undefined);
   };
 
   const onAdd = (cardType: CardType) => {
-    const newData = { ...data };
+    const newData = { ...value };
     newData[cardType].push({ id: uuidv4(), title: "", description: "" });
-    setData(newData);
+    setValue(newData);
+    needTriggerChange.current = true;
   };
 
   const onDelete = (cardType: CardType, recordId: string) => {
-    const newData = { ...data };
+    const newData = { ...value };
     newData[cardType] = newData[cardType].filter((r) => r.id !== recordId);
-    setData(newData);
+    setValue(newData);
+    needTriggerChange.current = true;
   };
 
-  const onChange = (cardType: CardType, record: ItemRecord) => {
-    setData((data) => {
-      const newData = { ...data };
+  const onUpdateRecord = (cardType: CardType, record: ItemRecord) => {
+    setValue((value) => {
+      const newData = { ...value };
       newData[cardType] = newData[cardType].map((r) =>
         r.id === record.id ? record : r
       );
       return newData;
     });
+    needTriggerChange.current = true;
   };
 
   const activeRecord = activeId ? findRecordById(activeId) : undefined;
@@ -245,12 +263,13 @@ const DragDropCards = <
           <Card
             key={config.type}
             config={config}
-            records={data[config.type]}
+            records={value[config.type]}
             isActive={activeCardType === config.type}
             renderHeader={renderHeader}
+            renderExtraHeader={renderExtraHeader}
             onAdd={() => onAdd(config.type)}
             onDelete={(recordId) => onDelete(config.type, recordId)}
-            onChange={(record) => onChange(config.type, record)}
+            onChange={(record) => onUpdateRecord(config.type, record)}
           />
         ))}
       </div>

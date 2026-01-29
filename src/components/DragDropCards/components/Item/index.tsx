@@ -17,7 +17,7 @@ export interface SortableRecordItemProps {
   cardType: string;
   onDelete: () => void;
   onChange: (record: ItemRecord) => void;
-  color?: "red" | "green" | "yellow";
+  color?: "red" | "green" | "yellow" | "blue";
 }
 
 const Item = ({

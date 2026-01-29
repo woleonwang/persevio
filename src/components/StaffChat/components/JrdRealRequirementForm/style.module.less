@@ -1,107 +1,107 @@
 @main-width: 800px;
 
 .container {
-    padding: 20px calc((100% - @main-width) / 2);
-    flex: auto;
-    overflow: auto;
+  padding: 20px calc((100% - @main-width) / 2);
+  flex: auto;
+  overflow: auto;
 }
 
 .title {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .cardHeader {
 
-    .cardTitleContainer {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
+  .cardTitleContainer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
 
+
+  .cardTitle,
+  .cardSubTitle {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .cardTitleSeparator {
+    height: 12px;
+    width: 1px;
+  }
+
+  .cardHint {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .cardNote {
+    margin-top: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  &.red {
 
     .cardTitle,
     .cardSubTitle {
-        font-size: 16px;
-        font-weight: bold;
+      color: rgba(62, 19, 19, 1)
     }
 
     .cardTitleSeparator {
-        height: 12px;
-        width: 1px;
+      background-color: rgba(243, 219, 219, 1);
     }
 
     .cardHint {
-        margin-top: 8px;
-        font-size: 14px;
+      color: rgba(162, 89, 89, 1);
     }
 
     .cardNote {
-        margin-top: 8px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px;
-        border-radius: 12px;
+      background-color: rgba(255, 234, 234, 1);
+      color: rgba(162, 89, 89, 1);
+
+      :global {
+        .perse-icon {
+          color: rgba(253, 96, 91, 1);
+        }
+      }
+    }
+  }
+
+  &.green {
+
+    .cardTitle,
+    .cardSubTitle {
+      color: rgba(62, 91, 37, 1)
     }
 
-    &.red {
-
-        .cardTitle,
-        .cardSubTitle {
-            color: rgba(62, 19, 19, 1)
-        }
-
-        .cardTitleSeparator {
-            background-color: rgba(243, 219, 219, 1);
-        }
-
-        .cardHint {
-            color: rgba(162, 89, 89, 1);
-        }
-
-        .cardNote {
-            background-color: rgba(255, 234, 234, 1);
-            color: rgba(162, 89, 89, 1);
-
-            :global {
-                .perse-icon {
-                    color: rgba(253, 96, 91, 1);
-                }
-            }
-        }
+    .cardTitleSeparator {
+      background-color: rgba(203, 228, 197, 1);
     }
 
-    &.green {
+    .cardHint {
+      color: rgba(102, 156, 116, 1);
+    }
+  }
 
-        .cardTitle,
-        .cardSubTitle {
-            color: rgba(62, 91, 37, 1)
-        }
+  &.yellow {
 
-        .cardTitleSeparator {
-            background-color: rgba(203, 228, 197, 1);
-        }
-
-        .cardHint {
-            color: rgba(102, 156, 116, 1);
-        }
+    .cardTitle,
+    .cardSubTitle {
+      color: rgba(91, 72, 59, 1)
     }
 
-    &.yellow {
-
-        .cardTitle,
-        .cardSubTitle {
-            color: rgba(91, 72, 59, 1)
-        }
-
-        .cardTitleSeparator {
-            background-color: rgba(241, 232, 223, 1);
-        }
-
-        .cardHint {
-            color: rgba(188, 147, 114, 1);
-        }
+    .cardTitleSeparator {
+      background-color: rgba(241, 232, 223, 1);
     }
+
+    .cardHint {
+      color: rgba(188, 147, 114, 1);
+    }
+  }
 
 }
