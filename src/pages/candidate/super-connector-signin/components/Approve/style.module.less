@@ -1,0 +1,64 @@
+@primary-color: #3682fe;
+@error-color: #ff4d4f;
+
+.container {
+  flex: auto;
+  display: flex;
+  width: 100%;
+  overflow: auto;
+}
+
+.body {
+  width: 1300px;
+  background-image: url("/banner-bg.png");
+  background-position-x: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin: 50px auto;
+  position: relative;
+}
+
+.logoWrapper {
+  padding-bottom: 32px;
+}
+
+.textWrapper {
+  padding: 20px 40px;
+  border-radius: 80px;
+  border: 1px solid @primary-color;
+  color: @primary-color;
+  background-color: #f6ffed; // 更浅的绿色背景
+
+  position: absolute;
+  top: 150px;
+  right: 0;
+  width: 300px;
+
+  &.rejected {
+    border: 1px solid @error-color;
+    color: @error-color;
+    background-color: #fff1f0;
+  }
+}
+
+.profileDoc {
+  width: 700px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: auto;
+
+  .profileDocTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    border-left: 4px solid @primary-color;
+    padding-left: 20px;
+  }
+
+  .profileDocContent {
+    flex: auto;
+    overflow: auto;
+  }
+}

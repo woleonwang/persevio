@@ -1,0 +1,194 @@
+@primary-color: #3682fe;
+
+.container {
+  height: 100vh;
+  min-width: 1300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &.mobile {
+    min-width: 0;
+  }
+}
+
+.header {
+  flex: none;
+  height: 100px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner {
+  height: 52px;
+  width: auto;
+  cursor: pointer;
+}
+
+.stepContainer {
+  display: flex;
+  padding: 20px 0;
+  width: 100%;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-top: 1px solid rgba(234, 234, 234, 1);
+  border-bottom: 1px solid rgba(234, 234, 234, 1);
+
+  .step {
+    width: 120px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: rgba(234, 234, 234, 1);
+    &.active {
+      background-color: @primary-color;
+    }
+  }
+}
+
+.form {
+  width: 800px;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.required {
+  &::before {
+    content: "*";
+    color: red;
+    margin-right: 4px;
+  }
+}
+
+.formBg {
+  background-color: rgba(250, 251, 252, 1);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.targetOption {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(234, 234, 234, 1);
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+
+  &.active {
+    border-color: @primary-color;
+    background-color: rgba(240, 249, 246, 1);
+  }
+
+  .targetTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .description {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(153, 153, 153, 1);
+    font-size: 14px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+}
+
+.addOtherTarget {
+  color: @primary-color;
+  cursor: pointer;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+
+  .back {
+    cursor: pointer;
+  }
+}
+
+.hint {
+  color: rgba(153, 153, 153, 1);
+  font-size: 14px;
+  padding: 20px 40px;
+}
+
+.conversation {
+  width: 1300px;
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+}
+
+.body {
+  flex: auto;
+  overflow: auto;
+  width: 100%;
+}
+
+.chatWrapper {
+  flex: auto;
+  width: 1000px;
+  display: flex;
+  overflow: hidden;
+  margin-top: 30px;
+}
+
+.loadingTip {
+  padding: 20px 40px;
+  background-color: white;
+  border-radius: 16px;
+  color: #333;
+  text-align: left;
+  width: 700px;
+
+  .waiting {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: @primary-color;
+    margin-bottom: 20px;
+
+    img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none;
+  }
+}
