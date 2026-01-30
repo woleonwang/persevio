@@ -55,12 +55,14 @@ type TExtractBasicInfo = {
   }[];
 };
 
+type TEvaluateResultLevel =
+  | "ideal_candidate"
+  | "good_fit"
+  | "recommend_with_reservations"
+  | "not_a_fit";
+
 type TExtractEvaluateResult = {
-  result:
-    | "ideal_candidate"
-    | "good_fit"
-    | "recommend_with_reservations"
-    | "not_a_fit";
+  result: TEvaluateResultLevel;
   summary: string;
   current_compensation: string;
   expected_compensation: string;
@@ -118,6 +120,8 @@ const TalentCards = (props: IProps) => {
 
   const [searchName, setSearchName] = useState<string>();
   const [selectedJob, setSelectedJob] = useState<number>();
+  const [evaluateResultLevel, setEvaluateResultLevel] =
+    useState<TEvaluateResultLevel>();
 
   const { staffs } = useStaffs();
 
@@ -286,12 +290,26 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return !selectedJob || getJobId(item) === selectedJob;
       })
+      .filter((item) => {
+        return (
+          !evaluateResultLevel ||
+          (getEvaluateResult(item)?.result ?? "recommend_with_reservations") ===
+            evaluateResultLevel
+        );
+      })
       .sort((a, b) => {
         return dayjs(
           b.talent?.created_at || b.linkedinProfile?.created_at
         ).diff(dayjs(a.talent?.created_at || a.linkedinProfile?.created_at));
       });
-  }, [talents, linkedinProfiles, activeTab, searchName, selectedJob]);
+  }, [
+    talents,
+    linkedinProfiles,
+    activeTab,
+    searchName,
+    selectedJob,
+    evaluateResultLevel,
+  ]);
 
   const currentPageDataSource = dataSource.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -308,18 +326,38 @@ const TalentCards = (props: IProps) => {
         >
           {t("candidate_list")}
         </div>
-        {!jobId && (
-          <div className={styles.filterSection}>
-            <div className={styles.filterItem}>
-              <Input
-                placeholder={t("search_placeholder")}
-                prefix={<SearchOutlined />}
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                style={{ width: 200 }}
-                allowClear
-              />
-            </div>
+        <div className={styles.filterSection}>
+          <div className={styles.filterItem}>
+            <Input
+              placeholder={t("search_placeholder")}
+              prefix={<SearchOutlined />}
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              style={{ width: 200 }}
+              allowClear
+            />
+          </div>
+          <div className={styles.filterItem}>
+            <Select
+              placeholder={t("level_placeholder")}
+              value={evaluateResultLevel}
+              onChange={setEvaluateResultLevel}
+              style={{ width: 200 }}
+              allowClear
+              options={[
+                "ideal_candidate",
+                "good_fit",
+                "recommend_with_reservations",
+                "not_a_fit",
+              ].map((level) => ({
+                label: originalT(
+                  `job_talents.evaluate_result_options.${level}`
+                ),
+                value: level,
+              }))}
+            />
+          </div>
+          {!jobId && (
             <div className={styles.filterItem}>
               <Select
                 placeholder={t("job_placeholder")}
@@ -340,8 +378,8 @@ const TalentCards = (props: IProps) => {
                 }
               />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <div>
         <Tabs

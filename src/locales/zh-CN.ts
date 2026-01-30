@@ -1030,6 +1030,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     work_experiences: "工作经历",
     search_placeholder: "请输入候选人姓名进行搜索",
     job_placeholder: "职位",
+    level_placeholder: "匹配度",
   },
 
   job_document: {
@@ -1659,6 +1660,8 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     candidate_name: "候选人姓名",
     company_name: "公司名称",
     job_name: "职位名称",
+    current_job_title: "当前职位",
+    current_company: "当前公司",
     current_compensation: "当前薪资",
     expected_compensation: "期望薪资",
     visa: "签证",

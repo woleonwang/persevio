@@ -1076,6 +1076,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     work_experiences: "Work Experiences",
     search_placeholder: "Candidate name",
     job_placeholder: "Job",
+    level_placeholder: "Match Level",
   },
 
   job_document: {
@@ -1719,6 +1720,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     candidate_name: "Candidate Name",
     company_name: "Company Name",
     job_name: "Job Name",
+    current_job_title: "Current Positiion",
+    current_company: "Current Company",
     current_compensation: "Current Compensation",
     expected_compensation: "Expected Compensation",
     visa: "Visa",
