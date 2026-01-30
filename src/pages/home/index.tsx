@@ -1,266 +1,151 @@
-import styles from "./style.module.less";
-import bannerVideo from "../../assets/banner-video.mp4";
-import logo from "../../assets/logo.png";
-import block1 from "../../assets/block-1.png";
-import calendarCheck from "../../assets/calendar-check.png";
-import check from "../../assets/check.png";
-import medal from "../../assets/medal.png";
-import tie from "../../assets/tie.png";
-import bottomCard1 from "../../assets/bottom-card-1.png";
-import bottomCard2 from "../../assets/bottom-card-2.png";
-import bottomCard3 from "../../assets/bottom-card-3.png";
-import targetArrow from "../../assets/target-arrow.png";
-import skill from "../../assets/videos/skill.mp4";
-import sourcing from "../../assets/videos/sourcing.mp4";
-import screening from "../../assets/videos/screening.mp4";
-import interview from "../../assets/videos/interview.mp4";
-import driving from "../../assets/videos/driving.mp4";
-import { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import HomeHeader from "@/components/HomeHeader";
+import classnames from "classnames";
+import { useTranslation } from "react-i18next";
+import { Button, Dropdown } from "antd";
+import { RightOutlined } from "@ant-design/icons";
 
-interface CardProps {
-  title: string;
-  description: string;
-  image: string;
-  color: string;
-  backgroundColor: string;
+import { Get } from "@/utils/request";
+import PublicJobCard from "@/components/PublicJobCard";
+import { parseJSON } from "@/utils";
+
+import logo from "@/assets/logo.png";
+import bannerVideo from "@/assets/banner-1.mp4";
+import bannerTalk1 from "@/assets/banner-talk-1.png";
+import bannerTalk3 from "@/assets/banner-talk-3.png";
+import bannerTalk4 from "@/assets/banner-talk-4.png";
+import howItWorks1 from "@/assets/how-it-works-1.png";
+import howItWorks2 from "@/assets/how-it-works-2.png";
+import howItWorks3 from "@/assets/how-it-works-3.png";
+import howItWorksVideo1 from "@/assets/videos/how-it-works-1.mp4";
+import howItWorksVideo2 from "@/assets/videos/how-it-works-2.mp4";
+import howItWorksVideo3 from "@/assets/videos/how-it-works-3.mp4";
+import different1 from "@/assets/different-1.png";
+import different2 from "@/assets/different-2.png";
+import different3 from "@/assets/different-3.png";
+import different1detail from "@/assets/different-1-detail.png";
+import different2detail from "@/assets/different-2-detail.png";
+import different3detail from "@/assets/different-3-detail.png";
+
+import styles from "./style.module.less";
+
+// const menusConfigs = {
+//   candidates: "/",
+//   employers: "/employers",
+// };
+
+const Speeches = [
+  [
+    {
+      text: "“Most platforms just match keywords. Viona understood the context of my experience and my soft skills. She helped me articulate my value in a way that got me straight to the interview stage with the hiring manager.”",
+      author: "Marvin",
+      position: "Technical Team Lead",
+      width: 900,
+    },
+    {
+      text: "“The most efficient hiring process of my life. From the first chat with Viona to the final offer took less than 10 days.”",
+      author: "Mingjie",
+      position: "Software Engineer",
+      width: 600,
+    },
+    {
+      text: "“I was skeptical about AI, but Viona asked deeper questions than most human recruiters. She understood my career pivot instantly and matched me with a role that I truly wanted.”",
+      author: "Sean",
+      position: "Head of Sales",
+      width: 920,
+    },
+    {
+      text: "“Viona’s recommendation was shockingly accurate and personalized.”",
+      author: "Jin",
+      position: "Trader",
+      width: 464,
+    },
+  ],
+  [
+    {
+      text: "“One conversation with Viona and she immediately sent me jobs I was actually interested in. So much better than endless scrolling on job boards.”",
+      author: "Kashif",
+      position: "HR manager",
+      width: 700,
+    },
+    {
+      text: "“Viona didn’t just passively listen; she challenged me to dig deeper. She actually helped me uncover core strengths I hadn't realized were my biggest assets.”",
+      author: "Lai",
+      position: "Product Manager",
+      width: 900,
+    },
+    {
+      text: "“Viona acted as my advocate from the very start, focusing entirely on how to champion my profile and highlight my best self to employers.”",
+      author: "Yang",
+      position: "Community Manager",
+      width: 600,
+    },
+    {
+      text: "“I loved that I could chat with Viona late at night, just lying on my couch. It didn't feel like a high-pressure interview, just a relaxed conversation, and she handled all the prep work for my application automatically.”",
+      author: "Lim",
+      position: "Data Engineer",
+      width: 900,
+    },
+  ],
+];
+
+interface JobPosting extends TJobBasicInfo {
+  id: number;
+  name: string;
+  company_name: string;
+  company_logo: string;
+  posted_at: string;
+  version: number;
 }
-
-interface GreenBtnProps {
-  title: string;
-  onClick?: () => void;
-  style?: CSSProperties;
-}
-
-interface BottomCardProps {
-  image: string;
-  title: string;
-  description: string;
-}
-
-interface PowerCardProps {
-  title: string;
-  list: string[];
-  noBorder?: boolean;
-}
-
-const GreenBtn = (props: GreenBtnProps) => {
-  const { title, onClick, style } = props;
-
-  return (
-    <div className={styles.greenBtn} onClick={onClick} style={style}>
-      {title}
-      <div className={styles.icon}>→</div>
-    </div>
-  );
-};
-
-const WhiteBtn = (props: GreenBtnProps) => {
-  const { title, onClick } = props;
-
-  return (
-    <div
-      className={styles.greenBtn}
-      onClick={onClick}
-      style={{
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        border: "1px solid rgba(255, 255, 255, 0.8)",
-      }}
-    >
-      {title}
-      <div
-        className={styles.icon}
-        style={{
-          color: "rgba(31, 172, 106, 1)",
-          backgroundColor: "rgba(255, 255, 255, 1)",
-        }}
-      >
-        →
-      </div>
-    </div>
-  );
-};
-
-const Card = (props: CardProps) => {
-  const { title, description, image, color, backgroundColor } = props;
-  return (
-    <div
-      style={{
-        backgroundColor,
-        borderRadius: 24,
-        padding: 24,
-        position: "relative",
-        height: 250,
-      }}
-    >
-      <div
-        style={{ color, fontSize: 32, fontWeight: "bold", lineHeight: "42px" }}
-      >
-        {title}
-      </div>
-      <div style={{ marginTop: 14, fontSize: 16, lineHeight: "21px" }}>
-        {description}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: 24,
-          bottom: 24,
-          backgroundColor: color,
-          borderRadius: "50%",
-          width: 40,
-          height: 40,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img src={check} style={{ width: 20 }} />
-      </div>
-      <img
-        style={{ position: "absolute", right: 24, bottom: 24, width: 96 }}
-        src={image}
-      />
-    </div>
-  );
-};
-
-const BottomCard = (props: BottomCardProps) => {
-  const { title, description, image } = props;
-  return (
-    <div
-      style={{
-        backgroundColor: "rgba(248, 248, 249, 1)",
-        borderRadius: 24,
-        padding: "50px 30px",
-        height: 332,
-      }}
-    >
-      <img style={{ width: 75 }} src={image} />
-      <div
-        style={{
-          color: "rgba(31, 172, 106, 1)",
-          fontSize: 24,
-          fontWeight: "bold",
-          lineHeight: "36px",
-          marginTop: 32,
-        }}
-      >
-        {title}
-      </div>
-      <div style={{ marginTop: 14, fontSize: 16, lineHeight: "21px" }}>
-        {description}
-      </div>
-    </div>
-  );
-};
-
-const PowerCard = (props: PowerCardProps) => {
-  const { title, list, noBorder = false } = props;
-  return (
-    <div
-      style={{
-        flex: 1,
-        display: "flex",
-        justifyContent: "center",
-        borderRight: `${noBorder ? 0 : 1}px solid rgba(234, 234, 234, 1)`,
-        padding: "0 30px",
-      }}
-    >
-      <div style={{ width: "fit-content" }}>
-        <div style={{ fontSize: 24, lineHeight: "36px", fontWeight: "bold" }}>
-          {title}
-        </div>
-        <div>
-          {list.map((item) => {
-            return (
-              <div
-                style={{
-                  marginTop: 16,
-                  display: "flex",
-                  alignItems: "flex-start",
-                }}
-              >
-                <img
-                  src={targetArrow}
-                  style={{ flex: "none", width: 24, marginRight: 12 }}
-                />
-                <div
-                  key={item}
-                  style={{ flex: 1, fontSize: 16, lineHeight: "24px" }}
-                >
-                  {item}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const VideoContainer = (props: { src: string; withBg?: boolean }) => {
-  const { src, withBg = false } = props;
-  return (
-    <div
-      style={{
-        flex: 1,
-        ...(withBg && {
-          padding: "73px 49px",
-          background:
-            "linear-gradient(125.62deg, #FBFAF1 15.1%, #EEEEFF 57.89%, #F4D7FE 94.28%),radial-gradient(38.81% 38.81% at 68.18% 0%, rgba(254, 255, 237, 0.8) 0%, rgba(255, 251, 234, 0) 100%)",
-          borderRadius: 24,
-        }),
-      }}
-    >
-      <div
-        style={{
-          borderRadius: 12,
-          backgroundColor: "white",
-          padding: 12,
-        }}
-      >
-        <video
-          src={src}
-          style={{
-            width: "100%",
-            borderRadius: 12,
-            border: "1px solid rgba(234, 234, 234, 1)",
-          }}
-          autoPlay
-          muted
-          loop
-        />
-      </div>
-    </div>
-  );
-};
-
 const Home = () => {
+  const [hoverStep, setHoverStep] = useState<number>(0);
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+
+  useEffect(() => {
+    getJobs();
+  }, []);
+
+  const getJobs = async () => {
+    const { code, data } = await Get("/api/public/jobs");
+    if (code !== 0) {
+      return;
+    }
+
+    const jobs: JobPosting[] = data.jobs;
+
+    const { code: code2, data: data2 } = await Get(
+      "/api/public/system_config/recommended_job_ids"
+    );
+    if (code2 !== 0 || !data2.value) {
+      return;
+    }
+
+    const indexJobIds = JSON.parse(data2.value);
+    setJobs(
+      jobs
+        .filter((job) => indexJobIds.includes(job.id))
+        .map((job: any) => {
+          return {
+            ...job,
+            ...parseJSON(job.basic_info),
+          };
+        })
+    );
+  };
+
+  // const isActive = (key: "candidates" | "employers"): boolean => {
+  //   const path = window.location.pathname;
+  //   return menusConfigs[key] === path;
+  // };
+
+  const { t } = useTranslation();
+  const originalT = (key: string) => t(`home_header.${key}`);
+
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const eventSource = new EventSource("/api/stream_invoke");
-
-  //   eventSource.onmessage = (event) => {
-  //     console.log(event.data);
-  //   };
-
-  //   // eventSource.onerror = (error) => {
-  //   //   console.error("SSE error:", error.);
-  //   //   eventSource.close();
-  //   // };
-
-  //   return () => {
-  //     eventSource.close();
-  //   };
-  // }, []);
-
   return (
-    <HomeHeader>
-      <div className={styles.bannerContainer}>
+    <div className={styles.container}>
+      <div className={styles.heroSection}>
         <video
           src={bannerVideo}
           autoPlay
@@ -268,279 +153,339 @@ const Home = () => {
           className={styles.bannerVideo}
           muted
         />
-        <div className={styles.title}>
-          <div>
-            <span className={styles.green}>Hi,</span> I am Viona.
-          </div>
-          <div>
-            Your <span className={styles.green}>autonomous</span>
-          </div>
-          <div>AI recruitment associate</div>
-        </div>
-        <div className={styles.bannerHint}>
-          Viona is the world's first AI associate who manages your recruitment
-          cycle from open to offer.
-        </div>
-        <div className={styles.bannerGreenBtn}>
-          <GreenBtn
-            title="Hire Viona Today"
-            onClick={() => navigate("/apply")}
-          />
-        </div>
-        <div className={`${styles.talk_1} ${styles.talk}`}>
-          Manage roles from open to offer
-        </div>
-        <div className={`${styles.talk_2} ${styles.talk}`}>Expert-trained</div>
-        <div className={`${styles.talk_3} ${styles.talk}`}>Work 24/7</div>
-      </div>
-
-      <div className={`${styles.bgContainer} ${styles.block1}`}>
-        <div className={styles.innerContainer}>
-          <div className={styles.blockDesc}>
-            Discuss with Viona as you would with a human recruiter—then sit back
-            and watch as interviews with qualified candidates booked on your
-            calendar
-          </div>
-          <img className={styles.image} src={block1} alt="block1" />
-
-          <div className={styles.cardContainer}>
-            <Card
-              title="Expertise"
-              description="Viona was trained by the world’s top recruiters and hiring managers."
-              color="rgba(31, 172, 106, 1)"
-              backgroundColor="rgba(236, 246, 236, 1)"
-              image={tie}
-            />
-            <Card
-              title="Independent"
-              description="Viona partners with with recruitment teams or works directly with hiring managers."
-              color="rgba(49, 101, 203, 1)"
-              backgroundColor="rgba(236, 239, 244, 1)"
-              image={medal}
-            />
-            <Card
-              title="Always-on"
-              description="Viona works 24/7 to drive recruitment forward by sourcing candidates, scheduling meetings, and following up with stakeholders."
-              color="rgba(176, 70, 200, 1)"
-              backgroundColor="rgba(250, 239, 248, 1)"
-              image={calendarCheck}
-            />
-          </div>
-          <div className={styles.block1GreenBtn}>
-            <GreenBtn
-              title="Hire Viona Today"
-              onClick={() => navigate("/apply")}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={`${styles.innerContainer} ${styles.block2}`}>
-        <div className={styles.blockTitle}>
-          Viona's <span className={styles.green}>Core Skills</span>
-        </div>
-        <div className={styles.blockDesc} style={{ marginTop: 16 }}>
-          Viona helps you focus on important tasks that actually matter -
-          pitching, evaluating and aligning.
-        </div>
-        <div
-          className={styles.flexContainerLeftImage}
-          style={{ marginTop: 120 }}
-        >
-          <VideoContainer src={skill} withBg />
-          <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
-            <div className={styles.blockSubTitle}>Requirement Gathering</div>
-            <div className={styles.blockSubDesc}>
-              Viona collects and qualifies job requirements, creating
-              professional job descriptions, outreach messages, and more.
+        <div className={styles.header}>
+          <img src={logo} className={styles.logo} />
+          <div className={styles.bannderMenuGroup}>
+            {/* <div
+              className={classnames({
+                [styles.active]: isActive("candidates"),
+              })}
+              onClick={() => navigate(menusConfigs["candidates"])}
+            >
+              {originalT("candidates")}
             </div>
-            <GreenBtn
-              title="Hire Viona Today"
-              style={{ marginTop: 64 }}
-              onClick={() => navigate("/apply")}
-            />
+            <div
+              className={classnames({ [styles.active]: isActive("employers") })}
+              onClick={() => navigate(menusConfigs["employers"])}
+            >
+              {originalT("employers")}
+            </div> */}
           </div>
-        </div>
-      </div>
-
-      <div
-        className={`${styles.innerContainer} ${styles.flexContainerRightImage}`}
-        style={{ marginTop: 210 }}
-      >
-        <div style={{ flex: 1, marginRight: 56, paddingTop: 100 }}>
-          <div className={styles.blockSubTitle}>Sourcing</div>
-          <div className={styles.blockSubDesc}>
-            Viona autonomously sources and engages candidates, ensuring they’re
-            ready to meet you and book them in on your calendar.
-          </div>
-          <GreenBtn
-            title="Hire Viona Today"
-            style={{ marginTop: 64 }}
-            onClick={() => navigate("/apply")}
-          />
-        </div>
-        <VideoContainer src={sourcing} />
-      </div>
-
-      <div
-        className={`${styles.flexContainerLeftImage} ${styles.innerContainer}`}
-        style={{ marginTop: 210 }}
-      >
-        <VideoContainer src={screening} withBg />
-        <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
-          <div className={styles.blockSubTitle}>Screening</div>
-          <div className={styles.blockSubDesc}>
-            Viona screens hundreds of applications in seconds, ensuring your
-            time is only spent on the most promising candidates.
-          </div>
-          <GreenBtn
-            title="Hire Viona Today"
-            style={{ marginTop: 64 }}
-            onClick={() => navigate("/apply")}
-          />
-        </div>
-      </div>
-
-      <div
-        className={`${styles.innerContainer} ${styles.flexContainerRightImage}`}
-        style={{ marginTop: 210 }}
-      >
-        <div style={{ flex: 1, marginRight: 56, paddingTop: 100 }}>
-          <div className={styles.blockSubTitle}>
-            Interview planning & Interviewing
-          </div>
-          <div className={styles.blockSubDesc}>
-            Viona designs interview plans, suggests interview questions, takes
-            notes and creates comprehensive summaries and reports for all
-            stakeholders
-          </div>
-          <GreenBtn
-            title="Hire Viona Today"
-            style={{ marginTop: 64 }}
-            onClick={() => navigate("/apply")}
-          />
-        </div>
-        <VideoContainer src={interview} />
-      </div>
-
-      <div
-        className={`${styles.flexContainerLeftImage} ${styles.innerContainer}`}
-        style={{ marginTop: 210 }}
-      >
-        <VideoContainer src={driving} withBg />
-        <div style={{ flex: 1, marginLeft: 56, paddingTop: 100 }}>
-          <div className={styles.blockSubTitle}>Driving</div>
-          <div className={styles.blockSubDesc}>
-            Viona drives the full recruitment process forward by proactively
-            scheduling meetings, providing context and following up with
-            relevant parties.
-          </div>
-          <GreenBtn
-            title="Hire Viona Today"
-            style={{ marginTop: 64 }}
-            onClick={() => navigate("/apply")}
-          />
-        </div>
-      </div>
-
-      <div className={styles.innerContainer} style={{ marginTop: 120 }}>
-        <div className={styles.blockTitle}>
-          <span className={styles.green}>Viona</span> is
-        </div>
-        <div className={styles.cardContainer} style={{ marginTop: 32 }}>
-          <BottomCard
-            image={bottomCard1}
-            title="Conversational"
-            description="No complex systems—interact with Viona as naturally as you would with a human colleague."
-          />
-          <BottomCard
-            image={bottomCard2}
-            title="Reliable"
-            description="Viona never misses a beat, ensuring every task is completed on time and the process stays on track."
-          />
-          <BottomCard
-            image={bottomCard3}
-            title="Alway-on"
-            description="Viona works 24/7 on autopilot to deliver exceptional recruitment results and candidate experience."
-          />
-        </div>
-      </div>
-
-      <div className={styles.innerContainer} style={{ marginTop: 132 }}>
-        <div className={styles.blockTitle}>
-          <div>Recruit with Viona to unleash the power of</div>
-          <div className={styles.green}>AI in recruitment</div>
-        </div>
-        <div className={styles.cardContainer} style={{ marginTop: 32 }}>
-          <PowerCard
-            title="Faster time-to-hire"
-            list={[
-              "Instantly available to start work",
-              "Works 24/7 on autopilot",
-            ]}
-          />
-          <PowerCard
-            title="Better candidate experience"
-            list={[
-              "Always available to assist candidates at any time",
-              "Infinitely patient and knowledgeable",
-            ]}
-          />
-          <PowerCard
-            title="A fraction of the cost"
-            list={[
-              "10X your productivity",
-              "A fraction of the cost of traditional recruitment solutions",
-            ]}
-            noBorder
-          />
-        </div>
-      </div>
-
-      <div
-        style={{
-          backgroundColor: "rgba(58, 147, 118, 0.79)",
-          marginTop: 120,
-          padding: "100px 0",
-          // backgroundImage: 'url("/hands.png")',
-          // backgroundSize: 'contain',
-          // backgroundRepeat: 'no-repeat',
-          // backgroundPosition: 'center',
-        }}
-      >
-        <div className={styles.innerContainer}>
-          <div
-            className={styles.blockTitle}
-            style={{ color: "white", fontSize: 32 }}
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "candidate",
+                  label: originalT("jobseeker"),
+                  onClick: () => navigate("/signin-candidate"),
+                },
+                {
+                  key: "recruiter",
+                  label: originalT("recruit"),
+                  onClick: () => navigate("/signin"),
+                },
+              ],
+            }}
+            placement="bottomRight"
+            trigger={["hover"]}
           >
-            Hey, I am Viona. Ready to experience the future of recruiting with
-            me?
+            <Button type="primary" className={styles.joinBtn}>
+              <span>{originalT("login_register")}</span>
+            </Button>
+          </Dropdown>
+        </div>
+        <div className={styles.heroSectionContent}>
+          <div className={styles.heroContent}>
+            <div className={styles.heroTitle}>
+              Curious what better jobs are out there?{" "}
+              <span className={styles.heroTitleHighlight}>Talk to Viona.</span>
+            </div>
+            <div className={styles.heroSubtitle}>
+              Have a conversation with Viona about your career goals. She'll
+              deliver hand-picked opportunities that match who you truly are.
+            </div>
+            <div>
+              <Button
+                type="primary"
+                size="large"
+                className={styles.ctaButton}
+                onClick={() => navigate("/signin-candidate")}
+              >
+                Chat with Viona now
+              </Button>
+
+              <Button
+                type="default"
+                size="large"
+                className={classnames(styles.ctaButton, styles.staff)}
+                onClick={() => navigate("/signin")}
+              >
+                Hiring? Talk to Viona too
+              </Button>
+            </div>
           </div>
-          <div style={{ marginTop: 50, textAlign: "center" }}>
-            <WhiteBtn
-              title="Hire Viona Today"
-              onClick={() => navigate("/apply")}
+
+          <img
+            src={bannerTalk1}
+            className={classnames(styles.bannerTalk, styles.bannerTalk1)}
+          />
+          <img
+            src={bannerTalk3}
+            className={classnames(styles.bannerTalk, styles.bannerTalk3)}
+          />
+          <img
+            src={bannerTalk4}
+            className={classnames(styles.bannerTalk, styles.bannerTalk4)}
+          />
+        </div>
+      </div>
+
+      {/* Testimonials Section */}
+      <div className={styles.testimonialsSection}>
+        <div className={styles.testimonialWrapper}>
+          <div className={styles.title}>
+            Join thousands of candidates that discovered their ideal role with
+            the help from Viona.
+          </div>
+        </div>
+        <div>
+          {Speeches.map((speechItems, index) => (
+            <div
+              key={index}
+              className={classnames(styles.testimonialRow, {
+                [styles.testimonialRowReverse]: index % 2 === 1,
+              })}
+            >
+              <div className={styles.testimonialRowInner}>
+                {[...speechItems, ...speechItems].map((item, innerIndex) => (
+                  <div
+                    key={innerIndex}
+                    className={styles.testimonialCard}
+                    style={{ width: item.width }}
+                  >
+                    <div className={styles.testimonialQuote}>{item.text}</div>
+                    <div>
+                      <div className={styles.testimonialAuthor}>
+                        {item.author}
+                      </div>
+                      <div className={styles.testimonialPosition}>
+                        {item.position}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className={styles.howItWorksSection}>
+        <div className={styles.sectionTitle}>
+          Here's How I Help You Discover Your Perfect Role.
+        </div>
+        <div className={styles.sectionHint}>
+          I do things differently. I have deep conversations - with both you and
+          employers - to create matches that actually make sense.
+        </div>
+        <div className={styles.stepsContainer}>
+          <div className={styles.step}>
+            <div className={styles.stepContent}>
+              <img src={howItWorks1} className={styles.stepIcon} />
+              <div className={styles.stepTitle}>First, we talk</div>
+              <div className={styles.stepDescription}>
+                I'll spend 15 minutes getting to know your real story - your
+                wins, what drives you, where you want to grow. Not just what's
+                on your resume.
+              </div>
+            </div>
+            <video
+              src={howItWorksVideo1}
+              autoPlay
+              loop
+              muted
+              className={styles.stepVisual}
+            />
+          </div>
+
+          <div className={styles.step}>
+            <video
+              src={howItWorksVideo2}
+              autoPlay
+              loop
+              muted
+              className={styles.stepVisual}
+            />
+            <div className={styles.stepContent}>
+              <img src={howItWorks2} className={styles.stepIcon} />
+              <div className={styles.stepTitle}>I also know the real job</div>
+              <div className={styles.stepDescription}>
+                Every employer has to explain their role to me in detail before
+                I'll help them. I know what they actually need, not just what
+                the JD says.
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.step}>
+            <div className={styles.stepContent}>
+              <img src={howItWorks3} className={styles.stepIcon} />
+              <div className={styles.stepTitle}>Then, magic happens</div>
+              <div className={styles.stepDescription}>
+                I match based on true fit - your goals with their needs, your
+                personality with their culture, your potential with their
+                growth.
+              </div>
+            </div>
+            <video
+              src={howItWorksVideo3}
+              autoPlay
+              loop
+              muted
+              className={styles.stepVisual}
             />
           </div>
         </div>
       </div>
 
-      <div className={`${styles.innerContainer} ${styles.footer}`}>
-        <img src={logo} style={{ width: 188 }} />
-        <div className={styles.footerLinksContainer}>
-          <div>
-            <div className={styles.footerTitle}>Products</div>
-            <div className={styles.footerLink}>For Agency Recruiters</div>
-            <div className={styles.footerLink}>For Inhouse Recruiters</div>
+      {/* Reinvent Job Search Section */}
+      <div className={styles.reinventSection}>
+        <div className={styles.reinventSectionContent}>
+          <div className={styles.sectionTitle}>
+            Reinvent Job Search with Viona
           </div>
-          <div>
-            <div className={styles.footerTitle}>Company</div>
-            <div className={styles.footerLink}>About Us</div>
-            <div className={styles.footerLink}>Privacy Policy</div>
+          <div className={styles.sectionDescription}>
+            I do things differently. I have deep conversations - with both you
+            and employers - to create matches that actually make sense.
+          </div>
+          <div className={styles.reinventContent}>
+            <div className={styles.reinventCards}>
+              <div
+                className={classnames(styles.reinventCard, {
+                  [styles.hover]: hoverStep === 0,
+                })}
+                onMouseEnter={() => setHoverStep(0)}
+              >
+                <img src={different1} className={styles.reinventIcon} />
+                <div className={styles.reinventCardTitle}>
+                  Your Personalized Shortlist
+                </div>
+                <div className={styles.reinventCardDescription}>
+                  No one wants to sift through hundreds of irrelevant job pos I
+                  only show you roles that match your specific goals and
+                  experience.
+                </div>
+              </div>
+              <div
+                className={classnames(styles.reinventCard, {
+                  [styles.hover]: hoverStep === 1,
+                })}
+                onMouseEnter={() => setHoverStep(1)}
+              >
+                <img src={different2} className={styles.reinventIcon} />
+                <div className={styles.reinventCardTitle}>
+                  Skip the Redundant Screens
+                </div>
+                <div className={styles.reinventCardDescription}>
+                  Since I've already had an in-depth conversation with you,
+                  employers trust my assessment. Jump straight to meaningful
+                  interviews.
+                </div>
+              </div>
+              <div
+                className={classnames(styles.reinventCard, {
+                  [styles.hover]: hoverStep === 2,
+                })}
+                onMouseEnter={() => setHoverStep(2)}
+              >
+                <img src={different3} className={styles.reinventIcon} />
+                <div className={styles.reinventCardTitle}>
+                  Complete Privacy Until You're Ready
+                </div>
+                <div className={styles.reinventCardDescription}>
+                  Your profile stays 100% confidential. No recruiter spam. You
+                  control when and how employers can contact you.
+                </div>
+              </div>
+            </div>
+            <img
+              src={
+                [different1detail, different2detail, different3detail][
+                  hoverStep
+                ]
+              }
+              className={styles.reinventDetail}
+            />
           </div>
         </div>
       </div>
-    </HomeHeader>
+
+      {/* Recommended Jobs Section */}
+      <div className={styles.jobsSection} style={{ display: "none" }}>
+        <div className={styles.sectionTitle}>Recommended Jobs</div>
+        <div className={styles.jobsList}>
+          {jobs.map((job) => (
+            <PublicJobCard job={job} key={job.id} />
+          ))}
+        </div>
+        <Button
+          size="large"
+          block
+          className={styles.moreJobsButton}
+          onClick={() => navigate("/jobs")}
+        >
+          More <RightOutlined />
+        </Button>
+      </div>
+
+      {/* Bottom CTA Section */}
+      <div className={styles.bottomCtaSection}>
+        <div className={styles.bottomCtaSectionBg}>
+          <div className={styles.bottomCtaSectionContent}>
+            <div className={styles.ctaTitle}>
+              Ready to meet your AI Career Agent?
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => navigate("/signin-candidate")}
+                size="large"
+                className={styles.ctaButton}
+              >
+                Speak with Viona now
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className={styles.footer}>
+        <div className={styles.footerContent}>
+          <img src={logo} className={styles.footerLogo} alt="Persevio" />
+          <div className={styles.footerLinks}>
+            <div className={styles.footerColumn}>
+              <h4 className={styles.footerTitle}>Products</h4>
+              <a href="#" className={styles.footerLink}>
+                Persevio
+              </a>
+            </div>
+            <div className={styles.footerColumn}>
+              <h4 className={styles.footerTitle}>Company</h4>
+              <a href="#" className={styles.footerLink}>
+                About us
+              </a>
+              <a href="/privacy-policy" className={styles.footerLink}>
+                Privacy Policy
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className={styles.footerCopyright}>
+          © {new Date().getFullYear()} Persevio. All rights reserved.
+        </div>
+      </div>
+    </div>
   );
 };
 

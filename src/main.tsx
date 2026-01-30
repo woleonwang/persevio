@@ -10,8 +10,7 @@ import "./index.css";
 import App from "./layouts/App";
 import CandidateApp from "./layouts/Candidate";
 
-// import Home from "./pages/home";
-import HomeNew from "./pages/homeNew";
+import Home from "./pages/home/index.tsx";
 import Signin from "./pages/signin";
 import Signup from "./pages/signup";
 import JobCreate from "./pages/job/create";
@@ -94,7 +93,7 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Routes>
         {/** 首页 */}
-        <Route path="/" element={<HomeNew />} />
+        <Route path="/" element={<Home />} />
         {/** 贪吃蛇游戏 */}
         <Route path="/snake" element={<SnakeGame />} />
         {/** 贪吃蛇游戏 */}
