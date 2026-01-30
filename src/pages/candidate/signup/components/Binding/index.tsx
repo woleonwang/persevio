@@ -5,7 +5,7 @@ import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
 import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
-import logo from "@/assets/logo.png";
+import Logo from "@/assets/logo.png";
 import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { tokenStorage } from "@/utils/storage";
@@ -32,7 +32,7 @@ const Binding = () => {
           <div
             className={classnames(styles.logoWrapper, styles.desktopVisible)}
           >
-            <img src={logo} />
+            <img src={Logo} />
           </div>
           <div className={styles.listTitle}>
             In the meantime, log onto the Persevio platform to manage your

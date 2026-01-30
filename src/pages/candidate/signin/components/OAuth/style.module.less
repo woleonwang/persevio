@@ -1,66 +1,118 @@
-@primary-color: #3682fe;
+@import "@/mixin.module.less";
+@error-color: #ff4d4f;
 
 .container {
   flex: auto;
   display: flex;
+  flex-direction: column;
   width: 100%;
   overflow: auto;
 }
 
 .body {
-  width: 1300px;
-  background-image: url("/banner-bg.png");
-  background-position-x: right;
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin: 50px auto;
-}
-
-.logoWrapper {
-  padding-bottom: 32px;
-}
-
-.brand {
-  width: 32px;
-  height: 32px;
-}
-
-.button {
-  width: 60%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  flex: auto;
   justify-content: center;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid rgba(234, 234, 234, 1);
-  border-radius: 4px;
-  margin-top: 16px;
-  font-weight: bold;
-  cursor: pointer;
+  width: 640px;
+  margin: 50px auto;
+  position: relative;
+}
 
-  &.google {
-    border-color: @primary-color;
-    color: @primary-color;
+.buttonWrapper {
+  width: 100%;
+  background-color: white;
+  padding: 32px 40px;
+  border-radius: 16px;
+  border: 1px solid #ebecee;
+
+  .logoWrapper {
+    border-bottom: 1px solid #ebecee;
+    padding-bottom: 32px;
+
+    img {
+      width: 156px;
+    }
   }
 
-  &.linkedin {
-    border-color: rgba(11, 102, 194);
-    color: rgba(11, 102, 194);
+  .listTitle {
+    font-size: 20px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    font-weight: bold;
+  }
+
+  .buttonGroup {
+    margin-top: 48px;
+  }
+
+  .brand {
+    width: 32px;
+    height: 32px;
+  }
+
+  .button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    margin-top: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: @primary-color;
+    }
   }
 }
 
-.title {
-  font-size: 48px;
-  font-weight: bold;
-  margin-top: 60px;
-  margin-bottom: 60px;
-  .primary {
-    color: @primary-color;
+.signupLink {
+  text-align: center;
+  margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+  .body {
+    width: 100%;
+    margin: 0;
+    padding: 16px 32px;
+    background-color: white;
+    display: block;
+    overflow: auto;
+  }
+
+  .textWrapper {
+    padding: 0;
+  }
+
+  .buttonWrapper {
+    background-color: #edf2ff;
+    margin-top: 15px;
+    padding: 16px 12px;
+
+    .listTitle {
+      margin-top: 0;
+      color: @primary-color;
+    }
+
+    .button {
+      background-color: white;
+      border: none;
+    }
+  }
+
+  .desktopVisible {
+    display: none !important;
   }
 }
 
-.hint {
-  font-size: 24px;
-  color: #a1a1a1;
-  margin-bottom: 60px;
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
+  }
 }
