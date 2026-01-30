@@ -516,6 +516,9 @@ const TalentCards = (props: IProps) => {
                           </div>
                         );
                       })}
+                    {(basicInfo?.work_experiences ?? []).length > 3 && (
+                      <div style={{ marginLeft: 20 }}>...</div>
+                    )}
                   </div>
 
                   <div className={styles.evaluateSummary}>

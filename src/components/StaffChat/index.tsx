@@ -135,14 +135,14 @@ const StaffChat: React.FC<IProps> = (props) => {
   }, [jobId]);
 
   useEffect(() => {
-    if (!showJrdRealRequirementForm) {
+    if (!showJrdRealRequirementForm && !showJrdTargetCandidateProfileForm) {
       const listNode = document.querySelector("." + styles.listArea);
       if (listNode && messageListScrollTopRef.current) {
         listNode.scrollTop = messageListScrollTopRef.current;
         messageListScrollTopRef.current = 0;
       }
     }
-  }, [showJrdRealRequirementForm]);
+  }, [showJrdRealRequirementForm, showJrdTargetCandidateProfileForm]);
 
   useEffect(() => {
     if (isLoading) {

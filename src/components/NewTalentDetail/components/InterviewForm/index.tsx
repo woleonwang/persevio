@@ -203,6 +203,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
                       message: t("enter_gap_required"),
                     },
                   ]}
+                  initialValue={30}
                 >
                   <InputNumber
                     suffix="min"
@@ -318,9 +319,11 @@ const InterviewForm: React.FC<IProps> = (props) => {
               </>
             )}
 
-            <Form.Item label={t("notes")} name="notes">
-              <Input.TextArea rows={4} disabled={readonly} />
-            </Form.Item>
+            {!!mode && (
+              <Form.Item label={t("notes")} name="notes">
+                <Input.TextArea rows={4} disabled={readonly} />
+              </Form.Item>
+            )}
           </Form>
         </div>
 
