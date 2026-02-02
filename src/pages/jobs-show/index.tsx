@@ -343,12 +343,12 @@ const JobsShow = () => {
                     className={styles.applyButton}
                     onClick={async () => {
                       if (candidate) {
-                        if (isTempAccount(candidate) && !!candidate.job_id) {
+                        if (isTempAccount(candidate)) {
+                          // 没走完注册流程
                           message.info(t("complete_registration_first"));
-                          navigate(`/signup-candidate?job_id=${id}`, {
+                          navigate(`/signup-candidate`, {
                             replace: true,
                           });
-                          // 没走完注册流程
                         } else {
                           // 是否已经创建职位申请
                           const { code, data } = await Get(

@@ -23,17 +23,14 @@ import Icon from "@/components/Icon";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import WhatsappIcon from "@/assets/icons/whatsapp";
-import Empty2 from "@/assets/empty2.png";
 import InterviewArrangement from "./components/InterviewArrangement";
 import Tabs from "@/components/Tabs";
+import useCandidate from "@/hooks/useCandidate";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApplyListItem>();
-  const [candidateSettings, setCandidateSettings] =
-    useState<ICandidateSettings>();
   const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
   const [whatsappModeOpen, setWhatsappModeOpen] = useState(false);
-  const [humanModeOpen, setHumanModeOpen] = useState(false);
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [tabKey, setTabKey] = useState<"jd" | "progress">("jd");
@@ -52,17 +49,16 @@ const JobApplyShow = () => {
 
   const { t: originalT } = useTranslation();
 
+  const { candidate } = useCandidate();
+
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`job_apply.${key}`, params);
 
   useEffect(() => {
-    fetchCandidateSettings();
     fetchApplyJob();
 
     const switchMode = getQuery("switch_mode");
-    if (switchMode === "human") {
-      setHumanModeOpen(true);
-    } else if (switchMode === "ai") {
+    if (switchMode === "ai") {
       setInterviewChatDrawerOpen(true);
     }
   }, []);
@@ -75,13 +71,6 @@ const JobApplyShow = () => {
       }
     }
   }, [jobApply]);
-
-  const fetchCandidateSettings = async () => {
-    const { code, data } = await Get("/api/candidate/settings");
-    if (code === 0) {
-      setCandidateSettings(data.candidate);
-    }
-  };
 
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
@@ -106,8 +95,6 @@ const JobApplyShow = () => {
   const onClickChat = () => {
     if (jobApply?.interview_mode === "whatsapp") {
       setWhatsappModeOpen(true);
-    } else if (jobApply?.interview_mode === "human") {
-      setHumanModeOpen(true);
     } else {
       setInterviewChatDrawerOpen(true);
     }
@@ -383,9 +370,9 @@ const JobApplyShow = () => {
 
       <Drawer
         open={interviewChatDrawerOpen}
-        width={1200}
+        width={"100vw"}
         onClose={() => setInterviewChatDrawerOpen(false)}
-        title={t("interview")}
+        title={`${t("interview")} - ${jobApply?.job_name ?? ""}`}
         destroyOnClose
       >
         <div style={{ height: "100%", display: "flex" }}>
@@ -492,36 +479,12 @@ const JobApplyShow = () => {
             <PhoneWithCountryCode
               readonly
               value={{
-                countryCode: candidateSettings?.whatsapp_country_code,
-                phoneNumber: candidateSettings?.whatsapp_phone_number,
+                countryCode: candidate?.whatsapp_country_code,
+                phoneNumber: candidate?.whatsapp_phone_number,
               }}
             />
           </div>
         )}
-      </Modal>
-
-      <Modal
-        title={originalT("apply_job.title")}
-        open={humanModeOpen}
-        onCancel={() => setHumanModeOpen(false)}
-        cancelButtonProps={{
-          style: {
-            display: "none",
-          },
-        }}
-        onOk={() => {
-          setHumanModeOpen(false);
-        }}
-        centered
-        width={740}
-      >
-        <div className={styles.humanModeContent}>
-          <img src={Empty2} alt="empty" style={{ width: 140 }} />
-          <div
-            className={styles.humanModeContentText}
-            dangerouslySetInnerHTML={{ __html: t("human_mode_hint") }}
-          />
-        </div>
       </Modal>
 
       <Modal
