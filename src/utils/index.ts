@@ -275,7 +275,7 @@ export const getJobChatbotUrl = (
   }${sourceChannel ? `?source_channel=${sourceChannel}` : ""}`;
 };
 
-export const isTempAccount = (candidate: ICandidateSettings) => {
+export const isTempAccount = (candidate: { email: string }) => {
   return candidate.email.endsWith("@persevio.ai");
 };
 

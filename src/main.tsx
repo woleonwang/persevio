@@ -72,6 +72,7 @@ import JobDetailsPage from "./pages/admin/job-details/index.tsx";
 import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
+import AdminCandidates from "./pages/admin/candidates/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -192,7 +193,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/admin/talents" element={<ScopedTalents />} />
           {/* 管理员企业审核列表 */}
           <Route path="/admin/companies" element={<AdminCompanies />} />
-          {/* <Route path="/admin/candidates" element={<AdminCandidates />} /> */}
+          <Route path="/admin/candidates" element={<AdminCandidates />} />
           {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
           {/* <Route
             path="/app/candidate-connections"

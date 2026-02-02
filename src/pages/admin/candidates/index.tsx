@@ -1,22 +1,43 @@
-import { Get, Post } from "@/utils/request";
-import { Button, Drawer, Input, message, Select, Table, Tag } from "antd";
+import { Get } from "@/utils/request";
+import { Button, Drawer, Input, message, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 
 import styles from "../style.module.less";
 import CandidateDrawerContent from "@/components/CandidateDrawerContent";
+import { isTempAccount, parseJSON } from "@/utils";
+import dayjs from "dayjs";
 
 const PAGE_SIZE = 10;
 
+type TCandidateListItemApi = {
+  id: number;
+  email: string;
+  name: string;
+  basic_info_json: string;
+  resume_path: string;
+  interview_finished_at: string;
+  created_at: string;
+  job_id?: number;
+};
+
+type TCandidateListItem = TCandidateListItemApi & {
+  basic_info: {
+    current_job_title: string;
+    current_company: string;
+    current_compensation: string;
+    visa: string;
+  };
+};
+
 const Candidates = () => {
-  const [candidates, setCandidates] = useState<ICandidateSettings[]>([]);
+  const [candidates, setCandidates] = useState<TCandidateListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [candidateDrawerOpen, setCandidateDrawerOpen] = useState(false);
-  const [candidate, setCandidate] = useState<ICandidateSettings>();
+  const [candidate, setCandidate] = useState<TCandidateListItem>();
 
   useEffect(() => {
     fetchCandidates();
@@ -25,13 +46,15 @@ const Candidates = () => {
   const fetchCandidates = async () => {
     setLoading(true);
     try {
-      const { code, data } = await Get("/api/admin/candidates");
+      const { code, data } = await Get<{ candidates: TCandidateListItemApi[] }>(
+        "/api/admin/candidates"
+      );
       if (code === 0) {
         setCandidates(
-          data.candidates.filter(
-            (candidate: ICandidateSettings) =>
-              !!candidate.network_profile_finished_at
-          )
+          data.candidates.map((candidate) => ({
+            ...candidate,
+            basic_info: parseJSON(candidate.basic_info_json),
+          }))
         );
       }
     } catch (error) {
@@ -41,57 +64,20 @@ const Candidates = () => {
     }
   };
 
-  const handleAudit = async (
-    candidateId: number,
-    action: "approve" | "reject"
-  ) => {
-    if (
-      confirm(`确定要${action === "approve" ? "通过" : "拒绝"}该候选人吗？`)
-    ) {
-      const { code } = await Post(
-        `/api/admin/candidates/${candidateId}/audit/${action}`
-      );
-      if (code === 0) {
-        message.success(action === "approve" ? "审核通过成功" : "审核拒绝成功");
-        fetchCandidates();
-      } else {
-        message.error("审核操作失败");
-      }
-    }
-  };
-
-  const getStatusTag = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Tag color="orange">审核中</Tag>;
-      case "approved":
-        return <Tag color="green">已通过</Tag>;
-      case "rejected":
-        return <Tag color="red">未通过</Tag>;
-      default:
-        return <Tag color="default">未知</Tag>;
-    }
-  };
-
-  const visibleCandidates = candidates
-    .filter((candidate) => {
-      if (!searchKeyword) return true;
-      return (
-        candidate.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        candidate.email.toLowerCase().includes(searchKeyword.toLowerCase())
-      );
-    })
-    .filter((candidate) => {
-      if (statusFilter === "all") return true;
-      return candidate.approve_status === statusFilter;
-    });
+  const visibleCandidates = candidates.filter((candidate) => {
+    if (!searchKeyword) return true;
+    return (
+      candidate.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      candidate.email.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  });
 
   const currentPageCandidates = visibleCandidates.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE
   );
 
-  const columns: ColumnsType<ICandidateSettings> = [
+  const columns: ColumnsType<TCandidateListItem> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -103,25 +89,45 @@ const Candidates = () => {
       width: 120,
     },
     {
-      title: "注册邮箱",
+      title: "邮箱",
       dataIndex: "email",
       width: 200,
     },
     {
-      title: "LinkedIn Profile",
-      dataIndex: "linkedin_profile_url",
+      title: "注册时间",
+      dataIndex: "created_at",
       width: 150,
-      render: (url: string) => (
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          {url ?? "-"}
-        </a>
-      ),
+      render: (created_at: string) => {
+        return dayjs(created_at).format("YYYY-MM-DD HH:mm:ss");
+      },
+    },
+    {
+      title: "注册来源",
+      dataIndex: "job_id",
+      width: 150,
+      render: (job_id: number) => {
+        return job_id ? "职位" : "首页";
+      },
+    },
+    {
+      title: "状态",
+      dataIndex: "status",
+      width: 150,
+      render: (_: string, record: TCandidateListItem) => {
+        return record.interview_finished_at
+          ? "已AI对话完"
+          : !isTempAccount(record)
+          ? "已绑定邮箱"
+          : record.resume_path
+          ? "已上传简历"
+          : "已填基本信息";
+      },
     },
     {
       title: "简历详情",
       dataIndex: "resume_path",
       width: 150,
-      render: (_, record: ICandidateSettings) => (
+      render: (_, record: TCandidateListItem) => (
         <Button
           type="link"
           size="small"
@@ -133,41 +139,6 @@ const Candidates = () => {
           查看
         </Button>
       ),
-    },
-    {
-      title: "审核状态",
-      dataIndex: "approve_status",
-      width: 100,
-      render: (status: string) => getStatusTag(status),
-    },
-    {
-      title: "操作",
-      key: "action",
-      width: 200,
-      render: (_, record: ICandidateSettings) => {
-        if (record.approve_status === "pending") {
-          return (
-            <div style={{ display: "flex", gap: "8px" }}>
-              <Button
-                type="primary"
-                danger
-                size="small"
-                onClick={() => handleAudit(record.id, "reject")}
-              >
-                不通过
-              </Button>
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => handleAudit(record.id, "approve")}
-              >
-                通过
-              </Button>
-            </div>
-          );
-        }
-        return null;
-      },
     },
   ];
 
@@ -185,23 +156,9 @@ const Candidates = () => {
             prefix={<SearchOutlined />}
           />
         </div>
-        <div className={styles.adminFilterItem}>
-          <div>审核状态: </div>
-          <Select
-            style={{ width: 150 }}
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={[
-              { value: "all", label: "所有审核状态" },
-              { value: "pending", label: "审核中" },
-              { value: "approved", label: "已通过" },
-              { value: "rejected", label: "未通过" },
-            ]}
-          />
-        </div>
       </div>
       <div className={styles.adminMain}>
-        <Table<ICandidateSettings>
+        <Table<TCandidateListItem>
           loading={loading}
           style={{ height: "100%", overflow: "auto" }}
           rowKey="id"
@@ -225,7 +182,7 @@ const Candidates = () => {
         destroyOnClose
         width={1200}
       >
-        {candidate && <CandidateDrawerContent candidate={candidate} />}
+        {candidate && <CandidateDrawerContent candidateId={candidate.id} />}
       </Drawer>
     </div>
   );

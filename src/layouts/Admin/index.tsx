@@ -14,6 +14,7 @@ import JobManagement from "@/assets/icons/job-management";
 import JobApplyManagement from "@/assets/icons/job-apply-management";
 import CompanyList from "@/assets/icons/company-list";
 import Sidebar from "@/components/Sidebar";
+import CandidateConnectionList from "@/assets/icons/candidate-connection-list";
 
 const AdminLayout = () => {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -51,12 +52,12 @@ const AdminLayout = () => {
       img: <JobApplyManagement />,
       requireAdmin: true,
     },
-    // {
-    //   title: t("menu.candidate_list"),
-    //   path: "/admin/candidates",
-    //   img: <CandidateConnectionList />,
-    //   requireAdmin: true,
-    // },
+    {
+      title: t("menu.candidate_list"),
+      path: "/admin/candidates",
+      img: <CandidateConnectionList />,
+      requireAdmin: true,
+    },
     // {
     //   title: t("menu.candidate_connection_list"),
     //   path: "/admin/candidate-connections",

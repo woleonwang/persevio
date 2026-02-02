@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
@@ -7,6 +7,8 @@ import { Empty, message, Spin } from "antd";
 import CandidateChat from "@/components/CandidateChat";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import useCandidate from "@/hooks/useCandidate";
+import globalStore from "@/store/global";
+import { observer } from "mobx-react-lite";
 
 // type TWorkExperience = {
 //   /** Legal employer name from verified sources */
@@ -82,21 +84,42 @@ const CandidateResume = () => {
 
   // const [editResumeContent, setEditResumeContent] = useState("");
 
+  const fetchResumeTimeoutRef = useRef<number>();
+
+  useEffect(() => {
+    return () => {
+      if (fetchResumeTimeoutRef.current) {
+        clearTimeout(fetchResumeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
 
   const { candidate, fetchCandidate } = useCandidate();
 
+  const { setMenuCollapse } = globalStore;
+
   useEffect(() => {
-    if (candidate?.interview_finished_at) {
-      fetchResume();
+    if (candidate) {
+      if (candidate.interview_finished_at) {
+        fetchResume();
+      } else {
+        setMenuCollapse(true);
+      }
     }
   }, [candidate]);
 
   const fetchResume = async () => {
     const { code, data } = await Get("/api/candidate/docs/llm_resume");
-    if (code === 0) {
+    if (code === 0 && data.content) {
       setResume(data.content);
+      fetchResumeTimeoutRef.current = 0;
+    } else {
+      fetchResumeTimeoutRef.current = window.setTimeout(() => {
+        fetchResume();
+      }, 5000);
     }
   };
 
@@ -366,4 +389,4 @@ const CandidateResume = () => {
   );
 };
 
-export default CandidateResume;
+export default observer(CandidateResume);

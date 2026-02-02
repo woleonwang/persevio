@@ -275,7 +275,7 @@ const CandidateConnections = () => {
         width={1200}
       >
         {selectedCandidate && (
-          <CandidateDrawerContent candidate={selectedCandidate} />
+          <CandidateDrawerContent candidateId={selectedCandidate.id} />
         )}
       </Drawer>
     </div>
