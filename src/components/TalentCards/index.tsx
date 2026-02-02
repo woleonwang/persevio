@@ -55,12 +55,6 @@ type TExtractBasicInfo = {
   }[];
 };
 
-type TEvaluateResultLevel =
-  | "ideal_candidate"
-  | "good_fit"
-  | "recommend_with_reservations"
-  | "not_a_fit";
-
 type TExtractEvaluateResult = {
   result: TEvaluateResultLevel;
   summary: string;
@@ -399,7 +393,7 @@ const TalentCards = (props: IProps) => {
             },
             {
               key: "linked_in_profiles",
-              label: "Ongioing Campaigns",
+              label: "Ongoing Campaigns",
             },
             {
               key: "all",

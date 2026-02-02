@@ -462,7 +462,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "real-requirement-form",
+      key: "realreq",
       title: "Edit Real Requirement",
       handler: (tag) => {
         setJrdRealRequirementFormValue(tag?.content);
@@ -473,7 +473,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     },
 
     {
-      key: "target-candidate-profile-form",
+      key: "targetprof",
       title: "Edit Target Candidate Profile",
       handler: (tag) => {
         setJrdTargetCandidateProfileFormValue(tag?.content);
