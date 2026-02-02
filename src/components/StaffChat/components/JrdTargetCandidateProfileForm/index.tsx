@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { PlusOutlined } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
+import { useTranslation } from "react-i18next";
 import DragDropCards, { DragDropRecord } from "@/components/DragDropCards";
 import styles from "./style.module.less";
 import Item from "./components/Item";
@@ -37,6 +38,9 @@ type TFeatures = {
 };
 
 const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`jrdTargetCandidateProfileForm.${key}`);
+
   const [value, setValue] = useState<Record<CardType, DragDropRecord[]>>();
   const [features, setFeatures] = useState<TFeatures>();
 
@@ -78,23 +82,23 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
     }
   > = {
     ideal_candidate: {
-      title: "Ideal Candidate",
-      hint: "Has successfully done this exact role before. Ready to perform on Day 1 with minimal risk.",
+      title: t("ideal_candidate_title"),
+      hint: t("ideal_candidate_hint"),
       color: "green",
     },
     good_fit: {
-      title: "Good Fit",
-      hint: "Strong match with minor gaps solvable during onboarding.",
+      title: t("good_fit_title"),
+      hint: t("good_fit_hint"),
       color: "blue",
     },
     recommend_with_reservations: {
-      title: "Recommend with Reservations",
-      hint: `High potential with adjacent experience. A "bet on growth" that requires a longer ramp-up.`,
+      title: t("recommend_with_reservations_title"),
+      hint: t("recommend_with_reservations_hint"),
       color: "yellow",
     },
     not_a_fit: {
-      title: "Not a Fit",
-      hint: "Misses Dealbreakers or has patterns that predict failure in this specific context, even if their background looks relevant on paper.",
+      title: t("not_a_fit_title"),
+      hint: t("not_a_fit_hint"),
       color: "red",
     },
   };
@@ -105,7 +109,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>The Candidate Profile</div>
+      <div className={styles.title}>{t("title")}</div>
       <DragDropCards<CardType, CardConfig>
         value={value}
         onChange={(value) => {
@@ -158,7 +162,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
                   <PlusOutlined />
                 </div>
                 <div className={classnames(styles.cardTitle, styles.subTitle)}>
-                  特征描述
+                  {t("featuresLabel")}
                 </div>
 
                 {cardFeatures.map((feature) => (
@@ -202,7 +206,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
               className={classnames(styles.cardHeader, styles[config.color])}
             >
               <div className={classnames(styles.cardTitle, styles.subTitle)}>
-                典型画像
+                {t("profileLabel")}
               </div>
             </div>
           );
@@ -214,7 +218,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
             onBack();
           }}
         >
-          Back
+          {t("back")}
         </Button>
         <Button
           type="primary"
@@ -224,7 +228,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
               result += `### ${records.title}\n\n`;
               const currentFeatures = features[key as CardType];
               if (currentFeatures.length > 0) {
-                result += `**Description:**`;
+                result += `**${t("description")}:**`;
                 currentFeatures.forEach((feature) => {
                   result += `\n- ${feature.content}`;
                 });
@@ -232,9 +236,9 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
               }
               const currentProfiles = value[key as CardType];
               if (currentProfiles.length > 0) {
-                result += `**Example Profiles:**
+                result += `**${t("exampleProfiles")}**
 
-| Profile | Description |
+| ${t("profile")} | ${t("description")} |
 |---------|-------------|
 `;
                 currentProfiles.forEach((profile) => {
@@ -246,7 +250,7 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
             onSubmit(result);
           }}
         >
-          Submit
+          {t("submit")}
         </Button>
       </div>
     </div>

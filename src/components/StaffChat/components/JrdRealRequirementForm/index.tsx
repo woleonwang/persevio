@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "antd";
 import classnames from "classnames";
 import { v4 as uuidv4 } from "uuid";
@@ -31,6 +32,9 @@ const JrdRealRequirementForm = ({
   onSubmit,
   onBack,
 }: JrdRealRequirementFormProps) => {
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`jrdRealRequirementForm.${key}`);
+
   const [value, setValue] = useState<TValue>();
 
   useEffect(() => {
@@ -56,22 +60,22 @@ const JrdRealRequirementForm = ({
     }
   > = {
     p0: {
-      title: "P0",
-      subTitle: "Dealbreaker",
-      hint: "The candidate must possess these on Day 1. Even if only one is not met, the candidate is immediately disqualified. ",
-      note: "Keep this list short to avoid shrinking your talent pool.",
+      title: t("p0_title"),
+      subTitle: t("p0_subTitle"),
+      hint: t("p0_hint"),
+      note: t("p0_note"),
       color: "red",
     },
     p1: {
-      title: "P1",
-      subTitle: "Highly Desired",
-      hint: `Important skills that separate a "capable" candidate from a "top" choice. These significantly boost a candidate’s rank but are not pass/fail.`,
+      title: t("p1_title"),
+      subTitle: t("p1_subTitle"),
+      hint: t("p1_hint"),
       color: "green",
     },
     p2: {
-      title: "P2",
-      subTitle: "Nice-to-have",
-      hint: `Useful skills that can be easily learned on the job. These are "bonuses" and should never be used to screen a candidate out.`,
+      title: t("p2_title"),
+      subTitle: t("p2_subTitle"),
+      hint: t("p2_hint"),
       color: "yellow",
     },
   };
@@ -82,7 +86,7 @@ const JrdRealRequirementForm = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>The Real Requirement</div>
+      <div className={styles.title}>{t("title")}</div>
       <DragDropCards<CardType, CardConfig>
         value={value}
         onChange={(value) => {
@@ -130,7 +134,7 @@ const JrdRealRequirementForm = ({
             onBack();
           }}
         >
-          Back
+          {t("back")}
         </Button>
         <Button
           type="primary"
@@ -148,7 +152,7 @@ const JrdRealRequirementForm = ({
             onSubmit(result);
           }}
         >
-          Submit
+          {t("submit")}
         </Button>
       </div>
     </div>

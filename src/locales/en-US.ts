@@ -1985,4 +1985,43 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     type_online: "Online",
     type_phone: "Phone",
   },
+
+  jrdTargetCandidateProfileForm: {
+    title: "The Candidate Profile",
+    ideal_candidate_title: "Ideal Candidate",
+    ideal_candidate_hint:
+      "Has successfully done this exact role before. Ready to perform on Day 1 with minimal risk.",
+    good_fit_title: "Good Fit",
+    good_fit_hint:
+      "Strong match with minor gaps solvable during onboarding.",
+    recommend_with_reservations_title: "Recommend with Reservations",
+    recommend_with_reservations_hint: `High potential with adjacent experience. A "bet on growth" that requires a longer ramp-up.`,
+    not_a_fit_title: "Not a Fit",
+    not_a_fit_hint:
+      "Misses Dealbreakers or has patterns that predict failure in this specific context, even if their background looks relevant on paper.",
+    featuresLabel: "Feature Description",
+    profileLabel: "Example Profile",
+    back: "Back",
+    submit: "Submit",
+    description: "Description",
+    exampleProfiles: "Example Profiles:",
+    profile: "Profile",
+  },
+
+  jrdRealRequirementForm: {
+    title: "The Real Requirement",
+    p0_title: "P0",
+    p0_subTitle: "Dealbreaker",
+    p0_hint:
+      "The candidate must possess these on Day 1. Even if only one is not met, the candidate is immediately disqualified.",
+    p0_note: "Keep this list short to avoid shrinking your talent pool.",
+    p1_title: "P1",
+    p1_subTitle: "Highly Desired",
+    p1_hint: `Important skills that separate a "capable" candidate from a "top" choice. These significantly boost a candidate's rank but are not pass/fail.`,
+    p2_title: "P2",
+    p2_subTitle: "Nice-to-have",
+    p2_hint: `Useful skills that can be easily learned on the job. These are "bonuses" and should never be used to screen a candidate out.`,
+    back: "Back",
+    submit: "Submit",
+  },
 };

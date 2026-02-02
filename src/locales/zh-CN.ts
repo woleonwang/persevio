@@ -1924,4 +1924,45 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     type_online: "在线",
     type_phone: "电话",
   },
+
+  jrdTargetCandidateProfileForm: {
+    title: "候选人画像",
+    ideal_candidate_title: "理想候选人",
+    ideal_candidate_hint:
+      "曾成功担任过相同角色。入职第一天即可胜任，风险极低。",
+    good_fit_title: "合适人选",
+    good_fit_hint: "匹配度高，少量差距可在入职后补齐。",
+    recommend_with_reservations_title: "有保留地推荐",
+    recommend_with_reservations_hint:
+      "具备相关经验、潜力高，属于「成长型」选择，需要较长适应期。",
+    not_a_fit_title: "不合适",
+    not_a_fit_hint:
+      "不满足硬性条件，或存在在该岗位上可能失败的风险因素，即使背景看似相关。",
+    featuresLabel: "特征描述",
+    profileLabel: "典型画像",
+    back: "返回",
+    submit: "提交",
+    description: "描述",
+    exampleProfiles: "示例画像：",
+    profile: "画像",
+  },
+
+  jrdRealRequirementForm: {
+    title: "真实需求",
+    p0_title: "P0",
+    p0_subTitle: "一票否决",
+    p0_hint:
+      "候选人必须在入职第一天就具备这些条件。只要有一条不满足，即视为不符合。",
+    p0_note: "请尽量精简，避免过度缩小人才池。",
+    p1_title: "P1",
+    p1_subTitle: "强烈期望",
+    p1_hint:
+      "区分「能胜任」与「最理想」人选的关键能力。会显著提升候选人排序，但不作为通过/不通过的标准。",
+    p2_title: "P2",
+    p2_subTitle: "加分项",
+    p2_hint:
+      "可在工作中快速习得的技能，属于「加分」项，不应作为淘汰候选人的依据。",
+    back: "返回",
+    submit: "提交",
+  },
 };
