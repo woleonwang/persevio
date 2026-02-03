@@ -135,37 +135,39 @@ const JrdRealRequirementForm = ({
           );
         }}
       />
-      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button type="primary" onClick={() => onAgree()}>
           {t("agree")}
         </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            let result = `I have modified your proposed job requirements, please review carefully and make sure you capture my modifications.
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              let result = `I have modified your proposed job requirements, please review carefully and make sure you capture my modifications.
 
 | Priority | Requirement | Notes |
 |----------|-------------|-------|`;
-            Object.entries(value).forEach(([key, records]) => {
-              records.forEach((record) => {
-                result += `
+              Object.entries(value).forEach(([key, records]) => {
+                records.forEach((record) => {
+                  result += `
 | ${cardTextMap[key as CardType].title} (${
-                  cardTextMap[key as CardType].subTitle
-                }) | ${record.title} | ${record.description} |`;
+                    cardTextMap[key as CardType].subTitle
+                  }) | ${record.title} | ${record.description} |`;
+                });
               });
-            });
-            onSubmit(result);
-          }}
-        >
-          {t("submit")}
-        </Button>
-        <Button
-          onClick={() => {
-            onBack();
-          }}
-        >
-          {t("back")}
-        </Button>
+              onSubmit(result);
+            }}
+          >
+            {t("submit")}
+          </Button>
+          <Button
+            onClick={() => {
+              onBack();
+            }}
+          >
+            {t("back")}
+          </Button>
+        </div>
       </div>
     </div>
   );

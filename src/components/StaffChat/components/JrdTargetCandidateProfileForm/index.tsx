@@ -119,11 +119,7 @@ const JrdRealRequirementForm = ({
       <div className={styles.title}>{t("title")}</div>
       <div style={{ display: "flex", gap: 8, margin: "12px 0", color: "#999" }}>
         <img src={VionaAvatar} style={{ width: 24, height: 24 }} />
-        <span>
-          From what you shared, I’ve drafted what I believe are the kind of
-          candidate profiles we should target in our search. Feel free to add,
-          delete, or revise items—and drag and drop to adjust the fit levels.
-        </span>
+        <span>{t("hint")}</span>
       </div>
       <DragDropCards<CardType, CardConfig>
         value={value}
@@ -227,49 +223,51 @@ const JrdRealRequirementForm = ({
           );
         }}
       />
-      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button type="primary" onClick={() => onAgree()}>
           {t("agree")}
         </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            let result = `I have modified your proposed target candidate profiles, please review carefully and make sure you capture my modifications.`;
-            Object.entries(cardConfigsMap).forEach(([key, records]) => {
-              result += `### ${records.title}\n\n`;
-              const currentFeatures = features[key as CardType];
-              if (currentFeatures.length > 0) {
-                result += `**${t("description")}:**`;
-                currentFeatures.forEach((feature) => {
-                  result += `\n- ${feature.content}`;
-                });
-                result += `\n\n`;
-              }
-              const currentProfiles = value[key as CardType];
-              if (currentProfiles.length > 0) {
-                result += `**${t("exampleProfiles")}**
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              let result = `I have modified your proposed target candidate profiles, please review carefully and make sure you capture my modifications.`;
+              Object.entries(cardConfigsMap).forEach(([key, records]) => {
+                result += `### ${records.title}\n\n`;
+                const currentFeatures = features[key as CardType];
+                if (currentFeatures.length > 0) {
+                  result += `**${t("description")}:**`;
+                  currentFeatures.forEach((feature) => {
+                    result += `\n- ${feature.content}`;
+                  });
+                  result += `\n\n`;
+                }
+                const currentProfiles = value[key as CardType];
+                if (currentProfiles.length > 0) {
+                  result += `**${t("exampleProfiles")}**
 
 | ${t("profile")} | ${t("description")} |
 |---------|-------------|
 `;
-                currentProfiles.forEach((profile) => {
-                  result += `| ${profile.title} | ${profile.description} |\n`;
-                });
-                result += `\n\n`;
-              }
-            });
-            onSubmit(result);
-          }}
-        >
-          {t("submit")}
-        </Button>
-        <Button
-          onClick={() => {
-            onBack();
-          }}
-        >
-          {t("back")}
-        </Button>
+                  currentProfiles.forEach((profile) => {
+                    result += `| ${profile.title} | ${profile.description} |\n`;
+                  });
+                  result += `\n\n`;
+                }
+              });
+              onSubmit(result);
+            }}
+          >
+            {t("submit")}
+          </Button>
+          <Button
+            onClick={() => {
+              onBack();
+            }}
+          >
+            {t("back")}
+          </Button>
+        </div>
       </div>
     </div>
   );
