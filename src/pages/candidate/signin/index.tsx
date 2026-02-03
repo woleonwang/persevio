@@ -55,6 +55,7 @@ const CandidateSignIn: React.FC = () => {
           navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`, {
             replace: true,
           });
+          storage.remove(StorageKey.SIGNIN_JOB_ID);
         } else {
           navigate("/candidate/jobs", { replace: true });
         }
