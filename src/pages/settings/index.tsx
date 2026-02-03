@@ -273,6 +273,8 @@ const Settings = () => {
                 style={{ width: 300 }}
                 options={allCompanies}
                 onChange={(staffId) => loginToStaff(staffId)}
+                showSearch
+                optionFilterProp="label"
               />
             </div>
           </div>
