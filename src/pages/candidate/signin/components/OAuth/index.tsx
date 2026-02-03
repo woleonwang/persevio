@@ -42,9 +42,9 @@ const OAuth = () => {
             </div>
           </div>
         </div>
-        <div className={styles.signupLink}>
+        {/* <div className={styles.signupLink}>
           Don't have an account yet? <Link to="/signup-candidate">Sign up</Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

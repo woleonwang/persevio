@@ -14,7 +14,7 @@ import {
   parseJSONArray,
 } from "@/utils";
 import MarkdownContainer from "@/components/MarkdownContainer";
-
+import VionaAvatar from "@/assets/viona-avatar.png";
 import styles from "./style.module.less";
 import CompanyLogo from "../components/CompanyLogo";
 import JobChatBot from "@/components/JobChatBot";
@@ -102,14 +102,8 @@ const JobApplyShow = () => {
 
   const jdJson = jobApply.jdJson;
 
-  const chatStepTitle =
-    jobApply.interview_mode === "human"
-      ? t("steps.chat.title_human")
-      : t("steps.chat.title_ai");
-  const chatStepHint =
-    jobApply.interview_mode === "human"
-      ? t("steps.chat.hint_human")
-      : t("steps.chat.hint_ai");
+  const chatStepTitle = t("steps.chat.title_ai");
+  const chatStepHint = t("steps.chat.hint_ai");
   const processedStepTitle =
     applyStatus === "accepted"
       ? t("steps.processed.accepted")
@@ -219,10 +213,16 @@ const JobApplyShow = () => {
                   })}
                 </div>
                 <div className={styles.operation}>
+                  <img src={VionaAvatar} style={{ width: 24, height: 24 }} />
                   <Button
                     color="primary"
                     variant="outlined"
-                    style={{ fontWeight: "bold" }}
+                    style={{
+                      fontWeight: "bold",
+                      minHeight: "32px",
+                      height: "auto",
+                      whiteSpace: "normal",
+                    }}
                     onClick={() => setChatDrawerOpen(true)}
                   >
                     {t("chat")}

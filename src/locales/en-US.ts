@@ -146,7 +146,7 @@ const CandidateResume = {
     interview: "Interview",
     finish_interview_hint: "Interview has finished, You can apply now!",
     waiting: "Viona is writing, please wait...",
-    chat: "Chat about Company/Position",
+    chat: "Ask Viona anything about the company and this role！",
     posted_at: "Posted at {{time}}",
     respond_interview: "Confirm first interview arrangement",
     company_overview: "Company Overview",
@@ -174,24 +174,24 @@ const CandidateResume = {
     },
     steps: {
       apply: {
-        title: "Apply for Position",
+        title: "Resume submitted on Persevio",
       },
       chat: {
         title_human: "Schedule a call with human recruiter",
-        title_ai: "Instant chat with AI Recruiter",
+        title_ai: "Discovery Chat with Viona",
         hint_human:
           "The human recruiter consultant will contact you promptly to have a brief conversation, aiming to further understand your background and career intentions.",
         hint_ai:
-          "Before submitting your resume, you will have a short interactive conversation with Viona to help you understand whether the position matches your background and interests, ensuring the position you apply for is the most suitable for you.",
+          "This isn’t an interview—it’s a discovery chat with your AI career agent Viona to understand your background so she can prepare the strongest application for you. It also helps Viona make hyper-personalized job recommendations to you in the future. Completing this chat can significantly improve your chances of getting an interview, and some employers only review candidates who have completed it.",
       },
       screening: {
-        title: "Resume Screening",
-        hint: "The recruitment department and the hiring department are screening resumes.",
+        title: "Pending Employer Resume Decision",
+        hint: "The employer is reviewing your resume and will decide whether to invite you to the next step.",
       },
       processed: {
         accepted: "Resume Accepted",
         rejected: "Resume Rejected",
-        default: "Resume Processed",
+        default: "Application Result",
       },
     },
     interview_arrangement: {
