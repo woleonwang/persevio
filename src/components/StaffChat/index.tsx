@@ -881,6 +881,12 @@ const StaffChat: React.FC<IProps> = (props) => {
               onBack={() => {
                 setShowJrdRealRequirementForm(false);
               }}
+              onAgree={() => {
+                if (!isLoading) {
+                  sendMessage(t("agree"));
+                  setShowJrdRealRequirementForm(false);
+                }
+              }}
               initialValue={jrdRealRequirementFormValue ?? ""}
             />
           ) : targetCandidateProfileFormVisible ? (
@@ -894,6 +900,12 @@ const StaffChat: React.FC<IProps> = (props) => {
               }}
               onBack={() => {
                 setShowJrdTargetCandidateProfileForm(false);
+              }}
+              onAgree={() => {
+                if (!isLoading) {
+                  sendMessage(t("agree"));
+                  setShowJrdTargetCandidateProfileForm(false);
+                }
               }}
             />
           ) : (

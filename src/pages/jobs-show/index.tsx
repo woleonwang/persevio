@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import {
   Avatar,
   Button,
@@ -527,7 +527,10 @@ const JobsShow = () => {
         </div>
       )}
       <div className={styles.footer}>
-        <img src={Logo} className={styles.logo} />
+        <div style={{ color: "#999", fontSize: 12 }}>Powered by</div>
+        <Link to="/">
+          <img src={Logo} className={styles.logo} />
+        </Link>
       </div>
     </div>
   );

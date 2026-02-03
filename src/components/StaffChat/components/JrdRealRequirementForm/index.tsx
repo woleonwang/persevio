@@ -22,6 +22,7 @@ interface JrdRealRequirementFormProps {
   initialValue: string;
   onSubmit: (value: string) => void;
   onBack: () => void;
+  onAgree: () => void;
 }
 
 type TValue = {
@@ -32,6 +33,7 @@ const JrdRealRequirementForm = ({
   initialValue,
   onSubmit,
   onBack,
+  onAgree,
 }: JrdRealRequirementFormProps) => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`jrdRealRequirementForm.${key}`);
@@ -90,11 +92,7 @@ const JrdRealRequirementForm = ({
       <div className={styles.title}>{t("title")}</div>
       <div style={{ display: "flex", gap: 8, margin: "12px 0", color: "#999" }}>
         <img src={VionaAvatar} style={{ width: 24, height: 24 }} />
-        <span>
-          From what you shared, I’ve drafted what I believe are the true
-          requirements for this role. Feel free to add, delete, or revise
-          items—and drag and drop to reorder the priority.
-        </span>
+        <span>{t("hint")}</span>
       </div>
       <DragDropCards<CardType, CardConfig>
         value={value}
@@ -138,17 +136,15 @@ const JrdRealRequirementForm = ({
         }}
       />
       <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-        <Button
-          onClick={() => {
-            onBack();
-          }}
-        >
-          {t("back")}
+        <Button type="primary" onClick={() => onAgree()}>
+          {t("agree")}
         </Button>
         <Button
           type="primary"
           onClick={() => {
-            let result = `| Priority | Requirement | Notes |
+            let result = `I have modified your proposed job requirements, please review carefully and make sure you capture my modifications.
+
+| Priority | Requirement | Notes |
 |----------|-------------|-------|`;
             Object.entries(value).forEach(([key, records]) => {
               records.forEach((record) => {
@@ -162,6 +158,13 @@ const JrdRealRequirementForm = ({
           }}
         >
           {t("submit")}
+        </Button>
+        <Button
+          onClick={() => {
+            onBack();
+          }}
+        >
+          {t("back")}
         </Button>
       </div>
     </div>

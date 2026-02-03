@@ -426,6 +426,7 @@ export default {
     proposal: "Your proposal is good.",
     no_others: "No further modifications needed.",
     confirm: "Confirm",
+    agree: "No edits, your proposal is good.",
 
     // 新增的国际化键值
     error_message: "Something wrong with Viona, please retry.",
@@ -540,7 +541,8 @@ export default {
     view_strategy: "View Strategy",
     reset_state: "Reset State",
     confirm_reset_state: "Are you sure you want to reset the state?",
-    reset_success: "State reset successfully. Please delete the uploaded JD message and re-upload.",
+    reset_success:
+      "State reset successfully. Please delete the uploaded JD message and re-upload.",
     reset_failed: "Reset failed",
     job_requirement_strategy_title: "Job Requirement Conversation Strategy",
 
@@ -2012,11 +2014,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Misses Dealbreakers or has patterns that predict failure in this specific context, even if their background looks relevant on paper.",
     featuresLabel: "Feature Description",
     profileLabel: "Example Profile",
+    agree: "No edits, proposal is good.",
     back: "Back",
-    submit: "Submit",
+    submit: "Submit edits",
     description: "Description",
     exampleProfiles: "Example Profiles:",
     profile: "Profile",
+    hint: "From what you shared, I’ve drafted what I believe are the kind of candidate profiles we should target in our search. Feel free to add, delete, or revise items—and drag and drop to adjust the fit levels.",
   },
 
   jrdRealRequirementForm: {
@@ -2032,7 +2036,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     p2_title: "P2",
     p2_subTitle: "Nice-to-have",
     p2_hint: `Useful skills that can be easily learned on the job. These are "bonuses" and should never be used to screen a candidate out.`,
+    agree: "No edits, proposal is good.",
     back: "Back",
-    submit: "Submit",
+    submit: "Submit edits",
+    hint: "From what you shared, I’ve drafted what I believe are the true requirements for this role. Feel free to add, delete, or revise items—and drag and drop to reorder the priority.",
   },
 };

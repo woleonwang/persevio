@@ -25,6 +25,7 @@ interface IProps {
   initialValue: string;
   onSubmit: (value: string) => void;
   onBack: () => void;
+  onAgree: () => void;
 }
 
 type TOriginalValue = {
@@ -38,7 +39,12 @@ type TFeatures = {
   [key in CardType]: { id: string; content: string }[];
 };
 
-const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
+const JrdRealRequirementForm = ({
+  initialValue,
+  onSubmit,
+  onBack,
+  onAgree,
+}: IProps) => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`jrdTargetCandidateProfileForm.${key}`);
 
@@ -222,17 +228,13 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
         }}
       />
       <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-        <Button
-          onClick={() => {
-            onBack();
-          }}
-        >
-          {t("back")}
+        <Button type="primary" onClick={() => onAgree()}>
+          {t("agree")}
         </Button>
         <Button
           type="primary"
           onClick={() => {
-            let result = ``;
+            let result = `I have modified your proposed target candidate profiles, please review carefully and make sure you capture my modifications.`;
             Object.entries(cardConfigsMap).forEach(([key, records]) => {
               result += `### ${records.title}\n\n`;
               const currentFeatures = features[key as CardType];
@@ -260,6 +262,13 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
           }}
         >
           {t("submit")}
+        </Button>
+        <Button
+          onClick={() => {
+            onBack();
+          }}
+        >
+          {t("back")}
         </Button>
       </div>
     </div>
