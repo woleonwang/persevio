@@ -3,6 +3,7 @@ import React, { useEffect, useReducer } from "react";
 
 import styles from "./style.module.less";
 import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
+import { Link } from "react-router";
 
 interface IProps {
   initValues: IPreRegisterInfo;
@@ -89,6 +90,10 @@ const BasicInfo: React.FC<IProps> = (props) => {
           >
             Next
           </Button>
+        </div>
+
+        <div style={{ marginTop: 8 }}>
+          Already have an account? <Link to="/signin-candidate">Sign In</Link>
         </div>
       </div>
     </div>
