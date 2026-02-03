@@ -4,9 +4,9 @@ import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
-import { Get } from "@/utils/request";
+import { Get, Post } from "@/utils/request";
 import { deleteQuery, getQuery, isTempAccount } from "@/utils";
-import { tokenStorage } from "@/utils/storage";
+import { storage, StorageKey, tokenStorage } from "@/utils/storage";
 
 import OAuth from "./components/OAuth";
 import styles from "./style.module.less";
@@ -16,6 +16,8 @@ const CandidateSignIn: React.FC = () => {
   const navigate = useNavigate();
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
+
+  const jobIdStr: string = getQuery("job_id");
 
   useEffect(() => {
     const error = getQuery("error");
@@ -30,6 +32,10 @@ const CandidateSignIn: React.FC = () => {
       tokenStorage.setToken(tokenFromUrl, "candidate");
     }
 
+    if (jobIdStr) {
+      storage.set(StorageKey.SIGNIN_JOB_ID, jobIdStr);
+    }
+
     fetchProfile();
   }, []);
 
@@ -38,8 +44,20 @@ const CandidateSignIn: React.FC = () => {
     if (code === 0) {
       const candidate: ICandidateSettings = data.candidate;
       i18n.changeLanguage(candidate.lang ?? "zh-CN");
+      const signinJobId = storage.get<string>(StorageKey.SIGNIN_JOB_ID);
       if (isTempAccount(candidate)) {
         navigate(`/signup-candidate`, { replace: true });
+      } else if (signinJobId) {
+        const { code, data } = await Post("/api/candidate/job_applies", {
+          job_id: parseInt(signinJobId),
+        });
+        if (code === 0) {
+          navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`, {
+            replace: true,
+          });
+        } else {
+          navigate("/candidate/jobs", { replace: true });
+        }
       } else {
         navigate("/candidate/jobs", { replace: true });
       }

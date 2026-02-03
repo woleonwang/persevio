@@ -8,6 +8,7 @@ import { Link } from "react-router";
 interface IProps {
   initValues: IPreRegisterInfo;
   onFinish: (params: IPreRegisterInfo) => void;
+  jobId?: number;
 }
 
 type TFormValues = {
@@ -20,7 +21,7 @@ type TFormValues = {
 };
 
 const BasicInfo: React.FC<IProps> = (props) => {
-  const { initValues, onFinish } = props;
+  const { initValues, onFinish, jobId } = props;
   const [form] = Form.useForm<TFormValues>();
   const [_, forceUpdate] = useReducer(() => ({}), {});
 
@@ -93,7 +94,10 @@ const BasicInfo: React.FC<IProps> = (props) => {
         </div>
 
         <div style={{ marginTop: 12, textAlign: "center" }}>
-          Already have an account? <Link to="/signin-candidate">Sign In</Link>
+          Already have an account?{" "}
+          <Link to={`/signin-candidate${jobId ? `?job_id=${jobId}` : ""}`}>
+            Sign In
+          </Link>
         </div>
       </div>
     </div>

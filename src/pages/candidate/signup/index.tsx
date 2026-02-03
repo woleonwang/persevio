@@ -42,6 +42,9 @@ const Signup: React.FC = () => {
   const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
   const [jobId, setJobId] = useState<number>(0);
 
+  const jobIdStr: string = getQuery("job_id");
+  const jobIdQuery = parseInt(jobIdStr ?? "0");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,13 +150,10 @@ const Signup: React.FC = () => {
         ...basicInfo,
       };
 
-      const jobIdStr: string = getQuery("job_id");
-      const jobId = parseInt(jobIdStr ?? "0");
-
-      if (jobId) {
+      if (jobIdQuery) {
         const shareTokenMapping =
           storage.get<Record<string, string>>(StorageKey.SHARE_TOKEN, {}) || {};
-        const shareToken = shareTokenMapping[jobId];
+        const shareToken = shareTokenMapping[jobIdQuery];
         const linkedinProfileId = storage.get<string>(
           StorageKey.LINKEDIN_PROFILE_ID
         );
@@ -161,10 +161,10 @@ const Signup: React.FC = () => {
           StorageKey.SOURCE_CHANNEL,
           {}
         );
-        const sourceChannel = sourceChannelMapping?.[jobId];
+        const sourceChannel = sourceChannelMapping?.[jobIdQuery];
         params = {
           ...params,
-          job_id: jobId,
+          job_id: jobIdQuery,
           share_token: shareToken,
           linkedin_profile_id: linkedinProfileId
             ? parseInt(linkedinProfileId)
@@ -301,6 +301,7 @@ const Signup: React.FC = () => {
                 onSubmitBasicInfo(params);
               }}
               initValues={preRegisterInfo}
+              jobId={jobIdQuery}
             />
           )}
           {pageState === "resume" && (

@@ -21,6 +21,8 @@ export enum StorageKey {
 
   // 是否是测试账号
   INTERNAL_ACCOUNT = "internal_account",
+  // 登录时的 job id 来源
+  SIGNIN_JOB_ID = "signin_job_id",
 }
 
 /**

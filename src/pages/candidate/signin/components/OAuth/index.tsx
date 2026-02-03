@@ -3,7 +3,7 @@ import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import styles from "./style.module.less";
 import classnames from "classnames";
-import { Link } from "react-router";
+// import { Link } from "react-router";
 
 const OAuth = () => {
   return (
