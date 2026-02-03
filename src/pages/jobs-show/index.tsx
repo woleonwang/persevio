@@ -356,10 +356,16 @@ const JobsShow = () => {
                               `/candidate/jobs/applies/${data.job_apply.id}?open=1`
                             );
                           } else {
+                            const sourceChannelMapping = storage.get<
+                              Record<string, string>
+                            >(StorageKey.SOURCE_CHANNEL, {});
+                            const sourceChannel =
+                              sourceChannelMapping?.[id as string];
                             const { code, data } = await Post(
                               "/api/candidate/job_applies",
                               {
                                 job_id: parseInt(id as string),
+                                source_channel: sourceChannel,
                               }
                             );
                             if (code === 0) {
