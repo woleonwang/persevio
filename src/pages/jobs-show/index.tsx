@@ -14,23 +14,23 @@ import {
 import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 import JobChatBot from "@/components/JobChatBot";
 import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
-import HomeHeader from "@/components/HomeHeader";
 import { storage, StorageKey } from "@/utils/storage";
-
-import styles from "./style.module.less";
-
-import VionaAvatar from "@/assets/viona-avatar.png";
-import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
 import EmptyImg from "@/assets/empty2.png";
 import ShareToken from "./components/ShareToken";
 import Share2 from "@/assets/icons/share2";
+import Logo from "@/assets/logo.png";
+import VionaAvatar from "@/assets/viona-avatar.png";
+
+import styles from "./style.module.less";
+import Guide from "@/assets/icons/guide";
 
 type TCompany = {
   logo: string;
@@ -236,16 +236,7 @@ const JobsShow = () => {
   );
 
   return (
-    <HomeHeader
-      className={styles.headerContainer}
-      onlyLogo
-      isPreview={isPreview}
-      rightContent={
-        shareToken ? (
-          <div className={styles.referral}>Your friend referral</div>
-        ) : undefined
-      }
-    >
+    <div className={styles.headerContainer}>
       {status === "success" && company && job && (
         <div
           className={styles.container}
@@ -271,13 +262,18 @@ const JobsShow = () => {
                   {!isPreview && (
                     <Icon
                       icon={<Share2 />}
-                      style={{ fontSize: 20, color: "#3682fe" }}
+                      className={styles.shareIcon}
                       onClick={async () => {
                         await copy(window.location.href);
                         message.success(originalT("copied"));
                       }}
                     />
                   )}
+                </div>
+
+                <div className={styles.companyName}>
+                  {company.name}
+                  <Icon icon={<Guide />} className={styles.guideIcon} />
                 </div>
 
                 <div className={styles.jobAttributes}>
@@ -530,7 +526,10 @@ const JobsShow = () => {
           )} */}
         </div>
       )}
-    </HomeHeader>
+      <div className={styles.footer}>
+        <img src={Logo} className={styles.logo} />
+      </div>
+    </div>
   );
 };
 
