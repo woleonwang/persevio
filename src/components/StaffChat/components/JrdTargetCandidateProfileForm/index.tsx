@@ -111,11 +111,8 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t("title")}</div>
-      <div style={{ display: "flex", gap: 8, margin: "12px 0" }}>
-        <img
-          src={VionaAvatar}
-          style={{ width: 24, height: 24, color: "#999" }}
-        />
+      <div style={{ display: "flex", gap: 8, margin: "12px 0", color: "#999" }}>
+        <img src={VionaAvatar} style={{ width: 24, height: 24 }} />
         <span>
           From what you shared, I’ve drafted what I believe are the kind of
           candidate profiles we should target in our search. Feel free to add,
