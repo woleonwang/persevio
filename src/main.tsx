@@ -73,6 +73,7 @@ import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
+import IconDemo from "./pages/icon-demo/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -97,6 +98,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<Home />} />
         {/** 贪吃蛇游戏 */}
         <Route path="/snake" element={<SnakeGame />} />
+        {/** Icon Demo */}
+        <Route path="/icon-demo" element={<IconDemo />} />
         {/** 贪吃蛇游戏 */}
         <Route path="/play-audio" element={<PlayAudio />} />
         {/** 职位列表 */}

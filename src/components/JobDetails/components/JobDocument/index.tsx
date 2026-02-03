@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Drawer, message, Tooltip } from "antd";
-import {
-  CopyOutlined,
-  DownloadOutlined,
-  EditOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import styles from "./style.module.less";
@@ -20,6 +14,11 @@ import {
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
+import Download from "@/assets/icons/download";
+import Icon from "@/components/Icon";
+import Copy from "@/assets/icons/copy";
+import Share2 from "@/assets/icons/share2";
+import Pen from "@/assets/icons/pen";
 
 type TChatType = "jobRequirement" | "jobDescription";
 
@@ -114,7 +113,8 @@ const JobDocument = (props: IProps) => {
         </div>
         {!!documentContent && (
           <div className={styles.operations}>
-            <DownloadOutlined
+            <Icon
+              icon={<Download />}
               onClick={() => {
                 downloadMarkdownAsPDF({
                   name: job.name,
@@ -122,7 +122,8 @@ const JobDocument = (props: IProps) => {
                 });
               }}
             />
-            <ShareAltOutlined
+            <Icon
+              icon={<Share2 />}
               onClick={async () => {
                 await copy(
                   `${window.origin}/jobs/${job.id}/share?show=${chatTypeMappings[chatType]}`
@@ -130,7 +131,8 @@ const JobDocument = (props: IProps) => {
                 message.success(originalT("copied"));
               }}
             />
-            <CopyOutlined
+            <Icon
+              icon={<Copy />}
               onClick={async () => {
                 await copy(documentContent);
                 message.success(originalT("copied"));
@@ -138,7 +140,8 @@ const JobDocument = (props: IProps) => {
             />
             {role === "staff" && (
               <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
-                <EditOutlined
+                <Icon
+                  icon={<Pen />}
                   onClick={() => {
                     if (disabledEdit) return;
                     setEditingValue(documentContent);

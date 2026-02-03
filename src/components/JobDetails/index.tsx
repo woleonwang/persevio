@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { ShareAltOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
@@ -15,6 +14,9 @@ import JobDocument from "./components/JobDocument";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import TalentCards from "../TalentCards";
+import ArrowLeft from "@/assets/icons/arrow-left";
+import Icon from "../Icon";
+import Share2 from "@/assets/icons/share2";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
@@ -64,10 +66,12 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <ArrowLeftOutlined
+          <Icon
+            icon={<ArrowLeft />}
             onClick={() =>
               role === "admin" ? navigate("/admin/jobs") : navigate("/app/jobs")
             }
+            style={{ fontSize: 20, cursor: "pointer" }}
           />
           <div className={styles.title}>{job.name}</div>
         </div>
@@ -81,7 +85,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
             }}
             onClick={async () => setIsCollaboratorModalOpen(true)}
           >
-            <ShareAltOutlined style={{ color: "#3682fe" }} />
+            <Icon icon={<Share2 />} style={{ color: "#3682fe" }} />
             <div style={{ fontSize: 14 }}>{t("share_position")}</div>
           </div>
         )}

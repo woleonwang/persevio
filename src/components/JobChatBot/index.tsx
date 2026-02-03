@@ -10,13 +10,14 @@ import { Get, Post } from "@/utils/request";
 import { IProps } from "./type";
 
 import styles from "./style.module.less";
-import ExpandOutlined from "@ant-design/icons/lib/icons/ExpandOutlined";
-import CompressOutlined from "@ant-design/icons/lib/icons/CompressOutlined";
-import { SendOutlined } from "@ant-design/icons";
+import { CompressOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
 import ListDown from "@/assets/icons/list-down";
 import ListUp from "@/assets/icons/list-up";
 import ChatMessageList from "../ChatMessageList";
+import ArrowRight from "@/assets/icons/arrow-right";
+import Send from "@/assets/icons/send";
+import Expand from "@/assets/icons/expand";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -72,7 +73,7 @@ const JobChatBot: React.FC<IProps> = (props) => {
     return originalT(`chat.${key}`);
   };
 
-  const apiMapping: { get: string; send: string; } = {
+  const apiMapping: { get: string; send: string } = {
     get: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}`,
     send: `/api/public/jobs/${jobId}/candidate_chat/${sessionId}/send`,
   };
@@ -224,14 +225,12 @@ const JobChatBot: React.FC<IProps> = (props) => {
                       onClick={() => sendMessage(message)}
                       className={styles.messageBlockItem}
                     >
-                      <span
+                      <Icon
+                        icon={<ArrowRight />}
                         style={{
                           color: "#3682FE",
-                          marginRight: 6,
                         }}
-                      >
-                        →
-                      </span>
+                      />
                       {message}
                     </div>
                   );
@@ -246,6 +245,7 @@ const JobChatBot: React.FC<IProps> = (props) => {
         <div
           className={classnames(styles.questionsContainer, {
             [styles.show]: preDefinedQuestionsVisible,
+            [styles.expanded]: isFullscreen,
           })}
         >
           <div style={{ overflow: "auto" }}>
@@ -293,6 +293,8 @@ const JobChatBot: React.FC<IProps> = (props) => {
             style={{
               backgroundColor: "rgba(237, 242, 255, 1)",
               borderRadius: 12,
+              width: 40,
+              height: 40,
             }}
           />
         </div>
@@ -337,21 +339,20 @@ const JobChatBot: React.FC<IProps> = (props) => {
               type="primary"
               onClick={submit}
               disabled={!canSubmit()}
-              icon={
-                <SendOutlined
-                  style={{
-                    transform: "rotate(-45deg)",
-                    transformOrigin: "5px 5px",
-                  }}
-                />
-              }
+              icon={<Icon icon={<Send />} style={{ fontSize: 24 }} />}
               size="large"
             />
             {enableFullscreen && (
               <Button
                 type="default"
                 onClick={toggleFullscreen}
-                icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
+                icon={
+                  isFullscreen ? (
+                    <CompressOutlined style={{ fontSize: 20 }} />
+                  ) : (
+                    <Icon icon={<Expand />} style={{ fontSize: 24 }} />
+                  )
+                }
                 size="large"
               />
             )}

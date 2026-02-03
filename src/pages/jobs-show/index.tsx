@@ -13,7 +13,6 @@ import {
 } from "antd";
 import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
-import { ShareAltOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import JobChatBot from "@/components/JobChatBot";
@@ -31,6 +30,7 @@ import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
 import EmptyImg from "@/assets/empty2.png";
 import ShareToken from "./components/ShareToken";
+import Share2 from "@/assets/icons/share2";
 
 type TCompany = {
   logo: string;
@@ -269,12 +269,13 @@ const JobsShow = () => {
                 <div className={styles.jobTitleSection}>
                   <div className={styles.jobTitle}>{job.name}</div>
                   {!isPreview && (
-                    <ShareAltOutlined
+                    <Icon
+                      icon={<Share2 />}
+                      style={{ fontSize: 20, color: "#3682fe" }}
                       onClick={async () => {
                         await copy(window.location.href);
                         message.success(originalT("copied"));
                       }}
-                      style={{ color: "#3682fe" }}
                     />
                   )}
                 </div>
