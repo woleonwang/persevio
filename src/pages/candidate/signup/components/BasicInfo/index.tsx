@@ -92,7 +92,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
           </Button>
         </div>
 
-        <div style={{ marginTop: 8 }}>
+        <div style={{ marginTop: 12, textAlign: "center" }}>
           Already have an account? <Link to="/signin-candidate">Sign In</Link>
         </div>
       </div>
