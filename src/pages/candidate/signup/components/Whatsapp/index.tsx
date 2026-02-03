@@ -15,10 +15,12 @@ interface IProps {
   }) => void;
   onSkip: () => void;
   isSubmitting: boolean;
+  isWithJob: boolean;
 }
 
 const Whatsapp: React.FC<IProps> = (props: IProps) => {
-  const { whatsappContactNumber, onFinish, onSkip, isSubmitting } = props;
+  const { whatsappContactNumber, onFinish, onSkip, isSubmitting, isWithJob } =
+    props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [isAgreed, setIsAgreed] = useState(true);
   const [form] = Form.useForm<{
@@ -62,10 +64,14 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>{t("title")}</div>
+      <div className={styles.title}>
+        {t(isWithJob ? "title" : "title_without_job")}
+      </div>
       <div
         className={styles.hint}
-        dangerouslySetInnerHTML={{ __html: t("hint") }}
+        dangerouslySetInnerHTML={{
+          __html: t(isWithJob ? "hint" : "hint_without_job"),
+        }}
       />
       <ul className={styles.list}>
         <li

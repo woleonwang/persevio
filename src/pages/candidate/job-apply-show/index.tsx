@@ -21,11 +21,9 @@ import JobChatBot from "@/components/JobChatBot";
 import dayjs from "dayjs";
 import Icon from "@/components/Icon";
 import ArrowLeft from "@/assets/icons/arrow-left";
-import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import WhatsappIcon from "@/assets/icons/whatsapp";
 import InterviewArrangement from "./components/InterviewArrangement";
 import Tabs from "@/components/Tabs";
-import useCandidate from "@/hooks/useCandidate";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApplyListItem>();
@@ -48,8 +46,6 @@ const JobApplyShow = () => {
   const navigate = useNavigate();
 
   const { t: originalT } = useTranslation();
-
-  const { candidate } = useCandidate();
 
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`job_apply.${key}`, params);
@@ -390,7 +386,11 @@ const JobApplyShow = () => {
       </Drawer>
 
       <Modal
-        title={originalT("apply_job.title")}
+        title={
+          jobApply?.whatsapp_number_confirmed_at
+            ? originalT("apply_job.title")
+            : t("whatsapp_confirm_title")
+        }
         open={whatsappModeOpen}
         onCancel={() => setWhatsappModeOpen(false)}
         footer={
@@ -453,37 +453,10 @@ const JobApplyShow = () => {
             />
           </div>
         ) : (
-          <div className={styles.whatsappModeContent}>
-            <div
-              className={styles.hint}
-              dangerouslySetInnerHTML={{ __html: originalT("apply_job.hint") }}
-            />
-            <ul className={styles.list}>
-              <li
-                className={styles.listItem}
-                dangerouslySetInnerHTML={{
-                  __html: originalT("apply_job.list_confidentiality"),
-                }}
-              />
-              <li
-                className={styles.listItem}
-                dangerouslySetInnerHTML={{
-                  __html: originalT("apply_job.list_add_contact"),
-                }}
-              />
-            </ul>
-
-            <div style={{ marginBottom: 8 }}>
-              {originalT("apply_job.whatsapp_label")}
-            </div>
-            <PhoneWithCountryCode
-              readonly
-              value={{
-                countryCode: candidate?.whatsapp_country_code,
-                phoneNumber: candidate?.whatsapp_phone_number,
-              }}
-            />
-          </div>
+          <div
+            className={styles.whatsappModeContent}
+            dangerouslySetInnerHTML={{ __html: t("whatsapp_confirm_hint") }}
+          />
         )}
       </Modal>
 

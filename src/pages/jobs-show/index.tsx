@@ -353,7 +353,7 @@ const JobsShow = () => {
                           );
                           if (code === 0) {
                             navigate(
-                              `/candidate/jobs/applies/${data.job_apply.id}`
+                              `/candidate/jobs/applies/${data.job_apply.id}?open=1`
                             );
                           } else {
                             const { code, data } = await Post(
@@ -364,7 +364,7 @@ const JobsShow = () => {
                             );
                             if (code === 0) {
                               navigate(
-                                `/candidate/jobs/applies/${data.job_apply_id}`
+                                `/candidate/jobs/applies/${data.job_apply_id}?open=1`
                               );
                             } else {
                               message.error(t("apply_job_failed"));

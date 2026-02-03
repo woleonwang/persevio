@@ -155,6 +155,8 @@ const CandidateResume = {
     bonus_points: "Bonus Points",
     progress_title: "Job Application Progress",
     chat_cta_label: "Chat",
+    whatsapp_confirm_title: "Ready to chat with Viona?",
+    whatsapp_confirm_hint: `Viona is all set to message you at +86 17778397744. She's ready to chat on WhatsApp to help fast-track your application.`,
     whatsapp_confirmed_hint: `Thanks! Our AI recruiter <b>Viona</b> has just reached out to you on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>).<br /><br />When you have a moment, please reply to her there and complete the discovery conversation with her. This helps us prepare your application accurately before submitting it to the employer.`,
     human_mode_hint:
       "<b>Thank you.</b><br />A consultant will be calling you soon.",
@@ -237,8 +239,10 @@ const CandidateResume = {
 
   apply_job: {
     title: "Let's Chat and Prepare Your Application",
+    title_without_job: "Let's Build Your Career Profile with Viona",
     hint: `Before we submit your application, our AI recruiter <b>Viona</b> will contact you on WhatsApp (from Whatsapp account "<b>Viona by Persevio</b>") for a short discovery conversation. 
  This helps us verify your experience, clarify key details from your resume, and understand your career preferences so we can present you to employers accurately and effectively.`,
+    hint_without_job: `To recommend the most suitable jobs for you, our AI recruiter <b>Viona</b> will contact you on WhatsApp (from Whatsapp account "<b>Viona by Persevio</b>") for a short discovery conversation. This helps us verify your experience, clarify key details from your resume, and understand your career preferences so we can present you to employers accurately and effectively.`,
     list_confidentiality:
       "This conversation is <b>strictly for your job application only</b>. It will not ask for sensitive personal information, and nothing you share will be used for marketing or shared with third parties without your permission.",
     list_add_contact:
@@ -1992,8 +1996,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     ideal_candidate_hint:
       "Has successfully done this exact role before. Ready to perform on Day 1 with minimal risk.",
     good_fit_title: "Good Fit",
-    good_fit_hint:
-      "Strong match with minor gaps solvable during onboarding.",
+    good_fit_hint: "Strong match with minor gaps solvable during onboarding.",
     recommend_with_reservations_title: "Recommend with Reservations",
     recommend_with_reservations_hint: `High potential with adjacent experience. A "bet on growth" that requires a longer ramp-up.`,
     not_a_fit_title: "Not a Fit",

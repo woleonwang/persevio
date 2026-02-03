@@ -152,6 +152,8 @@ const CandidateResume = {
     whatsapp_confirmed_hint:
       "感谢您！我们的 AI 招聘官 <b>Viona</b> 已通过 WhatsApp 与您联系（消息会显示为 <b>Viona by Persevio</b>）。<br /><br />请在方便时回复她，完成初步沟通，以便我们在提交给雇主前准确完善您的申请资料。",
     human_mode_hint: "<b>感谢您的配合。</b><br />顾问很快会致电与您沟通。",
+    whatsapp_confirm_title: "准备好与 Viona 聊天了吗？",
+    whatsapp_confirm_hint: `Viona 已准备好通过 WhatsApp 与您联系，助您快速推进申请。`,
     confirm_interview_title: "确认面试时间",
     confirm_interview_success: "面试时间确认成功。",
     first_round_interview: "第一轮面试",
@@ -230,7 +232,9 @@ const CandidateResume = {
 
   apply_job: {
     title: "与我们先聊一聊，准备好您的申请",
+    title_without_job: "让我们一起构建您的职业档案",
     hint: "在我们提交您的申请之前，我们的顾问【账号名-Viona-Ai Recruiter】将通过 Whatsapp 与您进行一次简短的沟通，以便更深入地了解您的经历、技能和职业偏好，帮助我们以最有利的方式向雇主介绍您。",
+    hint_without_job: `为了推荐最适合您的职位，我们的 AI 招聘官 <b>Viona</b> 将通过 WhatsApp（来自 WhatsApp 账户 "Viona by Persevio"）与您进行一次简短的发现对话。这将帮助我们验证您的经验、澄清简历中的关键细节并了解您的职业偏好，以便我们能够准确有效地向雇主介绍您。`,
     list_confidentiality:
       "本次沟通仅用于为您提供更好的服务，不会涉及敏感隐私信息，绝不会泄露给第三方或用于营销目的。",
     list_add_contact:
