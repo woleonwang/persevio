@@ -8,6 +8,7 @@ import Item from "./components/Item";
 import { useEffect, useState } from "react";
 import { parseJSON } from "@/utils";
 import { Button } from "antd";
+import VionaAvatar from "@/assets/viona-avatar.png";
 
 type CardType =
   | "ideal_candidate"
@@ -110,6 +111,17 @@ const JrdRealRequirementForm = ({ initialValue, onSubmit, onBack }: IProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t("title")}</div>
+      <div style={{ display: "flex", gap: 8, margin: "12px 0" }}>
+        <img
+          src={VionaAvatar}
+          style={{ width: 24, height: 24, color: "#999" }}
+        />
+        <span>
+          From what you shared, I’ve drafted what I believe are the kind of
+          candidate profiles we should target in our search. Feel free to add,
+          delete, or revise items—and drag and drop to adjust the fit levels.
+        </span>
+      </div>
       <DragDropCards<CardType, CardConfig>
         value={value}
         onChange={(value) => {

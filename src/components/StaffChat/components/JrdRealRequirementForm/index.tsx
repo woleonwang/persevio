@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import DragDropCards, { DragDropRecord } from "@/components/DragDropCards";
 import { parseJSON } from "@/utils";
 import Icon from "@/components/Icon";
+import VionaAvatar from "@/assets/viona-avatar.png";
 
 import Stars from "@/assets/icons/stars";
 import styles from "./style.module.less";
@@ -87,6 +88,14 @@ const JrdRealRequirementForm = ({
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t("title")}</div>
+      <div style={{ display: "flex", gap: 8, margin: "12px 0", color: "#999" }}>
+        <img src={VionaAvatar} style={{ width: 24, height: 24 }} />
+        <span>
+          From what you shared, I’ve drafted what I believe are the true
+          requirements for this role. Feel free to add, delete, or revise
+          items—and drag and drop to reorder the priority.
+        </span>
+      </div>
       <DragDropCards<CardType, CardConfig>
         value={value}
         onChange={(value) => {

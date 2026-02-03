@@ -520,6 +520,14 @@ export default {
     edit_message: "编辑消息",
     edit_message_desc: "点击这里修改 Viona 的消息，或者直接在问题下面添加答案",
     edit_ideal_profile: "编辑理想候选人画像",
+    edit_real_requirement: "编辑真实需求",
+    edit_target_candidate_profile: "编辑目标候选人画像",
+    view_strategy: "查看策略",
+    reset_state: "重置状态",
+    confirm_reset_state: "确定要重置状态吗？",
+    reset_success: "状态重置成功。请删除上传 JD 的消息并重新上传。",
+    reset_failed: "重置失败",
+    job_requirement_strategy_title: "职位需求对话策略",
 
     chatbot_greeting:
       "我现在可以准确地向潜在的候选人介绍我们公司和这个「职位名称」职位，并且回答他们关于这个职位的任何问题了。你可以直接把下面的链接附在JD上发到招聘网站上，也可以直接发给潜在的候选人。剩下的就交给我吧！",

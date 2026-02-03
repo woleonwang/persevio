@@ -463,24 +463,26 @@ const StaffChat: React.FC<IProps> = (props) => {
 
     {
       key: "realreq",
-      title: "Edit Real Requirement",
+      title: t("edit_real_requirement"),
       handler: (tag) => {
         setJrdRealRequirementFormValue(tag?.content);
         setShowJrdRealRequirementForm(true);
         messageListScrollTopRef.current =
           document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
       },
+      autoTrigger: true,
     },
 
     {
       key: "targetprof",
-      title: "Edit Target Candidate Profile",
+      title: t("edit_target_candidate_profile"),
       handler: (tag) => {
         setJrdTargetCandidateProfileFormValue(tag?.content);
         setShowJrdTargetCandidateProfileForm(true);
         messageListScrollTopRef.current =
           document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
       },
+      autoTrigger: true,
     },
 
     ...(SIDE_DOCUMENT_TYPES as TExtraTagName[]).map((key) => {
@@ -1155,24 +1157,24 @@ const StaffChat: React.FC<IProps> = (props) => {
                     setIsStrategyDrawerOpen(true);
                   }}
                   type="primary"
-                  description="查看策略"
+                  description={t("view_strategy")}
                 />
 
                 <FloatButton
                   onClick={async () => {
-                    if (confirm("确定要重置状态吗？")) {
+                    if (confirm(t("confirm_reset_state"))) {
                       const { code } = await Post(`/api/jobs/${jobId}`, {
                         is_jd_exsits: "",
                       });
                       if (code === 0) {
-                        alert("状态重置成功. 请删除上传 jd 的消息并重新上传");
+                        alert(t("reset_success"));
                       } else {
-                        message.error("重置失败");
+                        message.error(t("reset_failed"));
                       }
                     }
                   }}
                   type="primary"
-                  description="重置状态"
+                  description={t("reset_state")}
                 />
               </>
             )}
@@ -1300,7 +1302,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       <Drawer
         open={isStrategyDrawerOpen}
         onClose={() => setIsStrategyDrawerOpen(false)}
-        title="职位需求对话策略"
+        title={t("job_requirement_strategy_title")}
         width={800}
       >
         <MarkdownContainer content={job?.job_requirement_strategy_doc || ""} />

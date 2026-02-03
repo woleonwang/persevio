@@ -535,6 +535,14 @@ export default {
     edit_message_desc:
       "Click here to edit Viona's draft summaries, or answer her questions directly below.",
     edit_ideal_profile: "Edit Ideal Profile",
+    edit_real_requirement: "Edit Real Requirement",
+    edit_target_candidate_profile: "Edit Target Candidate Profile",
+    view_strategy: "View Strategy",
+    reset_state: "Reset State",
+    confirm_reset_state: "Are you sure you want to reset the state?",
+    reset_success: "State reset successfully. Please delete the uploaded JD message and re-upload.",
+    reset_failed: "Reset failed",
+    job_requirement_strategy_title: "Job Requirement Conversation Strategy",
 
     chatbot_greeting:
       "Share this link with potential candidates to connect them with Viona, who can answer their questions and help convert any curious candidates into interested applicants.",
