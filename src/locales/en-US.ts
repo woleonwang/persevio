@@ -311,6 +311,11 @@ export default {
   please_select: "Please select",
   please_enter: "Please enter",
   phone_not_valid: "Please enter a valid phone number",
+  assessment_options: {
+    meets: "Meets",
+    partially_meets: "Partially Meets",
+    does_not_meet: "Does Not Meet",
+  },
 
   calendar: {
     all_day: "All day",

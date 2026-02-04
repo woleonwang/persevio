@@ -351,6 +351,11 @@ export default {
     others: "其他",
   },
 
+  assessment_options: {
+    meets: "满足",
+    partially_meets: "部分满足",
+    does_not_meet: "不满足",
+  },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "推荐",

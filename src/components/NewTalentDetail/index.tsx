@@ -18,6 +18,7 @@ import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
+import Report from "./components/Report";
 import TextAreaWithVoice from "../TextAreaWithVoice";
 
 interface IProps {
@@ -214,9 +215,16 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 )}
               </div>
             </div>
-            <div className={styles.reportContainer} ref={reportContainerRef}>
-              <MarkdownContainer content={talent.raw_evaluate_result} />
-            </div>
+
+            {process.env.NODE_ENV === "development" ? (
+              <div ref={reportContainerRef}>
+                <Report candidateName={talent.name} jobName={job.name} />
+              </div>
+            ) : (
+              <div className={styles.reportContainer} ref={reportContainerRef}>
+                <MarkdownContainer content={talent.raw_evaluate_result} />
+              </div>
+            )}
           </div>
         ) : null}
       </div>
