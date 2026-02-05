@@ -385,15 +385,15 @@ const TalentCards = (props: IProps) => {
             },
             {
               key: "not_screened",
-              label: "Resume screened",
+              label: "Pending AI Interview",
             },
             {
               key: "rejected",
-              label: "Unsuitable candidates",
+              label: "Rejected",
             },
             {
               key: "linked_in_profiles",
-              label: "Ongoing Campaigns",
+              label: "Outreach Campaign",
             },
             {
               key: "all",
