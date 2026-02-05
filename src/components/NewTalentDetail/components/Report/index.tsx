@@ -26,7 +26,7 @@ type TReport = {
     title: string;
     content: string;
   }[];
-  key_informations: {
+  key_information: {
     title: string;
     details: string;
   }[];
@@ -43,104 +43,104 @@ type TReport = {
 interface IProps {
   candidateName: string;
   jobName: string;
-  report?: TReport;
+  report: TReport;
 }
 
-const mockReport: TReport = {
-  result: "ideal_candidate",
-  summary:
-    "The candidate is a good fit for the job. They have the skills and experience required for the job.",
-  created_at: "2026-01-01",
-  requirements: [
-    {
-      level: "p0",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "meets",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p0",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "partially_meets",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p1",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "does_not_meet",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p1",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "partially_meets",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p2",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "meets",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p2",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "does_not_meet",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-    {
-      level: "p2",
-      description:
-        "The candidate has the skills and experience required for the job.",
-      assessment_type: "meets",
-      reasoning:
-        "The candidate has the skills and experience required for the job.",
-    },
-  ],
-  snapshots: [
-    {
-      title: "Profile Snapshot",
-      content:
-        "The candidate has the skills and experience required for the job.",
-    },
-  ],
-  key_informations: [
-    {
-      title: "Key Information",
-      details:
-        "The candidate has the skills and experience required for the job.",
-    },
-  ],
-  potential_gaps: [
-    {
-      title: "Potential Gaps",
-      details:
-        "The candidate has the skills and experience required for the job.",
-    },
-  ],
-  areas_to_probe_futher: [
-    {
-      title: "Areas to Probe Further",
-      details:
-        "The candidate has the skills and experience required for the job.",
-    },
-  ],
-};
+// const mockReport: TReport = {
+//   result: "ideal_candidate",
+//   summary:
+//     "The candidate is a good fit for the job. They have the skills and experience required for the job.",
+//   created_at: "2026-01-01",
+//   requirements: [
+//     {
+//       level: "p0",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "meets",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p0",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "partially_meets",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p1",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "does_not_meet",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p1",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "partially_meets",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p2",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "meets",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p2",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "does_not_meet",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//     {
+//       level: "p2",
+//       description:
+//         "The candidate has the skills and experience required for the job.",
+//       assessment_type: "meets",
+//       reasoning:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//   ],
+//   snapshots: [
+//     {
+//       title: "Profile Snapshot",
+//       content:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//   ],
+//   key_informations: [
+//     {
+//       title: "Key Information",
+//       details:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//   ],
+//   potential_gaps: [
+//     {
+//       title: "Potential Gaps",
+//       details:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//   ],
+//   areas_to_probe_futher: [
+//     {
+//       title: "Areas to Probe Further",
+//       details:
+//         "The candidate has the skills and experience required for the job.",
+//     },
+//   ],
+// };
 
 const Report: React.FC<IProps> = (props) => {
-  const { report = mockReport, candidateName, jobName } = props;
+  const { report, candidateName, jobName } = props;
 
   const { t: originalT } = useTranslation();
 
@@ -288,7 +288,7 @@ const Report: React.FC<IProps> = (props) => {
             <div>Item</div>
             <div>Details</div>
           </div>
-          {report.key_informations.map((information, index) => {
+          {(report.key_information ?? []).map((information, index) => {
             return (
               <div
                 key={index}
@@ -304,32 +304,36 @@ const Report: React.FC<IProps> = (props) => {
           })}
         </div>
       </div>
-      <div className={styles.block}>
-        <div className={styles.blockTitle}>Potential Gaps</div>
-        <div>
-          {(report.potential_gaps ?? []).map((gap, index) => {
-            return (
-              <div key={index} className={styles.listItem}>
-                <span className={styles.listTitle}>{gap.title}:</span>
-                <span className={styles.gapContent}>{gap.details}</span>
-              </div>
-            );
-          })}
+      {(report.potential_gaps ?? []).length > 0 && (
+        <div className={styles.block}>
+          <div className={styles.blockTitle}>Potential Gaps</div>
+          <div>
+            {(report.potential_gaps ?? []).map((gap, index) => {
+              return (
+                <div key={index} className={styles.listItem}>
+                  <span className={styles.listTitle}>{gap.title}:</span>
+                  <span className={styles.gapContent}>{gap.details}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
-      <div className={styles.block}>
-        <div className={styles.blockTitle}>Areas to Probe Further</div>
-        <div>
-          {(report.areas_to_probe_futher ?? []).map((area, index) => {
-            return (
-              <div key={index} className={styles.listItem}>
-                <span className={styles.listTitle}>{area.title}:</span>
-                <span className={styles.areaContent}>{area.details}</span>
-              </div>
-            );
-          })}
+      )}
+      {(report.areas_to_probe_futher ?? []).length > 0 && (
+        <div className={styles.block}>
+          <div className={styles.blockTitle}>Areas to Probe Further</div>
+          <div>
+            {(report.areas_to_probe_futher ?? []).map((area, index) => {
+              return (
+                <div key={index} className={styles.listItem}>
+                  <span className={styles.listTitle}>{area.title}:</span>
+                  <span className={styles.areaContent}>{area.details}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

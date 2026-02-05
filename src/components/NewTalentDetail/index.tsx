@@ -105,6 +105,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   }
 
   const basicInfo = parseJSON(talent.basic_info_json);
+  const report = parseJSON(talent.evaluate_json);
 
   const interviewButtonArea =
     interviews.length === 0 ? (
@@ -216,9 +217,13 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               </div>
             </div>
 
-            {process.env.NODE_ENV === "development" ? (
+            {!!report.result ? (
               <div ref={reportContainerRef}>
-                <Report candidateName={talent.name} jobName={job.name} />
+                <Report
+                  candidateName={talent.name}
+                  jobName={job.name}
+                  report={report}
+                />
               </div>
             ) : (
               <div className={styles.reportContainer} ref={reportContainerRef}>
