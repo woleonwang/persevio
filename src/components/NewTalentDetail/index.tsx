@@ -189,8 +189,19 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             <div className={styles.evaluateResultTitle}>
               {t("candidate_evaluation_report")}
               <div className={styles.evaluateResultTitleButtons}>
+                {(talentChatMessages ?? []).length > 0 && (
+                  <Button
+                    type="primary"
+                    onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
+                    style={{ height: 40 }}
+                  >
+                    {t("ai_interview_record")}
+                  </Button>
+                )}
                 <Button
-                  type="primary"
+                  icon={
+                    <Icon icon={<DownloadIcon />} style={{ fontSize: 18 }} />
+                  }
                   onClick={() => {
                     if (!reportContainerRef.current) {
                       return;
@@ -203,22 +214,16 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                       element: reportContainerRef.current,
                     });
                   }}
-                >
-                  {originalT("download")}
-                </Button>
-                {(talentChatMessages ?? []).length > 0 && (
-                  <Button
-                    type="primary"
-                    onClick={() => setIsAIInterviewRecordDrawerOpen(true)}
-                  >
-                    {t("ai_interview_record")}
-                  </Button>
-                )}
+                  style={{ width: 40, height: 40 }}
+                />
               </div>
             </div>
 
             {!!report.result ? (
-              <div ref={reportContainerRef}>
+              <div
+                ref={reportContainerRef}
+                className={styles.newReportContainer}
+              >
                 <Report
                   candidateName={talent.name}
                   jobName={job.name}
@@ -299,9 +304,22 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   {t("ai_interview_record")}
                 </Button>
               </div>
-              <div className={styles.reportContainer}>
-                <MarkdownContainer content={talent.raw_evaluate_result} />
-              </div>
+              {!!report.result ? (
+                <div ref={reportContainerRef} style={{ marginTop: 12 }}>
+                  <Report
+                    candidateName={talent.name}
+                    jobName={job.name}
+                    report={report}
+                  />
+                </div>
+              ) : (
+                <div
+                  ref={reportContainerRef}
+                  className={styles.reportContainer}
+                >
+                  <MarkdownContainer content={talent.raw_evaluate_result} />
+                </div>
+              )}
             </div>
           ) : (
             <div>{t("no_report")}</div>

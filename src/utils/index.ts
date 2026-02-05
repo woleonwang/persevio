@@ -165,6 +165,7 @@ export const downloadMarkdownAsPDF = async ({
   try {
     // 创建一个临时的包装容器
     const wrapper = document.createElement("div");
+    wrapper.className = "persevio-pdf-wrapper";
     wrapper.style.width = "190mm";
 
     // 创建 logo 容器

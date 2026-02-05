@@ -268,7 +268,7 @@ const Report: React.FC<IProps> = (props) => {
             return (
               <div key={index} className={styles.listItem}>
                 <span className={styles.listTitle}>{snapshot.title}:</span>
-                <span className={styles.snapshotContent}>
+                <span className={classnames(styles.snapshotContent, "bgNone")}>
                   {snapshot.content}
                 </span>
               </div>
@@ -312,7 +312,9 @@ const Report: React.FC<IProps> = (props) => {
               return (
                 <div key={index} className={styles.listItem}>
                   <span className={styles.listTitle}>{gap.title}:</span>
-                  <span className={styles.gapContent}>{gap.details}</span>
+                  <span className={classnames(styles.gapContent, "bgNone")}>
+                    {gap.details}
+                  </span>
                 </div>
               );
             })}
@@ -327,7 +329,9 @@ const Report: React.FC<IProps> = (props) => {
               return (
                 <div key={index} className={styles.listItem}>
                   <span className={styles.listTitle}>{area.title}:</span>
-                  <span className={styles.areaContent}>{area.details}</span>
+                  <span className={classnames(styles.areaContent, "bgNone")}>
+                    {area.details}
+                  </span>
                 </div>
               );
             })}
