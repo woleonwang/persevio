@@ -32,6 +32,7 @@ const JobApplyShow = () => {
   const [interviewChatDrawerOpen, setInterviewChatDrawerOpen] = useState(false);
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [tabKey, setTabKey] = useState<"jd" | "progress">("jd");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handlerRef = useRef<{
     submit?: () => Promise<boolean>;
@@ -416,19 +417,22 @@ const JobApplyShow = () => {
             <Button
               type="primary"
               style={{ marginLeft: 12 }}
+              loading={isLoading}
               onClick={async () => {
                 if (jobApply?.whatsapp_number_confirmed_at) {
                   setWhatsappModeOpen(false);
                   return;
                 } else {
+                  setIsLoading(true);
                   const { code } = await Post(
                     `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
                   );
                   if (code === 0) {
-                    fetchApplyJob();
+                    await fetchApplyJob();
                   } else {
                     message.success(originalT("submit_failed"));
                   }
+                  setIsLoading(false);
                 }
               }}
             >
