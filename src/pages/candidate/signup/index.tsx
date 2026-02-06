@@ -44,7 +44,7 @@ const Signup: React.FC = () => {
 
   const jobIdStr: string = getQuery("job_id");
   const jobIdQuery = parseInt(jobIdStr ?? "0");
-  const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === "1";
+  const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === 1;
 
   const navigate = useNavigate();
 
