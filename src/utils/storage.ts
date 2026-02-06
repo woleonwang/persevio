@@ -23,6 +23,9 @@ export enum StorageKey {
   INTERNAL_ACCOUNT = "internal_account",
   // 登录时的 job id 来源
   SIGNIN_JOB_ID = "signin_job_id",
+
+  // 是否内部逻辑的标记
+  INTERNAL_SIGNUP = "internal_signup",
 }
 
 /**

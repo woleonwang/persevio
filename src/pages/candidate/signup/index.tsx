@@ -44,6 +44,7 @@ const Signup: React.FC = () => {
 
   const jobIdStr: string = getQuery("job_id");
   const jobIdQuery = parseInt(jobIdStr ?? "0");
+  const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === "1";
 
   const navigate = useNavigate();
 
@@ -148,6 +149,7 @@ const Signup: React.FC = () => {
     } else {
       let params: Record<string, unknown> = {
         ...basicInfo,
+        internal,
       };
 
       if (jobIdQuery) {
@@ -196,7 +198,11 @@ const Signup: React.FC = () => {
 
     if (code === 0) {
       message.success("Save successful");
-      setPageState("binding");
+      if (internal) {
+        setPageState("whatsapp");
+      } else {
+        setPageState("binding");
+      }
     } else {
       message.error("Save failed");
     }
