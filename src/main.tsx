@@ -74,6 +74,7 @@ import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx"
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
 import IconDemo from "./pages/icon-demo/index.tsx";
+import InternalSettings from "./pages/internal-settings/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -114,6 +115,7 @@ createRoot(document.getElementById("root")!).render(
           path="/jobs/:id/:companyName/:jobName/:version"
           element={<JobsShow />}
         />
+        <Route path="/internal-settings" element={<InternalSettings />} />
         {/** 分享候选人面试设计 & 面试反馈文档 */}
         <Route
           path="/jobs/:jobId/talents/:talentId/detail"
