@@ -439,6 +439,7 @@ type TTalent = {
     };
   };
   created_at: string;
+  viewed_at: string;
 };
 
 type TInterview = {

@@ -6,7 +6,8 @@ interface ITabProps {
   tabs: {
     key: string;
     icon?: React.ReactNode;
-    label: string;
+    label?: string;
+    node?: React.ReactNode;
   }[];
   activeKey: string;
   onChange: (key: string) => void;
@@ -26,7 +27,11 @@ const Tabs = (props: ITabProps) => {
           onClick={() => onChange(tab.key)}
         >
           <Icon icon={tab.icon} className={styles.tabIcon} />
-          <span className={styles.tabLabel}>{tab.label}</span>
+          {tab.label ? (
+            <span className={styles.tabLabel}>{tab.label}</span>
+          ) : (
+            tab.node
+          )}
         </div>
       ))}
     </div>

@@ -31,6 +31,7 @@ import TextAreaWithVoice from "../TextAreaWithVoice";
 import globalStore from "@/store/global";
 import { observer } from "mobx-react-lite";
 import useStaffs from "@/hooks/useStaffs";
+import Question from "@/assets/icons/question";
 
 interface IProps {
   jobId?: number;
@@ -236,7 +237,7 @@ const TalentCards = (props: IProps) => {
     }
   };
 
-  const dataSource: TDataSourceItem[] = useMemo(() => {
+  const mergedList: TDataSourceItem[] = useMemo(() => {
     let result: TDataSourceItem[] = [];
     linkedinProfiles.forEach((linkedinProfile) => {
       // 1. 只有 profile，没有 talent
@@ -274,7 +275,11 @@ const TalentCards = (props: IProps) => {
         });
       });
 
-    return result
+    return result;
+  }, [talents, linkedinProfiles]);
+
+  const dataSource: TDataSourceItem[] = useMemo(() => {
+    return mergedList
       .filter((item) => {
         return activeTab === "all" || getStatus(item) === activeTab;
       })
@@ -296,14 +301,7 @@ const TalentCards = (props: IProps) => {
           b.talent?.created_at || b.linkedinProfile?.created_at
         ).diff(dayjs(a.talent?.created_at || a.linkedinProfile?.created_at));
       });
-  }, [
-    talents,
-    linkedinProfiles,
-    activeTab,
-    searchName,
-    selectedJob,
-    evaluateResultLevel,
-  ]);
+  }, [mergedList, activeTab, searchName, selectedJob, evaluateResultLevel]);
 
   const currentPageDataSource = dataSource.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -381,23 +379,110 @@ const TalentCards = (props: IProps) => {
           tabs={[
             {
               key: "screened",
-              label: "Interview-Ready",
+              node: (
+                <div className={styles.tabItem}>
+                  Interview-Ready
+                  <span>
+                    (
+                    {
+                      mergedList.filter(
+                        (item) => getStatus(item) === "screened"
+                      ).length
+                    }
+                    )
+                  </span>
+                  {mergedList.filter(
+                    (item) =>
+                      getStatus(item) === "screened" && !item.talent?.viewed_at
+                  ).length > 0 && <div className={styles.point} />}
+                  <Tooltip title="Candidates who have completed the AI prescreening interview.">
+                    <Icon icon={<Question />} />
+                  </Tooltip>
+                </div>
+              ),
             },
             {
               key: "not_screened",
-              label: "Pending AI Interview",
+              node: (
+                <div className={styles.tabItem}>
+                  Pending AI Interview
+                  <span>
+                    (
+                    {
+                      mergedList.filter(
+                        (item) => getStatus(item) === "not_screened"
+                      ).length
+                    }
+                    )
+                  </span>
+                  {mergedList.filter(
+                    (item) =>
+                      getStatus(item) === "not_screened" &&
+                      !item.talent?.viewed_at
+                  ).length > 0 && <div className={styles.point} />}
+                  <Tooltip title="Candidates whose resumes have been analyzed and rated, but have not yet completed the AI prescreening interview. You can still reach out to schedule an interview without waiting for them to complete.">
+                    <Icon icon={<Question />} />
+                  </Tooltip>
+                </div>
+              ),
             },
             {
               key: "rejected",
-              label: "Rejected",
+              node: (
+                <div className={styles.tabItem}>
+                  Rejected
+                  <span>
+                    (
+                    {
+                      mergedList.filter(
+                        (item) => getStatus(item) === "rejected"
+                      ).length
+                    }
+                    )
+                  </span>
+                  {mergedList.filter(
+                    (item) =>
+                      getStatus(item) === "rejected" && !item.talent?.viewed_at
+                  ).length > 0 && <div className={styles.point} />}
+                  <Tooltip title="Candidates the hiring manager has decided not to move forward with.">
+                    <Icon icon={<Question />} />
+                  </Tooltip>
+                </div>
+              ),
             },
             {
               key: "linked_in_profiles",
-              label: "Outreach Campaign",
+              node: (
+                <div className={styles.tabItem}>
+                  Outreach Campaign
+                  <span>
+                    (
+                    {
+                      mergedList.filter(
+                        (item) => getStatus(item) === "linked_in_profiles"
+                      ).length
+                    }
+                    )
+                  </span>
+                  <Tooltip title="Candidates proactively sourced and contacted by the Persevio team, including their engagement status.">
+                    <Icon icon={<Question />} />
+                  </Tooltip>
+                </div>
+              ),
             },
             {
               key: "all",
-              label: "All Candidates",
+              node: (
+                <div className={styles.tabItem}>
+                  All Candidates<span>({mergedList.length})</span>
+                  {mergedList.filter(
+                    (item) => !!item.talent && !item.talent.viewed_at
+                  ).length > 0 && <div className={styles.point} />}
+                  <Tooltip title="Complete view of all candidates across all stages">
+                    <Icon icon={<Question />} />
+                  </Tooltip>
+                </div>
+              ),
             },
           ]}
           activeKey={activeTab}
