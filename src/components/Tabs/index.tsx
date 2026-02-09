@@ -23,6 +23,7 @@ const Tabs = (props: ITabProps) => {
           key={tab.key}
           className={classnames(styles.tab, {
             [styles.active]: activeKey === tab.key,
+            "perse-tabs-active": activeKey === tab.key,
           })}
           onClick={() => onChange(tab.key)}
         >

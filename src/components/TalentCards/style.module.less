@@ -40,11 +40,43 @@
   }
 }
 
+:global {
+  .perse-tabs-active {
+    >div {
+      color: #333;
+      font-weight: bold;
+    }
+  }
+}
+
 .tabItem {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
+  color: #999;
+  position: relative;
+
+  span {
+    color: rgba(159, 173, 195, 1);
+  }
+
+  :global {
+    .perse-icon {
+      font-size: 20px;
+      color: rgba(159, 173, 195, 1);
+    }
+  }
+
+  .point {
+    position: absolute;
+    right: -8px;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    background-color: rgba(224, 61, 61, 1);
+    border-radius: 50%;
+  }
 }
 
 .cardContainer {
