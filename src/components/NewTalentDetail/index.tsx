@@ -126,6 +126,10 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       </Button>
     );
 
+  const resumeDetail = talent.resume_detail_json
+    ? parseJSON(talent.resume_detail_json)
+    : null;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -182,8 +186,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             />
           </div>
           <div className={styles.markdownContainer}>
-            {talent.resume_detail_json ? (
-              <Resume resume={parseJSON(talent.resume_detail_json)} />
+            {resumeDetail ? (
+              <Resume resume={resumeDetail} />
             ) : (
               <MarkdownContainer content={talent.parsed_content || ""} />
             )}
@@ -266,8 +270,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         {tabKey === "resume" && (
           <div className={styles.resumeContainer}>
             <div className={styles.markdownContainer}>
-              {talent.resume_detail_json ? (
-                <Resume resume={parseJSON(talent.resume_detail_json)} />
+              {resumeDetail ? (
+                <Resume resume={resumeDetail} />
               ) : (
                 <MarkdownContainer content={talent.parsed_content || ""} />
               )}
