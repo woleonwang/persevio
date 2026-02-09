@@ -1,6 +1,7 @@
 import { Get } from "@/utils/request";
 import { useEffect, useState } from "react";
-const useCandidate = () => {
+const useCandidate = (options: { withDoc?: boolean } = {}) => {
+  const { withDoc = false } = options;
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [inited, setInited] = useState(false);
 
@@ -9,7 +10,9 @@ const useCandidate = () => {
   }, []);
 
   const fetchCandidate = async () => {
-    const { code, data } = await Get(`/api/candidate/settings`);
+    const { code, data } = await Get(
+      `/api/candidate/settings${withDoc ? "?with_doc=1" : ""}`
+    );
 
     if (code === 0) {
       const candidate: ICandidateSettings = data.candidate ?? data;

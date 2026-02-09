@@ -97,7 +97,7 @@ const CandidateResume = () => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`candidate_resume.${key}`);
 
-  const { candidate, fetchCandidate } = useCandidate();
+  const { candidate, fetchCandidate } = useCandidate({ withDoc: true });
 
   const { setMenuCollapse } = globalStore;
 
