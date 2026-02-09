@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { message, Spin } from "antd";
+import { Input, message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { CheckCircleFilled } from "@ant-design/icons";
 
 import useJob from "@/hooks/useJob";
 import { getQuery, updateQuery } from "@/utils";
@@ -17,6 +18,7 @@ import TalentCards from "../TalentCards";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
 import Share2 from "@/assets/icons/share2";
+import globalStore from "@/store/global";
 
 type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
 
@@ -30,8 +32,12 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     (tab as TMenu) || "jobDescription"
   );
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
+  const [isEditingJobName, setIsEditingJobName] = useState(false);
+  const [editingJobName, setEditingJobName] = useState("");
 
   const navigate = useNavigate();
+
+  const { fetchJobs } = globalStore;
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
@@ -58,6 +64,18 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     }
   };
 
+  const updateJobName = async () => {
+    if (!job) return;
+    const { code } = await Post(`/api/jobs/${job.id}`, {
+      name: editingJobName,
+    });
+    if (code === 0) {
+      fetchJob();
+      fetchJobs();
+      setIsEditingJobName(false);
+    }
+  };
+
   if (!job) {
     return <Spin />;
   }
@@ -73,7 +91,43 @@ const JobDetails = ({ role = "staff" }: IProps) => {
             }
             style={{ fontSize: 20, cursor: "pointer" }}
           />
-          <div className={styles.title}>{job.name}</div>
+          {isEditingJobName ? (
+            <Input
+              value={editingJobName}
+              onChange={(e) => {
+                setEditingJobName(e.target.value);
+              }}
+              onPressEnter={() => {
+                updateJobName();
+              }}
+              suffix={
+                <Icon
+                  icon={<CheckCircleFilled style={{ color: "#3682fe" }} />}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // 阻止 blur，使点击 suffix 时能正常保存
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateJobName();
+                  }}
+                />
+              }
+              onBlur={() => {
+                setIsEditingJobName(false);
+              }}
+              autoFocus
+            />
+          ) : (
+            <div
+              className={styles.title}
+              onClick={() => {
+                setEditingJobName(job.name);
+                setIsEditingJobName(true);
+              }}
+            >
+              {job.name}
+            </div>
+          )}
         </div>
         {role === "staff" && (
           <div

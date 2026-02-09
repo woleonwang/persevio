@@ -946,7 +946,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     share_message: "您也可以分享链接，与小伙伴一起定义职位需求",
     share_link: "分享链接",
     copy_success: "复制成功",
-    reply_placeholder: "回复 Viona",
+    reply_placeholder: "请输入职位的官方名称，例如：软件工程师、销售经理等",
     create_success: "创建职位成功",
   },
 

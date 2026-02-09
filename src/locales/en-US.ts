@@ -991,7 +991,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     share_message: "Invite your co-workers to this page by sharing this link.",
     share_link: "Share the link",
     copy_success: "Copied successfully",
-    reply_placeholder: "Reply to Viona",
+    reply_placeholder:
+      "Enter the offical job title of the role only, e.g. Software Engineer, Sales Manager, etc.",
     create_success: "Create job succeed",
   },
 
