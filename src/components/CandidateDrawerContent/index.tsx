@@ -2,10 +2,13 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { Get } from "@/utils/request";
+import { useTranslation } from "react-i18next";
 import ChatMessagePreview from "../ChatMessagePreview";
 
 const CandidateDrawerContent = (props: { candidateId: number }) => {
   const { candidateId } = props;
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_drawer_content.${key}`);
 
   const [candidate, setCandidate] = useState<ICandidateSettings>();
   const [messages, setMessages] = useState<TMessageFromApi[]>([]);
@@ -30,13 +33,13 @@ const CandidateDrawerContent = (props: { candidateId: number }) => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.left}>
-          <div className={styles.title}>个人资料</div>
+          <div className={styles.title}>{t("profile")}</div>
           <div className={styles.flexContent}>
             <MarkdownContainer content={candidate.resume_content} />
           </div>
         </div>
         <div className={styles.right}>
-          <div className={styles.title}>对话内容</div>
+          <div className={styles.title}>{t("chatContent")}</div>
           <div className={styles.flexContent}>
             <ChatMessagePreview messages={messages} />
           </div>

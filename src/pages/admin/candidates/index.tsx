@@ -3,6 +3,7 @@ import { Button, Drawer, Input, message, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 import styles from "../style.module.less";
 import CandidateDrawerContent from "@/components/CandidateDrawerContent";
@@ -32,6 +33,9 @@ type TCandidateListItem = TCandidateListItemApi & {
 };
 
 const Candidates = () => {
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`admin_candidates.${key}`);
+
   const [candidates, setCandidates] = useState<TCandidateListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -58,7 +62,7 @@ const Candidates = () => {
         );
       }
     } catch (error) {
-      message.error("获取候选人列表失败");
+      message.error(t("error.fetchFailed"));
     } finally {
       setLoading(false);
     }
@@ -79,22 +83,22 @@ const Candidates = () => {
 
   const columns: ColumnsType<TCandidateListItem> = [
     {
-      title: "ID",
+      title: t("table.id"),
       dataIndex: "id",
       width: 80,
     },
     {
-      title: "用户名称",
+      title: t("table.userName"),
       dataIndex: "name",
       width: 120,
     },
     {
-      title: "邮箱",
+      title: t("table.email"),
       dataIndex: "email",
       width: 200,
     },
     {
-      title: "注册时间",
+      title: t("table.createdAt"),
       dataIndex: "created_at",
       width: 150,
       render: (created_at: string) => {
@@ -102,29 +106,29 @@ const Candidates = () => {
       },
     },
     {
-      title: "注册来源",
+      title: t("table.registerSource"),
       dataIndex: "job_id",
       width: 150,
       render: (job_id: number) => {
-        return job_id ? "职位" : "首页";
+        return job_id ? t("registerSource.job") : t("registerSource.home");
       },
     },
     {
-      title: "状态",
+      title: t("table.status"),
       dataIndex: "status",
       width: 150,
       render: (_: string, record: TCandidateListItem) => {
         return record.interview_finished_at
-          ? "已AI对话完"
+          ? t("status.aiFinished")
           : !isTempAccount(record)
-          ? "已绑定邮箱"
+          ? t("status.boundEmail")
           : record.resume_path
-          ? "已上传简历"
-          : "已填基本信息";
+          ? t("status.uploadedResume")
+          : t("status.filledBasicInfo");
       },
     },
     {
-      title: "简历详情",
+      title: t("table.resumeDetail"),
       dataIndex: "resume_path",
       width: 150,
       render: (_, record: TCandidateListItem) => (
@@ -136,7 +140,7 @@ const Candidates = () => {
             setCandidateDrawerOpen(true);
           }}
         >
-          查看
+          {t("table.view")}
         </Button>
       ),
     },
@@ -144,12 +148,12 @@ const Candidates = () => {
 
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminPageHeader}>候选人列表</div>
+      <div className={styles.adminPageHeader}>{t("pageTitle")}</div>
       <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
-          <div>用户名称: </div>
+          <div>{t("filters.userNameLabel")}</div>
           <Input
-            placeholder="搜索用户名称"
+            placeholder={t("filters.userNamePlaceholder")}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             style={{ width: 200 }}

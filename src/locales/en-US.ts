@@ -1923,6 +1923,42 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Login URL: {{- loginUrl}}\nAccount Name: {{- name}}\nAccount Email: {{- email}}\nDefault Password: {{- password}}",
   },
 
+  admin_candidates: {
+    pageTitle: "User List",
+    filters: {
+      userNameLabel: "User Name: ",
+      userNamePlaceholder: "Search user name",
+    },
+    table: {
+      id: "ID",
+      userName: "User Name",
+      email: "Email",
+      createdAt: "Registration Time",
+      registerSource: "Registration Source",
+      status: "Status",
+      resumeDetail: "Resume Detail",
+      view: "View",
+    },
+    status: {
+      aiFinished: "AI Chat Completed",
+      boundEmail: "Email Bound",
+      uploadedResume: "Resume Uploaded",
+      filledBasicInfo: "Basic Info Filled",
+    },
+    registerSource: {
+      job: "Job",
+      home: "Home",
+    },
+    error: {
+      fetchFailed: "Failed to fetch candidate list",
+    },
+  },
+
+  candidate_drawer_content: {
+    profile: "Profile",
+    chatContent: "Chat Content",
+  },
+
   admin_jobs: {
     pageTitle: "Job List",
     filters: {

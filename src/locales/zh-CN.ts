@@ -1861,6 +1861,42 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       "登录链接: {{- loginUrl}}\n账号名称: {{- name}}\n账号邮箱: {{- email}}\n默认密码: {{- password}}",
   },
 
+  admin_candidates: {
+    pageTitle: "用户列表",
+    filters: {
+      userNameLabel: "用户名称: ",
+      userNamePlaceholder: "搜索用户名称",
+    },
+    table: {
+      id: "ID",
+      userName: "用户名称",
+      email: "邮箱",
+      createdAt: "注册时间",
+      registerSource: "注册来源",
+      status: "状态",
+      resumeDetail: "简历详情",
+      view: "查看",
+    },
+    status: {
+      aiFinished: "已AI对话完",
+      boundEmail: "已绑定邮箱",
+      uploadedResume: "已上传简历",
+      filledBasicInfo: "已填基本信息",
+    },
+    registerSource: {
+      job: "职位",
+      home: "首页",
+    },
+    error: {
+      fetchFailed: "获取候选人列表失败",
+    },
+  },
+
+  candidate_drawer_content: {
+    profile: "个人资料",
+    chatContent: "对话内容",
+  },
+
   admin_jobs: {
     pageTitle: "职位列表",
     filters: {
