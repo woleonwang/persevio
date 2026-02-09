@@ -20,11 +20,11 @@ import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
 import Report from "./components/Report";
 import TextAreaWithVoice from "../TextAreaWithVoice";
+import Resume from "./components/Resume";
 
 interface IProps {
   isPreview?: boolean;
 }
-
 const NewTalentDetail: React.FC<IProps> = (props) => {
   const { job } = usePublicJob();
   const { talent, interviews, fetchTalent } = useTalent();
@@ -104,7 +104,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     return <Spin />;
   }
 
-  const basicInfo = parseJSON(talent.basic_info_json);
   const report = parseJSON(talent.evaluate_json);
 
   const interviewButtonArea =
@@ -159,8 +158,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 {interviewButtonArea}
                 {interviews?.length === 0 && (
                   <Button
-                    variant="outlined"
-                    color="danger"
+                    danger
+                    type="primary"
                     onClick={() => {
                       form.resetFields();
                       setIsRejectModalOpen(true);
@@ -173,14 +172,21 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 )}
               </>
             )}
-          </div>
-          <div className={styles.basicInfoContainer}>
-            <Button type="primary" onClick={downloadTalentResume} size="large">
-              {t("download_resume")}
-            </Button>
+            <Button
+              icon={<Icon icon={<DownloadIcon />} style={{ fontSize: 18 }} />}
+              variant="outlined"
+              color="primary"
+              onClick={downloadTalentResume}
+              size="large"
+              style={{ width: 40, height: 40, flex: "none" }}
+            />
           </div>
           <div className={styles.markdownContainer}>
-            <MarkdownContainer content={talent.parsed_content || ""} />
+            {talent.resume_detail_json ? (
+              <Resume resume={parseJSON(talent.resume_detail_json)} />
+            ) : (
+              <MarkdownContainer content={talent.parsed_content || ""} />
+            )}
           </div>
         </div>
         {!talent.evaluate_result.evaluation_summary &&
@@ -202,6 +208,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   icon={
                     <Icon icon={<DownloadIcon />} style={{ fontSize: 18 }} />
                   }
+                  variant="outlined"
+                  color="primary"
                   onClick={() => {
                     if (!reportContainerRef.current) {
                       return;
@@ -257,34 +265,12 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         </div>
         {tabKey === "resume" && (
           <div className={styles.resumeContainer}>
-            <div className={styles.basicInfoContainer}>
-              <div>
-                <div className={styles.jobTitle}>
-                  {basicInfo.current_job_title}
-                </div>
-                <div className={styles.companyName}>
-                  {basicInfo.current_company}
-                </div>
-              </div>
-              <Button
-                type="primary"
-                onClick={downloadTalentResume}
-                size="large"
-                className={styles.desktopVisible}
-              >
-                {t("download_resume")}
-              </Button>
-              <Icon
-                icon={<DownloadIcon />}
-                onClick={downloadTalentResume}
-                className={classnames(
-                  styles.mobileVisible,
-                  styles.downloadIcon
-                )}
-              />
-            </div>
             <div className={styles.markdownContainer}>
-              <MarkdownContainer content={talent.parsed_content || ""} />
+              {talent.resume_detail_json ? (
+                <Resume resume={parseJSON(talent.resume_detail_json)} />
+              ) : (
+                <MarkdownContainer content={talent.parsed_content || ""} />
+              )}
             </div>
           </div>
         )}
@@ -325,14 +311,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             <div>{t("no_report")}</div>
           ))}
         <div className={styles.statusContainer}>
-          {talent?.status === "accepted" ? (
-            interviewButtonArea
-          ) : talent?.status === "rejected" ? (
+          {talent?.status === "rejected" ? (
             <Tag color="red">{t("status_rejected")}</Tag>
           ) : (
             <>
+              {interviewButtonArea}
               <Button
-                variant="outlined"
+                danger
+                type="primary"
                 color="danger"
                 onClick={() => {
                   form.resetFields();
@@ -344,13 +330,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 {t("action_reject")}
               </Button>
               <Button
-                type="primary"
-                onClick={() => updateTalentStatus("accept")}
-                style={{ flex: "auto" }}
+                icon={<Icon icon={<DownloadIcon />} style={{ fontSize: 18 }} />}
+                variant="outlined"
+                color="primary"
+                onClick={downloadTalentResume}
+                className={classnames(styles.downloadIcon)}
                 size="large"
-              >
-                {t("action_accept")}
-              </Button>
+                style={{ flex: "none" }}
+              />
             </>
           )}
         </div>

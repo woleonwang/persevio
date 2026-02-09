@@ -422,6 +422,7 @@ type TTalent = {
   evaluate_result: TEvaluationResult;
   raw_evaluate_result: string;
   basic_info_json: string;
+  resume_detail_json: string;
   evaluate_json: string;
   job_id: number;
   source_channel: "system" | "customer";

@@ -1,0 +1,142 @@
+@import "@/mixin.module.less";
+
+.italic() {
+  font-family: arial;
+  font-style: italic;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(235, 236, 238, 1);
+
+  .contactInfoName {
+    font-weight: bold;
+  }
+
+  .contactInfoItems {
+    display: flex;
+    gap: 4px 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+
+    .contactInfoItem {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+
+      :global {
+        .perse-icon {
+          font-size: 18px;
+        }
+      }
+
+      &:not(:first-child) {
+        color: @primary-color;
+
+        &:before {
+          content: "";
+          height: 16px;
+          border-left: 1px solid rgba(235, 236, 238, 1);
+          margin-right: 12px;
+        }
+      }
+    }
+  }
+}
+
+.section {
+  margin-top: 20px;
+
+  .sectionTitle {
+    font-weight: bold;
+  }
+
+  .sectionContent {
+    margin-top: 12px;
+    background-color: rgba(254, 251, 236, 1);
+    padding: 12px 16px;
+    border-radius: 12px;
+    .italic();
+    font-size: 14px;
+  }
+
+  .listContent {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .listItem {
+      position: relative;
+      padding-left: 30px;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 8px;
+        bottom: 0;
+        width: 2px;
+        background: rgba(232, 240, 255, 1);
+      }
+
+      .listTitle {
+        display: flex;
+        gap: 20px;
+
+        &:before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 6px;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: rgba(200, 220, 254, 1);
+        }
+      }
+
+      .listTitleCompany {
+        font-weight: bold;
+        .italic();
+      }
+
+      .listContentItem {
+        display: flex;
+        gap: 12px;
+        font-size: 14px;
+        margin-top: 6px;
+      }
+    }
+  }
+
+  .listContentDescription {
+    font-size: 14px;
+    margin-top: 6px;
+    padding: 12px 16px;
+    background-color: rgba(247, 249, 255, 1);
+    border-radius: 12px;
+    .italic();
+
+    &.listPoint {
+      position: relative;
+
+      &::before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        top: 12px;
+      }
+    }
+  }
+}
