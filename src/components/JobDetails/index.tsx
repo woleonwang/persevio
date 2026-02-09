@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input, message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import { CheckCircleFilled } from "@ant-design/icons";
 
 import useJob from "@/hooks/useJob";
 import { getQuery, updateQuery } from "@/utils";
-import { Post } from "@/utils/request";
+import { Get, Post } from "@/utils/request";
 import AdminTalents from "@/components/AdminTalents";
 
 import JobSettings from "./components/JobSettings";
@@ -26,11 +26,8 @@ interface IProps {
   role?: "admin" | "staff";
 }
 const JobDetails = ({ role = "staff" }: IProps) => {
-  const tab = getQuery("tab");
   const { job, fetchJob } = useJob();
-  const [chatType, setChatType] = useState<TMenu>(
-    (tab as TMenu) || "jobDescription"
-  );
+  const [chatType, setChatType] = useState<TMenu>();
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [isEditingJobName, setIsEditingJobName] = useState(false);
   const [editingJobName, setEditingJobName] = useState("");
@@ -42,6 +39,12 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
 
+  useEffect(() => {
+    if (job?.id) {
+      initTab();
+    }
+  }, [job?.id]);
+
   const chatTypeTitle: Partial<Record<TMenu, string>> = useMemo(() => {
     return {
       jobDescription: t("job_description_jd"),
@@ -50,6 +53,25 @@ const JobDetails = ({ role = "staff" }: IProps) => {
       ...(role === "admin" ? { settings: t("settings") } : {}),
     };
   }, [t, role]);
+
+  const initTab = async () => {
+    if (!job?.id) return;
+
+    const tab = getQuery("tab");
+    if (tab) {
+      setChatType(tab as TMenu);
+    } else {
+      const { code, data } = await Get(`/api/talents?job_id=${job.id}`);
+      if (
+        code === 0 &&
+        (data.talents.length > 0 || data.linkedin_profiles.length > 0)
+      ) {
+        setChatType("talents");
+      } else {
+        setChatType("jobDescription");
+      }
+    }
+  };
 
   const togglePostJob = async () => {
     if (!job) return;
