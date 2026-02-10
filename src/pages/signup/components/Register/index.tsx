@@ -7,8 +7,7 @@ import { Link } from "react-router";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
-import { tokenStorage } from "@/utils/storage";
-import { deleteQuery, getQuery } from "@/utils";
+import { StorageKey, storage, tokenStorage } from "@/utils/storage";
 
 interface SignupFormValues {
   username: string;
@@ -52,8 +51,7 @@ const Register: React.FC<IProps> = (props) => {
 
   // 清理倒计时定时器
   useEffect(() => {
-    setIsInternal(getQuery("internal") === "1");
-    deleteQuery("internal");
+    setIsInternal(storage.get(StorageKey.SKIP_VERIFYING_TOKEN) === 1);
 
     return () => {
       if (countdownRef.current) {
