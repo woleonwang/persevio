@@ -54,6 +54,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     share = false,
     jobInterviewDesignerId,
     jobInterviewFeedbackId,
+    talentId,
     viewDoc,
     onNextTask,
     newVersion = false,
@@ -238,6 +239,10 @@ const StaffChat: React.FC<IProps> = (props) => {
       send: formatUrl(
         `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/send`
       ),
+    },
+    jobTalentEvaluateFeedback: {
+      get: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/messages`),
+      send: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/send`),
     },
   };
 

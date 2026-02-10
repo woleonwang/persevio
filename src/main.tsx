@@ -75,6 +75,7 @@ import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
 import IconDemo from "./pages/icon-demo/index.tsx";
 import InternalSettings from "./pages/internal-settings/index.tsx";
+import Feedback from "./pages/job/feedback/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -275,6 +276,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/livekit" element={<LiveKit />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/l/:shortLink" element={<ShortLink />} />
+        <Route path="/demo" element={<Feedback />} />
       </Routes>
     </BrowserRouter>
   </AntdLocaleProvider>

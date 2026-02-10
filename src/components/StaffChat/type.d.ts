@@ -7,7 +7,8 @@ export type TChatType =
   | "jobOutreachMessage"
   | "jobInterviewPlan"
   | "jobInterviewDesign"
-  | "jobInterviewFeedback";
+  | "jobInterviewFeedback"
+  | "jobTalentEvaluateFeedback";
 
 export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {
@@ -20,6 +21,7 @@ export interface IProps {
   onNextTask?: () => void;
   jobInterviewDesignerId?: number;
   jobInterviewFeedbackId?: number;
+  talentId?: number;
   hideSidebar?: boolean;
   viewDoc?: (docType: string) => void;
   newVersion?: boolean;
