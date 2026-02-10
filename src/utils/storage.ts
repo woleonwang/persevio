@@ -26,6 +26,8 @@ export enum StorageKey {
 
   // 是否内部逻辑的标记
   INTERNAL_SIGNUP = "internal_signup",
+  // 是否跳过验证
+  SKIP_VERIFYING_TOKEN = "skip_verifying_token",
 }
 
 /**
