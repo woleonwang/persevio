@@ -7,6 +7,7 @@ import classnames from "classnames";
 import { Get, Post } from "@/utils/request";
 import CandidateChat from "@/components/CandidateChat";
 import {
+  deleteQuery,
   getJobApplyStatus,
   getQuery,
   parseJd,
@@ -24,6 +25,7 @@ import ArrowLeft from "@/assets/icons/arrow-left";
 import WhatsappIcon from "@/assets/icons/whatsapp";
 import InterviewArrangement from "./components/InterviewArrangement";
 import Tabs from "@/components/Tabs";
+import useCandidate from "@/hooks/useCandidate";
 
 const JobApplyShow = () => {
   const [jobApply, setJobApply] = useState<IJobApplyListItem>();
@@ -46,6 +48,8 @@ const JobApplyShow = () => {
 
   const navigate = useNavigate();
 
+  const { candidate } = useCandidate();
+
   const { t: originalT } = useTranslation();
 
   const t = (key: string, params?: Record<string, string>) =>
@@ -61,13 +65,22 @@ const JobApplyShow = () => {
   }, []);
 
   useEffect(() => {
-    if (jobApply) {
+    checkQuery();
+  }, [jobApply?.id]);
+
+  const checkQuery = async () => {
+    if (jobApply?.id) {
+      const autoCheck = getQuery("auto_check");
+      if (autoCheck === "1") {
+        deleteQuery("auto_check");
+        await confirmWhatsappNumber();
+      }
       const open = getQuery("open");
       if (open === "1") {
         onClickChat();
       }
     }
-  }, [jobApply]);
+  };
 
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
@@ -153,6 +166,19 @@ const JobApplyShow = () => {
   ];
 
   const interview = jobApply?.interviews?.[0];
+
+  const confirmWhatsappNumber = async () => {
+    setIsLoading(true);
+    const { code } = await Post(
+      `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
+    );
+    if (code === 0) {
+      await fetchApplyJob();
+    } else {
+      message.success(originalT("submit_failed"));
+    }
+    setIsLoading(false);
+  };
 
   if (
     applyStatus === "interview_created" ||
@@ -421,18 +447,8 @@ const JobApplyShow = () => {
               onClick={async () => {
                 if (jobApply?.whatsapp_number_confirmed_at) {
                   setWhatsappModeOpen(false);
-                  return;
                 } else {
-                  setIsLoading(true);
-                  const { code } = await Post(
-                    `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
-                  );
-                  if (code === 0) {
-                    await fetchApplyJob();
-                  } else {
-                    message.success(originalT("submit_failed"));
-                  }
-                  setIsLoading(false);
+                  confirmWhatsappNumber();
                 }
               }}
             >
@@ -459,7 +475,11 @@ const JobApplyShow = () => {
         ) : (
           <div
             className={styles.whatsappModeContent}
-            dangerouslySetInnerHTML={{ __html: t("whatsapp_confirm_hint") }}
+            dangerouslySetInnerHTML={{
+              __html: t("whatsapp_confirm_hint", {
+                phone: candidate?.whatsapp_contact_number ?? "",
+              }),
+            }}
           />
         )}
       </Modal>

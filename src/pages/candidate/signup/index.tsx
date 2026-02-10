@@ -60,6 +60,10 @@ const Signup: React.FC = () => {
       tokenStorage.setToken(token, "candidate");
       deleteQuery("candidate_token");
     }
+
+    if (jobIdQuery) {
+      setJobId(jobIdQuery);
+    }
     init();
   }, []);
 
@@ -221,7 +225,7 @@ const Signup: React.FC = () => {
     });
     if (code === 0) {
       message.success("Save successful");
-      redirectToDashboard();
+      redirectToDashboard("whatsapp");
     }
     setIsSubmittingWhatsapp(false);
   };
@@ -237,12 +241,17 @@ const Signup: React.FC = () => {
     );
   };
 
-  const redirectToDashboard = async () => {
+  const redirectToDashboard = async (mode?: "ai" | "whatsapp") => {
     const jobApply = jobId ? await fetchJobApply(jobId) : undefined;
     if (jobApply) {
-      navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, {
-        replace: true,
-      });
+      navigate(
+        `/candidate/jobs/applies/${jobApply.id}?open=1${
+          mode === "whatsapp" ? "&auto_check=1" : ""
+        }`,
+        {
+          replace: true,
+        }
+      );
     } else {
       navigate("/candidate/profile", { replace: true });
     }
@@ -334,7 +343,7 @@ const Signup: React.FC = () => {
                 onSubmitWhatsapp(whatsappContactNumber);
               }}
               onSkip={() => {
-                redirectToDashboard();
+                redirectToDashboard("ai");
               }}
               isSubmitting={isSubmittingWhatsapp}
               isWithJob={!!jobId}

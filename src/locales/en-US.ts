@@ -156,7 +156,7 @@ const CandidateResume = {
     progress_title: "Job Application Progress",
     chat_cta_label: "Chat",
     whatsapp_confirm_title: "Ready to chat with Viona?",
-    whatsapp_confirm_hint: `Viona is all set to message you at +86 17778397744. She's ready to chat on WhatsApp to help fast-track your application.`,
+    whatsapp_confirm_hint: `Viona is all set to message you at {{phone}}. She's ready to chat on WhatsApp to help fast-track your application.`,
     whatsapp_confirmed_hint: `Thanks! Our AI recruiter <b>Viona</b> has just reached out to you on WhatsApp (you’ll see the message from <b>Viona by Persevio</b>).<br /><br />When you have a moment, please reply to her there and complete the discovery conversation with her. This helps us prepare your application accurately before submitting it to the employer.`,
     human_mode_hint:
       "<b>Thank you.</b><br />A consultant will be calling you soon.",
