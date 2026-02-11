@@ -1,0 +1,208 @@
+@import "@/mixin.module.less";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  padding: 32px
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(235, 236, 238, 1);
+
+  .contactInfoName {
+    font-weight: bold;
+  }
+
+  .contactInfoItems {
+    display: flex;
+    gap: 4px 0;
+    flex-wrap: wrap;
+    margin-top: 8px;
+
+    .contactInfoItem {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+
+      :global {
+        .perse-icon {
+          font-size: 18px;
+        }
+      }
+
+      &:not(:last-child) {
+        &:after {
+          content: "";
+          height: 16px;
+          border-left: 1px solid rgba(235, 236, 238, 1);
+          margin-left: 12px;
+          margin-right: 12px;
+        }
+      }
+
+      &:not(:first-child) {
+        color: @primary-color;
+      }
+    }
+  }
+}
+
+.professionalSummary {
+  .italic();
+  background-color: rgba(247, 249, 255, 1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.section {
+  margin-top: 24px;
+
+  .sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+  }
+
+  .listContent {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+
+    .listItem {
+      position: relative;
+      padding-left: 30px;
+
+      &:not(.noBorder) {
+        &:not(:last-child)::before {
+          content: "";
+          position: absolute;
+          left: 5px;
+          top: 8px;
+          bottom: -40px;
+          width: 2px;
+          background: rgba(232, 240, 255, 1);
+        }
+      }
+
+    }
+
+    .listTitle {
+      display: flex;
+      gap: 20px;
+
+      &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(200, 220, 254, 1);
+      }
+    }
+
+    .listTitleCompany {
+      font-weight: bold;
+      .italic();
+    }
+
+    .listContentItem {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      margin-top: 6px;
+      color: #999
+    }
+
+    .listContentDescription {
+      font-size: 14px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed rgba(235, 236, 238, 1);
+    }
+
+    .listContentBullets {
+      margin-top: 16px;
+
+      .listContentBullet {
+        position: relative;
+        background-color: rgba(247, 249, 255, 1);
+        padding: 12px 16px 12px 24px;
+        border-radius: 12px;
+
+        &:not(:first-child) {
+          margin-top: 8px;
+        }
+
+        &::before {
+          content: "•";
+          position: absolute;
+          left: 12px;
+          font-size: 18px;
+          font-family: arial;
+        }
+      }
+    }
+  }
+}
+
+.educationBasicInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 16px;
+  font-weight: bold;
+
+  .educationInstitution,
+  .educationLocation,
+  .educationHonors {
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .educationInstitution {
+    background-color: rgba(227, 248, 230, 1);
+    color: rgba(38, 188, 93, 1);
+  }
+
+  .educationLocation {
+    background-color: rgba(227, 248, 246, 1);
+    color: rgba(38, 188, 173, 1);
+  }
+
+  .educationHonors {
+    background-color: rgba(255, 244, 231, 1);
+    color: rgba(249, 169, 48, 1);
+  }
+}
+
+.skillItem {
+  margin-left: 30px;
+  margin-top: 12px;
+  .italic();
+  padding: 12px 16px;
+  border-radius: 12px;
+
+  &.bgYellow {
+    background-color: rgba(254, 251, 236, 1);
+  }
+
+  .skillCategory {
+    font-weight: bold;
+  }
+}

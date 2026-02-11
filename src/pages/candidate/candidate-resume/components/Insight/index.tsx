@@ -83,8 +83,7 @@ const Insight = (props: IProps) => {
     areas_for_further_discussion,
   } = insight;
 
-  const { candidate_name, generated_date, last_conversation_date, version } =
-    metadata;
+  const { generated_date } = metadata;
 
   const {
     career_archetype,

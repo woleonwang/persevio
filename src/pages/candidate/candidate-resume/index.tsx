@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { Get } from "@/utils/request";
+import { useEffect, useRef } from "react";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
@@ -80,7 +79,7 @@ import { TProfile } from "./components/Profile";
 
 // type TTabKey = "resume" | "biography";
 const CandidateResume = () => {
-  const [resume, setResume] = useState<string>();
+  // const [resume, setResume] = useState<string>();
   // const [biography, setBiography] = useState<string>();
   // const [status, _] = useState<TTabKey>("resume");
   // const [isEditing, setIsEditing] = useState(false);
@@ -88,6 +87,8 @@ const CandidateResume = () => {
   // const [editResumeContent, setEditResumeContent] = useState("");
 
   const fetchResumeTimeoutRef = useRef<number>();
+
+  const { candidate, fetchCandidate } = useCandidate({ withDoc: true });
 
   useEffect(() => {
     return () => {
@@ -97,49 +98,29 @@ const CandidateResume = () => {
     };
   }, []);
 
-  const { t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`candidate_resume.${key}`);
-
-  const { candidate, fetchCandidate } = useCandidate({ withDoc: true });
-
-  const { setMenuCollapse } = globalStore;
-
   useEffect(() => {
-    if (candidate) {
-      if (candidate.interview_finished_at) {
-        fetchResume();
+    if (!candidate) {
+      return;
+    }
+
+    if (candidate.interview_finished_at) {
+      if (!!candidate?.profile_json) {
+        fetchResumeTimeoutRef.current = 0;
       } else {
-        setMenuCollapse(true);
+        fetchResumeTimeoutRef.current = window.setTimeout(() => {
+          fetchCandidate();
+        }, 5000);
       }
+    } else {
+      setMenuCollapse(true);
     }
   }, [candidate]);
 
-  const fetchResume = async () => {
-    const { code, data } = await Get("/api/candidate/docs/llm_resume");
-    if (code === 0 && data.content) {
-      setResume(data.content);
-      fetchResumeTimeoutRef.current = 0;
-    } else {
-      fetchResumeTimeoutRef.current = window.setTimeout(() => {
-        fetchResume();
-      }, 5000);
-    }
-  };
+  const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`candidate_resume.${key}`);
 
-  // const handleSave = async () => {
-  //   const { code } = await Post("/api/candidate/docs/llm_resume", {
-  //     content: editResumeContent,
-  //   });
-  //   if (code === 0) {
-  //     setIsEditing(false);
-  //     fetchResume();
-  //     message.success(originalT("submit_succeed"));
-  //   }
-  // };
+  const { setMenuCollapse } = globalStore;
 
-  // if (!resume) {
-  //   return <Empty style={{ marginTop: 200 }} description={t("pending")} />;
-  // }
   if (!candidate) {
     return <Spin style={{ marginTop: 200 }} />;
   }
@@ -152,7 +133,14 @@ const CandidateResume = () => {
       {candidate.interview_finished_at ? (
         <div style={{ display: "flex", gap: 24, overflow: "hidden" }}>
           {!!candidate.profile_json && (
-            <div style={{ flex: 1 }}>
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
               <Profile profile={profile} />
             </div>
           )}
