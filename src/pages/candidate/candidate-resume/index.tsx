@@ -3,12 +3,15 @@ import { Get } from "@/utils/request";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
-import { Empty, message, Spin } from "antd";
+import { message, Spin } from "antd";
 import CandidateChat from "@/components/CandidateChat";
-import MarkdownContainer from "@/components/MarkdownContainer";
 import useCandidate from "@/hooks/useCandidate";
 import globalStore from "@/store/global";
 import { observer } from "mobx-react-lite";
+import Insight, { TInsight } from "./components/Insight";
+import { parseJSON } from "@/utils";
+import Profile from "./components/Profile";
+import { TProfile } from "./components/Profile";
 
 // type TWorkExperience = {
 //   /** Legal employer name from verified sources */
@@ -141,18 +144,31 @@ const CandidateResume = () => {
     return <Spin style={{ marginTop: 200 }} />;
   }
 
+  const profile = parseJSON(candidate.profile_json) as TProfile;
+  const insight = parseJSON(candidate.insight_json) as TInsight;
+
   return (
     <div className={styles.container}>
       {candidate.interview_finished_at ? (
-        !!resume ? (
-          <div style={{ padding: "20px 40px", overflowY: "auto" }}>
-            <MarkdownContainer content={resume} />
-          </div>
-        ) : (
-          <div>
-            <Empty style={{ marginTop: 200 }} description={t("pending")} />
-          </div>
-        )
+        <div style={{ display: "flex", gap: 24, overflow: "hidden" }}>
+          {!!candidate.profile_json && (
+            <div style={{ flex: 1 }}>
+              <Profile profile={profile} />
+            </div>
+          )}
+          {!!insight.metadata && (
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
+              <Insight insight={insight} />
+            </div>
+          )}
+        </div>
       ) : (
         <CandidateChat
           chatType="profile"
@@ -163,228 +179,6 @@ const CandidateResume = () => {
           }}
         />
       )}
-      {/* {status === "resume" && !!resume && (
-        <div className={styles.resumeWrapper}>
-          <div className={styles.name}>{resume.name}</div>
-          <div className={styles.currentPosition}>
-            {resume.current_position}
-          </div>
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("basic_info")}</div>
-            <div className={styles.row}>
-              <div className={styles.item}>
-                <div className={styles.label}>{t("email")}</div>
-                <div>{resume.email || "N/A"}</div>
-              </div>
-              <div className={styles.item}>
-                <div className={styles.label}>{t("phone")}</div>
-                <div>{resume.phone}</div>
-              </div>
-            </div>
-
-            <div className={styles.row}>
-              <div className={styles.item}>
-                <div className={styles.label}>{t("base_in")}</div>
-                <div>{resume.current_based_in}</div>
-              </div>
-            </div>
-
-            <div className={styles.row}>
-              <div className={styles.item}>
-                <div className={styles.label}>{t("work_authorization")}</div>
-                <div>{resume.work_authorization || "N/A"}</div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("hightlight")}</div>
-            <div className={styles.highlightWrapper}>
-              {(resume.candidate_highlights ?? []).map((highlight, index) => (
-                <div key={highlight} className={styles.highlight}>
-                  {index + 1}. {highlight}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("core_competencies")}</div>
-            <div className={styles.competenciesWrapper}>
-              {Array.isArray(resume.core_competencies) &&
-                resume.core_competencies.map((competency) => (
-                  <div key={competency.name} className={styles.competency}>
-                    <div className={styles.subTitle}>{competency.name}</div>
-                    {competency.experiences.map((item, index) => {
-                      return (
-                        <div key={index} style={{ marginTop: 8 }}>{`${
-                          index + 1
-                        }. ${item}`}</div>
-                      );
-                    })}
-                  </div>
-                ))}
-            </div>
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("other_competencies")}</div>
-            <div className={styles.competenciesWrapper}>
-              {Array.isArray(resume.other_competencies) &&
-                resume.other_competencies.map((competency) => (
-                  <div key={competency.name} className={styles.competency}>
-                    <div className={styles.subTitle}>{competency.name}</div>
-                    {competency.experiences.map((item, index) => {
-                      return (
-                        <div key={index} style={{ marginTop: 8 }}>{`${
-                          index + 1
-                        }. ${item}`}</div>
-                      );
-                    })}
-                  </div>
-                ))}
-            </div>
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("work_experiences")}</div>
-            {resume.work_experience?.map((workExperience, i) => (
-              <div key={i} className={styles.workExperience}>
-                <div className={styles.subTitle}>
-                  {workExperience.company_name}
-                </div>
-                <div className={styles.companyInfo}>
-                  <div className={styles.position}>
-                    {workExperience.position}
-                  </div>
-                  <div>{workExperience.duration}</div>
-                  <div>{workExperience.location}</div>
-                </div>
-
-                {!!workExperience.employer_context && (
-                  <div className={styles.infoRow}>
-                    <div>{t("employer_context")}</div>
-                    <div>{workExperience.employer_context}</div>
-                  </div>
-                )}
-                {!!workExperience.core_role_objectives && (
-                  <div className={styles.infoRow}>
-                    <div>{t("core_role_objectives")}</div>
-                    <div>{workExperience.core_role_objectives}</div>
-                  </div>
-                )}
-                {!!workExperience.team_context && (
-                  <div className={styles.infoRow}>
-                    <div>{t("team_context")}</div>
-                    <div>{workExperience.team_context}</div>
-                  </div>
-                )}
-                {!!workExperience.projects_involved && (
-                  <div className={styles.infoRow}>
-                    <div>{t("projects_involved")}</div>
-                    <div>{workExperience.projects_involved}</div>
-                  </div>
-                )}
-                {!!workExperience.key_achievements && (
-                  <div className={styles.infoRow}>
-                    <div>{t("key_achivements")}</div>
-                    <div>{workExperience.key_achievements}</div>
-                  </div>
-                )}
-                {!!workExperience.summary && (
-                  <div className={styles.infoRow}>
-                    <div>{t("summary")}</div>
-                    <div>{workExperience.summary}</div>
-                  </div>
-                )}
-                {!!workExperience.reason_for_leaving_or_current_status && (
-                  <div className={styles.infoRow}>
-                    <div>{t("reason_for_leaving_or_current_status")}</div>
-                    <div>
-                      {workExperience.reason_for_leaving_or_current_status}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.panel}>
-            <div className={styles.panelTitle}>{t("education")}</div>
-            <div>
-              {resume.education?.map((education, i) => (
-                <div key={i} className={styles.educationExperience}>
-                  <div className={styles.school}>{education.school_name}</div>
-                  <div className={styles.degree}>
-                    {education.major} - {education.degree}
-                  </div>
-                  <div className={styles.hint}>
-                    <div>{education.duration}</div>
-                    {!!education.grade_or_honors && (
-                      <div className={styles.grade}>
-                        {education.grade_or_honors}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ marginTop: 10 }}>
-                    {(education.other_relevant_info ?? []).map(
-                      (info, index) => {
-                        return (
-                          <div key={info}>
-                            {index + 1}. {info}
-                          </div>
-                        );
-                      }
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {(() => {
-            const publications =
-              resume.additional_qualifications?.publications ?? [];
-            const certifications =
-              resume.additional_qualifications?.certifications ?? [];
-            const awardsAndHonors =
-              resume.additional_qualifications?.awards_and_honors ?? [];
-            if (
-              !publications.length &&
-              !certifications.length &&
-              !awardsAndHonors.length
-            ) {
-              return null;
-            }
-
-            return (
-              <div className={styles.panel}>
-                <div className={styles.panelTitle}>
-                  {t("additional_qualifications")}
-                </div>
-                {publications.length > 0 && (
-                  <div className={styles.infoRow}>
-                    <div>{t("publications")}</div>
-                    <div>{publications.join("、")}</div>
-                  </div>
-                )}
-                {certifications.length > 0 && (
-                  <div className={styles.infoRow}>
-                    <div>{t("certifications")}</div>
-                    <div>{certifications.join("、")}</div>
-                  </div>
-                )}
-                {awardsAndHonors.length > 0 && (
-                  <div className={styles.infoRow}>
-                    <div>{t("awards_and_honors")}</div>
-                    <div>{awardsAndHonors.join("、")}</div>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-        </div>
-      )} */}
     </div>
   );
 };

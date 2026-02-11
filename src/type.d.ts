@@ -222,6 +222,8 @@ interface ICandidateSettings {
   pre_register_info?: string;
   job_id?: number;
   interview_finished_at?: string;
+  insight_json?: string;
+  profile_json?: string;
 }
 
 interface IRecommendedJob {
