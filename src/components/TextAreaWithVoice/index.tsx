@@ -25,7 +25,7 @@ const TextAreaWithVoice: React.FC<IProps> = (props) => {
     onFinish: (result) => {
       onChange?.((value ?? "") + result);
     },
-    disableShortcuts: true,
+    // disableShortcuts: true,
   });
 
   return (
