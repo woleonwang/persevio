@@ -443,6 +443,8 @@ type TTalent = {
   };
   created_at: string;
   viewed_at: string;
+  evaluate_feedback: "accurate" | "slightly_inaccurate" | "inaccurate";
+  evaluate_feedback_reason: string;
 };
 
 type TInterview = {

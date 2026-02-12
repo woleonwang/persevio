@@ -1,0 +1,35 @@
+@import "@/mixin.module.less";
+
+.evaluateFeedback {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  :global(.perse-icon) {
+    font-size: 20px;
+    color: #999;
+    padding: 4px;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(246, 246, 246, 1);
+    }
+  }
+}
+
+
+
+.goodFitIcon,
+.goodFitIconOutline:hover {
+  color: #3682fe;
+}
+
+.slightlyOffIcon,
+.slightlyOffIconOutline:hover {
+  color: #F9A930;
+}
+
+.inaccurateIcon,
+.inaccurateIconOutline:hover {
+  color: rgba(224, 61, 61, 1);
+}

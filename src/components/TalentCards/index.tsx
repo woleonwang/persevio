@@ -32,6 +32,7 @@ import globalStore from "@/store/global";
 import { observer } from "mobx-react-lite";
 import useStaffs from "@/hooks/useStaffs";
 import Question from "@/assets/icons/question";
+import EvaluateFeedback from "../EvaluateFeedback";
 
 interface IProps {
   jobId?: number;
@@ -534,6 +535,9 @@ const TalentCards = (props: IProps) => {
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge result={evaluateResult?.result} />
                     </div>
+                    <EvaluateFeedback
+                      feedback={item.talent?.evaluate_feedback}
+                    />
                   </div>
                   <div className={styles.cardHeaderActions}>
                     {talent && talent.status !== "rejected" && (
