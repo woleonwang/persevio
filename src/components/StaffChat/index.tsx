@@ -58,6 +58,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     viewDoc,
     onNextTask,
     newVersion = false,
+    hidePredefinedButtons = false,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -1146,9 +1147,11 @@ const StaffChat: React.FC<IProps> = (props) => {
                 }}
               />
               <div className={styles.footer}>
-                <div className={classnames("flex-center")}>
-                  {genPredefinedButton()}
-                </div>
+                {!hidePredefinedButtons && (
+                  <div className={classnames("flex-center")}>
+                    {genPredefinedButton()}
+                  </div>
+                )}
                 <ChatInputArea
                   onSubmit={(value, options) => {
                     sendMessage(value, options);

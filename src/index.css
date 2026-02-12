@@ -165,8 +165,9 @@ img {
     border-radius: 16px;
   }
 
-  .ant-modal-body {
-    border-top: 1px dashed rgba(235, 236, 238, 1);
+  .ant-modal-header {
+    padding-bottom: 8px;
+    border-bottom: 1px dashed rgba(235, 236, 238, 1);
   }
 }
 

@@ -24,7 +24,6 @@ import Icon from "../Icon";
 import Stars from "@/assets/icons/stars";
 import Light from "@/assets/icons/light";
 import Ghost from "@/assets/icons/ghost";
-import { useNavigate } from "react-router";
 import Tabs from "../Tabs";
 import InterviewForm from "../NewTalentDetail/components/InterviewForm";
 import TextAreaWithVoice from "../TextAreaWithVoice";
@@ -34,6 +33,7 @@ import useStaffs from "@/hooks/useStaffs";
 import Question from "@/assets/icons/question";
 import EvaluateFeedback from "../EvaluateFeedback";
 import TalentEvaludateFeedbackModal from "../TalentEvaludateFeedbackModal";
+import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
 
 interface IProps {
   jobId?: number;
@@ -121,6 +121,14 @@ const TalentCards = (props: IProps) => {
     useState<TEvaluateResultLevel>();
   const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
     useState<boolean>(false);
+  const [
+    openEvaluateFeedbackConversation,
+    setOpenEvaluateFeedbackConversation,
+  ] = useState<boolean>(true);
+  const [
+    needConfirmEvaluateFeedbackConversation,
+    setNeedConfirmEvaluateFeedbackConversation,
+  ] = useState<boolean>(true);
 
   const { staffs } = useStaffs();
 
@@ -130,8 +138,6 @@ const TalentCards = (props: IProps) => {
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const candidateTab = getQuery("candidate_tab");
@@ -246,19 +252,19 @@ const TalentCards = (props: IProps) => {
     talentId: number,
     feedback: "accurate" | "slightly_inaccurate" | "inaccurate"
   ) => {
-    setTalents(
-      talents.map((talent) => {
-        if (talent.id === talentId) {
-          return {
-            ...talent,
-            evaluate_feedback: feedback,
-          };
-        }
-        return talent;
-      })
-    );
+    const newTalents = talents.map((talent) => {
+      if (talent.id === talentId) {
+        return {
+          ...talent,
+          evaluate_feedback: feedback,
+        };
+      }
+      return talent;
+    });
+    setTalents(newTalents);
 
     setOpenEvaluateFeedbackReason(true);
+    setSelectedTalent(newTalents.find((talent) => talent.id === talentId));
 
     const { code } = await Post(
       `/api/jobs/${jobId}/talents/${talentId}/evaluate_feedback`,
@@ -275,7 +281,7 @@ const TalentCards = (props: IProps) => {
   const updateTalentEvaluateFeedbackReason = async (reason: string) => {
     if (selectedTalent) {
       const { code } = await Post(
-        `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}`,
+        `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}/evaluate_feedback`,
         {
           evaluate_feedback_reason: reason,
         }
@@ -283,6 +289,9 @@ const TalentCards = (props: IProps) => {
 
       if (code === 0) {
         fetchTalents();
+        setOpenEvaluateFeedbackConversation(true);
+        setNeedConfirmEvaluateFeedbackConversation(true);
+        message.success("Update success");
       }
     }
   };
@@ -596,8 +605,9 @@ const TalentCards = (props: IProps) => {
                           );
                         }}
                         onOpen={() => {
-                          // setSelectedTalent(item.talent);
-                          // setIsEvaluateFeedbackModalOpen(true);
+                          setOpenEvaluateFeedbackConversation(true);
+                          setNeedConfirmEvaluateFeedbackConversation(false);
+                          setSelectedTalent(item.talent);
                         }}
                       />
                     )}
@@ -954,9 +964,18 @@ const TalentCards = (props: IProps) => {
       <TalentEvaludateFeedbackModal
         open={openEvaluateFeedbackReason}
         onOk={(value) => {
+          updateTalentEvaluateFeedbackReason(value);
           setOpenEvaluateFeedbackReason(false);
         }}
         onCancel={() => setOpenEvaluateFeedbackReason(false)}
+      />
+
+      <EvaluateFeedbackConversation
+        open={openEvaluateFeedbackConversation}
+        jobId={selectedTalent?.job_id ?? 0}
+        talentId={selectedTalent?.id ?? 0}
+        needConfirm={needConfirmEvaluateFeedbackConversation}
+        onCancel={() => setOpenEvaluateFeedbackConversation(false)}
       />
     </div>
   );

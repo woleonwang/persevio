@@ -25,6 +25,7 @@ export interface IProps {
   hideSidebar?: boolean;
   viewDoc?: (docType: string) => void;
   newVersion?: boolean;
+  hidePredefinedButtons?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

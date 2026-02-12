@@ -11,25 +11,43 @@ import SlightlyOff from "@/assets/icons/slightly-off";
 import styles from "./style.module.less";
 
 interface IProps {
-  feedback?: "accurate" | "slightly_inaccurate" | "inaccurate";
+  value?: "accurate" | "slightly_inaccurate" | "inaccurate";
+  onChange?: (value: "accurate" | "slightly_inaccurate" | "inaccurate") => void;
+  onOpen?: () => void;
 }
 const EvaluateFeedback = (props: IProps) => {
-  const { feedback } = props;
+  const { value, onChange, onOpen } = props;
 
-  if (!feedback) {
+  const _onChange = (
+    e: React.MouseEvent<HTMLSpanElement>,
+    value: "accurate" | "slightly_inaccurate" | "inaccurate"
+  ) => {
+    e.stopPropagation();
+    onChange?.(value);
+  };
+
+  const _onOpen = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.stopPropagation();
+    onOpen?.();
+  };
+
+  if (!value) {
     return (
       <div className={styles.evaluateFeedback}>
         <Icon
           icon={<GoodFitOutlined />}
           className={classnames(styles.goodFitIconOutline, styles.icon)}
+          onClick={(e) => _onChange(e, "accurate")}
         />
         <Icon
           icon={<SlightlyOffOutline />}
           className={classnames(styles.slightlyOffIconOutline, styles.icon)}
+          onClick={(e) => _onChange(e, "slightly_inaccurate")}
         />
         <Icon
           icon={<InaccurateOutline />}
           className={classnames(styles.inaccurateIconOutline, styles.icon)}
+          onClick={(e) => _onChange(e, "inaccurate")}
         />
       </div>
     );
@@ -37,19 +55,25 @@ const EvaluateFeedback = (props: IProps) => {
 
   return (
     <div className={styles.evaluateFeedback}>
-      {feedback === "accurate" && (
-        <Icon icon={<GoodFit />} className={classnames(styles.goodFitIcon)} />
+      {value === "accurate" && (
+        <Icon
+          icon={<GoodFit />}
+          className={classnames(styles.goodFitIcon)}
+          onClick={(e) => _onOpen(e)}
+        />
       )}
-      {feedback === "slightly_inaccurate" && (
+      {value === "slightly_inaccurate" && (
         <Icon
           icon={<SlightlyOff />}
           className={classnames(styles.slightlyOffIcon)}
+          onClick={(e) => _onOpen(e)}
         />
       )}
-      {feedback === "inaccurate" && (
+      {value === "inaccurate" && (
         <Icon
           icon={<Inaccurate />}
           className={classnames(styles.inaccurateIcon)}
+          onClick={(e) => _onOpen(e)}
         />
       )}
     </div>
