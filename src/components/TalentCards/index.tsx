@@ -33,6 +33,7 @@ import { observer } from "mobx-react-lite";
 import useStaffs from "@/hooks/useStaffs";
 import Question from "@/assets/icons/question";
 import EvaluateFeedback from "../EvaluateFeedback";
+import TalentEvaludateFeedbackModal from "../TalentEvaludateFeedbackModal";
 
 interface IProps {
   jobId?: number;
@@ -118,6 +119,8 @@ const TalentCards = (props: IProps) => {
   const [selectedJob, setSelectedJob] = useState<number>();
   const [evaluateResultLevel, setEvaluateResultLevel] =
     useState<TEvaluateResultLevel>();
+  const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
+    useState<boolean>(false);
 
   const { staffs } = useStaffs();
 
@@ -234,6 +237,52 @@ const TalentCards = (props: IProps) => {
         fetchTalents();
         setIsRejectModalOpen(false);
         message.success("Update talent status success");
+      }
+    }
+  };
+
+  const updateTalentEvaluateFeedback = async (
+    jobId: number,
+    talentId: number,
+    feedback: "accurate" | "slightly_inaccurate" | "inaccurate"
+  ) => {
+    setTalents(
+      talents.map((talent) => {
+        if (talent.id === talentId) {
+          return {
+            ...talent,
+            evaluate_feedback: feedback,
+          };
+        }
+        return talent;
+      })
+    );
+
+    setOpenEvaluateFeedbackReason(true);
+
+    const { code } = await Post(
+      `/api/jobs/${jobId}/talents/${talentId}/evaluate_feedback`,
+      {
+        evaluate_feedback: feedback,
+      }
+    );
+
+    if (code === 0) {
+      fetchTalents();
+    }
+  };
+
+  const updateTalentEvaluateFeedbackReason = async (reason: string) => {
+    if (selectedTalent) {
+      const { code } = await Post(
+        `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}`,
+        {
+          evaluate_feedback_reason: reason,
+        }
+      );
+
+      if (code === 0) {
+        fetchTalents();
       }
     }
   };
@@ -520,10 +569,11 @@ const TalentCards = (props: IProps) => {
                 key={item.talent?.id || item.linkedinProfile?.id}
                 className={styles.card}
                 onClick={() => {
-                  navigate(
+                  window.open(
                     item.talent
                       ? `/app/jobs/${item.talent.job_id}/standard-board/talents/${item.talent.id}`
-                      : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`
+                      : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`,
+                    "_blank"
                   );
                 }}
               >
@@ -535,9 +585,22 @@ const TalentCards = (props: IProps) => {
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge result={evaluateResult?.result} />
                     </div>
-                    <EvaluateFeedback
-                      feedback={item.talent?.evaluate_feedback}
-                    />
+                    {!!talent && (
+                      <EvaluateFeedback
+                        value={item.talent?.evaluate_feedback}
+                        onChange={(value) => {
+                          updateTalentEvaluateFeedback(
+                            talent.job_id,
+                            talent.id,
+                            value
+                          );
+                        }}
+                        onOpen={() => {
+                          // setSelectedTalent(item.talent);
+                          // setIsEvaluateFeedbackModalOpen(true);
+                        }}
+                      />
+                    )}
                   </div>
                   <div className={styles.cardHeaderActions}>
                     {talent && talent.status !== "rejected" && (
@@ -887,6 +950,14 @@ const TalentCards = (props: IProps) => {
           />
         )}
       </Modal>
+
+      <TalentEvaludateFeedbackModal
+        open={openEvaluateFeedbackReason}
+        onOk={(value) => {
+          setOpenEvaluateFeedbackReason(false);
+        }}
+        onCancel={() => setOpenEvaluateFeedbackReason(false)}
+      />
     </div>
   );
 };

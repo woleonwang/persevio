@@ -21,6 +21,7 @@ import InterviewForm from "./components/InterviewForm";
 import Report from "./components/Report";
 import TextAreaWithVoice from "../TextAreaWithVoice";
 import Resume from "./components/Resume";
+import { TTalentResume } from "./type";
 
 interface IProps {
   isPreview?: boolean;
@@ -126,7 +127,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       </Button>
     );
 
-  const resumeDetail = talent.resume_detail_json
+  const resumeDetail: TTalentResume | null = talent.resume_detail_json
     ? parseJSON(talent.resume_detail_json)
     : null;
 
@@ -143,7 +144,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${job.id}/standard-board?tab=talent`
+                `/app/jobs/${job.id}/standard-board?tab=talents`
               );
             }}
           />
@@ -186,8 +187,8 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             />
           </div>
           <div className={styles.markdownContainer}>
-            {resumeDetail ? (
-              <Resume resume={resumeDetail} />
+            {!!resumeDetail?.contact_information ? (
+              <Resume resume={resumeDetail as TTalentResume} />
             ) : (
               <MarkdownContainer content={talent.parsed_content || ""} />
             )}
@@ -270,7 +271,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         {tabKey === "resume" && (
           <div className={styles.resumeContainer}>
             <div className={styles.markdownContainer}>
-              {resumeDetail ? (
+              {!!resumeDetail?.contact_information ? (
                 <Resume resume={resumeDetail} />
               ) : (
                 <MarkdownContainer content={talent.parsed_content || ""} />

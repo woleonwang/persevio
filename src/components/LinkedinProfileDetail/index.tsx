@@ -58,7 +58,7 @@ const LinkedinProfileDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${jobId}/standard-board?tab=talent`
+                `/app/jobs/${jobId}/standard-board?tab=talents`
               );
             }}
           />
