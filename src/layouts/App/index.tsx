@@ -91,7 +91,11 @@ const AppLayout = () => {
       path: "/app/jobs",
       img: <Jobs />,
       children: jobs
-        .filter((job) => !searchKeyword || job.name.includes(searchKeyword))
+        .filter(
+          (job) =>
+            !searchKeyword ||
+            job.name.toLowerCase().includes(searchKeyword.toLowerCase())
+        )
         .map((job) => {
           const path =
             mode === "standard"

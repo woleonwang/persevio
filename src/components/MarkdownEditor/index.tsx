@@ -32,6 +32,7 @@ const MarkdownEditor: React.FC<IProps> = (props) => {
       value
         .replaceAll("<br>", "<br/>")
         .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())
+        .replace(/(?<!\\)</g, "\\<")
     );
   }, [value]);
 

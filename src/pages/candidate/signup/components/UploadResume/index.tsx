@@ -64,6 +64,7 @@ const UploadResume = (props: IProps) => {
               showUploadList={false}
               accept=".doc,.docx,.pdf"
               multiple={false}
+              disabled={isSubmitting}
             >
               <div className={styles.uploadIconContainer}>
                 {resumeFileName ? (
@@ -100,6 +101,7 @@ const UploadResume = (props: IProps) => {
             onClick={() => {
               onBack();
             }}
+            disabled={isSubmitting}
           >
             Previous Step
           </Button>

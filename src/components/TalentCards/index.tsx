@@ -342,7 +342,10 @@ const TalentCards = (props: IProps) => {
         return activeTab === "all" || getStatus(item) === activeTab;
       })
       .filter((item) => {
-        return !searchName || getName(item).includes(searchName);
+        return (
+          !searchName ||
+          getName(item).toLowerCase().includes(searchName.toLowerCase())
+        );
       })
       .filter((item) => {
         return !selectedJob || getJobId(item) === selectedJob;
