@@ -443,7 +443,7 @@ type TTalent = {
   };
   created_at: string;
   viewed_at: string;
-  evaluate_feedback: "accurate" | "slightly_inaccurate" | "inaccurate";
+  evaluate_feedback: TEvaluateFeedback;
   evaluate_feedback_reason: string;
 };
 
@@ -758,3 +758,5 @@ type TEvaluateResultLevel =
   | "good_fit"
   | "recommend_with_reservations"
   | "not_a_fit";
+
+type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";

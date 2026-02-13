@@ -11,8 +11,8 @@ import SlightlyOff from "@/assets/icons/slightly-off";
 import styles from "./style.module.less";
 
 interface IProps {
-  value?: "accurate" | "slightly_inaccurate" | "inaccurate";
-  onChange?: (value: "accurate" | "slightly_inaccurate" | "inaccurate") => void;
+  value?: TEvaluateFeedback;
+  onChange?: (value: TEvaluateFeedback) => void;
   onOpen?: () => void;
 }
 const EvaluateFeedback = (props: IProps) => {
@@ -20,7 +20,7 @@ const EvaluateFeedback = (props: IProps) => {
 
   const _onChange = (
     e: React.MouseEvent<HTMLSpanElement>,
-    value: "accurate" | "slightly_inaccurate" | "inaccurate"
+    value: TEvaluateFeedback
   ) => {
     e.stopPropagation();
     onChange?.(value);

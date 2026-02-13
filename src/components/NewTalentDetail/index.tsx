@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, message, Spin, Tag, Drawer, Modal, Form } from "antd";
+import { Button, message, Spin, Tag, Drawer, Modal } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
@@ -19,9 +19,11 @@ import Tabs from "../Tabs";
 import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
 import Report from "./components/Report";
-import TextAreaWithVoice from "../TextAreaWithVoice";
 import Resume from "./components/Resume";
 import { TTalentResume } from "./type";
+import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
+import TalentEvaluateFeedbackModal from "../TalentEvaluateFeedbackModal";
+import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
 
 interface IProps {
   isPreview?: boolean;
@@ -33,7 +35,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
 
   const [tabKey, setTabKey] = useState<"resume" | "report">("resume");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
-  const [form] = Form.useForm<{ reason: string }>();
   const t = (key: string) => originalT(`talent_details.${key}`);
   const reportContainerRef = useRef<HTMLDivElement>(null);
   const { isPreview } = props;
@@ -44,6 +45,17 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     TMessageFromApi[]
   >([]);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
+  const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
+    useState<boolean>(false);
+  const [
+    openEvaluateFeedbackConversation,
+    setOpenEvaluateFeedbackConversation,
+  ] = useState<boolean>(false);
+  const [
+    needConfirmEvaluateFeedbackConversation,
+    setNeedConfirmEvaluateFeedbackConversation,
+  ] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -80,23 +92,47 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       `${talent.name}_resume`
     );
   };
-  const updateTalentStatus = async (
-    action: "accept" | "reject",
-    feedback?: string
-  ) => {
-    if (action === "reject" || confirm(t("confirm_accept"))) {
+  const updateTalentStatus = async (feedback?: string) => {
+    const { code } = await Post(`/api/jobs/${job?.id}/talents/${talent?.id}`, {
+      status: "rejected",
+      feedback,
+    });
+
+    if (code === 0) {
+      fetchTalent();
+      setIsRejectModalOpen(false);
+      message.success(t("update_success"));
+    }
+  };
+
+  const updateTalentEvaluateFeedback = async (feedback: TEvaluateFeedback) => {
+    setOpenEvaluateFeedbackReason(true);
+
+    const { code } = await Post(
+      `/api/jobs/${job?.id}/talents/${talent?.id}/evaluate_feedback`,
+      {
+        evaluate_feedback: feedback,
+      }
+    );
+
+    if (code === 0) {
+      fetchTalent();
+    }
+  };
+  const updateTalentEvaluateFeedbackReason = async (reason: string) => {
+    if (talent) {
       const { code } = await Post(
-        `/api/jobs/${job?.id}/talents/${talent?.id}`,
+        `/api/jobs/${talent?.job_id}/talents/${talent?.id}/evaluate_feedback`,
         {
-          status: action === "accept" ? "accepted" : "rejected",
-          feedback,
+          evaluate_feedback_reason: reason,
         }
       );
 
       if (code === 0) {
         fetchTalent();
-        setIsRejectModalOpen(false);
-        message.success(t("update_success"));
+        setOpenEvaluateFeedbackConversation(true);
+        setNeedConfirmEvaluateFeedbackConversation(true);
+        message.success("Update success");
       }
     }
   };
@@ -159,15 +195,20 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             {talent?.status === "rejected" ? (
               <Tag color="red">{t("status_rejected")}</Tag>
             ) : (
-              <>
+              <div style={{ display: "flex", gap: 12, flex: "auto" }}>
                 {interviewButtonArea}
                 {interviews?.length === 0 && (
                   <Button
                     danger
                     type="primary"
                     onClick={() => {
-                      form.resetFields();
-                      setIsRejectModalOpen(true);
+                      if (!talent) return;
+
+                      if (!!talent.evaluate_feedback) {
+                        updateTalentStatus();
+                      } else {
+                        setIsRejectModalOpen(true);
+                      }
                     }}
                     style={{ flex: "auto" }}
                     size="large"
@@ -175,7 +216,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                     {t("action_reject")}
                   </Button>
                 )}
-              </>
+              </div>
             )}
             <Button
               icon={<Icon icon={<DownloadIcon />} style={{ fontSize: 18 }} />}
@@ -183,7 +224,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               color="primary"
               onClick={downloadTalentResume}
               size="large"
-              style={{ width: 40, height: 40, flex: "none" }}
             />
           </div>
           <div className={styles.markdownContainer}>
@@ -241,6 +281,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   candidateName={talent.name}
                   jobName={job.name}
                   report={report}
+                  evaluateFeedback={talent.evaluate_feedback}
+                  onChangeEvaluateFeedback={(value) => {
+                    updateTalentEvaluateFeedback(value);
+                  }}
+                  onOpenEvaluateFeedback={() => {
+                    setNeedConfirmEvaluateFeedbackConversation(false);
+                    setOpenEvaluateFeedbackConversation(true);
+                  }}
                 />
               </div>
             ) : (
@@ -301,6 +349,14 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                     candidateName={talent.name}
                     jobName={job.name}
                     report={report}
+                    evaluateFeedback={talent.evaluate_feedback}
+                    onChangeEvaluateFeedback={(value) => {
+                      updateTalentEvaluateFeedback(value);
+                    }}
+                    onOpenEvaluateFeedback={() => {
+                      setNeedConfirmEvaluateFeedbackConversation(false);
+                      setOpenEvaluateFeedbackConversation(true);
+                    }}
                   />
                 </div>
               ) : (
@@ -326,8 +382,11 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                 type="primary"
                 color="danger"
                 onClick={() => {
-                  form.resetFields();
-                  setIsRejectModalOpen(true);
+                  if (!!talent?.evaluate_feedback) {
+                    updateTalentStatus();
+                  } else {
+                    setIsRejectModalOpen(true);
+                  }
                 }}
                 style={{ flex: "auto" }}
                 size="large"
@@ -385,28 +444,39 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         />
       </Modal>
 
-      <Modal
-        open={isRejectModalOpen}
-        onCancel={() => setIsRejectModalOpen(false)}
-        onOk={() => {
-          form.validateFields().then((values) => {
-            updateTalentStatus("reject", values.reason);
-          });
+      {!!talent && (
+        <TalentEvaluateFeedbackWithReasonModal
+          jobId={talent?.job_id ?? 0}
+          talentId={talent?.id ?? 0}
+          open={isRejectModalOpen}
+          onOk={() => {
+            setIsRejectModalOpen(false);
+            setNeedConfirmEvaluateFeedbackConversation(true);
+            setOpenEvaluateFeedbackConversation(true);
+            fetchTalent();
+          }}
+          onCancel={() => setIsRejectModalOpen(false)}
+        />
+      )}
+
+      <TalentEvaluateFeedbackModal
+        open={openEvaluateFeedbackReason}
+        onOk={(value) => {
+          updateTalentEvaluateFeedbackReason(value);
+          setOpenEvaluateFeedbackReason(false);
         }}
-        title={t("reject_candidate_title")}
-        width={600}
-        centered
-      >
-        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item
-            name="reason"
-            label={t("reject_reason_label")}
-            rules={[{ required: true, message: t("reject_reason_required") }]}
-          >
-            <TextAreaWithVoice />
-          </Form.Item>
-        </Form>
-      </Modal>
+        onCancel={() => setOpenEvaluateFeedbackReason(false)}
+      />
+
+      {!!talent && (
+        <EvaluateFeedbackConversation
+          open={openEvaluateFeedbackConversation}
+          jobId={talent?.job_id ?? 0}
+          talentId={talent?.id ?? 0}
+          needConfirm={needConfirmEvaluateFeedbackConversation}
+          onCancel={() => setOpenEvaluateFeedbackConversation(false)}
+        />
+      )}
     </div>
   );
 };

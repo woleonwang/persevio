@@ -1168,37 +1168,39 @@ const StaffChat: React.FC<IProps> = (props) => {
             </>
           )}
 
-          <FloatButton.Group>
-            <FloatButton onClick={() => openSurvey()} type="primary" />
-            {isAdmin && (
-              <>
-                <FloatButton
-                  onClick={() => {
-                    setIsStrategyDrawerOpen(true);
-                  }}
-                  type="primary"
-                  description={t("view_strategy")}
-                />
+          {false && (
+            <FloatButton.Group>
+              <FloatButton onClick={() => openSurvey()} type="primary" />
+              {isAdmin && (
+                <>
+                  <FloatButton
+                    onClick={() => {
+                      setIsStrategyDrawerOpen(true);
+                    }}
+                    type="primary"
+                    description={t("view_strategy")}
+                  />
 
-                <FloatButton
-                  onClick={async () => {
-                    if (confirm(t("confirm_reset_state"))) {
-                      const { code } = await Post(`/api/jobs/${jobId}`, {
-                        is_jd_exsits: "",
-                      });
-                      if (code === 0) {
-                        alert(t("reset_success"));
-                      } else {
-                        message.error(t("reset_failed"));
+                  <FloatButton
+                    onClick={async () => {
+                      if (confirm(t("confirm_reset_state"))) {
+                        const { code } = await Post(`/api/jobs/${jobId}`, {
+                          is_jd_exsits: "",
+                        });
+                        if (code === 0) {
+                          alert(t("reset_success"));
+                        } else {
+                          message.error(t("reset_failed"));
+                        }
                       }
-                    }
-                  }}
-                  type="primary"
-                  description={t("reset_state")}
-                />
-              </>
-            )}
-          </FloatButton.Group>
+                    }}
+                    type="primary"
+                    description={t("reset_state")}
+                  />
+                </>
+              )}
+            </FloatButton.Group>
+          )}
 
           {mode === "utils" && (
             <JobRequirementFormDrawer

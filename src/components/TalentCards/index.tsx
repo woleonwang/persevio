@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Empty,
-  Form,
   Input,
   message,
   Modal,
@@ -26,7 +25,6 @@ import Light from "@/assets/icons/light";
 import Ghost from "@/assets/icons/ghost";
 import Tabs from "../Tabs";
 import InterviewForm from "../NewTalentDetail/components/InterviewForm";
-import TextAreaWithVoice from "../TextAreaWithVoice";
 import globalStore from "@/store/global";
 import { observer } from "mobx-react-lite";
 import useStaffs from "@/hooks/useStaffs";
@@ -134,8 +132,6 @@ const TalentCards = (props: IProps) => {
   const { staffs } = useStaffs();
 
   const { jobs } = globalStore;
-
-  const [form] = Form.useForm<{ reason: string }>();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
@@ -249,7 +245,7 @@ const TalentCards = (props: IProps) => {
   const updateTalentEvaluateFeedback = async (
     jobId: number,
     talentId: number,
-    feedback: "accurate" | "slightly_inaccurate" | "inaccurate"
+    feedback: TEvaluateFeedback
   ) => {
     const newTalents = talents.map((talent) => {
       if (talent.id === talentId) {
@@ -607,9 +603,9 @@ const TalentCards = (props: IProps) => {
                           );
                         }}
                         onOpen={() => {
-                          setOpenEvaluateFeedbackConversation(true);
-                          setNeedConfirmEvaluateFeedbackConversation(false);
                           setSelectedTalent(item.talent);
+                          setNeedConfirmEvaluateFeedbackConversation(false);
+                          setOpenEvaluateFeedbackConversation(true);
                         }}
                       />
                     )}
@@ -631,7 +627,6 @@ const TalentCards = (props: IProps) => {
                               } else {
                                 setSelectedTalent(item.talent);
                                 setIsRejectModalOpen(true);
-                                form.resetFields();
                               }
                             }}
                           >
@@ -918,33 +913,6 @@ const TalentCards = (props: IProps) => {
           }}
         />
       )}
-
-      <Modal
-        open={isRejectModalOpen}
-        onCancel={() => setIsRejectModalOpen(false)}
-        onOk={() => {
-          form.validateFields().then((values) => {
-            if (selectedTalent) {
-              updateTalentStatus(selectedTalent, values.reason);
-            }
-          });
-        }}
-        title="Reject Candidate"
-        width={600}
-        centered
-      >
-        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item
-            name="reason"
-            label="Reason for rejection"
-            rules={[
-              { required: true, message: "Reason for rejection is required" },
-            ]}
-          >
-            <TextAreaWithVoice />
-          </Form.Item>
-        </Form>
-      </Modal>
 
       <TalentEvaluateFeedbackWithReasonModal
         jobId={selectedTalent?.job_id ?? 0}

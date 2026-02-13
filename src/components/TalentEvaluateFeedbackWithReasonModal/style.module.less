@@ -20,24 +20,48 @@
   flex: 1;
   height: 52px;
   font-size: 14px;
+  outline: none !important;
+
+
+
+  &:hover:not(.active) {
+    background-color: transparent;
+
+    &.accurate {
+      color: @primary-color !important;
+    }
+
+    &.slightly_inaccurate {
+      border-color: rgba(249, 169, 48, 1) !important;
+      color: rgba(249, 169, 48, 1) !important;
+    }
+
+    &.inaccurate {
+      border-color: rgba(224, 61, 61, 1) !important;
+      color: rgba(224, 61, 61, 1) !important;
+    }
+  }
+
+  &.active {
+    color: white !important;
+    border: none !important;
+
+    &.accurate {
+      background-color: @primary-color !important;
+    }
+
+    &.slightly_inaccurate {
+      background-color: rgba(249, 169, 48, 1) !important;
+    }
+
+    &.inaccurate {
+      background-color: rgba(224, 61, 61, 1) !important;
+    }
+  }
 
   .icon {
     font-size: 20px;
 
-    &.active {
-      &.good-fit {
-        color: @primary-color;
-      }
-
-      &.slightly-off {
-        color: @primary-color;
-      }
-
-      &.inaccurate {
-        color: @primary-color;
-      }
-
-    }
   }
 }
 

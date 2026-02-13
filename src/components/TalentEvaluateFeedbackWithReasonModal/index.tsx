@@ -11,6 +11,9 @@ import SlightlyOffOutline from "@/assets/icons/slightly-off-outline";
 import InaccurateOutline from "@/assets/icons/inaccurate-outline";
 
 import { Post } from "@/utils/request";
+import GoodFit from "@/assets/icons/good-fit";
+import SlightlyOff from "@/assets/icons/slightly-off";
+import Inaccurate from "@/assets/icons/inaccurate";
 
 interface IProps {
   jobId: number;
@@ -20,7 +23,6 @@ interface IProps {
   onOk: () => void;
 }
 
-type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
 const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
   const { jobId, talentId, open, onCancel, onOk } = props;
 
@@ -104,26 +106,35 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
             };
             const icon =
               item === "accurate" ? (
-                <GoodFitOutlined />
+                isActive ? (
+                  <GoodFit />
+                ) : (
+                  <GoodFitOutlined />
+                )
               ) : item === "slightly_inaccurate" ? (
-                <SlightlyOffOutline />
+                isActive ? (
+                  <SlightlyOff />
+                ) : (
+                  <SlightlyOffOutline />
+                )
+              ) : isActive ? (
+                <Inaccurate />
               ) : (
                 <InaccurateOutline />
               );
             return (
               <Button
                 key={item}
-                className={styles.evaluateFeedbackItem}
+                className={classnames(
+                  styles.evaluateFeedbackItem,
+                  styles[item],
+                  { [styles.active]: isActive }
+                )}
                 onClick={() => setEvaluateFeedback(item)}
-                variant="outlined"
+                variant={isActive ? "filled" : "outlined"}
                 color={isActive ? "primary" : "default"}
               >
-                <Icon
-                  icon={icon}
-                  className={classnames(styles[item], styles.icon, {
-                    [styles.active]: isActive,
-                  })}
-                />
+                <Icon icon={icon} className={styles.icon} />
                 <span>{textMapping[item as keyof typeof textMapping]}</span>
               </Button>
             );

@@ -7,6 +7,7 @@ import TwoStar from "@/assets/icons/two-star";
 import Stars from "@/assets/icons/stars";
 import OneStar from "@/assets/icons/one-star";
 import { useTranslation } from "react-i18next";
+import EvaluateFeedback from "@/components/EvaluateFeedback";
 
 type TReport = {
   result:
@@ -44,103 +45,20 @@ interface IProps {
   candidateName: string;
   jobName: string;
   report: TReport;
+  evaluateFeedback: TEvaluateFeedback;
+  onChangeEvaluateFeedback: (value: TEvaluateFeedback) => void;
+  onOpenEvaluateFeedback: () => void;
 }
 
-// const mockReport: TReport = {
-//   result: "ideal_candidate",
-//   summary:
-//     "The candidate is a good fit for the job. They have the skills and experience required for the job.",
-//   created_at: "2026-01-01",
-//   requirements: [
-//     {
-//       level: "p0",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "meets",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p0",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "partially_meets",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p1",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "does_not_meet",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p1",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "partially_meets",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p2",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "meets",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p2",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "does_not_meet",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//     {
-//       level: "p2",
-//       description:
-//         "The candidate has the skills and experience required for the job.",
-//       assessment_type: "meets",
-//       reasoning:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//   ],
-//   snapshots: [
-//     {
-//       title: "Profile Snapshot",
-//       content:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//   ],
-//   key_informations: [
-//     {
-//       title: "Key Information",
-//       details:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//   ],
-//   potential_gaps: [
-//     {
-//       title: "Potential Gaps",
-//       details:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//   ],
-//   areas_to_probe_futher: [
-//     {
-//       title: "Areas to Probe Further",
-//       details:
-//         "The candidate has the skills and experience required for the job.",
-//     },
-//   ],
-// };
-
 const Report: React.FC<IProps> = (props) => {
-  const { report, candidateName, jobName } = props;
+  const {
+    report,
+    candidateName,
+    jobName,
+    evaluateFeedback,
+    onChangeEvaluateFeedback,
+    onOpenEvaluateFeedback,
+  } = props;
 
   const { t: originalT } = useTranslation();
 
@@ -188,10 +106,30 @@ const Report: React.FC<IProps> = (props) => {
           </div>
         </div>
       </div>
+
+      <div className={styles.block}>
+        <div
+          className={styles.blockTitle}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          Here's my feedback
+          <EvaluateFeedback
+            value={evaluateFeedback}
+            onChange={onChangeEvaluateFeedback}
+            onOpen={onOpenEvaluateFeedback}
+          />
+        </div>
+      </div>
+
       <div className={styles.block}>
         <div className={styles.blockTitle}>Summary</div>
         <div className={styles.summary}>{report.summary}</div>
       </div>
+
       <div className={styles.block}>
         <div className={styles.blockTitle}>Requirements Summary</div>
         <div className={styles.requirementsSummary}>
