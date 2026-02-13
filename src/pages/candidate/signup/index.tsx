@@ -51,8 +51,14 @@ const Signup: React.FC = () => {
   useEffect(() => {
     const error = getQuery("error");
     const code = getQuery("code");
-    if (error === "google_login_failed" && code === "10003") {
-      message.error("The email is already exists");
+    if (error === "google_login_failed") {
+      if (code === "10000") {
+        message.error("Failed to get profile");
+      } else if (code === "10001" || code === "10002") {
+        message.error("Token expired");
+      } else if (code === "10003") {
+        message.error("The email is already exists");
+      }
     }
 
     const token = getQuery("candidate_token");

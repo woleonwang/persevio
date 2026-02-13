@@ -22,8 +22,12 @@ const CandidateSignIn: React.FC = () => {
   useEffect(() => {
     const error = getQuery("error");
     const code = getQuery("code");
-    if (error === "google_login_failed" && code === "10001") {
-      message.error(t("email_not_exists"));
+    if (error === "google_login_failed") {
+      if (code === "10000") {
+        message.error("Failed to get profile");
+      } else if (code === "10001") {
+        message.error(t("email_not_exists"));
+      }
     }
 
     const tokenFromUrl = getQuery("token");
