@@ -38,25 +38,23 @@ const TextAreaWithVoice: React.FC<IProps> = (props) => {
         className={styles.textArea}
       />
       <div className={styles.voiceContainer}>
-        {(true || isRecording || isTranscribing) && (
-          <div
-            className={classnames(styles.volumeHistoryContainer, {
-              [styles.active]: isRecording,
-            })}
-          >
-            {volumeHistory.map((volume, index) => {
-              return (
-                <div
-                  key={index}
-                  className={styles.volumeHistoryItem}
-                  style={{
-                    height: 4 + Math.min(30, volume * 75),
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+        <div
+          className={classnames(styles.volumeHistoryContainer, {
+            [styles.active]: isRecording,
+          })}
+        >
+          {volumeHistory.map((volume, index) => {
+            return (
+              <div
+                key={index}
+                className={styles.volumeHistoryItem}
+                style={{
+                  height: 4 + Math.min(30, volume * 75),
+                }}
+              />
+            );
+          })}
+        </div>
         {isRecording ? (
           <Button
             className={styles.voiceButton}

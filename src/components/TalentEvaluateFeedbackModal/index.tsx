@@ -8,7 +8,7 @@ interface IProps {
   onCancel: () => void;
 }
 
-const TalentEvaludateFeedbackModal = (props: IProps) => {
+const TalentEvaluateFeedbackModal = (props: IProps) => {
   const { open, onOk, onCancel } = props;
 
   const [value, setValue] = useState<string>("");
@@ -44,4 +44,4 @@ const TalentEvaludateFeedbackModal = (props: IProps) => {
   );
 };
 
-export default TalentEvaludateFeedbackModal;
+export default TalentEvaluateFeedbackModal;

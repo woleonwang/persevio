@@ -1,0 +1,48 @@
+@import "@/mixin.module.less";
+
+.evaluateFeedbackTitle {
+  font-size: 14px;
+
+  span {
+    color: rgba(224, 61, 61, 1);
+    margin-right: 4px;
+  }
+}
+
+.evaluateFeedback {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.evaluateFeedbackItem {
+  flex: 1;
+  height: 52px;
+  font-size: 14px;
+
+  .icon {
+    font-size: 20px;
+
+    &.active {
+      &.good-fit {
+        color: @primary-color;
+      }
+
+      &.slightly-off {
+        color: @primary-color;
+      }
+
+      &.inaccurate {
+        color: @primary-color;
+      }
+
+    }
+  }
+}
+
+.evaluateFeedbackReason {
+  margin-top: 44px;
+  margin-bottom: 12px;
+  font-weight: bold;
+}

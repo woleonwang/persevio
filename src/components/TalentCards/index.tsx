@@ -32,8 +32,9 @@ import { observer } from "mobx-react-lite";
 import useStaffs from "@/hooks/useStaffs";
 import Question from "@/assets/icons/question";
 import EvaluateFeedback from "../EvaluateFeedback";
-import TalentEvaludateFeedbackModal from "../TalentEvaludateFeedbackModal";
+import TalentEvaluateFeedbackModal from "../TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
+import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
 
 interface IProps {
   jobId?: number;
@@ -124,11 +125,11 @@ const TalentCards = (props: IProps) => {
   const [
     openEvaluateFeedbackConversation,
     setOpenEvaluateFeedbackConversation,
-  ] = useState<boolean>(true);
+  ] = useState<boolean>(false);
   const [
     needConfirmEvaluateFeedbackConversation,
     setNeedConfirmEvaluateFeedbackConversation,
-  ] = useState<boolean>(true);
+  ] = useState<boolean>(false);
 
   const { staffs } = useStaffs();
 
@@ -229,21 +230,19 @@ const TalentCards = (props: IProps) => {
     return talentItem.talent?.job_id || talentItem.linkedinProfile?.job_id;
   };
 
-  const updateTalentStatus = async (feedback?: string) => {
-    if (selectedTalent) {
-      const { code } = await Post(
-        `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}`,
-        {
-          status: "rejected",
-          feedback,
-        }
-      );
-
-      if (code === 0) {
-        fetchTalents();
-        setIsRejectModalOpen(false);
-        message.success("Update talent status success");
+  const updateTalentStatus = async (talent: TTalentItem, feedback?: string) => {
+    const { code } = await Post(
+      `/api/jobs/${talent.job_id}/talents/${talent.id}`,
+      {
+        status: "rejected",
+        feedback,
       }
+    );
+
+    if (code === 0) {
+      fetchTalents();
+      setIsRejectModalOpen(false);
+      message.success("Update talent status success");
     }
   };
 
@@ -615,15 +614,22 @@ const TalentCards = (props: IProps) => {
                   <div className={styles.cardHeaderActions}>
                     {talent && talent.status !== "rejected" && (
                       <>
-                        {talent?.interviews?.length === 0 && (
+                        {talent.interviews?.length === 0 && (
                           <Button
                             type="primary"
                             danger
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedTalent(item.talent);
-                              setIsRejectModalOpen(true);
-                              form.resetFields();
+                              if (!!item.talent?.evaluate_feedback) {
+                                updateTalentStatus(
+                                  item.talent,
+                                  item.talent.evaluate_feedback_reason
+                                );
+                              } else {
+                                setSelectedTalent(item.talent);
+                                setIsRejectModalOpen(true);
+                                form.resetFields();
+                              }
                             }}
                           >
                             Reject
@@ -915,7 +921,9 @@ const TalentCards = (props: IProps) => {
         onCancel={() => setIsRejectModalOpen(false)}
         onOk={() => {
           form.validateFields().then((values) => {
-            updateTalentStatus(values.reason);
+            if (selectedTalent) {
+              updateTalentStatus(selectedTalent, values.reason);
+            }
           });
         }}
         title="Reject Candidate"
@@ -934,6 +942,19 @@ const TalentCards = (props: IProps) => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <TalentEvaluateFeedbackWithReasonModal
+        jobId={selectedTalent?.job_id ?? 0}
+        talentId={selectedTalent?.id ?? 0}
+        open={isRejectModalOpen}
+        onOk={() => {
+          setIsRejectModalOpen(false);
+          setNeedConfirmEvaluateFeedbackConversation(true);
+          setOpenEvaluateFeedbackConversation(true);
+          fetchTalents();
+        }}
+        onCancel={() => setIsRejectModalOpen(false)}
+      />
 
       <Modal
         open={isInterviewModalOpen}
@@ -961,7 +982,7 @@ const TalentCards = (props: IProps) => {
         )}
       </Modal>
 
-      <TalentEvaludateFeedbackModal
+      <TalentEvaluateFeedbackModal
         open={openEvaluateFeedbackReason}
         onOk={(value) => {
           updateTalentEvaluateFeedbackReason(value);
