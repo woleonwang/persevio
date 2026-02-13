@@ -35,6 +35,7 @@ const JobApplyShow = () => {
   const [interviewModalOpen, setInterviewModalOpen] = useState(false);
   const [tabKey, setTabKey] = useState<"jd" | "progress">("jd");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSwitchModeLoading, setIsSwitchModeLoading] = useState(false);
 
   const handlerRef = useRef<{
     submit?: () => Promise<boolean>;
@@ -425,6 +426,7 @@ const JobApplyShow = () => {
             {jobApply?.whatsapp_number_confirmed_at && (
               <Button
                 onClick={async () => {
+                  setIsSwitchModeLoading(true);
                   const { code } = await Post(
                     `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
                     {
@@ -432,10 +434,14 @@ const JobApplyShow = () => {
                     }
                   );
                   if (code === 0) {
+                    await fetchApplyJob();
                     setWhatsappModeOpen(false);
-                    fetchApplyJob();
+                  } else {
+                    message.error(originalT("submit_failed"));
                   }
+                  setIsSwitchModeLoading(false);
                 }}
+                loading={isSwitchModeLoading}
               >
                 Chat on Website
               </Button>
