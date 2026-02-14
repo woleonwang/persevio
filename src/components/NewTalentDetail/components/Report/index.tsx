@@ -172,7 +172,9 @@ const Report: React.FC<IProps> = (props) => {
 
       <div className={styles.block}>
         <div className={styles.blockTitle}>Summary</div>
-        <div className={styles.summary}>{report.summary.description}</div>
+        <div className={styles.summary}>
+          {report.summary.description ?? report.summary}
+        </div>
       </div>
 
       <div className={styles.block}>
@@ -182,10 +184,13 @@ const Report: React.FC<IProps> = (props) => {
             const items =
               requirementsSummaryMappings[level as "p0" | "p1" | "p2"];
             const meetCount = items.filter(
-              (item) => item.assessment === "meets"
+              (item) =>
+                item.assessment === "meets" || item.assessment_type === "meets"
             ).length;
             const partiallyMeetCount = items.filter(
-              (item) => item.assessment === "partially_meets"
+              (item) =>
+                item.assessment === "partially_meets" ||
+                item.assessment_type === "partially_meets"
             ).length;
             return (
               <div

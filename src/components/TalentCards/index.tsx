@@ -79,6 +79,9 @@ type TExtractEvaluateResult = {
   gap?: {
     content: string;
   }[];
+
+  // 兼容老数据
+  summary: string;
 };
 
 type TTalentFromApi = TTalent & {
@@ -594,7 +597,12 @@ const TalentCards = (props: IProps) => {
                       {getName(item) || "-"}
                     </div>
                     <div className={styles.cardTitleResult}>
-                      <EvaluateResultBadge result={evaluateResult?.result} />
+                      <EvaluateResultBadge
+                        result={
+                          evaluateResult?.overall_recommendation?.result ??
+                          evaluateResult?.result
+                        }
+                      />
                     </div>
                     {!!talent && (
                       <EvaluateFeedback
@@ -725,7 +733,9 @@ const TalentCards = (props: IProps) => {
 
                   <div className={styles.evaluateSummary}>
                     <Icon icon={<Stars />} />
-                    {evaluateResult?.thumbnail_summary || "-"}
+                    {evaluateResult?.thumbnail_summary ||
+                      evaluateResult?.summary ||
+                      "-"}
                   </div>
 
                   {item.talent && (
