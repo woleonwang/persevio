@@ -58,8 +58,10 @@ type TExtractBasicInfo = {
 };
 
 type TExtractEvaluateResult = {
-  result: TEvaluateResultLevel;
-  summary: string;
+  overall_recommendation: {
+    result: TEvaluateResultLevel;
+  };
+  thumbnail_summary: string;
   current_compensation: string;
   expected_compensation: string;
   visa: string;
@@ -70,6 +72,7 @@ type TExtractEvaluateResult = {
     content: string;
   }[];
   // 兼容老数据
+  result: TEvaluateResultLevel;
   strength?: {
     content: string;
   }[];
@@ -349,8 +352,9 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return (
           !evaluateResultLevel ||
-          (getEvaluateResult(item)?.result ?? "recommend_with_reservations") ===
-            evaluateResultLevel
+          (getEvaluateResult(item)?.overall_recommendation?.result ??
+            getEvaluateResult(item)?.result ??
+            "recommend_with_reservations") === evaluateResultLevel
         );
       })
       .sort((a, b) => {
@@ -721,7 +725,7 @@ const TalentCards = (props: IProps) => {
 
                   <div className={styles.evaluateSummary}>
                     <Icon icon={<Stars />} />
-                    {evaluateResult?.summary || "-"}
+                    {evaluateResult?.thumbnail_summary || "-"}
                   </div>
 
                   {item.talent && (

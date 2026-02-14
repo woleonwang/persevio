@@ -10,30 +10,72 @@ import { useTranslation } from "react-i18next";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 
 type TReport = {
-  result:
-    | "ideal_candidate"
-    | "good_fit"
-    | "recommend_with_reservations"
-    | "not_a_fit";
-  summary: string;
+  thumbnail_summary: string;
   created_at: string;
+
+  overall_recommendation: {
+    result: string;
+    skills_fit: {
+      level: string;
+      explanation: string;
+    };
+    logistics_fit: {
+      level: string;
+      explanation: string;
+    };
+    recruiter_note: string;
+  };
+
+  summary: {
+    description: string;
+    interest_level: {
+      level: string;
+      explanation: string;
+    };
+  };
+
   requirements: {
     level: "p0" | "p1" | "p2";
     description: string;
-    assessment_type: "meets" | "partially_meets" | "does_not_meet";
+    assessment: string;
     reasoning: string;
+
+    // 兼容老数据
+    assessment_type: string;
   }[];
-  snapshots: {
+
+  profile_snapshot: {
     title: string;
-    content: string;
+    details: string;
   }[];
+
   key_information: {
+    title: string;
+    details: string;
+  }[];
+
+  ai_interview_summary: {
+    topics_covered: string[];
+    key_revelations: string[];
+    interview_observations: { title: string; details: string }[];
+  };
+  key_strengths: {
     title: string;
     details: string;
   }[];
   potential_gaps: {
     title: string;
     details: string;
+  }[];
+  areas_to_probe_further: {
+    title: string;
+    details: string;
+  }[];
+
+  // 兼容老数据
+  snapshots: {
+    title: string;
+    content: string;
   }[];
   areas_to_probe_futher: {
     title: string;
@@ -67,8 +109,11 @@ const Report: React.FC<IProps> = (props) => {
     {
       level: "p0" | "p1" | "p2";
       description: string;
-      assessment_type: "meets" | "partially_meets" | "does_not_meet";
+      assessment: string;
       reasoning: string;
+
+      // 兼容老数据
+      assessment_type: string;
     }[]
   > = {
     p0: [],
@@ -102,7 +147,7 @@ const Report: React.FC<IProps> = (props) => {
         <div className={styles.overallRecommendation}>
           <div>Overall Recommendation</div>
           <div>
-            <EvaluateResultBadge result={report.result} />
+            <EvaluateResultBadge result={"good_fit"} />
           </div>
         </div>
       </div>
@@ -127,7 +172,7 @@ const Report: React.FC<IProps> = (props) => {
 
       <div className={styles.block}>
         <div className={styles.blockTitle}>Summary</div>
-        <div className={styles.summary}>{report.summary}</div>
+        <div className={styles.summary}>{report.summary.description}</div>
       </div>
 
       <div className={styles.block}>
@@ -137,10 +182,10 @@ const Report: React.FC<IProps> = (props) => {
             const items =
               requirementsSummaryMappings[level as "p0" | "p1" | "p2"];
             const meetCount = items.filter(
-              (item) => item.assessment_type === "meets"
+              (item) => item.assessment === "meets"
             ).length;
             const partiallyMeetCount = items.filter(
-              (item) => item.assessment_type === "partially_meets"
+              (item) => item.assessment === "partially_meets"
             ).length;
             return (
               <div
@@ -190,8 +235,12 @@ const Report: React.FC<IProps> = (props) => {
                 >
                   <div>{item.level}</div>
                   <div>{item.description}</div>
-                  <div className={styles[item.assessment_type]}>
-                    {originalT(`assessment_options.${item.assessment_type}`)}
+                  <div className={styles[item.assessment]}>
+                    {originalT(
+                      `assessment_options.${
+                        item.assessment ?? item.assessment_type
+                      }`
+                    )}
                   </div>
                   <div>{item.reasoning}</div>
                 </div>
@@ -202,6 +251,16 @@ const Report: React.FC<IProps> = (props) => {
       <div className={styles.block}>
         <div className={styles.blockTitle}>Profile Snapshot</div>
         <div>
+          {(report.profile_snapshot ?? []).map((snapshot, index) => {
+            return (
+              <div key={index} className={styles.listItem}>
+                <span className={styles.listTitle}>{snapshot.title}:</span>
+                <span className={classnames(styles.snapshotContent, "bgNone")}>
+                  {snapshot.details}
+                </span>
+              </div>
+            );
+          })}
           {(report.snapshots ?? []).map((snapshot, index) => {
             return (
               <div key={index} className={styles.listItem}>
@@ -259,11 +318,12 @@ const Report: React.FC<IProps> = (props) => {
           </div>
         </div>
       )}
-      {(report.areas_to_probe_futher ?? []).length > 0 && (
+      {(report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [])
+        .length > 0 && (
         <div className={styles.block}>
           <div className={styles.blockTitle}>Areas to Probe Further</div>
           <div>
-            {(report.areas_to_probe_futher ?? []).map((area, index) => {
+            {(report.areas_to_probe_further ?? []).map((area, index) => {
               return (
                 <div key={index} className={styles.listItem}>
                   <span className={styles.listTitle}>{area.title}:</span>
