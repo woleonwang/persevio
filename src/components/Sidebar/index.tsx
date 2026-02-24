@@ -1,5 +1,5 @@
 import classnames from "classnames";
-import { PushpinOutlined } from "@ant-design/icons";
+import { PushpinOutlined, PushpinFilled } from "@ant-design/icons";
 import logo from "@/assets/logo.png";
 import { SearchOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
@@ -48,9 +48,7 @@ const Sidebar = (props: ISidebarProps) => {
       <div className={styles.header}>
         <Icon
           icon={<PushpinOutlined />}
-          className={classnames(styles.collapseIcon, {
-            [styles.pined]: !collapsed,
-          })}
+          className={classnames(styles.collapseIcon)}
           onClick={() => setCollapsed(!collapsed)}
         />
       </div>
@@ -147,7 +145,7 @@ const Sidebar = (props: ISidebarProps) => {
         <div className={styles.header}>
           <img src={logo} className={styles.logo} />
           <Icon
-            icon={<PushpinOutlined />}
+            icon={!collapsed ? <PushpinFilled /> : <PushpinOutlined />}
             className={classnames(styles.collapseIcon, {
               [styles.pined]: !collapsed,
             })}

@@ -138,7 +138,10 @@ const Report: React.FC<IProps> = (props) => {
             Candidate Recommendation Report:
           </div>
           <div>
-            Date: <span>{dayjs(updatedAt).format("YYYY-MM-DD HH:mm")}</span>
+            Date:{" "}
+            <span>
+              {updatedAt ? dayjs(updatedAt).format("YYYY-MM-DD HH:mm") : "N.A."}
+            </span>
           </div>
         </div>
         <div className={styles.name}>
