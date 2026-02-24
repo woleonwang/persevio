@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 import Phone from "@/assets/icons/phone";
 import MailCheck from "@/assets/icons/mail-check";
 import Link2 from "@/assets/icons/link2";
+import MarkdownContainer from "@/components/MarkdownContainer";
 
 interface IProps {
   resume: TTalentResume;
@@ -106,7 +107,7 @@ const Resume = (props: IProps) => {
                   </div>
                   {!!work.description && (
                     <div className={styles.listContentDescription}>
-                      {work.description}
+                      <MarkdownContainer content={work.description} />
                     </div>
                   )}
                 </div>
@@ -189,18 +190,15 @@ const Resume = (props: IProps) => {
                 <div key={index} className={styles.listItem}>
                   <div className={styles.listTitle}>
                     <div className={styles.listTitleName}>{project.name}</div>
-                    <div>
-                      {project.start_date} ~ {project.end_date}
-                    </div>
+                    {!!project.start_date && !!project.end_date && (
+                      <div>
+                        {project.start_date} ~ {project.end_date}
+                      </div>
+                    )}
                   </div>
                   {!!project.description && (
-                    <div
-                      className={classnames(
-                        styles.listContentDescription,
-                        styles.listPoint
-                      )}
-                    >
-                      {project.description}
+                    <div className={classnames(styles.listContentDescription)}>
+                      <MarkdownContainer content={project.description} />
                     </div>
                   )}
                   {!!project.technologies && (
@@ -245,7 +243,7 @@ const Resume = (props: IProps) => {
                 <div key={index} className={styles.listItem}>
                   <div className={styles.listTitle}>{other.section_title}</div>
                   <div className={styles.listContentDescription}>
-                    {other.content}
+                    <MarkdownContainer content={other.content} />
                   </div>
                 </div>
               );

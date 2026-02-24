@@ -314,6 +314,23 @@ const Report: React.FC<IProps> = (props) => {
           })}
         </div>
       </div>
+      {(report.key_strengths ?? []).length > 0 && (
+        <div className={styles.block}>
+          <div className={styles.blockTitle}>Key Strengths</div>
+          <div>
+            {(report.key_strengths ?? []).map((strength, index) => {
+              return (
+                <div key={index} className={styles.listItem}>
+                  <span className={styles.listTitle}>{strength.title}:</span>
+                  <span className={classnames(styles.gapContent, "bgNone")}>
+                    {strength.details}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {(report.potential_gaps ?? []).length > 0 && (
         <div className={styles.block}>
           <div className={styles.blockTitle}>Potential Gaps</div>
