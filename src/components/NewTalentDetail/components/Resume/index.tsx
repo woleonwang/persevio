@@ -26,25 +26,31 @@ const Resume = (props: IProps) => {
       <div className={styles.contactInfo}>
         <div className={styles.contactInfoName}>{contact.name}</div>
         <div className={styles.contactInfoItems}>
-          <div className={styles.contactInfoItem}>
-            <Icon icon={<Phone />} />
-            {contact.phone}
-          </div>
-          <div className={styles.contactInfoItem}>
-            <Icon icon={<MailCheck />} />
-            {contact.email}
-          </div>
-          <div className={styles.contactInfoItem}>
-            {" "}
-            <Icon icon={<Link2 />} />
-            <a
-              href={contact.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {contact.linkedin}
-            </a>
-          </div>
+          {!!contact.phone && (
+            <div className={styles.contactInfoItem}>
+              <Icon icon={<Phone />} />
+              {contact.phone}
+            </div>
+          )}
+          {!!contact.email && (
+            <div className={styles.contactInfoItem}>
+              <Icon icon={<MailCheck />} />
+              {contact.email}
+            </div>
+          )}
+          {!!contact.linkedin && (
+            <div className={styles.contactInfoItem}>
+              {" "}
+              <Icon icon={<Link2 />} />
+              <a
+                href={contact.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {contact.linkedin}
+              </a>
+            </div>
+          )}
         </div>
       </div>
       {resume.summary && (
@@ -98,9 +104,11 @@ const Resume = (props: IProps) => {
                     <div>{work.title}</div>
                     <div>{work.location}</div>
                   </div>
-                  <div className={styles.listContentDescription}>
-                    {work.description}
-                  </div>
+                  {!!work.description && (
+                    <div className={styles.listContentDescription}>
+                      {work.description}
+                    </div>
+                  )}
                 </div>
               );
             })}
