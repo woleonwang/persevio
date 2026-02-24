@@ -551,6 +551,20 @@ const StaffChat: React.FC<IProps> = (props) => {
       setWaitingType(data.waiting_type);
       setIsLoading(isLoading);
 
+      if (
+        messageHistory.length === 0 &&
+        !isLoading &&
+        chatType === "jobTalentEvaluateFeedback"
+      ) {
+        sendMessage("Start", {
+          metadata: {
+            hide_for_roles: ["staff"],
+          },
+          hide: true,
+        });
+        return;
+      }
+
       if (chatType === "jobRequirementDoc") {
         const tagPrograss = {
           "cddreq-done": 1,
@@ -649,8 +663,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     const resultMessages: TMessage[] = [];
 
     messages.forEach((item, index) => {
+      const hideForRoles = item.content.metadata.hide_for_roles ?? [];
       // 过滤对该角色隐藏的消息
-      if ((item.content.metadata.hide_for_roles ?? []).length && share) return;
+      if ((hideForRoles.length && share) || hideForRoles.includes("staff"))
+        return;
 
       if (
         item.content.content ||
@@ -738,21 +754,28 @@ const StaffChat: React.FC<IProps> = (props) => {
       metadata?: {
         before_text?: string;
         after_text?: string;
+        hide_for_roles?: ("staff" | "coworker" | "candidate" | "trial_user")[];
       };
+      hide?: boolean;
     }
   ) => {
     if (isLoading) return;
 
+    const { voice_payload_id, metadata, hide } = options ?? {};
     const formattedMessage = rawMessage.trim();
     needScrollToBottom.current = true;
     setMessages([
       ...messages,
-      {
-        id: "fake_user_id",
-        role: "user",
-        content: formattedMessage,
-        updated_at: dayjs().format(datetimeFormat),
-      },
+      ...(hide
+        ? []
+        : [
+            {
+              id: "fake_user_id",
+              role: "user" as const,
+              content: formattedMessage,
+              updated_at: dayjs().format(datetimeFormat),
+            },
+          ]),
       {
         id: "fake_ai_id",
         role: "ai",
@@ -762,7 +785,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     ]);
     setIsLoading(true);
 
-    const { voice_payload_id, metadata } = options ?? {};
     const { code } = await Post(apiMapping[chatType as TChatType].send, {
       content: formattedMessage,
       voice_payload_id: voice_payload_id,
@@ -1104,6 +1126,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                 renderOperationContent={(item, isLast) => {
                   const canDelete =
                     !!profile?.is_admin &&
+                    chatType !== "jobTalentEvaluateFeedback" &&
                     item.role === "user" &&
                     item.messageType === "normal" &&
                     !["fake_ai_id", "fake_user_id"].includes(item.id);
