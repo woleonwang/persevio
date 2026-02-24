@@ -18,7 +18,7 @@ import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
-import Report from "./components/Report";
+import Report, { TReport } from "./components/Report";
 import Resume from "./components/Resume";
 import { TTalentResume } from "./type";
 import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
@@ -141,7 +141,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     return <Spin />;
   }
 
-  const report = parseJSON(talent.evaluate_json);
+  const report = parseJSON(talent.evaluate_json) as TReport;
 
   const interviewButtonArea =
     interviews.length === 0 ? (
@@ -272,7 +272,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               </div>
             </div>
 
-            {!!report.result ? (
+            {!!report.result || !!report.overall_recommendation ? (
               <div
                 ref={reportContainerRef}
                 className={styles.newReportContainer}
@@ -343,7 +343,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   {t("ai_interview_record")}
                 </Button>
               </div>
-              {!!report.result ? (
+              {!!report.result || !!report.overall_recommendation ? (
                 <div ref={reportContainerRef} style={{ marginTop: 12 }}>
                   <Report
                     candidateName={talent.name}

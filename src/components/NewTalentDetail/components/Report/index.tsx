@@ -9,7 +9,7 @@ import OneStar from "@/assets/icons/one-star";
 import { useTranslation } from "react-i18next";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 
-type TReport = {
+export type TReport = {
   thumbnail_summary: string;
   created_at: string;
 
@@ -81,6 +81,7 @@ type TReport = {
     title: string;
     details: string;
   }[];
+  result: TEvaluateResultLevel;
 };
 
 interface IProps {
@@ -147,7 +148,9 @@ const Report: React.FC<IProps> = (props) => {
         <div className={styles.overallRecommendation}>
           <div>Overall Recommendation</div>
           <div>
-            <EvaluateResultBadge result={"good_fit"} />
+            <EvaluateResultBadge
+              result={report.result || report.overall_recommendation.result}
+            />
           </div>
         </div>
       </div>
