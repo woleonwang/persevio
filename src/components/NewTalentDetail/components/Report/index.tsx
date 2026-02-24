@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import dayjs from "dayjs";
 import styles from "./style.module.less";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { getEvaluateResultLevel } from "@/utils";
@@ -89,6 +90,7 @@ interface IProps {
   candidateName: string;
   jobName: string;
   report: TReport;
+  updatedAt?: string;
   evaluateFeedback: TEvaluateFeedback;
   onChangeEvaluateFeedback: (value: TEvaluateFeedback) => void;
   onOpenEvaluateFeedback: () => void;
@@ -100,6 +102,7 @@ const Report: React.FC<IProps> = (props) => {
     candidateName,
     jobName,
     evaluateFeedback,
+    updatedAt,
     onChangeEvaluateFeedback,
     onOpenEvaluateFeedback,
   } = props;
@@ -135,7 +138,7 @@ const Report: React.FC<IProps> = (props) => {
             Candidate Recommendation Report:
           </div>
           <div>
-            Date: <span>{report.created_at ?? "N.A."}</span>
+            Date: <span>{dayjs(updatedAt).format("YYYY-MM-DD HH:mm")}</span>
           </div>
         </div>
         <div className={styles.name}>

@@ -426,6 +426,7 @@ type TTalent = {
   basic_info_json: string;
   resume_detail_json: string;
   evaluate_json: string;
+  evaluate_result_updated_at?: string;
   job_id: number;
   source_channel: "system" | "customer";
   hire_status: "hired" | "not_hired";

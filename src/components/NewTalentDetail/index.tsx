@@ -281,6 +281,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   candidateName={talent.name}
                   jobName={job.name}
                   report={report}
+                  updatedAt={talent.evaluate_result_updated_at}
                   evaluateFeedback={talent.evaluate_feedback}
                   onChangeEvaluateFeedback={(value) => {
                     updateTalentEvaluateFeedback(value);
@@ -350,6 +351,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                     jobName={job.name}
                     report={report}
                     evaluateFeedback={talent.evaluate_feedback}
+                    updatedAt={talent.evaluate_result_updated_at}
                     onChangeEvaluateFeedback={(value) => {
                       updateTalentEvaluateFeedback(value);
                     }}
