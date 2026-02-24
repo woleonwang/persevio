@@ -410,8 +410,8 @@ const TalentCards = (props: IProps) => {
               allowClear
               options={[
                 "ideal_candidate",
-                "good_fit",
                 "ideal_candidate_with_caveat",
+                "good_fit",
                 "good_fit_with_caveat",
                 "maybe",
                 "not_a_fit",
@@ -609,7 +609,8 @@ const TalentCards = (props: IProps) => {
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge
                         result={getEvaluateResultLevel(
-                          evaluateResult?.overall_recommendation?.result
+                          evaluateResult?.overall_recommendation?.result ??
+                            evaluateResult?.result
                         )}
                         caveat={evaluateResult?.overall_recommendation?.caveat}
                       />
