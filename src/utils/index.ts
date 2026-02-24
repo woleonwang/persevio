@@ -287,3 +287,22 @@ export const getDocumentType = (key: string): string => {
     .join("-") as TEditableDocumentType;
   return documentType;
 };
+
+export const getEvaluateResultLevel = (
+  result?: string
+): TEvaluateResultLevel => {
+  if (!result) return "maybe";
+
+  const resultOptions = [
+    "ideal_candidate",
+    "good_fit",
+    "ideal_candidate_with_caveat",
+    "good_fit_with_caveat",
+    "maybe",
+    "not_a_fit",
+  ];
+
+  return resultOptions.includes(result)
+    ? (result as TEvaluateResultLevel)
+    : "maybe";
+};

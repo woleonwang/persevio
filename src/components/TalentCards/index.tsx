@@ -15,7 +15,13 @@ import dayjs from "dayjs";
 import { SearchOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
-import { getQuery, parseJSON, parseJSONArray, updateQuery } from "@/utils";
+import {
+  getQuery,
+  parseJSON,
+  parseJSONArray,
+  updateQuery,
+  getEvaluateResultLevel,
+} from "@/utils";
 
 import styles from "./style.module.less";
 import EvaluateResultBadge from "../EvaluateResultBadge";
@@ -60,6 +66,7 @@ type TExtractBasicInfo = {
 type TExtractEvaluateResult = {
   overall_recommendation: {
     result: TEvaluateResultLevel;
+    caveat?: string;
   };
   thumbnail_summary: string;
   current_compensation: string;
@@ -355,9 +362,10 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return (
           !evaluateResultLevel ||
-          (getEvaluateResult(item)?.overall_recommendation?.result ??
-            getEvaluateResult(item)?.result ??
-            "recommend_with_reservations") === evaluateResultLevel
+          getEvaluateResultLevel(
+            getEvaluateResult(item)?.overall_recommendation?.result ??
+              getEvaluateResult(item)?.result
+          ) === evaluateResultLevel
         );
       })
       .sort((a, b) => {
@@ -403,11 +411,13 @@ const TalentCards = (props: IProps) => {
               options={[
                 "ideal_candidate",
                 "good_fit",
-                "recommend_with_reservations",
+                "ideal_candidate_with_caveat",
+                "good_fit_with_caveat",
+                "maybe",
                 "not_a_fit",
               ].map((level) => ({
                 label: originalT(
-                  `job_talents.evaluate_result_options.${level}`
+                  `job_talents.evaluate_result_select_options.${level}`
                 ),
                 value: level,
               }))}
@@ -598,10 +608,10 @@ const TalentCards = (props: IProps) => {
                     </div>
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge
-                        result={
-                          evaluateResult?.overall_recommendation?.result ??
-                          evaluateResult?.result
-                        }
+                        result={getEvaluateResultLevel(
+                          evaluateResult?.overall_recommendation?.result
+                        )}
+                        caveat={evaluateResult?.overall_recommendation?.caveat}
                       />
                     </div>
                     {!!talent && (

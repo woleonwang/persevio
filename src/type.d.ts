@@ -756,7 +756,9 @@ type TJobCollaborator = {
 type TEvaluateResultLevel =
   | "ideal_candidate"
   | "good_fit"
-  | "recommend_with_reservations"
+  | "ideal_candidate_with_caveat"
+  | "good_fit_with_caveat"
+  | "maybe"
   | "not_a_fit";
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";

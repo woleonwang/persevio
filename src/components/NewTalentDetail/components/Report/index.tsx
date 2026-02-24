@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import styles from "./style.module.less";
-import dayjs from "dayjs";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
+import { getEvaluateResultLevel } from "@/utils";
 import Icon from "@/components/Icon";
 import TwoStar from "@/assets/icons/two-star";
 import Stars from "@/assets/icons/stars";
@@ -15,6 +15,7 @@ export type TReport = {
 
   overall_recommendation: {
     result: string;
+    caveat?: string;
     skills_fit: {
       level: string;
       explanation: string;
@@ -134,12 +135,7 @@ const Report: React.FC<IProps> = (props) => {
             Candidate Recommendation Report:
           </div>
           <div>
-            Date:{" "}
-            <span>
-              {report.created_at
-                ? dayjs(report.created_at).format("YYYY-MM-DD")
-                : "N.A."}
-            </span>
+            Date: <span>{report.created_at ?? "N.A."}</span>
           </div>
         </div>
         <div className={styles.name}>
@@ -149,7 +145,10 @@ const Report: React.FC<IProps> = (props) => {
           <div>Overall Recommendation</div>
           <div>
             <EvaluateResultBadge
-              result={report.result || report.overall_recommendation.result}
+              result={getEvaluateResultLevel(
+                report?.overall_recommendation?.result ?? report?.result
+              )}
+              caveat={report?.overall_recommendation?.caveat}
             />
           </div>
         </div>
@@ -164,7 +163,7 @@ const Report: React.FC<IProps> = (props) => {
             justifyContent: "space-between",
           }}
         >
-          Here's my feedback
+          Is my assessment accurate?
           <EvaluateFeedback
             value={evaluateFeedback}
             onChange={onChangeEvaluateFeedback}

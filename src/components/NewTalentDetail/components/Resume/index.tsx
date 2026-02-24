@@ -73,12 +73,12 @@ const Resume = (props: IProps) => {
           </div>
         </div>
       )}
-      {resume.extraction_notes && (
+      {/* {resume.extraction_notes && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>EXTRACTION NOTES</div>
           <div className={styles.sectionContent}>{resume.extraction_notes}</div>
         </div>
-      )}
+      )} */}
       {(workExperience ?? []).length > 0 && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>WORK EXPERIENCE</div>
