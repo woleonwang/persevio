@@ -1681,6 +1681,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     delete_stage_title: "删除阶段",
     delete_stage_content: "确定要删除阶段「{{name}}」吗？",
     unnamed_stage: "未命名",
+    assigned_collaborators: "分配的招聘负责人",
+    add_collaborator: "添加招聘负责人",
+    add: "添加",
+    remove: "移除",
+    remove_collaborator_title: "移除协作者",
+    remove_collaborator_content: "确定要移除协作者「{{name}}」吗？",
   },
 
   talent_details: {

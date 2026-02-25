@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { Button, Input, message } from "antd";
-import { LockOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Input, message, Select } from "antd";
+import { LockOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   DndContext,
   closestCenter,
@@ -24,6 +24,7 @@ import Icon from "@/components/Icon";
 import Delete from "@/assets/icons/delete";
 import styles from "./style.module.less";
 import useJob from "@/hooks/useJob";
+import useStaffs from "@/hooks/useStaffs";
 
 const DEFAULT_STAGES = [
   "Reached Out",
@@ -127,9 +128,20 @@ const SortableStageItem = ({
   );
 };
 
+const getInitials = (name: string) => {
+  return name
+    .split(/\s+/)
+    .map((s) => s[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+
 const JobSettings = ({ jobId }: IProps) => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_settings.${key}`);
+  const tCollab = (key: string) =>
+    t(`job_details.job_collaborator_modal.${key}`);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
@@ -138,7 +150,12 @@ const JobSettings = ({ jobId }: IProps) => {
     PipelineStage[]
   >([]);
 
+  const [selectedStaffIds, setSelectedStaffIds] = useState<number[]>([]);
+  const [newStaffId, setNewStaffId] = useState<number | undefined>(undefined);
+  const [collabUpdating, setCollabUpdating] = useState(false);
+
   const { job } = useJob();
+  const { staffs } = useStaffs();
 
   const defaultStages: PipelineStage[] = DEFAULT_STAGES.map((name, i) => ({
     id: `default-${i}`,
@@ -161,6 +178,66 @@ const JobSettings = ({ jobId }: IProps) => {
       );
     }
   }, [job?.pipeline_stages]);
+
+  useEffect(() => {
+    if (jobId) {
+      fetchCollaborators();
+    }
+  }, [jobId]);
+
+  const fetchCollaborators = async () => {
+    const { code, data } = await Get<{ job_collaborators: TJobCollaborator[] }>(
+      `/api/jobs/${jobId}/collaborators`
+    );
+    if (code === 0) {
+      setSelectedStaffIds(
+        data.job_collaborators.map((collab) => collab.staff_id)
+      );
+    }
+  };
+
+  const handleUpdateCollaborators = async (staffIds: number[]) => {
+    setCollabUpdating(true);
+    const { code } = await Post(`/api/jobs/${jobId}/collaborators`, {
+      staff_ids: staffIds,
+    });
+    if (code === 0) {
+      setSelectedStaffIds(staffIds);
+      message.success(t("job_details.saveSuccess"));
+    } else {
+      message.error(tKey("save_failed"));
+    }
+    setCollabUpdating(false);
+  };
+
+  const handleAddCollaborator = () => {
+    if (!newStaffId || selectedStaffIds.includes(newStaffId)) return;
+    handleUpdateCollaborators([...selectedStaffIds, newStaffId]);
+    setNewStaffId(undefined);
+  };
+
+  const handleRemoveCollaborator = (staffId: number) => {
+    const staff = staffs.find((s) => s.id === staffId);
+    confirmModal({
+      title: tKey("remove_collaborator_title"),
+      content: tKey("remove_collaborator_content").replace(
+        "{{name}}",
+        staff?.name || ""
+      ),
+      onOk: () => {
+        handleUpdateCollaborators(
+          selectedStaffIds.filter((id) => id !== staffId)
+        );
+      },
+    });
+  };
+
+  const collaboratorStaffs = selectedStaffIds
+    .map((id) => staffs.find((s) => s.id === id))
+    .filter(Boolean) as IStaff[];
+  const staffOptions = staffs
+    .filter((s) => !selectedStaffIds.includes(s.id))
+    .map((s) => ({ value: s.id, label: s.name }));
 
   const saveStages = async (newStages: PipelineStage[]) => {
     const { code } = await Post(`/api/jobs/${jobId}`, {
@@ -289,6 +366,67 @@ const JobSettings = ({ jobId }: IProps) => {
         >
           {tKey("add_stage")}
         </Button>
+      </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>
+          {tKey("assigned_collaborators")}
+        </div>
+        <div className={styles.collaboratorCards}>
+          {collaboratorStaffs.map((staff) => (
+            <div key={staff.id} className={styles.collaboratorCard}>
+              <div className={styles.collaboratorAvatar}>
+                {getInitials(staff.name)}
+              </div>
+              <div className={styles.collaboratorInfo}>
+                <div className={styles.collaboratorName}>{staff.name}</div>
+                <div className={styles.collaboratorEmail}>
+                  {(staff as IStaffWithAccount)?.account?.username ||
+                    staff.phone ||
+                    "-"}
+                </div>
+              </div>
+              <Button
+                type="link"
+                danger
+                size="small"
+                icon={<DeleteOutlined />}
+                onClick={() => handleRemoveCollaborator(staff.id)}
+                loading={collabUpdating}
+              >
+                {tKey("remove")}
+              </Button>
+            </div>
+          ))}
+        </div>
+        <div className={styles.addCollaborator}>
+          <div className={styles.sectionTitle}>{tKey("add_collaborator")}</div>
+          <div className={styles.addCollaboratorRow}>
+            <Select
+              placeholder={tCollab("select_placeholder")}
+              options={staffOptions}
+              value={newStaffId}
+              onChange={setNewStaffId}
+              style={{ flex: 1, minWidth: 200 }}
+              showSearch
+              allowClear
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            />
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleAddCollaborator}
+              loading={collabUpdating}
+              disabled={!newStaffId}
+            >
+              {tKey("add")}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

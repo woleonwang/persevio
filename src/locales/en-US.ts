@@ -1741,6 +1741,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     delete_stage_title: "Delete Stage",
     delete_stage_content: "Are you sure you want to delete stage \"{{name}}\"?",
     unnamed_stage: "Unnamed",
+    assigned_collaborators: "Assigned Hiring Managers",
+    add_collaborator: "Add Hiring Manager",
+    add: "Add",
+    remove: "Remove",
+    remove_collaborator_title: "Remove Collaborator",
+    remove_collaborator_content: "Are you sure you want to remove collaborator \"{{name}}\"?",
   },
 
   talent_details: {
