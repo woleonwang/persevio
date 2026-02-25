@@ -628,8 +628,12 @@ const AdminTalents = (props: IProps) => {
     if (filterParams?.talentOrJobName) {
       result = result.filter((item) => {
         return (
-          getName(item).includes(filterParams.talentOrJobName ?? "") ||
-          getJobName(item).includes(filterParams.talentOrJobName ?? "")
+          getName(item)
+            .toLowerCase()
+            .includes((filterParams.talentOrJobName ?? "").toLowerCase()) ||
+          getJobName(item)
+            .toLowerCase()
+            .includes((filterParams.talentOrJobName ?? "").toLowerCase())
         );
       });
     }
