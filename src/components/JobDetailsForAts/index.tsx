@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Input, message, Spin } from "antd";
-import classnames from "classnames";
+import { Tabs as AntdTabs } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";
@@ -12,6 +12,7 @@ import AdminTalents from "@/components/AdminTalents";
 
 import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
+import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import TalentCards from "../TalentCards";
@@ -53,17 +54,6 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
       initTab();
     }
   }, [job?.id]);
-
-  const tabItems: { key: TMenu; label: string }[] = useMemo(() => {
-    return [
-      { key: "jobRequirements", label: t("job_requirements") },
-      { key: "pipeline", label: t("pipeline") },
-      { key: "sourcingChannels", label: t("sourcing_channels") },
-      { key: "outreachCampaigns", label: t("outreach_campaigns") },
-      { key: "analytics", label: t("analytics") },
-      { key: "settings", label: t("settings") },
-    ];
-  }, [t]);
 
   const initTab = async () => {
     if (!job?.id) return;
@@ -194,70 +184,117 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           </div>
         )}
       </div>
-      <div className={styles.tabBar}>
-        {tabItems.map((item) => (
-          <div
-            key={item.key}
-            onClick={() => {
-              setChatType(item.key);
-              updateQuery("tab", item.key);
-            }}
-            className={classnames(styles.tabItem, {
-              [styles.tabItemActive]: chatType === item.key,
-            })}
-          >
-            {item.label}
-          </div>
-        ))}
-      </div>
-      <div className={styles.body}>
-        {chatType === "pipeline" &&
-          (role === "staff" ? (
-            <TalentCards jobId={job.id} />
-          ) : (
-            <AdminTalents jobId={job.id} />
-          ))}
-        {chatType === "settings" && <JobSettings jobId={job.id} />}
-        {chatType === "jobRequirements" && (
-          <div className={styles.jobReqContent}>
-            <div className={styles.subTabBar}>
-              <div
-                className={classnames(styles.subTabItem, {
-                  [styles.subTabItemActive]: jobReqSubTab === "jobRequirement",
-                })}
-                onClick={() => setJobReqSubTab("jobRequirement")}
-              >
-                {t("job_requirement_table")}
+      <AntdTabs
+        activeKey={chatType}
+        onChange={(key) => {
+          setChatType(key as TMenu);
+          updateQuery("tab", key);
+        }}
+        className={styles.tabs}
+        items={[
+          {
+            key: "jobRequirements",
+            label: t("job_requirements"),
+            children: (
+              <div className={styles.body}>
+                <div className={styles.subTabsWrap}>
+                  <Tabs
+                    activeKey={jobReqSubTab}
+                    onChange={(key) =>
+                      setJobReqSubTab(
+                        key as "jobRequirement" | "jobDescription"
+                      )
+                    }
+                    size="small"
+                    tabs={[
+                      {
+                        key: "jobRequirement",
+                        label: t("job_requirement_table"),
+                      },
+                      {
+                        key: "jobDescription",
+                        label: t("job_description_jd"),
+                      },
+                    ]}
+                  />
+                </div>
+                <div style={{ fontSize: 12, color: "#999" }}>
+                  <span style={{ color: "#666", fontWeight: "bold" }}>
+                    Job Requirement Document
+                  </span>{" "}
+                  is the internal single source of truth — detailed
+                  requirements, context, and nuances for internal alignment. Job
+                  Description is the external-facing marketing document posted
+                  to job boards to attract candidates.
+                </div>
+                <div className={styles.jobReqContent}>
+                  <JobDocument
+                    job={job}
+                    chatType={jobReqSubTab}
+                    key={jobReqSubTab}
+                    togglePostJob={togglePostJob}
+                    onUpdateDoc={fetchJob}
+                    role={role}
+                  />
+                </div>
               </div>
-              <div
-                className={classnames(styles.subTabItem, {
-                  [styles.subTabItemActive]: jobReqSubTab === "jobDescription",
-                })}
-                onClick={() => setJobReqSubTab("jobDescription")}
-              >
-                {t("job_description_jd")}
+            ),
+          },
+          {
+            key: "pipeline",
+            label: t("pipeline"),
+            children: (
+              <div className={styles.body}>
+                {role === "staff" ? (
+                  <TalentCards jobId={job.id} />
+                ) : (
+                  <AdminTalents jobId={job.id} />
+                )}
               </div>
-            </div>
-            <JobDocument
-              job={job}
-              chatType={jobReqSubTab}
-              key={jobReqSubTab}
-              togglePostJob={togglePostJob}
-              onUpdateDoc={fetchJob}
-              role={role}
-            />
-          </div>
-        )}
-        {chatType === "sourcingChannels" && (
-          <div className={styles.placeholder}>{t("sourcing_channels")}</div>
-        )}
-        {chatType === "outreachCampaigns" && (
-          <div className={styles.placeholder}>{t("outreach_campaigns")}</div>
-        )}
-        {chatType === "analytics" && (
-          <div className={styles.placeholder}>{t("analytics")}</div>
-        )}
-      </div>
+            ),
+          },
+          {
+            key: "sourcingChannels",
+            label: t("sourcing_channels"),
+            children: (
+              <div className={styles.body}>
+                <div className={styles.placeholder}>
+                  {t("sourcing_channels")}
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: "outreachCampaigns",
+            label: t("outreach_campaigns"),
+            children: (
+              <div className={styles.body}>
+                <div className={styles.placeholder}>
+                  {t("outreach_campaigns")}
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: "analytics",
+            label: t("analytics"),
+            children: (
+              <div className={styles.body}>
+                <div className={styles.placeholder}>{t("analytics")}</div>
+              </div>
+            ),
+          },
+          {
+            key: "settings",
+            label: t("settings"),
+            children: (
+              <div className={styles.body}>
+                <JobSettings jobId={job.id} />
+              </div>
+            ),
+          },
+        ]}
+      />
 
       <JobCollaboratorModal
         open={isCollaboratorModalOpen}

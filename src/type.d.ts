@@ -75,6 +75,7 @@ interface IJob {
   jrd_context_document_json: string;
   jd_version: number;
   bonus_pool: number;
+  pipeline_stages: string;
 
   admin_jobs?: {
     admin: {

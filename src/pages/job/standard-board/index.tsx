@@ -176,7 +176,11 @@ const JobBoard = () => {
             </div>
           </div>
         )}
-        {jobState === "board" && <JobDetailsForAts />}
+        {jobState === "board" && (
+          <div className={styles.boardContent}>
+            <JobDetailsForAts />
+          </div>
+        )}
       </div>
     </div>
   );

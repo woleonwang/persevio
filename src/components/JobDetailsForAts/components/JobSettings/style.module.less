@@ -1,0 +1,110 @@
+.container {
+  padding: 20px 0;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.sectionDesc {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.stageList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stageItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.stageDragHandle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  color: #999;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.stageDragHandleLocked {
+  display: flex;
+  align-items: center;
+  color: #999;
+  cursor: default;
+}
+
+.stageNameLocked {
+  flex: 1;
+  font-size: 14px;
+}
+
+.dragDots {
+  display: grid;
+  grid-template-columns: repeat(2, 4px);
+  grid-template-rows: repeat(3, 4px);
+  gap: 2px;
+
+  span {
+    width: 4px;
+    height: 4px;
+    background-color: #999;
+    border-radius: 1px;
+  }
+}
+
+.stageName {
+  flex: 1;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    color: #3682fe;
+  }
+}
+
+.stageInput {
+  flex: 1;
+}
+
+.stageLockIcon {
+  color: #999;
+  font-size: 16px;
+}
+
+.stageDelete {
+  cursor: pointer;
+  color: #999;
+
+  &:hover {
+    color: #ff4d4f;
+  }
+}
+
+.addStageBtn {
+  margin-top: 8px;
+}
+
+.loading {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}

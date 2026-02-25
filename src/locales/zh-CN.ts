@@ -1637,6 +1637,9 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     analytics: "数据分析",
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
+    internal: "Internal",
+    download_pdf: "Download PDF",
+    edit: "编辑",
     job_requirement_hint:
       "Viona 会参考这份文档向候选人介绍该职位。你可以在此编辑内容，以控制她与候选人沟通时的说法。",
     talents: "候选人",
@@ -1665,6 +1668,19 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       update: "更新",
       copy_link: "复制职位链接",
     },
+  },
+
+  job_settings: {
+    pipeline_stages: "Pipeline Stages",
+    pipeline_stages_desc:
+      "Drag to reorder stages. The first 4 stages are locked and cannot be moved or deleted.",
+    add_stage: "Add Stage",
+    loading: "加载中...",
+    save_success: "保存成功",
+    save_failed: "保存失败",
+    delete_stage_title: "删除阶段",
+    delete_stage_content: "确定要删除阶段「{{name}}」吗？",
+    unnamed_stage: "未命名",
   },
 
   talent_details: {

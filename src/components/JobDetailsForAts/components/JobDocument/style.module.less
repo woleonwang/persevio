@@ -1,26 +1,41 @@
+@import "@/mixin.module.less";
+
 .container {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(222, 222, 222, 1);
+  margin-top: 12px;
 }
+
 
 .docHeader {
   flex: none;
   display: flex;
   justify-content: space-between;
   border-bottom: 1px dashed #eeeeee;
-  padding: 22px 0;
+  padding: 22px 24px;
 
   .docTitle {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .docTitleText {
+    font-size: 16px;
     font-weight: bold;
   }
 
-  .timestamp {
+  .internalBadge {
     font-size: 14px;
-    color: #999999;
-    font-weight: normal;
-    margin-left: 20px;
+    background-color: rgba(237, 242, 255, 1);
+    color: @primary-color;
+    border-radius: 16px;
+    padding: 4px 16px;
   }
 
   .operations {
@@ -31,7 +46,6 @@
     :global {
       .perse-icon {
         font-size: 20px;
-        margin-left: 12px;
         cursor: pointer;
       }
     }
@@ -39,6 +53,7 @@
 }
 
 .hint {
+  flex: none;
   border: 1px solid rgba(251, 131, 33, 0.3);
   border-radius: 16px;
   padding: 9px 16px;
@@ -47,11 +62,18 @@
   background-color: rgba(254, 251, 236, 1);
 }
 
+.editActions {
+  flex: none;
+  padding: 12px 24px;
+}
+
 .docContent {
-  flex: auto;
+  flex: 1;
+  min-height: 0;
   overflow: auto;
   margin: 20px 0;
   font-size: 14px;
+  padding: 0 24px;
 
   :global {
 

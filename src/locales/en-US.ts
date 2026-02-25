@@ -1696,6 +1696,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     analytics: "Analytics",
     job_requirement_table: "Job Requirement Document",
     job_description_jd: "Job Description (External)",
+    internal: "Internal",
+    download_pdf: "Download PDF",
+    edit: "Edit",
     job_requirement_hint:
       "When Viona introduces this role to candidates, she will reference the information in this document. You can edit the information here to control how Viona introduces this role to potential candidates.",
     talents: "Candidates",
@@ -1725,6 +1728,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       update: "Update",
       copy_link: "Copy Job Link",
     },
+  },
+
+  job_settings: {
+    pipeline_stages: "Pipeline Stages",
+    pipeline_stages_desc:
+      "Drag to reorder stages. The first 4 stages are locked and cannot be moved or deleted.",
+    add_stage: "Add Stage",
+    loading: "Loading...",
+    save_success: "Saved successfully",
+    save_failed: "Save failed",
+    delete_stage_title: "Delete Stage",
+    delete_stage_content: "Are you sure you want to delete stage \"{{name}}\"?",
+    unnamed_stage: "Unnamed",
   },
 
   talent_details: {
