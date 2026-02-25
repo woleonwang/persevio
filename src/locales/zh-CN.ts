@@ -1630,6 +1630,11 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
 
   job_details: {
     updated_at: "更新",
+    job_requirements: "职位需求",
+    pipeline: "Pipeline",
+    sourcing_channels: "招聘渠道",
+    outreach_campaigns: "外推活动",
+    analytics: "数据分析",
     job_requirement_table: "职位需求表",
     job_description_jd: "职位描述(JD)",
     job_requirement_hint:

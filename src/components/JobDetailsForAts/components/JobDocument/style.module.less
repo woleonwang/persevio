@@ -1,0 +1,74 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.docHeader {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #eeeeee;
+  padding: 22px 0;
+
+  .docTitle {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    color: #999999;
+    font-weight: normal;
+    margin-left: 20px;
+  }
+
+  .operations {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    :global {
+      .perse-icon {
+        font-size: 20px;
+        margin-left: 12px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.hint {
+  border: 1px solid rgba(251, 131, 33, 0.3);
+  border-radius: 16px;
+  padding: 9px 16px;
+  margin-top: 20px;
+  color: rgba(251, 131, 33, 1);
+  background-color: rgba(254, 251, 236, 1);
+}
+
+.docContent {
+  flex: auto;
+  overflow: auto;
+  margin: 20px 0;
+  font-size: 14px;
+
+  :global {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: 16px;
+    }
+
+    ul,
+    ol {
+      background-color: #eff3fe;
+      border-radius: 16px;
+      padding: 16px 32px;
+    }
+  }
+}

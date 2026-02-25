@@ -1689,8 +1689,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   job_details: {
     updated_at: "Updated",
+    job_requirements: "Job Requirements",
+    pipeline: "Pipeline",
+    sourcing_channels: "Sourcing Channels",
+    outreach_campaigns: "Outreach Campaigns",
+    analytics: "Analytics",
     job_requirement_table: "Job Requirement Document",
-    job_description_jd: "Your Job Listing",
+    job_description_jd: "Job Description (External)",
     job_requirement_hint:
       "When Viona introduces this role to candidates, she will reference the information in this document. You can edit the information here to control how Viona introduces this role to potential candidates.",
     talents: "Candidates",

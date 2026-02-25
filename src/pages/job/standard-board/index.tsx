@@ -9,9 +9,9 @@ import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
-import JobDetails from "@/components/JobDetails";
 import globalStore from "@/store/global";
 import { infoModal } from "@/utils";
+import JobDetailsForAts from "@/components/JobDetailsForAts";
 
 type TJobState = "jrd" | "jd" | "preview" | "board";
 
@@ -176,7 +176,7 @@ const JobBoard = () => {
             </div>
           </div>
         )}
-        {jobState === "board" && <JobDetails />}
+        {jobState === "board" && <JobDetailsForAts />}
       </div>
     </div>
   );
