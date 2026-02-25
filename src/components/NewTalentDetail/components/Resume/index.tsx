@@ -57,26 +57,32 @@ const Resume = (props: IProps) => {
       {resume.summary && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>SUMMARY</div>
-          <div className={styles.sectionContent}>{resume.summary}</div>
+          <div className={styles.sectionContent}>
+            <MarkdownContainer content={resume.summary} />
+          </div>
         </div>
       )}
       {resume.skills && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>SKILLS</div>
-          <div className={styles.sectionContent}>{resume.skills}</div>
+          <div className={styles.sectionContent}>
+            <MarkdownContainer content={resume.skills} />
+          </div>
         </div>
       )}
       {resume.patents && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>PATENTS</div>
-          <div className={styles.sectionContent}>{resume.patents}</div>
+          <div className={styles.sectionContent}>
+            <MarkdownContainer content={resume.patents} />
+          </div>
         </div>
       )}
       {resume.professional_affiliations && (
         <div className={styles.section}>
           <div className={styles.sectionTitle}>PROFESSIONAL AFFILIATIONS</div>
           <div className={styles.sectionContent}>
-            {resume.professional_affiliations}
+            <MarkdownContainer content={resume.professional_affiliations} />
           </div>
         </div>
       )}
