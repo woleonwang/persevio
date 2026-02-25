@@ -12,6 +12,7 @@ import AdminTalents from "@/components/AdminTalents";
 
 import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
+import JobOutreachCampaigns from "./components/JobOutreachCampaigns";
 import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
@@ -269,9 +270,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             label: t("outreach_campaigns"),
             children: (
               <div className={styles.body}>
-                <div className={styles.placeholder}>
-                  {t("outreach_campaigns")}
-                </div>
+                <JobOutreachCampaigns />
               </div>
             ),
           },
