@@ -27,7 +27,6 @@ const JobDocument = (props: IProps) => {
   const { job, chatType, onUpdateDoc, role = "staff" } = props;
 
   const [documentContent, setDocumentContent] = useState("");
-  const [updatedAt, setUpdatedAt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingValue, setEditingValue] = useState("");
 
@@ -44,10 +43,8 @@ const JobDocument = (props: IProps) => {
     );
     if (code === 0) {
       setDocumentContent(data.content);
-      setUpdatedAt(data.updated_at);
     } else {
       setDocumentContent("");
-      setUpdatedAt("");
     }
   };
 
@@ -84,6 +81,9 @@ const JobDocument = (props: IProps) => {
           </div>
           {chatType === "jobRequirement" && (
             <div className={styles.internalBadge}>{t("internal")}</div>
+          )}
+          {chatType === "jobDescription" && (
+            <div className={styles.publishedBadge}>Published</div>
           )}
         </div>
         {!!documentContent && (

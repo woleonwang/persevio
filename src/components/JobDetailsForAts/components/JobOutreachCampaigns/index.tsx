@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Empty, Select, Spin, Table, Tag } from "antd";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import dayjs from "dayjs";
 
 import useJob from "@/hooks/useJob";
@@ -59,6 +60,7 @@ const getCurrentJob = (basicInfo: TExtractBasicInfo | undefined) => {
 
 const JobOutreachCampaigns = () => {
   const { job } = useJob();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [linkedinProfiles, setLinkedinProfiles] = useState<
     TLinkedinProfileItem[]
@@ -235,6 +237,16 @@ const JobOutreachCampaigns = () => {
             pagination={{ pageSize: 10 }}
             locale={{
               emptyText: <Empty style={{ margin: "60px 0" }} />,
+            }}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  if (!job?.id) return;
+                  navigate(
+                    `/app/jobs/${job.id}/standard-board/linkedin-profiles/${record.id}`
+                  );
+                },
+              };
             }}
           />
         </div>
