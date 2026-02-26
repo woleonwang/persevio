@@ -10,3 +10,10 @@ export const SIDE_DOCUMENT_TYPES = [
   "summary-draft",
   "jd-draft",
 ];
+
+export const DEFAULT_STAGE_KEYS = [
+  "reached_out",
+  "applied",
+  "started_ai_interview",
+  "ai_interview_completed",
+];

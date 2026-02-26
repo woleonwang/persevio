@@ -17,7 +17,7 @@ import JobSourcingChannels from "./components/JobSourcingChannels";
 import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
-import TalentCards from "../TalentCards";
+import JobPipeline from "./components/JobPipeline";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
 import Share2 from "@/assets/icons/share2";
@@ -247,7 +247,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             children: (
               <div className={styles.body}>
                 {role === "staff" ? (
-                  <TalentCards jobId={job.id} />
+                  <JobPipeline />
                 ) : (
                   <AdminTalents jobId={job.id} />
                 )}

@@ -356,6 +356,13 @@ export default {
     partially_meets: "部分满足",
     does_not_meet: "不满足",
   },
+
+  pipeline_section: {
+    reached_out: "已接触",
+    applied: "已申请",
+    started_ai_interview: "已开始 AI 面试",
+    ai_interview_completed: "AI 面试已完成",
+  },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "推荐",
@@ -1632,11 +1639,23 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     updated_at: "更新",
     job_requirements: "职位需求",
     pipeline: "Pipeline",
+    pipeline_section: {
+      search_placeholder: "搜索候选人...",
+      all_sourcing_channels: "全部招聘渠道",
+      all_stages: "全部阶段",
+      all_fit_levels: "全部匹配度",
+      rank_by: "排序",
+      list: "列表",
+      kanban: "看板",
+      add_candidate: "添加候选人",
+      candidates_reached_out: "位候选人已触达",
+      click_to_view_details: "点击查看详情",
+      persevio: "Persevio",
+    },
     sourcing_channels: "招聘渠道",
     sourcing_channels_section: {
       free_job_board_title: "Persevio 免费招聘看板",
-      free_job_board_desc:
-        "您的职位已发布到 Persevio 招聘看板，完全免费。",
+      free_job_board_desc: "您的职位已发布到 Persevio 招聘看板，完全免费。",
       copy_url: "复制链接",
       view_posting: "查看发布",
       take_down: "撤下",

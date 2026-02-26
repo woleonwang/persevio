@@ -366,6 +366,12 @@ export default {
     others: "Others",
   },
 
+  pipeline_section: {
+    reached_out: "Reached Out",
+    applied: "Applied",
+    started_ai_interview: "Started AI Interview",
+    ai_interview_completed: "AI Interview Completed",
+  },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "Referrals",
@@ -1691,6 +1697,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     updated_at: "Updated",
     job_requirements: "Job Requirements",
     pipeline: "Pipeline",
+    pipeline_section: {
+      search_placeholder: "Search candidates...",
+      all_sourcing_channels: "All Sourcing Channels",
+      all_stages: "All Stages",
+      all_fit_levels: "All Fit Levels",
+      rank_by: "Rank by",
+      list: "List",
+      kanban: "Kanban",
+      add_candidate: "Add Candidate",
+      candidates_reached_out: "candidates reached out",
+      click_to_view_details: "Click to view details",
+      persevio: "Persevio",
+    },
     sourcing_channels: "Sourcing Channels",
     sourcing_channels_section: {
       free_job_board_title: "Persevio's Free Job Board",
@@ -1781,14 +1800,15 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     save_success: "Saved successfully",
     save_failed: "Save failed",
     delete_stage_title: "Delete Stage",
-    delete_stage_content: "Are you sure you want to delete stage \"{{name}}\"?",
+    delete_stage_content: 'Are you sure you want to delete stage "{{name}}"?',
     unnamed_stage: "Unnamed",
     assigned_collaborators: "Assigned Hiring Managers",
     add_collaborator: "Add Hiring Manager",
     add: "Add",
     remove: "Remove",
     remove_collaborator_title: "Remove Collaborator",
-    remove_collaborator_content: "Are you sure you want to remove collaborator \"{{name}}\"?",
+    remove_collaborator_content:
+      'Are you sure you want to remove collaborator "{{name}}"?',
   },
 
   talent_details: {
