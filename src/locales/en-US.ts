@@ -1692,6 +1692,36 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_requirements: "Job Requirements",
     pipeline: "Pipeline",
     sourcing_channels: "Sourcing Channels",
+    sourcing_channels_section: {
+      free_job_board_title: "Persevio's Free Job Board",
+      free_job_board_desc:
+        "Your job has been posted to Persevio's job board. It is completely free.",
+      copy_url: "Copy URL",
+      view_posting: "View Posting",
+      take_down: "Take Down",
+      boost_title: "Boost Your Job",
+      boost_desc:
+        "We'll actively promote your role on Persevio and across the web — including LinkedIn, JobStreet, job communities, and social media — to attract more qualified active candidates to apply.",
+      no_upfront_cost: "No upfront cost. Pay only when you hire.",
+      flat_fee_per_hire: "SGD 500 flat fee per hire.",
+      start_boosting: "Start Boosting",
+      outreach_title: "Outreach Campaigns",
+      outreach_desc:
+        "Target passive candidates who aren't actively looking. We'll proactively reach out to suitable candidates in Persevio's database and across the web, leveraging referrals and all possible channels to find the best match for your role. Success-based pricing — you only pay when you hire.",
+      start_outreach_campaigns: "Start Outreach Campaigns",
+      tracking_links_title: "Tracking Links",
+      tracking_links_desc:
+        "Direct candidates from your postings on other job boards to the respective link below so all candidates will be aggregated in the system.",
+      source: "Source",
+      url: "URL",
+      actions: "Actions",
+      copy: "Copy",
+      add_custom_source: "Add Custom Source",
+      direc: "Direc",
+      linkedin: "LinkedIn",
+      jobstreet: "JobStreet",
+      mycareersfuture: "MyCareersFuture",
+    },
     outreach_campaigns: "Outreach Campaigns",
     outreach_campaigns_table: {
       candidate_name: "Candidate Name",

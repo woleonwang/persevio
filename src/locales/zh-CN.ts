@@ -1633,6 +1633,36 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     job_requirements: "职位需求",
     pipeline: "Pipeline",
     sourcing_channels: "招聘渠道",
+    sourcing_channels_section: {
+      free_job_board_title: "Persevio 免费招聘看板",
+      free_job_board_desc:
+        "您的职位已发布到 Persevio 招聘看板，完全免费。",
+      copy_url: "复制链接",
+      view_posting: "查看发布",
+      take_down: "撤下",
+      boost_title: "推广您的职位",
+      boost_desc:
+        "我们将在 Persevio 及全网（包括 LinkedIn、JobStreet、招聘社区和社交媒体）积极推广您的职位，吸引更多合格的活跃候选人申请。",
+      no_upfront_cost: "无前期费用，仅在招聘成功时支付。",
+      flat_fee_per_hire: "每次招聘固定费用 SGD 500。",
+      start_boosting: "开始推广",
+      outreach_title: "外展活动",
+      outreach_desc:
+        "针对未积极寻找工作的被动候选人。我们将主动联系 Persevio 数据库和全网中合适的候选人，利用推荐和所有可能的渠道为您的职位找到最佳人选。按成功收费——仅在您招聘成功时支付。",
+      start_outreach_campaigns: "开始外展活动",
+      tracking_links_title: "追踪链接",
+      tracking_links_desc:
+        "将您在其他招聘板上的帖子中的候选人引导至下方相应的链接，以便所有候选人将在系统中聚合。",
+      source: "来源",
+      url: "URL",
+      actions: "操作",
+      copy: "复制",
+      add_custom_source: "添加自定义来源",
+      direc: "Direc",
+      linkedin: "LinkedIn",
+      jobstreet: "JobStreet",
+      mycareersfuture: "MyCareersFuture",
+    },
     outreach_campaigns: "外推活动",
     outreach_campaigns_table: {
       candidate_name: "候选人姓名",

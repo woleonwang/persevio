@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, message, Tag, Tooltip } from "antd";
+import { Button, message, Tooltip } from "antd";
 
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
@@ -9,7 +9,6 @@ import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import Download from "@/assets/icons/download";
 import Icon from "@/components/Icon";
-import Pen from "@/assets/icons/pen";
 
 type TChatType = "jobRequirement" | "jobDescription";
 
@@ -17,7 +16,6 @@ interface IProps {
   job: IJob;
   chatType: TChatType;
   role?: "admin" | "staff";
-  togglePostJob: () => Promise<void>;
   onUpdateDoc: () => Promise<void>;
 }
 
@@ -26,7 +24,7 @@ const chatTypeMappings: Record<TChatType, string> = {
   jobDescription: "jd",
 };
 const JobDocument = (props: IProps) => {
-  const { job, chatType, togglePostJob, onUpdateDoc, role = "staff" } = props;
+  const { job, chatType, onUpdateDoc, role = "staff" } = props;
 
   const [documentContent, setDocumentContent] = useState("");
   const [updatedAt, setUpdatedAt] = useState("");

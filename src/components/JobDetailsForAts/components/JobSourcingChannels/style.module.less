@@ -1,0 +1,82 @@
+.container {
+  padding: 20px 0;
+  overflow: auto;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.sectionDesc {
+  font-size: 13px;
+  color: #999;
+  margin: 0 0 16px 0;
+}
+
+.urlRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.urlLink {
+  font-size: 14px;
+  color: #3682fe;
+  word-break: break-all;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.urlActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.boostRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.boostPricing {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #666;
+}
+
+.boostBtn {
+  background: #ff7a00;
+  border-color: #ff7a00;
+
+  &:hover {
+    background: #ff8c1a !important;
+    border-color: #ff8c1a !important;
+  }
+}
+
+.tableWrap {
+  margin-bottom: 12px;
+
+  :global(.ant-table) {
+    font-size: 14px;
+  }
+}
+
+.addCustomSource {
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}

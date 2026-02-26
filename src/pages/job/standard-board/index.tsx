@@ -10,8 +10,9 @@ import { Post } from "@/utils/request";
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
 import globalStore from "@/store/global";
-import { infoModal } from "@/utils";
+import { infoModal, isDevelopment } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
+import JobDetails from "@/components/JobDetails";
 
 type TJobState = "jrd" | "jd" | "preview" | "board";
 
@@ -178,7 +179,7 @@ const JobBoard = () => {
         )}
         {jobState === "board" && (
           <div className={styles.boardContent}>
-            <JobDetailsForAts />
+            {isDevelopment() ? <JobDetailsForAts /> : <JobDetails />}
           </div>
         )}
       </div>

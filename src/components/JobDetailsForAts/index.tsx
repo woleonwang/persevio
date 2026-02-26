@@ -13,6 +13,7 @@ import AdminTalents from "@/components/AdminTalents";
 import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
 import JobOutreachCampaigns from "./components/JobOutreachCampaigns";
+import JobSourcingChannels from "./components/JobSourcingChannels";
 import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
@@ -233,7 +234,6 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
                     job={job}
                     chatType={jobReqSubTab}
                     key={jobReqSubTab}
-                    togglePostJob={togglePostJob}
                     onUpdateDoc={fetchJob}
                     role={role}
                   />
@@ -259,9 +259,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             label: t("sourcing_channels"),
             children: (
               <div className={styles.body}>
-                <div className={styles.placeholder}>
-                  {t("sourcing_channels")}
-                </div>
+                <JobSourcingChannels togglePostJob={togglePostJob} />
               </div>
             ),
           },
