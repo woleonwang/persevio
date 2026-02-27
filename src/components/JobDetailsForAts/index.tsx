@@ -171,20 +171,6 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             </div>
           )}
         </div>
-        {role === "staff" && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              cursor: "pointer",
-            }}
-            onClick={async () => setIsCollaboratorModalOpen(true)}
-          >
-            <Icon icon={<Share2 />} style={{ color: "#3682fe" }} />
-            <div style={{ fontSize: 14 }}>{t("share_position")}</div>
-          </div>
-        )}
       </div>
       <AntdTabs
         activeKey={chatType}
@@ -204,7 +190,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
                     activeKey={jobReqSubTab}
                     onChange={(key) =>
                       setJobReqSubTab(
-                        key as "jobRequirement" | "jobDescription"
+                        key as "jobRequirement" | "jobDescription",
                       )
                     }
                     size="small"

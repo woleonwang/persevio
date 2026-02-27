@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+backend codebase path is /Users/marvinwang/Documents/GitHub/persevio-backend, the api entry is in cmd/main.go，you can refer it

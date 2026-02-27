@@ -117,11 +117,11 @@ interface IJobApplyListItem extends IJobApply {
   jd: string;
   jdJson: Record<string, string>;
   talent_status:
-    | ""
-    | "evaluate_succeed"
-    | "evaluate_failed"
-    | "accepted"
-    | "rejected";
+  | ""
+  | "evaluate_succeed"
+  | "evaluate_failed"
+  | "accepted"
+  | "rejected";
   interviews?: TInterview[];
 }
 
@@ -445,6 +445,7 @@ type TTalent = {
   };
   created_at: string;
   viewed_at: string;
+  stage_id?: string;
   evaluate_feedback: TEvaluateFeedback;
   evaluate_feedback_reason: string;
 };

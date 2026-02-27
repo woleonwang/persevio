@@ -3,16 +3,17 @@ import { Empty } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { PipelineStage } from "../../JobSettings";
-import type { TDataSourceItem } from "./types";
-import { getInitials } from "./types";
+import type { TTalentListItem } from "./types";
+import { getInitials } from "./index";
 import DraggableCard from "./DraggableCard";
 import styles from "../style.module.less";
 
 interface IProps {
   stage: PipelineStage;
-  items: TDataSourceItem[];
+  items: TTalentListItem[] | TLinkedinProfile[];
   isLocked: boolean;
-  onCardClick: (item: TDataSourceItem) => void;
+  onCardClick: (item: TTalentListItem) => void;
+  onUpdateTalent: () => void;
   renderReachedOutSummary?: boolean;
 }
 
@@ -21,6 +22,7 @@ const DroppableColumn = ({
   items,
   isLocked,
   onCardClick,
+  onUpdateTalent,
   renderReachedOutSummary,
 }: IProps) => {
   const { setNodeRef, isOver } = useDroppable({
@@ -54,9 +56,9 @@ const DroppableColumn = ({
                 <div
                   key={item.id}
                   className={styles.avatarCircle}
-                  title={item.talent?.name}
+                  title={item.name}
                 >
-                  {getInitials(item.talent?.name || "?")}
+                  {getInitials(item.name || "?")}
                 </div>
               ))}
               {items.length > 5 && (
@@ -72,9 +74,10 @@ const DroppableColumn = ({
           items.map((item) => (
             <DraggableCard
               key={item.id}
-              item={item}
+              item={item as TTalentListItem}
               isDraggable={!isLocked}
-              onCardClick={() => onCardClick(item)}
+              onCardClick={() => onCardClick(item as TTalentListItem)}
+              onUpdateTalent={onUpdateTalent}
             />
           ))}
         {renderReachedOutSummary && items.length === 0 && (
