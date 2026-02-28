@@ -293,19 +293,19 @@ export const getEvaluateResultLevel = (
 ): TEvaluateResultLevel => {
   if (!result) return "maybe";
 
-  const resultOptions = [
-    "ideal_candidate",
-    "good_fit",
-    "ideal_candidate_with_caveat",
-    "good_fit_with_caveat",
-    "maybe",
-    "not_a_fit",
-  ];
-
-  return resultOptions.includes(result)
+  return EVALUATE_RESULT_LEVEL_KEYS.includes(result)
     ? (result as TEvaluateResultLevel)
     : "maybe";
 };
+
+export const EVALUATE_RESULT_LEVEL_KEYS = [
+  "ideal_candidate",
+  "ideal_candidate_with_caveat",
+  "good_fit",
+  "good_fit_with_caveat",
+  "maybe",
+  "not_a_fit",
+];
 
 export const SOURCING_CHANNEL_KEYS = [
   "system",

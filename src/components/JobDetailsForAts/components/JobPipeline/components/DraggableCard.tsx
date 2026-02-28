@@ -1,6 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Popover } from "antd";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 import { getEvaluateResultLevel, getSourcingChannel } from "@/utils";
 import type { TTalentListItem } from "./types";
@@ -12,6 +13,7 @@ import { useTranslation } from "react-i18next";
 interface IProps {
   item: TTalentListItem;
   isDraggable: boolean;
+  disabledPopover?: boolean;
   onCardClick: (item: TTalentListItem) => void;
   onUpdateTalent: () => void;
 }
@@ -19,6 +21,7 @@ interface IProps {
 const DraggableCard = ({
   item,
   isDraggable,
+  disabledPopover,
   onCardClick,
   onUpdateTalent,
 }: IProps) => {
@@ -27,6 +30,8 @@ const DraggableCard = ({
     data: { item },
     disabled: !isDraggable,
   });
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -61,6 +66,8 @@ const DraggableCard = ({
       trigger="hover"
       placement="right"
       mouseEnterDelay={0.5}
+      open={!disabledPopover && popoverOpen && !isDragging}
+      onOpenChange={setPopoverOpen}
     >
       <div
         ref={setNodeRef}
@@ -81,7 +88,8 @@ const DraggableCard = ({
             <span className={`${styles.infoValue}`}>
               <EvaluateResultBadge
                 result={getEvaluateResultLevel(
-                  evaluateResult?.overall_recommendation?.result,
+                  evaluateResult?.overall_recommendation?.result ||
+                    evaluateResult?.result,
                 )}
               />
             </span>

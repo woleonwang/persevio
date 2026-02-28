@@ -15,7 +15,13 @@ import { SearchOutlined } from "@ant-design/icons";
 
 import useJob from "@/hooks/useJob";
 import { Get, Post } from "@/utils/request";
-import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
+import {
+  EVALUATE_RESULT_LEVEL_KEYS,
+  getEvaluateResultLevel,
+  getSourcingChannel,
+  parseJSON,
+  SOURCING_CHANNEL_KEYS,
+} from "@/utils";
 import {
   DraggableCard,
   DroppableColumn,
@@ -36,6 +42,9 @@ const JobPipeline = () => {
   const [searchName, setSearchName] = useState<string>("");
   const [sourcingChannel, setSourcingChannel] = useState<string | undefined>();
   const [stageFilter, setStageFilter] = useState<string | undefined>();
+  const [evaluateResultLevel, setEvaluateResultLevel] = useState<
+    TEvaluateResultLevel | undefined
+  >();
 
   const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
   const [activeId, setActiveId] = useState<number>();
@@ -109,8 +118,17 @@ const JobPipeline = () => {
       .filter((item) => {
         if (!stageFilter) return true;
         return getStageKey(item) === stageFilter;
+      })
+      .filter((item) => {
+        if (!evaluateResultLevel) return true;
+        return (
+          getEvaluateResultLevel(
+            item.parsedEvaluateResult?.overall_recommendation?.result ||
+              item.parsedEvaluateResult?.result,
+          ) === evaluateResultLevel
+        );
       });
-  }, [talents, searchName, sourcingChannel, stageFilter]);
+  }, [talents, searchName, sourcingChannel, stageFilter, evaluateResultLevel]);
 
   const itemsByStage = useMemo(() => {
     const map: Record<string, TTalentListItem[] | TLinkedinProfile[]> = {};
@@ -206,6 +224,7 @@ const JobPipeline = () => {
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
           allowClear
+          style={{ width: 150 }}
         />
         <Select
           className={styles.filterSelect}
@@ -217,6 +236,7 @@ const JobPipeline = () => {
             value: key,
             label: tKey(`sourcing_channel.${key}`),
           }))}
+          style={{ width: 200 }}
         />
         <Select
           className={styles.filterSelect}
@@ -225,11 +245,19 @@ const JobPipeline = () => {
           onChange={setStageFilter}
           allowClear
           options={allStages.map((s) => ({ value: s.id, label: s.name }))}
+          style={{ width: 200 }}
         />
         <Select
           className={styles.filterSelect}
           placeholder={tKey("all_fit_levels")}
+          value={evaluateResultLevel}
+          onChange={setEvaluateResultLevel}
           allowClear
+          options={EVALUATE_RESULT_LEVEL_KEYS.map((level) => ({
+            label: t(`job_talents.evaluate_result_select_options.${level}`),
+            value: level,
+          }))}
+          style={{ width: 200 }}
         />
         {/* <Select
           className={styles.filterSelect}
@@ -291,10 +319,11 @@ const JobPipeline = () => {
           </div>
           <DragOverlay>
             {activeItem ? (
-              <div style={{ width: 280 }}>
+              <div>
                 <DraggableCard
                   item={activeItem}
-                  isDraggable
+                  isDraggable={false}
+                  disabledPopover
                   onCardClick={() => {}}
                   onUpdateTalent={() => {}}
                 />
