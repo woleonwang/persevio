@@ -1642,6 +1642,12 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     pipeline_section: {
       search_placeholder: "搜索候选人...",
       all_sourcing_channels: "全部招聘渠道",
+      sourcing_channel: {
+        system: "系统",
+        linkedin: "LinkedIn",
+        jobstreet: "JobStreet",
+        mycareersfuture: "MyCareersFuture",
+      },
       all_stages: "全部阶段",
       all_fit_levels: "全部匹配度",
       rank_by: "排序",

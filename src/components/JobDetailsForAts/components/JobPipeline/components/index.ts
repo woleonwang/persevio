@@ -1,12 +1,5 @@
 import { TTalentListItem } from "./types";
 
-export const SOURCING_CHANNEL_OPTIONS = [
-  { value: "system", label: "Direct" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "jobstreet", label: "JobStreet" },
-  { value: "mycareersfuture", label: "MyCareersFuture" },
-];
-
 export const getInitials = (name: string) =>
   name
     .split(/\s+/)

@@ -1700,6 +1700,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     pipeline_section: {
       search_placeholder: "Search candidates...",
       all_sourcing_channels: "All Sourcing Channels",
+      sourcing_channel: {
+        system: "System",
+        linkedin: "LinkedIn",
+        jobstreet: "JobStreet",
+        mycareersfuture: "MyCareersFuture",
+      },
       all_stages: "All Stages",
       all_fit_levels: "All Fit Levels",
       rank_by: "Rank by",

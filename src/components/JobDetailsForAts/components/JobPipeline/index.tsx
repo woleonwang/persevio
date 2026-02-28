@@ -15,11 +15,10 @@ import { SearchOutlined } from "@ant-design/icons";
 
 import useJob from "@/hooks/useJob";
 import { Get, Post } from "@/utils/request";
-import { parseJSON } from "@/utils";
+import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
 import {
   DraggableCard,
   DroppableColumn,
-  SOURCING_CHANNEL_OPTIONS,
   getStageKey,
   type TTalentListItem,
 } from "./components";
@@ -105,9 +104,7 @@ const JobPipeline = () => {
       })
       .filter((item) => {
         if (!sourcingChannel) return true;
-        const sc = item.source_channel || "system";
-        const normalized = sc === "customer" ? "linkedin" : sc;
-        return normalized === sourcingChannel;
+        return getSourcingChannel(item.source_channel) === sourcingChannel;
       })
       .filter((item) => {
         if (!stageFilter) return true;
@@ -216,7 +213,10 @@ const JobPipeline = () => {
           value={sourcingChannel}
           onChange={setSourcingChannel}
           allowClear
-          options={SOURCING_CHANNEL_OPTIONS}
+          options={SOURCING_CHANNEL_KEYS.map((key) => ({
+            value: key,
+            label: tKey(`sourcing_channel.${key}`),
+          }))}
         />
         <Select
           className={styles.filterSelect}

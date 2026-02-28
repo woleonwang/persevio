@@ -59,7 +59,7 @@ import { storage, StorageKey } from "./storage";
 export const checkJobDotStatus = (jobId: number, type: string): boolean => {
   const dotStatus = storage.get<Record<number, Record<string, number>>>(
     StorageKey.JOB_DOT,
-    {}
+    {},
   ) as Record<number, Record<string, number>>;
   return !!dotStatus[jobId]?.[type];
 };
@@ -67,7 +67,7 @@ export const checkJobDotStatus = (jobId: number, type: string): boolean => {
 export const setJobDotStatus = (jobId: number, type: string) => {
   const dotStatus = storage.get<Record<number, Record<string, number>>>(
     StorageKey.JOB_DOT,
-    {}
+    {},
   ) as Record<number, Record<string, number>>;
   dotStatus[jobId] = dotStatus[jobId] ?? {};
   dotStatus[jobId][type] = Date.now();
@@ -86,7 +86,7 @@ export const deleteQuery = (key: string) => {
   window.history.replaceState(
     {},
     "",
-    `${window.location.pathname}${query ? `?${query}` : ""}`
+    `${window.location.pathname}${query ? `?${query}` : ""}`,
   );
 };
 
@@ -96,7 +96,7 @@ export const updateQuery = (key: string, value: string) => {
   window.history.replaceState(
     {},
     "",
-    `${window.location.pathname}?${urlParams.toString()}`
+    `${window.location.pathname}?${urlParams.toString()}`,
   );
 };
 
@@ -269,7 +269,7 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
 export const getJobChatbotUrl = (
   jobId: number,
   version: string,
-  sourceChannel?: string
+  sourceChannel?: string,
 ) => {
   return `${window.origin}/jobs/${jobId}/chat${
     version === "0" ? "" : `/${version}`
@@ -289,7 +289,7 @@ export const getDocumentType = (key: string): string => {
 };
 
 export const getEvaluateResultLevel = (
-  result?: string
+  result?: string,
 ): TEvaluateResultLevel => {
   if (!result) return "maybe";
 
@@ -305,4 +305,19 @@ export const getEvaluateResultLevel = (
   return resultOptions.includes(result)
     ? (result as TEvaluateResultLevel)
     : "maybe";
+};
+
+export const SOURCING_CHANNEL_KEYS = [
+  "system",
+  "linkedin",
+  "jobstreet",
+  "mycareersfuture",
+];
+
+export const getSourcingChannel = (sourcingChannel?: string) => {
+  const sc =
+    sourcingChannel && SOURCING_CHANNEL_KEYS.includes(sourcingChannel)
+      ? sourcingChannel
+      : "system";
+  return sc === "customer" ? "linkedin" : sc;
 };
