@@ -31,7 +31,11 @@ import {
 import styles from "./style.module.less";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
 
-const JobPipeline = () => {
+const JobPipeline = ({
+  onChangeTab,
+}: {
+  onChangeTab: (tab: string) => void;
+}) => {
   const { job } = useJob();
   const [loading, setLoading] = useState(true);
   const [talents, setTalents] = useState<TTalentListItem[]>([]);
@@ -314,6 +318,9 @@ const JobPipeline = () => {
                   fetchTalents();
                 }}
                 renderReachedOutSummary={stage.id === "reached_out"}
+                onGoToReachedOut={() => {
+                  onChangeTab("outreachCampaigns");
+                }}
               />
             ))}
           </div>

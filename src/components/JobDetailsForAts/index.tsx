@@ -20,7 +20,6 @@ import JobCollaboratorModal from "../JobCollaboratorModal";
 import JobPipeline from "./components/JobPipeline";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
-import Share2 from "@/assets/icons/share2";
 import globalStore from "@/store/global";
 
 type TMenu =
@@ -36,7 +35,7 @@ interface IProps {
 }
 const JobDetailsForAts = ({ role = "staff" }: IProps) => {
   const { job, fetchJob } = useJob();
-  const [chatType, setChatType] = useState<TMenu>();
+  const [activeTab, setActiveTab] = useState<TMenu>();
   const [jobReqSubTab, setJobReqSubTab] = useState<
     "jobRequirement" | "jobDescription"
   >("jobRequirement");
@@ -76,7 +75,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
     };
     const resolvedTab = legacyTabMap[tab || ""] || tab;
     if (resolvedTab && validTabs.includes(resolvedTab)) {
-      setChatType(resolvedTab);
+      setActiveTab(resolvedTab);
       if (tab && tab !== resolvedTab) {
         updateQuery("tab", resolvedTab);
       }
@@ -86,9 +85,9 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
         code === 0 &&
         (data.talents.length > 0 || data.linkedin_profiles.length > 0)
       ) {
-        setChatType("pipeline");
+        setActiveTab("pipeline");
       } else {
-        setChatType("jobRequirements");
+        setActiveTab("jobRequirements");
       }
     }
   };
@@ -173,9 +172,9 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
         </div>
       </div>
       <AntdTabs
-        activeKey={chatType}
+        activeKey={activeTab}
         onChange={(key) => {
-          setChatType(key as TMenu);
+          setActiveTab(key as TMenu);
           updateQuery("tab", key);
         }}
         className={styles.tabs}
@@ -233,7 +232,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             children: (
               <div className={styles.body}>
                 {role === "staff" ? (
-                  <JobPipeline />
+                  <JobPipeline
+                    onChangeTab={(tab) => {
+                      setActiveTab(tab as TMenu);
+                      updateQuery("tab", tab);
+                    }}
+                  />
                 ) : (
                   <AdminTalents jobId={job.id} />
                 )}

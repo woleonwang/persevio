@@ -14,6 +14,7 @@ interface IProps {
   isLocked: boolean;
   onCardClick: (item: TTalentListItem) => void;
   onUpdateTalent: () => void;
+  onGoToReachedOut: () => void;
   renderReachedOutSummary?: boolean;
 }
 
@@ -23,6 +24,7 @@ const DroppableColumn = ({
   isLocked,
   onCardClick,
   onUpdateTalent,
+  onGoToReachedOut,
   renderReachedOutSummary,
 }: IProps) => {
   const { setNodeRef, isOver } = useDroppable({
@@ -37,7 +39,7 @@ const DroppableColumn = ({
       ref={setNodeRef}
       className={styles.kanbanColumn}
       style={{
-        border: isOver ? "2px dashed #1890ff" : undefined,
+        border: !isLocked && isOver ? "2px dashed #1890ff" : undefined,
       }}
     >
       <div className={styles.columnHeader}>
@@ -65,7 +67,12 @@ const DroppableColumn = ({
                 <div className={styles.avatarCircle}>...</div>
               )}
             </div>
-            <div className={styles.reachedOutLink}>
+            <div
+              className={styles.reachedOutLink}
+              onClick={() => {
+                onGoToReachedOut();
+              }}
+            >
               {tKey("click_to_view_details")} →
             </div>
           </div>
