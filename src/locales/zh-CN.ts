@@ -1657,6 +1657,13 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       candidates_reached_out: "位候选人已触达",
       click_to_view_details: "点击查看详情",
       persevio: "Persevio",
+      experience: "经验",
+      visa_status: "签证状态",
+      current_comp: "当前薪资",
+      days_in_stage: "阶段天数",
+      fit_high: "高",
+      fit_medium: "中",
+      fit_low: "低",
     },
     sourcing_channels: "招聘渠道",
     sourcing_channels_section: {

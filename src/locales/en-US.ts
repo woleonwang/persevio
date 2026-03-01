@@ -1715,6 +1715,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       candidates_reached_out: "candidates reached out",
       click_to_view_details: "Click to view details",
       persevio: "Persevio",
+      experience: "Experience",
+      visa_status: "Visa Status",
+      current_comp: "Current Comp",
+      days_in_stage: "Days in Stage",
+      fit_high: "High",
+      fit_medium: "Medium",
+      fit_low: "Low",
     },
     sourcing_channels: "Sourcing Channels",
     sourcing_channels_section: {

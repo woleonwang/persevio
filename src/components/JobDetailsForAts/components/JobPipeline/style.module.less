@@ -292,3 +292,121 @@
   padding: 60px 0;
   text-align: center;
 }
+
+// List mode
+.listBoard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  flex: 1;
+  align-content: start;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.listModeCard {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &:hover {
+    border-color: @primary-color;
+  }
+}
+
+.listCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f5f5f5;
+  padding: 12px 20px;
+}
+
+.listCardName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  min-width: 0;
+}
+
+.listCardBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stageBadge {
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background-color: #f0f4f9;
+  color: #738fbd;
+  line-height: 1.4;
+  border: 1px solid rgba(115, 143, 189, 0.2);
+}
+
+.listCardMore {
+  padding: 4px 8px;
+  color: #999;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #666;
+  }
+}
+
+.listCardContent {
+  padding: 20px;
+}
+
+.listCardInfoGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.listCardInfoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  &:not(:first-child) {
+    border-left: 1px dashed #dedede;
+    padding-left: 20px;
+  }
+}
+
+.listCardInfoLabel {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.listCardInfoValue {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.listCardSummary {
+  font-size: 12px;
+  color: #f9a930;
+  background: #fefbec;
+  padding: 10px 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.listBoardEmpty {
+  grid-column: 1 / -1;
+  padding: 48px 0;
+}

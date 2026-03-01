@@ -25,6 +25,7 @@ import {
 import {
   DraggableCard,
   DroppableColumn,
+  ListModeCard,
   getStageKey,
   type TTalentListItem,
 } from "./components";
@@ -50,7 +51,7 @@ const JobPipeline = ({
     TEvaluateResultLevel | undefined
   >();
 
-  const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const [activeId, setActiveId] = useState<number>();
 
   const { t } = useTranslation();
@@ -339,7 +340,27 @@ const JobPipeline = ({
           </DragOverlay>
         </DndContext>
       ) : (
-        <Empty description="List view" />
+        <div className={styles.listBoard}>
+          {filteredList.length === 0 ? (
+            <div className={styles.listBoardEmpty}>
+              <Empty />
+            </div>
+          ) : (
+            filteredList.map((item) => (
+              <ListModeCard
+                key={item.id}
+                allStages={allStages}
+                item={item}
+                onCardClick={(talent) => {
+                  window.open(
+                    `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                    "_blank",
+                  );
+                }}
+              />
+            ))
+          )}
+        </div>
       )}
     </div>
   );

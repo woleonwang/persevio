@@ -3,8 +3,9 @@ import { Popover } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
 
-import { getEvaluateResultLevel, getSourcingChannel } from "@/utils";
+import { getSourcingChannel } from "@/utils";
 import type { TTalentListItem } from "./types";
+import { getCandidateCardData } from "./getCandidateCardData";
 import styles from "../style.module.less";
 import PopoverContent from "./PopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
@@ -36,15 +37,8 @@ const DraggableCard = ({
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
-  const name = item.name || "-";
-  const basicInfo = item.basicInfo;
-  const evaluateResult = item.parsedEvaluateResult;
-  const exp = basicInfo?.years_of_experience || "-";
-  const visa = evaluateResult?.visa || basicInfo?.visa || "-";
-  const comp =
-    evaluateResult?.current_compensation ||
-    basicInfo?.current_compensation ||
-    "-";
+  const { name, exp, visa, comp, fitResult, summary } =
+    getCandidateCardData(item);
   const sourceChannel = getSourcingChannel(item.source_channel);
   const sourceLabel = tKey(`sourcing_channel.${sourceChannel}`);
   const lastActivity = item.created_at;
@@ -57,8 +51,6 @@ const DraggableCard = ({
         return d.format("MMM D");
       })()
     : "-";
-  const summary =
-    evaluateResult?.thumbnail_summary || evaluateResult?.summary || "";
 
   return (
     <Popover
@@ -86,12 +78,7 @@ const DraggableCard = ({
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Fit</span>
             <span className={`${styles.infoValue}`}>
-              <EvaluateResultBadge
-                result={getEvaluateResultLevel(
-                  evaluateResult?.overall_recommendation?.result ||
-                    evaluateResult?.result,
-                )}
-              />
+              <EvaluateResultBadge result={fitResult} />
             </span>
           </div>
           <div className={styles.infoRow}>

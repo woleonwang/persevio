@@ -24,4 +24,5 @@ export const getStageKey = (talent: TTalentListItem): string => {
 
 export { default as DraggableCard } from "./DraggableCard";
 export { default as DroppableColumn } from "./DroppableColumn";
+export { default as ListModeCard } from "./ListModeCard";
 export { type TTalentListItem } from "./types";
