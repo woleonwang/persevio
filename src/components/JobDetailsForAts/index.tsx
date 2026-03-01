@@ -178,6 +178,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           updateQuery("tab", key);
         }}
         className={styles.tabs}
+        animated={false}
         items={[
           {
             key: "jobRequirements",

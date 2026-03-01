@@ -1,27 +1,94 @@
 .container {
-  padding: 20px 0;
+  padding: 20px 10px 20px 0;
   overflow: auto;
 }
 
 .section {
-  margin-bottom: 32px;
-}
+  margin-bottom: 16px;
 
-.sectionTitle {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-}
+  &.freeJobBoardSection {
+    background-color: rgba(247, 249, 255, 1);
+    padding: 24px;
+    border-radius: 12px;
+  }
 
-.sectionDesc {
-  font-size: 13px;
-  color: #999;
-  margin: 0 0 16px 0;
+  &:not(.freeJobBoardSection) {
+    display: flex;
+    border: 1px solid rgba(222, 222, 222, 1);
+    padding: 20px 24px;
+    border-radius: 12px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .boost,
+    .outreach {
+      font-size: 20px;
+    }
+
+    .boost {
+      color: rgba(224, 61, 61, 1);
+    }
+
+    .outreach {
+      color: rgba(54, 130, 254, 1);
+    }
+  }
+
+  .sectionLeft {
+    flex: 1;
+    padding-right: 20px;
+
+    .sectionDesc {
+      font-size: 13px;
+      color: #999;
+      margin: 0 0 16px 0;
+    }
+  }
+
+  .sectionRight {
+    width: 274px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-left: 1px solid rgba(222, 222, 222, 1);
+
+    .boostBtnWrap {
+      text-align: right;
+    }
+
+    .boostBtn {
+      background: linear-gradient(90deg, #fe6b36 0%, #ff963a 100%);
+      border-color: #ff7a00;
+      transition: none;
+
+      &:hover {
+        background: #ff8c1a !important;
+        border-color: #ff8c1a !important;
+      }
+    }
+
+    .boostPricing {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+      margin-top: 8px;
+      span:first-child {
+        color: #999;
+      }
+    }
+  }
 }
 
 .urlRow {
   display: flex;
-  flex-direction: column;
   gap: 12px;
 }
 
@@ -41,42 +108,19 @@
   align-items: center;
 }
 
-.boostRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.boostPricing {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 14px;
-  color: #666;
-}
-
-.boostBtn {
-  background: #ff7a00;
-  border-color: #ff7a00;
-
-  &:hover {
-    background: #ff8c1a !important;
-    border-color: #ff8c1a !important;
-  }
-}
-
 .tableWrap {
   margin-bottom: 12px;
+
+  .sourceName {
+    font-weight: bold;
+  }
+
+  .url {
+    padding: 6px 12px;
+    background-color: rgba(246, 246, 246, 1);
+  }
 
   :global(.ant-table) {
     font-size: 14px;
   }
-}
-
-.addCustomSource {
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
 }

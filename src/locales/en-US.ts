@@ -1730,7 +1730,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
         "Your job has been posted to Persevio's job board. It is completely free.",
       copy_url: "Copy URL",
       view_posting: "View Posting",
-      take_down: "Take Down",
+      take_down: "Delist",
       boost_title: "Boost Your Job",
       boost_desc:
         "We'll actively promote your role on Persevio and across the web — including LinkedIn, JobStreet, job communities, and social media — to attract more qualified active candidates to apply.",
