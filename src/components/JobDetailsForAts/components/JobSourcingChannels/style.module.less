@@ -120,7 +120,54 @@
     background-color: rgba(246, 246, 246, 1);
   }
 
+  .actionsCell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .deleteSourceBtn {
+    margin-left: 4px;
+  }
+
   :global(.ant-table) {
     font-size: 14px;
   }
+}
+
+.addCustomSourceBtn {
+  margin-top: 12px;
+}
+
+.addCustomForm {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.addCustomFormRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.addCustomFormLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.addCustomFormInput {
+  width: 320px;
+}
+
+.generateUrlBtn {
+  flex-shrink: 0;
 }

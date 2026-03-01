@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Input, message, Table } from "antd";
 import classnames from "classnames";
@@ -5,16 +6,14 @@ import classnames from "classnames";
 import useJob from "@/hooks/useJob";
 import { confirmModal, copy, getJobChatbotUrl } from "@/utils";
 import Icon from "@/components/Icon";
-import Link2 from "@/assets/icons/link2";
-import Delete from "@/assets/icons/delete";
-import ListUp from "@/assets/icons/list-up";
 import styles from "./style.module.less";
 import ButtonGroup from "antd/es/button/button-group";
 import BoostJob from "@/assets/icons/boost-job";
 import OutreachCampaign from "@/assets/icons/outreach-campaign";
 import StartBoost from "@/assets/icons/start-boost";
-import { Post } from "@/utils/request";
+import { Get, Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
+import Delete from "@/assets/icons/delete";
 
 const DEFAULT_TRACKING_SOURCES = [
   "direc",
@@ -23,20 +22,50 @@ const DEFAULT_TRACKING_SOURCES = [
   "mycareersfuture",
 ] as const;
 
+type TCustomSource = {
+  id: number;
+  job_id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type TrackingRow =
+  | { key: string; source: string; url: string; type: "default" }
+  | { key: string; source: string; url: string; type: "custom"; id: number };
+
 interface IProps {
   togglePostJob: () => Promise<void>;
 }
 
 const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   const { job } = useJob();
+  const [showAddCustomForm, setShowAddCustomForm] = useState(false);
+  const [customSourceName, setCustomSourceName] = useState("");
+  const [customSources, setCustomSources] = useState<TCustomSource[]>([]);
+
+  const fetchCustomSources = async () => {
+    if (!job?.id) return;
+    const { code, data } = await Get<{ custom_sources: TCustomSource[] }>(
+      `/api/jobs/${job.id}/custom_sources`,
+    );
+    if (code === 0) setCustomSources(data?.custom_sources ?? []);
+  };
+
+  useEffect(() => {
+    fetchCustomSources();
+  }, [job?.id]);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) =>
     originalT(`job_details.sourcing_channels_section.${key}`);
 
-  const jobUrl = job
-    ? getJobChatbotUrl(job.id, job.jd_version?.toString(), "customer")
-    : "";
+  const getJobUrl = (source: string) => {
+    if (!job?.id) return "";
+    return getJobChatbotUrl(job.id, job.jd_version?.toString(), source);
+  };
+
+  const customSourceUrl = getJobUrl("customer");
 
   const handleCopyUrl = async (url: string) => {
     await copy(url);
@@ -56,7 +85,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   };
 
   const handleViewPosting = () => {
-    window.open(jobUrl, "_blank");
+    window.open(customSourceUrl, "_blank");
   };
 
   const applyService = async (type: "boost" | "outreach") => {
@@ -71,14 +100,37 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     }
   };
 
+  const handleDeleteCustomSource = (id: number, name: string) => {
+    confirmModal({
+      title: t("delete_custom_source_title"),
+      content: originalT(
+        "job_details.sourcing_channels_section.delete_custom_source_content",
+        { name },
+      ),
+      onOk: async () => {
+        const { code } = await Post(
+          `/api/jobs/${job!.id}/custom_sources/${id}/destroy`,
+        );
+        if (code === 0) {
+          message.success(originalT("delete_success"));
+          fetchCustomSources();
+        } else {
+          message.error(originalT("delete_failed"));
+        }
+      },
+    });
+  };
+
   const trackingColumns = [
     {
       title: t("source"),
       dataIndex: "source",
       key: "source",
       width: 160,
-      render: (key: string) => (
-        <div className={styles.sourceName}>{t(key)}</div>
+      render: (_: string, record: TrackingRow) => (
+        <div className={styles.sourceName}>
+          {record.type === "default" ? t(record.source) : record.source}
+        </div>
       ),
     },
     {
@@ -91,20 +143,63 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     {
       title: t("actions"),
       key: "actions",
-      width: 150,
-      render: (_: unknown, record: { url: string }) => (
-        <Button type="default" onClick={() => handleCopyUrl(record.url)}>
-          <Icon icon={<Copy />} /> {t("copy")}
-        </Button>
+      width: 250,
+      render: (_: unknown, record: TrackingRow) => (
+        <span className={styles.actionsCell}>
+          <Button type="default" onClick={() => handleCopyUrl(record.url)}>
+            <Icon icon={<Copy />} /> {t("copy")}
+          </Button>
+          {record.type === "custom" && (
+            <Button
+              type="default"
+              danger
+              onClick={() => handleDeleteCustomSource(record.id, record.source)}
+              className={styles.deleteSourceBtn}
+            >
+              <Icon icon={<Delete />} /> {t("delete")}
+            </Button>
+          )}
+        </span>
       ),
     },
   ];
 
-  const trackingData = DEFAULT_TRACKING_SOURCES.map((source) => ({
-    key: source,
-    source,
-    url: jobUrl,
-  }));
+  const trackingData: TrackingRow[] = [
+    ...DEFAULT_TRACKING_SOURCES.map((source) => ({
+      key: source,
+      source,
+      url: getJobUrl(source),
+      type: "default" as const,
+    })),
+    ...customSources.map((cs) => ({
+      key: `custom-${cs.id}`,
+      source: cs.name,
+      url: getJobUrl(cs.name),
+      type: "custom" as const,
+      id: cs.id,
+    })),
+  ];
+
+  const handleGenerateUrl = async () => {
+    const name = customSourceName.trim();
+    if (!name || !job?.id) return;
+    const { code } = await Post(`/api/jobs/${job.id}/custom_sources`, {
+      name,
+    });
+    if (code === 0) {
+      message.success(originalT("create_succeed"));
+      fetchCustomSources();
+      setShowAddCustomForm(false);
+      setCustomSourceName("");
+    } else {
+      message.error(originalT("submit_failed"));
+    }
+  };
+
+  const handleCancelAddCustom = () => {
+    setShowAddCustomForm(false);
+    setCustomSourceName("");
+  };
 
   if (!job) return null;
 
@@ -117,11 +212,11 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
         <div className={styles.urlRow}>
           <ButtonGroup style={{ width: 720 }}>
             <Input
-              value={jobUrl}
+              value={customSourceUrl}
               readOnly
               style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             />
-            <Button onClick={() => handleCopyUrl(jobUrl)}>
+            <Button onClick={() => handleCopyUrl(customSourceUrl)}>
               {t("copy_url")}
             </Button>
           </ButtonGroup>
@@ -194,9 +289,40 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
             bordered
           />
         </div>
-        <Button variant="outlined" color="primary">
-          + {t("add_custom_source")}
-        </Button>
+        {!showAddCustomForm ? (
+          <Button
+            type="default"
+            onClick={() => setShowAddCustomForm(true)}
+            className={styles.addCustomSourceBtn}
+          >
+            + {t("add_custom_source")}
+          </Button>
+        ) : (
+          <div className={styles.addCustomForm}>
+            <div className={styles.addCustomFormRow}>
+              <label className={styles.addCustomFormLabel}>
+                {t("source_name")}
+              </label>
+            </div>
+            <div className={styles.addCustomFormRow}>
+              <Input
+                className={styles.addCustomFormInput}
+                placeholder={t("source_name_placeholder")}
+                value={customSourceName}
+                onChange={(e) => setCustomSourceName(e.target.value)}
+                allowClear
+              />
+              <Button
+                type="primary"
+                onClick={handleGenerateUrl}
+                className={styles.generateUrlBtn}
+              >
+                {t("generate_url")}
+              </Button>
+              <Button onClick={handleCancelAddCustom}>{t("cancel")}</Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
