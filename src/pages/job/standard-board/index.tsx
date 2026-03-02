@@ -9,7 +9,7 @@ import useJob from "@/hooks/useJob";
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
 import globalStore from "@/store/global";
-import { addQuery, getQuery, infoModal, isDevelopment } from "@/utils";
+import { addQuery, getQuery, infoModal } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
 import JobDetails from "@/components/JobDetails";
 import { Post } from "@/utils/request";
