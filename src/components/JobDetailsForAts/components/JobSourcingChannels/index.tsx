@@ -299,11 +299,9 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
           </Button>
         ) : (
           <div className={styles.addCustomForm}>
-            <div className={styles.addCustomFormRow}>
-              <label className={styles.addCustomFormLabel}>
-                {t("source_name")}
-              </label>
-            </div>
+            <label className={styles.addCustomFormLabel}>
+              {t("source_name")}
+            </label>
             <div className={styles.addCustomFormRow}>
               <Input
                 className={styles.addCustomFormInput}
@@ -311,6 +309,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
                 value={customSourceName}
                 onChange={(e) => setCustomSourceName(e.target.value)}
                 allowClear
+                autoFocus
               />
               <Button
                 type="primary"
