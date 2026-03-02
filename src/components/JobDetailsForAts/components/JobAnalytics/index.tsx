@@ -136,7 +136,7 @@ const JobAnalytics = () => {
         isDefault: true,
       })),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
-    ].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    ];
   }, [job]);
 
   useEffect(() => {

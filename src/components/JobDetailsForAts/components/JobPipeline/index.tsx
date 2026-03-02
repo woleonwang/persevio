@@ -231,7 +231,7 @@ const JobPipeline = ({
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
           allowClear
-          style={{ width: 150 }}
+          style={{ width: 200 }}
         />
         <Select
           className={styles.filterSelect}
@@ -258,7 +258,7 @@ const JobPipeline = ({
           onChange={setStageFilter}
           allowClear
           options={allStages.map((s) => ({ value: s.id, label: s.name }))}
-          style={{ width: 200 }}
+          style={{ width: 180 }}
         />
         <Select
           className={styles.filterSelect}
