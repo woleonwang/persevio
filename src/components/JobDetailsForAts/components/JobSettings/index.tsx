@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Input, message, Select } from "antd";
-import { LockOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import {
   DndContext,
@@ -23,6 +23,7 @@ import { Get, Post } from "@/utils/request";
 import { confirmModal } from "@/utils";
 import Icon from "@/components/Icon";
 import Delete from "@/assets/icons/delete";
+import LockCheck from "@/assets/icons/lock-check";
 import styles from "./style.module.less";
 import useJob from "@/hooks/useJob";
 import useStaffs from "@/hooks/useStaffs";
@@ -56,7 +57,10 @@ const LockedStageItem = ({ name }: { name: string }) => (
       </div>
     </div>
     <div className={styles.stageNameLocked}>{name}</div>
-    <LockOutlined className={styles.stageLockIcon} />
+    <Icon
+      icon={<LockCheck />}
+      style={{ fontSize: 20, color: "rgba(193, 193, 193, 1)" }}
+    />
   </div>
 );
 
@@ -124,7 +128,10 @@ const SortableStageItem = ({
         </div>
       )}
       <div className={styles.stageDelete} onClick={onDelete}>
-        <Icon icon={<Delete />} style={{ fontSize: 16 }} />
+        <Icon
+          icon={<Delete />}
+          style={{ fontSize: 20, color: "rgba(193, 193, 193, 1)" }}
+        />
       </div>
     </div>
   );
