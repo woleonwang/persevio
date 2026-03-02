@@ -1,23 +1,23 @@
-import { Breadcrumb, Button, Spin } from "antd";
+import { Breadcrumb, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { CheckCircleFilled, RightOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 
 import useJob from "@/hooks/useJob";
-import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
 import globalStore from "@/store/global";
-import { infoModal, isDevelopment } from "@/utils";
+import { addQuery, infoModal, isDevelopment } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
 import JobDetails from "@/components/JobDetails";
+import { Post } from "@/utils/request";
 
-type TJobState = "jrd" | "jd" | "preview" | "board";
+type TJobState = "jrd" | "jd" | "board";
 
 const JobBoard = () => {
-  const { job, fetchJob } = useJob();
+  const { job } = useJob();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_board.${key}`);
@@ -30,8 +30,6 @@ const JobBoard = () => {
     if (job) {
       if (job.initial_posted_at) {
         setJobState("board");
-      } else if (job.jd_doc_id) {
-        setJobState("preview");
       } else if (job.requirement_doc_id) {
         setJobState("jd");
         setMenuCollapse(true);
@@ -43,6 +41,28 @@ const JobBoard = () => {
       setJobState(undefined);
     }
   }, [job]);
+
+  const postJob = async () => {
+    if (!job) return;
+
+    if (!job.initial_posted_at) {
+      const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+        open: "1",
+      });
+
+      if (code !== 0) {
+        message.error(originalT("submit_failed"));
+        return;
+      }
+    }
+
+    addQuery("tab", "sourcingChannels");
+    setJobState("board");
+    infoModal({
+      title: t("published_successfully"),
+      content: t("published_success_content"),
+    });
+  };
 
   if (!job) {
     return <Spin />;
@@ -60,10 +80,6 @@ const JobBoard = () => {
     {
       title: t("step_draft_jd"),
       key: "jd",
-    },
-    {
-      title: t("step_preview"),
-      key: "preview",
     },
     {
       title: t("step_publish"),
@@ -84,7 +100,7 @@ const JobBoard = () => {
               items={stepItems}
               itemRender={(item) => {
                 const itemIndex = stepItems.findIndex(
-                  (step) => step.key === item.key
+                  (step) => step.key === item.key,
                 );
                 let status: "done" | "process" | "wait" = "wait";
                 if (itemIndex < currentIndex) {
@@ -129,53 +145,12 @@ const JobBoard = () => {
           <StaffChat
             chatType="jobDescription"
             jobId={job.id}
-            onNextTask={() => setJobState("preview")}
+            onNextTask={() => {
+              postJob();
+            }}
             key={`jd-${job.id}`}
             newVersion
           />
-        )}
-        {jobState === "preview" && (
-          <div className={styles.previewContainer}>
-            <div className={styles.previewHeader}>
-              {t("preview_description")}
-            </div>
-            <iframe
-              src={`/jobs/${job.id}/chat/${job.jd_version}?preview=1`}
-              style={{
-                border: "1px solid #eee",
-                flex: "auto",
-                width: "100%",
-                borderRadius: 16,
-              }}
-            />
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                type="primary"
-                onClick={async () => {
-                  const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
-                    open: "1",
-                  });
-                  if (code === 0) {
-                    infoModal({
-                      title: t("published_successfully"),
-                      content: t("published_success_content"),
-                      okText: t("go_to_job_details_page"),
-                      onOk: async () => {
-                        fetchJob();
-                      },
-                    });
-                  }
-                }}
-              >
-                {t("post_job")}
-              </Button>
-            </div>
-          </div>
         )}
         {jobState === "board" && (
           <div className={styles.boardContent}>

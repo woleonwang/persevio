@@ -79,6 +79,16 @@ export const getQuery = (key: string): string => {
   return urlParams.get(key) ?? "";
 };
 
+export const addQuery = (key: string, value: string) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.append(key, value);
+  window.history.replaceState(
+    {},
+    "",
+    `${window.location.pathname}?${urlParams.toString()}`,
+  );
+};
+
 export const deleteQuery = (key: string) => {
   const urlParams = new URLSearchParams(window.location.search);
   urlParams.delete(key);
