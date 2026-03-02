@@ -318,14 +318,14 @@ export const EVALUATE_RESULT_LEVEL_KEYS = [
 ];
 
 export const SOURCING_CHANNEL_KEYS = [
-  "direc",
+  "direct",
   "linkedin",
   "jobstreet",
   "mycareersfuture",
 ];
 
-export const getSourcingChannel = (sc: string = "direc"): string => {
+export const getSourcingChannel = (sc: string = "direct"): string => {
   if (sc === "customer") return "linkedin";
-  if (sc === "system" || sc === "delivery" || sc === "") return "direc";
+  if (sc === "system" || sc === "delivery" || sc === "") return "direct";
   return sc;
 };

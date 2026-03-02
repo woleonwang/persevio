@@ -1703,7 +1703,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       search_placeholder: "Search candidates...",
       all_sourcing_channels: "All Sourcing Channels",
       sourcing_channel: {
-        direc: "Direc",
+        direct: "Direct",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",
@@ -1759,7 +1759,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       delete_custom_source_title: "Delete custom source?",
       delete_custom_source_content:
         'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
-      direc: "Direc",
+      direct: "Direct",
       linkedin: "LinkedIn",
       jobstreet: "JobStreet",
       mycareersfuture: "MyCareersFuture",
@@ -1793,7 +1793,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       top_source_persevio_outreach: "Persevio Outreach",
       starting: "Starting",
       sourcing_channel: {
-        direc: "Direc",
+        direct: "Direct",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",

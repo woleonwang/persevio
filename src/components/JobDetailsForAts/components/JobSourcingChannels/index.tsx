@@ -17,7 +17,7 @@ import Delete from "@/assets/icons/delete";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
 
 const DEFAULT_TRACKING_SOURCES = [
-  "direc",
+  "direct",
   "linkedin",
   "jobstreet",
   "mycareersfuture",
@@ -49,7 +49,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     return getJobChatbotUrl(job.id, job.jd_version?.toString(), source);
   };
 
-  const customSourceUrl = getJobUrl("direc");
+  const customSourceUrl = getJobUrl("direct");
 
   const handleCopyUrl = async (url: string) => {
     await copy(url);

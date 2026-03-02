@@ -1700,7 +1700,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       delete_custom_source_title: "删除自定义渠道？",
       delete_custom_source_content:
         "确定要删除「{{name}}」吗？此操作无法撤销。",
-      direc: "Direc",
+      direct: "Direct",
       linkedin: "LinkedIn",
       jobstreet: "JobStreet",
       mycareersfuture: "MyCareersFuture",
@@ -1734,7 +1734,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       top_source_persevio_outreach: "Persevio Outreach",
       starting: "起始",
       sourcing_channel: {
-        direc: "Direc",
+        direct: "Direct",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",
