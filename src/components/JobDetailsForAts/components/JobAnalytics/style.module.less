@@ -1,0 +1,99 @@
+@import "@/mixin.module.less";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+}
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  min-width: 140px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary, #1f2937);
+}
+
+.funnelWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.funnelRow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 38px;
+}
+
+.funnelBarWrap {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.funnelBar {
+  position: relative;
+  flex-shrink: 0;
+  height: 36px;
+  border-radius: 4px;
+  background-color: #8b5cf6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.funnelStageName {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.funnelRight {
+  flex: 1;
+  flex-shrink: 0;
+  min-width: 160px;
+  padding-left: 16px;
+  text-align: right;
+}
+
+.conversionText {
+  font-size: 13px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.table {
+  :global {
+    .ant-table-thead > tr > th {
+      font-weight: 600;
+    }
+  }
+}
