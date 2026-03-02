@@ -1808,7 +1808,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       description:
         "Please select the collaborators of the current job, click the [Update] button to confirm, then click the [Copy Job Link] button to send the link to the collaborators.",
       select_collaborators: "Select Collaborators",
-      select_placeholder: "Please select collaborators",
+      select_placeholder: "Select a hiring manager...",
       update: "Update",
       copy_link: "Copy Job Link",
     },

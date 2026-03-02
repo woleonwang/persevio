@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Input, message, Select } from "antd";
-import { LockOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { LockOutlined, PlusOutlined } from "@ant-design/icons";
+import classnames from "classnames";
 import {
   DndContext,
   closestCenter,
@@ -25,6 +26,7 @@ import Delete from "@/assets/icons/delete";
 import styles from "./style.module.less";
 import useJob from "@/hooks/useJob";
 import useStaffs from "@/hooks/useStaffs";
+import { getInitials } from "../JobPipeline/components";
 
 const DEFAULT_STAGES = [
   "Reached Out",
@@ -45,7 +47,7 @@ interface IProps {
 }
 
 const LockedStageItem = ({ name }: { name: string }) => (
-  <div className={styles.stageItem}>
+  <div className={classnames(styles.stageItem, styles.stageItemLocked)}>
     <div className={styles.stageDragHandleLocked}>
       <div className={styles.dragDots}>
         {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -118,7 +120,7 @@ const SortableStageItem = ({
         />
       ) : (
         <div className={styles.stageName} onClick={() => onEdit(stage.name)}>
-          {stage.name || "Click to edit"}
+          {stage.name}
         </div>
       )}
       <div className={styles.stageDelete} onClick={onDelete}>
@@ -126,15 +128,6 @@ const SortableStageItem = ({
       </div>
     </div>
   );
-};
-
-const getInitials = (name: string) => {
-  return name
-    .split(/\s+/)
-    .map((s) => s[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
 };
 
 const JobSettings = ({ jobId }: IProps) => {
@@ -173,8 +166,8 @@ const JobSettings = ({ jobId }: IProps) => {
             name: s.name,
             order: i + 4,
             isDefault: false,
-          })
-        )
+          }),
+        ),
       );
     }
   }, [job?.pipeline_stages]);
@@ -187,11 +180,11 @@ const JobSettings = ({ jobId }: IProps) => {
 
   const fetchCollaborators = async () => {
     const { code, data } = await Get<{ job_collaborators: TJobCollaborator[] }>(
-      `/api/jobs/${jobId}/collaborators`
+      `/api/jobs/${jobId}/collaborators`,
     );
     if (code === 0) {
       setSelectedStaffIds(
-        data.job_collaborators.map((collab) => collab.staff_id)
+        data.job_collaborators.map((collab) => collab.staff_id),
       );
     }
   };
@@ -222,11 +215,11 @@ const JobSettings = ({ jobId }: IProps) => {
       title: tKey("remove_collaborator_title"),
       content: tKey("remove_collaborator_content").replace(
         "{{name}}",
-        staff?.name || ""
+        staff?.name || "",
       ),
       onOk: () => {
         handleUpdateCollaborators(
-          selectedStaffIds.filter((id) => id !== staffId)
+          selectedStaffIds.filter((id) => id !== staffId),
         );
       },
     });
@@ -272,7 +265,7 @@ const JobSettings = ({ jobId }: IProps) => {
     if (!stage) return;
     const newName = editingName.trim();
     const newStages = customizedPipelineStages.map((s) =>
-      s.id === id ? { ...s, name: newName || s.name } : s
+      s.id === id ? { ...s, name: newName || s.name } : s,
     );
     setCustomizedPipelineStages(newStages);
     setEditingId(null);
@@ -286,7 +279,7 @@ const JobSettings = ({ jobId }: IProps) => {
       title: tKey("delete_stage_title"),
       content: tKey("delete_stage_content").replace(
         "{{name}}",
-        stage?.name || tKey("unnamed_stage")
+        stage?.name || tKey("unnamed_stage"),
       ),
       onOk: () => {
         const newStages = customizedPipelineStages
@@ -321,7 +314,7 @@ const JobSettings = ({ jobId }: IProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
-    })
+    }),
   );
 
   return (
@@ -359,7 +352,8 @@ const JobSettings = ({ jobId }: IProps) => {
           </DndContext>
         </div>
         <Button
-          type="primary"
+          variant="outlined"
+          color="primary"
           icon={<PlusOutlined />}
           onClick={handleAddStage}
           className={styles.addStageBtn}
@@ -387,10 +381,14 @@ const JobSettings = ({ jobId }: IProps) => {
                 </div>
               </div>
               <Button
-                type="link"
-                danger
-                size="small"
-                icon={<DeleteOutlined />}
+                variant="outlined"
+                color="default"
+                icon={
+                  <Icon
+                    icon={<Delete />}
+                    style={{ fontSize: 16, color: "rgba(193, 193, 193, 1)" }}
+                  />
+                }
                 onClick={() => handleRemoveCollaborator(staff.id)}
                 loading={collabUpdating}
               >
@@ -407,7 +405,7 @@ const JobSettings = ({ jobId }: IProps) => {
               options={staffOptions}
               value={newStaffId}
               onChange={setNewStaffId}
-              style={{ flex: 1, minWidth: 200 }}
+              style={{ width: 784 }}
               showSearch
               allowClear
               filterOption={(input, option) =>
