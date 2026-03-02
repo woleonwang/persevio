@@ -1809,6 +1809,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     talents: "Candidates",
     settings: "Settings",
     share_position: "Copy Link",
+    copy_document: "Copy document",
     unpost_job_title: "Unpost this Job?",
     unpost_job_content:
       "Once you unpost, this job will no longer be visible to candidates. You can post it again anytime.",

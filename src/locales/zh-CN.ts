@@ -1750,6 +1750,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
     talents: "候选人",
     settings: "设置",
     share_position: "分享职位",
+    copy_document: "复制文档",
     unpost_job_title: "取消发布职位？",
     unpost_job_content:
       "取消发布后，职位将不再对候选人可见。您可以随时重新发布。",
