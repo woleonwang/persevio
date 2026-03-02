@@ -269,7 +269,7 @@ const JobSettings = ({ jobId }: IProps) => {
 
   const handleEditEnd = (id: string) => {
     const stage = customizedPipelineStages.find((s) => s.id === id);
-    if (!stage) return;
+    if (editingName.trim() === "" || !stage) return;
     const newName = editingName.trim();
     const newStages = customizedPipelineStages.map((s) =>
       s.id === id ? { ...s, name: newName || s.name } : s,
