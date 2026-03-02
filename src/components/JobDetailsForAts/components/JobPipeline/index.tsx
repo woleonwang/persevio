@@ -178,9 +178,6 @@ const JobPipeline = ({
     const item = talents.find((i) => i.id === itemId);
     if (!item) return;
 
-    const currentStageKey = getStageKey(item);
-    if (isStageLocked(currentStageKey)) return;
-
     const talentId = item.id;
     const prevStageId = item.stage_id;
     const prevStageKey = item.stageKey;

@@ -174,6 +174,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
       </div>
       <AntdTabs
         activeKey={activeTab}
+        destroyInactiveTabPane
         onChange={(key) => {
           setActiveTab(key as TMenu);
           updateQuery("tab", key);

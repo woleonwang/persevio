@@ -82,7 +82,7 @@ const DroppableColumn = ({
             <DraggableCard
               key={item.id}
               item={item as TTalentListItem}
-              isDraggable={!isLocked}
+              isDraggable
               onCardClick={() => onCardClick(item as TTalentListItem)}
               onUpdateTalent={onUpdateTalent}
             />
