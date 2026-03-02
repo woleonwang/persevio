@@ -9,7 +9,7 @@ import useJob from "@/hooks/useJob";
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
 import globalStore from "@/store/global";
-import { addQuery, infoModal, isDevelopment } from "@/utils";
+import { addQuery, getQuery, infoModal, isDevelopment } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
 import JobDetails from "@/components/JobDetails";
 import { Post } from "@/utils/request";
@@ -25,6 +25,8 @@ const JobBoard = () => {
   const [jobState, setJobState] = useState<TJobState>();
 
   const { setMenuCollapse } = globalStore;
+
+  const isOld = getQuery("old") === "1";
 
   useEffect(() => {
     if (job) {
@@ -154,7 +156,7 @@ const JobBoard = () => {
         )}
         {jobState === "board" && (
           <div className={styles.boardContent}>
-            {isDevelopment() ? <JobDetailsForAts /> : <JobDetails />}
+            {isOld ? <JobDetails /> : <JobDetailsForAts />}
           </div>
         )}
       </div>
