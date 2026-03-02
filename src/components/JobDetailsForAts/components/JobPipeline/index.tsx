@@ -31,6 +31,7 @@ import {
 } from "./components";
 import styles from "./style.module.less";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
+import useSourcingChannels from "@/hooks/useSourcingChannels";
 
 const JobPipeline = ({
   onChangeTab,
@@ -50,6 +51,10 @@ const JobPipeline = ({
   const [evaluateResultLevel, setEvaluateResultLevel] = useState<
     TEvaluateResultLevel | undefined
   >();
+
+  const { customSources } = useSourcingChannels({
+    jobId: job?.id,
+  });
 
   const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
   const [activeId, setActiveId] = useState<number>();
@@ -237,10 +242,16 @@ const JobPipeline = ({
           value={sourcingChannel}
           onChange={setSourcingChannel}
           allowClear
-          options={SOURCING_CHANNEL_KEYS.map((key) => ({
-            value: key,
-            label: tKey(`sourcing_channel.${key}`),
-          }))}
+          options={[
+            ...SOURCING_CHANNEL_KEYS.map((key) => ({
+              value: key,
+              label: tKey(`sourcing_channel.${key}`),
+            })),
+            ...customSources.map((cs) => ({
+              value: cs.name,
+              label: cs.name,
+            })),
+          ]}
           style={{ width: 200 }}
         />
         <Select

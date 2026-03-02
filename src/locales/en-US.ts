@@ -1703,7 +1703,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       search_placeholder: "Search candidates...",
       all_sourcing_channels: "All Sourcing Channels",
       sourcing_channel: {
-        system: "System",
+        direc: "Direc",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",
@@ -1793,7 +1793,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       top_source_persevio_outreach: "Persevio Outreach",
       starting: "Starting",
       sourcing_channel: {
-        system: "System",
+        direc: "Direc",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",

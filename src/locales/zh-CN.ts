@@ -1734,7 +1734,7 @@ e. 免费发布职位：您可以免费发布职位空缺，开始发现卓越�
       top_source_persevio_outreach: "Persevio Outreach",
       starting: "起始",
       sourcing_channel: {
-        system: "System",
+        direc: "Direc",
         linkedin: "LinkedIn",
         jobstreet: "JobStreet",
         mycareersfuture: "MyCareersFuture",

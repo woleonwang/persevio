@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Input, message, Table } from "antd";
 import classnames from "classnames";
@@ -11,9 +11,10 @@ import ButtonGroup from "antd/es/button/button-group";
 import BoostJob from "@/assets/icons/boost-job";
 import OutreachCampaign from "@/assets/icons/outreach-campaign";
 import StartBoost from "@/assets/icons/start-boost";
-import { Get, Post } from "@/utils/request";
+import { Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
 import Delete from "@/assets/icons/delete";
+import useSourcingChannels from "@/hooks/useSourcingChannels";
 
 const DEFAULT_TRACKING_SOURCES = [
   "direc",
@@ -21,14 +22,6 @@ const DEFAULT_TRACKING_SOURCES = [
   "jobstreet",
   "mycareersfuture",
 ] as const;
-
-type TCustomSource = {
-  id: number;
-  job_id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-};
 
 type TrackingRow =
   | { key: string; source: string; url: string; type: "default" }
@@ -42,19 +35,10 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   const { job } = useJob();
   const [showAddCustomForm, setShowAddCustomForm] = useState(false);
   const [customSourceName, setCustomSourceName] = useState("");
-  const [customSources, setCustomSources] = useState<TCustomSource[]>([]);
 
-  const fetchCustomSources = async () => {
-    if (!job?.id) return;
-    const { code, data } = await Get<{ custom_sources: TCustomSource[] }>(
-      `/api/jobs/${job.id}/custom_sources`,
-    );
-    if (code === 0) setCustomSources(data?.custom_sources ?? []);
-  };
-
-  useEffect(() => {
-    fetchCustomSources();
-  }, [job?.id]);
+  const { customSources, fetchCustomSources } = useSourcingChannels({
+    jobId: job?.id,
+  });
 
   const { t: originalT } = useTranslation();
   const t = (key: string) =>
@@ -65,7 +49,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     return getJobChatbotUrl(job.id, job.jd_version?.toString(), source);
   };
 
-  const customSourceUrl = getJobUrl("customer");
+  const customSourceUrl = getJobUrl("direc");
 
   const handleCopyUrl = async (url: string) => {
     await copy(url);

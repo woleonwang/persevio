@@ -308,16 +308,14 @@ export const EVALUATE_RESULT_LEVEL_KEYS = [
 ];
 
 export const SOURCING_CHANNEL_KEYS = [
-  "system",
+  "direc",
   "linkedin",
   "jobstreet",
   "mycareersfuture",
 ];
 
-export const getSourcingChannel = (sourcingChannel?: string) => {
-  const sc =
-    sourcingChannel && SOURCING_CHANNEL_KEYS.includes(sourcingChannel)
-      ? sourcingChannel
-      : "system";
-  return sc === "customer" ? "linkedin" : sc;
+export const getSourcingChannel = (sc: string = "direc"): string => {
+  if (sc === "customer") return "linkedin";
+  if (sc === "system" || sc === "delivery" || sc === "") return "direc";
+  return sc;
 };

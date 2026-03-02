@@ -766,3 +766,11 @@ type TEvaluateResultLevel =
   | "not_a_fit";
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
+
+type TCustomSource = {
+  id: number;
+  job_id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+};
