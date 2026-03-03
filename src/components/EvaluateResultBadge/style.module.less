@@ -1,50 +1,55 @@
 .badge {
-    padding: 4px 12px;
-    border-radius: 16px;
-    font-size: 14px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-    :global {
-        .perse-icon {
-            font-size: 16px;
-        }
+  :global {
+    .perse-icon {
+      font-size: 16px;
     }
+  }
 
-    &.ideal_candidate {
-        background-color: rgba(227, 248, 230, 1);
-        color: rgba(38, 188, 93, 1);
-    }
+  &.small {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
 
-    &.good_fit {
-        background-color: rgba(229, 247, 247, 1);
-        color: rgba(38, 167, 247, 1);
-    }
+  &.ideal_candidate {
+    background-color: rgba(227, 248, 230, 1);
+    color: rgba(38, 188, 93, 1);
+  }
 
-    &.ideal_candidate_with_caveat {
-        background-color: rgba(232, 245, 233, 1);
-        color: rgba(56, 142, 60, 1);
-    }
+  &.good_fit {
+    background-color: rgba(229, 247, 247, 1);
+    color: rgba(38, 167, 247, 1);
+  }
 
-    &.good_fit_with_caveat {
-        background-color: rgba(227, 242, 253, 1);
-        color: rgba(25, 118, 210, 1);
-    }
+  &.ideal_candidate_with_caveat {
+    background-color: rgba(232, 245, 233, 1);
+    color: rgba(56, 142, 60, 1);
+  }
 
-    &.maybe {
-        background-color: rgba(255, 243, 224, 1);
-        color: rgba(230, 126, 34, 1);
-    }
+  &.good_fit_with_caveat {
+    background-color: rgba(227, 242, 253, 1);
+    color: rgba(25, 118, 210, 1);
+  }
 
-    &.recommend_with_reservations {
-        background-color: rgba(255, 248, 230, 1);
-        color: rgba(247, 145, 36, 1);
-    }
+  &.maybe {
+    background-color: rgba(255, 243, 224, 1);
+    color: rgba(230, 126, 34, 1);
+  }
 
-    &.not_a_fit {
-        background-color: rgba(255, 242, 242, 1);
-        color: rgba(224, 61, 61, 1);
-    }
+  &.recommend_with_reservations {
+    background-color: rgba(255, 248, 230, 1);
+    color: rgba(247, 145, 36, 1);
+  }
+
+  &.not_a_fit {
+    background-color: rgba(255, 242, 242, 1);
+    color: rgba(224, 61, 61, 1);
+  }
 }

@@ -84,7 +84,7 @@ const DraggableCard = ({
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Fit</span>
             <span className={`${styles.infoValue}`}>
-              <EvaluateResultBadge result={fitResult} />
+              <EvaluateResultBadge result={fitResult} size="small" />
             </span>
           </div>
           <div className={styles.infoRow}>

@@ -54,9 +54,6 @@ const DroppableColumn = ({
             <div className={styles.reachedOutTop}>
               <div className={styles.reachedOutLeft}>
                 <div className={styles.reachedOutNumber}>{items.length}</div>
-                <div className={styles.reachedOutLabel}>
-                  {tKey("candidates_reached_out")}
-                </div>
               </div>
               <div className={styles.reachedOutAvatars}>
                 {items.slice(0, 5).map((item) => (
@@ -72,6 +69,9 @@ const DroppableColumn = ({
                   <div className={styles.avatarCircleEllipsis}>⋯</div>
                 )}
               </div>
+            </div>
+            <div className={styles.reachedOutLabel}>
+              {tKey("candidates_reached_out")}
             </div>
             <div className={styles.reachedOutDivider} />
             <div className={styles.reachedOutBottom}>

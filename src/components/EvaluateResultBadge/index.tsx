@@ -17,14 +17,20 @@ interface IProps {
     | "maybe"
     | "not_a_fit";
   caveat?: string;
+  size?: "small" | "normal";
 }
 
 const EvaluateResultBadge = (props: IProps) => {
-  const { result } = props;
+  const { result, size = "normal" } = props;
   const { t: originalT } = useTranslation();
 
   const t = (key: string, params?: Record<string, string>) =>
-    originalT(`job_talents.evaluate_result_options.${key}`, params);
+    originalT(
+      size === "small"
+        ? `job_talents.evaluate_result_select_options.${key}`
+        : `job_talents.evaluate_result_options.${key}`,
+      params,
+    );
 
   const iconMappings = {
     ideal_candidate: <IdealCandidateIcon />,
@@ -36,8 +42,8 @@ const EvaluateResultBadge = (props: IProps) => {
   };
 
   return (
-    <div className={classnames(styles.badge, styles[result])}>
-      <Icon icon={iconMappings[result]} />
+    <div className={classnames(styles.badge, styles[result], styles[size])}>
+      {size === "normal" && <Icon icon={iconMappings[result]} />}
       {t(result, { caveat: props.caveat ?? "" })}
     </div>
   );
