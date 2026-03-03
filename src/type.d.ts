@@ -421,6 +421,7 @@ type TTalent = {
   name: string;
   status: string;
   feedback: string;
+  feedback_updated_at?: string;
   parsed_content: string;
   evaluate_result: TEvaluationResult;
   raw_evaluate_result: string;

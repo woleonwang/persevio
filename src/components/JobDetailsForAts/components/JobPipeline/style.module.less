@@ -334,100 +334,50 @@
 
 // List mode
 .listBoard {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
   flex: 1;
-  align-content: start;
   padding: 16px 0;
+  overflow: auto;
 }
 
-.listModeCard {
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border: 1px solid rgba(222, 222, 222, 1);
+.listTableWrap {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
   overflow: hidden;
-
-  &:hover {
-    border-color: @primary-color;
-  }
+  background: #fff;
+  min-width: 800px;
 }
 
-.listCardHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #f5f5f5;
-  padding: 12px 20px;
-
-  .listCardName {
+.listAntdTable {
+  :global(.ant-table) {
     font-size: 14px;
+  }
+
+  :global(.ant-table-thead > tr > th) {
+    background: #fafafa;
     font-weight: 600;
-    color: #111827;
-    min-width: 0;
+    color: #666;
   }
 
-  .listCardBadges {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .stageBadge {
-    font-size: 14px;
-    padding: 4px 8px;
-    border-radius: 999px;
-    background-color: #f0f4f9;
-    color: #738fbd;
-    line-height: 1.4;
-    border: 1px solid rgba(115, 143, 189, 0.2);
+  :global(.ant-table-tbody > tr:hover > td) {
+    background: #fafafa;
   }
 }
 
-.listCardContent {
-  padding: 20px;
-  flex: auto;
+.listTableEllipsis {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  .listCardInfoGrid {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .listCardInfoItem {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex: 1;
-    &:not(:first-child) {
-      border-left: 1px dashed #dedede;
-      padding-left: 20px;
-    }
-  }
-
-  .listCardInfoLabel {
-    font-size: 12px;
-    color: #999;
-    line-height: 1.4;
-  }
-
-  .listCardInfoValue {
-    font-size: 14px;
-    color: #374151;
-    line-height: 1.4;
-  }
-
-  .listCardSummary {
-    font-size: 12px;
-    color: #f9a930;
-    background: #fefbec;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-top: 16px;
-  }
+.listTableStageBadge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  line-height: 1.4;
+  border: 1px solid transparent;
 }
 
 .listBoardEmpty {

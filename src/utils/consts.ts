@@ -17,4 +17,5 @@ export const DEFAULT_STAGE_KEYS = [
   "started_ai_interview",
   "ai_interview_completed",
   "shortlisted",
+  "rejected",
 ];

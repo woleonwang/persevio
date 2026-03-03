@@ -25,7 +25,7 @@ import {
 import {
   DraggableCard,
   DroppableColumn,
-  ListModeCard,
+  ListModeTable,
   getStageKey,
   type TTalentListItem,
 } from "./components/utils";
@@ -382,19 +382,17 @@ const JobPipeline = ({
               <Empty />
             </div>
           ) : (
-            filteredList.map((item) => (
-              <ListModeCard
-                key={item.id}
-                allStages={allStages}
-                item={item}
-                onCardClick={(talent) => {
-                  window.open(
-                    `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
-                    "_blank",
-                  );
-                }}
-              />
-            ))
+            <ListModeTable
+              allStages={allStages}
+              items={filteredList}
+              onRowClick={(talent) => {
+                window.open(
+                  `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                  "_blank",
+                );
+              }}
+              onUpdateTalent={fetchTalents}
+            />
           )}
         </div>
       )}

@@ -4,38 +4,17 @@ import { Select, Spin, Table } from "antd";
 import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
-import { getStageKey, type TTalentListItem } from "../JobPipeline/components/utils";
+import {
+  getStageEntryTime,
+  getStageKey,
+  type TTalentListItem,
+} from "../JobPipeline/components/utils";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
+import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "./colors";
 import styles from "./style.module.less";
 
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = 60 * 60 * 1000;
-
-function getStageEntryTime(
-  stageId: string,
-  talent: TTalentListItem,
-): number | null {
-  if (talent.stage_updated_at) {
-    return new Date(talent.stage_updated_at).getTime();
-  }
-  if (!DEFAULT_STAGE_KEYS.includes(stageId)) {
-    return null;
-  }
-  switch (stageId) {
-    case "applied":
-      return talent.created_at ? new Date(talent.created_at).getTime() : null;
-    case "started_ai_interview":
-      return talent.job_apply?.interview_started_at
-        ? new Date(talent.job_apply.interview_started_at).getTime()
-        : null;
-    case "ai_interview_completed":
-      return talent.job_apply?.interview_finished_at
-        ? new Date(talent.job_apply.interview_finished_at).getTime()
-        : null;
-    default:
-      return null;
-  }
-}
 
 function computeAvgDaysInStage(
   stageId: string,
@@ -89,28 +68,6 @@ function getTopSource(
 }
 
 const FUNNEL_BOTTOM_WIDTH = 229;
-const FUNNEL_COLORS = [
-  "rgba(144, 103, 243, 1)",
-  "rgba(95, 127, 253, 1)",
-  "rgba(82, 219, 212, 1)",
-  "rgba(109, 224, 119, 1)",
-  "rgba(235, 196, 125, 1)",
-  "rgba(243, 174, 125, 1)",
-  "rgba(255, 132, 107, 1)",
-  "rgba(238, 129, 151, 1)",
-  "rgba(237, 100, 100, 1)",
-];
-const FUNNEL_BG_COLORS = [
-  "rgba(144, 103, 243, 0.1)",
-  "rgba(95, 127, 253, 0.1)",
-  "rgba(82, 219, 212, 0.1)",
-  "rgba(109, 224, 119, 0.1)",
-  "rgba(235, 196, 125, 0.1)",
-  "rgba(243, 174, 125, 0.1)",
-  "rgba(255, 132, 107, 0.1)",
-  "rgba(238, 129, 151, 0.1)",
-  "rgba(237, 100, 100, 0.1)",
-];
 
 const JobAnalytics = () => {
   const { job } = useJob();
