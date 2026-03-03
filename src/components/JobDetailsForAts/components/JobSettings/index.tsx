@@ -34,7 +34,10 @@ const DEFAULT_STAGES = [
   "Applied",
   "Started AI Interview",
   "AI Interview Completed",
+  "Shortlisted",
 ];
+
+const REJECTED_STAGE_NAME = "Rejected";
 
 export interface PipelineStage {
   id: string;
@@ -171,7 +174,7 @@ const JobSettings = ({ jobId }: IProps) => {
           (s: PipelineStage, i: number) => ({
             id: s.id,
             name: s.name,
-            order: i + 4,
+            order: i + DEFAULT_STAGES.length,
             isDefault: false,
           }),
         ),
@@ -254,7 +257,7 @@ const JobSettings = ({ jobId }: IProps) => {
     const newStage: PipelineStage = {
       id: uuidv4(),
       name: "",
-      order: customizedPipelineStages.length + 4,
+      order: customizedPipelineStages.length + DEFAULT_STAGES.length,
       isDefault: false,
     };
     setCustomizedPipelineStages([...customizedPipelineStages, newStage]);
@@ -357,6 +360,7 @@ const JobSettings = ({ jobId }: IProps) => {
               ))}
             </SortableContext>
           </DndContext>
+          <LockedStageItem key="rejected" name={REJECTED_STAGE_NAME} />
         </div>
         <Button
           variant="outlined"

@@ -85,10 +85,9 @@ const JobPipeline = ({
     return stages;
   }, [job]);
 
-  const LOCKED_STAGE_KEYS = DEFAULT_STAGE_KEYS.slice(
-    0,
-    DEFAULT_STAGE_KEYS.length - 1,
-  );
+  const LOCKED_STAGE_KEYS = allStages
+    .filter((s) => s.isDefault)
+    .map((s) => s.id);
 
   const isStageLocked = (stageKey: string) =>
     LOCKED_STAGE_KEYS.includes(stageKey);

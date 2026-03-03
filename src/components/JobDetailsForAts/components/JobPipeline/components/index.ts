@@ -35,6 +35,13 @@ export const getStageKey = (talent: TTalentListItem): string => {
   return key;
 };
 
+export const DEFAULT_TRACKING_SOURCES = [
+  "direct",
+  "linkedin",
+  "jobstreet",
+  "mycareersfuture",
+] as const;
+
 export { default as DraggableCard } from "./DraggableCard";
 export { default as DroppableColumn } from "./DroppableColumn";
 export { default as ListModeCard } from "./ListModeCard";

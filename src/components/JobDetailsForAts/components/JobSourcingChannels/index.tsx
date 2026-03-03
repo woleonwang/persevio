@@ -15,13 +15,7 @@ import { Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
 import Delete from "@/assets/icons/delete";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
-
-const DEFAULT_TRACKING_SOURCES = [
-  "direct",
-  "linkedin",
-  "jobstreet",
-  "mycareersfuture",
-] as const;
+import { DEFAULT_TRACKING_SOURCES } from "../JobPipeline/components";
 
 type TrackingRow =
   | { key: string; source: string; url: string; type: "default" }

@@ -10,6 +10,7 @@ import styles from "../style.module.less";
 import PopoverContent from "./PopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
+import { DEFAULT_TRACKING_SOURCES } from ".";
 
 interface IProps {
   item: TTalentListItem;
@@ -40,7 +41,12 @@ const DraggableCard = ({
   const { name, exp, visa, comp, fitResult, summary } =
     getCandidateCardData(item);
   const sourceChannel = getSourcingChannel(item.source_channel);
-  const sourceLabel = tKey(`sourcing_channel.${sourceChannel}`);
+  const isDefaultSource = DEFAULT_TRACKING_SOURCES.includes(
+    sourceChannel as any,
+  );
+  const sourceLabel = isDefaultSource
+    ? tKey(`sourcing_channel.${sourceChannel}`)
+    : sourceChannel;
   const lastActivity = item.created_at;
   const lastActivityStr = lastActivity
     ? (() => {
