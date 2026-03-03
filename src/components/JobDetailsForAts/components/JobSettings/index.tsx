@@ -27,7 +27,7 @@ import LockCheck from "@/assets/icons/lock-check";
 import styles from "./style.module.less";
 import useJob from "@/hooks/useJob";
 import useStaffs from "@/hooks/useStaffs";
-import { getInitials } from "../JobPipeline/components";
+import { getInitials } from "../JobPipeline/components/utils";
 
 const DEFAULT_STAGES = [
   "Reached Out",

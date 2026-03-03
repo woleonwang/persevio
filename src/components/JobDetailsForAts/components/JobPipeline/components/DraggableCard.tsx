@@ -10,7 +10,7 @@ import styles from "../style.module.less";
 import PopoverContent from "./PopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
-import { DEFAULT_TRACKING_SOURCES } from ".";
+import { DEFAULT_TRACKING_SOURCES } from "./utils";
 
 interface IProps {
   item: TTalentListItem;

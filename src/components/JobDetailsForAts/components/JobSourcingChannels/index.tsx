@@ -15,7 +15,7 @@ import { Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
 import Delete from "@/assets/icons/delete";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
-import { DEFAULT_TRACKING_SOURCES } from "../JobPipeline/components";
+import { DEFAULT_TRACKING_SOURCES } from "../JobPipeline/components/utils";
 
 type TrackingRow =
   | { key: string; source: string; url: string; type: "default" }

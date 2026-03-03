@@ -28,7 +28,7 @@ import {
   ListModeCard,
   getStageKey,
   type TTalentListItem,
-} from "./components";
+} from "./components/utils";
 import styles from "./style.module.less";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
 import useSourcingChannels from "@/hooks/useSourcingChannels";

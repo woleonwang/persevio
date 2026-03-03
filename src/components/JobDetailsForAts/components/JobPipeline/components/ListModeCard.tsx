@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 
 import type { TTalentListItem } from "./types";
-import { getStageKey } from "./index";
+import { getStageKey } from "./utils";
 import { getCandidateCardData } from "./getCandidateCardData";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import styles from "../style.module.less";

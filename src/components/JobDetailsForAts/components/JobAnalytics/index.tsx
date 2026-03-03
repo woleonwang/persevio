@@ -4,7 +4,7 @@ import { Select, Spin, Table } from "antd";
 import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
-import { getStageKey, type TTalentListItem } from "../JobPipeline/components";
+import { getStageKey, type TTalentListItem } from "../JobPipeline/components/utils";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
 import styles from "./style.module.less";
 
