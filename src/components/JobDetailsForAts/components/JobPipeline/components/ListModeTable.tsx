@@ -146,7 +146,7 @@ const ListModeTable = ({
           dataSource={items}
           scroll={{ x: "max-content" }}
           rowKey="id"
-          pagination={false}
+          pagination={{ pageSize: 10, showSizeChanger: false }}
           onRow={(record) => ({
             onClick: () => onRowClick(record),
           })}
