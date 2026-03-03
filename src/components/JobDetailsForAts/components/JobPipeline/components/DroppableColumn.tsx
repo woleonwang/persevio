@@ -1,5 +1,4 @@
 import { useDroppable } from "@dnd-kit/core";
-import { Empty } from "antd";
 import { useTranslation } from "react-i18next";
 
 import type { PipelineStage } from "../../JobSettings";
