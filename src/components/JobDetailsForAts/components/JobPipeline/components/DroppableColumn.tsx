@@ -78,15 +78,19 @@ const DroppableColumn = ({
           </div>
         )}
         {!renderReachedOutSummary &&
-          items.map((item) => (
-            <DraggableCard
-              key={item.id}
-              item={item as TTalentListItem}
-              isDraggable
-              onCardClick={() => onCardClick(item as TTalentListItem)}
-              onUpdateTalent={onUpdateTalent}
-            />
-          ))}
+          items.map((item) => {
+            const talent = item as TTalentListItem;
+            const isRejected = talent.stageKey === "rejected";
+            return (
+              <DraggableCard
+                key={talent.id}
+                item={talent}
+                isDraggable={!isRejected}
+                onCardClick={() => onCardClick(talent)}
+                onUpdateTalent={onUpdateTalent}
+              />
+            );
+          })}
         {renderReachedOutSummary && items.length === 0 && (
           <Empty description="" image={Empty.PRESENTED_IMAGE_SIMPLE} />
         )}

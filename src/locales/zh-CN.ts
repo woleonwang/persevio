@@ -364,6 +364,8 @@ export default {
     applied: "已申请",
     started_ai_interview: "已开始 AI 面试",
     ai_interview_completed: "AI 面试已完成",
+    shortlisted: "已入围",
+    rejected: "已淘汰",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {

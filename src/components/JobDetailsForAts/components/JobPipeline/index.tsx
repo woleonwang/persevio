@@ -64,7 +64,7 @@ const JobPipeline = ({
 
   const allStages = useMemo(() => {
     if (!job) return [];
-    return [
+    const stages = [
       ...DEFAULT_STAGE_KEYS.map((key, i) => ({
         id: key,
         name: t(`pipeline_section.${key}`),
@@ -73,6 +73,16 @@ const JobPipeline = ({
       })),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
     ];
+    // 在末尾追加统一的 rejected 阶段
+    if (!stages.find((s) => s.id === "rejected")) {
+      stages.push({
+        id: "rejected",
+        name: t("pipeline_section.rejected"),
+        order: stages.length,
+        isDefault: true,
+      });
+    }
+    return stages;
   }, [job]);
 
   const LOCKED_STAGE_KEYS = DEFAULT_STAGE_KEYS.slice(
@@ -177,6 +187,10 @@ const JobPipeline = ({
 
     const item = talents.find((i) => i.id === itemId);
     if (!item) return;
+
+    const currentStageKey = getStageKey(item);
+    // rejected 阶段的候选人不可拖动
+    if (currentStageKey === "rejected") return;
 
     const talentId = item.id;
     const prevStageId = item.stage_id;

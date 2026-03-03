@@ -373,6 +373,8 @@ export default {
     applied: "Applied",
     started_ai_interview: "Started AI Interview",
     ai_interview_completed: "AI Interview Completed",
+    shortlisted: "Shortlisted",
+    rejected: "Rejected",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {

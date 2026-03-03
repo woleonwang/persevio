@@ -128,7 +128,7 @@ const JobAnalytics = () => {
 
   const allStages = useMemo(() => {
     if (!job) return [];
-    return [
+    const stages = [
       ...DEFAULT_STAGE_KEYS.map((key, i) => ({
         id: key,
         name: pipelineTKey(key),
@@ -137,6 +137,15 @@ const JobAnalytics = () => {
       })),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
     ];
+    if (!stages.find((s) => s.id === "rejected")) {
+      stages.push({
+        id: "rejected",
+        name: pipelineTKey("rejected"),
+        order: stages.length,
+        isDefault: true,
+      });
+    }
+    return stages;
   }, [job]);
 
   useEffect(() => {
