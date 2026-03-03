@@ -393,13 +393,8 @@ const JobSettings = ({ jobId }: IProps) => {
               </div>
               <Button
                 variant="outlined"
-                color="default"
-                icon={
-                  <Icon
-                    icon={<Delete />}
-                    style={{ fontSize: 16, color: "rgba(193, 193, 193, 1)" }}
-                  />
-                }
+                color="danger"
+                icon={<Icon icon={<Delete />} style={{ fontSize: 16 }} />}
                 onClick={() => handleRemoveCollaborator(staff.id)}
                 loading={collabUpdating}
               >

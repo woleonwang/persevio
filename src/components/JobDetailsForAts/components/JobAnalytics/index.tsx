@@ -12,6 +12,7 @@ import {
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
 import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "./colors";
 import styles from "./style.module.less";
+import useSourcingChannels from "@/hooks/useSourcingChannels";
 
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = 60 * 60 * 1000;
@@ -82,6 +83,9 @@ const JobAnalytics = () => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.analytics_section.${key}`);
   const pipelineTKey = (key: string) => t(`pipeline_section.${key}`);
+  const { customSources } = useSourcingChannels({
+    jobId: job?.id,
+  });
 
   const allStages = useMemo(() => {
     if (!job) return [];
@@ -257,10 +261,16 @@ const JobAnalytics = () => {
           value={sourcingChannel}
           onChange={setSourcingChannel}
           allowClear
-          options={SOURCING_CHANNEL_KEYS.map((key) => ({
-            value: key,
-            label: tKey(`sourcing_channel.${key}`),
-          }))}
+          options={[
+            ...SOURCING_CHANNEL_KEYS.map((key) => ({
+              value: key,
+              label: tKey(`sourcing_channel.${key}`),
+            })),
+            ...customSources.map((cs) => ({
+              value: cs.name,
+              label: cs.name,
+            })),
+          ]}
           style={{ width: 160 }}
         />
         <Select
