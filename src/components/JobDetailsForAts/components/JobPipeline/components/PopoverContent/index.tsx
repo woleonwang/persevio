@@ -309,27 +309,21 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
       </div>
 
       <div className={styles.cardFooter}>
-        <div className={styles.cardFooterContent}>
-          {(() => {
-            // 候选人已确认面试
-            // 已安排面试、等待候选人确认
-            // 通过筛选、等待安排面试
-            // 拒绝
-            // 等待筛选
-            // 抓取简历、未投递
-            const status = getStatus(talent);
-            const interview = talent.interviews?.[0];
-            const createdAt = talent.created_at;
-            const tagType =
-              status === "rejected"
-                ? "rejected"
-                : !!interview
-                  ? interview.mode === "written" || interview.scheduled_at
-                    ? "interview_scheduled"
-                    : "interview_created"
-                  : "waiting_for_screening";
-            return (
-              <>
+        {(() => {
+          const status = getStatus(talent);
+          const interview = talent.interviews?.[0];
+          const createdAt = talent.created_at;
+          const tagType =
+            status === "rejected"
+              ? "rejected"
+              : !!interview
+                ? interview.mode === "written" || interview.scheduled_at
+                  ? "interview_scheduled"
+                  : "interview_created"
+                : "waiting_for_screening";
+          return (
+            <>
+              <div className={styles.cardFooterContent}>
                 <div className={styles.left}>
                   <div
                     className={classnames(
@@ -345,39 +339,12 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
                           ? "Pending Candidate Interview Confirmation"
                           : "Pending Resume Review"}
                   </div>
-                  {(tagType === "interview_scheduled" ||
-                    tagType === "interview_created") && (
-                    <div className={styles.cardFooterInterviewInfo}>
-                      <div className={styles.cardFooterInterviewInfoItem}>
-                        <div>Interview Mode:</div>
-                        <div>
-                          {originalT(`interview_form.mode_${interview?.mode}`)}
-                        </div>
-                      </div>
-                      <div className={styles.cardFooterInterviewInfoItem}>
-                        <div>Schedule Time:</div>
-                        <div>
-                          {interview?.scheduled_at
-                            ? dayjs(interview?.scheduled_at).format(
-                                "YYYY-MM-DD HH:mm",
-                              )
-                            : "-"}
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <div className={styles.right}>
                   {!!job && (
-                    <>
-                      <div className={styles.border}>{job.name}</div>
-                      <div className={styles.border}>
-                        {
-                          staffs.find((staff) => staff.id === job.staff_id)
-                            ?.name
-                        }
-                      </div>
-                    </>
+                    <div className={styles.border}>
+                      {staffs.find((staff) => staff.id === job.staff_id)?.name}
+                    </div>
                   )}
                   <div>{dayjs(createdAt).format("YYYY-MM-DD HH:mm")}</div>
                   <div className={styles.cardFooterSourceChannel}>
@@ -386,10 +353,31 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
                       : "Persevio"}
                   </div>
                 </div>
-              </>
-            );
-          })()}
-        </div>
+              </div>
+              {(tagType === "interview_scheduled" ||
+                tagType === "interview_created") && (
+                <div className={styles.cardFooterInterviewInfo}>
+                  <div className={styles.cardFooterInterviewInfoItem}>
+                    <div>Interview Mode:</div>
+                    <div>
+                      {originalT(`interview_form.mode_${interview?.mode}`)}
+                    </div>
+                  </div>
+                  <div className={styles.cardFooterInterviewInfoItem}>
+                    <div>Schedule Time:</div>
+                    <div>
+                      {interview?.scheduled_at
+                        ? dayjs(interview?.scheduled_at).format(
+                            "YYYY-MM-DD HH:mm",
+                          )
+                        : "-"}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
         {talent?.feedback && (
           <div className={styles.cardFooterFeedback}>
             <span>Reason for rejection:</span> {talent.feedback}

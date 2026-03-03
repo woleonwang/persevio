@@ -48,32 +48,38 @@ const DroppableColumn = ({
       </div>
       <div className={styles.columnContent}>
         {renderReachedOutSummary && (
-          <div className={styles.reachedOutSummary} onClick={() => {}}>
-            <div className={styles.reachedOutNumber}>{items.length}</div>
-            <div className={styles.reachedOutLabel}>
-              {tKey("candidates_reached_out")}
-            </div>
-            <div className={styles.reachedOutAvatars}>
-              {items.slice(0, 5).map((item) => (
-                <div
-                  key={item.id}
-                  className={styles.avatarCircle}
-                  title={item.name}
-                >
-                  {getInitials(item.name || "?")}
+          <div
+            className={styles.reachedOutSummary}
+            onClick={() => onGoToReachedOut()}
+          >
+            <div className={styles.reachedOutTop}>
+              <div className={styles.reachedOutLeft}>
+                <div className={styles.reachedOutNumber}>{items.length}</div>
+                <div className={styles.reachedOutLabel}>
+                  {tKey("candidates_reached_out")}
                 </div>
-              ))}
-              {items.length > 5 && (
-                <div className={styles.avatarCircle}>...</div>
-              )}
+              </div>
+              <div className={styles.reachedOutAvatars}>
+                {items.slice(0, 5).map((item) => (
+                  <div
+                    key={item.id}
+                    className={styles.avatarCircle}
+                    title={item.name}
+                  >
+                    {getInitials(item.name || "?")}
+                  </div>
+                ))}
+                {items.length > 5 && (
+                  <div className={styles.avatarCircleEllipsis}>⋯</div>
+                )}
+              </div>
             </div>
-            <div
-              className={styles.reachedOutLink}
-              onClick={() => {
-                onGoToReachedOut();
-              }}
-            >
-              {tKey("click_to_view_details")} →
+            <div className={styles.reachedOutDivider} />
+            <div className={styles.reachedOutBottom}>
+              <span className={styles.reachedOutLinkText}>
+                {tKey("click_to_view_details")}
+              </span>
+              <span className={styles.reachedOutArrow}>→</span>
             </div>
           </div>
         )}
