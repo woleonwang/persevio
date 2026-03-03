@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Input, message, Table } from "antd";
+import { Button, Input, message, Select, Table, Tag } from "antd";
 import classnames from "classnames";
 
 import useJob from "@/hooks/useJob";
@@ -162,6 +162,14 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     });
   };
 
+  const handleChangePostingStatus = (value: "published" | "delisted") => {
+    if (!job) return;
+    const isLive = !!job.posted_at;
+    const targetLive = value === "published";
+    if (isLive === targetLive) return;
+    handlePostOrTakeDown();
+  };
+
   const handleDeleteCustomSource = (id: number, name: string) => {
     confirmModal({
       title: t("delete_custom_source_title"),
@@ -286,12 +294,22 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
             <Button type="primary" onClick={handleViewPosting}>
               {t("view_posting")}
             </Button>
-            <Button type="primary" onClick={handlePostOrTakeDown}>
-              {job.posted_at
-                ? t("take_down")
-                : originalT("job_details.post_job")}
-            </Button>
+            <Tag
+              color={job.posted_at ? "success" : "error"}
+              style={{ fontSize: 16, lineHeight: "26px", padding: "2px 10px" }}
+            >
+              {job.posted_at ? "Live" : "Delisted"}
+            </Tag>
           </div>
+          <Select
+            style={{ width: 120, marginLeft: "auto" }}
+            value={job.posted_at ? "published" : "delisted"}
+            onChange={handleChangePostingStatus}
+            options={[
+              { value: "published", label: "Published" },
+              { value: "delisted", label: "Delist" },
+            ]}
+          />
         </div>
       </div>
 

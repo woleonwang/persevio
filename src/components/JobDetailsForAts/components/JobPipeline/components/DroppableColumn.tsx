@@ -47,7 +47,7 @@ const DroppableColumn = ({
         <span className={styles.columnCount}>{items.length}</span>
       </div>
       <div className={styles.columnContent}>
-        {renderReachedOutSummary && items.length > 0 && (
+        {renderReachedOutSummary && (
           <div className={styles.reachedOutSummary} onClick={() => {}}>
             <div className={styles.reachedOutNumber}>{items.length}</div>
             <div className={styles.reachedOutLabel}>
@@ -91,9 +91,6 @@ const DroppableColumn = ({
               />
             );
           })}
-        {renderReachedOutSummary && items.length === 0 && (
-          <Empty description="" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        )}
       </div>
     </div>
   );
