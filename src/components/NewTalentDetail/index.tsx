@@ -18,7 +18,7 @@ import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
 import InterviewForm from "./components/InterviewForm";
-import Report, { TReport } from "./components/Report";
+import Report from "./components/Report";
 import Resume from "./components/Resume";
 import { TTalentResume } from "./type";
 import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
@@ -77,7 +77,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/jobs/${job.id}/talents/${talent.id}/messages`
+      `/api/jobs/${job.id}/talents/${talent.id}/messages`,
     );
     if (code === 0) {
       setTalentChatMessages(data.messages);
@@ -89,7 +89,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
 
     await Download(
       `/api/jobs/${job?.id}/talents/${talent?.id}/download_resume`,
-      `${talent.name}_resume`
+      `${talent.name}_resume`,
     );
   };
   const updateTalentStatus = async (feedback?: string) => {
@@ -112,7 +112,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
       `/api/jobs/${job?.id}/talents/${talent?.id}/evaluate_feedback`,
       {
         evaluate_feedback: feedback,
-      }
+      },
     );
 
     if (code === 0) {
@@ -125,7 +125,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
         `/api/jobs/${talent?.job_id}/talents/${talent?.id}/evaluate_feedback`,
         {
           evaluate_feedback_reason: reason,
-        }
+        },
       );
 
       if (code === 0) {
@@ -180,7 +180,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${job.id}/standard-board?tab=talents`
+                `/app/jobs/${job.id}/standard-board?tab=talents`,
               );
             }}
           />
@@ -262,7 +262,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
 
                     downloadMarkdownAsPDF({
                       name: `${talent.name}_${t(
-                        "candidate_evaluation_report"
+                        "candidate_evaluation_report",
                       )}`,
                       element: reportContainerRef.current,
                     });

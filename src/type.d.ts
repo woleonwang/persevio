@@ -775,3 +775,79 @@ type TCustomSource = {
   created_at: string;
   updated_at: string;
 };
+
+type TReport = {
+  thumbnail_summary: string;
+  created_at: string;
+
+  overall_recommendation: {
+    result: string;
+    caveat?: string;
+    skills_fit: {
+      level: string;
+      explanation: string;
+    };
+    logistics_fit: {
+      level: string;
+      explanation: string;
+    };
+    recruiter_note: string;
+  };
+
+  summary: {
+    description: string;
+    interest_level: {
+      level: string;
+      explanation: string;
+    };
+  };
+
+  requirements: {
+    level: "p0" | "p1" | "p2";
+    description: string;
+    assessment: string;
+    reasoning: string;
+
+    // 兼容老数据
+    assessment_type: string;
+  }[];
+
+  profile_snapshot: {
+    title: string;
+    details: string;
+  }[];
+
+  key_information: {
+    title: string;
+    details: string;
+  }[];
+
+  ai_interview_summary: {
+    topics_covered: string[];
+    key_revelations: string[];
+    interview_observations: { title: string; details: string }[];
+  };
+  key_strengths: {
+    title: string;
+    details: string;
+  }[];
+  potential_gaps: {
+    title: string;
+    details: string;
+  }[];
+  areas_to_probe_further: {
+    title: string;
+    details: string;
+  }[];
+
+  // 兼容老数据
+  snapshots: {
+    title: string;
+    content: string;
+  }[];
+  areas_to_probe_futher: {
+    title: string;
+    details: string;
+  }[];
+  result: TEvaluateResultLevel;
+};

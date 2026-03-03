@@ -10,82 +10,6 @@ import OneStar from "@/assets/icons/one-star";
 import { useTranslation } from "react-i18next";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 
-export type TReport = {
-  thumbnail_summary: string;
-  created_at: string;
-
-  overall_recommendation: {
-    result: string;
-    caveat?: string;
-    skills_fit: {
-      level: string;
-      explanation: string;
-    };
-    logistics_fit: {
-      level: string;
-      explanation: string;
-    };
-    recruiter_note: string;
-  };
-
-  summary: {
-    description: string;
-    interest_level: {
-      level: string;
-      explanation: string;
-    };
-  };
-
-  requirements: {
-    level: "p0" | "p1" | "p2";
-    description: string;
-    assessment: string;
-    reasoning: string;
-
-    // 兼容老数据
-    assessment_type: string;
-  }[];
-
-  profile_snapshot: {
-    title: string;
-    details: string;
-  }[];
-
-  key_information: {
-    title: string;
-    details: string;
-  }[];
-
-  ai_interview_summary: {
-    topics_covered: string[];
-    key_revelations: string[];
-    interview_observations: { title: string; details: string }[];
-  };
-  key_strengths: {
-    title: string;
-    details: string;
-  }[];
-  potential_gaps: {
-    title: string;
-    details: string;
-  }[];
-  areas_to_probe_further: {
-    title: string;
-    details: string;
-  }[];
-
-  // 兼容老数据
-  snapshots: {
-    title: string;
-    content: string;
-  }[];
-  areas_to_probe_futher: {
-    title: string;
-    details: string;
-  }[];
-  result: TEvaluateResultLevel;
-};
-
 interface IProps {
   candidateName: string;
   jobName: string;
@@ -152,7 +76,7 @@ const Report: React.FC<IProps> = (props) => {
           <div>
             <EvaluateResultBadge
               result={getEvaluateResultLevel(
-                report?.overall_recommendation?.result ?? report?.result
+                report?.overall_recommendation?.result ?? report?.result,
               )}
               caveat={report?.overall_recommendation?.caveat}
             />
@@ -193,12 +117,12 @@ const Report: React.FC<IProps> = (props) => {
               requirementsSummaryMappings[level as "p0" | "p1" | "p2"];
             const meetCount = items.filter(
               (item) =>
-                item.assessment === "meets" || item.assessment_type === "meets"
+                item.assessment === "meets" || item.assessment_type === "meets",
             ).length;
             const partiallyMeetCount = items.filter(
               (item) =>
                 item.assessment === "partially_meets" ||
-                item.assessment_type === "partially_meets"
+                item.assessment_type === "partially_meets",
             ).length;
             return (
               <div
@@ -226,7 +150,7 @@ const Report: React.FC<IProps> = (props) => {
           <div
             className={classnames(
               styles.requirementsSummaryRow,
-              styles.requirementsSummaryHeader
+              styles.requirementsSummaryHeader,
             )}
           >
             <div>Priority</div>
@@ -243,7 +167,7 @@ const Report: React.FC<IProps> = (props) => {
                   className={classnames(
                     styles.requirementsSummaryRow,
                     styles.requirementsSummaryItem,
-                    styles[item.level]
+                    styles[item.level],
                   )}
                 >
                   <div>{item.level}</div>
@@ -252,7 +176,7 @@ const Report: React.FC<IProps> = (props) => {
                     {originalT(
                       `assessment_options.${
                         item.assessment ?? item.assessment_type
-                      }`
+                      }`,
                     )}
                   </div>
                   <div>{item.reasoning}</div>
@@ -292,7 +216,7 @@ const Report: React.FC<IProps> = (props) => {
           <div
             className={classnames(
               styles.keyInformationRow,
-              styles.keyInformationHeader
+              styles.keyInformationHeader,
             )}
           >
             <div>Item</div>
@@ -304,7 +228,7 @@ const Report: React.FC<IProps> = (props) => {
                 key={index}
                 className={classnames(
                   styles.keyInformationRow,
-                  styles.keyInformationItem
+                  styles.keyInformationItem,
                 )}
               >
                 <div>{information.title}</div>
