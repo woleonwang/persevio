@@ -1741,10 +1741,40 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       no_upfront_cost: "No upfront cost. Pay only when you hire.",
       flat_fee_per_hire: "SGD 500 flat fee per hire.",
       start_boosting: "Start Boosting",
+      boost_modal_title: "Boost Your Job",
+      boost_modal_desc:
+        "By activating Boost Your Job, Persevio will actively promote your job listing across multiple channels to attract more qualified candidates:",
+      boost_modal_point_1: "Featured placement on Persevio's job board",
+      boost_modal_point_2:
+        "Promotion on LinkedIn, JobStreet, and other major job boards",
+      boost_modal_point_3:
+        "Social media campaigns targeting relevant professionals",
+      boost_modal_point_4:
+        "Distribution to relevant job communities and forums",
+      boost_modal_pricing_title: "Pricing",
+      boost_modal_pricing_desc:
+        "Zero upfront cost. You only pay a flat fee per successful hire made through Persevio's boosted promotion channels.",
+      boost_modal_contact_sales: "Contact Sales",
+      boost_modal_confirm: "I Agree — Start Boosting",
       outreach_title: "Outreach Campaigns",
       outreach_desc:
         "Target passive candidates who aren't actively looking. We'll proactively reach out to suitable candidates in Persevio's database and across the web, leveraging referrals and all possible channels to find the best match for your role. Success-based pricing — you only pay when you hire.",
       start_outreach_campaigns: "Start Outreach Campaigns",
+      outreach_modal_title: "Start Outreach Campaigns",
+      outreach_modal_desc:
+        "With Outreach Campaigns, Persevio will proactively source and engage passive candidates who aren't actively job-seeking:",
+      outreach_modal_point_1:
+        "Search and identify suitable candidates from Persevio's talent database",
+      outreach_modal_point_2:
+        "Proactive outreach via email, LinkedIn, and professional networks",
+      outreach_modal_point_3:
+        "Leverage referrals and industry connections",
+      outreach_modal_point_4:
+        "Screen and present qualified candidates directly to your pipeline",
+      outreach_modal_pricing_title: "Pricing",
+      outreach_modal_pricing_desc:
+        "Success-based pricing — you only pay when you successfully hire a candidate sourced through outreach. Our team will discuss the specific fee structure for your role.",
+      outreach_modal_contact_sales: "Contact Sales",
       tracking_links_title: "Tracking Links",
       tracking_links_desc:
         "Direct candidates from your postings on other job boards to the respective link below so all candidates will be aggregated in the system.",

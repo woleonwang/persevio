@@ -19,6 +19,9 @@ export enum StorageKey {
   SNAKE_HIGH_SCORE = "snakeHighScore",
   EDIT_MESSAGE_GUIDE = "edit_message_guide",
 
+  // Job 相关本地配置
+  JOB_PIPELINE_VIEW_MODE = "jobPipelineViewMode",
+
   // 是否是测试账号
   INTERNAL_ACCOUNT = "internal_account",
   // 登录时的 job id 来源

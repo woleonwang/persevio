@@ -78,6 +78,90 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     }
   };
 
+  const handleBoostClick = () => {
+    confirmModal({
+      styles: {
+        content: {
+          width: 600,
+        },
+      },
+      title: t("boost_modal_title"),
+      content: (
+        <div style={{ marginTop: 8 }}>
+          <p
+            style={{ marginBottom: 12 }}
+            dangerouslySetInnerHTML={{ __html: t("boost_modal_desc") }}
+          />
+          <ul style={{ paddingLeft: 20, marginBottom: 16 }}>
+            <li>{t("boost_modal_point_1")}</li>
+            <li>{t("boost_modal_point_2")}</li>
+            <li>{t("boost_modal_point_3")}</li>
+            <li>{t("boost_modal_point_4")}</li>
+          </ul>
+          <div
+            style={{
+              marginTop: 8,
+              padding: 12,
+              borderRadius: 8,
+              background: "#F3F4F6",
+            }}
+          >
+            <div style={{ fontWeight: 600, marginBottom: 4 }}>
+              {t("boost_modal_pricing_title")}
+            </div>
+            <div
+              style={{ fontSize: 13, color: "#4B5563" }}
+              dangerouslySetInnerHTML={{
+                __html: t("boost_modal_pricing_desc"),
+              }}
+            />
+          </div>
+        </div>
+      ),
+      okText: t("boost_modal_confirm"),
+      onOk: () => applyService("boost"),
+    });
+  };
+
+  const handleOutreachClick = () => {
+    confirmModal({
+      styles: {
+        content: {
+          width: 600,
+        },
+      },
+      title: t("outreach_modal_title"),
+      content: (
+        <div style={{ marginTop: 8 }}>
+          <p style={{ marginBottom: 12 }}>{t("outreach_modal_desc")}</p>
+          <ul style={{ paddingLeft: 20, marginBottom: 16 }}>
+            <li>{t("outreach_modal_point_1")}</li>
+            <li>{t("outreach_modal_point_2")}</li>
+            <li>{t("outreach_modal_point_3")}</li>
+            <li>{t("outreach_modal_point_4")}</li>
+          </ul>
+          <div
+            style={{
+              marginTop: 8,
+              padding: 12,
+              borderRadius: 8,
+              background: "#F3F4F6",
+            }}
+          >
+            <div style={{ fontWeight: 600, marginBottom: 4 }}>
+              {t("outreach_modal_pricing_title")}
+            </div>
+            <div style={{ fontSize: 13, color: "#4B5563" }}>
+              {t("outreach_modal_pricing_desc")}
+            </div>
+          </div>
+        </div>
+      ),
+      okText: t("outreach_modal_contact_sales"),
+      onOk: () => applyService("outreach"),
+    });
+  };
+
   const handleDeleteCustomSource = (id: number, name: string) => {
     confirmModal({
       title: t("delete_custom_source_title"),
@@ -226,7 +310,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
               type="primary"
               className={styles.boostBtn}
               icon={<Icon icon={<StartBoost />} />}
-              onClick={() => applyService("boost")}
+              onClick={handleBoostClick}
             >
               {t("start_boosting")}
             </Button>
@@ -248,7 +332,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
           <p className={styles.sectionDesc}>{t("outreach_desc")}</p>
         </div>
         <div className={styles.sectionRight}>
-          <Button type="primary" onClick={() => applyService("outreach")}>
+          <Button type="primary" onClick={handleOutreachClick}>
             {t("start_outreach_campaigns")}
           </Button>
         </div>

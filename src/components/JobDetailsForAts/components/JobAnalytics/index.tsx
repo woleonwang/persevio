@@ -329,7 +329,7 @@ const JobAnalytics = () => {
             <div className={styles.funnelSectionWrap}>
               <div className={styles.funnelWrap}>
                 {stageStats.map((row, index) => {
-                  const displayCount = funnelCumulativeCounts[index] ?? 0;
+                  const displayCount = row.candidates;
                   const topW = funnelWidths[index];
                   const bottomW =
                     index < stageStats.length - 1

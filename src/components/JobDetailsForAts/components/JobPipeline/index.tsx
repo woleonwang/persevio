@@ -32,6 +32,7 @@ import {
 import styles from "./style.module.less";
 import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
+import { storage, StorageKey } from "@/utils/storage";
 
 const JobPipeline = ({
   onChangeTab,
@@ -56,7 +57,7 @@ const JobPipeline = ({
     jobId: job?.id,
   });
 
-  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
   const [activeId, setActiveId] = useState<number>();
 
   const { t } = useTranslation();
@@ -91,6 +92,15 @@ const JobPipeline = ({
 
   const isStageLocked = (stageKey: string) =>
     LOCKED_STAGE_KEYS.includes(stageKey);
+
+  useEffect(() => {
+    const saved = storage.get<"list" | "kanban">(
+      StorageKey.JOB_PIPELINE_VIEW_MODE,
+    );
+    if (saved === "list" || saved === "kanban") {
+      setViewMode(saved);
+    }
+  }, []);
 
   useEffect(() => {
     fetchTalents();
@@ -165,6 +175,11 @@ const JobPipeline = ({
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
+
+  const handleChangeViewMode = (mode: "list" | "kanban") => {
+    setViewMode(mode);
+    storage.set<"list" | "kanban">(StorageKey.JOB_PIPELINE_VIEW_MODE, mode);
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as number);
@@ -295,14 +310,14 @@ const JobPipeline = ({
           <Button
             className={styles.viewToggleBtn}
             type={viewMode === "list" ? "primary" : "default"}
-            onClick={() => setViewMode("list")}
+            onClick={() => handleChangeViewMode("list")}
           >
             {tKey("list")}
           </Button>
           <Button
             className={styles.viewToggleBtn}
             type={viewMode === "kanban" ? "primary" : "default"}
-            onClick={() => setViewMode("kanban")}
+            onClick={() => handleChangeViewMode("kanban")}
           >
             {tKey("kanban")}
           </Button>
