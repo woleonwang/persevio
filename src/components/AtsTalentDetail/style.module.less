@@ -311,7 +311,7 @@
 
   .interviewPanel {
     border-radius: 12px !important;
-    border: 1px solid @border-color;
+    border: 1px solid @border-color !important;
     overflow: hidden;
   }
 
@@ -414,34 +414,74 @@
     margin-top: 16px;
   }
 
-  .aiSummaryGrid {
+  .aiSummaryLayout {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .aiSummaryLeft {
+    display: flex;
+    flex-direction: column;
     gap: 12px;
   }
 
+  .aiSummaryGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .aiSummaryBg {
+    background: rgba(250, 250, 250, 1);
+  }
+
   .aiSummaryCard {
-    background: #ffffff;
-    border-radius: 12px;
     padding: 12px 14px;
-    border: 1px dashed #ebecee;
   }
 
   .aiSummaryTitle {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: bold;
     margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .aiSummaryList {
     margin: 0;
     padding-left: 18px;
     font-size: 12px;
-    color: #555;
+    color: #666;
   }
 
   .aiSummaryItemTitle {
     font-weight: 600;
+  }
+
+  .aiSummaryRight {
+    background: #ffffff;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    min-height: 260px;
+  }
+
+  .aiTranscriptHeader {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .aiTranscriptBody {
+    flex: 1;
+    min-height: 0;
+
+    :global {
+      .chatMessageListContainer {
+        height: 100%;
+      }
+    }
   }
 
   .candidateEvalSection {
@@ -469,7 +509,6 @@
   .candidateEvalLayout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
     background-color: rgba(250, 250, 250, 1);
   }
 

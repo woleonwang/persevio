@@ -6,7 +6,7 @@ import useTalent from "@/hooks/useTalent";
 import usePublicJob from "@/hooks/usePublicJob";
 import { Download, Get } from "@/utils/request";
 import { backOrDirect, getEvaluateResultLevel, parseJSON } from "@/utils";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import Icon from "@/components/Icon";
@@ -18,6 +18,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
 import Resume from "./components/Resume";
+import ChatMessagePreview from "@/components/ChatMessagePreview";
 import { TTalentResume } from "@/components/NewTalentDetail/type";
 import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
@@ -37,8 +38,16 @@ const formatLastUpdated = (dateStr?: string) => {
 };
 
 const AtsTalentDetail: React.FC = () => {
-  const [talentsOfCandidate, setTalentsOfCandidate] = useState<TTalent[]>([]);
+  const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
+    talentId: string;
+    jobId: string;
+  }>();
+
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [talentsOfCandidate, setTalentsOfCandidate] = useState<TTalent[]>([]);
+  const [talentChatMessages, setTalentChatMessages] = useState<
+    TMessageFromApi[]
+  >([]);
 
   const { job } = usePublicJob();
   const { talent } = useTalent();
@@ -46,19 +55,27 @@ const AtsTalentDetail: React.FC = () => {
   const { t: originalT } = useTranslation();
 
   useEffect(() => {
-    if (job && talent) {
-      fetchTalentsOfCandidate();
-    }
-  }, [job, talent]);
+    fetchTalentsOfCandidate();
+    fetchTalentChatMessages();
+  }, [talentIdStr, jobIdStr]);
 
   const fetchTalentsOfCandidate = async () => {
-    if (!job || !talent) return;
-
     const { code, data } = await Get(
-      `/api/jobs/${job.id}/talents/${talent.id}/all_talents`,
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/all_talents`,
     );
     if (code === 0) {
       setTalentsOfCandidate(data.talents);
+    }
+  };
+
+  const fetchTalentChatMessages = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/messages`,
+    );
+    if (code === 0) {
+      setTalentChatMessages(data.messages);
+    } else {
+      setTalentChatMessages([]);
     }
   };
 
@@ -523,43 +540,102 @@ const AtsTalentDetail: React.FC = () => {
                     )}
                   </div>
                 </div>
+              </div>
 
-                {report.ai_interview_summary && (
-                  <div className={styles.aiSummarySection}>
+              <div className={styles.aiSummarySection}>
+                <div className={styles.aiSummaryLayout}>
+                  <div className={styles.aiSummaryLeft}>
                     <div className={styles.aiSummaryGrid}>
-                      {(report.ai_interview_summary?.topics_covered ?? [])
-                        .length > 0 && (
-                        <div className={styles.aiSummaryCard}>
-                          <div className={styles.aiSummaryTitle}>
-                            Topics Covered
-                          </div>
-                          <ul className={styles.aiSummaryList}>
-                            {(
-                              report.ai_interview_summary?.topics_covered ?? []
-                            ).map((item, index) => (
-                              <li key={index}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {(report.ai_interview_summary?.key_revelations ?? [])
-                        .length > 0 && (
-                        <div className={styles.aiSummaryCard}>
-                          <div className={styles.aiSummaryTitle}>
-                            Key Revelations
-                          </div>
-                          <ul className={styles.aiSummaryList}>
+                      <div
+                        className={classnames(
+                          styles.aiSummaryTitle,
+                          styles.bluePoint,
+                        )}
+                        style={{ margin: "0 12px" }}
+                      >
+                        AI Interview Summary
+                      </div>
+
+                      <div className={styles.aiSummaryBg}>
+                        {report.ai_interview_summary && (
+                          <>
+                            {(report.ai_interview_summary?.topics_covered ?? [])
+                              .length > 0 && (
+                              <div className={styles.aiSummaryCard}>
+                                <div className={styles.aiSummaryTitle}>
+                                  Topics Covered
+                                </div>
+                                <ul className={styles.aiSummaryList}>
+                                  {(
+                                    report.ai_interview_summary
+                                      ?.topics_covered ?? []
+                                  ).map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                             {(
                               report.ai_interview_summary?.key_revelations ?? []
-                            ).map((item, index) => (
-                              <li key={index}>{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                            ).length > 0 && (
+                              <div className={styles.aiSummaryCard}>
+                                <div className={styles.aiSummaryTitle}>
+                                  Key Revelations
+                                </div>
+                                <ul className={styles.aiSummaryList}>
+                                  {(
+                                    report.ai_interview_summary
+                                      ?.key_revelations ?? []
+                                  ).map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {(
+                              report.ai_interview_summary
+                                ?.interview_observations ?? []
+                            ).length > 0 && (
+                              <div className={styles.aiSummaryCard}>
+                                <div className={styles.aiSummaryTitle}>
+                                  Interview Observations
+                                </div>
+                                <ul className={styles.aiSummaryList}>
+                                  {(
+                                    report.ai_interview_summary
+                                      ?.interview_observations ?? []
+                                  ).map((item, index) => (
+                                    <li key={index}>
+                                      <span
+                                        className={styles.aiSummaryItemTitle}
+                                      >
+                                        {item.title}:
+                                      </span>{" "}
+                                      {item.details}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
+                  <div className={styles.aiSummaryRight}>
+                    <div className={styles.aiTranscriptHeader}>
+                      AI Interview Transcript
+                    </div>
+                    <div className={styles.aiTranscriptBody}>
+                      <ChatMessagePreview
+                        messages={talentChatMessages}
+                        job={job as any}
+                        talent={talent}
+                        fontSize={14}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </Collapse.Panel>
           </Collapse>

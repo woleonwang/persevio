@@ -18,11 +18,12 @@ interface IProps {
   className?: string;
   style?: React.CSSProperties;
   showUserTimestamp?: boolean;
+  fontSize?: number;
   renderTagsContent?: (item: TMessage) => React.ReactNode;
   renderOperationContent?: (
     item: TMessage,
     isLast: boolean,
-    isFirst: boolean
+    isFirst: boolean,
   ) => React.ReactNode;
   showCustomThinkingText?: () => string;
 }
@@ -39,6 +40,7 @@ const ChatMessageList = (props: IProps) => {
     renderOperationContent,
     showUserTimestamp = false,
     showCustomThinkingText,
+    fontSize = 16,
   } = props;
 
   const [loadingText, setLoadingText] = useState(".");
@@ -162,6 +164,7 @@ const ChatMessageList = (props: IProps) => {
                       [styles.lastMessage]: index === messages.length - 1,
                       [styles.user]: item.role === "user",
                     })}
+                    style={{ fontSize }}
                   >
                     {showUserTimestamp && item.role === "user" && (
                       <div
@@ -178,7 +181,7 @@ const ChatMessageList = (props: IProps) => {
                             __html: `${loadingText}${
                               dayjs().diff(
                                 loadingStartedAtRef.current ?? dayjs(),
-                                "second"
+                                "second",
                               ) > 1
                                 ? `(${
                                     showCustomThinkingText?.() ||

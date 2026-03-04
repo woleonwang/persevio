@@ -12,8 +12,9 @@ const ChatMessagePreview = (props: {
   role?: "admin" | "staff";
   job?: IJob;
   talent?: TTalent;
+  fontSize?: number;
 }) => {
-  const { messages, job, talent, role = "staff" } = props;
+  const { messages, job, talent, role = "staff", fontSize = 16 } = props;
   const [sideDocumentDrawerVisible, setSideDocumentDrawerVisible] =
     useState(false);
   const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
@@ -31,7 +32,7 @@ const ChatMessagePreview = (props: {
       .filter(
         (item) =>
           item.content.content ||
-          item.content.metadata.message_sub_type === "error"
+          item.content.metadata.message_sub_type === "error",
       )
       .map((item) => {
         return {
@@ -58,7 +59,7 @@ const ChatMessagePreview = (props: {
           const documentType = getDocumentType(key);
           setSideDocumentDrawerVisible(true);
           setSideDocumentContent(
-            jrdContextDocumentJsonRef.current?.[documentType] ?? ""
+            jrdContextDocumentJsonRef.current?.[documentType] ?? "",
           );
         },
         autoTrigger: true,
@@ -70,6 +71,7 @@ const ChatMessagePreview = (props: {
     <div className={styles.container}>
       <ChatMessageList
         messages={formatMessages()}
+        fontSize={fontSize}
         renderTagsContent={(item) => {
           const canPlayAudio = !!item.payloadId && item.duration;
 
@@ -94,7 +96,7 @@ const ChatMessagePreview = (props: {
                           className={styles.inlineButton}
                           onClick={() => {
                             const extraTag = (item.extraTags ?? []).find(
-                              (extraTag) => extraTag.name === tag.key
+                              (extraTag) => extraTag.name === tag.key,
                             );
                             tag.handler?.(extraTag);
                           }}
