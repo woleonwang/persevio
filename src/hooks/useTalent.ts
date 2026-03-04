@@ -17,7 +17,7 @@ const useTalent = () => {
 
   useEffect(() => {
     fetchTalent();
-  }, []);
+  }, [talentIdStr]);
 
   const fetchTalent = async () => {
     const { code, data } = await Get(`/api/jobs/${jobId}/talents/${talentId}`);
@@ -35,7 +35,7 @@ const useTalent = () => {
             ...item,
             time_slots: parseJSONArray(item.time_slots),
           };
-        })
+        }),
       );
     } else {
       message.error("Get talent failed");

@@ -439,6 +439,7 @@ type TTalent = {
     name: string;
     staff_id: number;
     bonus_pool: number;
+    posted_at?: string;
     company?: {
       id: number;
       name: string;

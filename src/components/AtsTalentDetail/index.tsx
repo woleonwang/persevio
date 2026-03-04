@@ -1,10 +1,11 @@
-import React from "react";
-import { Button, Spin } from "antd";
+import React, { useEffect, useReducer, useState } from "react";
+import { Button, Spin, Collapse, Tabs } from "antd";
+import classnames from "classnames";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import usePublicJob from "@/hooks/usePublicJob";
-import { Download } from "@/utils/request";
-import { backOrDirect, parseJSON } from "@/utils";
+import { Download, Get } from "@/utils/request";
+import { backOrDirect, getEvaluateResultLevel, parseJSON } from "@/utils";
 import { useNavigate } from "react-router";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
@@ -14,11 +15,13 @@ import Phone from "@/assets/icons/phone";
 import MailCheck from "@/assets/icons/mail-check";
 import Link2 from "@/assets/icons/link2";
 import MarkdownContainer from "@/components/MarkdownContainer";
+import EvaluateResultBadge from "@/components/EvaluateResultBadge";
+import { useTranslation } from "react-i18next";
 import Resume from "./components/Resume";
 import { TTalentResume } from "@/components/NewTalentDetail/type";
-import type { TExtractBasicInfo } from "@/components/JobDetailsForAts/components/JobPipeline/components/types";
-
 import styles from "./style.module.less";
+import StrengthFilled from "@/assets/icons/strength-filled";
+import GapsFilled from "@/assets/icons/gaps-filled";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -34,9 +37,30 @@ const formatLastUpdated = (dateStr?: string) => {
 };
 
 const AtsTalentDetail: React.FC = () => {
+  const [talentsOfCandidate, setTalentsOfCandidate] = useState<TTalent[]>([]);
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const { job } = usePublicJob();
   const { talent } = useTalent();
   const navigate = useNavigate();
+  const { t: originalT } = useTranslation();
+
+  useEffect(() => {
+    if (job && talent) {
+      fetchTalentsOfCandidate();
+    }
+  }, [job, talent]);
+
+  const fetchTalentsOfCandidate = async () => {
+    if (!job || !talent) return;
+
+    const { code, data } = await Get(
+      `/api/jobs/${job.id}/talents/${talent.id}/all_talents`,
+    );
+    if (code === 0) {
+      setTalentsOfCandidate(data.talents);
+    }
+  };
 
   if (!job || !talent) {
     return <Spin />;
@@ -44,9 +68,6 @@ const AtsTalentDetail: React.FC = () => {
 
   const resumeDetail: TTalentResume | null = talent.resume_detail_json
     ? (parseJSON(talent.resume_detail_json) as TTalentResume)
-    : null;
-  const basicInfo: TExtractBasicInfo | null = talent.basic_info_json
-    ? (parseJSON(talent.basic_info_json) as TExtractBasicInfo)
     : null;
 
   const report = parseJSON(talent.evaluate_json) as TReport;
@@ -67,6 +88,25 @@ const AtsTalentDetail: React.FC = () => {
   const handleBack = () => {
     backOrDirect(navigate, `/app/jobs/${job.id}/standard-board?tab=talents`);
   };
+
+  const requirementsSummaryMappings: Record<
+    "p0" | "p1" | "p2",
+    {
+      level: "p0" | "p1" | "p2";
+      description: string;
+      assessment: string;
+      reasoning: string;
+      assessment_type: string;
+    }[]
+  > = {
+    p0: [],
+    p1: [],
+    p2: [],
+  };
+
+  (report.requirements ?? []).forEach((item) => {
+    requirementsSummaryMappings[item.level].push(item as any);
+  });
 
   return (
     <div className={styles.container}>
@@ -121,7 +161,7 @@ const AtsTalentDetail: React.FC = () => {
           <h2 className={styles.sectionTitle}>Profile Snapshot</h2>
         </div>
         <div className={styles.snapshotGrid}>
-          {report.profile_snapshot.map((snapshot) => (
+          {(report.profile_snapshot ?? []).map((snapshot) => (
             <div className={styles.snapshotItem}>
               <span className={styles.snapshotLabel}>{snapshot.title}</span>
               <span className={styles.snapshotValue}>{snapshot.details}</span>
@@ -155,17 +195,10 @@ const AtsTalentDetail: React.FC = () => {
         <div className={styles.keyInfoColumn}>
           <div className={styles.sectionHead} style={{ height: 49 }}>
             <h2 className={styles.sectionTitle}>Key Information</h2>
-            <div className={styles.sectionMeta}>
-              {lastUpdated && (
-                <span className={styles.lastUpdated}>
-                  Last updated: {formatLastUpdated(lastUpdated)}
-                </span>
-              )}
-            </div>
           </div>
           <div className={styles.bgWrap}>
             <div className={styles.keyInfoCards}>
-              {report.key_information.map((information) => (
+              {(report.key_information ?? []).map((information) => (
                 <div className={styles.keyInfoCard}>
                   <span className={styles.keyInfoLabel}>
                     {information.title}
@@ -178,6 +211,359 @@ const AtsTalentDetail: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className={styles.jobApplySection}>
+        <h2 className={styles.sectionTitle}>Jobs Applied</h2>
+        <Tabs
+          items={talentsOfCandidate.map((talent) => ({
+            key: talent.id.toString(),
+            label: (
+              <div className={styles.jobApplyLabel}>
+                <div className={styles.jobName}>{talent.job?.name}</div>
+                {talent.job?.posted_at ? (
+                  <div className={styles.active}>Active</div>
+                ) : (
+                  <div className={styles.closed}>Closed</div>
+                )}
+              </div>
+            ),
+          }))}
+          activeKey={talent.id.toString()}
+          onChange={(key) => {
+            const talent = talentsOfCandidate.find(
+              (t) => t.id.toString() === key,
+            );
+
+            if (talent?.job) {
+              navigate(
+                `/app/jobs/${talent.job.id}/standard-board/talents/${talent.id}`,
+              );
+              forceUpdate();
+            }
+          }}
+        />
+        <section className={styles.interviewsSection}>
+          <h2 className={styles.sectionTitle}>Interviews</h2>
+          <Collapse
+            defaultActiveKey={["round0"]}
+            expandIconPosition="end"
+            ghost
+            className={styles.interviewsCollapse}
+          >
+            <Collapse.Panel
+              key="round0"
+              header={
+                <div className={styles.interviewHeader}>
+                  <div className={styles.interviewRound}>
+                    Round 0: AI Prescreening
+                  </div>
+                  <EvaluateResultBadge
+                    size="small"
+                    result={getEvaluateResultLevel(
+                      report?.overall_recommendation?.result ?? report?.result,
+                    )}
+                  />
+                </div>
+              }
+              className={styles.interviewPanel}
+            >
+              <div className={styles.evalSummaryCard}>
+                <div
+                  className={classnames(
+                    styles.evalSummaryHeader,
+                    styles.bluePoint,
+                  )}
+                >
+                  Evaluation Summary
+                </div>
+                <div className={styles.evalSummaryContent}>
+                  <div className={styles.evalOverallText}>
+                    <div className={styles.evalOverallLabel}>
+                      <span>Overall Fit</span>
+                      <EvaluateResultBadge
+                        result={getEvaluateResultLevel(
+                          report?.overall_recommendation?.result ??
+                            report?.result,
+                        )}
+                      />
+                    </div>
+                    <div className={styles.evalOverallDescription}>
+                      {report.summary?.description || report.thumbnail_summary}
+                    </div>
+                  </div>
+                  <div className={styles.evalDetailItem}>
+                    <div className={styles.evalDetailTitle}>
+                      <span>Skills Fit</span>
+                      <div className={styles.evalDetailLevel}>
+                        {report.overall_recommendation?.skills_fit?.level}
+                      </div>
+                    </div>
+
+                    <div className={styles.evalDetailDesc}>
+                      {report.overall_recommendation?.skills_fit?.explanation}
+                    </div>
+                  </div>
+                  <div className={styles.evalDetailItem}>
+                    <div className={styles.evalDetailTitle}>
+                      <span>Logistical Fit</span>
+                      <div className={styles.evalDetailLevel}>
+                        {report.overall_recommendation?.logistics_fit?.level}
+                      </div>
+                    </div>
+
+                    <div className={styles.evalDetailDesc}>
+                      {
+                        report.overall_recommendation?.logistics_fit
+                          ?.explanation
+                      }
+                    </div>
+                  </div>
+                  <div className={styles.evalDetailItem}>
+                    <div className={styles.evalDetailTitle}>
+                      <span>Interest Level</span>
+                      <div className={styles.evalDetailLevel}>
+                        {report.summary?.interest_level?.level}
+                      </div>
+                    </div>
+
+                    <div className={styles.evalDetailDesc}>
+                      {report.summary?.interest_level?.explanation}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.candidateEvalSection}>
+                <div className={styles.candidateEvalHeader}>
+                  <div
+                    className={classnames(
+                      styles.candidateEvalTitle,
+                      styles.bluePoint,
+                    )}
+                  >
+                    Candidate Evaluation Report
+                  </div>
+                </div>
+
+                <div className={styles.candidateEvalLayout}>
+                  <div className={styles.candidateEvalLeft}>
+                    <div className={styles.evalBlock}>
+                      <div className={styles.evalBlockTitle}>
+                        Requirements Summary
+                      </div>
+                      <div className={styles.requirementsSummary}>
+                        {(["p0", "p1", "p2"] as const).map((level) => {
+                          const items = requirementsSummaryMappings[level];
+                          if (!items.length) return null;
+
+                          const meetCount = items.filter(
+                            (item) =>
+                              item.assessment === "meets" ||
+                              item.assessment_type === "meets",
+                          ).length;
+                          const partiallyMeetCount = items.filter(
+                            (item) =>
+                              item.assessment === "partially_meets" ||
+                              item.assessment_type === "partially_meets",
+                          ).length;
+
+                          return (
+                            <div
+                              key={level}
+                              className={`${styles.requirementSummaryItem} ${styles[level]}`}
+                            >
+                              <div className={styles.point} />
+                              <span>
+                                {meetCount} of {items.length}{" "}
+                                {level.toUpperCase()}
+                              </span>
+                              requirements met
+                              {partiallyMeetCount > 0 &&
+                                ` (${partiallyMeetCount} partially)`}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className={styles.evalBlock}>
+                      <div className={styles.evalBlockTitle}>
+                        Detailed Requirements Analysis
+                      </div>
+                      <div className={styles.requirementsSummaryTable}>
+                        <div
+                          className={`${styles.requirementsSummaryRow} ${styles.requirementsSummaryHeader}`}
+                        >
+                          <div>Priority</div>
+                          <div>Requirement</div>
+                          <div>Assessment</div>
+                          <div>Reasoning</div>
+                        </div>
+                        {(report.requirements ?? []).map((item, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className={`${styles.requirementsSummaryRow} ${styles.requirementsSummaryItem} ${styles[item.level]}`}
+                            >
+                              <div>
+                                <div
+                                  className={classnames(
+                                    styles.levelTag,
+                                    styles[item.level],
+                                  )}
+                                >
+                                  {item.level.toUpperCase()}
+                                </div>
+                              </div>
+                              <div>{item.description}</div>
+                              <div>
+                                <div
+                                  className={classnames(
+                                    styles[item.assessment],
+                                    styles.assessmentText,
+                                  )}
+                                >
+                                  {originalT(
+                                    `assessment_options.${
+                                      item.assessment ?? item.assessment_type
+                                    }`,
+                                  )}
+                                </div>
+                              </div>
+                              <div>{item.reasoning}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.candidateEvalRight}>
+                    {(report.key_strengths ?? []).length > 0 && (
+                      <div
+                        className={`${styles.evalBlock} ${styles.strengthsBlock}`}
+                      >
+                        <div className={styles.evalBlockTitle}>
+                          <Icon icon={<StrengthFilled />} />
+                          Strengths
+                        </div>
+                        <div className={styles.evalList}>
+                          {(report.key_strengths ?? []).map(
+                            (strength, index) => {
+                              return (
+                                <div key={index} className={styles.listItem}>
+                                  <span className={styles.listTitle}>
+                                    {strength.title}:
+                                  </span>
+                                  <span className={styles.snapshotContent}>
+                                    {strength.details}
+                                  </span>
+                                </div>
+                              );
+                            },
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {(report.potential_gaps ?? []).length > 0 && (
+                      <div
+                        className={`${styles.evalBlock} ${styles.gapsBlock}`}
+                      >
+                        <div className={styles.evalBlockTitle}>
+                          <Icon icon={<GapsFilled />} />
+                          Potential Gaps
+                        </div>
+                        <div className={styles.evalList}>
+                          {(report.potential_gaps ?? []).map((gap, index) => {
+                            return (
+                              <div key={index} className={styles.listItem}>
+                                <span className={styles.listTitle}>
+                                  {gap.title}:
+                                </span>
+                                <span className={styles.gapContent}>
+                                  {gap.details}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {(
+                      report.areas_to_probe_further ??
+                      report.areas_to_probe_futher ??
+                      []
+                    ).length > 0 && (
+                      <div
+                        className={`${styles.evalBlock} ${styles.areasBlock}`}
+                      >
+                        <div className={styles.evalBlockTitle}>
+                          Areas to Probe in Next Rounds
+                        </div>
+                        <div className={styles.evalList}>
+                          {(report.areas_to_probe_further ?? []).map(
+                            (area, index) => {
+                              return (
+                                <div key={index} className={styles.listItem}>
+                                  <span className={styles.listTitle}>
+                                    {area.title}:
+                                  </span>
+                                  <span className={styles.areaContent}>
+                                    {area.details}
+                                  </span>
+                                </div>
+                              );
+                            },
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {report.ai_interview_summary && (
+                  <div className={styles.aiSummarySection}>
+                    <div className={styles.aiSummaryGrid}>
+                      {(report.ai_interview_summary?.topics_covered ?? [])
+                        .length > 0 && (
+                        <div className={styles.aiSummaryCard}>
+                          <div className={styles.aiSummaryTitle}>
+                            Topics Covered
+                          </div>
+                          <ul className={styles.aiSummaryList}>
+                            {(
+                              report.ai_interview_summary?.topics_covered ?? []
+                            ).map((item, index) => (
+                              <li key={index}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {(report.ai_interview_summary?.key_revelations ?? [])
+                        .length > 0 && (
+                        <div className={styles.aiSummaryCard}>
+                          <div className={styles.aiSummaryTitle}>
+                            Key Revelations
+                          </div>
+                          <ul className={styles.aiSummaryList}>
+                            {(
+                              report.ai_interview_summary?.key_revelations ?? []
+                            ).map((item, index) => (
+                              <li key={index}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Collapse.Panel>
+          </Collapse>
+        </section>
       </div>
     </div>
   );
