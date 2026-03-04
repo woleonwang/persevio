@@ -21,7 +21,7 @@ import Resume from "./components/Resume";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
 import TextAreaWithVoice from "@/components/TextAreaWithVoice";
 import { TTalentResume } from "@/components/NewTalentDetail/type";
-import type { TTalentNote } from "./type";
+import type { TTalentNote, TActiveLog } from "./type";
 import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";
@@ -56,6 +56,7 @@ const AtsTalentDetail: React.FC = () => {
   const [notes, setNotes] = useState<TTalentNote[]>([]);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
+  const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
 
   const { job } = usePublicJob();
   const { talent, interviews, fetchTalent } = useTalent();
@@ -66,6 +67,7 @@ const AtsTalentDetail: React.FC = () => {
     fetchTalentsOfCandidate();
     fetchTalentChatMessages();
     fetchTalentNotes();
+    fetchActiveLogs();
   }, [talentIdStr, jobIdStr]);
 
   const fetchTalentsOfCandidate = async () => {
@@ -96,6 +98,17 @@ const AtsTalentDetail: React.FC = () => {
       setNotes(data.talent_notes ?? []);
     } else {
       setNotes([]);
+    }
+  };
+
+  const fetchActiveLogs = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/active_logs`,
+    );
+    if (code === 0) {
+      setActiveLogs(data.active_logs ?? []);
+    } else {
+      setActiveLogs([]);
     }
   };
 
@@ -759,6 +772,54 @@ const AtsTalentDetail: React.FC = () => {
 
       <div className={styles.activitiesSection}>
         <h2 className={styles.sectionTitle}>Activity Log</h2>
+        <div className={styles.activityList}>
+          {activeLogs.map((log) => {
+            let description = "";
+            const content = (() => {
+              try {
+                return JSON.parse(log.content || "{}") as any;
+              } catch {
+                return {};
+              }
+            })();
+
+            if (log.event_type === "update_stage") {
+              description = `Moved to ${content.stage_name} stage`;
+            } else if (log.event_type === "add_feedback") {
+              description = "Interview feedback added";
+            } else if (log.event_type === "add_note") {
+              description = `${log.staff?.name ?? ""} add a note`;
+            } else if (log.event_type === "start_interview") {
+              description = "AI prescreening started";
+            } else if (log.event_type === "finish_interview") {
+              description = "AI prescreening completed";
+            } else if (log.event_type === "create") {
+              description = "Application received";
+            } else {
+              description = "Activity";
+            }
+
+            return (
+              <div key={log.id} className={styles.activityItem}>
+                <div className={styles.activityDotWrapper}>
+                  <span
+                    className={classnames(
+                      styles.activityDot,
+                      styles[log.event_type],
+                    )}
+                  />
+                  <span className={styles.activityLine} />
+                </div>
+                <div className={styles.activityContent}>
+                  <div className={styles.activityTitle}>{description}</div>
+                  <div className={styles.activityDate}>
+                    {dayjs(log.created_at).format("MMM DD, YYYY")}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <Modal
@@ -791,6 +852,7 @@ const AtsTalentDetail: React.FC = () => {
             setNewFeedbackContent("");
             setNewFeedbackAdvance(false);
             fetchTalent();
+            fetchActiveLogs();
           }
         }}
         okText="Save"
@@ -839,7 +901,8 @@ const AtsTalentDetail: React.FC = () => {
             message.success("Note added");
             setIsAddNoteModalOpen(false);
             setNewNoteContent("");
-            await fetchTalentNotes();
+            fetchTalentNotes();
+            fetchActiveLogs();
           }
         }}
         okText="Save"

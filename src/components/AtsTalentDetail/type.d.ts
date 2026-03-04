@@ -110,3 +110,24 @@ export type TTalentNote = {
     position: string;
   };
 };
+
+export type TActiveLog = {
+  id: number;
+  job_id: number;
+  talent_id: number;
+  event_type:
+    | "create"
+    | "start_interview"
+    | "finish_interview"
+    | "update_stage"
+    | "add_feedback"
+    | "add_note"
+    | string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  staff: {
+    id: number;
+    name: string;
+  };
+};
