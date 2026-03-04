@@ -21,6 +21,7 @@ import Resume from "./components/Resume";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
 import TextAreaWithVoice from "@/components/TextAreaWithVoice";
 import { TTalentResume } from "@/components/NewTalentDetail/type";
+import type { TTalentNote } from "./type";
 import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";
@@ -52,6 +53,9 @@ const AtsTalentDetail: React.FC = () => {
   const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvance, setNewFeedbackAdvance] = useState(false);
+  const [notes, setNotes] = useState<TTalentNote[]>([]);
+  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
+  const [newNoteContent, setNewNoteContent] = useState("");
 
   const { job } = usePublicJob();
   const { talent, interviews, fetchTalent } = useTalent();
@@ -61,6 +65,7 @@ const AtsTalentDetail: React.FC = () => {
   useEffect(() => {
     fetchTalentsOfCandidate();
     fetchTalentChatMessages();
+    fetchTalentNotes();
   }, [talentIdStr, jobIdStr]);
 
   const fetchTalentsOfCandidate = async () => {
@@ -80,6 +85,17 @@ const AtsTalentDetail: React.FC = () => {
       setTalentChatMessages(data.messages);
     } else {
       setTalentChatMessages([]);
+    }
+  };
+
+  const fetchTalentNotes = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/notes`,
+    );
+    if (code === 0) {
+      setNotes(data.talent_notes ?? []);
+    } else {
+      setNotes([]);
     }
   };
 
@@ -697,7 +713,8 @@ const AtsTalentDetail: React.FC = () => {
                   </div>
                   <div className={styles.roundFeedbackActions}>
                     <Button
-                      type="default"
+                      variant="outlined"
+                      color="primary"
                       onClick={() => setIsAddFeedbackModalOpen(true)}
                     >
                       + Add Feedback
@@ -712,6 +729,32 @@ const AtsTalentDetail: React.FC = () => {
 
       <div className={styles.notesSection}>
         <h2 className={styles.sectionTitle}>Notes</h2>
+        <div className={styles.notesContainer}>
+          <div className={styles.notesList}>
+            {notes.map((note) => (
+              <div key={note.id} className={styles.noteItem}>
+                <div className={styles.noteHeader}>
+                  <span className={styles.noteAuthor}>
+                    {note.staff?.name || "-"}
+                  </span>
+                  <span className={styles.noteDate}>
+                    {dayjs(note.created_at).format("MMM DD, YYYY")}
+                  </span>
+                </div>
+                <div className={styles.noteContent}>{note.content}</div>
+              </div>
+            ))}
+          </div>
+          <div className={styles.notesActions}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setIsAddNoteModalOpen(true)}
+            >
+              + Add Note
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className={styles.activitiesSection}>
@@ -769,6 +812,46 @@ const AtsTalentDetail: React.FC = () => {
               <Switch
                 checked={newFeedbackAdvance}
                 onChange={setNewFeedbackAdvance}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        title="Add Note"
+        open={isAddNoteModalOpen}
+        centered
+        onCancel={() => {
+          setIsAddNoteModalOpen(false);
+          setNewNoteContent("");
+        }}
+        onOk={async () => {
+          if (!newNoteContent.trim()) {
+            message.error("Please enter note.");
+            return;
+          }
+          const { code } = await Post(
+            `/api/jobs/${jobIdStr}/talents/${talentIdStr}/notes`,
+            { content: newNoteContent.trim() },
+          );
+          if (code === 0) {
+            message.success("Note added");
+            setIsAddNoteModalOpen(false);
+            setNewNoteContent("");
+            await fetchTalentNotes();
+          }
+        }}
+        okText="Save"
+      >
+        <div className={styles.addFeedbackModal}>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Note</div>
+            <div className={styles.addFeedbackContent}>
+              <TextAreaWithVoice
+                value={newNoteContent}
+                onChange={setNewNoteContent}
+                placeholder="Write note or use voice input..."
               />
             </div>
           </div>

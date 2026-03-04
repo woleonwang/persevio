@@ -95,3 +95,18 @@ export type TTalentResume = {
     content: string;
   }[];
 };
+
+export type TTalentNote = {
+  id: number;
+  talent_id: number;
+  job_id: number;
+  staff_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  staff?: {
+    id: number;
+    name: string;
+    position: string;
+  };
+};
