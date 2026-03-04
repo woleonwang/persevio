@@ -323,7 +323,12 @@
   .interviewHeader {
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
+  }
+
+  .interviewMeta {
+    font-size: 12px;
+    color: #999;
   }
 
   .interviewRound {
@@ -718,4 +723,98 @@
   .areasBlock .listItem:before {
     background: rgba(242, 148, 7, 1);
   }
+
+  .roundFeedbackSection {
+    padding: 0 20px;
+    background-color: #fff;
+
+    .roundHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .roundFeedbackList {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .roundFeedbackItem {
+      border-bottom: 1px dashed #ebecee;
+      padding: 20px 0;
+    }
+
+    .roundFeedbackHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .roundFeedbackInterviewer {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .roundFeedbackDate {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .roundFeedbackContent {
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .roundFeedbackFooter {
+      display: flex;
+      align-items: center;
+    }
+
+    .roundFeedbackActions {
+      margin: 16px 0;
+    }
+
+    .advanceBadge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #d1fae5;
+      background-color: #ecfdf5;
+    }
+
+    .advanceYes {
+      color: @green-color;
+      background-color: rgba(242, 255, 234, 1);
+      border-color: rgba(38, 188, 93, 0.2);
+    }
+
+    .advanceNo {
+      color: #991b1b;
+      border-color: #fee2e2;
+      background-color: #fef2f2;
+    }
+  }
+}
+
+.addFeedbackModal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.addFeedbackField {
+  gap: 8px;
+}
+
+.addFeedbackLabel {
+  font-size: 14px;
+}
+
+.addFeedbackContent {
+  flex: 1;
+  margin-top: 8px;
 }

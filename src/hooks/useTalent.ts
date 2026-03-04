@@ -13,7 +13,7 @@ const useTalent = () => {
   const jobId = parseInt(jobIdStr ?? "0");
 
   const [talent, setTalent] = useState<TTalent>();
-  const [interviews, setInterviews] = useState<TInterview[]>([]);
+  const [interviews, setInterviews] = useState<TInterviewWithFeedback[]>([]);
 
   useEffect(() => {
     fetchTalent();

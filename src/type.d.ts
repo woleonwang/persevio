@@ -474,6 +474,25 @@ type TInterview = {
   updated_at: string;
 };
 
+type TInterviewFeedbackRecord = {
+  id: number;
+  interview_id: number;
+  talent_id: number;
+  staff_id: number;
+  content: string;
+  is_advance: boolean;
+  created_at: string;
+  updated_at: string;
+  staff?: {
+    id: number;
+    name: string;
+  };
+};
+
+type TInterviewWithFeedback = TInterview & {
+  feedback_records: TInterviewFeedbackRecord[];
+};
+
 type TTalentChatType = "resume" | "interview_designer" | "interview_feedback";
 
 type TSignalGroupKey =

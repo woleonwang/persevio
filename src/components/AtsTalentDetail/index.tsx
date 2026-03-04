@@ -1,10 +1,10 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Spin, Collapse, Tabs } from "antd";
+import { Button, Spin, Collapse, Tabs, Modal, Switch, message } from "antd";
 import classnames from "classnames";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import usePublicJob from "@/hooks/usePublicJob";
-import { Download, Get } from "@/utils/request";
+import { Download, Get, Post } from "@/utils/request";
 import { backOrDirect, getEvaluateResultLevel, parseJSON } from "@/utils";
 import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
@@ -19,6 +19,7 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
 import Resume from "./components/Resume";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
+import TextAreaWithVoice from "@/components/TextAreaWithVoice";
 import { TTalentResume } from "@/components/NewTalentDetail/type";
 import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
@@ -48,9 +49,12 @@ const AtsTalentDetail: React.FC = () => {
   const [talentChatMessages, setTalentChatMessages] = useState<
     TMessageFromApi[]
   >([]);
+  const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
+  const [newFeedbackContent, setNewFeedbackContent] = useState("");
+  const [newFeedbackAdvance, setNewFeedbackAdvance] = useState(false);
 
   const { job } = usePublicJob();
-  const { talent } = useTalent();
+  const { talent, interviews, fetchTalent } = useTalent();
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
 
@@ -639,8 +643,137 @@ const AtsTalentDetail: React.FC = () => {
               </div>
             </Collapse.Panel>
           </Collapse>
+
+          {interviews.length > 0 && (
+            <Collapse
+              defaultActiveKey={["round1"]}
+              expandIconPosition="end"
+              ghost
+              className={styles.interviewsCollapse}
+            >
+              <Collapse.Panel
+                key="round1"
+                header={
+                  <div className={styles.interviewHeader}>
+                    <div className={styles.interviewRound}>
+                      Round 1: Interview
+                    </div>
+                    <div className={styles.interviewMeta}>
+                      {dayjs(interviews[0].created_at).format("MMM DD, YYYY")}
+                    </div>
+                  </div>
+                }
+                className={styles.interviewPanel}
+              >
+                <div className={styles.roundFeedbackSection}>
+                  <div className={styles.roundFeedbackList}>
+                    {interviews[0].feedback_records.map((record) => (
+                      <div key={record.id} className={styles.roundFeedbackItem}>
+                        <div className={styles.roundFeedbackHeader}>
+                          <span className={styles.roundFeedbackInterviewer}>
+                            {record.staff?.name || "-"}
+                          </span>
+                          <span className={styles.roundFeedbackDate}>
+                            {dayjs(record.created_at).format("MMM DD, YYYY")}
+                          </span>
+                        </div>
+                        <div className={styles.roundFeedbackContent}>
+                          {record.content}
+                        </div>
+                        <div className={styles.roundFeedbackFooter}>
+                          <span
+                            className={classnames(
+                              styles.advanceBadge,
+                              record.is_advance
+                                ? styles.advanceYes
+                                : styles.advanceNo,
+                            )}
+                          >
+                            {record.is_advance ? "Advance: Yes" : "Advance: No"}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className={styles.roundFeedbackActions}>
+                    <Button
+                      type="default"
+                      onClick={() => setIsAddFeedbackModalOpen(true)}
+                    >
+                      + Add Feedback
+                    </Button>
+                  </div>
+                </div>
+              </Collapse.Panel>
+            </Collapse>
+          )}
         </section>
       </div>
+
+      <div className={styles.notesSection}>
+        <h2 className={styles.sectionTitle}>Notes</h2>
+      </div>
+
+      <div className={styles.activitiesSection}>
+        <h2 className={styles.sectionTitle}>Activity Log</h2>
+      </div>
+
+      <Modal
+        title="Add Feedback"
+        open={isAddFeedbackModalOpen}
+        centered
+        onCancel={() => {
+          setIsAddFeedbackModalOpen(false);
+          setNewFeedbackContent("");
+          setNewFeedbackAdvance(false);
+        }}
+        onOk={async () => {
+          if (!newFeedbackContent.trim()) {
+            message.error("Please enter feedback.");
+            return;
+          }
+          if (!interviews.length) return;
+          const interview = interviews[0];
+
+          const { code } = await Post(
+            `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${interview.id}/feedback_records`,
+            {
+              content: newFeedbackContent.trim(),
+              is_advance: newFeedbackAdvance,
+            },
+          );
+          if (code === 0) {
+            message.success("Feedback added");
+            setIsAddFeedbackModalOpen(false);
+            setNewFeedbackContent("");
+            setNewFeedbackAdvance(false);
+            fetchTalent();
+          }
+        }}
+        okText="Save"
+      >
+        <div className={styles.addFeedbackModal}>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Feedback</div>
+            <div className={styles.addFeedbackContent}>
+              <TextAreaWithVoice
+                value={newFeedbackContent}
+                onChange={setNewFeedbackContent}
+                placeholder="Write feedback or use voice input..."
+              />
+            </div>
+          </div>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Advance</div>
+            <div className={styles.addFeedbackContent}>
+              <Switch
+                checked={newFeedbackAdvance}
+                onChange={setNewFeedbackAdvance}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
