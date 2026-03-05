@@ -85,6 +85,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
           width: 600,
         },
       },
+      rootClassName: styles.conformModal,
       title: t("boost_modal_title"),
       content: (
         <div style={{ marginTop: 8 }}>
@@ -130,6 +131,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
           width: 600,
         },
       },
+      rootClassName: styles.conformModal,
       title: t("outreach_modal_title"),
       content: (
         <div style={{ marginTop: 8 }}>

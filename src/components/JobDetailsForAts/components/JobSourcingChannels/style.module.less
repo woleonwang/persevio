@@ -109,7 +109,6 @@
   align-items: center;
 }
 
-
 .tableWrap {
   margin-bottom: 12px;
 
@@ -163,4 +162,10 @@
 
 .generateUrlBtn {
   flex-shrink: 0;
+}
+
+.conformModal {
+  :global(.ant-modal) {
+    width: fit-content !important;
+  }
 }
