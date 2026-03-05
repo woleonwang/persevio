@@ -8,11 +8,11 @@ import {
   Switch,
   message,
   Tag,
+  Select,
 } from "antd";
 import classnames from "classnames";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
-import usePublicJob from "@/hooks/usePublicJob";
 import { Download, Get, Post } from "@/utils/request";
 import {
   backOrDirect,
@@ -48,6 +48,7 @@ import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversat
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 import ScheduleInterview from "@/assets/icons/schedule-interview";
 import ProbeFilled from "@/assets/icons/probe-filled";
+import useJob from "@/hooks/useJob";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -85,6 +86,8 @@ const AtsTalentDetail: React.FC = () => {
   const [newFeedbackRound, setNewFeedbackRound] = useState("");
   const [isAddFeedbackForInterview, setIsAddFeedbackForInterview] =
     useState(false);
+  const [isMoveStageModalOpen, setIsMoveStageModalOpen] = useState(false);
+  const [selectedStageId, setSelectedStageId] = useState<string | undefined>();
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -100,7 +103,7 @@ const AtsTalentDetail: React.FC = () => {
     setNeedConfirmEvaluateFeedbackConversation,
   ] = useState(false);
 
-  const { job } = usePublicJob();
+  const { job } = useJob();
   const { talent, interviews, fetchTalent } = useTalent();
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
@@ -194,6 +197,20 @@ const AtsTalentDetail: React.FC = () => {
     backOrDirect(navigate, `/app/jobs/${job.id}/standard-board?tab=talents`);
   };
 
+  const handleMoveStage = async () => {
+    if (!job || !talent || !selectedStageId) return;
+    const { code } = await Post(
+      `/api/jobs/${job.id}/talents/${talent.id}/stage`,
+      { stage_id: selectedStageId },
+    );
+    if (code === 0) {
+      message.success(originalT("job_details.saveSuccess"));
+      setIsMoveStageModalOpen(false);
+      fetchTalent();
+      fetchActiveLogs();
+    }
+  };
+
   const updateTalentStatus = async (feedback?: string) => {
     const { code } = await Post(`/api/jobs/${job?.id}/talents/${talent?.id}`, {
       status: "rejected",
@@ -248,6 +265,10 @@ const AtsTalentDetail: React.FC = () => {
     requirementsSummaryMappings[item.level].push(item as any);
   });
 
+  const moveStageOptions: { id: string; name: string }[] = job?.pipeline_stages
+    ? JSON.parse(job.pipeline_stages)
+    : [];
+
   const rawSkillsFitLevel = report.overall_recommendation?.skills_fit?.level;
   type TSkillsFitKey = "ideal" | "good" | "uncertain" | "poor";
   const skillsFitLabelMap: Record<TSkillsFitKey, string> = {
@@ -287,30 +308,38 @@ const AtsTalentDetail: React.FC = () => {
           }
         : null;
 
-  const interestLevel = report.summary?.interest_level?.level as
-    | "high"
-    | "moderate"
-    | "low"
-    | "unclear"
-    | undefined;
-  const interestLabelMap: Record<
-    "high" | "moderate" | "low" | "unclear",
-    string
-  > = {
+  const rawInterestLevel = report.summary?.interest_level?.level;
+  type TInterestLevelKey = "high" | "moderate" | "low" | "unclear";
+
+  const interestLabelMap: Record<TInterestLevelKey, string> = {
     high: "High",
     moderate: "Moderate",
     low: "Low",
     unclear: "Unclear",
   };
-  const interestClassMap: Record<
-    "high" | "moderate" | "low" | "unclear",
-    string
-  > = {
+  const interestClassMap: Record<TInterestLevelKey, string> = {
     high: "evalDetailLevelHigh",
     moderate: "evalDetailLevelModerate",
     low: "evalDetailLevelLow",
     unclear: "evalDetailLevelUnclear",
   };
+  const isKnownInterestLevel = (
+    level: string | undefined,
+  ): level is TInterestLevelKey =>
+    !!level && Object.keys(interestClassMap).includes(level);
+
+  const interestLevelMeta =
+    rawInterestLevel && isKnownInterestLevel(rawInterestLevel)
+      ? {
+          label: interestLabelMap[rawInterestLevel],
+          className: styles[interestClassMap[rawInterestLevel]],
+        }
+      : rawInterestLevel
+        ? {
+            label: rawInterestLevel,
+            className: styles.evalDetailLevelUnclear,
+          }
+        : null;
 
   const interviewButtonArea =
     interviews.length === 0 ? (
@@ -474,6 +503,15 @@ const AtsTalentDetail: React.FC = () => {
             <>
               {interviewButtonArea}
               <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => {
+                  setIsMoveStageModalOpen(true);
+                }}
+              >
+                Move Stage
+              </Button>
+              <Button
                 danger
                 onClick={() => {
                   if (talent?.evaluate_feedback) {
@@ -591,14 +629,14 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
                       <span>Interest Level</span>
-                      {interestLevel && (
+                      {interestLevelMeta && (
                         <div
                           className={classnames(
                             styles.evalDetailLevel,
-                            styles[interestClassMap[interestLevel]],
+                            interestLevelMeta.className,
                           )}
                         >
-                          {interestLabelMap[interestLevel]}
+                          {interestLevelMeta.label}
                         </div>
                       )}
                     </div>
@@ -1230,6 +1268,33 @@ const AtsTalentDetail: React.FC = () => {
                 onChange={setNewFeedbackAdvance}
               />
             </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        title="Move Stage"
+        open={isMoveStageModalOpen}
+        centered
+        onCancel={() => {
+          setIsMoveStageModalOpen(false);
+        }}
+        onOk={handleMoveStage}
+        okButtonProps={{ disabled: !selectedStageId }}
+        destroyOnClose
+      >
+        <div className={styles.addFeedbackModal}>
+          <div className={styles.addFeedbackField}>
+            <Select
+              value={selectedStageId}
+              onChange={(val) => setSelectedStageId(val)}
+              options={moveStageOptions.map((s) => ({
+                value: s.id,
+                label: s.name,
+              }))}
+              style={{ width: "100%" }}
+              placeholder="Select stage"
+            />
           </div>
         </div>
       </Modal>
