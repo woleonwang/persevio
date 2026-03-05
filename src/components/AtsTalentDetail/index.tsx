@@ -248,6 +248,70 @@ const AtsTalentDetail: React.FC = () => {
     requirementsSummaryMappings[item.level].push(item as any);
   });
 
+  const rawSkillsFitLevel = report.overall_recommendation?.skills_fit?.level;
+  type TSkillsFitKey = "ideal" | "good" | "uncertain" | "poor";
+  const skillsFitLabelMap: Record<TSkillsFitKey, string> = {
+    ideal: "Ideal",
+    good: "Good",
+    uncertain: "Uncertain",
+    poor: "Poor",
+  };
+  const skillsFitClassMap: Record<TSkillsFitKey, string> = {
+    ideal: "evalDetailLevelIdeal",
+    good: "evalDetailLevelGood",
+    uncertain: "evalDetailLevelUncertain",
+    poor: "evalDetailLevelPoor",
+  };
+
+  const skillsFitKnownKeys: TSkillsFitKey[] = [
+    "ideal",
+    "good",
+    "uncertain",
+    "poor",
+  ];
+  const isKnownSkillsFitLevel = (
+    level: string | undefined,
+  ): level is TSkillsFitKey =>
+    !!level && skillsFitKnownKeys.includes(level as TSkillsFitKey);
+
+  const skillsFitMeta =
+    rawSkillsFitLevel && isKnownSkillsFitLevel(rawSkillsFitLevel)
+      ? {
+          label: skillsFitLabelMap[rawSkillsFitLevel],
+          className: styles[skillsFitClassMap[rawSkillsFitLevel]],
+        }
+      : rawSkillsFitLevel
+        ? {
+            label: rawSkillsFitLevel,
+            className: styles.evalDetailLevelNeutral,
+          }
+        : null;
+
+  const interestLevel = report.summary?.interest_level?.level as
+    | "high"
+    | "moderate"
+    | "low"
+    | "unclear"
+    | undefined;
+  const interestLabelMap: Record<
+    "high" | "moderate" | "low" | "unclear",
+    string
+  > = {
+    high: "High",
+    moderate: "Moderate",
+    low: "Low",
+    unclear: "Unclear",
+  };
+  const interestClassMap: Record<
+    "high" | "moderate" | "low" | "unclear",
+    string
+  > = {
+    high: "evalDetailLevelHigh",
+    moderate: "evalDetailLevelModerate",
+    low: "evalDetailLevelLow",
+    unclear: "evalDetailLevelUnclear",
+  };
+
   const interviewButtonArea =
     interviews.length === 0 ? (
       <Button
@@ -486,9 +550,16 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
                       <span>Skills Fit</span>
-                      <div className={styles.evalDetailLevel}>
-                        {report.overall_recommendation?.skills_fit?.level}
-                      </div>
+                      {skillsFitMeta && (
+                        <div
+                          className={classnames(
+                            styles.evalDetailLevel,
+                            skillsFitMeta.className,
+                          )}
+                        >
+                          {skillsFitMeta.label}
+                        </div>
+                      )}
                     </div>
 
                     <div className={styles.evalDetailDesc}>
@@ -498,9 +569,16 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
                       <span>Logistical Fit</span>
-                      <div className={styles.evalDetailLevel}>
-                        {report.overall_recommendation?.logistics_fit?.level}
-                      </div>
+                      {report.overall_recommendation?.logistics_fit?.level && (
+                        <div
+                          className={classnames(
+                            styles.evalDetailLevel,
+                            styles.evalDetailLevelNeutral,
+                          )}
+                        >
+                          {report.overall_recommendation?.logistics_fit?.level}
+                        </div>
+                      )}
                     </div>
 
                     <div className={styles.evalDetailDesc}>
@@ -513,9 +591,16 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
                       <span>Interest Level</span>
-                      <div className={styles.evalDetailLevel}>
-                        {report.summary?.interest_level?.level}
-                      </div>
+                      {interestLevel && (
+                        <div
+                          className={classnames(
+                            styles.evalDetailLevel,
+                            styles[interestClassMap[interestLevel]],
+                          )}
+                        >
+                          {interestLabelMap[interestLevel]}
+                        </div>
+                      )}
                     </div>
 
                     <div className={styles.evalDetailDesc}>
