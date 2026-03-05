@@ -9,6 +9,7 @@ import {
   message,
   Tag,
   Select,
+  Input,
 } from "antd";
 import classnames from "classnames";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -1239,17 +1240,19 @@ const AtsTalentDetail: React.FC = () => {
         okText="Save"
       >
         <div className={styles.addFeedbackModal}>
-          <div className={styles.addFeedbackField}>
-            <div className={styles.addFeedbackLabel}>Interview Round</div>
-            <div className={styles.addFeedbackContent}>
-              <input
-                className={styles.roundInput}
-                value={newFeedbackRound}
-                onChange={(e) => setNewFeedbackRound(e.target.value)}
-                placeholder="e.g. Round 1, Round 2"
-              />
+          {!isAddFeedbackForInterview && (
+            <div className={styles.addFeedbackField}>
+              <div className={styles.addFeedbackLabel}>Interview Round</div>
+              <div className={styles.addFeedbackContent}>
+                <Input
+                  className={styles.roundInput}
+                  value={newFeedbackRound}
+                  onChange={(e) => setNewFeedbackRound(e.target.value)}
+                  placeholder="e.g. Round 1, Round 2"
+                />
+              </div>
             </div>
-          </div>
+          )}
           <div className={styles.addFeedbackField}>
             <div className={styles.addFeedbackLabel}>Feedback</div>
             <div className={styles.addFeedbackContent}>
