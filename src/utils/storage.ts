@@ -14,6 +14,8 @@ export enum StorageKey {
   SOURCE_CHANNEL = "source_channel",
   LINKEDIN_PROFILE_ID = "linkedin_profile_id",
 
+  MENU_COLLAPSE = "menu_collapse",
+
   // 业务数据
   JOB_DOT = "job_dot",
   SNAKE_HIGH_SCORE = "snakeHighScore",
@@ -225,7 +227,7 @@ export const tokenStorage = {
   setToken: (
     token: string,
     role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
-    expiresIn?: number
+    expiresIn?: number,
   ) => {
     const keyMap = {
       staff: StorageKey.TOKEN,
@@ -247,7 +249,7 @@ export const tokenStorage = {
    * 获取 token
    */
   getToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff"
+    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
   ): string | null => {
     const keyMap = {
       staff: StorageKey.TOKEN,
@@ -264,7 +266,7 @@ export const tokenStorage = {
    * 移除 token
    */
   removeToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff"
+    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
   ) => {
     const keyMap = {
       staff: StorageKey.TOKEN,

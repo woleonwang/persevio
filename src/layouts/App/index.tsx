@@ -11,7 +11,7 @@ import { Get, Post } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
-import { tokenStorage } from "../../utils/storage";
+import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
 import CompanyInfo from "@/assets/icons/company-info";
@@ -51,12 +51,6 @@ const AppLayout = () => {
     jobs,
     unreadTalentsCount,
     mode,
-    fetchJobs,
-    fetchUnreadTalentsCount,
-    setMode,
-  } = globalStore;
-
-  const {
     menuCollapse,
     collapseForDrawer,
     staffRole,
@@ -65,12 +59,18 @@ const AppLayout = () => {
     setStaffRole,
     setIsAdmin,
     setAntdLocale,
+    fetchJobs,
+    fetchUnreadTalentsCount,
+    setMode,
   } = globalStore;
 
   useEffect(() => {
     init();
+    const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
     if (window.innerWidth < 768) {
       setMenuCollapse(true);
+    } else {
+      setMenuCollapse(menuCollapse === "1");
     }
   }, []);
 
@@ -78,6 +78,11 @@ const AppLayout = () => {
     // 获取未读候选人数量
     fetchUnreadTalentsCount();
   }, []);
+
+  const setAndCacheMenuCollapse = (collapse: boolean) => {
+    setMenuCollapse(collapse);
+    storage.set(StorageKey.MENU_COLLAPSE, collapse ? "1" : "0");
+  };
 
   const MENU: TMenu[] = [
     {
@@ -94,7 +99,7 @@ const AppLayout = () => {
         .filter(
           (job) =>
             !searchKeyword ||
-            job.name.toLowerCase().includes(searchKeyword.toLowerCase())
+            job.name.toLowerCase().includes(searchKeyword.toLowerCase()),
         )
         .map((job) => {
           const path =
@@ -235,7 +240,7 @@ const AppLayout = () => {
     <div className={styles.container}>
       <Sidebar
         collapsed={menuCollapse || collapseForDrawer}
-        setCollapsed={setMenuCollapse}
+        setCollapsed={setAndCacheMenuCollapse}
         menu={MENU}
         footer={FOOTER}
         searchKeyword={searchKeyword}
