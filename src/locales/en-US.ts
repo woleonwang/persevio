@@ -376,6 +376,13 @@ export default {
     shortlisted: "Shortlisted",
     rejected: "Rejected",
   },
+
+  sourcing_channel: {
+    direct: "Direct",
+    linkedin: "LinkedIn",
+    jobstreet: "JobStreet",
+    mycareersfuture: "MyCareersFuture",
+  },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "Referrals",
@@ -1704,12 +1711,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     pipeline_section: {
       search_placeholder: "Search candidates...",
       all_sourcing_channels: "All Sourcing Channels",
-      sourcing_channel: {
-        direct: "Direct",
-        linkedin: "LinkedIn",
-        jobstreet: "JobStreet",
-        mycareersfuture: "MyCareersFuture",
-      },
       all_stages: "All Stages",
       all_fit_levels: "All Fit Levels",
       rank_by: "Rank by",
@@ -1770,8 +1771,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
         "Search and identify suitable candidates from Persevio's talent database",
       outreach_modal_point_2:
         "Proactive outreach via email, LinkedIn, and professional networks",
-      outreach_modal_point_3:
-        "Leverage referrals and industry connections",
+      outreach_modal_point_3: "Leverage referrals and industry connections",
       outreach_modal_point_4:
         "Screen and present qualified candidates directly to your pipeline",
       outreach_modal_pricing_title: "Pricing",
@@ -1794,10 +1794,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       delete_custom_source_title: "Delete custom source?",
       delete_custom_source_content:
         'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
-      direct: "Direct",
-      linkedin: "LinkedIn",
-      jobstreet: "JobStreet",
-      mycareersfuture: "MyCareersFuture",
     },
     outreach_campaigns: "Outreach Campaigns",
     outreach_campaigns_table: {
@@ -1827,12 +1823,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       top_source: "Top Source",
       top_source_persevio_outreach: "Persevio Outreach",
       starting: "Starting",
-      sourcing_channel: {
-        direct: "Direct",
-        linkedin: "LinkedIn",
-        jobstreet: "JobStreet",
-        mycareersfuture: "MyCareersFuture",
-      },
     },
     job_requirement_table: "Job Requirement Document",
     job_description_jd: "Job Description (External)",

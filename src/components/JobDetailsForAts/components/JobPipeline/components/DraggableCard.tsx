@@ -36,16 +36,14 @@ const DraggableCard = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const { t } = useTranslation();
-  const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
-  const { name, exp, visa, comp, fitResult, summary } =
-    getCandidateCardData(item);
+  const { name, exp, visa, comp, fitResult } = getCandidateCardData(item);
   const sourceChannel = getSourcingChannel(item.source_channel);
   const isDefaultSource = DEFAULT_TRACKING_SOURCES.includes(
     sourceChannel as any,
   );
   const sourceLabel = isDefaultSource
-    ? tKey(`sourcing_channel.${sourceChannel}`)
+    ? t(`sourcing_channel.${sourceChannel}`)
     : sourceChannel;
   const lastActivity = item.created_at;
   const lastActivityStr = lastActivity
@@ -105,7 +103,7 @@ const DraggableCard = ({
           <span className={styles.sourceLink}>{sourceLabel}</span>
           <span className={styles.activityTime}>{lastActivityStr}</span>
         </div>
-        {summary && <div className={styles.cardSummary}>{summary}</div>}
+        {/* {summary && <div className={styles.cardSummary}>{summary}</div>} */}
       </div>
     </Popover>
   );

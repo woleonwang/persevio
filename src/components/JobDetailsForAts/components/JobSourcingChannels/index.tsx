@@ -199,7 +199,9 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
       width: 160,
       render: (_: string, record: TrackingRow) => (
         <div className={styles.sourceName}>
-          {record.type === "default" ? t(record.source) : record.source}
+          {record.type === "default"
+            ? originalT(`sourcing_channel.${record.source}`)
+            : record.source}
         </div>
       ),
     },

@@ -270,7 +270,7 @@ const JobPipeline = ({
           options={[
             ...SOURCING_CHANNEL_KEYS.map((key) => ({
               value: key,
-              label: tKey(`sourcing_channel.${key}`),
+              label: t(`sourcing_channel.${key}`),
             })),
             ...customSources.map((cs) => ({
               value: cs.name,

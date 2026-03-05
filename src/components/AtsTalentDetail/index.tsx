@@ -5,7 +5,12 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import usePublicJob from "@/hooks/usePublicJob";
 import { Download, Get, Post } from "@/utils/request";
-import { backOrDirect, getEvaluateResultLevel, parseJSON } from "@/utils";
+import {
+  backOrDirect,
+  getEvaluateResultLevel,
+  getSourcingChannel,
+  parseJSON,
+} from "@/utils";
 import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
@@ -25,6 +30,8 @@ import type { TTalentNote, TActiveLog } from "./type";
 import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";
+import Empty from "../Empty";
+import { DEFAULT_TRACKING_SOURCES } from "../JobDetailsForAts/components/JobPipeline/components/utils";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -695,35 +702,44 @@ const AtsTalentDetail: React.FC = () => {
                 className={styles.interviewPanel}
               >
                 <div className={styles.roundFeedbackSection}>
-                  <div className={styles.roundFeedbackList}>
-                    {interviews[0].feedback_records.map((record) => (
-                      <div key={record.id} className={styles.roundFeedbackItem}>
-                        <div className={styles.roundFeedbackHeader}>
-                          <span className={styles.roundFeedbackInterviewer}>
-                            {record.staff?.name || "-"}
-                          </span>
-                          <span className={styles.roundFeedbackDate}>
-                            {dayjs(record.created_at).format("MMM DD, YYYY")}
-                          </span>
+                  {interviews[0].feedback_records.length > 0 ? (
+                    <div className={styles.roundFeedbackList}>
+                      {interviews[0].feedback_records.map((record) => (
+                        <div
+                          key={record.id}
+                          className={styles.roundFeedbackItem}
+                        >
+                          <div className={styles.roundFeedbackHeader}>
+                            <span className={styles.roundFeedbackInterviewer}>
+                              {record.staff?.name || "-"}
+                            </span>
+                            <span className={styles.roundFeedbackDate}>
+                              {dayjs(record.created_at).format("MMM DD, YYYY")}
+                            </span>
+                          </div>
+                          <div className={styles.roundFeedbackContent}>
+                            {record.content}
+                          </div>
+                          <div className={styles.roundFeedbackFooter}>
+                            <span
+                              className={classnames(
+                                styles.advanceBadge,
+                                record.is_advance
+                                  ? styles.advanceYes
+                                  : styles.advanceNo,
+                              )}
+                            >
+                              {record.is_advance
+                                ? "Advance: Yes"
+                                : "Advance: No"}
+                            </span>
+                          </div>
                         </div>
-                        <div className={styles.roundFeedbackContent}>
-                          {record.content}
-                        </div>
-                        <div className={styles.roundFeedbackFooter}>
-                          <span
-                            className={classnames(
-                              styles.advanceBadge,
-                              record.is_advance
-                                ? styles.advanceYes
-                                : styles.advanceNo,
-                            )}
-                          >
-                            {record.is_advance ? "Advance: Yes" : "Advance: No"}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <Empty />
+                  )}
                   <div className={styles.roundFeedbackActions}>
                     <Button
                       variant="outlined"
@@ -742,22 +758,27 @@ const AtsTalentDetail: React.FC = () => {
 
       <div className={styles.notesSection}>
         <h2 className={styles.sectionTitle}>Notes</h2>
+
         <div className={styles.notesContainer}>
-          <div className={styles.notesList}>
-            {notes.map((note) => (
-              <div key={note.id} className={styles.noteItem}>
-                <div className={styles.noteHeader}>
-                  <span className={styles.noteAuthor}>
-                    {note.staff?.name || "-"}
-                  </span>
-                  <span className={styles.noteDate}>
-                    {dayjs(note.created_at).format("MMM DD, YYYY")}
-                  </span>
+          {notes.length > 0 ? (
+            <div className={styles.notesList}>
+              {notes.map((note) => (
+                <div key={note.id} className={styles.noteItem}>
+                  <div className={styles.noteHeader}>
+                    <span className={styles.noteAuthor}>
+                      {note.staff?.name || "-"}
+                    </span>
+                    <span className={styles.noteDate}>
+                      {dayjs(note.created_at).format("MMM DD, YYYY")}
+                    </span>
+                  </div>
+                  <div className={styles.noteContent}>{note.content}</div>
                 </div>
-                <div className={styles.noteContent}>{note.content}</div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <Empty />
+          )}
           <div className={styles.notesActions}>
             <Button
               variant="outlined"
@@ -772,54 +793,75 @@ const AtsTalentDetail: React.FC = () => {
 
       <div className={styles.activitiesSection}>
         <h2 className={styles.sectionTitle}>Activity Log</h2>
-        <div className={styles.activityList}>
-          {activeLogs.map((log) => {
-            let description = "";
-            const content = (() => {
-              try {
-                return JSON.parse(log.content || "{}") as any;
-              } catch {
-                return {};
+        {activeLogs.length > 0 ? (
+          <div className={styles.activityList}>
+            {activeLogs.map((log) => {
+              let description = "";
+              const content = (() => {
+                try {
+                  return JSON.parse(log.content || "{}") as any;
+                } catch {
+                  return {};
+                }
+              })();
+              let color: "red" | "blue" | "green" | "yellow";
+
+              if (log.event_type === "update_stage") {
+                // 更新阶段
+                description = `Moved to ${content.stage_name} stage`;
+                color = "green";
+              } else if (log.event_type === "add_feedback") {
+                // 添加反馈
+                description = `${log.staff?.name ?? ""} added interview feedback`;
+                color = "blue";
+              } else if (log.event_type === "add_note") {
+                // 添加备注
+                description = `${log.staff?.name ?? ""} added a note`;
+                color = "yellow";
+              } else if (log.event_type === "start_interview") {
+                // 开始AI预筛
+                description = "AI prescreening started";
+                color = "red";
+              } else if (log.event_type === "finish_interview") {
+                // 完成AI预筛
+                description = "AI prescreening completed";
+                color = "red";
+              } else if (log.event_type === "create") {
+                // 创建候选人
+                const sourceChannel = getSourcingChannel(talent.source_channel);
+                const sourceChannelText = DEFAULT_TRACKING_SOURCES.includes(
+                  sourceChannel as any,
+                )
+                  ? originalT(`sourcing_channel.${sourceChannel}`)
+                  : sourceChannel;
+                description = `Application received via ${sourceChannelText}`;
+                color = "red";
+              } else {
+                description = "Activity";
+                color = "green";
               }
-            })();
 
-            if (log.event_type === "update_stage") {
-              description = `Moved to ${content.stage_name} stage`;
-            } else if (log.event_type === "add_feedback") {
-              description = "Interview feedback added";
-            } else if (log.event_type === "add_note") {
-              description = `${log.staff?.name ?? ""} add a note`;
-            } else if (log.event_type === "start_interview") {
-              description = "AI prescreening started";
-            } else if (log.event_type === "finish_interview") {
-              description = "AI prescreening completed";
-            } else if (log.event_type === "create") {
-              description = "Application received";
-            } else {
-              description = "Activity";
-            }
-
-            return (
-              <div key={log.id} className={styles.activityItem}>
-                <div className={styles.activityDotWrapper}>
-                  <span
-                    className={classnames(
-                      styles.activityDot,
-                      styles[log.event_type],
-                    )}
-                  />
-                  <span className={styles.activityLine} />
-                </div>
-                <div className={styles.activityContent}>
-                  <div className={styles.activityTitle}>{description}</div>
-                  <div className={styles.activityDate}>
-                    {dayjs(log.created_at).format("MMM DD, YYYY")}
+              return (
+                <div key={log.id} className={styles.activityItem}>
+                  <div className={styles.activityDotWrapper}>
+                    <span
+                      className={classnames(styles.activityDot, styles[color])}
+                    />
+                    <span className={styles.activityLine} />
+                  </div>
+                  <div className={styles.activityContent}>
+                    <div className={styles.activityTitle}>{description}</div>
+                    <div className={styles.activityDate}>
+                      {dayjs(log.created_at).format("MMM DD, YYYY")}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <Empty />
+        )}
       </div>
 
       <Modal

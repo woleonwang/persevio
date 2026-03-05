@@ -48,10 +48,10 @@ function getTopSource(
   stageId: string,
   talentsInStage: TTalentListItem[],
   _linkedinProfilesForReachedOut: TLinkedinProfile[],
-  tKey: (key: string) => string,
+  t: (key: string) => string,
 ): string {
   if (stageId === "reached_out") {
-    return tKey("top_source_persevio_outreach");
+    return t("job_details.analytics_section.top_source_persevio_outreach");
   }
   const countBySource: Record<string, number> = {};
   for (const t of talentsInStage) {
@@ -62,7 +62,7 @@ function getTopSource(
   if (entries.length === 0) return "--";
   const [topKey] = entries.sort((a, b) => b[1] - a[1])[0];
   if (SOURCING_CHANNEL_KEYS.includes(topKey)) {
-    return tKey(`sourcing_channel.${topKey}`);
+    return t(`sourcing_channel.${topKey}`);
   } else {
     return topKey;
   }
@@ -203,7 +203,7 @@ const JobAnalytics = () => {
         stage.id,
         talentsInStage,
         linkedinForReachedOut,
-        tKey,
+        t,
       );
 
       result.push({
