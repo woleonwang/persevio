@@ -9,7 +9,10 @@ import {
   getStageKey,
   type TTalentListItem,
 } from "../JobPipeline/components/utils";
-import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
+import {
+  PREFIX_DEFAULT_STAGE_KEYS,
+  SUFFIX_DEFAULT_STAGE_KEYS,
+} from "@/utils/consts";
 import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "./colors";
 import styles from "./style.module.less";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
@@ -90,7 +93,7 @@ const JobAnalytics = () => {
   const allStages = useMemo(() => {
     if (!job) return [];
     const stages = [
-      ...DEFAULT_STAGE_KEYS.map((key, i) => ({
+      ...PREFIX_DEFAULT_STAGE_KEYS.map((key, i) => ({
         id: key,
         name: pipelineTKey(key),
         order: i,
@@ -98,14 +101,14 @@ const JobAnalytics = () => {
       })),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
     ];
-    if (!stages.find((s) => s.id === "rejected")) {
+    SUFFIX_DEFAULT_STAGE_KEYS.forEach((key) => {
       stages.push({
-        id: "rejected",
-        name: pipelineTKey("rejected"),
+        id: key,
+        name: pipelineTKey(key),
         order: stages.length,
         isDefault: true,
       });
-    }
+    });
     return stages;
   }, [job]);
 

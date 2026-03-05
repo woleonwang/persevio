@@ -30,7 +30,10 @@ import {
   type TTalentListItem,
 } from "./components/utils";
 import styles from "./style.module.less";
-import { DEFAULT_STAGE_KEYS } from "@/utils/consts";
+import {
+  PREFIX_DEFAULT_STAGE_KEYS,
+  SUFFIX_DEFAULT_STAGE_KEYS,
+} from "@/utils/consts";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
 import { storage, StorageKey } from "@/utils/storage";
 
@@ -66,7 +69,7 @@ const JobPipeline = ({
   const allStages = useMemo(() => {
     if (!job) return [];
     const stages = [
-      ...DEFAULT_STAGE_KEYS.map((key, i) => ({
+      ...PREFIX_DEFAULT_STAGE_KEYS.map((key, i) => ({
         id: key,
         name: t(`pipeline_section.${key}`),
         order: i,
@@ -74,15 +77,15 @@ const JobPipeline = ({
       })),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
     ];
-    // 在末尾追加统一的 rejected 阶段
-    if (!stages.find((s) => s.id === "rejected")) {
+
+    SUFFIX_DEFAULT_STAGE_KEYS.forEach((key) => {
       stages.push({
-        id: "rejected",
-        name: t("pipeline_section.rejected"),
+        id: key,
+        name: t(`pipeline_section.${key}`),
         order: stages.length,
         isDefault: true,
       });
-    }
+    });
     return stages;
   }, [job]);
 

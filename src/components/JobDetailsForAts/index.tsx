@@ -220,13 +220,26 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
                   />
                 </div>
                 <div style={{ fontSize: 12, color: "#999" }}>
-                  <span style={{ color: "#666", fontWeight: "bold" }}>
-                    Job Requirement Document
-                  </span>{" "}
-                  is the internal single source of truth — detailed
-                  requirements, context, and nuances for internal alignment. Job
-                  Description is the external-facing marketing document posted
-                  to job boards to attract candidates.
+                  {jobReqSubTab === "jobRequirement" ? (
+                    <>
+                      <span style={{ color: "#666", fontWeight: "bold" }}>
+                        Job Requirement Document
+                      </span>
+                      &nbsp;is the internal single source of truth — detailed
+                      requirements, context, and nuances for internal
+                      alignment. Job Description is the external-facing
+                      marketing document posted to job boards to attract
+                      candidates.
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ color: "#666", fontWeight: "bold" }}>
+                        Job Description (JD)
+                      </span>
+                      &nbsp;is the external-facing document posted on job boards
+                      and career pages to attract applicants.
+                    </>
+                  )}
                 </div>
                 <div className={styles.jobReqContent}>
                   <JobDocument

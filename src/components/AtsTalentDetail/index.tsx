@@ -73,13 +73,17 @@ const AtsTalentDetail: React.FC = () => {
   const [talentChatMessages, setTalentChatMessages] = useState<
     TMessageFromApi[]
   >([]);
+  const [interviewFeedbackRecords, setInterviewFeedbackRecords] = useState<
+    TInterviewFeedbackRecord[]
+  >([]);
+  const [notes, setNotes] = useState<TTalentNote[]>([]);
+  const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
+
   const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvance, setNewFeedbackAdvance] = useState(false);
-  const [notes, setNotes] = useState<TTalentNote[]>([]);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
-  const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
   const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
@@ -104,6 +108,7 @@ const AtsTalentDetail: React.FC = () => {
     fetchTalentChatMessages();
     fetchTalentNotes();
     fetchActiveLogs();
+    fetchInterviewFeedbackRecords();
   }, [talentIdStr, jobIdStr]);
 
   const fetchTalentsOfCandidate = async () => {
@@ -120,6 +125,21 @@ const AtsTalentDetail: React.FC = () => {
       `/api/jobs/${jobIdStr}/talents/${talentIdStr}/messages`,
     );
     setTalentChatMessages(data.messages ?? []);
+  };
+
+  const fetchInterviewFeedbackRecords = async () => {
+    const { code, data } = await Get(
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interview_feedback_records`,
+    );
+    if (code === 0) {
+      setInterviewFeedbackRecords(
+        (data.interview_feedback_records ?? []).filter(
+          (record: TInterviewFeedbackRecord) => !record.interview_id,
+        ),
+      );
+    } else {
+      setInterviewFeedbackRecords([]);
+    }
   };
 
   const fetchTalentNotes = async () => {
@@ -524,8 +544,8 @@ const AtsTalentDetail: React.FC = () => {
                         <div
                           className={`${styles.requirementsSummarySummaryRow} ${styles.requirementsSummarySummaryHeader}`}
                         >
-                          <div>Requirements Met</div>
-                          <div>Assessment</div>
+                          <div>Requirement Priorities</div>
+                          <div>No. of Requirements Met</div>
                         </div>
                         {(["p0", "p1", "p2"] as const).map((level) => {
                           const items = requirementsSummaryMappings[level];

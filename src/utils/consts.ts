@@ -11,11 +11,16 @@ export const SIDE_DOCUMENT_TYPES = [
   "jd-draft",
 ];
 
-export const DEFAULT_STAGE_KEYS = [
+export const PREFIX_DEFAULT_STAGE_KEYS = [
   "reached_out",
   "applied",
   "started_ai_interview",
   "ai_interview_completed",
-  "shortlisted",
-  "rejected",
+];
+
+export const SUFFIX_DEFAULT_STAGE_KEYS = ["rejected"];
+
+export const DEFAULT_STAGE_KEYS = [
+  ...PREFIX_DEFAULT_STAGE_KEYS,
+  ...SUFFIX_DEFAULT_STAGE_KEYS,
 ];
