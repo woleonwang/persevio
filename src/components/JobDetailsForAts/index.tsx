@@ -22,6 +22,12 @@ import JobAnalytics from "./components/JobAnalytics";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
 import globalStore from "@/store/global";
+import Jobs from "@/assets/icons/jobs";
+import Pipeline from "@/assets/icons/pipeline";
+import SourceChannels from "@/assets/icons/source-channels";
+import Bag from "@/assets/icons/bag";
+import Analytics from "@/assets/icons/analytics";
+import Settings from "@/assets/icons/settings";
 
 type TMenu =
   | "jobRequirements"
@@ -184,7 +190,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
         items={[
           {
             key: "jobRequirements",
-            label: t("job_requirements"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<Jobs />} />
+                {t("job_requirements")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 <div className={styles.subTabsWrap}>
@@ -231,7 +242,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           },
           {
             key: "pipeline",
-            label: t("pipeline"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<Pipeline />} />
+                {t("pipeline")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 {role === "staff" ? (
@@ -249,7 +265,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           },
           {
             key: "sourcingChannels",
-            label: t("sourcing_channels"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<SourceChannels />} />
+                {t("sourcing_channels")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 <JobSourcingChannels togglePostJob={togglePostJob} />
@@ -258,7 +279,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           },
           {
             key: "outreachCampaigns",
-            label: t("outreach_campaigns"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<Bag />} />
+                {t("outreach_campaigns")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 <JobOutreachCampaigns />
@@ -267,7 +293,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           },
           {
             key: "analytics",
-            label: t("analytics"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<Analytics />} />
+                {t("analytics")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 <JobAnalytics />
@@ -276,7 +307,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
           },
           {
             key: "settings",
-            label: t("settings"),
+            label: (
+              <div className={styles.tabsLabel}>
+                <Icon icon={<Settings />} />
+                {t("settings")}
+              </div>
+            ),
             children: (
               <div className={styles.body}>
                 <JobSettings jobId={job.id} />

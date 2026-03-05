@@ -302,9 +302,37 @@
       color: #999;
     }
   }
+
+  .jobApplyActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .scheduleInterviewBtn {
+      flex-shrink: 0;
+    }
+
+    .jobApplyStage {
+      flex: 1;
+      min-width: 80px;
+      padding: 4px 12px;
+      font-size: 14px;
+      color: #666;
+      background: #f5f5f5;
+      border-radius: 6px;
+      border: 1px solid @border-color;
+      text-align: center;
+    }
+
+    .rejectBtn {
+      flex-shrink: 0;
+    }
+  }
 }
 
 .interviewsSection {
+  margin-top: 24px;
   .interviewsCollapse {
     margin-top: 16px;
   }
@@ -358,6 +386,14 @@
       font-size: 14px;
       font-weight: 600;
       margin-bottom: 12px;
+    }
+
+    .evalSummaryHeaderRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .evalSummaryContent {

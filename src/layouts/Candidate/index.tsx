@@ -13,7 +13,7 @@ import { deleteQuery, getQuery, isTempAccount } from "@/utils";
 import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
-import Referrals from "@/assets/icons/referrals";
+import Candidates from "@/assets/icons/candidates";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
@@ -72,7 +72,7 @@ const CandidateLayout = () => {
     {
       title: t("menu.referrals"),
       path: "/candidate/referrals",
-      img: <Referrals />,
+      img: <Candidates />,
     },
     // {
     //   title: t("menu.connections"),

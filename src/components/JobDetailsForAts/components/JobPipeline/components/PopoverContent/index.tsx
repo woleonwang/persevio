@@ -121,7 +121,11 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
   };
 
   return (
-    <div key={talent.id} className={styles.card}>
+    <div
+      key={talent.id}
+      className={styles.card}
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.cardHeader}>
         <div className={styles.cardTitle}>
           <div className={styles.cardTitleName}>{talent.name || "-"}</div>
@@ -186,8 +190,15 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
 
       <div className={styles.cardContent}>
         <div className={styles.evaluateSummary}>
-          <Icon icon={<Stars />} />
-          {evaluateResult?.thumbnail_summary || evaluateResult?.summary || "-"}
+          <div className={styles.evaluateSummaryTitle}>
+            <Icon icon={<Stars />} />
+            Viona’s Take
+          </div>
+          <div>
+            {evaluateResult?.thumbnail_summary ||
+              evaluateResult?.summary ||
+              "-"}
+          </div>
         </div>
         <div className={styles.workExperiences}>
           <div className={styles.workExperiencesTitle}>

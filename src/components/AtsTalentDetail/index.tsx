@@ -1,5 +1,14 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Button, Spin, Collapse, Tabs, Modal, Switch, message } from "antd";
+import {
+  Button,
+  Spin,
+  Collapse,
+  Tabs,
+  Modal,
+  Switch,
+  message,
+  Tag,
+} from "antd";
 import classnames from "classnames";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
@@ -32,6 +41,12 @@ import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";
 import Empty from "../Empty";
 import { DEFAULT_TRACKING_SOURCES } from "../JobDetailsForAts/components/JobPipeline/components/utils";
+import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
+import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
+import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
+import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
+import EvaluateFeedback from "@/components/EvaluateFeedback";
+import ScheduleInterview from "@/assets/icons/schedule-interview";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -64,11 +79,24 @@ const AtsTalentDetail: React.FC = () => {
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
   const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+  const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
+    useState(false);
+  const [
+    openEvaluateFeedbackConversation,
+    setOpenEvaluateFeedbackConversation,
+  ] = useState(false);
+  const [
+    needConfirmEvaluateFeedbackConversation,
+    setNeedConfirmEvaluateFeedbackConversation,
+  ] = useState(false);
 
   const { job } = usePublicJob();
   const { talent, interviews, fetchTalent } = useTalent();
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
+  const t = (key: string) => originalT(`talent_details.${key}`);
 
   useEffect(() => {
     fetchTalentsOfCandidate();
@@ -142,6 +170,41 @@ const AtsTalentDetail: React.FC = () => {
     backOrDirect(navigate, `/app/jobs/${job.id}/standard-board?tab=talents`);
   };
 
+  const updateTalentStatus = async (feedback?: string) => {
+    const { code } = await Post(`/api/jobs/${job?.id}/talents/${talent?.id}`, {
+      status: "rejected",
+      feedback,
+    });
+    if (code === 0) {
+      fetchTalent();
+      setIsRejectModalOpen(false);
+      message.success(t("update_success"));
+    }
+  };
+
+  const updateTalentEvaluateFeedback = async (feedback: TEvaluateFeedback) => {
+    setOpenEvaluateFeedbackReason(true);
+    const { code } = await Post(
+      `/api/jobs/${job?.id}/talents/${talent?.id}/evaluate_feedback`,
+      { evaluate_feedback: feedback },
+    );
+    if (code === 0) fetchTalent();
+  };
+
+  const updateTalentEvaluateFeedbackReason = async (reason: string) => {
+    if (!job || !talent) return;
+    const { code } = await Post(
+      `/api/jobs/${job.id}/talents/${talent.id}/evaluate_feedback`,
+      { evaluate_feedback_reason: reason },
+    );
+    if (code === 0) {
+      fetchTalent();
+      setOpenEvaluateFeedbackConversation(true);
+      setNeedConfirmEvaluateFeedbackConversation(true);
+      message.success(t("update_success"));
+    }
+  };
+
   const requirementsSummaryMappings: Record<
     "p0" | "p1" | "p2",
     {
@@ -160,6 +223,26 @@ const AtsTalentDetail: React.FC = () => {
   (report.requirements ?? []).forEach((item) => {
     requirementsSummaryMappings[item.level].push(item as any);
   });
+
+  const interviewButtonArea =
+    interviews.length === 0 || true ? (
+      <Button
+        type="primary"
+        onClick={() => setIsInterviewModalOpen(true)}
+        className={styles.scheduleInterviewBtn}
+        icon={<Icon icon={<ScheduleInterview />} style={{ fontSize: 16 }} />}
+      >
+        {t("schedule_interview")}
+      </Button>
+    ) : interviews[0].mode === "written" || interviews[0].scheduled_at ? (
+      <Button onClick={() => setIsInterviewModalOpen(true)}>
+        {t("interview_scheduled")}
+      </Button>
+    ) : (
+      <Button onClick={() => setIsInterviewModalOpen(true)}>
+        {t("awaiting_candidate_confirm")}
+      </Button>
+    );
 
   return (
     <div className={styles.container}>
@@ -296,6 +379,28 @@ const AtsTalentDetail: React.FC = () => {
             }
           }}
         />
+        <div className={styles.jobApplyActions}>
+          {talent?.status === "rejected" ? (
+            <Tag color="red">{t("status_rejected")}</Tag>
+          ) : (
+            <>
+              {interviewButtonArea}
+              <Button
+                danger
+                onClick={() => {
+                  if (talent?.evaluate_feedback) {
+                    updateTalentStatus();
+                  } else {
+                    setIsRejectModalOpen(true);
+                  }
+                }}
+                className={styles.rejectBtn}
+              >
+                {t("action_reject")}
+              </Button>
+            </>
+          )}
+        </div>
         <section className={styles.interviewsSection}>
           <h2 className={styles.sectionTitle}>Interviews</h2>
           <Collapse
@@ -326,9 +431,18 @@ const AtsTalentDetail: React.FC = () => {
                   className={classnames(
                     styles.evalSummaryHeader,
                     styles.bluePoint,
+                    styles.evalSummaryHeaderRow,
                   )}
                 >
-                  Evaluation Summary
+                  <span>Evaluation Summary</span>
+                  <EvaluateFeedback
+                    value={talent.evaluate_feedback}
+                    onChange={updateTalentEvaluateFeedback}
+                    onOpen={() => {
+                      setNeedConfirmEvaluateFeedbackConversation(false);
+                      setOpenEvaluateFeedbackConversation(true);
+                    }}
+                  />
                 </div>
                 <div className={styles.evalSummaryContent}>
                   <div className={styles.evalOverallText}>
@@ -958,6 +1072,64 @@ const AtsTalentDetail: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      <Modal
+        open={isInterviewModalOpen}
+        onCancel={() => setIsInterviewModalOpen(false)}
+        width="fit-content"
+        centered
+        title={t("schedule_interview")}
+        footer={null}
+      >
+        <InterviewForm
+          talent={talent}
+          jobName={job?.name ?? ""}
+          interview={interviews[0]}
+          onClose={() => setIsInterviewModalOpen(false)}
+          onSubmit={() => {
+            if (interviews[0]) {
+              setIsInterviewModalOpen(false);
+            } else {
+              fetchTalent();
+              setIsInterviewModalOpen(false);
+            }
+          }}
+        />
+      </Modal>
+
+      {!!talent && (
+        <TalentEvaluateFeedbackWithReasonModal
+          jobId={talent.job_id ?? 0}
+          talentId={talent.id ?? 0}
+          open={isRejectModalOpen}
+          onOk={() => {
+            setIsRejectModalOpen(false);
+            setNeedConfirmEvaluateFeedbackConversation(true);
+            setOpenEvaluateFeedbackConversation(true);
+            fetchTalent();
+          }}
+          onCancel={() => setIsRejectModalOpen(false)}
+        />
+      )}
+
+      <TalentEvaluateFeedbackModal
+        open={openEvaluateFeedbackReason}
+        onOk={(value) => {
+          updateTalentEvaluateFeedbackReason(value);
+          setOpenEvaluateFeedbackReason(false);
+        }}
+        onCancel={() => setOpenEvaluateFeedbackReason(false)}
+      />
+
+      {!!talent && (
+        <EvaluateFeedbackConversation
+          open={openEvaluateFeedbackConversation}
+          jobId={talent.job_id ?? 0}
+          talentId={talent.id ?? 0}
+          needConfirm={needConfirmEvaluateFeedbackConversation}
+          onCancel={() => setOpenEvaluateFeedbackConversation(false)}
+        />
+      )}
     </div>
   );
 };
