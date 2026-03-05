@@ -49,11 +49,6 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
   const evaluateResult = talent.parsedEvaluateResult;
   const interview = talent.interviews?.[0];
   const job = talent.job;
-  const visa = evaluateResult.visa || basicInfo.visa;
-  const currentCompensation =
-    evaluateResult.current_compensation || basicInfo.current_compensation;
-  const expectedCompensation =
-    evaluateResult.expected_compensation || basicInfo.expected_compensation;
 
   const updateTalentEvaluateFeedback = async (
     jobId: number,
