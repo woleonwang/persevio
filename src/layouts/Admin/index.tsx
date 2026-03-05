@@ -9,7 +9,7 @@ import { Get } from "../../utils/request";
 import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
-import { tokenStorage } from "../../utils/storage";
+import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import JobManagement from "@/assets/icons/job-management";
 import JobApplyManagement from "@/assets/icons/job-apply-management";
 import CompanyList from "@/assets/icons/company-list";
@@ -31,7 +31,14 @@ const AdminLayout = () => {
 
   useEffect(() => {
     init();
+    const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
+    setMenuCollapse(menuCollapse === "1");
   }, []);
+
+  const setAndCacheMenuCollapse = (collapse: boolean) => {
+    setMenuCollapse(collapse);
+    storage.set(StorageKey.MENU_COLLAPSE, collapse ? "1" : "0");
+  };
 
   const MENU: TMenu[] = [
     {
@@ -122,7 +129,7 @@ const AdminLayout = () => {
     <div className={styles.container}>
       <Sidebar
         collapsed={menuCollapse}
-        setCollapsed={setMenuCollapse}
+        setCollapsed={setAndCacheMenuCollapse}
         menu={MENU}
         footer={FOOTER}
         onSwitch={() => navigate("/app/jobs")}

@@ -10,7 +10,7 @@ import globalStore from "@/store/global";
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
 import { deleteQuery, getQuery, isTempAccount } from "@/utils";
-import { tokenStorage } from "../../utils/storage";
+import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
 import Referrals from "@/assets/icons/referrals";
@@ -44,6 +44,8 @@ const CandidateLayout = () => {
 
   useEffect(() => {
     init();
+    const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
+    setMenuCollapse(menuCollapse === "1");
   }, []);
 
   const MENU: TMenu[] = [
@@ -110,6 +112,11 @@ const CandidateLayout = () => {
     }
   };
 
+  const setAndCacheMenuCollapse = (collapse: boolean) => {
+    setMenuCollapse(collapse);
+    storage.set(StorageKey.MENU_COLLAPSE, collapse ? "1" : "0");
+  };
+
   if (!inited) {
     return (
       <div
@@ -146,7 +153,7 @@ const CandidateLayout = () => {
     <div className={styles.container}>
       <Sidebar
         collapsed={menuCollapse || collapseForDrawer}
-        setCollapsed={setMenuCollapse}
+        setCollapsed={setAndCacheMenuCollapse}
         menu={MENU}
         footer={FOOTER}
       />
