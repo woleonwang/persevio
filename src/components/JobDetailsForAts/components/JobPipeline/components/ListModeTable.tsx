@@ -27,6 +27,19 @@ const ListModeTable = ({
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
+  const renderRowPopover = (record: TTalentListItem, children: React.ReactNode) => (
+    <Popover
+      content={
+        <PopoverContent talent={record} onUpdateTalent={onUpdateTalent} />
+      }
+      trigger="hover"
+      placement="right"
+      mouseEnterDelay={0.5}
+    >
+      <span className={styles.listTableCellTrigger}>{children}</span>
+    </Popover>
+  );
+
   const columns: ColumnsType<TTalentListItem> = [
     {
       title: tKey("candidate_name"),
@@ -34,18 +47,7 @@ const ListModeTable = ({
       width: 180,
       render: (_: unknown, record: TTalentListItem) => {
         const { name } = getCandidateCardData(record);
-        return (
-          <Popover
-            content={
-              <PopoverContent talent={record} onUpdateTalent={onUpdateTalent} />
-            }
-            trigger="hover"
-            placement="right"
-            mouseEnterDelay={0.5}
-          >
-            <span>{name}</span>
-          </Popover>
-        );
+        return renderRowPopover(record, name);
       },
     },
     {
@@ -59,7 +61,8 @@ const ListModeTable = ({
           stageIndex >= 0 ? stageIndex % FUNNEL_BG_COLORS.length : 0;
         const bgColor = FUNNEL_BG_COLORS[colorIndex];
         const textColor = FUNNEL_COLORS[colorIndex];
-        return (
+        return renderRowPopover(
+          record,
           <span
             className={styles.listTableStageBadge}
             style={{
@@ -69,7 +72,7 @@ const ListModeTable = ({
             }}
           >
             {stageLabel}
-          </span>
+          </span>,
         );
       },
       width: 140,
@@ -79,10 +82,11 @@ const ListModeTable = ({
       dataIndex: "fit",
       render: (_: unknown, record: TTalentListItem) => {
         const { fitResult } = getCandidateCardData(record);
-        return (
+        return renderRowPopover(
+          record,
           <div style={{ width: "fit-content" }}>
             <EvaluateResultBadge result={fitResult} size="small" />
-          </div>
+          </div>,
         );
       },
       width: 160,
@@ -92,10 +96,11 @@ const ListModeTable = ({
       dataIndex: "experience",
       render: (_: unknown, record: TTalentListItem) => {
         const { exp } = getCandidateCardData(record);
-        return (
+        return renderRowPopover(
+          record,
           <span className={styles.listTableEllipsis} style={{ maxWidth: 300 }}>
             {exp}
-          </span>
+          </span>,
         );
       },
       width: 160,
@@ -105,10 +110,11 @@ const ListModeTable = ({
       dataIndex: "visa_status",
       render: (_: unknown, record: TTalentListItem) => {
         const { visa } = getCandidateCardData(record);
-        return (
+        return renderRowPopover(
+          record,
           <span className={styles.listTableEllipsis} style={{ maxWidth: 300 }}>
             {visa}
-          </span>
+          </span>,
         );
       },
       width: 160,
@@ -118,10 +124,11 @@ const ListModeTable = ({
       dataIndex: "current_comp",
       render: (_: unknown, record: TTalentListItem) => {
         const { comp } = getCandidateCardData(record);
-        return (
+        return renderRowPopover(
+          record,
           <span className={styles.listTableEllipsis} style={{ maxWidth: 300 }}>
             {comp}
-          </span>
+          </span>,
         );
       },
       width: 160,
@@ -131,7 +138,9 @@ const ListModeTable = ({
       dataIndex: "days_in_stage",
       render: (_: unknown, record: TTalentListItem) => {
         const daysInStageValue = getDaysInStage(record);
-        return daysInStageValue != null ? daysInStageValue.toFixed(1) : "--";
+        const text =
+          daysInStageValue != null ? daysInStageValue.toFixed(1) : "--";
+        return renderRowPopover(record, text);
       },
       width: 140,
     },

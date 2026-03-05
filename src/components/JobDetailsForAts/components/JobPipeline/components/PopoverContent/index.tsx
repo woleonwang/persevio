@@ -4,7 +4,7 @@ import styles from "./style.module.less";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { getEvaluateResultLevel } from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
-import { Button, message, Modal, Tooltip } from "antd";
+import { Button, message, Modal } from "antd";
 import { useState } from "react";
 import { Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
@@ -190,33 +190,10 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
       </div>
 
       <div className={styles.cardContent}>
-        <div className={styles.basicInfo}>
-          <div>
-            <div>{t("years_of_experience")}</div>
-            <Tooltip title={basicInfo?.years_of_experience}>
-              <div>{basicInfo?.years_of_experience || "-"}</div>
-            </Tooltip>
-          </div>
-          <div>
-            <div>{t("visa")}</div>
-            <Tooltip title={visa}>
-              <div>{visa || "-"}</div>
-            </Tooltip>
-          </div>
-          <div>
-            <div>{t("current_compensation")}</div>
-            <Tooltip title={currentCompensation}>
-              <div>{currentCompensation || "-"}</div>
-            </Tooltip>
-          </div>
-          <div>
-            <div>{t("expected_compensation")}</div>
-            <Tooltip title={expectedCompensation}>
-              <div>{expectedCompensation || "-"}</div>
-            </Tooltip>
-          </div>
+        <div className={styles.evaluateSummary}>
+          <Icon icon={<Stars />} />
+          {evaluateResult?.thumbnail_summary || evaluateResult?.summary || "-"}
         </div>
-
         <div className={styles.workExperiences}>
           <div className={styles.workExperiencesTitle}>
             {t("work_experiences")}
@@ -249,12 +226,6 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
             <div style={{ marginLeft: 20 }}>...</div>
           )}
         </div>
-
-        <div className={styles.evaluateSummary}>
-          <Icon icon={<Stars />} />
-          {evaluateResult?.thumbnail_summary || evaluateResult?.summary || "-"}
-        </div>
-
         {talent && (
           <div className={styles.evaluateDetails}>
             <div

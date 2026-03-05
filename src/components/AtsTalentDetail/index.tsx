@@ -87,14 +87,10 @@ const AtsTalentDetail: React.FC = () => {
   };
 
   const fetchTalentChatMessages = async () => {
-    const { code, data } = await Get(
+    const { data } = await Get(
       `/api/jobs/${jobIdStr}/talents/${talentIdStr}/messages`,
     );
-    if (code === 0) {
-      setTalentChatMessages(data.messages);
-    } else {
-      setTalentChatMessages([]);
-    }
+    setTalentChatMessages(data.messages ?? []);
   };
 
   const fetchTalentNotes = async () => {
@@ -738,7 +734,7 @@ const AtsTalentDetail: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <Empty />
+                    <Empty style={{ marginTop: 60 }} />
                   )}
                   <div className={styles.roundFeedbackActions}>
                     <Button
