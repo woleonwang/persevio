@@ -194,7 +194,7 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
             <Icon icon={<Stars />} />
             Viona’s Take
           </div>
-          <div>
+          <div style={{ marginLeft: 24 }}>
             {evaluateResult?.thumbnail_summary ||
               evaluateResult?.summary ||
               "-"}

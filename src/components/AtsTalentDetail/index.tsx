@@ -226,7 +226,7 @@ const AtsTalentDetail: React.FC = () => {
   });
 
   const interviewButtonArea =
-    interviews.length === 0 || true ? (
+    interviews.length === 0 ? (
       <Button
         type="primary"
         onClick={() => setIsInterviewModalOpen(true)}
