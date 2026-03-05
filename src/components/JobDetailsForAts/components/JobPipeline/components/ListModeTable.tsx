@@ -1,4 +1,5 @@
-import { Popover, Table } from "antd";
+import { useState } from "react";
+import { Button, Dropdown, Modal, Popover, Select, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 
@@ -9,7 +10,11 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import PopoverContent from "./PopoverContent";
 import { PipelineStage } from "../../JobSettings";
 import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "../../JobAnalytics/colors";
+import { Post } from "@/utils/request";
+import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
+import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import styles from "../style.module.less";
+import List from "@/assets/icons/list";
 
 interface IProps {
   allStages: PipelineStage[];
@@ -27,7 +32,53 @@ const ListModeTable = ({
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
-  const renderRowPopover = (record: TTalentListItem, children: React.ReactNode) => (
+  const [actionRecord, setActionRecord] = useState<TTalentListItem | null>(
+    null,
+  );
+  const [moveStageOpen, setMoveStageOpen] = useState(false);
+  const [interviewOpen, setInterviewOpen] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [selectedStageId, setSelectedStageId] = useState<string | undefined>();
+
+  const customStages = allStages.filter((s) => !s.isDefault);
+  const moveStageOptions =
+    customStages.length > 0
+      ? customStages
+      : allStages.filter((s) => s.id !== "rejected");
+
+  const updateTalentStatus = async (
+    record: TTalentListItem,
+    feedback?: string,
+  ) => {
+    const { code } = await Post(
+      `/api/jobs/${record.job_id}/talents/${record.id}`,
+      { status: "rejected", feedback },
+    );
+    if (code === 0) {
+      onUpdateTalent();
+      setRejectOpen(false);
+      message.success(t("job_details.saveSuccess"));
+    }
+  };
+
+  const handleMoveStageOk = async () => {
+    if (!actionRecord || !selectedStageId) return;
+    const { code } = await Post(
+      `/api/jobs/${actionRecord.job_id}/talents/${actionRecord.id}/stage`,
+      { stage_id: selectedStageId },
+    );
+    if (code === 0) {
+      onUpdateTalent();
+      setMoveStageOpen(false);
+      setActionRecord(null);
+      message.success(t("job_details.saveSuccess"));
+    }
+  };
+
+  const renderRowPopover = (
+    record: TTalentListItem,
+    children: React.ReactNode,
+  ) => (
     <Popover
       content={
         <PopoverContent talent={record} onUpdateTalent={onUpdateTalent} />
@@ -144,6 +195,79 @@ const ListModeTable = ({
       },
       width: 140,
     },
+    {
+      title: tKey("actions"),
+      key: "actions",
+      width: 100,
+      fixed: "right",
+      render: (_: unknown, record: TTalentListItem) => {
+        const interview = record.interviews?.[0] as
+          | { mode?: string; scheduled_at?: string }
+          | undefined;
+        const hasScheduledInterview =
+          interview &&
+          (interview.mode === "written" || !!interview.scheduled_at);
+
+        const menuItems = [
+          {
+            key: "move_stage",
+            label: tKey("move_stage"),
+            onClick: () => {
+              setActionRecord(record);
+              setSelectedStageId(undefined);
+              setMoveStageOpen(true);
+            },
+          },
+          {
+            key: "schedule",
+            label: hasScheduledInterview
+              ? tKey("view_interview_info")
+              : tKey("schedule_interview"),
+            onClick: () => {
+              setActionRecord(record);
+              setInterviewOpen(true);
+            },
+          },
+          ...(record.status !== "rejected"
+            ? [
+                {
+                  key: "reject",
+                  label: tKey("reject"),
+                  danger: true,
+                  onClick: () => {
+                    setActionRecord(record);
+                    if (record.evaluate_feedback) {
+                      updateTalentStatus(
+                        record,
+                        record.evaluate_feedback_reason,
+                      );
+                    } else {
+                      setRejectOpen(true);
+                    }
+                  },
+                },
+              ]
+            : []),
+        ];
+
+        return (
+          <div
+            className={styles.actionsCell}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
+              <Button
+                variant="outlined"
+                style={{ borderRadius: 8 }}
+                icon={<List />}
+                className={styles.actionsBtn}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </Dropdown>
+          </div>
+        );
+      },
+    },
   ];
 
   return (
@@ -161,6 +285,85 @@ const ListModeTable = ({
           })}
         />
       </div>
+
+      <Modal
+        title={tKey("move_stage_modal_title")}
+        open={moveStageOpen}
+        onCancel={() => {
+          setMoveStageOpen(false);
+          setActionRecord(null);
+        }}
+        onOk={handleMoveStageOk}
+        okText={t("job_details.save")}
+        okButtonProps={{
+          disabled: !selectedStageId,
+        }}
+        destroyOnClose
+      >
+        <div className={styles.moveStageSelectWrap}>
+          <Select
+            className={styles.moveStageSelect}
+            placeholder={tKey("move_stage_modal_title")}
+            value={selectedStageId}
+            onChange={setSelectedStageId}
+            options={moveStageOptions.map((s) => ({
+              value: s.id,
+              label: s.name,
+            }))}
+          />
+        </div>
+      </Modal>
+
+      <Modal
+        open={interviewOpen}
+        onCancel={() => {
+          setInterviewOpen(false);
+          setActionRecord(null);
+        }}
+        width="fit-content"
+        centered
+        title={
+          actionRecord?.interviews?.[0]
+            ? tKey("view_interview_info")
+            : tKey("schedule_interview")
+        }
+        footer={null}
+        destroyOnClose
+      >
+        {actionRecord && (
+          <InterviewForm
+            talent={actionRecord as TTalent}
+            jobName={actionRecord.job?.name ?? ""}
+            interview={actionRecord.interviews?.[0] as TInterview | undefined}
+            onClose={() => {
+              setInterviewOpen(false);
+              setActionRecord(null);
+            }}
+            onSubmit={() => {
+              onUpdateTalent();
+              setInterviewOpen(false);
+              setActionRecord(null);
+            }}
+          />
+        )}
+      </Modal>
+
+      {actionRecord && (
+        <TalentEvaluateFeedbackWithReasonModal
+          jobId={actionRecord.job_id}
+          talentId={actionRecord.id}
+          open={rejectOpen}
+          onOk={() => {
+            setRejectOpen(false);
+            setActionRecord(null);
+            onUpdateTalent();
+          }}
+          onCancel={() => {
+            setRejectOpen(false);
+            setActionRecord(null);
+          }}
+        />
+      )}
     </div>
   );
 };

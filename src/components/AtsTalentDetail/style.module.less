@@ -486,25 +486,56 @@
       padding: 16px;
     }
 
-    .requirementsSummary {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .requirementsSummaryTableWrap {
+      margin-top: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(222, 222, 222, 1);
     }
 
-    .requirementSummaryItem {
-      display: flex;
-      align-items: center;
+    .requirementsSummarySummaryRow {
+      display: grid;
+      grid-template-columns: 300px 1fr;
       font-size: 12px;
-      padding-left: 4px;
-      border-radius: 10px;
-      color: #666;
-      gap: 4px;
 
-      .point {
-        width: 3px;
-        height: 3px;
-        background-color: #666;
+      .levelTag {
+        width: 288px;
+      }
+    }
+
+    .requirementsSummarySummaryHeader {
+      font-weight: bold;
+      font-size: 14px;
+      background: rgba(245, 245, 245, 1);
+    }
+
+    .requirementsSummarySummaryHeader > div {
+      padding: 10px 12px;
+      &:not(:last-child) {
+        border-right: 1px solid rgba(222, 222, 222, 1);
+      }
+    }
+
+    .requirementsSummarySummaryRow:not(.requirementsSummarySummaryHeader)
+      > div {
+      padding: 10px 12px;
+      border-top: 1px solid rgba(222, 222, 222, 1);
+      background-color: #fff;
+      &:first-child {
+        display: flex;
+        align-items: center;
+      }
+      &:not(:last-child) {
+        border-right: 1px solid rgba(222, 222, 222, 1);
+      }
+    }
+
+    .requirementsSummaryAssessment {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      span {
+        color: @primary-color;
       }
     }
 
@@ -524,6 +555,7 @@
     .requirementsSummaryHeader {
       font-weight: bold;
       background: rgba(245, 245, 245, 1);
+      font-size: 14px;
     }
 
     .requirementsSummaryHeader > div {
@@ -618,25 +650,32 @@
     }
 
     .strengthsBlock {
+      :global(.perse-icon) {
+        color: rgba(38, 188, 93, 1);
+      }
       border: 1px solid rgba(187, 247, 208, 1);
       background: rgba(240, 253, 244, 0.8);
-      color: rgba(38, 188, 93, 0.8);
       border-left-width: 4px;
       border-right-width: 4px;
     }
 
     .gapsBlock {
+      :global(.perse-icon) {
+        color: rgba(224, 61, 61, 1);
+      }
       border: 1px solid rgba(247, 189, 187, 1);
       background: rgba(254, 242, 242, 0.8);
-      color: rgba(224, 61, 61, 1);
+
       border-left-width: 4px;
       border-right-width: 4px;
     }
 
     .areasBlock {
+      :global(.perse-icon) {
+        color: rgba(242, 148, 7, 1);
+      }
       border: 1px solid rgba(247, 199, 129, 1);
       background: rgba(255, 251, 235, 0.8);
-      color: rgba(242, 148, 7, 1);
       border-left-width: 4px;
       border-right-width: 4px;
     }

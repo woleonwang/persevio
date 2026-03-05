@@ -47,6 +47,7 @@ import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModa
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 import ScheduleInterview from "@/assets/icons/schedule-interview";
+import ProbeFilled from "@/assets/icons/probe-filled";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -519,7 +520,13 @@ const AtsTalentDetail: React.FC = () => {
                       <div className={styles.evalBlockTitle}>
                         Requirements Summary
                       </div>
-                      <div className={styles.requirementsSummary}>
+                      <div className={styles.requirementsSummaryTableWrap}>
+                        <div
+                          className={`${styles.requirementsSummarySummaryRow} ${styles.requirementsSummarySummaryHeader}`}
+                        >
+                          <div>Requirements Met</div>
+                          <div>Assessment</div>
+                        </div>
                         {(["p0", "p1", "p2"] as const).map((level) => {
                           const items = requirementsSummaryMappings[level];
                           if (!items.length) return null;
@@ -529,25 +536,28 @@ const AtsTalentDetail: React.FC = () => {
                               item.assessment === "meets" ||
                               item.assessment_type === "meets",
                           ).length;
-                          const partiallyMeetCount = items.filter(
-                            (item) =>
-                              item.assessment === "partially_meets" ||
-                              item.assessment_type === "partially_meets",
-                          ).length;
 
                           return (
                             <div
                               key={level}
-                              className={`${styles.requirementSummaryItem} ${styles[level]}`}
+                              className={styles.requirementsSummarySummaryRow}
                             >
-                              <div className={styles.point} />
-                              <span>
-                                {meetCount} of {items.length}{" "}
-                                {level.toUpperCase()}
-                              </span>
-                              requirements met
-                              {partiallyMeetCount > 0 &&
-                                ` (${partiallyMeetCount} partially)`}
+                              <div>
+                                <div
+                                  className={classnames(
+                                    styles.levelTag,
+                                    styles[level],
+                                  )}
+                                >
+                                  {level.toUpperCase()}
+                                </div>
+                              </div>
+                              <div
+                                className={styles.requirementsSummaryAssessment}
+                              >
+                                <span>{meetCount}&nbsp;</span>/&nbsp;
+                                {items.length}
+                              </div>
                             </div>
                           );
                         })}
@@ -668,6 +678,7 @@ const AtsTalentDetail: React.FC = () => {
                         className={`${styles.evalBlock} ${styles.areasBlock}`}
                       >
                         <div className={styles.evalBlockTitle}>
+                          <Icon icon={<ProbeFilled />} />
                           Areas to Probe in Next Rounds
                         </div>
                         <div className={styles.evalList}>
