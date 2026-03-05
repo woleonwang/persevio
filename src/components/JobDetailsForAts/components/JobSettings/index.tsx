@@ -34,7 +34,6 @@ const DEFAULT_STAGES = [
   "Applied",
   "Started AI Interview",
   "AI Interview Completed",
-  "Shortlisted",
 ];
 
 const REJECTED_STAGE_NAME = "Rejected";

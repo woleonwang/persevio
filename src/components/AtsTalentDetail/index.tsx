@@ -82,6 +82,9 @@ const AtsTalentDetail: React.FC = () => {
   const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvance, setNewFeedbackAdvance] = useState(false);
+  const [newFeedbackRound, setNewFeedbackRound] = useState("");
+  const [isAddFeedbackForInterview, setIsAddFeedbackForInterview] =
+    useState(false);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -129,7 +132,7 @@ const AtsTalentDetail: React.FC = () => {
 
   const fetchInterviewFeedbackRecords = async () => {
     const { code, data } = await Get(
-      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interview_feedback_records`,
+      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
     );
     if (code === 0) {
       setInterviewFeedbackRecords(
@@ -885,7 +888,10 @@ const AtsTalentDetail: React.FC = () => {
                     <Button
                       variant="outlined"
                       color="primary"
-                      onClick={() => setIsAddFeedbackModalOpen(true)}
+                      onClick={() => {
+                        setIsAddFeedbackForInterview(true);
+                        setIsAddFeedbackModalOpen(true);
+                      }}
                     >
                       + Add Feedback
                     </Button>
@@ -894,6 +900,63 @@ const AtsTalentDetail: React.FC = () => {
               </Collapse.Panel>
             </Collapse>
           )}
+
+          <div
+            className={classnames(
+              styles.roundFeedbackSection,
+              styles.customizedFeedbackSection,
+            )}
+          >
+            {interviewFeedbackRecords.length > 0 && (
+              <div className={styles.roundFeedbackList}>
+                {interviewFeedbackRecords.map((record) => (
+                  <div
+                    key={record.id}
+                    className={classnames(
+                      styles.roundFeedbackItem,
+                      styles.customizedFeedbackItem,
+                    )}
+                  >
+                    <div className={styles.roundFeedbackHeader}>
+                      <span className={styles.roundFeedbackInterviewer}>
+                        {record.staff?.name || "-"} - {record.customized_round}
+                      </span>
+                      <span className={styles.roundFeedbackDate}>
+                        {dayjs(record.created_at).format("MMM DD, YYYY")}
+                      </span>
+                    </div>
+                    <div className={styles.roundFeedbackContent}>
+                      {record.content}
+                    </div>
+                    <div className={styles.roundFeedbackFooter}>
+                      <span
+                        className={classnames(
+                          styles.advanceBadge,
+                          record.is_advance
+                            ? styles.advanceYes
+                            : styles.advanceNo,
+                        )}
+                      >
+                        {record.is_advance ? "Advance: Yes" : "Advance: No"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className={styles.roundFeedbackActions}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => {
+                  setIsAddFeedbackForInterview(false);
+                  setIsAddFeedbackModalOpen(true);
+                }}
+              >
+                + Add Feedback
+              </Button>
+            </div>
+          </div>
         </section>
       </div>
 
@@ -1013,27 +1076,39 @@ const AtsTalentDetail: React.FC = () => {
           setIsAddFeedbackModalOpen(false);
           setNewFeedbackContent("");
           setNewFeedbackAdvance(false);
+          setNewFeedbackRound("");
+          setIsAddFeedbackForInterview(false);
         }}
         onOk={async () => {
+          if (!isAddFeedbackForInterview && !newFeedbackRound.trim()) {
+            message.error("Please enter interview round.");
+            return;
+          }
+
           if (!newFeedbackContent.trim()) {
             message.error("Please enter feedback.");
             return;
           }
-          if (!interviews.length) return;
-          const interview = interviews[0];
 
           const { code } = await Post(
-            `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${interview.id}/feedback_records`,
+            isAddFeedbackForInterview
+              ? `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${interviews?.[0]?.id}/feedback_records`
+              : `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
             {
               content: newFeedbackContent.trim(),
               is_advance: newFeedbackAdvance,
+              customized_round: newFeedbackRound,
             },
           );
+
           if (code === 0) {
             message.success("Feedback added");
             setIsAddFeedbackModalOpen(false);
             setNewFeedbackContent("");
             setNewFeedbackAdvance(false);
+            setNewFeedbackRound("");
+            setIsAddFeedbackForInterview(false);
+            fetchInterviewFeedbackRecords();
             fetchTalent();
             fetchActiveLogs();
           }
@@ -1041,6 +1116,17 @@ const AtsTalentDetail: React.FC = () => {
         okText="Save"
       >
         <div className={styles.addFeedbackModal}>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Interview Round</div>
+            <div className={styles.addFeedbackContent}>
+              <input
+                className={styles.roundInput}
+                value={newFeedbackRound}
+                onChange={(e) => setNewFeedbackRound(e.target.value)}
+                placeholder="e.g. Round 1, Round 2"
+              />
+            </div>
+          </div>
           <div className={styles.addFeedbackField}>
             <div className={styles.addFeedbackLabel}>Feedback</div>
             <div className={styles.addFeedbackContent}>

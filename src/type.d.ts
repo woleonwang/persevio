@@ -480,6 +480,7 @@ type TInterviewFeedbackRecord = {
   talent_id: number;
   staff_id: number;
   content: string;
+  customized_round: string;
   is_advance: boolean;
   created_at: string;
   updated_at: string;
@@ -804,7 +805,7 @@ type TReport = {
     result: string;
     caveat?: string;
     skills_fit: {
-      level: string;
+      level: "ideal" | "good" | "uncertain" | "poor";
       explanation: string;
     };
     logistics_fit: {
@@ -817,7 +818,7 @@ type TReport = {
   summary: {
     description: string;
     interest_level: {
-      level: string;
+      level: "high" | "moderate" | "low" | "unclear";
       explanation: string;
     };
   };

@@ -806,6 +806,9 @@
   .roundFeedbackSection {
     padding: 0 20px;
     background-color: #fff;
+    &.customizedFeedbackSection {
+      padding: 20px 0;
+    }
 
     .roundHeader {
       display: flex;
@@ -822,6 +825,13 @@
     .roundFeedbackItem {
       border-bottom: 1px dashed #ebecee;
       padding: 20px 0;
+
+      &.customizedFeedbackItem {
+        border: 1px solid @border-color;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 12px;
+      }
     }
 
     .roundFeedbackHeader {
@@ -945,6 +955,14 @@
   .addFeedbackContent {
     flex: 1;
     margin-top: 8px;
+  }
+
+  .roundInput {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid @border-color;
+    font-size: 14px;
   }
 }
 
