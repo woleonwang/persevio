@@ -203,12 +203,14 @@ const JobAnalytics = () => {
 
     const denominator = [
       "started_ai_interview",
-      "ai_interview_completed",
       "shortlisted",
       "rejected",
     ].includes(stage.id)
       ? allTalentCount
-      : funnelCumulativeCounts[index - 1];
+      : stage.id === "ai_interview_completed"
+        ? filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
+            .length
+        : funnelCumulativeCounts[index - 1];
 
     const numerator =
       stage.id === "started_ai_interview"
@@ -221,7 +223,7 @@ const JobAnalytics = () => {
 
     if (denominator == null || numerator == null || denominator === 0)
       return "0%";
-    return `${Math.round((numerator / denominator) * 100)}%`;
+    return `${Math.round((Math.min(numerator, denominator) / denominator) * 100)}%`;
   };
 
   if (!job) return <Spin />;
