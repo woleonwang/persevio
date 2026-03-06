@@ -64,7 +64,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [messages, setMessages] = useState<TMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
-    ""
+    "",
   );
   const [jrdProgress, setJrdProgress] = useState<number>(0);
 
@@ -104,6 +104,11 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
+
+  // 当前 tab 未激活时的新消息提醒（提示音 + tab 红点）
+  const [hasUnreadInInactiveTab, setHasUnreadInInactiveTab] = useState(false);
+  const originalTitleRef = useRef<string | null>(null);
+  const prevIsLoadingRef = useRef(isLoading);
 
   // 最后一条消息的 id，用于控制新增消息的自动弹出
   const lastMessageIdRef = useRef<string>();
@@ -173,10 +178,94 @@ const StaffChat: React.FC<IProps> = (props) => {
   useEffect(() => {
     if (jrdContextDocumentJsonRef.current) {
       setSideDocumentContent(
-        jrdContextDocumentJsonRef.current[sideDocumentType ?? ""] ?? ""
+        jrdContextDocumentJsonRef.current[sideDocumentType ?? ""] ?? "",
       );
     }
   }, [job]);
+
+  // 记录初始标题，用于在取消红点时恢复
+  useEffect(() => {
+    if (typeof document !== "undefined" && !originalTitleRef.current) {
+      originalTitleRef.current = document.title;
+    }
+  }, []);
+
+  // 当 tab 从非激活恢复为激活时，清除未读状态和标题红点
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        setHasUnreadInInactiveTab(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // 根据未读状态更新浏览器 tab 标题（在标题前加一个红点）
+  useEffect(() => {
+    if (typeof document === "undefined" || !originalTitleRef.current) return;
+
+    if (hasUnreadInInactiveTab) {
+      const prefix = "● ";
+      if (!document.title.startsWith(prefix)) {
+        document.title = `${prefix}${originalTitleRef.current}`;
+      }
+    } else {
+      document.title = originalTitleRef.current;
+    }
+  }, [hasUnreadInInactiveTab]);
+
+  const playNotificationBeep = () => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const AudioCtx =
+        (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      const audioCtx = new AudioCtx();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      gainNode.gain.value = 0.12;
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        audioCtx.close();
+      }, 200);
+    } catch {
+      // 忽略浏览器不支持或被用户禁用声音的情况
+    }
+  };
+
+  // 大模型回复结束时，如果当前 tab 不在前台，则播放提示音并标记未读
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const wasLoading = prevIsLoadingRef.current;
+    prevIsLoadingRef.current = isLoading;
+
+    // 仅在从 loading -> 非 loading 的瞬间判断
+    if (true || (wasLoading && !isLoading && messages.length > 0)) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.role === "ai" && document.hidden) {
+        playNotificationBeep();
+        setHasUnreadInInactiveTab(true);
+      }
+    }
+  }, [isLoading, messages]);
 
   // 当 sideDocument 打开时，滚动到触发打开的消息
   useEffect(() => {
@@ -184,7 +273,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       // 延迟执行，确保布局已经更新
       setTimeout(() => {
         childrenFunctionsRef.current.scrollToMessage?.(
-          sideDocumentTriggerMessageIdRef.current!
+          sideDocumentTriggerMessageIdRef.current!,
         );
       }, 100);
     }
@@ -213,7 +302,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     },
     jobCompensationDetails: {
       get: formatUrl(
-        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`
+        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`,
       ),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
     },
@@ -227,18 +316,18 @@ const StaffChat: React.FC<IProps> = (props) => {
     },
     jobInterviewDesign: {
       get: formatUrl(
-        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/messages`
+        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/messages`,
       ),
       send: formatUrl(
-        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/send`
+        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/send`,
       ),
     },
     jobInterviewFeedback: {
       get: formatUrl(
-        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/messages`
+        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/messages`,
       ),
       send: formatUrl(
-        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/send`
+        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/send`,
       ),
     },
     jobTalentEvaluateFeedback: {
@@ -269,7 +358,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           ),
           handler: () =>
             sendMessage(
-              "好的，我们可以开始对话。请你用中文和我进行接下来的对话。"
+              "好的，我们可以开始对话。请你用中文和我进行接下来的对话。",
             ),
         },
         {
@@ -298,7 +387,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             const success = await updateJob({ jd_language: "zh-CN" });
             if (success) {
               sendMessage(
-                "请用中文来撰写这个职位的JD。请你在把JD发给我之前确保你的语言是正宗地道的适合在职位描述中使用的中文。"
+                "请用中文来撰写这个职位的JD。请你在把JD发给我之前确保你的语言是正宗地道的适合在职位描述中使用的中文。",
               );
             } else {
               message.error(t("update_job_failed"));
@@ -316,7 +405,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             const success = await updateJob({ jd_language: "en-US" });
             if (success) {
               sendMessage(
-                "Please use English to draft the JD. Please make sure you use authentic English that is appropriate for the use in an official Job Description."
+                "Please use English to draft the JD. Please make sure you use authentic English that is appropriate for the use in an official Job Description.",
               );
             } else {
               message.error(t("update_job_failed"));
@@ -431,7 +520,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             await copy(
               `${window.origin}/app/jobs/${jobId}/board?token=${
                 tokenStorage.getToken("staff") || ""
-              }&share=1`
+              }&share=1`,
             );
             message.success(t("copied"));
           }
@@ -500,7 +589,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             const documentType = getDocumentType(key);
             setSideDocumentVisible(true);
             setSideDocumentContent(
-              jrdContextDocumentJsonRef.current?.[documentType] ?? ""
+              jrdContextDocumentJsonRef.current?.[documentType] ?? "",
             );
             setSideDocumentType(documentType as TEditableDocumentType);
           });
@@ -589,7 +678,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           if (
             lastMessage.role === "ai" &&
             !SIDE_DOCUMENT_TYPES.find((type) =>
-              (lastMessage.extraTags ?? []).find((tag) => tag.name === type)
+              (lastMessage.extraTags ?? []).find((tag) => tag.name === type),
             )
           ) {
             setSideDocumentVisible(false);
@@ -598,7 +687,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           let extraTag;
           const autoTriggerTag = supportTags.find((supportTag) => {
             extraTag = (lastMessage.extraTags ?? []).find(
-              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
+              (tag) => supportTag.key === tag.name && supportTag.autoTrigger,
             );
             return !!extraTag;
           });
@@ -627,7 +716,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       {
         field: sideDocumentType,
         content: content,
-      }
+      },
     );
     if (code === 0) {
       message.success(originalT("submit_succeed"));
@@ -657,7 +746,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const formatMessages = (
     messages: TMessageFromApi[],
-    job: IJob
+    job: IJob,
   ): TMessage[] => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
@@ -681,8 +770,8 @@ const StaffChat: React.FC<IProps> = (props) => {
           !messages.find(
             (item) =>
               !!item.content.metadata.extra_tags?.find(
-                (item) => item.name === "current-round-evaluation"
-              )
+                (item) => item.name === "current-round-evaluation",
+              ),
           )
         ) {
           extraTags.push({
@@ -757,7 +846,7 @@ const StaffChat: React.FC<IProps> = (props) => {
         hide_for_roles?: ("staff" | "coworker" | "candidate" | "trial_user")[];
       };
       hide?: boolean;
-    }
+    },
   ) => {
     if (isLoading) return;
 
@@ -832,8 +921,8 @@ const StaffChat: React.FC<IProps> = (props) => {
       chatType === "jobInterviewDesign"
         ? `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/clear_messages`
         : chatType === "jobInterviewFeedback"
-        ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
-        : `/api/jobs/${jobId}/messages`;
+          ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
+          : `/api/jobs/${jobId}/messages`;
 
     const { code } = await Post(url, {
       message_id: messageId,
@@ -863,7 +952,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                 <span style={{ color: "#c1c1c1" }}>→</span> {text}
               </Button>
             );
-          }
+          },
         )}
       </div>
     );
@@ -952,12 +1041,12 @@ const StaffChat: React.FC<IProps> = (props) => {
                   const visibleTags = (item.extraTags ?? [])
                     .map((extraTag) => {
                       return supportTags.find(
-                        (tag) => tag.key === extraTag.name
+                        (tag) => tag.key === extraTag.name,
                       );
                     })
                     .filter(Boolean) as TSupportTag[];
                   const inlineButtons = visibleTags.filter(
-                    (tag) => !tag.style || tag.style === "inline-button"
+                    (tag) => !tag.style || tag.style === "inline-button",
                   );
 
                   return (
@@ -981,7 +1070,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                                     onClick={() => {
                                       if (
                                         SIDE_DOCUMENT_TYPES.includes(
-                                          tag.key as any
+                                          tag.key as any,
                                         )
                                       ) {
                                         sideDocumentTriggerMessageIdRef.current =
@@ -990,7 +1079,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                                       const extraTag = (
                                         item.extraTags ?? []
                                       ).find(
-                                        (extraTag) => extraTag.name === tag.key
+                                        (extraTag) => extraTag.name === tag.key,
                                       );
                                       tag.handler?.(extraTag);
                                     }}
@@ -1028,13 +1117,13 @@ const StaffChat: React.FC<IProps> = (props) => {
                                     reader.onload = function (event) {
                                       if (event.target?.result) {
                                         sendMessage(
-                                          event.target.result as string
+                                          event.target.result as string,
                                         );
                                       }
                                     };
                                     reader.readAsText(
                                       fileInfo.file as unknown as Blob,
-                                      "UTF-8"
+                                      "UTF-8",
                                     );
                                   } else if (
                                     fileExt === "docx" ||
@@ -1043,12 +1132,12 @@ const StaffChat: React.FC<IProps> = (props) => {
                                     const formData = new FormData();
                                     formData.append(
                                       "file",
-                                      fileInfo.file as any
+                                      fileInfo.file as any,
                                     );
 
                                     const { code, data } = await PostFormData(
                                       `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                      formData
+                                      formData,
                                     );
                                     if (code === 0) {
                                       sendMessage(data.resume);
@@ -1087,7 +1176,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                                 }}
                                 onClick={() => {
                                   const extraTag = (item.extraTags ?? []).find(
-                                    (extraTag) => extraTag.name === tag.key
+                                    (extraTag) => extraTag.name === tag.key,
                                   );
                                   tag.handler?.(extraTag);
                                 }}
@@ -1111,7 +1200,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                               style={{ marginTop: 8 }}
                               onClick={() => {
                                 const extraTag = (item.extraTags ?? []).find(
-                                  (extraTag) => extraTag.name === tag.key
+                                  (extraTag) => extraTag.name === tag.key,
                                 );
                                 tag.handler?.(extraTag);
                               }}
@@ -1138,7 +1227,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                     <div
                       className={classnames(
                         styles.operationArea,
-                        styles[item.role]
+                        styles[item.role],
                       )}
                     >
                       {canDelete && (
@@ -1254,7 +1343,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             title={
               {
                 high_level_responsibility: t(
-                  "extract_high_level_responsibility"
+                  "extract_high_level_responsibility",
                 ),
                 day_to_day_tasks: t("extract_day_to_day_tasks"),
                 icp: t("extract_icp"),

@@ -23,18 +23,8 @@ const MS_PER_HOUR = 60 * 60 * 1000;
 function computeAvgDaysInStage(
   stageId: string,
   talentsInStage: TTalentListItem[],
-  linkedinProfilesForReachedOut: TLinkedinProfile[],
 ): number | null {
   const now = Date.now();
-
-  if (stageId === "reached_out") {
-    if (linkedinProfilesForReachedOut.length === 0) return null;
-    const totalHours = linkedinProfilesForReachedOut.reduce((sum, p) => {
-      const entry = new Date(p.created_at).getTime();
-      return sum + (now - entry) / MS_PER_HOUR;
-    }, 0);
-    return totalHours / linkedinProfilesForReachedOut.length / HOURS_PER_DAY;
-  }
 
   const hoursList: number[] = [];
   for (const t of talentsInStage) {
@@ -48,14 +38,9 @@ function computeAvgDaysInStage(
 }
 
 function getTopSource(
-  stageId: string,
   talentsInStage: TTalentListItem[],
-  _linkedinProfilesForReachedOut: TLinkedinProfile[],
   t: (key: string) => string,
 ): string {
-  if (stageId === "reached_out") {
-    return t("job_details.analytics_section.top_source_persevio_outreach");
-  }
   const countBySource: Record<string, number> = {};
   for (const t of talentsInStage) {
     const src = getSourcingChannel(t.source_channel);
@@ -77,9 +62,6 @@ const JobAnalytics = () => {
   const { job } = useJob();
   const [loading, setLoading] = useState(true);
   const [talents, setTalents] = useState<TTalentListItem[]>([]);
-  const [linkedinProfiles, setLinkedinProfiles] = useState<TLinkedinProfile[]>(
-    [],
-  );
   const [sourcingChannel, setSourcingChannel] = useState<string | undefined>();
   const [timeRange, setTimeRange] = useState<string>("all");
 
@@ -134,7 +116,6 @@ const JobAnalytics = () => {
               stageKey: getStageKey(t),
             })),
           );
-          setLinkedinProfiles(data.linkedin_profiles ?? []);
         }
       })
       .finally(() => setLoading(false));
@@ -157,79 +138,46 @@ const JobAnalytics = () => {
     });
   }, [talents, sourcingChannel, timeRange]);
 
-  const filteredLinkedinProfiles = useMemo(() => {
-    return linkedinProfiles.filter((p) => {
-      if (timeRange === "last30") {
-        const created = new Date(p.created_at).getTime();
-        if (Date.now() - created > 30 * 24 * MS_PER_HOUR) return false;
-      }
-      return true;
-    });
-  }, [linkedinProfiles, timeRange]);
-
   const stageStats = useMemo(() => {
     const result: {
       stageId: string;
       stageName: string;
       candidates: number;
-      conversionRate: number | null;
       avgDaysInStage: number | null;
       topSource: string;
     }[] = [];
 
-    let prevCount = 0;
     for (let i = 0; i < allStages.length; i++) {
       const stage = allStages[i];
-      const isReachedOut = stage.id === "reached_out";
-      const count = isReachedOut
-        ? filteredLinkedinProfiles.length
-        : filteredTalents.filter((t) => t.stageKey === stage.id).length;
 
-      const conversionRate =
-        i === 0
-          ? null
-          : prevCount > 0
-            ? Math.round((count / prevCount) * 100)
-            : null;
-
-      const talentsInStage = isReachedOut
-        ? []
-        : filteredTalents.filter((t) => t.stageKey === stage.id);
-      const linkedinForReachedOut = isReachedOut
-        ? filteredLinkedinProfiles
-        : [];
-
-      const avgDaysInStage = computeAvgDaysInStage(
-        stage.id,
-        talentsInStage,
-        linkedinForReachedOut,
+      const talentsInStage = filteredTalents.filter(
+        (t) => t.stageKey === stage.id,
       );
-      const topSource = getTopSource(
-        stage.id,
-        talentsInStage,
-        linkedinForReachedOut,
-        t,
-      );
+
+      const avgDaysInStage = computeAvgDaysInStage(stage.id, talentsInStage);
+      const topSource = getTopSource(talentsInStage, t);
 
       result.push({
         stageId: stage.id,
         stageName: stage.name,
-        candidates: count,
-        conversionRate,
+        candidates: talentsInStage.length,
         avgDaysInStage: avgDaysInStage != null ? avgDaysInStage : null,
         topSource,
       });
-      prevCount = count;
     }
     return result;
-  }, [allStages, filteredTalents, filteredLinkedinProfiles, tKey]);
+  }, [allStages, filteredTalents, tKey]);
 
   const funnelCumulativeCounts = useMemo(() => {
     const arr: number[] = [];
     let sum = 0;
     for (let i = stageStats.length - 1; i >= 0; i--) {
-      sum += stageStats[i].candidates;
-      arr[i] = sum;
+      if (i === stageStats.length - 1) {
+        arr[i] = stageStats[i].candidates;
+      } else {
+        sum += stageStats[i].candidates;
+        arr[i] = sum;
+      }
     }
     return arr;
   }, [stageStats]);
@@ -249,10 +197,31 @@ const JobAnalytics = () => {
 
   const getConversionRate = (index: number) => {
     if (index === 0) return "--";
-    const prev = funnelCumulativeCounts[index - 1];
-    const curr = funnelCumulativeCounts[index];
-    if (prev == null || curr == null || prev === 0) return "0%";
-    return `${Math.round((curr / prev) * 100)}%`;
+
+    const stage = allStages[index];
+    const allTalentCount = filteredTalents.length;
+
+    const denominator = [
+      "started_ai_interview",
+      "ai_interview_completed",
+      "shortlisted",
+      "rejected",
+    ].includes(stage.id)
+      ? allTalentCount
+      : funnelCumulativeCounts[index - 1];
+
+    const numerator =
+      stage.id === "started_ai_interview"
+        ? filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
+            .length
+        : stage.id === "ai_interview_completed"
+          ? filteredTalents.filter((t) => !!t.job_apply?.interview_finished_at)
+              .length
+          : funnelCumulativeCounts[index];
+
+    if (denominator == null || numerator == null || denominator === 0)
+      return "0%";
+    return `${Math.round((numerator / denominator) * 100)}%`;
   };
 
   if (!job) return <Spin />;
