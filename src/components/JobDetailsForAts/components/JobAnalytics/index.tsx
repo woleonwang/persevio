@@ -93,12 +93,14 @@ const JobAnalytics = () => {
   const allStages = useMemo(() => {
     if (!job) return [];
     const stages = [
-      ...PREFIX_DEFAULT_STAGE_KEYS.map((key, i) => ({
-        id: key,
-        name: pipelineTKey(key),
-        order: i,
-        isDefault: true,
-      })),
+      ...PREFIX_DEFAULT_STAGE_KEYS.filter((key) => key !== "reached_out").map(
+        (key, i) => ({
+          id: key,
+          name: pipelineTKey(key),
+          order: i,
+          isDefault: true,
+        }),
+      ),
       ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
     ];
     SUFFIX_DEFAULT_STAGE_KEYS.forEach((key) => {
@@ -267,7 +269,7 @@ const JobAnalytics = () => {
           options={[
             ...SOURCING_CHANNEL_KEYS.map((key) => ({
               value: key,
-              label: tKey(`sourcing_channel.${key}`),
+              label: t(`sourcing_channel.${key}`),
             })),
             ...customSources.map((cs) => ({
               value: cs.name,
@@ -345,7 +347,9 @@ const JobAnalytics = () => {
                         <div className={styles.conversionText}>
                           {index === 0
                             ? tKey("starting")
-                            : tKey("conversion_rate_label")}
+                            : row.stageId === "shortlisted"
+                              ? "Shortlisted/Applied"
+                              : tKey("conversion_rate_label")}
                           : {getConversionRate(index)}
                         </div>
                         <div className={styles.totalCountText}>

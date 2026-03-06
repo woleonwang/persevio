@@ -124,7 +124,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
     }
   };
 
-  if (!job) {
+  if (!job || !activeTab) {
     return <Spin />;
   }
 

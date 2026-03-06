@@ -378,6 +378,7 @@ export default {
   },
 
   sourcing_channel: {
+    persevio: "Persevio",
     direct: "Direct",
     linkedin: "LinkedIn",
     jobstreet: "JobStreet",

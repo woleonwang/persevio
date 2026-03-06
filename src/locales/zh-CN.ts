@@ -369,7 +369,8 @@ export default {
   },
 
   sourcing_channel: {
-    system: "系统",
+    persevio: "Persevio",
+    direct: "Direct",
     linkedin: "LinkedIn",
     jobstreet: "JobStreet",
     mycareersfuture: "MyCareersFuture",

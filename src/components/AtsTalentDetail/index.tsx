@@ -580,6 +580,7 @@ const AtsTalentDetail: React.FC = () => {
                           report?.overall_recommendation?.result ??
                             report?.result,
                         )}
+                        caveat={report.overall_recommendation?.caveat}
                       />
                     </div>
                     <div className={styles.evalOverallDescription}>
