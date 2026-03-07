@@ -42,22 +42,19 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
       open={open}
       onCancel={onCancel}
       onOk={async () => {
-        if (evaluateFeedback) {
-          const { code } = await Post(
-            `/api/jobs/${jobId}/talents/${talentId}`,
-            {
-              status: "rejected",
-              feedback: evaluateFeedbackReason,
-            }
-          );
+        const { code } = await Post(`/api/jobs/${jobId}/talents/${talentId}`, {
+          status: "rejected",
+          feedback: evaluateFeedbackReason,
+        });
 
-          if (code === 0) {
+        if (code === 0) {
+          if (evaluateFeedback) {
             const { code } = await Post(
               `/api/jobs/${jobId}/talents/${talentId}/evaluate_feedback`,
               {
                 evaluate_feedback: evaluateFeedback,
                 evaluate_feedback_reason: evaluateFeedbackReason,
-              }
+              },
             );
 
             if (code === 0) {
@@ -67,16 +64,15 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
               message.error("Submit failed");
             }
           } else {
-            message.error("Submit failed");
+            onCancel();
           }
+        } else {
+          message.error("Submit failed");
         }
       }}
       title="Reject Candidate"
       width={800}
       centered
-      okButtonProps={{
-        disabled: !evaluateFeedback,
-      }}
       okText="NEXT"
       cancelButtonProps={{
         style: {
@@ -86,9 +82,9 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
     >
       <div>
         <div className={styles.evaluateFeedbackTitle}>
-          <span>*</span>In order to recommend more suitable candidates for you
-          going forward, could you kindly confirm whether the referral report
-          for Viona this time is accurate?
+          In order to recommend more suitable candidates for you going forward,
+          could you kindly confirm whether the referral report for Viona this
+          time is accurate?
         </div>
         <div className={styles.evaluateFeedback}>
           {(
@@ -128,7 +124,7 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
                 className={classnames(
                   styles.evaluateFeedbackItem,
                   styles[item],
-                  { [styles.active]: isActive }
+                  { [styles.active]: isActive },
                 )}
                 onClick={() => setEvaluateFeedback(item)}
                 variant={isActive ? "filled" : "outlined"}
