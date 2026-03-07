@@ -64,6 +64,7 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
               message.error("Submit failed");
             }
           } else {
+            message.success("Submit success");
             onCancel();
           }
         } else {
