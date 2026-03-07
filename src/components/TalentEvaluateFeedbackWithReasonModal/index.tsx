@@ -74,7 +74,10 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
       title="Reject Candidate"
       width={800}
       centered
-      okText="NEXT"
+      okButtonProps={{
+        disabled: !!evaluateFeedback && !evaluateFeedbackReason,
+      }}
+      okText="Reject"
       cancelButtonProps={{
         style: {
           display: "none",
