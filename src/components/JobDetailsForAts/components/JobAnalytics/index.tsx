@@ -145,6 +145,7 @@ const JobAnalytics = () => {
       candidates: number;
       avgDaysInStage: number | null;
       topSource: string;
+      percentageName?: string;
     }[] = [];
 
     for (let i = 0; i < allStages.length; i++) {
@@ -157,12 +158,26 @@ const JobAnalytics = () => {
       const avgDaysInStage = computeAvgDaysInStage(stage.id, talentsInStage);
       const topSource = getTopSource(talentsInStage, t);
 
+      let percentageName = "";
+      if (stage.id === "applied") {
+        percentageName = "Starting";
+      } else if (stage.id === "started_ai_interview") {
+        percentageName = "Started AI Interview/Applied";
+      } else if (stage.id === "ai_interview_completed") {
+        percentageName = "AI Interview Completed/Started AI Interview";
+      } else if (stage.id === "shortlisted") {
+        percentageName = "Shortlisted/Applied";
+      } else if (stage.id === "rejected") {
+        percentageName = "Rejected/Applied";
+      }
+
       result.push({
         stageId: stage.id,
         stageName: stage.name,
         candidates: talentsInStage.length,
         avgDaysInStage: avgDaysInStage != null ? avgDaysInStage : null,
         topSource,
+        percentageName,
       });
     }
     return result;
@@ -212,18 +227,23 @@ const JobAnalytics = () => {
             .length
         : funnelCumulativeCounts[index - 1];
 
-    const numerator =
-      stage.id === "started_ai_interview"
-        ? filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
-            .length
-        : stage.id === "ai_interview_completed"
-          ? filteredTalents.filter((t) => !!t.job_apply?.interview_finished_at)
-              .length
-          : funnelCumulativeCounts[index];
+    const numerator = getNumerator(index);
 
     if (denominator == null || numerator == null || denominator === 0)
       return "0%";
     return `${Math.round((Math.min(numerator, denominator) / denominator) * 100)}%`;
+  };
+
+  const getNumerator = (index: number) => {
+    const stage = allStages[index];
+    if (stage.id === "started_ai_interview") {
+      return filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
+        .length;
+    } else if (stage.id === "ai_interview_completed") {
+      return filteredTalents.filter((t) => !!t.job_apply?.interview_finished_at)
+        .length;
+    }
+    return funnelCumulativeCounts[index];
   };
 
   if (!job) return <Spin />;
@@ -272,7 +292,6 @@ const JobAnalytics = () => {
             <div className={styles.funnelSectionWrap}>
               <div className={styles.funnelWrap}>
                 {stageStats.map((row, index) => {
-                  const displayCount = row.candidates;
                   const topW = funnelWidths[index];
                   const bottomW =
                     index < stageStats.length - 1
@@ -316,15 +335,12 @@ const JobAnalytics = () => {
                       </div>
                       <div className={styles.funnelRight}>
                         <div className={styles.conversionText}>
-                          {index === 0
-                            ? tKey("starting")
-                            : row.stageId === "shortlisted"
-                              ? "Shortlisted/Applied"
-                              : tKey("conversion_rate_label")}
+                          {row.percentageName ||
+                            `${row.stageName}/${stageStats[index - 1].stageName}`}
                           : {getConversionRate(index)}
                         </div>
                         <div className={styles.totalCountText}>
-                          {displayCount}
+                          {getNumerator(index)}
                         </div>
                       </div>
                     </div>
@@ -351,8 +367,10 @@ const JobAnalytics = () => {
                 },
                 {
                   title: tKey("candidates"),
-                  dataIndex: "candidates",
-                  key: "candidates",
+                  key: "numerator",
+                  render: (_: unknown, _row: unknown, index: number) => {
+                    return getNumerator(index);
+                  },
                 },
                 {
                   title: tKey("conversion_rate"),
