@@ -145,7 +145,9 @@ const JobPipeline = ({
       })
       .filter((item) => {
         if (sourcingChannels.length === 0) return true;
-        return sourcingChannels.includes(getSourcingChannel(item.source_channel));
+        return sourcingChannels.includes(
+          getSourcingChannel(item.source_channel),
+        );
       })
       .filter((item) => {
         if (stageFilters.length === 0) return true;
@@ -159,7 +161,13 @@ const JobPipeline = ({
         );
         return evaluateResultLevels.includes(level);
       });
-  }, [talents, searchName, sourcingChannels, stageFilters, evaluateResultLevels]);
+  }, [
+    talents,
+    searchName,
+    sourcingChannels,
+    stageFilters,
+    evaluateResultLevels,
+  ]);
 
   const itemsByStage = useMemo(() => {
     const map: Record<string, TTalentListItem[] | TLinkedinProfile[]> = {};
@@ -269,6 +277,7 @@ const JobPipeline = ({
           value={sourcingChannels}
           onChange={setSourcingChannels}
           mode="multiple"
+          maxTagCount={1}
           allowClear
           options={[
             ...SOURCING_CHANNEL_KEYS.map((key) => ({
@@ -288,6 +297,7 @@ const JobPipeline = ({
           value={stageFilters}
           onChange={setStageFilters}
           mode="multiple"
+          maxTagCount={1}
           allowClear
           options={allStages.map((s) => ({ value: s.id, label: s.name }))}
           style={{ width: 180 }}
@@ -298,6 +308,7 @@ const JobPipeline = ({
           value={evaluateResultLevels}
           onChange={setEvaluateResultLevels}
           mode="multiple"
+          maxTagCount={1}
           allowClear
           options={EVALUATE_RESULT_LEVEL_KEYS.map((level) => ({
             label: t(`job_talents.evaluate_result_select_options.${level}`),
