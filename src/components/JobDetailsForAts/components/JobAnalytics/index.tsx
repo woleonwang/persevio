@@ -193,6 +193,9 @@ const JobAnalytics = () => {
         sum += stageStats[i].candidates;
         arr[i] = sum;
       }
+      if (i === 0) {
+        arr[i] += arr[arr.length - 1]; // applied 数量包含 rejected
+      }
     }
     return arr;
   }, [stageStats]);
