@@ -50,11 +50,11 @@ const JobPipeline = ({
   );
 
   const [searchName, setSearchName] = useState<string>("");
-  const [sourcingChannel, setSourcingChannel] = useState<string | undefined>();
-  const [stageFilter, setStageFilter] = useState<string | undefined>();
-  const [evaluateResultLevel, setEvaluateResultLevel] = useState<
-    TEvaluateResultLevel | undefined
-  >();
+  const [sourcingChannels, setSourcingChannels] = useState<string[]>([]);
+  const [stageFilters, setStageFilters] = useState<string[]>([]);
+  const [evaluateResultLevels, setEvaluateResultLevels] = useState<
+    TEvaluateResultLevel[]
+  >([]);
 
   const { customSources } = useSourcingChannels({
     jobId: job?.id,
@@ -144,23 +144,22 @@ const JobPipeline = ({
         return name.toLowerCase().includes(searchName.toLowerCase());
       })
       .filter((item) => {
-        if (!sourcingChannel) return true;
-        return getSourcingChannel(item.source_channel) === sourcingChannel;
+        if (sourcingChannels.length === 0) return true;
+        return sourcingChannels.includes(getSourcingChannel(item.source_channel));
       })
       .filter((item) => {
-        if (!stageFilter) return true;
-        return getStageKey(item) === stageFilter;
+        if (stageFilters.length === 0) return true;
+        return stageFilters.includes(getStageKey(item));
       })
       .filter((item) => {
-        if (!evaluateResultLevel) return true;
-        return (
-          getEvaluateResultLevel(
-            item.parsedEvaluateResult?.overall_recommendation?.result ||
-              item.parsedEvaluateResult?.result,
-          ) === evaluateResultLevel
+        if (evaluateResultLevels.length === 0) return true;
+        const level = getEvaluateResultLevel(
+          item.parsedEvaluateResult?.overall_recommendation?.result ||
+            item.parsedEvaluateResult?.result,
         );
+        return evaluateResultLevels.includes(level);
       });
-  }, [talents, searchName, sourcingChannel, stageFilter, evaluateResultLevel]);
+  }, [talents, searchName, sourcingChannels, stageFilters, evaluateResultLevels]);
 
   const itemsByStage = useMemo(() => {
     const map: Record<string, TTalentListItem[] | TLinkedinProfile[]> = {};
@@ -267,8 +266,9 @@ const JobPipeline = ({
         <Select
           className={styles.filterSelect}
           placeholder={tKey("all_sourcing_channels")}
-          value={sourcingChannel}
-          onChange={setSourcingChannel}
+          value={sourcingChannels}
+          onChange={setSourcingChannels}
+          mode="multiple"
           allowClear
           options={[
             ...SOURCING_CHANNEL_KEYS.map((key) => ({
@@ -285,8 +285,9 @@ const JobPipeline = ({
         <Select
           className={styles.filterSelect}
           placeholder={tKey("all_stages")}
-          value={stageFilter}
-          onChange={setStageFilter}
+          value={stageFilters}
+          onChange={setStageFilters}
+          mode="multiple"
           allowClear
           options={allStages.map((s) => ({ value: s.id, label: s.name }))}
           style={{ width: 180 }}
@@ -294,8 +295,9 @@ const JobPipeline = ({
         <Select
           className={styles.filterSelect}
           placeholder={tKey("all_fit_levels")}
-          value={evaluateResultLevel}
-          onChange={setEvaluateResultLevel}
+          value={evaluateResultLevels}
+          onChange={setEvaluateResultLevels}
+          mode="multiple"
           allowClear
           options={EVALUATE_RESULT_LEVEL_KEYS.map((level) => ({
             label: t(`job_talents.evaluate_result_select_options.${level}`),
