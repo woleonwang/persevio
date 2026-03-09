@@ -5,7 +5,7 @@ import {
   Collapse,
   Tabs,
   Modal,
-  Switch,
+  Radio,
   message,
   Tag,
   Select,
@@ -83,7 +83,9 @@ const AtsTalentDetail: React.FC = () => {
 
   const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
-  const [newFeedbackAdvance, setNewFeedbackAdvance] = useState(false);
+  const [newFeedbackAdvanceStatus, setNewFeedbackAdvanceStatus] = useState<
+    "advance" | "hold" | "reject"
+  >("hold");
   const [newFeedbackRound, setNewFeedbackRound] = useState("");
   const [isAddFeedbackForInterview, setIsAddFeedbackForInterview] =
     useState(false);
@@ -993,14 +995,19 @@ const AtsTalentDetail: React.FC = () => {
                             <span
                               className={classnames(
                                 styles.advanceBadge,
-                                record.is_advance
-                                  ? styles.advanceYes
-                                  : styles.advanceNo,
+                                record.advance_status === "advance" &&
+                                  styles.advanceYes,
+                                record.advance_status === "hold" &&
+                                  styles.advanceHold,
+                                record.advance_status === "reject" &&
+                                  styles.advanceNo,
                               )}
                             >
-                              {record.is_advance
-                                ? "Advance: Yes"
-                                : "Advance: No"}
+                              {record.advance_status === "advance"
+                                ? "Advance"
+                                : record.advance_status === "hold"
+                                  ? "Hold"
+                                  : "Reject"}
                             </span>
                           </div>
                         </div>
@@ -1057,12 +1064,19 @@ const AtsTalentDetail: React.FC = () => {
                       <span
                         className={classnames(
                           styles.advanceBadge,
-                          record.is_advance
-                            ? styles.advanceYes
-                            : styles.advanceNo,
+                          record.advance_status === "advance" &&
+                            styles.advanceYes,
+                          record.advance_status === "hold" &&
+                            styles.advanceHold,
+                          record.advance_status === "reject" &&
+                            styles.advanceNo,
                         )}
                       >
-                        {record.is_advance ? "Advance: Yes" : "Advance: No"}
+                        {record.advance_status === "advance"
+                          ? "Advance"
+                          : record.advance_status === "hold"
+                            ? "Hold"
+                            : "Reject"}
                       </span>
                     </div>
                   </div>
@@ -1200,7 +1214,7 @@ const AtsTalentDetail: React.FC = () => {
         onCancel={() => {
           setIsAddFeedbackModalOpen(false);
           setNewFeedbackContent("");
-          setNewFeedbackAdvance(false);
+          setNewFeedbackAdvanceStatus("hold");
           setNewFeedbackRound("");
           setIsAddFeedbackForInterview(false);
         }}
@@ -1221,7 +1235,7 @@ const AtsTalentDetail: React.FC = () => {
               : `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
             {
               content: newFeedbackContent.trim(),
-              is_advance: newFeedbackAdvance,
+              advance_status: newFeedbackAdvanceStatus,
               customized_round: newFeedbackRound,
             },
           );
@@ -1230,7 +1244,7 @@ const AtsTalentDetail: React.FC = () => {
             message.success("Feedback added");
             setIsAddFeedbackModalOpen(false);
             setNewFeedbackContent("");
-            setNewFeedbackAdvance(false);
+            setNewFeedbackAdvanceStatus("hold");
             setNewFeedbackRound("");
             setIsAddFeedbackForInterview(false);
             fetchInterviewFeedbackRecords();
@@ -1267,9 +1281,14 @@ const AtsTalentDetail: React.FC = () => {
           <div className={styles.addFeedbackField}>
             <div className={styles.addFeedbackLabel}>Advance</div>
             <div className={styles.addFeedbackContent}>
-              <Switch
-                checked={newFeedbackAdvance}
-                onChange={setNewFeedbackAdvance}
+              <Radio.Group
+                value={newFeedbackAdvanceStatus}
+                onChange={(e) => setNewFeedbackAdvanceStatus(e.target.value)}
+                options={[
+                  { label: "Advance", value: "advance" },
+                  { label: "Hold", value: "hold" },
+                  { label: "Reject", value: "reject" },
+                ]}
               />
             </div>
           </div>

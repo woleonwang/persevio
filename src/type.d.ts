@@ -481,7 +481,8 @@ type TInterviewFeedbackRecord = {
   staff_id: number;
   content: string;
   customized_round: string;
-  is_advance: boolean;
+  /** advance | hold | reject */
+  advance_status: "advance" | "hold" | "reject";
   created_at: string;
   updated_at: string;
   staff?: {
