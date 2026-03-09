@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Dropdown, Modal, Popover, Select, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,8 @@ import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import styles from "../style.module.less";
 import List from "@/assets/icons/list";
+import { EVALUATE_RESULT_LEVEL_KEYS } from "@/utils";
+import dayjs from "dayjs";
 
 interface IProps {
   allStages: PipelineStage[];
@@ -45,6 +47,28 @@ const ListModeTable = ({
     customStages.length > 0
       ? customStages
       : allStages.filter((s) => s.id !== "rejected");
+
+  const sortedTalents = useMemo(() => {
+    return items.sort((a, b) => {
+      const fitLevelA =
+        a.parsedEvaluateResult?.overall_recommendation?.result ||
+        a.parsedEvaluateResult?.result ||
+        "maybe";
+      const fitLevelB =
+        b.parsedEvaluateResult?.overall_recommendation?.result ||
+        b.parsedEvaluateResult?.result ||
+        "maybe";
+
+      if (fitLevelA === fitLevelB) {
+        return dayjs(b.created_at).diff(dayjs(a.created_at));
+      } else {
+        return (
+          EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelA) -
+          EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelB)
+        );
+      }
+    });
+  }, [items]);
 
   const updateTalentStatus = async (
     record: TTalentListItem,
@@ -276,7 +300,7 @@ const ListModeTable = ({
         <Table<TTalentListItem>
           className={styles.listAntdTable}
           columns={columns}
-          dataSource={items}
+          dataSource={sortedTalents}
           scroll={{ x: "max-content" }}
           rowKey="id"
           pagination={{ pageSize: 10, showSizeChanger: false }}

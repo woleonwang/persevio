@@ -6,6 +6,8 @@ import type { TTalentListItem } from "./types";
 import { getInitials } from "./utils";
 import DraggableCard from "./DraggableCard";
 import styles from "../style.module.less";
+import dayjs from "dayjs";
+import { EVALUATE_RESULT_LEVEL_KEYS } from "@/utils";
 
 interface IProps {
   stage: PipelineStage;
@@ -83,19 +85,39 @@ const DroppableColumn = ({
           </div>
         )}
         {!renderReachedOutSummary &&
-          items.map((item) => {
-            const talent = item as TTalentListItem;
-            const isRejected = talent.stageKey === "rejected";
-            return (
-              <DraggableCard
-                key={talent.id}
-                item={talent}
-                isDraggable={!isRejected}
-                onCardClick={() => onCardClick(talent)}
-                onUpdateTalent={onUpdateTalent}
-              />
-            );
-          })}
+          (items as TTalentListItem[])
+            .sort((a, b) => {
+              const fitLevelA =
+                a.parsedEvaluateResult?.overall_recommendation?.result ||
+                a.parsedEvaluateResult?.result ||
+                "maybe";
+              const fitLevelB =
+                b.parsedEvaluateResult?.overall_recommendation?.result ||
+                b.parsedEvaluateResult?.result ||
+                "maybe";
+
+              if (fitLevelA === fitLevelB) {
+                return dayjs(b.created_at).diff(dayjs(a.created_at));
+              } else {
+                return (
+                  EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelA) -
+                  EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelB)
+                );
+              }
+            })
+            .map((item) => {
+              const talent = item as TTalentListItem;
+              const isRejected = talent.stageKey === "rejected";
+              return (
+                <DraggableCard
+                  key={talent.id}
+                  item={talent}
+                  isDraggable={!isRejected}
+                  onCardClick={() => onCardClick(talent)}
+                  onUpdateTalent={onUpdateTalent}
+                />
+              );
+            })}
       </div>
     </div>
   );
