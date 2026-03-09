@@ -5,7 +5,9 @@ import classnames from "classnames";
 
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import Pause from "@/assets/icons/pause";
-import MarkdownEditor, { type MDXEditorMethods } from "@/components/MarkdownEditor";
+import MarkdownEditor, {
+  type MDXEditorMethods,
+} from "@/components/MarkdownEditor";
 
 import styles from "./style.module.less";
 
@@ -57,6 +59,7 @@ const RichTextWithVoice: React.FC<IProps> = (props) => {
             overflow: "hidden",
             display: "flex",
           }}
+          boldItalicUnderlineTogglesOptions={["Bold"]}
         />
       </div>
       <div className={styles.voiceContainer}>

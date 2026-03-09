@@ -23,11 +23,17 @@ interface IProps {
   value?: string;
   onChange?: (value: string) => void;
   style?: React.CSSProperties;
+  boldItalicUnderlineTogglesOptions?: ("Bold" | "Italic" | "Underline")[];
 }
 
 const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
   (props, ref) => {
-    const { value = "", onChange = () => {}, style = {} } = props;
+    const {
+      value = "",
+      onChange = () => {},
+      style = {},
+      boldItalicUnderlineTogglesOptions,
+    } = props;
     const internalRef = useRef<MDXEditorMethods | null>(null);
 
     useEffect(() => {
@@ -35,7 +41,7 @@ const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
         value
           .replaceAll("<br>", "<br/>")
           .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())
-          .replace(/(?<!\\)</g, "\\<")
+          .replace(/(?<!\\)</g, "\\<"),
       );
     }, [value]);
 
@@ -47,7 +53,8 @@ const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
             if (typeof ref === "function") {
               ref(r);
             } else if (ref != null) {
-              (ref as React.MutableRefObject<MDXEditorMethods | null>).current = r;
+              (ref as React.MutableRefObject<MDXEditorMethods | null>).current =
+                r;
             }
           }}
           contentEditableClassName={styles.mdEditor}
@@ -64,7 +71,9 @@ const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
               toolbarContents: () => (
                 <>
                   <UndoRedo />
-                  <BoldItalicUnderlineToggles />
+                  <BoldItalicUnderlineToggles
+                    options={boldItalicUnderlineTogglesOptions}
+                  />
                   <ListsToggle options={["bullet", "number"]} />
                   <Separator />
                   <BlockTypeSelect />
@@ -75,7 +84,7 @@ const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
         />
       </div>
     );
-  }
+  },
 );
 
 MarkdownEditor.displayName = "MarkdownEditor";
