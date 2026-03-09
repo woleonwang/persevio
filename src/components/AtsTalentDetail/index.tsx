@@ -50,6 +50,7 @@ import EvaluateFeedback from "@/components/EvaluateFeedback";
 import ScheduleInterview from "@/assets/icons/schedule-interview";
 import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
+import RichTextWithVoice from "../RichTextWithVoice";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -989,7 +990,7 @@ const AtsTalentDetail: React.FC = () => {
                             </span>
                           </div>
                           <div className={styles.roundFeedbackContent}>
-                            {record.content}
+                            <MarkdownContainer content={record.content} />
                           </div>
                           <div className={styles.roundFeedbackFooter}>
                             <span
@@ -1058,7 +1059,7 @@ const AtsTalentDetail: React.FC = () => {
                       </span>
                     </div>
                     <div className={styles.roundFeedbackContent}>
-                      {record.content}
+                      <MarkdownContainer content={record.content} />
                     </div>
                     <div className={styles.roundFeedbackFooter}>
                       <span
@@ -1115,7 +1116,9 @@ const AtsTalentDetail: React.FC = () => {
                       {dayjs(note.created_at).format("MMM DD, YYYY")}
                     </span>
                   </div>
-                  <div className={styles.noteContent}>{note.content}</div>
+                  <div className={styles.noteContent}>
+                    <MarkdownContainer content={note.content} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -1271,10 +1274,9 @@ const AtsTalentDetail: React.FC = () => {
           <div className={styles.addFeedbackField}>
             <div className={styles.addFeedbackLabel}>Feedback</div>
             <div className={styles.addFeedbackContent}>
-              <TextAreaWithVoice
+              <RichTextWithVoice
                 value={newFeedbackContent}
                 onChange={setNewFeedbackContent}
-                placeholder="Write feedback or use voice input..."
               />
             </div>
           </div>
@@ -1353,10 +1355,9 @@ const AtsTalentDetail: React.FC = () => {
           <div className={styles.addFeedbackField}>
             <div className={styles.addFeedbackLabel}>Note</div>
             <div className={styles.addFeedbackContent}>
-              <TextAreaWithVoice
+              <RichTextWithVoice
                 value={newNoteContent}
                 onChange={setNewNoteContent}
-                placeholder="Write note or use voice input..."
               />
             </div>
           </div>

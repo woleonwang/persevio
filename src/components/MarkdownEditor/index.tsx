@@ -15,7 +15,9 @@ import {
   MDXEditorMethods,
 } from "@mdxeditor/editor";
 import styles from "./style.module.less";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+
+export type { MDXEditorMethods };
 
 interface IProps {
   value?: string;
@@ -23,48 +25,59 @@ interface IProps {
   style?: React.CSSProperties;
 }
 
-const MarkdownEditor: React.FC<IProps> = (props) => {
-  const { value = "", onChange = () => {}, style = {} } = props;
-  const markdownRef = useRef<MDXEditorMethods>(null);
+const MarkdownEditor = React.forwardRef<MDXEditorMethods, IProps>(
+  (props, ref) => {
+    const { value = "", onChange = () => {}, style = {} } = props;
+    const internalRef = useRef<MDXEditorMethods | null>(null);
 
-  useEffect(() => {
-    markdownRef.current?.setMarkdown(
-      value
-        .replaceAll("<br>", "<br/>")
-        .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())
-        .replace(/(?<!\\)</g, "\\<")
+    useEffect(() => {
+      internalRef.current?.setMarkdown(
+        value
+          .replaceAll("<br>", "<br/>")
+          .replace(/```markdown\s*([\s\S]*?)\s*```/g, (_, code) => code.trim())
+          .replace(/(?<!\\)</g, "\\<")
+      );
+    }, [value]);
+
+    return (
+      <div style={style} className={styles.mdEditorContainer}>
+        <MDXEditor
+          ref={(r) => {
+            internalRef.current = r;
+            if (typeof ref === "function") {
+              ref(r);
+            } else if (ref != null) {
+              (ref as React.MutableRefObject<MDXEditorMethods | null>).current = r;
+            }
+          }}
+          contentEditableClassName={styles.mdEditor}
+          markdown={""}
+          onChange={(md) => onChange(md)}
+          plugins={[
+            headingsPlugin(),
+            quotePlugin(),
+            listsPlugin(),
+            thematicBreakPlugin(),
+            linkPlugin(),
+            tablePlugin(),
+            toolbarPlugin({
+              toolbarContents: () => (
+                <>
+                  <UndoRedo />
+                  <BoldItalicUnderlineToggles />
+                  <ListsToggle options={["bullet", "number"]} />
+                  <Separator />
+                  <BlockTypeSelect />
+                </>
+              ),
+            }),
+          ]}
+        />
+      </div>
     );
-  }, [value]);
+  }
+);
 
-  return (
-    <div style={style} className={styles.mdEditorContainer}>
-      <MDXEditor
-        ref={markdownRef}
-        contentEditableClassName={styles.mdEditor}
-        markdown={""}
-        onChange={(md) => onChange(md)}
-        plugins={[
-          headingsPlugin(),
-          quotePlugin(),
-          listsPlugin(),
-          thematicBreakPlugin(),
-          linkPlugin(),
-          tablePlugin(),
-          toolbarPlugin({
-            toolbarContents: () => (
-              <>
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <ListsToggle options={["bullet", "number"]} />
-                <Separator />
-                <BlockTypeSelect />
-              </>
-            ),
-          }),
-        ]}
-      />
-    </div>
-  );
-};
+MarkdownEditor.displayName = "MarkdownEditor";
 
 export default MarkdownEditor;
