@@ -4,8 +4,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 
 import { getSourcingChannel } from "@/utils";
-import type { TTalentListItem } from "./types";
-import { getCandidateCardData } from "./getCandidateCardData";
+import { getCandidateCardData } from "@/components/ListModeTable/utils";
 import styles from "../style.module.less";
 import PopoverContent from "./PopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";

@@ -7,8 +7,7 @@ import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
 import {
   getStageEntryTime,
   getStageKey,
-  type TTalentListItem,
-} from "../JobPipeline/components/utils";
+} from "@/utils/talentStage";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,

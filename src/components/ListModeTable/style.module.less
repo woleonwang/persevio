@@ -1,0 +1,75 @@
+.listTableWrap {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  min-width: 800px;
+}
+
+.listTable {
+  overflow: auto;
+}
+
+.listAntdTable {
+  :global(.ant-table) {
+    font-size: 14px;
+  }
+
+  :global(.ant-table-tbody > tr > td) {
+    padding: 10px 16px;
+  }
+
+  :global(.ant-table-thead > tr > th) {
+    background: #fafafa;
+    font-weight: 600;
+    color: #666;
+  }
+
+  :global(.ant-table-tbody > tr:hover > td) {
+    background: #fafafa;
+  }
+}
+
+.cellTrigger {
+  display: block;
+  width: 100%;
+  min-height: 1em;
+}
+
+.ellipsis {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stageBadge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  line-height: 1.4;
+  border: 1px solid transparent;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+}
+
+.actionsBtn {
+  color: #666;
+  &:hover {
+    color: #333;
+  }
+}
+
+.moveStageSelectWrap {
+  padding: 8px 0;
+}
+
+.moveStageSelect {
+  width: 100%;
+}
+

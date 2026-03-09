@@ -1,5 +1,4 @@
 import classnames from "classnames";
-import { TTalentListItem } from "../types";
 import styles from "./style.module.less";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { getEvaluateResultLevel } from "@/utils";

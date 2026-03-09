@@ -2,7 +2,6 @@ import { useDroppable } from "@dnd-kit/core";
 import { useTranslation } from "react-i18next";
 
 import type { PipelineStage } from "../../JobSettings";
-import type { TTalentListItem } from "./types";
 import { getInitials } from "./utils";
 import DraggableCard from "./DraggableCard";
 import styles from "../style.module.less";

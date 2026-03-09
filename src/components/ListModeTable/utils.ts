@@ -1,5 +1,4 @@
 import { getEvaluateResultLevel } from "@/utils";
-import type { TTalentListItem } from "./types";
 
 export function getCandidateCardData(item: TTalentListItem) {
   const basicInfo = item.basicInfo;
@@ -27,3 +26,4 @@ export function getCandidateCardData(item: TTalentListItem) {
     summary,
   };
 }
+

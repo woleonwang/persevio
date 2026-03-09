@@ -22,13 +22,7 @@ import {
   parseJSON,
   SOURCING_CHANNEL_KEYS,
 } from "@/utils";
-import {
-  DraggableCard,
-  DroppableColumn,
-  ListModeTable,
-  getStageKey,
-  type TTalentListItem,
-} from "./components/utils";
+import { DraggableCard, DroppableColumn } from "./components/utils";
 import styles from "./style.module.less";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
@@ -36,6 +30,8 @@ import {
 } from "@/utils/consts";
 import useSourcingChannels from "@/hooks/useSourcingChannels";
 import { storage, StorageKey } from "@/utils/storage";
+import ListModeTable from "@/components/ListModeTable";
+import { getStageKey } from "@/utils/talentStage";
 
 const JobPipeline = ({
   onChangeTab,
