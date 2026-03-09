@@ -145,7 +145,6 @@ const JobAnalytics = () => {
       candidates: number;
       avgDaysInStage: number | null;
       topSource: string;
-      percentageName?: string;
     }[] = [];
 
     for (let i = 0; i < allStages.length; i++) {
@@ -158,26 +157,12 @@ const JobAnalytics = () => {
       const avgDaysInStage = computeAvgDaysInStage(stage.id, talentsInStage);
       const topSource = getTopSource(talentsInStage, t);
 
-      let percentageName = "";
-      if (stage.id === "applied") {
-        percentageName = "Starting";
-      } else if (stage.id === "started_ai_interview") {
-        percentageName = "Started AI Interview/Applied";
-      } else if (stage.id === "ai_interview_completed") {
-        percentageName = "AI Interview Completed/Started AI Interview";
-      } else if (stage.id === "shortlisted") {
-        percentageName = "Shortlisted/Applied";
-      } else if (stage.id === "rejected") {
-        percentageName = "Rejected/Applied";
-      }
-
       result.push({
         stageId: stage.id,
         stageName: stage.name,
         candidates: talentsInStage.length,
         avgDaysInStage: avgDaysInStage != null ? avgDaysInStage : null,
         topSource,
-        percentageName,
       });
     }
     return result;
@@ -215,23 +200,8 @@ const JobAnalytics = () => {
 
   const getConversionRate = (index: number) => {
     if (index === 0) return "--";
-
-    const stage = allStages[index];
-    const allTalentCount = filteredTalents.length;
-
-    const denominator = [
-      "started_ai_interview",
-      "shortlisted",
-      "rejected",
-    ].includes(stage.id)
-      ? allTalentCount
-      : stage.id === "ai_interview_completed"
-        ? filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
-            .length
-        : funnelCumulativeCounts[index - 1];
-
+    const denominator = filteredTalents.length;
     const numerator = getNumerator(index);
-
     if (denominator == null || numerator == null || denominator === 0)
       return "0%";
     return `${Math.round((Math.min(numerator, denominator) / denominator) * 100)}%`;
@@ -338,8 +308,9 @@ const JobAnalytics = () => {
                       </div>
                       <div className={styles.funnelRight}>
                         <div className={styles.conversionText}>
-                          {row.percentageName ||
-                            `${row.stageName}/${stageStats[index - 1].stageName}`}
+                          {row.stageId === "applied"
+                            ? "Starting"
+                            : `${row.stageName}/Applied`}
                           : {getConversionRate(index)}
                         </div>
                         <div className={styles.totalCountText}>
