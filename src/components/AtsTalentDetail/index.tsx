@@ -12,6 +12,8 @@ import {
   Input,
 } from "antd";
 import classnames from "classnames";
+import { v4 as uuidv4 } from "uuid";
+
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
@@ -51,6 +53,13 @@ import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
 import RichTextWithVoice from "../RichTextWithVoice";
 
+type TCustomizedInterview = {
+  id: string;
+  name: string;
+  created_at: string;
+  feedback_records: TInterviewFeedbackRecord[];
+};
+
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
   if (parts.length >= 2) {
@@ -82,13 +91,14 @@ const AtsTalentDetail: React.FC = () => {
   const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
 
   const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
+  const [addFeedbackForInterviewId, setAddFeedbackForInterviewId] = useState<
+    number | string
+  >();
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvanceStatus, setNewFeedbackAdvanceStatus] = useState<
     "advance" | "hold" | "reject"
   >("hold");
   const [newFeedbackRound, setNewFeedbackRound] = useState("");
-  const [isAddFeedbackForInterview, setIsAddFeedbackForInterview] =
-    useState(false);
   const [isMoveStageModalOpen, setIsMoveStageModalOpen] = useState(false);
   const [selectedStageId, setSelectedStageId] = useState<string | undefined>();
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
@@ -105,6 +115,9 @@ const AtsTalentDetail: React.FC = () => {
     needConfirmEvaluateFeedbackConversation,
     setNeedConfirmEvaluateFeedbackConversation,
   ] = useState(false);
+  const [activeInterviewKeys, setActiveInterviewKeys] = useState<string[]>([
+    "round0",
+  ]);
 
   const { job } = useJob();
   const { talent, interviews, fetchTalent } = useTalent();
@@ -364,6 +377,30 @@ const AtsTalentDetail: React.FC = () => {
       </Button>
     );
 
+  const groupedInterviewFeedbackRecordsMap = interviewFeedbackRecords.reduce(
+    (acc, record) => {
+      const roundKey = record.customized_round_key || record.customized_round;
+      if (!acc[roundKey]) {
+        acc[roundKey] = [];
+      }
+      acc[roundKey].push(record);
+      return acc;
+    },
+    {} as Record<string, TInterviewFeedbackRecord[]>,
+  );
+
+  const customizedInterviews: TCustomizedInterview[] = Object.keys(
+    groupedInterviewFeedbackRecordsMap,
+  ).map((roundKey) => {
+    const records = groupedInterviewFeedbackRecordsMap[roundKey];
+    return {
+      id: roundKey,
+      name: records[0]?.customized_round,
+      created_at: records[0]?.created_at,
+      feedback_records: records,
+    };
+  });
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -533,7 +570,10 @@ const AtsTalentDetail: React.FC = () => {
         <section className={styles.interviewsSection}>
           <h2 className={styles.sectionTitle}>Interviews</h2>
           <Collapse
-            defaultActiveKey={["round0"]}
+            activeKey={activeInterviewKeys}
+            onChange={(keys) => {
+              setActiveInterviewKeys(keys);
+            }}
             expandIconPosition="end"
             ghost
             className={styles.interviewsCollapse}
@@ -949,89 +989,89 @@ const AtsTalentDetail: React.FC = () => {
                 </div>
               </div>
             </Collapse.Panel>
-          </Collapse>
-
-          {interviews.length > 0 && (
-            <Collapse
-              defaultActiveKey={["round1"]}
-              expandIconPosition="end"
-              ghost
-              className={styles.interviewsCollapse}
-            >
-              <Collapse.Panel
-                key="round1"
-                header={
-                  <div className={styles.interviewHeader}>
-                    <div className={styles.interviewRound}>
-                      Round 1: Interview
-                    </div>
-                    <div className={styles.interviewMeta}>
-                      {dayjs(interviews[0].created_at).format("MMM DD, YYYY")}
-                    </div>
-                  </div>
-                }
-                className={styles.interviewPanel}
-              >
-                <div className={styles.roundFeedbackSection}>
-                  {interviews[0].feedback_records.length > 0 ? (
-                    <div className={styles.roundFeedbackList}>
-                      {interviews[0].feedback_records.map((record) => (
-                        <div
-                          key={record.id}
-                          className={styles.roundFeedbackItem}
-                        >
-                          <div className={styles.roundFeedbackHeader}>
-                            <span className={styles.roundFeedbackInterviewer}>
-                              {record.staff?.name || "-"}
-                            </span>
-                            <span className={styles.roundFeedbackDate}>
-                              {dayjs(record.created_at).format("MMM DD, YYYY")}
-                            </span>
-                          </div>
-                          <div className={styles.roundFeedbackContent}>
-                            <MarkdownContainer content={record.content} />
-                          </div>
-                          <div className={styles.roundFeedbackFooter}>
-                            <span
-                              className={classnames(
-                                styles.advanceBadge,
-                                record.advance_status === "advance" &&
-                                  styles.advanceYes,
-                                record.advance_status === "hold" &&
-                                  styles.advanceHold,
-                                record.advance_status === "reject" &&
-                                  styles.advanceNo,
-                              )}
-                            >
-                              {record.advance_status === "advance"
-                                ? "Advance"
-                                : record.advance_status === "hold"
-                                  ? "Hold"
-                                  : "Reject"}
-                            </span>
-                          </div>
+            {(interviews.length > 0 || customizedInterviews.length > 0) &&
+              [...interviews, ...customizedInterviews].map((interview) => {
+                return (
+                  <Collapse.Panel
+                    key={interview.id}
+                    header={
+                      <div className={styles.interviewHeader}>
+                        <div className={styles.interviewRound}>
+                          {(interview as TCustomizedInterview).name ||
+                            `Round 1: Interview`}
                         </div>
-                      ))}
+                        <div className={styles.interviewMeta}>
+                          {dayjs(interview.created_at).format("MMM DD, YYYY")}
+                        </div>
+                      </div>
+                    }
+                    className={styles.interviewPanel}
+                  >
+                    <div className={styles.roundFeedbackSection}>
+                      {interview.feedback_records.length > 0 ? (
+                        <div className={styles.roundFeedbackList}>
+                          {interview.feedback_records.map((record) => (
+                            <div
+                              key={record.id}
+                              className={styles.roundFeedbackItem}
+                            >
+                              <div className={styles.roundFeedbackHeader}>
+                                <span
+                                  className={styles.roundFeedbackInterviewer}
+                                >
+                                  {record.staff?.name || "-"}
+                                </span>
+                                <span className={styles.roundFeedbackDate}>
+                                  {dayjs(record.created_at).format(
+                                    "MMM DD, YYYY",
+                                  )}
+                                </span>
+                              </div>
+                              <div className={styles.roundFeedbackContent}>
+                                <MarkdownContainer content={record.content} />
+                              </div>
+                              <div className={styles.roundFeedbackFooter}>
+                                <span
+                                  className={classnames(
+                                    styles.advanceBadge,
+                                    record.advance_status === "advance" &&
+                                      styles.advanceYes,
+                                    record.advance_status === "hold" &&
+                                      styles.advanceHold,
+                                    record.advance_status === "reject" &&
+                                      styles.advanceNo,
+                                  )}
+                                >
+                                  {record.advance_status === "advance"
+                                    ? "Advance"
+                                    : record.advance_status === "hold"
+                                      ? "Hold"
+                                      : "Reject"}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <Empty style={{ marginTop: 60 }} />
+                      )}
+                      <div className={styles.roundFeedbackActions}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => {
+                            setAddFeedbackForInterviewId(interview.id);
+                            setIsAddFeedbackModalOpen(true);
+                          }}
+                        >
+                          + Add Feedback
+                        </Button>
+                      </div>
                     </div>
-                  ) : (
-                    <Empty style={{ marginTop: 60 }} />
-                  )}
-                  <div className={styles.roundFeedbackActions}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => {
-                        setIsAddFeedbackForInterview(true);
-                        setIsAddFeedbackModalOpen(true);
-                      }}
-                    >
-                      + Add Feedback
-                    </Button>
-                  </div>
-                </div>
-              </Collapse.Panel>
-            </Collapse>
-          )}
+                  </Collapse.Panel>
+                );
+              })}
+          </Collapse>
 
           <div
             className={classnames(
@@ -1039,56 +1079,12 @@ const AtsTalentDetail: React.FC = () => {
               styles.customizedFeedbackSection,
             )}
           >
-            {interviewFeedbackRecords.length > 0 && (
-              <div className={styles.roundFeedbackList}>
-                {interviewFeedbackRecords.map((record) => (
-                  <div
-                    key={record.id}
-                    className={classnames(
-                      styles.roundFeedbackItem,
-                      styles.customizedFeedbackItem,
-                    )}
-                  >
-                    <div className={styles.roundFeedbackHeader}>
-                      <span className={styles.roundFeedbackInterviewer}>
-                        {record.staff?.name || "-"} - {record.customized_round}
-                      </span>
-                      <span className={styles.roundFeedbackDate}>
-                        {dayjs(record.created_at).format("MMM DD, YYYY")}
-                      </span>
-                    </div>
-                    <div className={styles.roundFeedbackContent}>
-                      <MarkdownContainer content={record.content} />
-                    </div>
-                    <div className={styles.roundFeedbackFooter}>
-                      <span
-                        className={classnames(
-                          styles.advanceBadge,
-                          record.advance_status === "advance" &&
-                            styles.advanceYes,
-                          record.advance_status === "hold" &&
-                            styles.advanceHold,
-                          record.advance_status === "reject" &&
-                            styles.advanceNo,
-                        )}
-                      >
-                        {record.advance_status === "advance"
-                          ? "Advance"
-                          : record.advance_status === "hold"
-                            ? "Hold"
-                            : "Reject"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
             <div className={styles.roundFeedbackActions}>
               <Button
                 variant="outlined"
                 color="primary"
                 onClick={() => {
-                  setIsAddFeedbackForInterview(false);
+                  setAddFeedbackForInterviewId(undefined);
                   setIsAddFeedbackModalOpen(true);
                 }}
               >
@@ -1218,10 +1214,10 @@ const AtsTalentDetail: React.FC = () => {
           setNewFeedbackContent("");
           setNewFeedbackAdvanceStatus("hold");
           setNewFeedbackRound("");
-          setIsAddFeedbackForInterview(false);
+          setAddFeedbackForInterviewId(undefined);
         }}
         onOk={async () => {
-          if (!isAddFeedbackForInterview && !newFeedbackRound.trim()) {
+          if (!addFeedbackForInterviewId && !newFeedbackRound.trim()) {
             message.error("Please enter interview round.");
             return;
           }
@@ -1231,24 +1227,35 @@ const AtsTalentDetail: React.FC = () => {
             return;
           }
 
+          const isForRealInterview =
+            addFeedbackForInterviewId &&
+            typeof addFeedbackForInterviewId === "number";
+          const newUuid = uuidv4();
+
           const { code } = await Post(
-            isAddFeedbackForInterview
-              ? `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${interviews?.[0]?.id}/feedback_records`
+            isForRealInterview
+              ? `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${addFeedbackForInterviewId}/feedback_records`
               : `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
             {
               content: newFeedbackContent.trim(),
               advance_status: newFeedbackAdvanceStatus,
               customized_round: newFeedbackRound,
+              customized_round_key: isForRealInterview
+                ? undefined
+                : (addFeedbackForInterviewId ?? newUuid),
             },
           );
 
           if (code === 0) {
             message.success("Feedback added");
+            if (!addFeedbackForInterviewId) {
+              setActiveInterviewKeys([...activeInterviewKeys, newUuid]);
+            }
             setIsAddFeedbackModalOpen(false);
             setNewFeedbackContent("");
             setNewFeedbackAdvanceStatus("hold");
             setNewFeedbackRound("");
-            setIsAddFeedbackForInterview(false);
+            setAddFeedbackForInterviewId(undefined);
             fetchInterviewFeedbackRecords();
             fetchTalent();
             fetchActiveLogs();
@@ -1257,7 +1264,7 @@ const AtsTalentDetail: React.FC = () => {
         okText="Save"
       >
         <div className={styles.addFeedbackModal}>
-          {!isAddFeedbackForInterview && (
+          {!addFeedbackForInterviewId && (
             <div className={styles.addFeedbackField}>
               <div className={styles.addFeedbackLabel}>Interview Round</div>
               <div className={styles.addFeedbackContent}>
