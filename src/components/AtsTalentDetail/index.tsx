@@ -1283,6 +1283,7 @@ const AtsTalentDetail: React.FC = () => {
               <RichTextWithVoice
                 value={newFeedbackContent}
                 onChange={setNewFeedbackContent}
+                minHeight={300}
               />
             </div>
           </div>
@@ -1364,6 +1365,7 @@ const AtsTalentDetail: React.FC = () => {
               <RichTextWithVoice
                 value={newNoteContent}
                 onChange={setNewNoteContent}
+                minHeight={300}
               />
             </div>
           </div>
