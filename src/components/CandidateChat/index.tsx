@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, message, Tooltip } from "antd";
+import { Button } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import classnames from "classnames";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 
@@ -11,8 +10,6 @@ import styles from "./style.module.less";
 
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
-import Icon from "../Icon";
-import Delete from "@/assets/icons/delete";
 import AudioPlayer from "../AudioPlayer";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -138,7 +135,7 @@ Shall we start now?`,
     const { code, data } = await Get(
       `/api/candidate/chat/${ChatTypeMappings[chatType]}${
         jobApplyId ? `/${jobApplyId}` : ""
-      }/messages`
+      }/messages`,
     );
 
     if (code === 0) {
@@ -154,7 +151,7 @@ Shall we start now?`,
           let extraTag;
           const autoTriggerTag = supportTags.find((supportTag) => {
             extraTag = (lastMessage.extraTags ?? []).find(
-              (tag) => supportTag.key === tag.name && supportTag.autoTrigger
+              (tag) => supportTag.key === tag.name && supportTag.autoTrigger,
             );
             return !!extraTag;
           });
@@ -210,7 +207,7 @@ Shall we start now?`,
         before_text?: string;
         after_text?: string;
       };
-    }
+    },
   ) => {
     if (isLoading) return;
 
@@ -228,7 +225,7 @@ Shall we start now?`,
         content: formattedMessage,
         voice_payload_id: voice_payload_id,
         metadata: metadata,
-      }
+      },
     );
     if (code === 0) {
       needScrollToBottom.current = true;
@@ -252,24 +249,6 @@ Shall we start now?`,
     }
   };
 
-  const deleteMessage = async (messageId: number) => {
-    const { code } = await Post(
-      `/api/candidate/chat/${ChatTypeMappings[chatType]}${
-        jobApplyId ? `/${jobApplyId}` : ""
-      }/clear_messages`,
-      {
-        message_id: messageId,
-      }
-    );
-
-    if (code === 0) {
-      message.success(t("message_delete_success"));
-      fetchMessages();
-    } else {
-      message.error(t("message_delete_failed"));
-    }
-  };
-
   return (
     <div className={styles.container}>
       <ChatMessageList
@@ -289,7 +268,7 @@ Shall we start now?`,
           const visibleTags = (item.extraTags ?? [])
             .map((extraTag) => {
               return supportTags.find(
-                (tag) => tag.key === extraTag.name && tag.title
+                (tag) => tag.key === extraTag.name && tag.title,
               );
             })
             .filter(Boolean) as TSupportTag[];
@@ -312,7 +291,7 @@ Shall we start now?`,
                           type="primary"
                           onClick={() => {
                             const extraTag = (item.extraTags ?? []).find(
-                              (extraTag) => extraTag.name === tag.key
+                              (extraTag) => extraTag.name === tag.key,
                             );
                             tag.handler(extraTag);
                           }}
@@ -335,30 +314,6 @@ Shall we start now?`,
                 />
               )}
             </>
-          );
-        }}
-        renderOperationContent={(item) => {
-          const canDelete =
-            item.role === "user" &&
-            item.messageType === "normal" &&
-            !["fake_ai_id", "fake_user_id"].includes(item.id);
-
-          return (
-            canDelete && (
-              <div className={classnames(styles.operationArea, styles.user)}>
-                <Tooltip title={originalT("delete")}>
-                  <div
-                    onClick={() => {
-                      if (confirm(t("confirm_delete_message"))) {
-                        deleteMessage(parseInt(item.id));
-                      }
-                    }}
-                  >
-                    <Icon icon={<Delete />} />
-                  </div>
-                </Tooltip>
-              </div>
-            )
           );
         }}
       />
