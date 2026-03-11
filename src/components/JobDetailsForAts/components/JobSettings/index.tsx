@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Button, Input, message, Select } from "antd";
+import { Button, Input, message, Select, Switch } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import {
@@ -156,7 +156,7 @@ const JobSettings = ({ jobId }: IProps) => {
   const [newStaffId, setNewStaffId] = useState<number | undefined>(undefined);
   const [collabUpdating, setCollabUpdating] = useState(false);
 
-  const { job } = useJob();
+  const { job, fetchJob } = useJob();
   const { staffs } = useStaffs();
 
   const defaultStages: PipelineStage[] = DEFAULT_STAGES.map((name, i) => ({
@@ -216,6 +216,17 @@ const JobSettings = ({ jobId }: IProps) => {
     if (!newStaffId || selectedStaffIds.includes(newStaffId)) return;
     handleUpdateCollaborators([...selectedStaffIds, newStaffId]);
     setNewStaffId(undefined);
+  };
+
+  const handleToggleConfidential = async (checked: boolean) => {
+    if (!job) return;
+    const { code } = await Post(`/api/jobs/${job.id}`, {
+      is_confidential: checked,
+    });
+    if (code === 0) {
+      message.success(t("job_details.saveSuccess"));
+      fetchJob();
+    }
   };
 
   const handleRemoveCollaborator = (staffId: number) => {
@@ -430,6 +441,14 @@ const JobSettings = ({ jobId }: IProps) => {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Is confidential</div>
+        <Switch
+          checked={!!job?.is_confidential}
+          onChange={handleToggleConfidential}
+        />
       </div>
     </div>
   );

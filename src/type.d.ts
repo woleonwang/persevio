@@ -77,6 +77,8 @@ interface IJob {
   bonus_pool: number;
   pipeline_stages: string;
 
+  is_confidential: boolean;
+
   admin_jobs?: {
     admin: {
       id: number;
