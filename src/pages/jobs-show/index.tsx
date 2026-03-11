@@ -19,7 +19,13 @@ import dayjs from "dayjs";
 import JobChatBot from "@/components/JobChatBot";
 import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { copy, getQuery, isTempAccount, parseJSON } from "@/utils";
+import {
+  copy,
+  getCompanyLogo,
+  getQuery,
+  isTempAccount,
+  parseJSON,
+} from "@/utils";
 import { storage, StorageKey } from "@/utils/storage";
 import Icon from "@/components/Icon";
 import Send from "@/assets/icons/send";
@@ -142,7 +148,7 @@ const JobsShow = () => {
     const shareToken = getQuery("share_token");
     const shareTokenMapping = storage.get<Record<string, string>>(
       StorageKey.SHARE_TOKEN,
-      {}
+      {},
     ) as Record<string, string>;
 
     if (shareToken) {
@@ -172,7 +178,7 @@ const JobsShow = () => {
     if (sourceChannel) {
       const sourceChannelMapping = storage.get<Record<string, string>>(
         StorageKey.SOURCE_CHANNEL,
-        {}
+        {},
       ) as Record<string, string>;
 
       if (sourceChannel) {
@@ -247,11 +253,7 @@ const JobsShow = () => {
             <div className={styles.bannerLeft}>
               {!!company.logo && (
                 <img
-                  src={
-                    company.logo.startsWith("http")
-                      ? company.logo
-                      : `/api/logo/${company.logo}`
-                  }
+                  src={getCompanyLogo(company.logo)}
                   className={classnames(styles.logo, styles.desktopVisible)}
                   alt={company.name}
                 />
@@ -292,7 +294,7 @@ const JobsShow = () => {
                       <span className={styles.attributeIcon} />
                       <span>
                         {originalT(
-                          `public_jobs.job_card.role_type.${job.basic_info.role_type}`
+                          `public_jobs.job_card.role_type.${job.basic_info.role_type}`,
                         )}
                       </span>
                     </div>
@@ -304,16 +306,12 @@ const JobsShow = () => {
               <div
                 className={classnames(
                   styles.companySection,
-                  styles.mobileVisible
+                  styles.mobileVisible,
                 )}
               >
                 {!!company.logo && (
                   <img
-                    src={
-                      company.logo.startsWith("http")
-                        ? company.logo
-                        : `/api/logo/${company.logo}`
-                    }
+                    src={getCompanyLogo(company.logo)}
                     className={styles.logo}
                     alt={company.name}
                   />
@@ -349,11 +347,11 @@ const JobsShow = () => {
                         } else {
                           // 是否已经创建职位申请
                           const { code, data } = await Get(
-                            `/api/candidate/jobs/${id}/job_apply`
+                            `/api/candidate/jobs/${id}/job_apply`,
                           );
                           if (code === 0) {
                             navigate(
-                              `/candidate/jobs/applies/${data.job_apply.id}?open=1`
+                              `/candidate/jobs/applies/${data.job_apply.id}?open=1`,
                             );
                           } else {
                             const sourceChannelMapping = storage.get<
@@ -366,11 +364,11 @@ const JobsShow = () => {
                               {
                                 job_id: parseInt(id as string),
                                 source_channel: sourceChannel,
-                              }
+                              },
                             );
                             if (code === 0) {
                               navigate(
-                                `/candidate/jobs/applies/${data.job_apply_id}?open=1`
+                                `/candidate/jobs/applies/${data.job_apply_id}?open=1`,
                               );
                             } else {
                               message.error(t("apply_job_failed"));

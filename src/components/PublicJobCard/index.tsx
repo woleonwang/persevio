@@ -1,4 +1,4 @@
-import { getJobChatbotUrl } from "@/utils";
+import { getCompanyLogo, getJobChatbotUrl } from "@/utils";
 import { useTranslation } from "react-i18next";
 
 import styles from "./style.module.less";
@@ -131,12 +131,6 @@ const PublicJobCard = ({ job }: { job: JobPosting }) => {
     }
   };
 
-  const companyLogo = (job: JobPosting) => {
-    return job.company_logo.startsWith("http")
-      ? job.company_logo
-      : `/api/logo/${job.company_logo}`;
-  };
-
   const formatUpdatedAt = (updatedAt: string): string => {
     const now = dayjs();
     const updated = dayjs(updatedAt);
@@ -167,7 +161,7 @@ const PublicJobCard = ({ job }: { job: JobPosting }) => {
           <img
             src={
               job.company_logo
-                ? companyLogo(job)
+                ? getCompanyLogo(job.company_logo)
                 : `/api/logo/${
                     MockCompanies[job.id % MockCompanies.length].logo
                   }`
@@ -200,7 +194,7 @@ const PublicJobCard = ({ job }: { job: JobPosting }) => {
           <span className={styles["experience-tag"]}>
             {job.employee_level
               .map((level) =>
-                t(`job_card.employee_level.${levelTranslations[level]}`)
+                t(`job_card.employee_level.${levelTranslations[level]}`),
               )
               .join("、")}
           </span>

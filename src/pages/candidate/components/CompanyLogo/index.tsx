@@ -1,4 +1,4 @@
-import { getImgSrc } from "@/utils";
+import { getCompanyLogo } from "@/utils";
 import styles from "./style.module.less";
 
 interface IProps {
@@ -8,7 +8,7 @@ const CompanyLogo = (props: IProps) => {
   const { logo } = props;
   return (
     <div className={styles.companyLogo}>
-      <img src={getImgSrc(logo)} />
+      <img src={getCompanyLogo(logo)} />
     </div>
   );
 };

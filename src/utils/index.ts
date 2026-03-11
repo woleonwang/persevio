@@ -40,12 +40,6 @@ export const isDevelopment = (): boolean => {
   return process.env.NODE_ENV === "development";
 };
 
-export const getImgSrc = (originalUrl: string) => {
-  return originalUrl.startsWith("http")
-    ? originalUrl
-    : `/api/logo/${originalUrl}`;
-};
-
 export const parseJd = (originalJd: string) => {
   return originalJd.replaceAll(/<chatbot-delete>.*<\/chatbot-delete>/g, "");
 };
@@ -329,4 +323,11 @@ export const getSourcingChannel = (sc: string = "persevio"): string => {
   if (sc === "customer") return "direct";
   if (sc === "system" || sc === "delivery" || sc === "") return "persevio";
   return sc;
+};
+
+export const getCompanyLogo = (logo: string = "") => {
+  if (logo === "persevio") {
+    return "/company-logo/persevio.png";
+  }
+  return logo.startsWith("http") ? logo : `/api/logo/${logo}`;
 };
