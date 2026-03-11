@@ -86,10 +86,6 @@ const JobList = () => {
       dataIndex: "total_candidates",
     },
     {
-      title: t("columns.candidates_passed_screening"),
-      dataIndex: "candidates_passed_screening",
-    },
-    {
       title: t("columns.actions"),
       dataIndex: "action",
       render: (_, record) => {
@@ -105,7 +101,7 @@ const JobList = () => {
                   }),
                   onOk: async () => {
                     const { code } = await Post(
-                      `/api/jobs/${record.id}/destroy`
+                      `/api/jobs/${record.id}/destroy`,
                     );
                     if (code === 0) {
                       message.success(originalT("submit_succeed"));
@@ -135,8 +131,8 @@ const JobList = () => {
                     getJobChatbotUrl(
                       record.id,
                       record.jd_version?.toString(),
-                      "customer"
-                    )
+                      "customer",
+                    ),
                   );
                 }}
               >

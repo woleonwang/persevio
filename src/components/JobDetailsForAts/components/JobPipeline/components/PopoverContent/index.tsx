@@ -127,7 +127,17 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
     >
       <div className={styles.cardHeader}>
         <div className={styles.cardTitle}>
-          <div className={styles.cardTitleName}>{talent.name || "-"}</div>
+          <div
+            className={styles.cardTitleName}
+            onClick={() =>
+              window.open(
+                `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                "_blank",
+              )
+            }
+          >
+            {talent.name || "-"}
+          </div>
           <div className={styles.cardTitleResult}>
             <EvaluateResultBadge
               result={getEvaluateResultLevel(
@@ -187,7 +197,15 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
         </div>
       </div>
 
-      <div className={styles.cardContent}>
+      <div
+        className={styles.cardContent}
+        onClick={() =>
+          window.open(
+            `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+            "_blank",
+          )
+        }
+      >
         <div className={styles.evaluateSummary}>
           <div className={styles.evaluateSummaryTitle}>
             <Icon icon={<Stars />} />
