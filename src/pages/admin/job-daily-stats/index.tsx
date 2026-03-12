@@ -243,7 +243,7 @@ const JobDailyStats = () => {
 
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminPageHeader}>Daily Breakdown</div>
+      <div className={styles.adminPageHeader}>Daily Job Breakdown</div>
       <div className={styles.adminFilter}>
         <div className={styles.adminFilterItem}>
           <span>Date</span>
