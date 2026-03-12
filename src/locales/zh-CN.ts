@@ -391,6 +391,7 @@ export default {
     candidate_list: "C端用户列表",
     candidate_connection_list: "匹配列表",
     company_list: "公司列表",
+    daily_breakdown: "每日统计",
 
     home: "首页",
     profile: "简历",

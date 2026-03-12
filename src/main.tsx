@@ -38,6 +38,7 @@ import JobApplyShow from "./pages/candidate/job-apply-show";
 import CandidateHome from "./pages/candidate/candidate-home";
 
 import AdminJobs from "./pages/admin/jobs";
+import JobDailyStats from "./pages/admin/job-daily-stats";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -195,6 +196,7 @@ createRoot(document.getElementById("root")!).render(
           {/* 管理员职位列表：用于推荐给候选人 */}
           <Route path="/admin/jobs" element={<AdminJobs />} />
           <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
+          <Route path="/admin/job-daily-stats" element={<JobDailyStats />} />
           {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
           <Route path="/admin/talents" element={<ScopedTalents />} />
           {/* 管理员企业审核列表 */}

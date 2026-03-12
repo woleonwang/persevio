@@ -400,6 +400,7 @@ export default {
     candidate_list: "Candidate List",
     candidate_connection_list: "Candidate Connection List",
     company_list: "Company List",
+    daily_breakdown: "Daily Breakdown",
 
     home: "Home",
     profile: "Profile",
