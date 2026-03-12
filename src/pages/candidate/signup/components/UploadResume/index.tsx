@@ -48,13 +48,13 @@ const UploadResume = (props: IProps) => {
                 const formData = new FormData();
                 formData.append("file", fileInfo.file as any);
                 const { code, data } = await PostFormData(
+                  // `/api/upload_resume_to_oss`,
                   `/api/upload_resume`,
-                  formData
+                  formData,
                 );
                 if (code === 0) {
                   message.success("Upload successful");
                   setResumePath(data.resume);
-                  console.log("resume:", data.resume);
                   setResumeFileName(fileInfo.file.name);
                 } else {
                   message.error(data.message);

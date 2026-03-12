@@ -83,7 +83,7 @@ const Signup: React.FC = () => {
 
     const candidate: ICandidateSettings = data1.candidate;
     const preRegisterInfo: IPreRegisterInfo = parseJSON(
-      data1.candidate.pre_register_info ?? "{}"
+      data1.candidate.pre_register_info ?? "{}",
     );
     setPreRegisterInfo(preRegisterInfo);
     setResumePath(data1.candidate.resume_path ?? "");
@@ -126,7 +126,7 @@ const Signup: React.FC = () => {
   };
 
   const fetchJobApply = async (
-    jobId: number
+    jobId: number,
   ): Promise<IJobApply | undefined> => {
     if (!jobId) {
       return undefined;
@@ -167,11 +167,11 @@ const Signup: React.FC = () => {
           storage.get<Record<string, string>>(StorageKey.SHARE_TOKEN, {}) || {};
         const shareToken = shareTokenMapping[jobIdQuery];
         const linkedinProfileId = storage.get<string>(
-          StorageKey.LINKEDIN_PROFILE_ID
+          StorageKey.LINKEDIN_PROFILE_ID,
         );
         const sourceChannelMapping = storage.get<Record<string, string>>(
           StorageKey.SOURCE_CHANNEL,
-          {}
+          {},
         );
         const sourceChannel = sourceChannelMapping?.[jobIdQuery];
         params = {
@@ -202,6 +202,7 @@ const Signup: React.FC = () => {
     setIsSubmitting(true);
 
     const params = {
+      // type: "oss",
       resume_path: resumePath,
     };
     const { code } = await Post(`/api/candidate/resume`, params);
@@ -240,10 +241,10 @@ const Signup: React.FC = () => {
     await copy(
       `${window.location.href}?candidate_token=${
         tokenStorage.getToken("candidate") || ""
-      }`
+      }`,
     );
     message.success(
-      "The link has been copied. Simply open it in a new device's browser to resume chatting."
+      "The link has been copied. Simply open it in a new device's browser to resume chatting.",
     );
   };
 
@@ -256,7 +257,7 @@ const Signup: React.FC = () => {
         }`,
         {
           replace: true,
-        }
+        },
       );
     } else {
       navigate("/candidate/profile", { replace: true });
@@ -264,7 +265,7 @@ const Signup: React.FC = () => {
   };
 
   const currentIndex = ["basic", "resume", "binding", "whatsapp"].indexOf(
-    pageState || "basic"
+    pageState || "basic",
   );
 
   if (!pageState) {
