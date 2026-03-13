@@ -125,6 +125,7 @@ const JobPipeline = ({
         parsedTalents.map((t) => ({
           ...t,
           stageKey: getStageKey(t),
+          cachedViewedAt: t.viewed_at,
         })),
       );
       setLinkedinProfiles(data.linkedin_profiles ?? []);

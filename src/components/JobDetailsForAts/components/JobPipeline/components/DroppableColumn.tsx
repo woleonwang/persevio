@@ -106,7 +106,19 @@ const DroppableColumn = ({
                   b.parsedEvaluateResult?.result,
               );
 
-              if (fitLevelA === fitLevelB) {
+              if (
+                !a.cachedViewedAt &&
+                fitLevelA !== "not_a_fit" &&
+                b.cachedViewedAt
+              ) {
+                return -1;
+              } else if (
+                !b.cachedViewedAt &&
+                fitLevelB !== "not_a_fit" &&
+                a.cachedViewedAt
+              ) {
+                return 1;
+              } else if (fitLevelA === fitLevelB) {
                 return dayjs(b.created_at).diff(dayjs(a.created_at));
               } else {
                 return (

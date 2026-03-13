@@ -509,6 +509,7 @@ type TTalentListItem = TTalent & {
     created_at?: string;
   }[];
   stageKey?: string;
+  cachedViewedAt?: string;
 };
 
 type TInterview = {
