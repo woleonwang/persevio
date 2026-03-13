@@ -253,6 +253,19 @@ const JobPipeline = ({
     ? talents.find((i) => i.id === activeId)
     : undefined;
 
+  const handleMarkViewed = (talentId: number) => {
+    setTalents((prev) =>
+      prev.map((t) =>
+        t.id === talentId
+          ? {
+              ...t,
+              viewed_at: t.viewed_at || new Date().toISOString(),
+            }
+          : t,
+      ),
+    );
+  };
+
   if (!job) return <Spin />;
 
   return (
@@ -370,6 +383,7 @@ const JobPipeline = ({
                 onGoToReachedOut={() => {
                   onChangeTab("outreachCampaigns");
                 }}
+                onMarkViewed={handleMarkViewed}
               />
             ))}
           </div>
@@ -382,6 +396,7 @@ const JobPipeline = ({
                   disabledPopover
                   onCardClick={() => {}}
                   onUpdateTalent={() => {}}
+                  onViewed={() => {}}
                 />
               </div>
             ) : null}

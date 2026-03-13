@@ -18,6 +18,7 @@ interface IProps {
   disabledPopover?: boolean;
   onCardClick: (item: TTalentListItem) => void;
   onUpdateTalent: () => void;
+  onViewed?: (talentId: number) => void;
 }
 
 const DraggableCard = ({
@@ -26,6 +27,7 @@ const DraggableCard = ({
   disabledPopover,
   onCardClick,
   onUpdateTalent,
+  onViewed,
 }: IProps) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: item.id,
@@ -34,7 +36,6 @@ const DraggableCard = ({
   });
 
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [hasViewed, setHasViewed] = useState<boolean>(!!item.viewed_at);
 
   const { t } = useTranslation();
 
@@ -59,9 +60,9 @@ const DraggableCard = ({
 
   const handleOpenChange = async (open: boolean) => {
     setPopoverOpen(open);
-    if (open && !hasViewed && !item.viewed_at) {
-      setHasViewed(true);
+    if (open && !item.viewed_at) {
       Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
+      onViewed?.(item.id);
     }
   };
 
@@ -86,12 +87,8 @@ const DraggableCard = ({
         {...(isDraggable ? { ...attributes, ...listeners } : {})}
       >
         <div className={styles.cardHeader}>
-          <div className={styles.cardNameWrap}>
-            <div className={styles.cardName}>{name}</div>
-            {!hasViewed && !item.viewed_at && (
-              <span className={styles.unreadDot} />
-            )}
-          </div>
+          <div className={styles.cardNameWrap}>{name}</div>
+          {!item.viewed_at && <span className={styles.newBadge}>NEW!</span>}
         </div>
         <div className={styles.cardDivider} />
         <div className={styles.cardBody}>

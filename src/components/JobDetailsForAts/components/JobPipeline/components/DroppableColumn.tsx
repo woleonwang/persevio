@@ -16,6 +16,7 @@ interface IProps {
   onUpdateTalent: () => void;
   onGoToReachedOut: () => void;
   renderReachedOutSummary?: boolean;
+  onMarkViewed?: (talentId: number) => void;
 }
 
 const DroppableColumn = ({
@@ -26,6 +27,7 @@ const DroppableColumn = ({
   onUpdateTalent,
   onGoToReachedOut,
   renderReachedOutSummary,
+  onMarkViewed,
 }: IProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `stage-${stage.id}`,
@@ -33,6 +35,11 @@ const DroppableColumn = ({
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
+
+  const unreadCount =
+    !renderReachedOutSummary
+      ? (items as TTalentListItem[]).filter((t) => !t.viewed_at).length
+      : 0;
 
   return (
     <div
@@ -44,7 +51,12 @@ const DroppableColumn = ({
     >
       <div className={styles.columnHeader}>
         <span className={styles.columnTitle}>{stage.name}</span>
-        <span className={styles.columnCount}>{items.length}</span>
+        <div className={styles.columnHeaderRight}>
+          <span className={styles.columnCount}>{items.length}</span>
+          {unreadCount > 0 && (
+            <span className={styles.columnUnreadBadge}>{unreadCount}</span>
+          )}
+        </div>
       </div>
       <div className={styles.columnContent}>
         {renderReachedOutSummary && (
@@ -114,6 +126,7 @@ const DroppableColumn = ({
                   isDraggable={!isRejected}
                   onCardClick={() => onCardClick(talent)}
                   onUpdateTalent={onUpdateTalent}
+                  onViewed={onMarkViewed}
                 />
               );
             })}
