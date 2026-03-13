@@ -23,7 +23,10 @@ interface IProps {
   onUpdateTalent: () => void;
 }
 
-const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
+const TalentPopoverContent = ({
+  talent: talentProps,
+  onUpdateTalent,
+}: IProps) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
   const [talent, setTalent] = useState<TTalentListItem>(talentProps);
@@ -438,4 +441,4 @@ const PopoverContent = ({ talent: talentProps, onUpdateTalent }: IProps) => {
   );
 };
 
-export default PopoverContent;
+export default TalentPopoverContent;

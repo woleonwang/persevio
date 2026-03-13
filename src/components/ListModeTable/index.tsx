@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Dropdown, Modal, Popover, Select, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ import List from "@/assets/icons/list";
 import { EVALUATE_RESULT_LEVEL_KEYS } from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
-import PopoverContent from "@/components/JobDetailsForAts/components/JobPipeline/components/PopoverContent";
+import TalentPopoverContent from "@/components/TalentPopoverContent";
 import { getCandidateCardData } from "./utils";
 
 import styles from "./style.module.less";
@@ -53,21 +53,42 @@ const ListModeTable = ({
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
-  const wrapCell = (record: TTalentListItem, children: React.ReactNode) => (
-    <Popover
-      content={
-        <PopoverContent
-          talent={record}
-          onUpdateTalent={onUpdateTalent ?? (() => {})}
-        />
+  const [viewedMap, setViewedMap] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const next: Record<number, boolean> = {};
+    items.forEach((talent) => {
+      next[talent.id] = !!talent.viewed_at;
+    });
+    setViewedMap(next);
+  }, [items]);
+
+  const wrapCell = (record: TTalentListItem, children: React.ReactNode) => {
+    const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
+    const handleOpenChange = (open: boolean) => {
+      if (open && !hasViewed && !record.viewed_at) {
+        setViewedMap((prev) => ({ ...prev, [record.id]: true }));
+        Post(`/api/jobs/${record.job_id}/talents/${record.id}/viewed`, {});
       }
-      trigger="hover"
-      placement="right"
-      mouseEnterDelay={0.5}
-    >
-      <span className={styles.cellTrigger}>{children}</span>
-    </Popover>
-  );
+    };
+
+    return (
+      <Popover
+        content={
+          <TalentPopoverContent
+            talent={record}
+            onUpdateTalent={onUpdateTalent ?? (() => {})}
+          />
+        }
+        trigger="hover"
+        placement="right"
+        mouseEnterDelay={0.5}
+        onOpenChange={handleOpenChange}
+      >
+        <span className={styles.cellTrigger}>{children}</span>
+      </Popover>
+    );
+  };
 
   const enablePipelineActions =
     variant === "pipeline" &&
@@ -151,7 +172,16 @@ const ListModeTable = ({
       width: 180,
       render: (_: unknown, record: TTalentListItem) => {
         const { name } = getCandidateCardData(record);
-        return wrapCell(record, name);
+        const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
+        return wrapCell(
+          record,
+          <span className={styles.nameWithDot}>
+            {name}
+            {!hasViewed && !record.viewed_at && (
+              <span className={styles.unreadDot} />
+            )}
+          </span>,
+        );
       },
     },
     {
@@ -316,16 +346,22 @@ const ListModeTable = ({
       : []),
   ];
 
-  const talentsColumnsBase: ColumnsType<TTalentListItem> = [
+  const talentsColumns: ColumnsType<TTalentListItem> = [
     {
       title: "Candidate",
       dataIndex: "name",
       width: 180,
       render: (_: unknown, record) => {
         const { name } = getCandidateCardData(record);
+        const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
         return wrapCell(
           record,
-          <span className={styles.ellipsis}>{name}</span>,
+          <span className={styles.nameWithDot}>
+            {name}
+            {!hasViewed && !record.viewed_at && (
+              <span className={styles.unreadDot} />
+            )}
+          </span>,
         );
       },
     },
@@ -393,87 +429,6 @@ const ListModeTable = ({
       },
     },
   ];
-
-  const talentsColumns: ColumnsType<TTalentListItem> = enablePipelineActions
-    ? [
-        ...talentsColumnsBase,
-        {
-          title: tKey("actions"),
-          key: "actions",
-          width: 100,
-          fixed: "right",
-          render: (_: unknown, record: TTalentListItem) => {
-            const interview = record.interviews?.[0];
-            const hasScheduledInterview =
-              interview &&
-              (interview.mode === "written" || !!interview.scheduled_at);
-
-            const menuItems = [
-              ...(allStages.length > 0
-                ? [
-                    {
-                      key: "move_stage",
-                      label: tKey("move_stage"),
-                      onClick: () => {
-                        setActionRecord(record);
-                        setSelectedStageId(undefined);
-                        setMoveStageOpen(true);
-                      },
-                    },
-                  ]
-                : []),
-              {
-                key: "schedule",
-                label: hasScheduledInterview
-                  ? tKey("view_interview_info")
-                  : tKey("schedule_interview"),
-                onClick: () => {
-                  setActionRecord(record);
-                  setInterviewOpen(true);
-                },
-              },
-              ...(record.status !== "rejected"
-                ? [
-                    {
-                      key: "reject",
-                      label: tKey("reject"),
-                      danger: true,
-                      onClick: () => {
-                        setActionRecord(record);
-                        if (record.evaluate_feedback) {
-                          updateTalentStatus(
-                            record,
-                            record.evaluate_feedback_reason,
-                          );
-                        } else {
-                          setRejectOpen(true);
-                        }
-                      },
-                    },
-                  ]
-                : []),
-            ];
-
-            return (
-              <div
-                className={styles.actionsCell}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
-                  <Button
-                    variant="outlined"
-                    style={{ borderRadius: 8 }}
-                    icon={<List />}
-                    className={styles.actionsBtn}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </Dropdown>
-              </div>
-            );
-          },
-        },
-      ]
-    : talentsColumnsBase;
 
   return (
     <div className={styles.listTableWrap}>

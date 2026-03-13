@@ -6,10 +6,11 @@ import { useState } from "react";
 import { getSourcingChannel } from "@/utils";
 import { getCandidateCardData } from "@/components/ListModeTable/utils";
 import styles from "../style.module.less";
-import PopoverContent from "./PopoverContent";
+import TalentPopoverContent from "@/components/TalentPopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
 import { DEFAULT_TRACKING_SOURCES } from "./utils";
+import { Post } from "@/utils/request";
 
 interface IProps {
   item: TTalentListItem;
@@ -33,6 +34,7 @@ const DraggableCard = ({
   });
 
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [hasViewed, setHasViewed] = useState<boolean>(!!item.viewed_at);
 
   const { t } = useTranslation();
 
@@ -55,14 +57,24 @@ const DraggableCard = ({
       })()
     : "-";
 
+  const handleOpenChange = async (open: boolean) => {
+    setPopoverOpen(open);
+    if (open && !hasViewed && !item.viewed_at) {
+      setHasViewed(true);
+      Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
+    }
+  };
+
   return (
     <Popover
-      content={<PopoverContent talent={item} onUpdateTalent={onUpdateTalent} />}
+      content={
+        <TalentPopoverContent talent={item} onUpdateTalent={onUpdateTalent} />
+      }
       trigger="hover"
       placement="right"
       mouseEnterDelay={0.5}
       open={!disabledPopover && popoverOpen && !isDragging}
-      onOpenChange={setPopoverOpen}
+      onOpenChange={handleOpenChange}
     >
       <div
         ref={setNodeRef}
@@ -74,7 +86,12 @@ const DraggableCard = ({
         {...(isDraggable ? { ...attributes, ...listeners } : {})}
       >
         <div className={styles.cardHeader}>
-          <div className={styles.cardName}>{name}</div>
+          <div className={styles.cardNameWrap}>
+            <div className={styles.cardName}>{name}</div>
+            {!hasViewed && !item.viewed_at && (
+              <span className={styles.unreadDot} />
+            )}
+          </div>
         </div>
         <div className={styles.cardDivider} />
         <div className={styles.cardBody}>
