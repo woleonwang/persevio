@@ -997,8 +997,9 @@ const AtsTalentDetail: React.FC = () => {
                     header={
                       <div className={styles.interviewHeader}>
                         <div className={styles.interviewRound}>
-                          {(interview as TCustomizedInterview).name ||
-                            `Round 1: Interview`}
+                          {(interview as TCustomizedInterview).name
+                            ? `Interview Round: ${(interview as TCustomizedInterview).name}`
+                            : `Round 1: Interview`}
                         </div>
                         <div className={styles.interviewMeta}>
                           {dayjs(interview.created_at).format("MMM DD, YYYY")}
@@ -1088,7 +1089,7 @@ const AtsTalentDetail: React.FC = () => {
                   setIsAddFeedbackModalOpen(true);
                 }}
               >
-                + Add Feedback
+                + Create New Interview Round
               </Button>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { getInitials } from "./utils";
 import DraggableCard from "./DraggableCard";
 import styles from "../style.module.less";
 import dayjs from "dayjs";
-import { EVALUATE_RESULT_LEVEL_KEYS } from "@/utils";
+import { EVALUATE_RESULT_LEVEL_KEYS, getEvaluateResultLevel } from "@/utils";
 
 interface IProps {
   stage: PipelineStage;
@@ -36,10 +36,9 @@ const DroppableColumn = ({
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
-  const unreadCount =
-    !renderReachedOutSummary
-      ? (items as TTalentListItem[]).filter((t) => !t.viewed_at).length
-      : 0;
+  const unreadCount = !renderReachedOutSummary
+    ? (items as TTalentListItem[]).filter((t) => !t.viewed_at).length
+    : 0;
 
   return (
     <div
@@ -98,14 +97,14 @@ const DroppableColumn = ({
         {!renderReachedOutSummary &&
           (items as TTalentListItem[])
             .sort((a, b) => {
-              const fitLevelA =
+              const fitLevelA = getEvaluateResultLevel(
                 a.parsedEvaluateResult?.overall_recommendation?.result ||
-                a.parsedEvaluateResult?.result ||
-                "maybe";
-              const fitLevelB =
+                  a.parsedEvaluateResult?.result,
+              );
+              const fitLevelB = getEvaluateResultLevel(
                 b.parsedEvaluateResult?.overall_recommendation?.result ||
-                b.parsedEvaluateResult?.result ||
-                "maybe";
+                  b.parsedEvaluateResult?.result,
+              );
 
               if (fitLevelA === fitLevelB) {
                 return dayjs(b.created_at).diff(dayjs(a.created_at));
