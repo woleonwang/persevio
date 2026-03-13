@@ -218,15 +218,68 @@ const JobSettings = ({ jobId }: IProps) => {
     setNewStaffId(undefined);
   };
 
-  const handleToggleConfidential = async (checked: boolean) => {
+  const handleToggleConfidential = (checked: boolean) => {
     if (!job) return;
-    const { code } = await Post(`/api/jobs/${job.id}`, {
-      is_confidential: checked,
-    });
-    if (code === 0) {
-      message.success(t("job_details.saveSuccess"));
-      fetchJob();
+
+    // 关闭 -> 开启：先弹确认，再更新
+    if (!job.is_confidential && checked) {
+      confirmModal({
+        title: "You are making this job a Confidential Search",
+        content: (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <p style={{ margin: 0 }}>
+              We will create an anonymized version of this job posting that
+              removes your company name and any identifying details. It will be
+              posted under Persevio as if we are your agency, posting on your
+              behalf.
+            </p>
+            <p style={{ margin: 0 }}>
+              Candidates will know this is a confidential search, but will not
+              know which company is hiring. Viona will discuss the role
+              requirements with candidates during prescreening, but will not
+              disclose any information that could directly or indirectly
+              identify your company. Your company's identity will only be
+              disclosed when you choose to — typically when you shortlist
+              candidates for further conversations.
+            </p>
+            <p style={{ margin: 0 }}>
+              All other aspects of the hiring process remain the same:
+              candidates will go through Viona&apos;s prescreening, and you will
+              receive assessment reports as usual.
+            </p>
+          </div>
+        ),
+        styles: {
+          content: {
+            width: 600,
+          },
+        },
+        okText: "Proceed",
+        cancelText: "Cancel",
+        onOk: async () => {
+          const { code } = await Post(`/api/jobs/${job.id}`, {
+            is_confidential: true,
+          });
+          if (code === 0) {
+            message.success(t("job_details.saveSuccess"));
+            fetchJob();
+          }
+        },
+      });
+
+      return;
     }
+
+    // 其它情况（开启 -> 关闭 或重复点击）：直接更新
+    (async () => {
+      const { code } = await Post(`/api/jobs/${job.id}`, {
+        is_confidential: checked,
+      });
+      if (code === 0) {
+        message.success(t("job_details.saveSuccess"));
+        fetchJob();
+      }
+    })();
   };
 
   const handleRemoveCollaborator = (staffId: number) => {
