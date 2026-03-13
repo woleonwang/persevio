@@ -167,7 +167,7 @@ const Register: React.FC<IProps> = (props) => {
         };
         message.error(
           errMeesageMapping[signupCode as keyof typeof errMeesageMapping] ||
-            t("signup_failed")
+            t("signup_failed"),
         );
       }
     });
@@ -197,9 +197,6 @@ const Register: React.FC<IProps> = (props) => {
           name="password"
           rules={[
             {
-              required: true,
-            },
-            {
               validator(_, value, callback) {
                 if (process.env.NODE_ENV === "development") {
                   return callback();
@@ -222,7 +219,7 @@ const Register: React.FC<IProps> = (props) => {
                 }
                 if (
                   !/[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·！#￥（——）：；“”‘、，|《。》？、【】]/.test(
-                    value
+                    value,
                   )
                 ) {
                   return callback(t("password_special_error"));
@@ -292,8 +289,8 @@ const Register: React.FC<IProps> = (props) => {
                   {countdown > 0
                     ? `${countdown}${t("countdown")}`
                     : isSendingCode
-                    ? t("sending")
-                    : t("send_code")}
+                      ? t("sending")
+                      : t("send_code")}
                 </Button>
               }
             />
