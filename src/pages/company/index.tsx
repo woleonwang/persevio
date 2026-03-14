@@ -6,6 +6,7 @@ import TextAreaWithHint from "./components/TextAreaWithHint";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import { tokenStorage } from "@/utils/storage";
+import { getCompanyLogo } from "@/utils";
 
 const CompanyKnowledge = () => {
   const [form] = Form.useForm();
@@ -80,7 +81,7 @@ const CompanyKnowledge = () => {
             >
               {logo ? (
                 <img
-                  src={`/api/logo/${logo}`}
+                  src={getCompanyLogo(logo)}
                   alt="logo"
                   style={{ width: "100%" }}
                 />
