@@ -85,9 +85,7 @@ const JobDailyStats = () => {
           Get<JobDailyStatsPayload>("/api/admin/job_daily_stats", {
             timestamp: prevTimestampParam,
           } as Record<string, unknown>),
-          Get<{ jobs: JobInfo[]; total: number }>(
-            "/api/admin/jobs?page=1&size=500",
-          ),
+          Get<{ jobs: JobInfo[]; total: number }>("/api/admin/jobs/options"),
         ]);
         setPayload(res?.code === 0 ? (res.data ?? null) : null);
         setPrevPayload(prevRes?.code === 0 ? (prevRes.data ?? null) : null);
