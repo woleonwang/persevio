@@ -31,6 +31,7 @@ type JobDailyStatsPayload = {
 type JobInfo = {
   id: number;
   name: string;
+  posted_at?: string;
   company?: { name?: string };
 };
 
@@ -87,8 +88,10 @@ const JobDailyStats = () => {
     fetchData();
   }, [dateStr]);
 
-  const jobMap = new Map(jobs.map((j) => [j.id, j]));
   const byJob = payload?.by_job ?? [];
+  const statsByJobId = new Map<number, JobDailyStatsItem>(
+    byJob.map((row) => [row.job_id, row]),
+  );
   const totals = byJob.reduce(
     (acc, row) => ({
       applied: acc.applied + row.applied,
@@ -107,14 +110,31 @@ const JobDailyStats = () => {
     },
   );
 
-  const tableData: TableRow[] = byJob.map((row) => {
-    const job = jobMap.get(row.job_id);
+  // 所有 posted_at 不为空的 jobs 都要展示；有统计数据的排在前面
+  const postedJobs = jobs.filter((job) => !!job.posted_at);
+  postedJobs.sort((a, b) => {
+    const hasA = statsByJobId.has(a.id);
+    const hasB = statsByJobId.has(b.id);
+    if (hasA === hasB) return 0;
+    return hasA ? -1 : 1;
+  });
+
+  const tableData: TableRow[] = postedJobs.map((job) => {
+    const row =
+      statsByJobId.get(job.id) ?? {
+        job_id: job.id,
+        applied: 0,
+        resume_submitted: 0,
+        signed_up: 0,
+        started_prescreening: 0,
+        completed_prescreening: 0,
+      };
     const applied = row.applied;
 
     return {
-      key: `${row.job_id}-${payload?.date ?? ""}`,
-      role: job?.name ?? String(row.job_id),
-      employer: job?.company?.name ?? "-",
+      key: `${job.id}-${payload?.date ?? ""}`,
+      role: job.name,
+      employer: job.company?.name ?? "-",
       applied,
       resumeSubmitted: formatMetricCell(
         row.resume_submitted,
