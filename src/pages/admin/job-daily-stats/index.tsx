@@ -47,48 +47,35 @@ type TableRow = {
 function formatMetricCell(
   count: number,
   applied: number,
-  prevCount: number,
+  priorStageCount: number,
 ): string {
   const pctApplied = applied === 0 ? 0 : Math.round((count / applied) * 100);
   const pctChange =
-    prevCount === 0
-      ? count > 0
-        ? 100
-        : 0
-      : Math.round(((count - prevCount) / prevCount) * 100);
+    priorStageCount === 0 ? 0 : Math.round((count / priorStageCount) * 100);
   return `${count} / ${pctApplied}% / ${pctChange}%`;
 }
 
 const JobDailyStats = () => {
   const [selectedDate, setSelectedDate] = useState(getInitialDate);
   const [payload, setPayload] = useState<JobDailyStatsPayload | null>(null);
-  const [prevPayload, setPrevPayload] = useState<JobDailyStatsPayload | null>(
-    null,
-  );
   const [jobs, setJobs] = useState<JobInfo[]>([]);
   const [loading, setLoading] = useState(false);
 
   const dateStr = selectedDate.format("YYYY-MM-DD");
-  const prevDateStr = selectedDate.subtract(1, "day").format("YYYY-MM-DD");
 
   useEffect(() => {
     const timestampParam = `${dateStr} 09:00:00 +0800`;
-    const prevTimestampParam = `${prevDateStr} 09:00:00 +0800`;
 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [res, prevRes, jobsRes] = await Promise.all([
+        const [res, jobsRes] = await Promise.all([
           Get<JobDailyStatsPayload>("/api/admin/job_daily_stats", {
             timestamp: timestampParam,
-          } as Record<string, unknown>),
-          Get<JobDailyStatsPayload>("/api/admin/job_daily_stats", {
-            timestamp: prevTimestampParam,
           } as Record<string, unknown>),
           Get<{ jobs: JobInfo[]; total: number }>("/api/admin/jobs/options"),
         ]);
         setPayload(res?.code === 0 ? (res.data ?? null) : null);
-        setPrevPayload(prevRes?.code === 0 ? (prevRes.data ?? null) : null);
         if (jobsRes?.code === 0 && jobsRes.data?.jobs) {
           setJobs(jobsRes.data.jobs);
         }
@@ -97,33 +84,11 @@ const JobDailyStats = () => {
       }
     };
     fetchData();
-  }, [dateStr, prevDateStr]);
+  }, [dateStr]);
 
   const jobMap = new Map(jobs.map((j) => [j.id, j]));
-  const prevByJobId = new Map<number, JobDailyStatsItem>(
-    (prevPayload?.by_job ?? []).map((b) => [b.job_id, b]),
-  );
-
   const byJob = payload?.by_job ?? [];
-  const prevByJob = prevPayload?.by_job ?? [];
   const totals = byJob.reduce(
-    (acc, row) => ({
-      applied: acc.applied + row.applied,
-      resume_submitted: acc.resume_submitted + row.resume_submitted,
-      signed_up: acc.signed_up + row.signed_up,
-      started_prescreening: acc.started_prescreening + row.started_prescreening,
-      completed_prescreening:
-        acc.completed_prescreening + row.completed_prescreening,
-    }),
-    {
-      applied: 0,
-      resume_submitted: 0,
-      signed_up: 0,
-      started_prescreening: 0,
-      completed_prescreening: 0,
-    },
-  );
-  const prevTotals = prevByJob.reduce(
     (acc, row) => ({
       applied: acc.applied + row.applied,
       resume_submitted: acc.resume_submitted + row.resume_submitted,
@@ -143,7 +108,6 @@ const JobDailyStats = () => {
 
   const tableData: TableRow[] = byJob.map((row) => {
     const job = jobMap.get(row.job_id);
-    const prev = prevByJobId.get(row.job_id);
     const applied = row.applied;
 
     return {
@@ -154,18 +118,18 @@ const JobDailyStats = () => {
       resumeSubmitted: formatMetricCell(
         row.resume_submitted,
         applied,
-        prev?.resume_submitted ?? 0,
+        row.applied,
       ),
-      signedUp: formatMetricCell(row.signed_up, applied, prev?.signed_up ?? 0),
+      signedUp: formatMetricCell(row.signed_up, applied, row.resume_submitted),
       startedPrescreening: formatMetricCell(
         row.started_prescreening,
         applied,
-        prev?.started_prescreening ?? 0,
+        row.signed_up,
       ),
       completedPrescreening: formatMetricCell(
         row.completed_prescreening,
         applied,
-        prev?.completed_prescreening ?? 0,
+        row.started_prescreening,
       ),
     };
   });
@@ -211,28 +175,28 @@ const JobDailyStats = () => {
           {formatMetricCell(
             totals.resume_submitted,
             totals.applied,
-            prevTotals.resume_submitted,
+            totals.applied,
           )}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={3}>
           {formatMetricCell(
             totals.signed_up,
             totals.applied,
-            prevTotals.signed_up,
+            totals.resume_submitted,
           )}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={4}>
           {formatMetricCell(
             totals.started_prescreening,
             totals.applied,
-            prevTotals.started_prescreening,
+            totals.signed_up,
           )}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={5}>
           {formatMetricCell(
             totals.completed_prescreening,
             totals.applied,
-            prevTotals.completed_prescreening,
+            totals.started_prescreening,
           )}
         </Table.Summary.Cell>
       </Table.Summary.Row>
