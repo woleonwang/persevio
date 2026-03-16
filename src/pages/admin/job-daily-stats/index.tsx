@@ -1,7 +1,8 @@
 import { Get } from "@/utils/request";
 import { getQuery } from "@/utils";
-import { DatePicker, Spin, Table } from "antd";
+import { DatePicker, Spin, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import styles from "../style.module.less";
@@ -134,30 +135,39 @@ const JobDailyStats = () => {
     };
   });
 
+  const metricTitle = (label: string) => (
+    <span>
+      {label}{" "}
+      <Tooltip title="No./% of Applied/ % of prior stage">
+        <InfoCircleOutlined style={{ marginLeft: 4, color: "#999" }} />
+      </Tooltip>
+    </span>
+  );
+
   const columns: ColumnsType<TableRow> = [
     { title: "Role", dataIndex: "role", key: "role", width: 160 },
     { title: "Employer", dataIndex: "employer", key: "employer", width: 140 },
     { title: "Applied", dataIndex: "applied", key: "applied", width: 80 },
     {
-      title: "Resume Submitted",
+      title: metricTitle("Resume Submitted"),
       dataIndex: "resumeSubmitted",
       key: "resumeSubmitted",
       render: (t: string) => t,
     },
     {
-      title: "Signed Up",
+      title: metricTitle("Signed Up"),
       dataIndex: "signedUp",
       key: "signedUp",
       render: (t: string) => t,
     },
     {
-      title: "Started Prescreening",
+      title: metricTitle("Started Prescreening"),
       dataIndex: "startedPrescreening",
       key: "startedPrescreening",
       render: (t: string) => t,
     },
     {
-      title: "Completed Prescreening",
+      title: metricTitle("Completed Prescreening"),
       dataIndex: "completedPrescreening",
       key: "completedPrescreening",
       render: (t: string) => t,
