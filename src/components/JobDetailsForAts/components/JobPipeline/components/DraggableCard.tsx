@@ -11,6 +11,7 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
 import { DEFAULT_TRACKING_SOURCES } from "./utils";
 import { Post } from "@/utils/request";
+import globalStore from "@/store/global";
 
 interface IProps {
   item: TTalentListItem;
@@ -29,6 +30,7 @@ const DraggableCard = ({
   onUpdateTalent,
   onViewed,
 }: IProps) => {
+  const { fetchUnreadTalentsCount } = globalStore;
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: item.id,
     data: { item },
@@ -61,15 +63,20 @@ const DraggableCard = ({
   const handleOpenChange = async (open: boolean) => {
     setPopoverOpen(open);
     if (open && !item.viewed_at) {
-      Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
+      await Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
       onViewed?.(item.id);
+      fetchUnreadTalentsCount();
     }
   };
 
   return (
     <Popover
       content={
-        <TalentPopoverContent variant="pipeline" talent={item} onUpdateTalent={onUpdateTalent} />
+        <TalentPopoverContent
+          variant="pipeline"
+          talent={item}
+          onUpdateTalent={onUpdateTalent}
+        />
       }
       trigger="hover"
       placement="right"

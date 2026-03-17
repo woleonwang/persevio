@@ -19,6 +19,7 @@ import TalentPopoverContent from "@/components/TalentPopoverContent";
 import { getCandidateCardData } from "./utils";
 
 import styles from "./style.module.less";
+import globalStore from "@/store/global";
 
 export type PipelineStageLike = {
   id: string;
@@ -32,6 +33,7 @@ interface IProps {
   variant?: ListModeTableVariant;
   allStages?: PipelineStageLike[];
   items: TTalentListItem[];
+  onMarkViewed?: () => void;
   onRowClick: (item: TTalentListItem) => void;
   onUpdateTalent?: () => void;
 }
@@ -49,47 +51,14 @@ const ListModeTable = ({
   items,
   onRowClick,
   onUpdateTalent,
+  onMarkViewed,
 }: IProps) => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
   const [viewedMap, setViewedMap] = useState<Record<number, boolean>>({});
 
-  useEffect(() => {
-    const next: Record<number, boolean> = {};
-    items.forEach((talent) => {
-      next[talent.id] = !!talent.viewed_at;
-    });
-    setViewedMap(next);
-  }, [items]);
-
-  const wrapCell = (record: TTalentListItem, children: React.ReactNode) => {
-    const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
-    const handleOpenChange = (open: boolean) => {
-      if (open && !hasViewed && !record.viewed_at) {
-        setViewedMap((prev) => ({ ...prev, [record.id]: true }));
-        Post(`/api/jobs/${record.job_id}/talents/${record.id}/viewed`, {});
-      }
-    };
-
-    return (
-      <Popover
-        content={
-          <TalentPopoverContent
-            variant={variant}
-            talent={record}
-            onUpdateTalent={onUpdateTalent ?? (() => {})}
-          />
-        }
-        trigger="hover"
-        placement="right"
-        mouseEnterDelay={0.5}
-        onOpenChange={handleOpenChange}
-      >
-        <span className={styles.cellTrigger}>{children}</span>
-      </Popover>
-    );
-  };
+  const { fetchUnreadTalentsCount } = globalStore;
 
   const enablePipelineActions =
     variant === "pipeline" &&
@@ -109,6 +78,14 @@ const ListModeTable = ({
     customStages.length > 0
       ? customStages
       : allStages.filter((s) => s.id !== "rejected");
+
+  useEffect(() => {
+    const next: Record<number, boolean> = {};
+    items.forEach((talent) => {
+      next[talent.id] = !!talent.viewed_at;
+    });
+    setViewedMap(next);
+  }, [items]);
 
   const sortedTalents = useMemo(() => {
     return [...items].sort((a, b) => {
@@ -131,6 +108,39 @@ const ListModeTable = ({
       );
     });
   }, [items]);
+
+  const wrapCell = (record: TTalentListItem, children: React.ReactNode) => {
+    const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
+    const handleOpenChange = async (open: boolean) => {
+      if (open && !hasViewed && !record.viewed_at) {
+        await Post(
+          `/api/jobs/${record.job_id}/talents/${record.id}/viewed`,
+          {},
+        );
+        setViewedMap((prev) => ({ ...prev, [record.id]: true }));
+        fetchUnreadTalentsCount();
+        onMarkViewed?.();
+      }
+    };
+
+    return (
+      <Popover
+        content={
+          <TalentPopoverContent
+            variant={variant}
+            talent={record}
+            onUpdateTalent={onUpdateTalent ?? (() => {})}
+          />
+        }
+        trigger="hover"
+        placement="right"
+        mouseEnterDelay={0.5}
+        onOpenChange={handleOpenChange}
+      >
+        <span className={styles.cellTrigger}>{children}</span>
+      </Popover>
+    );
+  };
 
   const updateTalentStatus = async (
     record: TTalentListItem,

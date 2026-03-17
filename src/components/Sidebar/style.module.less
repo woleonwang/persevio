@@ -134,6 +134,18 @@
   gap: 8px;
   margin-bottom: 8px;
   border: 1px solid transparent;
+  position: relative;
+
+  &.badge::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background-color: @red-color;
+    border-radius: 50%;
+    position: absolute;
+    left: 2px;
+    top: 8px;
+  }
 
   &.active,
   &:hover {

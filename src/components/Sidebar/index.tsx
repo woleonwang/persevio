@@ -199,9 +199,10 @@ const Sidebar = (props: ISidebarProps) => {
                     {item.children.map((child) => {
                       return (
                         <div
-                          className={`${styles.subMenuItem} ${
-                            child.active ? styles.active : ""
-                          }`}
+                          className={classnames(styles.subMenuItem, {
+                            [styles.active]: child.active,
+                            [styles.badge]: child.badge,
+                          })}
                           key={child.path}
                           onClick={() => navigate(child.path)}
                         >
@@ -216,12 +217,6 @@ const Sidebar = (props: ISidebarProps) => {
                             >
                               <Icon icon={<Delete />} />
                             </div>
-                          )}
-                          {child.badge && (
-                            <Badge
-                              count={child.badge}
-                              style={{ marginLeft: 8 }}
-                            />
                           )}
                         </div>
                       );

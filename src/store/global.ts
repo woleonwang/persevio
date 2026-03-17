@@ -11,6 +11,8 @@ class GlobalStore {
 
   unreadTalentsCount = 0;
 
+  unreadTalentsJobIds: number[] = [];
+
   mode = "";
 
   antdLocale: "zh-CN" | "en-US" = "en-US";
@@ -47,6 +49,7 @@ class GlobalStore {
     const { code, data } = await Get("/api/talents/status");
     if (code == 0) {
       this.unreadTalentsCount = data.count;
+      this.unreadTalentsJobIds = data.job_ids ?? [];
     }
   };
 

@@ -1,3 +1,5 @@
+@import "@/mixin.module.less";
+
 .container {
   flex: 1;
   min-height: 0;
@@ -30,9 +32,25 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    position: relative;
 
     :global(.perse-icon) {
       font-size: 20px;
+    }
+
+    .unviewedTalentBadge {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      right: -16px;
+      top: -8px;
+      background-color: @red-color;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
     }
   }
 

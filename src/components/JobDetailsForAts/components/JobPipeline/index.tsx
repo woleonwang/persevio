@@ -35,8 +35,10 @@ import { getStageKey } from "@/utils/talentStage";
 
 const JobPipeline = ({
   onChangeTab,
+  onMarkViewed,
 }: {
   onChangeTab: (tab: string) => void;
+  onMarkViewed: () => void;
 }) => {
   const { job } = useJob();
   const [loading, setLoading] = useState(true);
@@ -255,6 +257,7 @@ const JobPipeline = ({
     : undefined;
 
   const handleMarkViewed = (talentId: number) => {
+    onMarkViewed();
     setTalents((prev) =>
       prev.map((t) =>
         t.id === talentId
@@ -420,6 +423,7 @@ const JobPipeline = ({
                 );
               }}
               onUpdateTalent={fetchTalents}
+              onMarkViewed={onMarkViewed}
             />
           )}
         </div>

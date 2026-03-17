@@ -41,7 +41,8 @@ interface IProps {
   role?: "admin" | "staff";
 }
 const JobDetailsForAts = ({ role = "staff" }: IProps) => {
-  const { job, fetchJob } = useJob();
+  const { job, fetchJob, unviewedTalentCount, setUnviewedTalentCount } =
+    useJob();
   const [activeTab, setActiveTab] = useState<TMenu>();
   const [jobReqSubTab, setJobReqSubTab] = useState<
     "jobRequirement" | "jobDescription"
@@ -259,6 +260,11 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
               <div className={styles.tabsLabel}>
                 <Icon icon={<Pipeline />} />
                 {t("pipeline")}
+                {unviewedTalentCount > 0 && (
+                  <span className={styles.unviewedTalentBadge}>
+                    {unviewedTalentCount}
+                  </span>
+                )}
               </div>
             ),
             children: (
@@ -268,6 +274,11 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
                     onChangeTab={(tab) => {
                       setActiveTab(tab as TMenu);
                       updateQuery("tab", tab);
+                    }}
+                    onMarkViewed={() => {
+                      setUnviewedTalentCount((current) =>
+                        current > 0 ? current - 1 : 0,
+                      );
                     }}
                   />
                 ) : (

@@ -55,6 +55,7 @@ const AppLayout = () => {
     collapseForDrawer,
     staffRole,
     isAdmin,
+    unreadTalentsJobIds,
     setMenuCollapse,
     setStaffRole,
     setIsAdmin,
@@ -111,6 +112,7 @@ const AppLayout = () => {
             title: job.name,
             path,
             active: isActive,
+            badge: unreadTalentsJobIds.includes(job.id),
             onRemove: () => {
               Modal.confirm({
                 title: t("app_layout.delete_job"),

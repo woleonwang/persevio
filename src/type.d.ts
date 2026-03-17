@@ -262,7 +262,7 @@ type TMenu = {
     path: string;
     active: boolean;
     onRemove?: () => void;
-    badge?: number;
+    badge?: boolean;
   }[];
 };
 

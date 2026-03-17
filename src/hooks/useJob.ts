@@ -9,6 +9,7 @@ const useJob = () => {
   const jobId = parseInt(jobIdStr ?? "0");
 
   const [job, setJob] = useState<IJob>();
+  const [unviewedTalentCount, setUnviewedTalentCount] = useState(0);
 
   useEffect(() => {
     fetchJob();
@@ -21,12 +22,13 @@ const useJob = () => {
     if (code === 0) {
       const job: IJob = data.job ?? data;
       setJob(job);
+      setUnviewedTalentCount(data.unviewed_talent_count);
     } else {
       message.error("Get job failed");
     }
   };
 
-  return { job, fetchJob };
+  return { job, fetchJob, unviewedTalentCount, setUnviewedTalentCount };
 };
 
 export default useJob;
