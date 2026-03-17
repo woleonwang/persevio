@@ -342,6 +342,8 @@ const InterviewForm: React.FC<IProps> = (props) => {
                 });
                 forceUpdate();
               }}
+              duration={form.getFieldValue("duration")}
+              gap={form.getFieldValue("slots_gap")}
             />
           </div>
         )}
@@ -356,6 +358,8 @@ const InterviewForm: React.FC<IProps> = (props) => {
                 });
                 forceUpdate();
               }}
+              duration={form.getFieldValue("duration")}
+              gap={form.getFieldValue("slots_gap")}
             />
           </div>
         )}

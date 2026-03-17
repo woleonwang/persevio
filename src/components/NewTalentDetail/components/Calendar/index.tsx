@@ -1,5 +1,9 @@
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import { Button, Modal, TimePicker } from "antd";
+import {
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import { Button, Modal, TimePicker, Tooltip } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import classnames from "classnames";
@@ -15,11 +19,13 @@ export type TValue = {
 interface IProps {
   value?: TValue[];
   onChange?: (value: TValue[]) => void;
+  duration?: number;
+  gap?: number;
 }
 
 const AVAILABLE_HOURS = Array.from({ length: 24 }, (_, index) => index);
 const Calendar: React.FC<IProps> = (props) => {
-  const { value: timeSlots, onChange } = props;
+  const { value: timeSlots, onChange, duration, gap } = props;
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`calendar.${key}`);
 
@@ -284,6 +290,35 @@ const Calendar: React.FC<IProps> = (props) => {
                   )}
                 {selectedTimeSlots.map((item) => {
                   const endTime = dayjs(item.to).format("HH:mm");
+                  const splitSlots: { from: Dayjs; to: Dayjs }[] = [];
+                  let current = dayjs(item.from);
+                  const slotEnd = dayjs(item.to);
+                  if (duration && gap) {
+                    while (current.add(duration, "minute").isBefore(slotEnd)) {
+                      const to = current.add(duration, "minute");
+                      splitSlots.push({
+                        from: current,
+                        to: to,
+                      });
+                      current = current.add(gap, "minute");
+                    }
+                  }
+
+                  const tooltipContent = (
+                    <div>
+                      {splitSlots.length > 0
+                        ? splitSlots.map((s) => {
+                            const t = s.to.format("HH:mm");
+                            return (
+                              <div key={s.from.toISOString()}>
+                                {s.from.format("HH:mm")} ~{" "}
+                                {t === "00:00" ? "24:00" : t}
+                              </div>
+                            );
+                          })
+                        : "No available time slots"}
+                    </div>
+                  );
                   return (
                     <div
                       key={item.from}
@@ -306,6 +341,11 @@ const Calendar: React.FC<IProps> = (props) => {
                     >
                       {dayjs(item.from).format("HH:mm")} ~{" "}
                       {endTime === "00:00" ? "24:00" : endTime}
+                      {duration && gap && (
+                        <Tooltip title={tooltipContent} placement="right">
+                          <InfoCircleOutlined className={styles.slotInfoIcon} />
+                        </Tooltip>
+                      )}
                     </div>
                   );
                 })}

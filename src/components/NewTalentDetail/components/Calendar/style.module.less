@@ -122,6 +122,19 @@
     z-index: 1;
     border-bottom-right-radius: 16px;
     padding-left: 4px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow: hidden;
+
+    .slotInfoIcon {
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      color: @primary-color;
+      opacity: 0.6;
+      cursor: pointer;
+    }
   }
 
   .timeSlot {
