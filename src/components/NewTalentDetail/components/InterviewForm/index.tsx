@@ -23,15 +23,25 @@ import styles from "./style.module.less";
 
 type TFormValue = TInterview;
 
+type TInterviewDefaults = {
+  interviewers?: string;
+  focus?: string;
+  contact_person?: string;
+  contact_number?: string;
+  notes?: string;
+};
+
 interface IProps {
   talent: TTalent;
   jobName: string;
   interview?: TInterview;
+  interviewDefaults?: TInterviewDefaults;
   onClose: () => void;
   onSubmit: () => void;
 }
 const InterviewForm: React.FC<IProps> = (props) => {
-  const { talent, jobName, interview, onClose, onSubmit } = props;
+  const { talent, jobName, interview, interviewDefaults, onClose, onSubmit } =
+    props;
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`interview_form.${key}`);
@@ -53,6 +63,15 @@ const InterviewForm: React.FC<IProps> = (props) => {
       form.setFieldsValue(interview);
     } else {
       form.resetFields();
+      if (interviewDefaults) {
+        form.setFieldsValue({
+          interviewers: interviewDefaults.interviewers,
+          focus: interviewDefaults.focus,
+          contact_person: interviewDefaults.contact_person,
+          contact_number: interviewDefaults.contact_number,
+          notes: interviewDefaults.notes,
+        });
+      }
     }
 
     const { code, data } = await Get(`/api/settings`);

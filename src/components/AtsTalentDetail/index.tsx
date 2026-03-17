@@ -1392,6 +1392,11 @@ const AtsTalentDetail: React.FC = () => {
           talent={talent}
           jobName={job?.name ?? ""}
           interview={interviews[0]}
+          interviewDefaults={
+            job?.interview_defaults_json
+              ? JSON.parse(job.interview_defaults_json)
+              : undefined
+          }
           onClose={() => setIsInterviewModalOpen(false)}
           onSubmit={() => {
             if (interviews[0]) {

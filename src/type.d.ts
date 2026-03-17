@@ -78,6 +78,7 @@ interface IJob {
   pipeline_stages: string;
 
   is_confidential: boolean;
+  interview_defaults_json?: string;
 
   admin_jobs?: {
     admin: {
