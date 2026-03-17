@@ -69,7 +69,7 @@ const DraggableCard = ({
   return (
     <Popover
       content={
-        <TalentPopoverContent talent={item} onUpdateTalent={onUpdateTalent} />
+        <TalentPopoverContent variant="pipeline" talent={item} onUpdateTalent={onUpdateTalent} />
       }
       trigger="hover"
       placement="right"

@@ -19,11 +19,13 @@ import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModa
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
 
 interface IProps {
+  variant: "pipeline" | "talents";
   talent: TTalentListItem;
   onUpdateTalent: () => void;
 }
 
 const TalentPopoverContent = ({
+  variant,
   talent: talentProps,
   onUpdateTalent,
 }: IProps) => {
@@ -51,6 +53,7 @@ const TalentPopoverContent = ({
   const evaluateResult = talent.parsedEvaluateResult;
   const interview = talent.interviews?.[0];
   const job = talent.job;
+  const isPipeline = variant === "pipeline";
 
   const updateTalentEvaluateFeedback = async (
     jobId: number,
@@ -141,63 +144,73 @@ const TalentPopoverContent = ({
           >
             {talent.name || "-"}
           </div>
-          <div className={styles.cardTitleResult}>
-            <EvaluateResultBadge
-              result={getEvaluateResultLevel(
-                evaluateResult?.overall_recommendation?.result ??
-                  evaluateResult?.result,
-              )}
-              caveat={evaluateResult?.overall_recommendation?.caveat}
-            />
-          </div>
-          {!!talent && (
-            <EvaluateFeedback
-              value={talent.evaluate_feedback}
-              onChange={(value) => {
-                updateTalentEvaluateFeedback(talent.job_id, talent.id, value);
-              }}
-              onOpen={() => {
-                setNeedConfirmEvaluateFeedbackConversation(false);
-                setOpenEvaluateFeedbackConversation(true);
-              }}
-            />
-          )}
-        </div>
-        <div className={styles.cardHeaderActions}>
-          {talent && talent.status !== "rejected" && (
+          {isPipeline && (
             <>
-              {talent.interviews?.length === 0 && (
-                <Button
-                  type="primary"
-                  danger
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!!talent.evaluate_feedback) {
-                      updateTalentStatus(
-                        talent,
-                        talent.evaluate_feedback_reason,
-                      );
-                    } else {
-                      setIsRejectModalOpen(true);
-                    }
+              <div className={styles.cardTitleResult}>
+                <EvaluateResultBadge
+                  result={getEvaluateResultLevel(
+                    evaluateResult?.overall_recommendation?.result ??
+                      evaluateResult?.result,
+                  )}
+                  caveat={evaluateResult?.overall_recommendation?.caveat}
+                />
+              </div>
+              {!!talent && (
+                <EvaluateFeedback
+                  value={talent.evaluate_feedback}
+                  onChange={(value) => {
+                    updateTalentEvaluateFeedback(
+                      talent.job_id,
+                      talent.id,
+                      value,
+                    );
                   }}
-                >
-                  Reject
-                </Button>
+                  onOpen={() => {
+                    setNeedConfirmEvaluateFeedbackConversation(false);
+                    setOpenEvaluateFeedbackConversation(true);
+                  }}
+                />
               )}
-
-              <Button
-                type="primary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsInterviewModalOpen(true);
-                }}
-              >
-                {interview ? "Interview Information" : "Schedule Interview"}
-              </Button>
             </>
           )}
         </div>
+        {isPipeline && (
+          <div className={styles.cardHeaderActions}>
+            {talent && talent.status !== "rejected" && (
+              <>
+                {talent.interviews?.length === 0 && (
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!!talent.evaluate_feedback) {
+                        updateTalentStatus(
+                          talent,
+                          talent.evaluate_feedback_reason,
+                        );
+                      } else {
+                        setIsRejectModalOpen(true);
+                      }
+                    }}
+                  >
+                    Reject
+                  </Button>
+                )}
+
+                <Button
+                  type="primary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsInterviewModalOpen(true);
+                  }}
+                >
+                  {interview ? "Interview Information" : "Schedule Interview"}
+                </Button>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <div
@@ -252,7 +265,7 @@ const TalentPopoverContent = ({
             <div style={{ marginLeft: 20 }}>...</div>
           )}
         </div>
-        {talent && (
+        {isPipeline && talent && (
           <div className={styles.evaluateDetails}>
             <div
               className={classnames(
@@ -324,20 +337,22 @@ const TalentPopoverContent = ({
             <>
               <div className={styles.cardFooterContent}>
                 <div className={styles.left}>
-                  <div
-                    className={classnames(
-                      styles.cardFooterStatus,
-                      styles[tagType],
-                    )}
-                  >
-                    {tagType === "rejected"
-                      ? "Rejected"
-                      : tagType === "interview_scheduled"
-                        ? "Interview Scheduled"
-                        : tagType === "interview_created"
-                          ? "Pending Candidate Interview Confirmation"
-                          : "Pending Resume Review"}
-                  </div>
+                  {isPipeline && (
+                    <div
+                      className={classnames(
+                        styles.cardFooterStatus,
+                        styles[tagType],
+                      )}
+                    >
+                      {tagType === "rejected"
+                        ? "Rejected"
+                        : tagType === "interview_scheduled"
+                          ? "Interview Scheduled"
+                          : tagType === "interview_created"
+                            ? "Pending Candidate Interview Confirmation"
+                            : "Pending Resume Review"}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.right}>
                   {!!job && (
@@ -353,31 +368,32 @@ const TalentPopoverContent = ({
                   </div>
                 </div>
               </div>
-              {(tagType === "interview_scheduled" ||
-                tagType === "interview_created") && (
-                <div className={styles.cardFooterInterviewInfo}>
-                  <div className={styles.cardFooterInterviewInfoItem}>
-                    <div>Interview Mode:</div>
-                    <div>
-                      {originalT(`interview_form.mode_${interview?.mode}`)}
+              {isPipeline &&
+                (tagType === "interview_scheduled" ||
+                  tagType === "interview_created") && (
+                  <div className={styles.cardFooterInterviewInfo}>
+                    <div className={styles.cardFooterInterviewInfoItem}>
+                      <div>Interview Mode:</div>
+                      <div>
+                        {originalT(`interview_form.mode_${interview?.mode}`)}
+                      </div>
+                    </div>
+                    <div className={styles.cardFooterInterviewInfoItem}>
+                      <div>Schedule Time:</div>
+                      <div>
+                        {interview?.scheduled_at
+                          ? dayjs(interview?.scheduled_at).format(
+                              "YYYY-MM-DD HH:mm",
+                            )
+                          : "-"}
+                      </div>
                     </div>
                   </div>
-                  <div className={styles.cardFooterInterviewInfoItem}>
-                    <div>Schedule Time:</div>
-                    <div>
-                      {interview?.scheduled_at
-                        ? dayjs(interview?.scheduled_at).format(
-                            "YYYY-MM-DD HH:mm",
-                          )
-                        : "-"}
-                    </div>
-                  </div>
-                </div>
-              )}
+                )}
             </>
           );
         })()}
-        {talent?.feedback && (
+        {isPipeline && talent?.feedback && (
           <div className={styles.cardFooterFeedback}>
             <span>Reason for rejection:</span> {talent.feedback}
           </div>

@@ -76,6 +76,7 @@ const ListModeTable = ({
       <Popover
         content={
           <TalentPopoverContent
+            variant={variant}
             talent={record}
             onUpdateTalent={onUpdateTalent ?? (() => {})}
           />
