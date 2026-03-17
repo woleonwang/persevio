@@ -36,6 +36,7 @@ import CandidateSettings from "./pages/candidate/settings";
 import JobApplies from "./pages/candidate/job-applies";
 import JobApplyShow from "./pages/candidate/job-apply-show";
 import CandidateHome from "./pages/candidate/candidate-home";
+import CandidateHelperAgentPage from "./pages/candidate/helper-agent";
 
 import AdminJobs from "./pages/admin/jobs";
 import JobDailyStats from "./pages/admin/job-daily-stats";
@@ -215,6 +216,10 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/candidate" element={<CandidateApp />}>
           {/* 候选人主页 */}
           <Route path="/candidate/home" element={<CandidateHome />} />
+          <Route
+            path="/candidate/helper-agent"
+            element={<CandidateHelperAgentPage />}
+          />
           {/* 候选人简历 */}
           <Route path="/candidate/profile" element={<CandidateResume />} />
           {/* connector 简历 */}

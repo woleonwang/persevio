@@ -120,15 +120,14 @@ const JobDailyStats = () => {
   });
 
   const tableData: TableRow[] = postedJobs.map((job) => {
-    const row =
-      statsByJobId.get(job.id) ?? {
-        job_id: job.id,
-        applied: 0,
-        resume_submitted: 0,
-        signed_up: 0,
-        started_prescreening: 0,
-        completed_prescreening: 0,
-      };
+    const row = statsByJobId.get(job.id) ?? {
+      job_id: job.id,
+      applied: 0,
+      resume_submitted: 0,
+      signed_up: 0,
+      started_prescreening: 0,
+      completed_prescreening: 0,
+    };
     const applied = row.applied;
 
     return {
@@ -247,17 +246,19 @@ const JobDailyStats = () => {
         </div>
       </div>
       <div className={styles.adminMain}>
-        {loading ? (
-          <Spin />
-        ) : (
-          <Table
-            columns={columns}
-            dataSource={tableData}
-            pagination={false}
-            scroll={{ x: 900 }}
-            summary={() => summaryRow}
-          />
-        )}
+        <div style={{ height: "100%", overflow: "auto" }}>
+          {loading ? (
+            <Spin />
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={tableData}
+              pagination={false}
+              scroll={{ x: 900 }}
+              summary={() => summaryRow}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
