@@ -57,6 +57,21 @@ const Calendar: React.FC<IProps> = (props) => {
     [Dayjs | null, Dayjs | null] | null
   >();
 
+  type DragState = {
+    currentDay: Dayjs;
+    columnTop: number;
+    startMinutes: number;
+    currentMinutes: number;
+    minMinutes: number;
+  };
+  const [dragState, setDragState] = useState<DragState | null>(null);
+
+  const getMinutesFromY = (y: number, minMinutes = 0) => {
+    const clamped = Math.max(0, Math.min(y, 24 * 50 - 1));
+    const snapped = Math.round(((clamped / 50) * 60) / 15) * 15;
+    return Math.max(minMinutes, snapped);
+  };
+
   useEffect(() => {
     setValue(timeSlots ?? []);
   }, [timeSlots]);
@@ -99,6 +114,47 @@ const Calendar: React.FC<IProps> = (props) => {
     onChange?.(newTimeSlot);
   };
 
+  useEffect(() => {
+    if (!dragState) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const y = e.clientY - dragState.columnTop;
+      setDragState((prev) =>
+        prev
+          ? { ...prev, currentMinutes: getMinutesFromY(y, prev.minMinutes) }
+          : null,
+      );
+    };
+
+    const handleMouseUp = () => {
+      if (dragState) {
+        const fromMin = Math.min(
+          dragState.startMinutes,
+          dragState.currentMinutes,
+        );
+        const toMin = Math.max(
+          dragState.startMinutes,
+          dragState.currentMinutes,
+        );
+        if (toMin - fromMin >= 15) {
+          const from = dragState.currentDay
+            .startOf("day")
+            .add(fromMin, "minute");
+          const to = dragState.currentDay.startOf("day").add(toMin, "minute");
+          addNewTimeSlot(from, to);
+        }
+        setDragState(null);
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragState]);
+
   return (
     <div>
       <div className={styles.weekSelector}>
@@ -122,7 +178,9 @@ const Calendar: React.FC<IProps> = (props) => {
           {headers.map((header, index) => {
             const now = dayjs();
             const currentDay = currentWeek.add(index, "day");
-            const disabled = currentDay.isBefore(dayjs(), "day");
+            const disabled =
+              currentDay.isBefore(dayjs(), "day") ||
+              (currentDay.isSame(dayjs(), "day") && dayjs().hour() === 23);
 
             return (
               <div key={header} className={styles.dayItem}>
@@ -174,8 +232,56 @@ const Calendar: React.FC<IProps> = (props) => {
             const selectedTimeSlots = value.filter((item) =>
               dayjs(item.from).isSame(currentDay, "day"),
             );
+            const disabled =
+              currentDay.isBefore(dayjs(), "day") ||
+              (currentDay.isSame(dayjs(), "day") && dayjs().hour() === 23);
             return (
-              <div key={header} className={styles.weekDay}>
+              <div
+                key={header}
+                className={styles.weekDay}
+                onMouseDown={(e) => {
+                  if (disabled) return;
+                  e.preventDefault();
+                  const now = dayjs();
+                  const isToday = currentDay.isSame(now, "day");
+                  const minMinutes = isToday ? (now.hour() + 1) * 60 : 0;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const y = e.clientY - rect.top;
+                  const startMinutes = getMinutesFromY(y, minMinutes);
+                  setDragState({
+                    currentDay,
+                    columnTop: rect.top,
+                    startMinutes,
+                    currentMinutes: startMinutes,
+                    minMinutes,
+                  });
+                }}
+              >
+                {dragState &&
+                  dragState.currentDay.isSame(currentDay, "day") && (
+                    <div
+                      className={styles.dragPreviewSlot}
+                      style={{
+                        top:
+                          (Math.min(
+                            dragState.startMinutes,
+                            dragState.currentMinutes,
+                          ) *
+                            50) /
+                          60,
+                        height: Math.max(
+                          (Math.abs(
+                            dragState.currentMinutes - dragState.startMinutes,
+                          ) *
+                            50) /
+                            60,
+                          12.5,
+                        ),
+                        left: 0,
+                        right: 4,
+                      }}
+                    />
+                  )}
                 {selectedTimeSlots.map((item) => {
                   const endTime = dayjs(item.to).format("HH:mm");
                   return (

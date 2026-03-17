@@ -87,10 +87,21 @@
   }
 }
 
+.dragPreviewSlot {
+  position: absolute;
+  background-color: rgba(54, 130, 254, 0.25);
+  border: 1px solid @primary-color;
+  border-left-width: 4px;
+  border-bottom-right-radius: 16px;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .body {
   display: flex;
   padding-left: 60px;
   position: relative;
+  user-select: none;
 
   .weekDay {
     flex: 1;
