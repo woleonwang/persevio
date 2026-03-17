@@ -125,6 +125,13 @@ const TalentPopoverContent = ({
     }
   };
 
+  const handleOpenTalentDetail = () => {
+    window.open(
+      `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}?from=${variant}`,
+      "_blank",
+    );
+  };
+
   return (
     <div
       key={talent.id}
@@ -135,12 +142,7 @@ const TalentPopoverContent = ({
         <div className={styles.cardTitle}>
           <div
             className={styles.cardTitleName}
-            onClick={() =>
-              window.open(
-                `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
-                "_blank",
-              )
-            }
+            onClick={handleOpenTalentDetail}
           >
             {talent.name || "-"}
           </div>
@@ -213,15 +215,7 @@ const TalentPopoverContent = ({
         )}
       </div>
 
-      <div
-        className={styles.cardContent}
-        onClick={() =>
-          window.open(
-            `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
-            "_blank",
-          )
-        }
-      >
+      <div className={styles.cardContent} onClick={handleOpenTalentDetail}>
         <div className={styles.evaluateSummary}>
           <div className={styles.evaluateSummaryTitle}>
             <Icon icon={<Stars />} />

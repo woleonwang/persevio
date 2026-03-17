@@ -20,6 +20,7 @@ import { Download, Get, Post } from "@/utils/request";
 import {
   backOrDirect,
   getEvaluateResultLevel,
+  getQuery,
   getSourcingChannel,
   parseJSON,
 } from "@/utils";
@@ -210,7 +211,13 @@ const AtsTalentDetail: React.FC = () => {
   };
 
   const handleBack = () => {
-    backOrDirect(navigate, `/app/jobs/${job.id}/standard-board?tab=talents`);
+    const from = getQuery("from");
+    backOrDirect(
+      navigate,
+      from === "talents"
+        ? `/app/talents`
+        : `/app/jobs/${job.id}/standard-board?tab=talents`,
+    );
   };
 
   const handleMoveStage = async () => {

@@ -123,7 +123,7 @@ const Talents: React.FC = () => {
             items={filteredList}
             onRowClick={(talent) => {
               window.open(
-                `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}?from=talents`,
                 "_blank",
               );
             }}
