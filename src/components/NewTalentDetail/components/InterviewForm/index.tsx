@@ -18,7 +18,7 @@ import Icon from "@/components/Icon";
 import TimeSlot from "@/assets/icons/time-slot";
 import Delete from "@/assets/icons/delete";
 
-import Calender from "../Calender";
+import Calendar from "../Calendar";
 import styles from "./style.module.less";
 
 type TFormValue = TInterview;
@@ -65,7 +65,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
     form.validateFields().then(async (values) => {
       const { code } = await Post(
         `/api/jobs/${talent.job_id}/talents/${talent.id}/interviews`,
-        values
+        values,
       );
       if (code === 0) {
         message.success(t("create_success"));
@@ -127,7 +127,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
                     ([key, value]) => ({
                       label: value,
                       value: key,
-                    })
+                    }),
                   )}
                   size="large"
                   className={styles.radioGroup}
@@ -168,7 +168,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
                         ([key, value]) => ({
                           label: value,
                           value: key,
-                        })
+                        }),
                       )}
                       size="large"
                       className={styles.radioGroup}
@@ -221,11 +221,11 @@ const InterviewForm: React.FC<IProps> = (props) => {
                           const startTime = dayjs(interview.scheduled_at);
                           const endTime = startTime.add(
                             interview.duration,
-                            "minutes"
+                            "minutes",
                           );
 
                           return `${startTime.format(
-                            "YYYY/MM/DD HH:mm"
+                            "YYYY/MM/DD HH:mm",
                           )} ~ ${endTime.format("HH:mm")}`;
                         })()}
                         disabled
@@ -272,7 +272,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
                             onClick={() => {
                               form.setFieldsValue({
                                 time_slots: timeSlots.filter(
-                                  (_item) => _item !== item
+                                  (_item) => _item !== item,
                                 ),
                               });
                               forceUpdate();
@@ -331,10 +331,10 @@ const InterviewForm: React.FC<IProps> = (props) => {
           <div
             className={classnames(
               styles.calendarContainer,
-              styles.desktopVisible
+              styles.desktopVisible,
             )}
           >
-            <Calender
+            <Calendar
               value={timeSlots}
               onChange={(value) => {
                 form.setFieldsValue({
@@ -348,7 +348,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
 
         {isShowCalendar && (
           <div className={styles.calendarContainer}>
-            <Calender
+            <Calendar
               value={timeSlots}
               onChange={(value) => {
                 form.setFieldsValue({
@@ -389,7 +389,7 @@ const InterviewForm: React.FC<IProps> = (props) => {
                           className={styles.timeSlotItemDelete}
                           onClick={() => {
                             const newTimeSlots = timeSlots.filter(
-                              (_item) => _item !== item
+                              (_item) => _item !== item,
                             );
                             form.setFieldsValue({
                               time_slots: newTimeSlots,

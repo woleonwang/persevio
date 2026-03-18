@@ -18,7 +18,7 @@ interface IProps {
 }
 
 const AVAILABLE_HOURS = Array.from({ length: 24 }, (_, index) => index);
-const Calender: React.FC<IProps> = (props) => {
+const Calendar: React.FC<IProps> = (props) => {
   const { value: timeSlots, onChange } = props;
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`calendar.${key}`);
@@ -49,7 +49,7 @@ const Calender: React.FC<IProps> = (props) => {
   const [value, setValue] = useState<TValue[]>([]);
 
   const [currentWeek, setCurrentWeek] = useState<Dayjs>(
-    dayjs().startOf("week")
+    dayjs().startOf("week"),
   );
   const [isAddTimeModalOpen, setIsAddTimeModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState<Dayjs>();
@@ -157,9 +157,9 @@ const Calender: React.FC<IProps> = (props) => {
                         "hour",
                         now.isSame(currentDay, "day")
                           ? now.hour() + 1
-                          : AVAILABLE_HOURS[0]
+                          : AVAILABLE_HOURS[0],
                       ),
-                      currentDay.add(1, "day").set("hour", 0)
+                      currentDay.add(1, "day").set("hour", 0),
                     );
                   }}
                 />
@@ -172,7 +172,7 @@ const Calender: React.FC<IProps> = (props) => {
           {headers.map((header, index) => {
             const currentDay = currentWeek.add(index, "day");
             const selectedTimeSlots = value.filter((item) =>
-              dayjs(item.from).isSame(currentDay, "day")
+              dayjs(item.from).isSame(currentDay, "day"),
             );
             return (
               <div key={header} className={styles.weekDay}>
@@ -188,7 +188,7 @@ const Calender: React.FC<IProps> = (props) => {
                         top:
                           (dayjs(item.from).diff(
                             currentDay.set("hour", AVAILABLE_HOURS[0]),
-                            "minute"
+                            "minute",
                           ) *
                             50) /
                           60,
@@ -266,7 +266,7 @@ const Calender: React.FC<IProps> = (props) => {
                     .millisecond(0);
                 });
                 setCurrentTimeRange(
-                  withSelectedDay as [dayjs.Dayjs, dayjs.Dayjs]
+                  withSelectedDay as [dayjs.Dayjs, dayjs.Dayjs],
                 );
               }
             }}
@@ -289,4 +289,4 @@ const Calender: React.FC<IProps> = (props) => {
   );
 };
 
-export default Calender;
+export default Calendar;
