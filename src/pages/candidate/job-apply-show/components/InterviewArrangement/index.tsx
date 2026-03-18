@@ -324,18 +324,6 @@ const InterviewArrangement: React.FC<IProps> = ({
                 />
               </Form.Item>
 
-              <Form.Item
-                label={originalT("interview_form.slots_gap")}
-                name="slots_gap"
-              >
-                <InputNumber
-                  suffix="min"
-                  size="large"
-                  style={{ width: "100%" }}
-                  disabled
-                />
-              </Form.Item>
-
               {!!interview.scheduled_at ? (
                 <div>
                   <Form.Item
@@ -363,13 +351,9 @@ const InterviewArrangement: React.FC<IProps> = ({
                 <Form.Item
                   label={originalT("interview_form.interview_time_slots")}
                   required
+                  className={classnames(styles.mobileVisible)}
                 >
-                  <div
-                    className={classnames(
-                      styles.mobileVisible,
-                      styles.mobileCalendarContainer,
-                    )}
-                  >
+                  <div className={classnames(styles.mobileCalendarContainer)}>
                     {timeslotsSelector}
                   </div>
                 </Form.Item>
