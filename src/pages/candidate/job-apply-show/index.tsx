@@ -85,7 +85,7 @@ const JobApplyShow = () => {
 
   const fetchApplyJob = async () => {
     const { code, data } = await Get(
-      `/api/candidate/job_applies/${jobApplyId}`
+      `/api/candidate/job_applies/${jobApplyId}`,
     );
     if (code === 0) {
       setJobApply({
@@ -123,8 +123,8 @@ const JobApplyShow = () => {
     applyStatus === "accepted"
       ? t("steps.processed.accepted")
       : applyStatus === "rejected"
-      ? t("steps.processed.rejected")
-      : t("steps.processed.default");
+        ? t("steps.processed.rejected")
+        : t("steps.processed.default");
 
   const steps: {
     key: string;
@@ -151,8 +151,8 @@ const JobApplyShow = () => {
         applyStatus === "chat"
           ? "disabled"
           : applyStatus === "screening"
-          ? "active"
-          : "done",
+            ? "active"
+            : "done",
     },
     {
       key: "processed",
@@ -171,7 +171,7 @@ const JobApplyShow = () => {
   const confirmWhatsappNumber = async () => {
     setIsLoading(true);
     const { code } = await Post(
-      `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`
+      `/api/candidate/job_applies/${jobApply.id}/confirm_whatsapp_number`,
     );
     if (code === 0) {
       await fetchApplyJob();
@@ -347,8 +347,9 @@ const JobApplyShow = () => {
                             <div>
                               {t("interview_time")}:{" "}
                               {dayjs(interview.scheduled_at).format(
-                                "YYYY-MM-DD HH:mm"
-                              )}
+                                "YYYY-MM-DD HH:mm",
+                              )}{" "}
+                              (GMT{dayjs().format("Z")})
                             </div>
                             <Button
                               type="primary"
@@ -431,7 +432,7 @@ const JobApplyShow = () => {
                     `/api/candidate/job_applies/${jobApply?.id}/interview_mode`,
                     {
                       mode: "ai",
-                    }
+                    },
                   );
                   if (code === 0) {
                     await fetchApplyJob();

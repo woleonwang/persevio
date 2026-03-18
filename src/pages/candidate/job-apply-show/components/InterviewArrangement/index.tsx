@@ -67,17 +67,17 @@ const InterviewArrangement: React.FC<IProps> = ({
     interview.time_slots.forEach((slot) => {
       const from = dayjs(slot.from);
       const to = dayjs(slot.to);
-      const date = from.format("YYYY-MM-DD");
-      if (!result[date]) {
-        result[date] = {
-          morning: [],
-          afternoon: [],
-        };
-      }
 
       let currentFrom = from;
       let currentTo = currentFrom.add(interview.duration, "minutes");
       while (!currentTo.isAfter(to)) {
+        const date = currentFrom.format("YYYY-MM-DD");
+        if (!result[date]) {
+          result[date] = {
+            morning: [],
+            afternoon: [],
+          };
+        }
         if (currentFrom.get("hour") < 12) {
           result[date].morning.push({ from: currentFrom, to: currentTo });
         } else {
@@ -123,8 +123,13 @@ const InterviewArrangement: React.FC<IProps> = ({
     phone: originalT("interview_form.type_phone"),
   };
 
+  const timezone = dayjs().format("Z");
+
   const timeslotsSelector = (
     <div className={classnames(styles.calendarContainer)}>
+      <div className={styles.timezone}>
+        Times shown in your local time zone GMT{timezone}
+      </div>
       <div className={styles.dateContainer}>
         <LeftOutlined
           className={styles.dateItemIcon}
@@ -340,7 +345,7 @@ const InterviewArrangement: React.FC<IProps> = ({
 
                         return `${startTime.format(
                           "YYYY/MM/DD HH:mm",
-                        )} ~ ${endTime.format("HH:mm")}`;
+                        )} ~ ${endTime.format("HH:mm")} (GMT${timezone})`;
                       })()}
                       disabled
                       size="large"
