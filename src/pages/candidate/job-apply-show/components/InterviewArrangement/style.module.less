@@ -17,9 +17,15 @@
   }
 }
 
+.desktopCalendarContainer {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .calendarContainer {
   width: 1000px;
-  flex: none;
+  flex: auto;
   background-color: rgba(245, 247, 251, 1);
   padding: 50px 40px;
   overflow: hidden;
@@ -112,7 +118,6 @@
 
     .slotsItem {
       width: 284px;
-      height: 410px;
       overflow-y: hidden;
       display: flex;
       flex-direction: column;

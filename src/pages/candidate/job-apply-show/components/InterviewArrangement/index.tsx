@@ -95,7 +95,7 @@ const InterviewArrangement: React.FC<IProps> = ({
       `/api/candidate/job_applies/${jobApply.job_id}/interviews/${interview.id}/confirm_time`,
       {
         scheduled_at: selectedDate?.toISOString(),
-      }
+      },
     );
     if (code === 0) {
       message.success(t("confirm_success"));
@@ -138,7 +138,7 @@ const InterviewArrangement: React.FC<IProps> = ({
             const isShowBorder = index !== 0 && currentDate.get("date") === 1;
             const isShowMonth = index === 0 || currentDate.get("date") === 1;
             const hasSlots = interview.time_slots.some((slot) =>
-              dayjs(slot.from).isSame(currentDate, "day")
+              dayjs(slot.from).isSame(currentDate, "day"),
             );
             return (
               <Fragment key={index}>
@@ -160,7 +160,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                     onClick={() => {
                       if (hasSlots) {
                         const slotItem = document.getElementById(
-                          `slot-item-${currentDate.format("YYYY-MM-DD")}`
+                          `slot-item-${currentDate.format("YYYY-MM-DD")}`,
                         );
                         if (slotItem) {
                           slotItem.scrollIntoView({
@@ -235,7 +235,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                               className={classnames(styles.slotItem, {
                                 [styles.selected]: selectedDate?.isSame(
                                   slot.from,
-                                  "minute"
+                                  "minute",
                                 ),
                               })}
                             >
@@ -347,11 +347,11 @@ const InterviewArrangement: React.FC<IProps> = ({
                         const startTime = dayjs(interview.scheduled_at);
                         const endTime = startTime.add(
                           interview.duration,
-                          "minutes"
+                          "minutes",
                         );
 
                         return `${startTime.format(
-                          "YYYY/MM/DD HH:mm"
+                          "YYYY/MM/DD HH:mm",
                         )} ~ ${endTime.format("HH:mm")}`;
                       })()}
                       disabled
@@ -367,7 +367,7 @@ const InterviewArrangement: React.FC<IProps> = ({
                   <div
                     className={classnames(
                       styles.mobileVisible,
-                      styles.mobileCalendarContainer
+                      styles.mobileCalendarContainer,
                     )}
                   >
                     {timeslotsSelector}
@@ -411,7 +411,14 @@ const InterviewArrangement: React.FC<IProps> = ({
         </Form>
       </div>
       {!readonly && (
-        <div className={styles.desktopVisible}>{timeslotsSelector}</div>
+        <div
+          className={classnames(
+            styles.desktopVisible,
+            styles.desktopCalendarContainer,
+          )}
+        >
+          {timeslotsSelector}
+        </div>
       )}
     </div>
   );
