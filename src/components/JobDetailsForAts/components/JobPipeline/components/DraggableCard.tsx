@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Popover } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getSourcingChannel } from "@/utils";
 import { getCandidateCardData } from "@/components/ListModeTable/utils";
@@ -60,7 +60,15 @@ const DraggableCard = ({
       })()
     : "-";
 
+  useEffect(() => {
+    if (disabledPopover) {
+      setPopoverOpen(false);
+    }
+  }, [disabledPopover]);
+
   const handleOpenChange = async (open: boolean) => {
+    if (open && (disabledPopover || isDragging)) return;
+
     setPopoverOpen(open);
     if (open && !item.viewed_at) {
       await Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
