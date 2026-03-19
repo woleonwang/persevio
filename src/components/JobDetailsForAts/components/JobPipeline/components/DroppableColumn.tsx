@@ -1,5 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import { useTranslation } from "react-i18next";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { PipelineStage } from "../../JobSettings";
 import { getInitials } from "./utils";
@@ -32,9 +33,34 @@ const DroppableColumn = ({
   const { setNodeRef, isOver } = useDroppable({
     id: `stage-${stage.id}`,
   });
+  const [isColumnScrolling, setIsColumnScrolling] = useState(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
+
+  const clearScrollTimer = useCallback(() => {
+    if (!scrollTimerRef.current) {
+      return;
+    }
+    clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = null;
+  }, []);
+
+  const handleColumnScroll = useCallback(() => {
+    setIsColumnScrolling(true);
+    clearScrollTimer();
+    scrollTimerRef.current = setTimeout(() => {
+      setIsColumnScrolling(false);
+      scrollTimerRef.current = null;
+    }, 200);
+  }, [clearScrollTimer]);
+
+  useEffect(() => {
+    return () => {
+      clearScrollTimer();
+    };
+  }, [clearScrollTimer]);
 
   const unreadCount = !renderReachedOutSummary
     ? (items as TTalentListItem[]).filter((t) => !t.viewed_at).length
@@ -57,7 +83,7 @@ const DroppableColumn = ({
           )}
         </div>
       </div>
-      <div className={styles.columnContent}>
+      <div className={styles.columnContent} onScroll={handleColumnScroll}>
         {renderReachedOutSummary && (
           <div
             className={styles.reachedOutSummary}
@@ -135,6 +161,7 @@ const DroppableColumn = ({
                   key={talent.id}
                   item={talent}
                   isDraggable={!isRejected}
+                  disabledPopover={isColumnScrolling}
                   onCardClick={() => onCardClick(talent)}
                   onUpdateTalent={onUpdateTalent}
                   onViewed={onMarkViewed}
