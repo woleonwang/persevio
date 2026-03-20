@@ -19,9 +19,11 @@ import {
   EVALUATE_RESULT_LEVEL_KEYS,
   getEvaluateResultLevel,
   getSourcingChannel,
+  isDevelopment,
   parseJSON,
   SOURCING_CHANNEL_KEYS,
 } from "@/utils";
+import UploadCandidateModal from "./components/UploadCandidateModal";
 import { DraggableCard, DroppableColumn } from "./components/utils";
 import styles from "./style.module.less";
 import {
@@ -60,6 +62,8 @@ const JobPipeline = ({
 
   const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
   const [activeId, setActiveId] = useState<number>();
+  const [uploadCandidateModalOpen, setUploadCandidateModalOpen] =
+    useState(false);
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -335,21 +339,31 @@ const JobPipeline = ({
           allowClear
           options={[{ value: undefined, label: tKey("rank_by") }]}
         /> */}
-        <div className={styles.viewToggle}>
-          <Button
-            className={styles.viewToggleBtn}
-            type={viewMode === "list" ? "primary" : "default"}
-            onClick={() => handleChangeViewMode("list")}
-          >
-            {tKey("list")}
-          </Button>
-          <Button
-            className={styles.viewToggleBtn}
-            type={viewMode === "kanban" ? "primary" : "default"}
-            onClick={() => handleChangeViewMode("kanban")}
-          >
-            {tKey("kanban")}
-          </Button>
+        <div className={styles.filterRowRight}>
+          {isDevelopment() && (
+            <Button
+              type="default"
+              onClick={() => setUploadCandidateModalOpen(true)}
+            >
+              {tKey("upload_candidate")}
+            </Button>
+          )}
+          <div className={styles.viewToggle}>
+            <Button
+              className={styles.viewToggleBtn}
+              type={viewMode === "list" ? "primary" : "default"}
+              onClick={() => handleChangeViewMode("list")}
+            >
+              {tKey("list")}
+            </Button>
+            <Button
+              className={styles.viewToggleBtn}
+              type={viewMode === "kanban" ? "primary" : "default"}
+              onClick={() => handleChangeViewMode("kanban")}
+            >
+              {tKey("kanban")}
+            </Button>
+          </div>
         </div>
         {/* <Button type="primary" className={styles.addCandidateBtn}>
           + {tKey("add_candidate")}
@@ -427,6 +441,14 @@ const JobPipeline = ({
             />
           )}
         </div>
+      )}
+      {isDevelopment() && job && (
+        <UploadCandidateModal
+          open={uploadCandidateModalOpen}
+          jobId={job.id}
+          onCancel={() => setUploadCandidateModalOpen(false)}
+          onSuccess={() => void fetchTalents()}
+        />
       )}
     </div>
   );

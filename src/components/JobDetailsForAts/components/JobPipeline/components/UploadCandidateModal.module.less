@@ -1,0 +1,57 @@
+@import "@/mixin.module.less";
+
+.uploadSection {
+  margin-bottom: 16px;
+}
+
+.uploadLabel {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.dragger {
+  :global(.ant-upload-drag) {
+    border-radius: 12px;
+  }
+}
+
+.uploadIconContainer {
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.uploadIcon {
+  font-size: 40px;
+  color: @primary-color;
+}
+
+.uploadingIcon {
+  font-size: 28px;
+  color: @primary-color;
+}
+
+.uploadHint {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  text-align: center;
+}
+
+.fileName {
+  font-weight: 500;
+  word-break: break-all;
+  text-align: center;
+}
+
+.contactForm {
+  margin-top: 8px;
+}
+
+.footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
