@@ -12,7 +12,7 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import List from "@/assets/icons/list";
-import { EVALUATE_RESULT_LEVEL_KEYS } from "@/utils";
+import { EVALUATE_RESULT_LEVEL_KEYS, getEvaluateResultLevel } from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
@@ -89,14 +89,8 @@ const ListModeTable = ({
 
   const sortedTalents = useMemo(() => {
     return [...items].sort((a, b) => {
-      const fitLevelA =
-        a.parsedEvaluateResult?.overall_recommendation?.result ||
-        a.parsedEvaluateResult?.result ||
-        "maybe";
-      const fitLevelB =
-        b.parsedEvaluateResult?.overall_recommendation?.result ||
-        b.parsedEvaluateResult?.result ||
-        "maybe";
+      const fitLevelA = getEvaluateResultLevel(a.parsedEvaluateResult);
+      const fitLevelB = getEvaluateResultLevel(b.parsedEvaluateResult);
 
       if (fitLevelA === fitLevelB) {
         return dayjs(b.created_at).diff(dayjs(a.created_at));

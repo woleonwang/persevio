@@ -123,14 +123,8 @@ const DroppableColumn = ({
         {!renderReachedOutSummary &&
           (items as TTalentListItem[])
             .sort((a, b) => {
-              const fitLevelA = getEvaluateResultLevel(
-                a.parsedEvaluateResult?.overall_recommendation?.result ||
-                  a.parsedEvaluateResult?.result,
-              );
-              const fitLevelB = getEvaluateResultLevel(
-                b.parsedEvaluateResult?.overall_recommendation?.result ||
-                  b.parsedEvaluateResult?.result,
-              );
+              const fitLevelA = getEvaluateResultLevel(a.parsedEvaluateResult);
+              const fitLevelB = getEvaluateResultLevel(b.parsedEvaluateResult);
 
               if (
                 !a.cachedViewedAt &&

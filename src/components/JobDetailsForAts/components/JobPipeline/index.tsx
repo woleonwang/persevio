@@ -158,10 +158,7 @@ const JobPipeline = ({
       })
       .filter((item) => {
         if (evaluateResultLevels.length === 0) return true;
-        const level = getEvaluateResultLevel(
-          item.parsedEvaluateResult?.overall_recommendation?.result ||
-            item.parsedEvaluateResult?.result,
-        );
+        const level = getEvaluateResultLevel(item.parsedEvaluateResult);
         return evaluateResultLevels.includes(level);
       });
   }, [

@@ -10,9 +10,7 @@ export function getCandidateCardData(item: TTalentListItem) {
     evaluateResult?.current_compensation ||
     basicInfo?.current_compensation ||
     "-";
-  const fitResult = getEvaluateResultLevel(
-    evaluateResult?.overall_recommendation?.result || evaluateResult?.result,
-  );
+  const fitResult = getEvaluateResultLevel(evaluateResult);
   const summary =
     evaluateResult?.thumbnail_summary || evaluateResult?.summary || "";
   return {
@@ -26,4 +24,3 @@ export function getCandidateCardData(item: TTalentListItem) {
     summary,
   };
 }
-

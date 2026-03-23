@@ -150,10 +150,7 @@ const TalentPopoverContent = ({
             <>
               <div className={styles.cardTitleResult}>
                 <EvaluateResultBadge
-                  result={getEvaluateResultLevel(
-                    evaluateResult?.overall_recommendation?.result ??
-                      evaluateResult?.result,
-                  )}
+                  result={getEvaluateResultLevel(evaluateResult)}
                   caveat={evaluateResult?.overall_recommendation?.caveat}
                 />
               </div>
@@ -223,7 +220,7 @@ const TalentPopoverContent = ({
           </div>
           <div style={{ marginLeft: 24 }}>
             {evaluateResult?.thumbnail_summary ||
-              evaluateResult?.summary ||
+              (evaluateResult?.summary as unknown as string) ||
               "-"}
           </div>
         </div>

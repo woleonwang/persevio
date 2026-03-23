@@ -63,34 +63,6 @@ type TExtractBasicInfo = {
   }[];
 };
 
-type TExtractEvaluateResult = {
-  overall_recommendation: {
-    result: TEvaluateResultLevel;
-    caveat?: string;
-  };
-  thumbnail_summary: string;
-  current_compensation: string;
-  expected_compensation: string;
-  visa: string;
-  strengths?: {
-    content: string;
-  }[];
-  gaps?: {
-    content: string;
-  }[];
-  // 兼容老数据
-  result: TEvaluateResultLevel;
-  strength?: {
-    content: string;
-  }[];
-  gap?: {
-    content: string;
-  }[];
-
-  // 兼容老数据
-  summary: string;
-};
-
 type TTalentFromApi = TTalent & {
   job_apply: {
     interview_finished_at?: string;
@@ -99,12 +71,12 @@ type TTalentFromApi = TTalent & {
 
 type TTalentItem = TTalentFromApi & {
   basicInfo: TExtractBasicInfo;
-  parsedEvaluateResult: TExtractEvaluateResult;
+  parsedEvaluateResult: TReport;
 };
 
 type TLinkedinProfileItem = TLinkedinProfile & {
   basicInfo: TExtractBasicInfo;
-  parsedEvaluateResult: TExtractEvaluateResult;
+  parsedEvaluateResult: TReport;
 };
 
 type TTabKey =
@@ -177,12 +149,12 @@ const TalentCards = (props: IProps) => {
               return {
                 ...interview,
                 time_slots: parseJSONArray(
-                  interview.time_slots as unknown as string
+                  interview.time_slots as unknown as string,
                 ),
               };
             }),
           };
-        })
+        }),
       );
       setLinkedinProfiles(
         (data.linkedin_profiles ?? []).map((linkedinProfile) => {
@@ -191,7 +163,7 @@ const TalentCards = (props: IProps) => {
             basicInfo: parseJSON(linkedinProfile.basic_info_json),
             parsedEvaluateResult: parseJSON(linkedinProfile.evaluate_json),
           };
-        })
+        }),
       );
     }
   };
@@ -219,8 +191,8 @@ const TalentCards = (props: IProps) => {
   };
 
   const getEvaluateResult = (
-    talentItem: TDataSourceItem
-  ): TExtractEvaluateResult | undefined => {
+    talentItem: TDataSourceItem,
+  ): TReport | undefined => {
     return (
       talentItem.talent?.parsedEvaluateResult ||
       talentItem.linkedinProfile?.parsedEvaluateResult
@@ -228,7 +200,7 @@ const TalentCards = (props: IProps) => {
   };
 
   const getBasicInfo = (
-    talentItem: TDataSourceItem
+    talentItem: TDataSourceItem,
   ): TExtractBasicInfo | undefined => {
     return (
       talentItem.talent?.basicInfo || talentItem.linkedinProfile?.basicInfo
@@ -245,7 +217,7 @@ const TalentCards = (props: IProps) => {
       {
         status: "rejected",
         feedback,
-      }
+      },
     );
 
     if (code === 0) {
@@ -258,7 +230,7 @@ const TalentCards = (props: IProps) => {
   const updateTalentEvaluateFeedback = async (
     jobId: number,
     talentId: number,
-    feedback: TEvaluateFeedback
+    feedback: TEvaluateFeedback,
   ) => {
     const newTalents = talents.map((talent) => {
       if (talent.id === talentId) {
@@ -278,7 +250,7 @@ const TalentCards = (props: IProps) => {
       `/api/jobs/${jobId}/talents/${talentId}/evaluate_feedback`,
       {
         evaluate_feedback: feedback,
-      }
+      },
     );
 
     if (code === 0) {
@@ -292,7 +264,7 @@ const TalentCards = (props: IProps) => {
         `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}/evaluate_feedback`,
         {
           evaluate_feedback_reason: reason,
-        }
+        },
       );
 
       if (code === 0) {
@@ -313,7 +285,7 @@ const TalentCards = (props: IProps) => {
       if (linkedinProfile.candidate_id) {
         // 2
         const talent = talents.find(
-          (talent) => talent.candidate_id === linkedinProfile.candidate_id
+          (talent) => talent.candidate_id === linkedinProfile.candidate_id,
         );
         result.push({
           linkedinProfile,
@@ -333,8 +305,8 @@ const TalentCards = (props: IProps) => {
           !linkedinProfiles.find(
             (linkedinProfile) =>
               linkedinProfile.candidate_id !== 0 &&
-              linkedinProfile.candidate_id === talent.candidate_id
-          )
+              linkedinProfile.candidate_id === talent.candidate_id,
+          ),
       )
       .forEach((talent) => {
         result.push({
@@ -362,22 +334,20 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return (
           !evaluateResultLevel ||
-          getEvaluateResultLevel(
-            getEvaluateResult(item)?.overall_recommendation?.result ??
-              getEvaluateResult(item)?.result
-          ) === evaluateResultLevel
+          getEvaluateResultLevel(getEvaluateResult(item)) ===
+            evaluateResultLevel
         );
       })
       .sort((a, b) => {
         return dayjs(
-          b.talent?.created_at || b.linkedinProfile?.created_at
+          b.talent?.created_at || b.linkedinProfile?.created_at,
         ).diff(dayjs(a.talent?.created_at || a.linkedinProfile?.created_at));
       });
   }, [mergedList, activeTab, searchName, selectedJob, evaluateResultLevel]);
 
   const currentPageDataSource = dataSource.slice(
     (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+    currentPage * PAGE_SIZE,
   );
 
   return (
@@ -417,7 +387,7 @@ const TalentCards = (props: IProps) => {
                 "not_a_fit",
               ].map((level) => ({
                 label: originalT(
-                  `job_talents.evaluate_result_select_options.${level}`
+                  `job_talents.evaluate_result_select_options.${level}`,
                 ),
                 value: level,
               }))}
@@ -460,14 +430,14 @@ const TalentCards = (props: IProps) => {
                     (
                     {
                       mergedList.filter(
-                        (item) => getStatus(item) === "screened"
+                        (item) => getStatus(item) === "screened",
                       ).length
                     }
                     )
                   </span>
                   {mergedList.filter(
                     (item) =>
-                      getStatus(item) === "screened" && !item.talent?.viewed_at
+                      getStatus(item) === "screened" && !item.talent?.viewed_at,
                   ).length > 0 && <div className={styles.point} />}
                   <Tooltip title="Candidates who have completed the AI prescreening interview.">
                     <Icon icon={<Question />} />
@@ -484,7 +454,7 @@ const TalentCards = (props: IProps) => {
                     (
                     {
                       mergedList.filter(
-                        (item) => getStatus(item) === "not_screened"
+                        (item) => getStatus(item) === "not_screened",
                       ).length
                     }
                     )
@@ -492,7 +462,7 @@ const TalentCards = (props: IProps) => {
                   {mergedList.filter(
                     (item) =>
                       getStatus(item) === "not_screened" &&
-                      !item.talent?.viewed_at
+                      !item.talent?.viewed_at,
                   ).length > 0 && <div className={styles.point} />}
                   <Tooltip title="Candidates whose resumes have been analyzed and rated, but have not yet completed the AI prescreening interview. You can still reach out to schedule an interview without waiting for them to complete.">
                     <Icon icon={<Question />} />
@@ -509,14 +479,14 @@ const TalentCards = (props: IProps) => {
                     (
                     {
                       mergedList.filter(
-                        (item) => getStatus(item) === "rejected"
+                        (item) => getStatus(item) === "rejected",
                       ).length
                     }
                     )
                   </span>
                   {mergedList.filter(
                     (item) =>
-                      getStatus(item) === "rejected" && !item.talent?.viewed_at
+                      getStatus(item) === "rejected" && !item.talent?.viewed_at,
                   ).length > 0 && <div className={styles.point} />}
                   <Tooltip title="Candidates the hiring manager has decided not to move forward with.">
                     <Icon icon={<Question />} />
@@ -533,7 +503,7 @@ const TalentCards = (props: IProps) => {
                     (
                     {
                       mergedList.filter(
-                        (item) => getStatus(item) === "linked_in_profiles"
+                        (item) => getStatus(item) === "linked_in_profiles",
                       ).length
                     }
                     )
@@ -550,7 +520,7 @@ const TalentCards = (props: IProps) => {
                 <div className={styles.tabItem}>
                   All Candidates<span>({mergedList.length})</span>
                   {mergedList.filter(
-                    (item) => !!item.talent && !item.talent.viewed_at
+                    (item) => !!item.talent && !item.talent.viewed_at,
                   ).length > 0 && <div className={styles.point} />}
                   <Tooltip title="Complete view of all candidates across all stages">
                     <Icon icon={<Question />} />
@@ -578,7 +548,7 @@ const TalentCards = (props: IProps) => {
             const interview = talent?.interviews?.[0];
             const job = jobs.find(
               (job) =>
-                job.id === (talent?.job_id || item.linkedinProfile?.job_id)
+                job.id === (talent?.job_id || item.linkedinProfile?.job_id),
             );
             const visa = evaluateResult?.visa || basicInfo?.visa;
             const currentCompensation =
@@ -597,7 +567,7 @@ const TalentCards = (props: IProps) => {
                     item.talent
                       ? `/app/jobs/${item.talent.job_id}/standard-board/talents/${item.talent.id}`
                       : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`,
-                    "_blank"
+                    "_blank",
                   );
                 }}
               >
@@ -608,10 +578,7 @@ const TalentCards = (props: IProps) => {
                     </div>
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge
-                        result={getEvaluateResultLevel(
-                          evaluateResult?.overall_recommendation?.result ??
-                            evaluateResult?.result
-                        )}
+                        result={getEvaluateResultLevel(evaluateResult)}
                         caveat={evaluateResult?.overall_recommendation?.caveat}
                       />
                     </div>
@@ -622,7 +589,7 @@ const TalentCards = (props: IProps) => {
                           updateTalentEvaluateFeedback(
                             talent.job_id,
                             talent.id,
-                            value
+                            value,
                           );
                         }}
                         onOpen={() => {
@@ -645,7 +612,7 @@ const TalentCards = (props: IProps) => {
                               if (!!item.talent?.evaluate_feedback) {
                                 updateTalentStatus(
                                   item.talent,
-                                  item.talent.evaluate_feedback_reason
+                                  item.talent.evaluate_feedback_reason,
                                 );
                               } else {
                                 setSelectedTalent(item.talent);
@@ -745,7 +712,7 @@ const TalentCards = (props: IProps) => {
                   <div className={styles.evaluateSummary}>
                     <Icon icon={<Stars />} />
                     {evaluateResult?.thumbnail_summary ||
-                      evaluateResult?.summary ||
+                      (evaluateResult?.summary as unknown as string) ||
                       "-"}
                   </div>
 
@@ -754,7 +721,7 @@ const TalentCards = (props: IProps) => {
                       <div
                         className={classnames(
                           styles.evaluateDetailsItem,
-                          styles.strengths
+                          styles.strengths,
                         )}
                       >
                         <div className={styles.evaluateDetailsItemTitle}>
@@ -782,7 +749,7 @@ const TalentCards = (props: IProps) => {
                       <div
                         className={classnames(
                           styles.evaluateDetailsItem,
-                          styles.gaps
+                          styles.gaps,
                         )}
                       >
                         <div className={styles.evaluateDetailsItemTitle}>
@@ -827,11 +794,11 @@ const TalentCards = (props: IProps) => {
                         status === "rejected"
                           ? "rejected"
                           : !!interview
-                          ? interview.mode === "written" ||
-                            interview.scheduled_at
-                            ? "interview_scheduled"
-                            : "interview_created"
-                          : "waiting_for_screening";
+                            ? interview.mode === "written" ||
+                              interview.scheduled_at
+                              ? "interview_scheduled"
+                              : "interview_created"
+                            : "waiting_for_screening";
                       return (
                         <>
                           <div className={styles.left}>
@@ -839,22 +806,22 @@ const TalentCards = (props: IProps) => {
                               <div
                                 className={classnames(
                                   styles.cardFooterStatus,
-                                  styles[tagType]
+                                  styles[tagType],
                                 )}
                               >
                                 {tagType === "rejected"
                                   ? "Rejected"
                                   : tagType === "interview_scheduled"
-                                  ? "Interview Scheduled"
-                                  : tagType === "interview_created"
-                                  ? "Pending Candidate Interview Confirmation"
-                                  : "Pending Resume Review"}
+                                    ? "Interview Scheduled"
+                                    : tagType === "interview_created"
+                                      ? "Pending Candidate Interview Confirmation"
+                                      : "Pending Resume Review"}
                               </div>
                             ) : (
                               <div
                                 className={classnames(
                                   styles.cardFooterStatus,
-                                  styles.interview_scheduled
+                                  styles.interview_scheduled,
                                 )}
                               >
                                 {item.linkedinProfile?.message_read_at
@@ -871,7 +838,7 @@ const TalentCards = (props: IProps) => {
                                   <div>Interview Mode:</div>
                                   <div>
                                     {originalT(
-                                      `interview_form.mode_${interview?.mode}`
+                                      `interview_form.mode_${interview?.mode}`,
                                     )}
                                   </div>
                                 </div>
@@ -882,7 +849,7 @@ const TalentCards = (props: IProps) => {
                                   <div>
                                     {interview?.scheduled_at
                                       ? dayjs(interview?.scheduled_at).format(
-                                          "YYYY-MM-DD HH:mm"
+                                          "YYYY-MM-DD HH:mm",
                                         )
                                       : "-"}
                                   </div>
@@ -897,7 +864,7 @@ const TalentCards = (props: IProps) => {
                                 <div className={styles.border}>
                                   {
                                     staffs.find(
-                                      (staff) => staff.id === job.staff_id
+                                      (staff) => staff.id === job.staff_id,
                                     )?.name
                                   }
                                 </div>

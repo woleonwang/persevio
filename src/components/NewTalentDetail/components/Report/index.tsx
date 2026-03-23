@@ -75,9 +75,7 @@ const Report: React.FC<IProps> = (props) => {
           <div>Overall Recommendation</div>
           <div>
             <EvaluateResultBadge
-              result={getEvaluateResultLevel(
-                report?.overall_recommendation?.result ?? report?.result,
-              )}
+              result={getEvaluateResultLevel(report)}
               caveat={report?.overall_recommendation?.caveat}
             />
           </div>

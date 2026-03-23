@@ -594,9 +594,7 @@ const AtsTalentDetail: React.FC = () => {
                   </div>
                   <EvaluateResultBadge
                     size="small"
-                    result={getEvaluateResultLevel(
-                      report?.overall_recommendation?.result ?? report?.result,
-                    )}
+                    result={getEvaluateResultLevel(report)}
                   />
                 </div>
               }
@@ -625,10 +623,7 @@ const AtsTalentDetail: React.FC = () => {
                     <div className={styles.evalOverallLabel}>
                       <span>Overall Fit</span>
                       <EvaluateResultBadge
-                        result={getEvaluateResultLevel(
-                          report?.overall_recommendation?.result ??
-                            report?.result,
-                        )}
+                        result={getEvaluateResultLevel(report)}
                         caveat={report.overall_recommendation?.caveat}
                       />
                     </div>

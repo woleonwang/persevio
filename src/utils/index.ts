@@ -293,8 +293,10 @@ export const getDocumentType = (key: string): string => {
 };
 
 export const getEvaluateResultLevel = (
-  result?: string,
+  report?: TReport,
 ): TEvaluateResultLevel => {
+  const result = report?.overall_recommendation?.result ?? report?.result;
+
   if (!result) return "maybe";
 
   return EVALUATE_RESULT_LEVEL_KEYS.includes(result)
