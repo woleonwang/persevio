@@ -24,6 +24,7 @@ import {
   getSourcingChannel,
   parseJSON,
 } from "@/utils";
+import { getStageKey } from "@/utils/talentStage";
 import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
@@ -190,6 +191,9 @@ const AtsTalentDetail: React.FC = () => {
   if (!job || !talent) {
     return <Spin />;
   }
+
+  const currentStageKey = getStageKey(talent);
+  const isShortlisted = currentStageKey === "shortlisted";
 
   const resumeDetail: TTalentResume | null = talent.resume_detail_json
     ? (parseJSON(talent.resume_detail_json) as TTalentResume)
@@ -558,19 +562,21 @@ const AtsTalentDetail: React.FC = () => {
               >
                 Move Stage
               </Button>
-              <Button
-                danger
-                onClick={() => {
-                  if (talent?.evaluate_feedback) {
-                    updateTalentStatus();
-                  } else {
-                    setIsRejectModalOpen(true);
-                  }
-                }}
-                className={styles.rejectBtn}
-              >
-                {t("action_reject")}
-              </Button>
+              {!isShortlisted && (
+                <Button
+                  danger
+                  onClick={() => {
+                    if (talent?.evaluate_feedback) {
+                      updateTalentStatus();
+                    } else {
+                      setIsRejectModalOpen(true);
+                    }
+                  }}
+                  className={styles.rejectBtn}
+                >
+                  {t("action_reject")}
+                </Button>
+              )}
             </>
           )}
         </div>

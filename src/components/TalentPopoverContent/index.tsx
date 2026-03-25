@@ -17,6 +17,7 @@ import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFe
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
+import { getStageKey } from "@/utils/talentStage";
 
 interface IProps {
   variant: "pipeline" | "talents";
@@ -54,6 +55,7 @@ const TalentPopoverContent = ({
   const interview = talent.interviews?.[0];
   const job = talent.job;
   const isPipeline = variant === "pipeline";
+  const isShortlisted = getStageKey(talent) === "shortlisted";
 
   const updateTalentEvaluateFeedback = async (
     jobId: number,
@@ -177,7 +179,7 @@ const TalentPopoverContent = ({
           <div className={styles.cardHeaderActions}>
             {talent && talent.status !== "rejected" && (
               <>
-                {talent.interviews?.length === 0 && (
+                {talent.interviews?.length === 0 && !isShortlisted && (
                   <Button
                     type="primary"
                     danger
