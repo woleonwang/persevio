@@ -1738,8 +1738,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       fit_medium: "Medium",
       fit_low: "Low",
       actions: "Actions",
-      upload_candidate: "Upload candidate",
-      upload_candidate_modal_title: "Upload candidate",
+      upload_candidate: "Upload Candidate",
+      upload_candidate_modal_title: "Upload Candidate",
       resume_label: "Resume",
       resume_upload_hint:
         "Support .doc, .docx, .pdf — same as candidate registration",

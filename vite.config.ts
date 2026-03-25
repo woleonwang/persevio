@@ -9,10 +9,10 @@ export default defineConfig({
     host: "0.0.0.0",
     proxy: {
       "/api": {
-        target: "http://localhost:10808",
-        // target: "http://47.236.233.206:10808",
+        // target: "http://localhost:10808",
+        target: "https://dev.persevio.ai",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        // rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

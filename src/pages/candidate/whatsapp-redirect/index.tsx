@@ -1,8 +1,9 @@
-import { getQuery, isTempAccount } from "@/utils";
+import { deleteQuery, getQuery, isTempAccount } from "@/utils";
 import { useEffect, useState } from "react";
 import { message, Spin } from "antd";
 import { Get, Post } from "@/utils/request";
 import { useNavigate } from "react-router";
+import { tokenStorage } from "@/utils/storage";
 
 const WhatsappRedirect = () => {
   const [status, setStatus] = useState<"handling" | "error">("handling");
@@ -11,6 +12,12 @@ const WhatsappRedirect = () => {
   useEffect(() => {
     const action = getQuery("action");
     const jobId = getQuery("job_id");
+    const initToken = getQuery("candidate_token");
+    if (initToken) {
+      tokenStorage.setToken(initToken, "candidate");
+      deleteQuery("candidate_token");
+    }
+
     if (action === "switch_to_human") {
       switchConversationMode("human", jobId);
     } else if (action === "switch_to_ai") {
@@ -19,7 +26,7 @@ const WhatsappRedirect = () => {
   }, []);
 
   const fetchJobApply = async (
-    jobId: string
+    jobId: string,
   ): Promise<IJobApply | undefined> => {
     const { code, data } = await Get(`/api/candidate/jobs/${jobId}/job_apply`);
     if (code === 0) {
@@ -38,7 +45,7 @@ const WhatsappRedirect = () => {
 
   const switchConversationMode = async (
     mode: "human" | "ai",
-    jobId: string
+    jobId: string,
   ) => {
     const jobApply = await fetchJobApply(jobId);
     if (!jobApply) {
@@ -55,13 +62,12 @@ const WhatsappRedirect = () => {
       `/api/candidate/job_applies/${jobApply.id}/interview_mode`,
       {
         mode,
-      }
+      },
     );
 
     if (code === 0) {
-      message.success(`Switch successful`);
       if (isTempAccount(candidateSettings)) {
-        navigate(`/apply-job/${jobId}`, { replace: true });
+        navigate(`/candidate/interview/${jobApply.id}`, { replace: true });
       } else {
         navigate(`/candidate/jobs/applies/${jobApply.id}?switch_mode=${mode}`, {
           replace: true,

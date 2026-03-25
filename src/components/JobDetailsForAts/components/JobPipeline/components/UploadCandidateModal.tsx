@@ -50,19 +50,10 @@ function pickFromBasicInfo(info: Record<string, unknown>) {
   };
 
   return {
-    name: pick(["name", "full_name", "candidate_name", "display_name"]),
-    email: pick(["email", "Email", "work_email"]),
-    phoneNumber: pick([
-      "phone",
-      "phone_number",
-      "mobile",
-      "cellphone",
-      "tel",
-      "whatsapp_phone_number",
-    ]),
-    countryCode:
-      pick(["country_code", "countryCode", "whatsapp_country_code", "dial_code"]) ||
-      "+65",
+    name: pick(["name"]),
+    email: pick(["email"]),
+    phoneNumber: pick(["phone_number"]),
+    countryCode: pick(["country_code"]) || "+65",
   };
 }
 
@@ -214,7 +205,10 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
               </>
             ) : (
               <>
-                <Icon icon={<UploadIcon />} className={modalStyles.uploadIcon} />
+                <Icon
+                  icon={<UploadIcon />}
+                  className={modalStyles.uploadIcon}
+                />
                 <div className={modalStyles.uploadHint}>
                   {tKey("resume_upload_hint")}
                 </div>

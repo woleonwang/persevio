@@ -269,10 +269,6 @@ createRoot(document.getElementById("root")!).render(
           />
           <Route path="/candidate/apply-job" element={<ApplyJobTest />} />
           <Route path="/candidate/jobs" element={<Jobs />} />
-          <Route
-            path="/candidate/whatsapp-redirect"
-            element={<WhatsappRedirect />}
-          />
         </Route>
 
         <Route path="/signin-candidate" element={<SignInCandidate />} />
@@ -286,10 +282,14 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/l/:shortLink" element={<ShortLink />} />
         <Route path="/demo" element={<Feedback />} />
         <Route
+          path="/candidate/whatsapp-redirect"
+          element={<WhatsappRedirect />}
+        />
+        <Route
           path="/candidate/interview/:jobApplyId"
           element={<InterviewChat />}
         />
       </Routes>
     </BrowserRouter>
-  </AntdLocaleProvider>
+  </AntdLocaleProvider>,
 );
