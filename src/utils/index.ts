@@ -36,6 +36,13 @@ export const parseMarkdown = (markdownString?: string) => {
     : markdownString;
 };
 
+// normalize string fields extracted from resume; treat "N.A." placeholders as empty
+export const normalizeTalentField = (value?: string): string => {
+  const s = (value ?? "").trim();
+  if (s === "N.A." || s === "N.A") return "";
+  return s;
+};
+
 export const isDevelopment = (): boolean => {
   return process.env.NODE_ENV === "development";
 };

@@ -146,6 +146,35 @@
     }
   }
 
+  .location {
+    margin: 16px 0 16px 3px;
+
+    .locationTitle {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      gap: 16px;
+
+      &::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        outline: 3px solid rgba(54, 130, 254, 0.1);
+        background-color: @primary-color;
+      }
+    }
+
+    .locationValue {
+      margin-left: 20px;
+      margin-top: 12px;
+      font-size: 14px;
+      word-break: break-word;
+    }
+  }
+
   .evaluateSummary {
     display: flex;
     flex-direction: column;

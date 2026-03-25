@@ -459,6 +459,7 @@ type TTalent = {
 // JobPipeline / Talents list 通用候选人类型
 type TExtractBasicInfo = {
   years_of_experience: string;
+  location: string;
   current_compensation: string;
   expected_compensation: string;
   visa: string;

@@ -19,6 +19,7 @@ import {
   EVALUATE_RESULT_LEVEL_KEYS,
   getEvaluateResultLevel,
   getSourcingChannel,
+  normalizeTalentField,
   parseJSON,
   SOURCING_CHANNEL_KEYS,
 } from "@/utils";
@@ -142,8 +143,19 @@ const JobPipeline = ({
     return talents
       .filter((item) => {
         if (!searchName) return true;
-        const name = item.name || "";
-        return name.toLowerCase().includes(searchName.toLowerCase());
+        const query = searchName.trim().toLowerCase();
+        const basicInfo = item.basicInfo;
+        const haystack = [
+          item.name ?? "",
+          normalizeTalentField(basicInfo?.location),
+          normalizeTalentField(basicInfo?.visa),
+          normalizeTalentField(basicInfo?.current_compensation),
+          normalizeTalentField(basicInfo?.expected_compensation),
+          normalizeTalentField(basicInfo?.years_of_experience),
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(query);
       })
       .filter((item) => {
         if (sourcingChannels.length === 0) return true;

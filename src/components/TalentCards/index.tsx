@@ -21,6 +21,7 @@ import {
   parseJSONArray,
   updateQuery,
   getEvaluateResultLevel,
+  normalizeTalentField,
 } from "@/utils";
 
 import styles from "./style.module.less";
@@ -51,6 +52,7 @@ type TDataSourceItem = {
 
 type TExtractBasicInfo = {
   years_of_experience: string;
+  location: string;
   current_compensation: string;
   expected_compensation: string;
   visa: string;
@@ -325,7 +327,17 @@ const TalentCards = (props: IProps) => {
       .filter((item) => {
         return (
           !searchName ||
-          getName(item).toLowerCase().includes(searchName.toLowerCase())
+          [
+            getName(item),
+            normalizeTalentField(getBasicInfo(item)?.location),
+            normalizeTalentField(getBasicInfo(item)?.visa),
+            normalizeTalentField(getBasicInfo(item)?.current_compensation),
+            normalizeTalentField(getBasicInfo(item)?.expected_compensation),
+            normalizeTalentField(getBasicInfo(item)?.years_of_experience),
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(searchName.toLowerCase())
         );
       })
       .filter((item) => {
