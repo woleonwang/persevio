@@ -19,7 +19,6 @@ import {
   EVALUATE_RESULT_LEVEL_KEYS,
   getEvaluateResultLevel,
   getSourcingChannel,
-  isDevelopment,
   parseJSON,
   SOURCING_CHANNEL_KEYS,
 } from "@/utils";
@@ -337,14 +336,12 @@ const JobPipeline = ({
           options={[{ value: undefined, label: tKey("rank_by") }]}
         /> */}
         <div className={styles.filterRowRight}>
-          {isDevelopment() && (
-            <Button
-              type="default"
-              onClick={() => setUploadCandidateModalOpen(true)}
-            >
-              {tKey("upload_candidate")}
-            </Button>
-          )}
+          <Button
+            type="default"
+            onClick={() => setUploadCandidateModalOpen(true)}
+          >
+            {tKey("upload_candidate")}
+          </Button>
           <div className={styles.viewToggle}>
             <Button
               className={styles.viewToggleBtn}
@@ -366,7 +363,6 @@ const JobPipeline = ({
           + {tKey("add_candidate")}
         </Button> */}
       </div>
-
       {loading ? (
         <div className={styles.loading}>
           <Spin />
@@ -439,7 +435,7 @@ const JobPipeline = ({
           )}
         </div>
       )}
-      {isDevelopment() && job && (
+      {job && (
         <UploadCandidateModal
           open={uploadCandidateModalOpen}
           jobId={job.id}

@@ -1,6 +1,6 @@
 import { deleteQuery, getQuery, isTempAccount } from "@/utils";
 import { useEffect, useState } from "react";
-import { message, Spin } from "antd";
+import { Spin } from "antd";
 import { Get, Post } from "@/utils/request";
 import { useNavigate } from "react-router";
 import { tokenStorage } from "@/utils/storage";

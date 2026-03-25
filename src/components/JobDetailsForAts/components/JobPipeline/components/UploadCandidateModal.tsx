@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Modal, Upload } from "antd";
+import { Button, Form, Input, message, Modal, Switch, Upload } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +22,7 @@ type TFormValues = {
     countryCode: string;
     phoneNumber: string;
   };
+  notifyInterview: boolean;
 };
 
 function normalizeBasicInfo(raw: unknown): Record<string, unknown> {
@@ -155,6 +156,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
         email: values.email,
         country_code: values.phone.countryCode,
         phone: values.phone.phoneNumber,
+        notify_interview: values.notifyInterview ?? true,
       });
       if (code === 0) {
         message.success(tKey("create_candidate_success"));
@@ -224,6 +226,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
           layout="vertical"
           className={modalStyles.contactForm}
           requiredMark
+          initialValues={{ notifyInterview: true }}
         >
           <Form.Item
             label={tKey("field_name")}
@@ -262,6 +265,13 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
             ]}
           >
             <PhoneWithCountryCode />
+          </Form.Item>
+          <Form.Item
+            label={tKey("field_notify_interview")}
+            name="notifyInterview"
+            valuePropName="checked"
+          >
+            <Switch />
           </Form.Item>
         </Form>
       )}

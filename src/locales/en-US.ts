@@ -1754,6 +1754,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       field_placeholder: "Please fill in",
       field_email_invalid: "Please enter a valid email",
       field_phone_invalid: "Please enter country code and phone number",
+      field_notify_interview: "Invite candidate to AI interview",
       cancel: "Cancel",
       submit_create_candidate: "Create candidate",
       create_candidate_success: "Candidate created successfully",
