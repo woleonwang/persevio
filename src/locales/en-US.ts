@@ -1738,8 +1738,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       fit_medium: "Medium",
       fit_low: "Low",
       actions: "Actions",
-      upload_candidate: "Upload Candidate",
-      upload_candidate_modal_title: "Upload Candidate",
+      upload_candidate: "Add Candidate",
+      upload_candidate_modal_title: "Add Candidate",
       resume_label: "Resume",
       resume_upload_hint:
         "Support .doc, .docx, .pdf — same as candidate registration",
@@ -1756,9 +1756,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       field_phone_invalid: "Please enter country code and phone number",
       field_notify_interview: "Invite candidate to AI interview",
       cancel: "Cancel",
-      submit_create_candidate: "Create candidate",
-      create_candidate_success: "Candidate created successfully",
-      create_candidate_failed: "Failed to create candidate",
+      submit_create_candidate: "Add Candidate",
+      create_candidate_success: "Candidate added successfully",
+      create_candidate_failed: "Failed to add candidate",
     },
     sourcing_channels: "Sourcing Channels",
     sourcing_channels_section: {

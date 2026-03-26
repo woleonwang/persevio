@@ -8,7 +8,7 @@ import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import UploadIcon from "@/assets/icons/upload";
 import { Post, PostFormData } from "@/utils/request";
 
-import modalStyles from "./UploadCandidateModal.module.less";
+import styles from "./style.module.less";
 
 type TParseResumeData = {
   resume: string;
@@ -181,8 +181,8 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
       destroyOnClose
       width={560}
     >
-      <div className={modalStyles.uploadSection}>
-        <div className={modalStyles.uploadLabel}>{tKey("resume_label")}</div>
+      <div className={styles.uploadSection}>
+        <div className={styles.uploadLabel}>{tKey("resume_label")}</div>
         <Upload.Dragger
           beforeUpload={() => false}
           onChange={(info) => {
@@ -195,23 +195,20 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
           accept=".doc,.docx,.pdf"
           multiple={false}
           disabled={isUploadingResume}
-          className={modalStyles.dragger}
+          className={styles.dragger}
         >
-          <div className={modalStyles.uploadIconContainer}>
+          <div className={styles.uploadIconContainer}>
             {resumeFileName ? (
-              <span className={modalStyles.fileName}>{resumeFileName}</span>
+              <span className={styles.fileName}>{resumeFileName}</span>
             ) : isUploadingResume ? (
               <>
-                <LoadingOutlined className={modalStyles.uploadingIcon} />
+                <LoadingOutlined className={styles.uploadingIcon} />
                 <span>{tKey("uploading_resume")}</span>
               </>
             ) : (
               <>
-                <Icon
-                  icon={<UploadIcon />}
-                  className={modalStyles.uploadIcon}
-                />
-                <div className={modalStyles.uploadHint}>
+                <Icon icon={<UploadIcon />} className={styles.uploadIcon} />
+                <div className={styles.uploadHint}>
                   {tKey("resume_upload_hint")}
                 </div>
               </>
@@ -224,7 +221,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
         <Form
           form={form}
           layout="vertical"
-          className={modalStyles.contactForm}
+          className={styles.contactForm}
           requiredMark
           initialValues={{ notifyInterview: true }}
         >
@@ -276,7 +273,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
         </Form>
       )}
 
-      <div className={modalStyles.footer}>
+      <div className={styles.footer}>
         <Button onClick={onCancel}>{tKey("cancel")}</Button>
         <Button
           type="primary"
