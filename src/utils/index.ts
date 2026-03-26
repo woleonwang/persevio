@@ -320,13 +320,14 @@ export const EVALUATE_RESULT_LEVEL_KEYS = [
   "not_a_fit",
 ];
 
-export const SOURCING_CHANNEL_KEYS = [
-  "persevio",
+export const DEFAULT_TRACKING_SOURCES = [
   "direct",
   "linkedin",
   "jobstreet",
   "mycareersfuture",
-];
+] as const;
+
+export const SOURCING_CHANNEL_KEYS = ["persevio", ...DEFAULT_TRACKING_SOURCES];
 
 export const getSourcingChannel = (sc: string = "persevio"): string => {
   if (sc === "customer") return "direct";

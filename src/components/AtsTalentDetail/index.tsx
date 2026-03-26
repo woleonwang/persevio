@@ -23,6 +23,7 @@ import {
   getQuery,
   getSourcingChannel,
   parseJSON,
+  DEFAULT_TRACKING_SOURCES,
 } from "@/utils";
 import { getStageKey } from "@/utils/talentStage";
 import { useNavigate, useParams } from "react-router";
@@ -44,7 +45,6 @@ import styles from "./style.module.less";
 import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";
 import Empty from "../Empty";
-import { DEFAULT_TRACKING_SOURCES } from "@/components/JobDetailsForAts/components/JobPipeline/components/utils";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";

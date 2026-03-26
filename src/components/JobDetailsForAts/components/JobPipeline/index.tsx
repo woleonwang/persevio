@@ -21,7 +21,6 @@ import {
   getSourcingChannel,
   normalizeTalentField,
   parseJSON,
-  SOURCING_CHANNEL_KEYS,
 } from "@/utils";
 import UploadCandidateModal from "./components/UploadCandidateModal";
 import { DraggableCard, DroppableColumn } from "./components/utils";
@@ -30,7 +29,7 @@ import {
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,
 } from "@/utils/consts";
-import useSourcingChannels from "@/hooks/useSourcingChannels";
+import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
 import { storage, StorageKey } from "@/utils/storage";
 import ListModeTable from "@/components/ListModeTable";
 import { getStageKey } from "@/utils/talentStage";
@@ -56,7 +55,7 @@ const JobPipeline = ({
     TEvaluateResultLevel[]
   >([]);
 
-  const { customSources } = useSourcingChannels({
+  const { options: sourceChannelOptions } = useJobSourceChannelOptions({
     jobId: job?.id,
   });
 
@@ -304,16 +303,7 @@ const JobPipeline = ({
           mode="multiple"
           maxTagCount={1}
           allowClear
-          options={[
-            ...SOURCING_CHANNEL_KEYS.map((key) => ({
-              value: key,
-              label: t(`sourcing_channel.${key}`),
-            })),
-            ...customSources.map((cs) => ({
-              value: cs.name,
-              label: cs.name,
-            })),
-          ]}
+          options={sourceChannelOptions}
           style={{ width: 200 }}
         />
         <Select

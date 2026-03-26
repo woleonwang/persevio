@@ -1,5 +1,14 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Modal, Switch, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Switch,
+  Upload,
+} from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +16,7 @@ import Icon from "@/components/Icon";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import UploadIcon from "@/assets/icons/upload";
 import { Post, PostFormData } from "@/utils/request";
+import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
 
 import styles from "./style.module.less";
 
@@ -22,6 +32,7 @@ type TFormValues = {
     countryCode: string;
     phoneNumber: string;
   };
+  sourceChannel: string;
   notifyInterview: boolean;
 };
 
@@ -70,6 +81,9 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
 
   const [form] = Form.useForm<TFormValues>();
+  const { options: sourceChannelOptions } = useJobSourceChannelOptions({
+    jobId,
+  });
   const [resumeContent, setResumeContent] = useState<string | null>(null);
   const [resumeFileName, setResumeFileName] = useState<string>("");
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -156,6 +170,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
         email: values.email,
         country_code: values.phone.countryCode,
         phone: values.phone.phoneNumber,
+        source_channel: values.sourceChannel,
         notify_interview: values.notifyInterview ?? true,
       });
       if (code === 0) {
@@ -223,7 +238,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
           layout="vertical"
           className={styles.contactForm}
           requiredMark
-          initialValues={{ notifyInterview: true }}
+          initialValues={{ notifyInterview: true, sourceChannel: "persevio" }}
         >
           <Form.Item
             label={tKey("field_name")}
@@ -262,6 +277,23 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
             ]}
           >
             <PhoneWithCountryCode />
+          </Form.Item>
+          <Form.Item
+            label={tKey("field_source_channel")}
+            name="sourceChannel"
+            rules={[
+              {
+                required: true,
+                message: tKey("field_source_channel_required"),
+              },
+            ]}
+          >
+            <Select
+              placeholder={tKey("field_source_channel_placeholder")}
+              options={sourceChannelOptions}
+              showSearch
+              optionFilterProp="label"
+            />
           </Form.Item>
           <Form.Item
             label={tKey("field_notify_interview")}

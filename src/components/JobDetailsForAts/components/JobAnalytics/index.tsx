@@ -4,17 +4,14 @@ import { Select, Spin, Table } from "antd";
 import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
-import {
-  getStageEntryTime,
-  getStageKey,
-} from "@/utils/talentStage";
+import { getStageEntryTime, getStageKey } from "@/utils/talentStage";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,
 } from "@/utils/consts";
 import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "./colors";
 import styles from "./style.module.less";
-import useSourcingChannels from "@/hooks/useSourcingChannels";
+import useJobSourceChanneOptions from "@/hooks/useJobSourceChannelOptions";
 
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = 60 * 60 * 1000;
@@ -67,7 +64,7 @@ const JobAnalytics = () => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.analytics_section.${key}`);
   const pipelineTKey = (key: string) => t(`pipeline_section.${key}`);
-  const { customSources } = useSourcingChannels({
+  const { options: sourceChannelOptions } = useJobSourceChanneOptions({
     jobId: job?.id,
   });
 
@@ -229,16 +226,7 @@ const JobAnalytics = () => {
           value={sourcingChannel}
           onChange={setSourcingChannel}
           allowClear
-          options={[
-            ...SOURCING_CHANNEL_KEYS.map((key) => ({
-              value: key,
-              label: t(`sourcing_channel.${key}`),
-            })),
-            ...customSources.map((cs) => ({
-              value: cs.name,
-              label: cs.name,
-            })),
-          ]}
+          options={sourceChannelOptions}
           style={{ width: 160 }}
         />
         <Select

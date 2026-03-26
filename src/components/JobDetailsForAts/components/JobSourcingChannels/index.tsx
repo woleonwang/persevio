@@ -14,8 +14,8 @@ import StartBoost from "@/assets/icons/start-boost";
 import { Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
 import Delete from "@/assets/icons/delete";
-import useSourcingChannels from "@/hooks/useSourcingChannels";
-import { DEFAULT_TRACKING_SOURCES } from "../JobPipeline/components/utils";
+import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
+import { DEFAULT_TRACKING_SOURCES } from "@/utils";
 
 type TrackingRow =
   | { key: string; source: string; url: string; type: "default" }
@@ -30,7 +30,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   const [showAddCustomForm, setShowAddCustomForm] = useState(false);
   const [customSourceName, setCustomSourceName] = useState("");
 
-  const { customSources, fetchCustomSources } = useSourcingChannels({
+  const { customSources, fetchCustomSources } = useJobSourceChannelOptions({
     jobId: job?.id,
   });
 

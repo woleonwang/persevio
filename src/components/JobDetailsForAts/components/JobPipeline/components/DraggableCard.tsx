@@ -9,7 +9,7 @@ import styles from "../style.module.less";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
-import { DEFAULT_TRACKING_SOURCES } from "./utils";
+import { SOURCING_CHANNEL_KEYS } from "@/utils";
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
 
@@ -43,9 +43,7 @@ const DraggableCard = ({
 
   const { name, exp, visa, comp, fitResult } = getCandidateCardData(item);
   const sourceChannel = getSourcingChannel(item.source_channel);
-  const isDefaultSource = DEFAULT_TRACKING_SOURCES.includes(
-    sourceChannel as any,
-  );
+  const isDefaultSource = SOURCING_CHANNEL_KEYS.includes(sourceChannel as any);
   const sourceLabel = isDefaultSource
     ? t(`sourcing_channel.${sourceChannel}`)
     : sourceChannel;
