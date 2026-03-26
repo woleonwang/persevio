@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
 import { storage, StorageKey, tokenStorage } from "../../utils/storage";
+import { refreshStaffTokenIfExpiringSoon } from "@/utils/staffToken";
 import JobManagement from "@/assets/icons/job-management";
 import JobApplyManagement from "@/assets/icons/job-apply-management";
 import CompanyList from "@/assets/icons/company-list";
@@ -99,6 +100,8 @@ const AdminLayout = () => {
       tokenStorage.setToken(initToken, "staff");
       deleteQuery("token");
     }
+
+    await refreshStaffTokenIfExpiringSoon();
 
     // 校验 token
     const { code, data } = await Get("/api/settings");

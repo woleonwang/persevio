@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import globalStore from "../../store/global";
 import { deleteQuery, getQuery } from "@/utils";
 import { storage, StorageKey, tokenStorage } from "../../utils/storage";
+import { refreshStaffTokenIfExpiringSoon } from "@/utils/staffToken";
 import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
 import CompanyInfo from "@/assets/icons/company-info";
@@ -169,6 +170,8 @@ const AppLayout = () => {
       tokenStorage.setToken(initToken, "staff");
       deleteQuery("token");
     }
+
+    await refreshStaffTokenIfExpiringSoon();
 
     const share = getQuery("share");
     if (share === "1") {
