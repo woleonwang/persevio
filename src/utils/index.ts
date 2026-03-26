@@ -282,9 +282,13 @@ export const getJobChatbotUrl = (
   version: string,
   sourceChannel?: string,
 ) => {
+  const query =
+    sourceChannel != null && sourceChannel !== ""
+      ? `?source_channel=${encodeURIComponent(sourceChannel)}`
+      : "";
   return `${window.origin}/jobs/${jobId}/chat${
     version === "0" ? "" : `/${version}`
-  }${sourceChannel ? `?source_channel=${sourceChannel}` : ""}`;
+  }${query}`;
 };
 
 export const isTempAccount = (candidate: { email: string }) => {
