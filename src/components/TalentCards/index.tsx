@@ -16,12 +16,13 @@ import { SearchOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
 import {
+  getCandidateCardData,
+  getEvaluateResultLevel,
   getQuery,
+  normalizeTalentField,
   parseJSON,
   parseJSONArray,
   updateQuery,
-  getEvaluateResultLevel,
-  normalizeTalentField,
 } from "@/utils";
 
 import styles from "./style.module.less";
@@ -325,15 +326,20 @@ const TalentCards = (props: IProps) => {
         return activeTab === "all" || getStatus(item) === activeTab;
       })
       .filter((item) => {
+        const card = getCandidateCardData({
+          name: getName(item),
+          basicInfo: getBasicInfo(item),
+          parsedEvaluateResult: getEvaluateResult(item),
+        });
         return (
           !searchName ||
           [
             getName(item),
-            normalizeTalentField(getBasicInfo(item)?.location),
-            normalizeTalentField(getBasicInfo(item)?.visa),
-            normalizeTalentField(getBasicInfo(item)?.current_compensation),
-            normalizeTalentField(getBasicInfo(item)?.expected_compensation),
-            normalizeTalentField(getBasicInfo(item)?.years_of_experience),
+            normalizeTalentField(card.location),
+            normalizeTalentField(card.visa),
+            normalizeTalentField(card.comp),
+            normalizeTalentField(card.expectedCompensation),
+            normalizeTalentField(card.exp),
           ]
             .join(" ")
             .toLowerCase()

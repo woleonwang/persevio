@@ -315,6 +315,45 @@ export const getEvaluateResultLevel = (
     : "maybe";
 };
 
+/** 候选人卡片/搜索：合并 basicInfo 与 evaluate 侧字段 */
+export type TCandidateCardSource = {
+  name?: string;
+  basicInfo?: TExtractBasicInfo;
+  parsedEvaluateResult?: TReport;
+};
+
+export const getCandidateCardData = (item: TCandidateCardSource) => {
+  const basicInfo = item.basicInfo;
+  const evaluateResult = item.parsedEvaluateResult;
+  const name = item.name || "-";
+  const exp = basicInfo?.years_of_experience || "-";
+  const location = basicInfo?.location || "-";
+  const visa = evaluateResult?.visa || basicInfo?.visa || "-";
+  const comp =
+    evaluateResult?.current_compensation ||
+    basicInfo?.current_compensation ||
+    "-";
+  const expectedCompensation =
+    evaluateResult?.expected_compensation ||
+    basicInfo?.expected_compensation ||
+    "-";
+  const fitResult = getEvaluateResultLevel(evaluateResult);
+  const summary =
+    evaluateResult?.thumbnail_summary || evaluateResult?.summary || "";
+  return {
+    name,
+    basicInfo,
+    evaluateResult,
+    exp,
+    location,
+    visa,
+    comp,
+    expectedCompensation,
+    fitResult,
+    summary,
+  };
+};
+
 export const EVALUATE_RESULT_LEVEL_KEYS = [
   "ideal_candidate",
   "ideal_candidate_with_caveat",

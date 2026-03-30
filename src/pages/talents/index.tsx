@@ -9,6 +9,7 @@ import styles from "./style.module.less";
 import { Get } from "@/utils/request";
 import {
   EVALUATE_RESULT_LEVEL_KEYS,
+  getCandidateCardData,
   getEvaluateResultLevel,
   normalizeTalentField,
   parseJSON,
@@ -61,14 +62,14 @@ const Talents: React.FC = () => {
       .filter((item) => {
         if (!searchName) return true;
         const query = searchName.trim().toLowerCase();
-        const basicInfo = item.basicInfo;
+        const card = getCandidateCardData(item);
         const haystack = [
           item.name ?? "",
-          normalizeTalentField(basicInfo?.location),
-          normalizeTalentField(basicInfo?.visa),
-          normalizeTalentField(basicInfo?.current_compensation),
-          normalizeTalentField(basicInfo?.expected_compensation),
-          normalizeTalentField(basicInfo?.years_of_experience),
+          normalizeTalentField(card.location),
+          normalizeTalentField(card.visa),
+          normalizeTalentField(card.comp),
+          normalizeTalentField(card.expectedCompensation),
+          normalizeTalentField(card.exp),
         ]
           .join(" ")
           .toLowerCase();

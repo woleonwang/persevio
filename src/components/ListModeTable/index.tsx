@@ -12,11 +12,14 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import List from "@/assets/icons/list";
-import { EVALUATE_RESULT_LEVEL_KEYS, getEvaluateResultLevel } from "@/utils";
+import {
+  EVALUATE_RESULT_LEVEL_KEYS,
+  getCandidateCardData,
+  getEvaluateResultLevel,
+} from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
-import { getCandidateCardData } from "./utils";
 
 import styles from "./style.module.less";
 import globalStore from "@/store/global";

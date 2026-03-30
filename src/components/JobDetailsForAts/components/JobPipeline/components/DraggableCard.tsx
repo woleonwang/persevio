@@ -3,13 +3,15 @@ import { Popover } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-import { getSourcingChannel } from "@/utils";
-import { getCandidateCardData } from "@/components/ListModeTable/utils";
+import {
+  getCandidateCardData,
+  getSourcingChannel,
+  SOURCING_CHANNEL_KEYS,
+} from "@/utils";
 import styles from "../style.module.less";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { useTranslation } from "react-i18next";
-import { SOURCING_CHANNEL_KEYS } from "@/utils";
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
 
