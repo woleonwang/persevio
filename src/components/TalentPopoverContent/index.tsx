@@ -222,12 +222,6 @@ const TalentPopoverContent = ({
               "-"}
           </div>
         </div>
-        <div className={styles.location}>
-          <div className={styles.locationTitle}>Location</div>
-          <div className={styles.locationValue}>
-            {basicInfo?.location || "-"}
-          </div>
-        </div>
         <div className={styles.workExperiences}>
           <div className={styles.workExperiencesTitle}>
             {t("work_experiences")}

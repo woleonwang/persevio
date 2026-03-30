@@ -41,7 +41,8 @@ const DraggableCard = ({
 
   const { t } = useTranslation();
 
-  const { name, exp, visa, comp, fitResult } = getCandidateCardData(item);
+  const { name, exp, visa, comp, fitResult, location } =
+    getCandidateCardData(item);
   const sourceChannel = getSourcingChannel(item.source_channel);
   const isDefaultSource = SOURCING_CHANNEL_KEYS.includes(sourceChannel as any);
   const sourceLabel = isDefaultSource
@@ -114,6 +115,10 @@ const DraggableCard = ({
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Exp</span>
             <span className={styles.infoValue}>{exp}</span>
+          </div>
+          <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>Location</span>
+            <span className={styles.infoValue}>{location}</span>
           </div>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Visa</span>

@@ -5,6 +5,7 @@ export function getCandidateCardData(item: TTalentListItem) {
   const evaluateResult = item.parsedEvaluateResult;
   const name = item.name || "-";
   const exp = basicInfo?.years_of_experience || "-";
+  const location = basicInfo?.location || "-";
   const visa = evaluateResult?.visa || basicInfo?.visa || "-";
   const comp =
     evaluateResult?.current_compensation ||
@@ -18,6 +19,7 @@ export function getCandidateCardData(item: TTalentListItem) {
     basicInfo,
     evaluateResult,
     exp,
+    location,
     visa,
     comp,
     fitResult,
