@@ -177,25 +177,23 @@ const TalentPopoverContent = ({
           <div className={styles.cardHeaderActions}>
             {talent && talent.status !== "rejected" && (
               <>
-                {talent.interviews?.length === 0 && (
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (!!talent.evaluate_feedback) {
-                        updateTalentStatus(
-                          talent,
-                          talent.evaluate_feedback_reason,
-                        );
-                      } else {
-                        setIsRejectModalOpen(true);
-                      }
-                    }}
-                  >
-                    Reject
-                  </Button>
-                )}
+                <Button
+                  type="primary"
+                  danger
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!!talent.evaluate_feedback) {
+                      updateTalentStatus(
+                        talent,
+                        talent.evaluate_feedback_reason,
+                      );
+                    } else {
+                      setIsRejectModalOpen(true);
+                    }
+                  }}
+                >
+                  Reject
+                </Button>
 
                 <Button
                   type="primary"
