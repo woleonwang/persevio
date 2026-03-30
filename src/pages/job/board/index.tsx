@@ -98,7 +98,7 @@ const JobBoard = () => {
           return;
         }
 
-        const { talent_name: talentName, resume } = data;
+        const { talent_name: talentName, resume, resume_path: resumePath } = data;
         const { code: code3, data: data3 } = await Get(
           `/api/jobs/${job.id}/talents/check_name?name=${talentName}`
         );
@@ -121,6 +121,7 @@ const JobBoard = () => {
         const { code: code2 } = await Post(`/api/jobs/${job.id}/talents`, {
           resume: resume,
           name: talentName,
+          resume_path: resumePath,
         });
         if (code2 === 0) {
           message.success(t("create_succeed"));

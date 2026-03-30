@@ -23,6 +23,7 @@ import styles from "./style.module.less";
 type TParseResumeData = {
   resume: string;
   basic_info: unknown;
+  resume_path: string;
 };
 
 type TFormValues = {
@@ -85,6 +86,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
     jobId,
   });
   const [resumeContent, setResumeContent] = useState<string | null>(null);
+  const [resumePath, setResumePath] = useState<string>("");
   const [resumeFileName, setResumeFileName] = useState<string>("");
   const [isUploadingResume, setIsUploadingResume] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +94,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
 
   const resetModal = useCallback(() => {
     setResumeContent(null);
+    setResumePath("");
     setResumeFileName("");
     setIsUploadingResume(false);
     setIsSubmitting(false);
@@ -149,6 +152,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
     }
 
     setResumeContent(data.resume);
+    setResumePath(data.resume_path);
     setResumeFileName(file.name);
     applyBasicInfoToForm(data.basic_info);
     setShowContactForm(true);
@@ -172,6 +176,7 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
         phone: values.phone.phoneNumber,
         source_channel: values.sourceChannel,
         notify_interview: values.notifyInterview ?? true,
+        resume_path: resumePath,
       });
       if (code === 0) {
         message.success(tKey("create_candidate_success"));
