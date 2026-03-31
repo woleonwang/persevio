@@ -154,6 +154,12 @@ const AppLayout = () => {
       img: <FileDoneOutlined />,
       requireStaffAdmin: true,
     },
+    {
+      title: t("menu.group_management"),
+      path: "/app/groups",
+      img: <FileDoneOutlined />,
+      requireStaffAdmin: true,
+    },
   ].filter((item) => !item.requireStaffAdmin || staffRole === "admin");
 
   const FOOTER = [

@@ -105,3 +105,19 @@ export const PostFormData = async <T = any>(url: string, data: FormData) => {
     return response?.data ?? { code: -1 };
   }
 };
+
+export const Delete = async <T = any>(url: string) => {
+  let response;
+  try {
+    response = await instance.delete<{ code: number; data?: T; message?: string }>(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getTokenByUrl(url) || "",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    return response?.data ?? { code: -1 };
+  }
+};

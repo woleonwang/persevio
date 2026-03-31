@@ -652,6 +652,18 @@ interface IStaffWithAccount extends IStaff {
   account: IAccount;
 }
 
+interface IGroup {
+  id: number;
+  name: string;
+  company_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface IGroupWithStaffIds extends IGroup {
+  staff_ids: number[];
+}
+
 interface IStaffListResponse {
   code: number;
   data: IStaffWithAccount[];

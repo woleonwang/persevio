@@ -1,0 +1,121 @@
+.groupsPage {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 20px;
+}
+
+.headerSection {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  background: white;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.titleSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.backArrow {
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.filterSection {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 0 24px;
+  border-radius: 8px;
+}
+
+.searchSection {
+  flex: 1;
+  max-width: 400px;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.actionSection {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.tableSection {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0 24px;
+  flex: auto;
+  overflow: auto;
+}
+
+.tableSection :global(.ant-table-thead > tr > th) {
+  white-space: nowrap;
+  word-break: keep-all;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  font-weight: 600;
+  color: #333;
+}
+
+.tableSection :global(.ant-table-tbody > tr:hover > td) {
+  background-color: #f8f9fa;
+}
+
+.tableSection :global(.ant-table-tbody > tr > td) {
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: top;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tableSection :global(.ant-table-cell) {
+  padding: 12px 8px;
+}
+
+@media (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .filterSection {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .searchSection {
+    margin: 0;
+    max-width: none;
+  }
+
+  .actionSection {
+    justify-content: center;
+  }
+
+  .tableSection {
+    padding: 0 16px;
+  }
+}
