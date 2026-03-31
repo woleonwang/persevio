@@ -1,9 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ArrowLeftOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -15,7 +11,6 @@ import {
   Tooltip,
   message,
 } from "antd";
-import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Delete, Get, Post } from "@/utils/request";
 import useStaffs from "@/hooks/useStaffs";
@@ -24,14 +19,15 @@ import styles from "./style.module.less";
 const PAGE_SIZE = 10;
 
 const Groups: React.FC = () => {
-  const navigate = useNavigate();
   const { staffs } = useStaffs();
   const [groups, setGroups] = useState<IGroupWithStaffIds[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editingGroup, setEditingGroup] = useState<IGroupWithStaffIds | null>(null);
+  const [editingGroup, setEditingGroup] = useState<IGroupWithStaffIds | null>(
+    null,
+  );
   const [page, setPage] = useState(1);
   const [form] = Form.useForm();
 
@@ -41,7 +37,9 @@ const Groups: React.FC = () => {
 
   const fetchGroups = async () => {
     setLoading(true);
-    const { code, data } = await Get<{ groups: IGroupWithStaffIds[] }>("/api/groups");
+    const { code, data } = await Get<{ groups: IGroupWithStaffIds[] }>(
+      "/api/groups",
+    );
     if (code === 0) {
       setGroups(data.groups ?? []);
     }
@@ -54,7 +52,7 @@ const Groups: React.FC = () => {
 
   const visibleGroups = useMemo(() => {
     return groups.filter((group) =>
-      group.name.toLowerCase().includes(searchTerm.toLowerCase())
+      group.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [groups, searchTerm]);
 
@@ -64,16 +62,12 @@ const Groups: React.FC = () => {
         label: staff.name,
         value: staff.id,
       })),
-    [staffs]
+    [staffs],
   );
 
   const staffNameMap = useMemo(() => {
     return new Map(staffs.map((staff) => [staff.id, staff.name]));
   }, [staffs]);
-
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   const showCreateModal = () => {
     setIsEditMode(false);
@@ -142,7 +136,9 @@ const Groups: React.FC = () => {
       title: t("deleteTitle"),
       content: t("deleteConfirm", { name: group.name }),
       onOk: async () => {
-        const { code, message: errorMessage } = await Delete(`/api/groups/${group.id}`);
+        const { code, message: errorMessage } = await Delete(
+          `/api/groups/${group.id}`,
+        );
         if (code === 0) {
           message.success(t("deleteSuccess"));
           fetchGroups();
@@ -166,7 +162,8 @@ const Groups: React.FC = () => {
         const names = record.staff_ids
           .map((staffId) => staffNameMap.get(staffId))
           .filter((name): name is string => Boolean(name));
-        const tooltipText = names.length > 0 ? names.join(", ") : originalT("empty_text");
+        const tooltipText =
+          names.length > 0 ? names.join(", ") : originalT("empty_text");
         return <Tooltip title={tooltipText}>{record.staff_ids.length}</Tooltip>;
       },
     },
@@ -177,7 +174,11 @@ const Groups: React.FC = () => {
         const hasStaff = record.staff_ids.length > 0;
         return (
           <Space size="small">
-            <Button type="link" size="small" onClick={() => showEditModal(record)}>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => showEditModal(record)}
+            >
               {t("edit")}
             </Button>
             <Button
@@ -199,10 +200,7 @@ const Groups: React.FC = () => {
   return (
     <div className={styles.groupsPage}>
       <div className={styles.headerSection}>
-        <div className={styles.titleSection}>
-          <ArrowLeftOutlined className={styles.backArrow} onClick={handleBack} />
-          <h1 className={styles.pageTitle}>{t("title")}</h1>
-        </div>
+        <div className={styles.pageTitle}>{t("title")}</div>
       </div>
 
       <div className={styles.filterSection}>
@@ -220,7 +218,11 @@ const Groups: React.FC = () => {
           />
         </div>
         <div className={styles.actionSection}>
-          <Button type="primary" icon={<PlusOutlined />} onClick={showCreateModal}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showCreateModal}
+          >
             {t("createGroup")}
           </Button>
         </div>
@@ -231,7 +233,10 @@ const Groups: React.FC = () => {
           rowKey="id"
           columns={columns}
           loading={loading}
-          dataSource={visibleGroups.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)}
+          dataSource={visibleGroups.slice(
+            (page - 1) * PAGE_SIZE,
+            page * PAGE_SIZE,
+          )}
           pagination={{
             total: visibleGroups.length,
             pageSize: PAGE_SIZE,

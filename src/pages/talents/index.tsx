@@ -84,7 +84,7 @@ const Talents: React.FC = () => {
 
   return (
     <div className={styles.candidatesContainer}>
-      <div className={styles.pageTitle}>Candidate List </div>
+      <div className={styles.pageTitle}>Candidate List</div>
       <div className={styles.filterRow}>
         <Input
           className={styles.searchInput}

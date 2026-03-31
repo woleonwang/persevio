@@ -12,10 +12,8 @@ import {
 import {
   SearchOutlined,
   PlusOutlined,
-  ArrowLeftOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router";
 import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
 import { copy } from "@/utils";
@@ -26,7 +24,6 @@ const { Option } = Select;
 const PAGE_SIZE = 10;
 
 const Staffs: React.FC = () => {
-  const navigate = useNavigate();
   const [staffs, setStaffs] = useState<IStaffWithAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +31,7 @@ const Staffs: React.FC = () => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingStaff, setEditingStaff] = useState<IStaffWithAccount | null>(
-    null
+    null,
   );
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
@@ -51,8 +48,8 @@ const Staffs: React.FC = () => {
   // 获取员工数据
   const fetchStaffs = async () => {
     setLoading(true);
-    const { code, data } = await Get<{ staffs: IStaffWithAccount[]; }>(
-      "/api/staffs"
+    const { code, data } = await Get<{ staffs: IStaffWithAccount[] }>(
+      "/api/staffs",
     );
     if (code === 0) {
       setStaffs(data.staffs);
@@ -69,13 +66,8 @@ const Staffs: React.FC = () => {
   const visibleStaffs = staffs.filter(
     (staff) =>
       staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.account.username.toLowerCase().includes(searchTerm.toLowerCase())
+      staff.account.username.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  // 返回上一页
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   // 生成随机密码
   const generatePassword = () => {
@@ -281,13 +273,7 @@ const Staffs: React.FC = () => {
     <div className={styles.staffsPage}>
       {/* 头部区域 */}
       <div className={styles.headerSection}>
-        <div className={styles.titleSection}>
-          <ArrowLeftOutlined
-            className={styles.backArrow}
-            onClick={handleBack}
-          />
-          <h1 className={styles.pageTitle}>{t("title")}</h1>
-        </div>
+        <div className={styles.pageTitle}>{t("title")}</div>
       </div>
 
       {/* 筛选和操作区域 */}
@@ -323,7 +309,7 @@ const Staffs: React.FC = () => {
           columns={columns}
           dataSource={visibleStaffs.slice(
             (page - 1) * PAGE_SIZE,
-            page * PAGE_SIZE
+            page * PAGE_SIZE,
           )}
           loading={loading}
           rowKey="id"
