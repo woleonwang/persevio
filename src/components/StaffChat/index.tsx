@@ -979,6 +979,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           {basicFormVisible ? (
             <JobRequirementForm
               group={jobRequirementFormType}
+              jobId={jobId}
               onOk={(result: string) => {
                 if (!isLoading) {
                   sendJobRequirementForm(result);

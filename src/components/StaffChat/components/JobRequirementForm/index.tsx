@@ -1,4 +1,9 @@
-import { ReactNode, useEffect, useReducer, useState } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import {
   Button,
   Collapse,
@@ -13,6 +18,8 @@ import {
   Radio,
   Select,
 } from "antd";
+import OrgNodeTreeSelect from "@/components/OrgNodeTreeSelect";
+import { orgNodesToIdTitleMap } from "@/utils/orgNodes";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
@@ -63,7 +70,8 @@ type TQuestion = {
     | "base_salary"
     | "city_and_address"
     | "manager_detail"
-    | "percentage";
+    | "percentage"
+    | "org_node";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -94,6 +102,8 @@ interface IProps {
   group?: TRoleOverviewType;
   userRole: TUserRole;
   onOk: (result: string) => void;
+  /** 基础信息提交前写入职位 org_node_id */
+  jobId?: number;
 }
 
 type TTeam = {
@@ -103,8 +113,11 @@ type TTeam = {
 };
 
 const JobRequirementForm = (props: IProps) => {
-  const { group: formType = "basic_info", userRole, onOk } = props;
+  const { group: formType = "basic_info", userRole, onOk, jobId } = props;
   const [form] = Form.useForm();
+  const [orgNodeTitleMap, setOrgNodeTitleMap] = useState<Map<number, string>>(
+    () => new Map(),
+  );
   const [createTeamForm] = Form.useForm();
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [createTeamModelOpen, setCreateTeamModelOpen] = useState(false);
@@ -115,7 +128,7 @@ const JobRequirementForm = (props: IProps) => {
   useEffect(() => {
     form.resetFields();
     forceUpdate();
-  }, [formType, open]);
+  }, [formType, form]);
 
   const t = (key: string, params?: Record<string, string>): string => {
     return originalT(`job_requirement_form.${key}`, params);
@@ -179,6 +192,12 @@ const JobRequirementForm = (props: IProps) => {
       key: "basic_info",
       title: t("basic_information"),
       questions: [
+        {
+          key: "org_node_id",
+          type: "org_node",
+          question: t("org_node_question"),
+          required: false,
+        },
         {
           key: "headcount_number",
           type: "number",
@@ -497,7 +516,20 @@ const JobRequirementForm = (props: IProps) => {
 
   const onSubmit = () => {
     try {
-      form.validateFields().then((values) => {
+      form.validateFields().then(async (values) => {
+        if (formType === "basic_info" && jobId != null) {
+          const rawOrg = values.org_node_id as number | undefined;
+          if (rawOrg !== undefined && rawOrg !== null) {
+            const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), {
+              org_node_id: rawOrg,
+            });
+            if (code !== 0) {
+              message.error(t("org_node_save_failed"));
+              return;
+            }
+          }
+        }
+
         let resultStr = "";
         const getAnswer = (
           question: TQuestion,
@@ -600,6 +632,14 @@ const JobRequirementForm = (props: IProps) => {
 
           if (question.type === "date") {
             formattedValue = dayjs(value).format("YYYY-MM-DD");
+          }
+
+          if (question.type === "org_node") {
+            const id = value as number | undefined;
+            if (id == null) {
+              return "";
+            }
+            formattedValue = orgNodeTitleMap.get(id) ?? String(id);
           }
 
           if (formattedValue === "") {
@@ -887,6 +927,16 @@ const JobRequirementForm = (props: IProps) => {
             <InternalEmployeeLevel />
           )} */}
         {question.type === "manager_detail" && <ManagerDetail onlyJobTitle />}
+        {question.type === "org_node" && (
+          <OrgNodeTreeSelect
+            style={{ width: "100%" }}
+            formatUrl={formatUrl}
+            placeholder={t("org_node_placeholder")}
+            onCatalogLoaded={(nodes) =>
+              setOrgNodeTitleMap(orgNodesToIdTitleMap(nodes))
+            }
+          />
+        )}
         {question.type === "percentage" && (
           <PercentageInput options={question.options ?? []} />
         )}

@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { FileDoneOutlined } from "@ant-design/icons";
+import { ApartmentOutlined, FileDoneOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import styles from "./style.module.less";
@@ -155,11 +155,17 @@ const AppLayout = () => {
       requireStaffAdmin: true,
     },
     {
-      title: t("menu.group_management"),
-      path: "/app/groups",
-      img: <FileDoneOutlined />,
+      title: t("menu.org_chart"),
+      path: "/app/org-chart",
+      img: <ApartmentOutlined />,
       requireStaffAdmin: true,
     },
+    // {
+    //   title: t("menu.group_management"),
+    //   path: "/app/groups",
+    //   img: <FileDoneOutlined />,
+    //   requireStaffAdmin: true,
+    // },
   ].filter((item) => !item.requireStaffAdmin || staffRole === "admin");
 
   const FOOTER = [

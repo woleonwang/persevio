@@ -56,6 +56,7 @@ import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
+import OrgChart from "./pages/org-chart";
 import Groups from "./pages/groups";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
@@ -189,8 +190,9 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/app/company" element={<CompanyKnowledge />} />
           {/* 面试官管理 */}
           <Route path="/app/staffs" element={<Staffs />} />
+          <Route path="/app/org-chart" element={<OrgChart />} />
           {/* Group 管理 */}
-          <Route path="/app/groups" element={<Groups />} />
+          {/* <Route path="/app/groups" element={<Groups />} /> */}
           {/* HR端设置 */}
           <Route path="/app/settings" element={<Settings />} />
           {/* 候选人列表 */}

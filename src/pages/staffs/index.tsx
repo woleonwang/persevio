@@ -15,6 +15,7 @@ import {
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import { Get, Post } from "@/utils/request";
+import OrgNodeTreeSelect from "@/components/OrgNodeTreeSelect";
 import styles from "./style.module.less";
 import { copy } from "@/utils";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,9 @@ import { useTranslation } from "react-i18next";
 const { Option } = Select;
 
 const PAGE_SIZE = 10;
+
+const normalizeRole = (role: string) =>
+  role === "normal" ? "recruiter" : role;
 
 const Staffs: React.FC = () => {
   const [staffs, setStaffs] = useState<IStaffWithAccount[]>([]);
@@ -34,6 +38,7 @@ const Staffs: React.FC = () => {
     null,
   );
   const [form] = Form.useForm();
+  const role = Form.useWatch("role", form);
   const [page, setPage] = useState(1);
   const [createdStaffInfo, setCreatedStaffInfo] = useState<{
     name: string;
@@ -45,7 +50,7 @@ const Staffs: React.FC = () => {
   const t = (key: string, params?: Record<string, string>) => {
     return originalT(`staffs.${key}`, params);
   };
-  // 获取员工数据
+
   const fetchStaffs = async () => {
     setLoading(true);
     const { code, data } = await Get<{ staffs: IStaffWithAccount[] }>(
@@ -62,14 +67,12 @@ const Staffs: React.FC = () => {
     fetchStaffs();
   }, []);
 
-  // 过滤员工数据
   const visibleStaffs = staffs.filter(
     (staff) =>
       staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       staff.account.username.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  // 生成随机密码
   const generatePassword = () => {
     const lowercase = "abcdefghijklmnopqrstuvwxyz";
     const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -78,19 +81,16 @@ const Staffs: React.FC = () => {
 
     let password = "";
 
-    // 确保每种字符至少有一个
     password += lowercase[Math.floor(Math.random() * lowercase.length)];
     password += uppercase[Math.floor(Math.random() * uppercase.length)];
     password += numbers[Math.floor(Math.random() * numbers.length)];
     password += symbols[Math.floor(Math.random() * symbols.length)];
 
-    // 填充剩余长度到8位
     const allChars = lowercase + uppercase + numbers + symbols;
     for (let i = 4; i < 8; i++) {
       password += allChars[Math.floor(Math.random() * allChars.length)];
     }
 
-    // 打乱密码字符顺序
     password = password
       .split("")
       .sort(() => Math.random() - 0.5)
@@ -99,30 +99,38 @@ const Staffs: React.FC = () => {
     form.setFieldsValue({ password: password });
   };
 
-  // 显示创建 Modal
   const showCreateModal = () => {
     setIsEditMode(false);
     setEditingStaff(null);
     setIsModalVisible(true);
     form.resetFields();
     generatePassword();
-    form.setFieldsValue({ role: "normal" });
+    form.setFieldsValue({ role: "recruiter" });
   };
 
-  // 显示编辑 Modal
-  const showEditModal = (staff: IStaffWithAccount) => {
+  const showEditModal = async (staff: IStaffWithAccount) => {
     setIsEditMode(true);
     setEditingStaff(staff);
     setIsModalVisible(true);
+
+    let visibility: number[] = [];
+    const detailRes = await Get<{ staff: IStaffWithAccount }>(
+      `/api/staffs/${staff.id}`,
+    );
+    if (detailRes.code === 0 && detailRes.data?.staff) {
+      visibility = detailRes.data.staff.visibility_org_node_ids ?? [];
+    }
+
     form.setFieldsValue({
       name: staff.name,
       email: staff.account.username,
-      role: staff.role,
-      password: "******", // 编辑模式下不显示真实密码
+      role: normalizeRole(staff.role),
+      org_node_id: staff.org_node_id ?? undefined,
+      visibility_org_node_ids: visibility,
+      password: "******",
     });
   };
 
-  // 隐藏 Modal
   const handleCancel = () => {
     setIsModalVisible(false);
     setIsEditMode(false);
@@ -130,7 +138,6 @@ const Staffs: React.FC = () => {
     form.resetFields();
   };
 
-  // 复制信息到剪贴板
   const copyToClipboard = async () => {
     if (!createdStaffInfo) return;
 
@@ -146,34 +153,39 @@ const Staffs: React.FC = () => {
     message.success(t("copySuccess"));
   };
 
-  // 创建员工
   const handleCreate = async () => {
     try {
       const values = await form.validateFields();
 
-      const createData = {
+      const createData: Record<string, unknown> = {
         username: values.email,
         password: values.password,
         name: values.name,
         role: values.role,
       };
+      if (values.org_node_id != null) {
+        createData.org_node_id = values.org_node_id;
+      }
+      if (
+        values.role === "recruiter" &&
+        values.visibility_org_node_ids?.length
+      ) {
+        createData.visibility_org_node_ids = values.visibility_org_node_ids;
+      }
 
       const { code } = await Post("/api/staffs", createData);
 
       if (code === 0) {
-        // 保存创建的员工信息
         setCreatedStaffInfo({
           name: values.name,
           email: values.email,
           password: values.password,
         });
 
-        // 关闭创建 Modal，显示成功 Modal
         setIsModalVisible(false);
         form.resetFields();
         setIsSuccessModalVisible(true);
 
-        // 刷新员工列表
         fetchStaffs();
       } else if (code === 10002) {
         message.error(t("staffExists"));
@@ -185,17 +197,21 @@ const Staffs: React.FC = () => {
     }
   };
 
-  // 更新员工
   const handleUpdate = async () => {
     try {
       const values = await form.validateFields();
 
       if (!editingStaff) return;
 
-      const updateData = {
+      const updateData: Record<string, unknown> = {
         name: values.name,
         role: values.role,
+        org_node_id: values.org_node_id ?? 0,
       };
+      if (values.role === "recruiter") {
+        updateData.visibility_org_node_ids =
+          values.visibility_org_node_ids ?? [];
+      }
 
       const { code } = await Post(`/api/staffs/${editingStaff.id}`, updateData);
 
@@ -206,7 +222,6 @@ const Staffs: React.FC = () => {
         setEditingStaff(null);
         form.resetFields();
 
-        // 刷新员工列表
         fetchStaffs();
       } else {
         message.error(t("updateFailed"));
@@ -216,13 +231,18 @@ const Staffs: React.FC = () => {
     }
   };
 
-  // 关闭成功 Modal
   const handleSuccessModalClose = () => {
     setIsSuccessModalVisible(false);
     setCreatedStaffInfo(undefined);
   };
 
-  // 表格列定义
+  const renderRoleLabel = (r: string) => {
+    if (r === "admin") return t("admin");
+    if (r === "hiring_manager") return t("hiring_manager");
+    if (r === "recruiter" || r === "normal") return t("recruiter");
+    return t("normal");
+  };
+
   const columns = [
     {
       title: t("id"),
@@ -246,16 +266,14 @@ const Staffs: React.FC = () => {
       title: t("role"),
       dataIndex: "role",
       key: "role",
-      width: 120,
-      render: (role: string) => {
-        return role === "admin" ? t("admin") : t("normal");
-      },
+      width: 140,
+      render: (r: string) => renderRoleLabel(r),
     },
     {
       title: t("action"),
       key: "action",
       width: 120,
-      render: (_: any, record: IStaffWithAccount) => (
+      render: (_: unknown, record: IStaffWithAccount) => (
         <Space size="small">
           <Button
             type="link"
@@ -271,12 +289,10 @@ const Staffs: React.FC = () => {
 
   return (
     <div className={styles.staffsPage}>
-      {/* 头部区域 */}
       <div className={styles.headerSection}>
         <div className={styles.pageTitle}>{t("title")}</div>
       </div>
 
-      {/* 筛选和操作区域 */}
       <div className={styles.filterSection}>
         <div className={styles.searchSection}>
           <Input
@@ -303,7 +319,6 @@ const Staffs: React.FC = () => {
         </div>
       </div>
 
-      {/* 表格区域 */}
       <div className={styles.tableSection}>
         <Table
           columns={columns}
@@ -322,14 +337,13 @@ const Staffs: React.FC = () => {
                 total: String(total),
               }),
             pageSize: PAGE_SIZE,
-            onChange: (page) => {
-              setPage(page);
+            onChange: (p) => {
+              setPage(p);
             },
           }}
         />
       </div>
 
-      {/* 创建/编辑员工 Modal */}
       <Modal
         title={isEditMode ? t("editStaff") : t("createStaff")}
         open={isModalVisible}
@@ -337,9 +351,9 @@ const Staffs: React.FC = () => {
         onCancel={handleCancel}
         okText={isEditMode ? t("update") : t("confirm")}
         cancelText={t("cancel")}
-        width={500}
+        width={560}
       >
-        <Form form={form} layout="vertical" initialValues={{ role: "normal" }}>
+        <Form form={form} layout="vertical" initialValues={{ role: "recruiter" }}>
           <Form.Item
             label={t("name")}
             name="name"
@@ -365,10 +379,33 @@ const Staffs: React.FC = () => {
             rules={[{ required: true, message: t("roleRequired") }]}
           >
             <Select placeholder={t("rolePlaceholder")}>
-              <Option value="normal">{t("normal")}</Option>
               <Option value="admin">{t("admin")}</Option>
+              <Option value="recruiter">{t("recruiter")}</Option>
+              <Option value="hiring_manager">{t("hiring_manager")}</Option>
             </Select>
           </Form.Item>
+
+          <Form.Item label={t("orgNode")} name="org_node_id">
+            <OrgNodeTreeSelect
+              style={{ width: "100%" }}
+              placeholder={t("orgNodePlaceholder")}
+              allowClear
+            />
+          </Form.Item>
+
+          {role === "recruiter" && (
+            <Form.Item
+              label={t("visibilityScope")}
+              name="visibility_org_node_ids"
+            >
+              <OrgNodeTreeSelect
+                style={{ width: "100%" }}
+                multiple
+                placeholder={t("visibilityPlaceholder")}
+                allowClear
+              />
+            </Form.Item>
+          )}
 
           {!isEditMode && (
             <Form.Item
@@ -382,17 +419,16 @@ const Staffs: React.FC = () => {
         </Form>
       </Modal>
 
-      {/* 创建成功 Modal */}
       <Modal
         title=""
         open={isSuccessModalVisible}
         onCancel={handleSuccessModalClose}
         footer={[
-          <Button key="confirm" type="primary" onClick={copyToClipboard}>
+          <Button key="copy" type="primary" onClick={copyToClipboard}>
             {t("copyLoginInfo")}
           </Button>,
           <Button
-            key="confirm"
+            key="done"
             type="primary"
             onClick={handleSuccessModalClose}
           >

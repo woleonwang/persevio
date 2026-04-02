@@ -80,6 +80,8 @@ interface IJob {
   is_confidential: boolean;
   interview_defaults_json?: string;
 
+  org_node_id?: number | null;
+
   admin_jobs?: {
     admin: {
       id: number;
@@ -627,6 +629,16 @@ type TJobBasicInfo = {
     | "senior"
   )[];
 };
+interface IOrgNode {
+  id: number;
+  company_id: number;
+  parent_id: number | null;
+  name: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 // Staff 相关类型定义
 interface IAccount {
   id: number;
@@ -644,6 +656,8 @@ interface IStaff {
   role: string;
   account_id: number;
   company_id: number;
+  org_node_id?: number | null;
+  visibility_org_node_ids?: number[];
   created_at: string;
   updated_at: string;
 }

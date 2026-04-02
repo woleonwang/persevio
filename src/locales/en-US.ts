@@ -395,6 +395,7 @@ export default {
     talents: "Candidates",
     account_management: "Account Management",
     group_management: "Group Management",
+    org_chart: "Org chart",
     job_management: "Job Management",
     talent_management: "Talent Management",
     job_apply_management: "Application Management",
@@ -662,6 +663,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
+    org_node_question: "Which organization / department does this role belong to?",
+    org_node_placeholder: "Select org node (optional)",
+    org_node_save_failed: "Could not save the job's org assignment. Please try again.",
 
     // basic_info question texts
     headcount_number_question:
@@ -2087,6 +2091,34 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
+  org_chart: {
+    title: "Organization chart",
+    empty: "No org nodes yet",
+    addChild: "Add child",
+    rename: "Rename",
+    delete: "Delete",
+    addChildModalTitle: "Add child node",
+    renameModalTitle: "Rename node",
+    nodeName: "Name",
+    namePlaceholder: "Enter name",
+    nameRequired: "Name is required",
+    confirm: "OK",
+    cancel: "Cancel",
+    createSuccess: "Created",
+    createFailed: "Create failed",
+    renameSuccess: "Renamed",
+    renameFailed: "Rename failed",
+    deleteTitle: "Delete node",
+    deleteConfirm:
+      'Delete "{{name}}"? Only leaf nodes with no references can be deleted.',
+    deleteSuccess: "Deleted",
+    deleteFailed: "Delete failed",
+    updateSuccess: "Order updated",
+    updateFailed: "Update failed",
+    dropInvalid: "Invalid drop; list refreshed",
+    cannotMoveRoot: "The company root cannot be moved",
+  },
+
   staffs: {
     title: "Staff List",
     searchPlaceholder: "Staff name, account email",
@@ -2100,6 +2132,12 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     edit: "Edit",
     admin: "Admin",
     normal: "Staff",
+    recruiter: "Recruiter",
+    hiring_manager: "Hiring manager",
+    orgNode: "Org position",
+    orgNodePlaceholder: "Optional — org node for this user",
+    visibilityScope: "Visibility (org scope)",
+    visibilityPlaceholder: "Optional — org nodes this recruiter can see",
     update: "Update",
     confirm: "Confirm",
     cancel: "Cancel",
