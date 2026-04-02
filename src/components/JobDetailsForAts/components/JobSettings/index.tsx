@@ -28,6 +28,7 @@ import styles from "./style.module.less";
 import useJob from "@/hooks/useJob";
 import useStaffs from "@/hooks/useStaffs";
 import { getInitials } from "../JobPipeline/components/utils";
+import OrgNodeTreeSelect from "@/components/OrgNodeTreeSelect";
 
 const DEFAULT_STAGES = [
   "Reached Out",
@@ -156,6 +157,9 @@ const JobSettings = ({ jobId }: IProps) => {
   const [newStaffId, setNewStaffId] = useState<number | undefined>(undefined);
   const [collabUpdating, setCollabUpdating] = useState(false);
 
+  const [orgNodeId, setOrgNodeId] = useState<number | undefined>(undefined);
+  const [orgNodeUpdating, setOrgNodeUpdating] = useState(false);
+
   const { job, fetchJob } = useJob();
   const { staffs } = useStaffs();
 
@@ -180,6 +184,10 @@ const JobSettings = ({ jobId }: IProps) => {
       );
     }
   }, [job?.pipeline_stages]);
+
+  useEffect(() => {
+    setOrgNodeId(job?.org_node_id ?? undefined);
+  }, [job?.org_node_id]);
 
   useEffect(() => {
     if (jobId) {
@@ -280,6 +288,34 @@ const JobSettings = ({ jobId }: IProps) => {
         fetchJob();
       }
     })();
+  };
+
+  const handleUpdateOrgNode = async (next: unknown) => {
+    if (!jobId) return;
+    const nextId =
+      typeof next === "number"
+        ? next
+        : typeof next === "string"
+          ? Number(next)
+          : 0;
+
+    if (Number.isNaN(nextId)) return;
+    if (orgNodeId === nextId) return;
+
+    setOrgNodeUpdating(true);
+    setOrgNodeId(nextId === 0 ? undefined : nextId);
+
+    const { code } = await Post(`/api/jobs/${jobId}`, {
+      org_node_id: nextId,
+    });
+    if (code === 0) {
+      message.success(tKey("save_success"));
+      fetchJob();
+    } else {
+      message.error(tKey("save_failed"));
+      fetchJob();
+    }
+    setOrgNodeUpdating(false);
   };
 
   const handleRemoveCollaborator = (staffId: number) => {
@@ -392,6 +428,20 @@ const JobSettings = ({ jobId }: IProps) => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>{tKey("org_node")}</div>
+        <div className={styles.addCollaboratorRow}>
+          <OrgNodeTreeSelect
+            style={{ flex: "auto" }}
+            placeholder={tKey("org_node_placeholder")}
+            allowClear
+            disabled={orgNodeUpdating}
+            value={orgNodeId}
+            onChange={(val) => handleUpdateOrgNode(val)}
+          />
+        </div>
+      </div>
+
       <div className={styles.section}>
         <div className={styles.sectionTitle}>{tKey("pipeline_stages")}</div>
         <div className={styles.sectionDesc}>{tKey("pipeline_stages_desc")}</div>

@@ -1911,6 +1911,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     delete_stage_title: "Delete Stage",
     delete_stage_content: 'Are you sure you want to delete stage "{{name}}"?',
     unnamed_stage: "Unnamed",
+    org_node: "Organization / Department",
+    org_node_placeholder: "Optional — no assignment",
     assigned_collaborators: "Assigned Hiring Managers",
     add_collaborator: "Add Hiring Manager",
     add: "Add",
@@ -2094,7 +2096,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   },
 
   org_chart: {
-    title: "Organization chart",
+    title: "Organization",
     empty: "No org nodes yet",
     addChild: "Add child",
     rename: "Rename",
