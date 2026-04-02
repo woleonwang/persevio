@@ -67,9 +67,8 @@ const MultipleCityAndAddressSelect = (props: IMultiProps) => {
     }
   }, [value]);
 
-  const formatUrl = (url: string) => {
-    return isCoworker ? url.replace("/api", "/api/coworker") : url;
-  };
+  // 已无 coworker / trial_user；接口路径无需再做替换
+  const formatUrl = (url: string) => url;
 
   const fetchCityAndAddress = async () => {
     const { code, data } = await Get(formatUrl("/api/city_and_address"));
@@ -149,7 +148,7 @@ const CityAndAddressSelect = (props: IProps) => {
   }, [cities]);
 
   const formatUrl = (url: string) => {
-    return isCoworker ? url.replace("/api", "/api/coworker") : url;
+    return url;
   };
 
   const onCityChange = (cityId: number) => {

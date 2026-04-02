@@ -129,16 +129,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
     return originalT(`job_requirement_form.${key}`, params);
   };
 
-  const formatUrl = (url: string) => {
-    if (userRole === "coworker") {
-      return url.replace("/api", "/api/coworker");
-    }
-
-    if (userRole === "trial_user") {
-      return url.replace("/api", "/api/trial_user");
-    }
-    return url;
-  };
+  // 当前已无 coworker / trial_user；替换逻辑不再需要
+  const formatUrl = (url: string) => url;
 
   const TeamQuestions: TQuestion[] = [
     {

@@ -663,9 +663,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
-    org_node_question: "Which organization / department does this role belong to?",
+    org_node_question:
+      "Which organization / department does this role belong to?",
     org_node_placeholder: "Select org node (optional)",
-    org_node_save_failed: "Could not save the job's org assignment. Please try again.",
+    org_node_save_failed:
+      "Could not save the job's org assignment. Please try again.",
 
     // basic_info question texts
     headcount_number_question:
@@ -2135,9 +2137,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     recruiter: "Recruiter",
     hiring_manager: "Hiring manager",
     orgNode: "Org position",
-    orgNodePlaceholder: "Optional — org node for this user",
+    orgNodePlaceholder: "Org node for this user",
     visibilityScope: "Visibility (org scope)",
-    visibilityPlaceholder: "Optional — org nodes this recruiter can see",
+    visibilityPlaceholder: "Org nodes this recruiter can see",
     update: "Update",
     confirm: "Confirm",
     cancel: "Cancel",
@@ -2188,7 +2190,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     deleteSuccess: "Group deleted successfully",
     deleteFailed: "Failed to delete group",
     deleteTitle: "Delete Group",
-    deleteConfirm: "Confirm delete group {{name}}? This action cannot be undone.",
+    deleteConfirm:
+      "Confirm delete group {{name}}? This action cannot be undone.",
     deleteDisabledHint: "Only groups with 0 staff can be deleted",
   },
 

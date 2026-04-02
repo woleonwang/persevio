@@ -41,9 +41,8 @@ const InternalEmployeeLevel = (props: IProps) => {
     }
   }, [internalEmployeeLevels]);
 
-  const formatUrl = (url: string) => {
-    return isCoworker ? url.replace("/api", "/api/coworker") : url;
-  };
+  // 已无 coworker / trial_user；接口路径无需再做替换
+  const formatUrl = (url: string) => url;
 
   const fetchInternalEmployeeLevels = async () => {
     const { code, data } = await Get(

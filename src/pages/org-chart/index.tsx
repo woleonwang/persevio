@@ -67,7 +67,10 @@ const OrgChartPage = () => {
       setTreeData(td as DataNode[]);
       if (root) {
         setRootId(root.id);
-        setExpandedKeys([String(root.id)]);
+        // 不在每次刷新都强制仅展开根节点；避免编辑/删除后父节点被折叠
+        setExpandedKeys((prev) =>
+          prev.length ? prev : [String(root.id)],
+        );
       } else {
         setRootId(null);
       }
@@ -109,7 +112,14 @@ const OrgChartPage = () => {
       return;
     }
 
-    const data = [...treeData];
+    const cloneTree = (nodes: DataNode[]): DataNode[] =>
+      nodes.map((n) => ({
+        ...n,
+        children: n.children ? cloneTree(n.children as DataNode[]) : undefined,
+      }));
+
+    // 用 clone 版本做“计算”，避免直接改动 state 引用导致 UI 在后端返回前错乱
+    const data = cloneTree(treeData);
     let dragObj: DataNode;
 
     loop(data, dragKey, (item, index, arr) => {
@@ -146,8 +156,6 @@ const OrgChartPage = () => {
       }
     }
 
-    setTreeData(data);
-
     const dragKeyStr = String(dragKey);
     const parentKey = findParentKey(data as DataNode[], dragKeyStr);
     const siblings = findSiblingKeys(data as DataNode[], dragKeyStr);
@@ -158,9 +166,6 @@ const OrgChartPage = () => {
       return;
     }
 
-    // 拖拽结束后，确保新父节点及其祖先路径展开，保证用户能立刻看到拖动后的结果。
-    expandPathTo(Number(parentKey));
-
     const sortOrder = siblings.indexOf(dragKeyStr);
     if (sortOrder < 0) {
       void fetchNodes();
@@ -168,6 +173,7 @@ const OrgChartPage = () => {
     }
 
     void (async () => {
+      const newParentId = Number(parentKey);
       const { code } = await Post(`/api/org_nodes/${dragKeyStr}`, {
         parent_id: Number(parentKey),
         sort_order: sortOrder,
@@ -175,6 +181,15 @@ const OrgChartPage = () => {
       if (code === 0) {
         message.success(t("updateSuccess"));
         await fetchNodes();
+        // 展开拖拽后的新父节点链路，确保松手后立刻能看到结果
+        const keysToExpand: string[] = [];
+        let curKey: string | null = String(newParentId);
+        while (curKey) {
+          keysToExpand.push(curKey);
+          const p = findParentKey(data as DataNode[], curKey);
+          curKey = p;
+        }
+        setExpandedKeys((prev) => Array.from(new Set([...prev, ...keysToExpand])));
       } else {
         message.error(t("updateFailed"));
         await fetchNodes();
@@ -265,9 +280,7 @@ const OrgChartPage = () => {
               e.stopPropagation();
               showAddChild(id);
             }}
-          >
-            {t("addChild")}
-          </Button>
+          />
           <Button
             type="link"
             size="small"
@@ -276,9 +289,7 @@ const OrgChartPage = () => {
               e.stopPropagation();
               showRename(id, titleText);
             }}
-          >
-            {t("rename")}
-          </Button>
+          />
           {!isRoot && (
             <Button
               type="link"
@@ -289,9 +300,7 @@ const OrgChartPage = () => {
                 e.stopPropagation();
                 handleDelete(id, titleText);
               }}
-            >
-              {t("delete")}
-            </Button>
+            />
           )}
         </Space>
       </span>

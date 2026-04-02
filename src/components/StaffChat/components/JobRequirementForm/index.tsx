@@ -113,7 +113,7 @@ type TTeam = {
 };
 
 const JobRequirementForm = (props: IProps) => {
-  const { group: formType = "basic_info", userRole, onOk, jobId } = props;
+  const { group: formType = "basic_info", onOk, jobId } = props;
   const [form] = Form.useForm();
   const [orgNodeTitleMap, setOrgNodeTitleMap] = useState<Map<number, string>>(
     () => new Map(),
@@ -132,17 +132,6 @@ const JobRequirementForm = (props: IProps) => {
 
   const t = (key: string, params?: Record<string, string>): string => {
     return originalT(`job_requirement_form.${key}`, params);
-  };
-
-  const formatUrl = (url: string) => {
-    if (userRole === "coworker") {
-      return url.replace("/api", "/api/coworker");
-    }
-
-    if (userRole === "trial_user") {
-      return url.replace("/api", "/api/trial_user");
-    }
-    return url;
   };
 
   const TeamQuestions: TQuestion[] = [
@@ -469,7 +458,7 @@ const JobRequirementForm = (props: IProps) => {
   }, []);
 
   const fetchTeams = async (options?: { selectedTeamId?: number }) => {
-    const res = await Get<{ teams: TTeam[] }>(formatUrl(`/api/teams`));
+    const res = await Get<{ teams: TTeam[] }>(`/api/teams`);
     if (res.code === 0) {
       setTeams(res.data.teams);
       if (options?.selectedTeamId) {
@@ -491,7 +480,7 @@ const JobRequirementForm = (props: IProps) => {
   const createTeam = async () => {
     createTeamForm.validateFields().then(async (questions) => {
       const { code, data } = await Post<{ team: TTeam }>(
-        formatUrl(`/api/teams`),
+        `/api/teams`,
         {
           name: questions.name,
           detail: JSON.stringify(questions),
@@ -520,7 +509,7 @@ const JobRequirementForm = (props: IProps) => {
         if (formType === "basic_info" && jobId != null) {
           const rawOrg = values.org_node_id as number | undefined;
           if (rawOrg !== undefined && rawOrg !== null) {
-            const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), {
+            const { code } = await Post(`/api/jobs/${jobId}`, {
               org_node_id: rawOrg,
             });
             if (code !== 0) {
@@ -930,7 +919,6 @@ const JobRequirementForm = (props: IProps) => {
         {question.type === "org_node" && (
           <OrgNodeTreeSelect
             style={{ width: "100%" }}
-            formatUrl={formatUrl}
             placeholder={t("org_node_placeholder")}
             onCatalogLoaded={(nodes) =>
               setOrgNodeTitleMap(orgNodesToIdTitleMap(nodes))

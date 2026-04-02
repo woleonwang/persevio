@@ -16,7 +16,7 @@ export interface IProps {
   onChange?: (val: TInternalEmployeeLevelValue) => void;
 }
 const InternalEmployeeLevel = (props: IProps) => {
-  const { value: { id } = {}, isCoworker = false, onChange } = props;
+  const { value: { id } = {}, onChange } = props;
   const [internalEmployeeLevels, setInternalEmployeeLevels] = useState<
     { id: number; name: string }[]
   >([]);
@@ -41,9 +41,7 @@ const InternalEmployeeLevel = (props: IProps) => {
     }
   }, [internalEmployeeLevels]);
 
-  const formatUrl = (url: string) => {
-    return isCoworker ? url.replace("/api", "/api/coworker") : url;
-  };
+  const formatUrl = (url: string) => url;
 
   const fetchInternalEmployeeLevels = async () => {
     const { code, data } = await Get(

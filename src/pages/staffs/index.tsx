@@ -27,6 +27,30 @@ const PAGE_SIZE = 10;
 const normalizeRole = (role: string) =>
   role === "normal" ? "recruiter" : role;
 
+const normalizeIntArray = (v: unknown): number[] => {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((item) => {
+      if (typeof item === "number") return item;
+      if (typeof item === "string") return Number(item);
+      if (item && typeof item === "object" && "value" in item) {
+        // antd TreeSelect when labelInValue=true
+        return Number((item as { value: unknown }).value);
+      }
+      return NaN;
+    })
+    .filter((n): n is number => !Number.isNaN(n));
+};
+
+const normalizeIntOrZero = (v: unknown): number => {
+  if (typeof v === "number") return v;
+  if (typeof v === "string") return Number(v);
+  if (v && typeof v === "object" && "value" in v) {
+    return Number((v as { value: unknown }).value);
+  }
+  return 0;
+};
+
 const Staffs: React.FC = () => {
   const [staffs, setStaffs] = useState<IStaffWithAccount[]>([]);
   const [loading, setLoading] = useState(true);
@@ -164,13 +188,15 @@ const Staffs: React.FC = () => {
         role: values.role,
       };
       if (values.org_node_id != null) {
-        createData.org_node_id = values.org_node_id;
+        createData.org_node_id = normalizeIntOrZero(values.org_node_id);
       }
       if (
         values.role === "recruiter" &&
         values.visibility_org_node_ids?.length
       ) {
-        createData.visibility_org_node_ids = values.visibility_org_node_ids;
+        createData.visibility_org_node_ids = normalizeIntArray(
+          values.visibility_org_node_ids,
+        );
       }
 
       const { code } = await Post("/api/staffs", createData);
@@ -206,11 +232,12 @@ const Staffs: React.FC = () => {
       const updateData: Record<string, unknown> = {
         name: values.name,
         role: values.role,
-        org_node_id: values.org_node_id ?? 0,
+        org_node_id: normalizeIntOrZero(values.org_node_id),
       };
       if (values.role === "recruiter") {
-        updateData.visibility_org_node_ids =
-          values.visibility_org_node_ids ?? [];
+        updateData.visibility_org_node_ids = normalizeIntArray(
+          values.visibility_org_node_ids,
+        );
       }
 
       const { code } = await Post(`/api/staffs/${editingStaff.id}`, updateData);
