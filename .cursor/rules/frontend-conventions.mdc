@@ -1,0 +1,22 @@
+---
+description: Frontend conventions source of truth
+alwaysApply: true
+---
+
+# Frontend Conventions Source of Truth
+
+When working on frontend code in this repository, always follow:
+
+- `FRONTEND_CONVENTIONS.md`
+
+Requirements:
+
+- Treat `FRONTEND_CONVENTIONS.md` as the single source of truth for frontend conventions.
+- Read the latest version of `FRONTEND_CONVENTIONS.md` before making frontend changes.
+- If this rule conflicts with `FRONTEND_CONVENTIONS.md`, `FRONTEND_CONVENTIONS.md` takes precedence.
+- If `FRONTEND_CONVENTIONS.md` is updated during a session, re-check it before continuing frontend edits.
+
+Scope notes:
+
+- This rule applies globally (`alwaysApply: true`) for frontend work.
+- Existing workspace/global rules still apply (e.g. CSS class naming requirements).
