@@ -11,12 +11,11 @@ export type TInternalEmployeeLevelValue = {
 };
 
 export interface IProps {
-  isCoworker?: boolean;
   value?: TInternalEmployeeLevelValue;
   onChange?: (val: TInternalEmployeeLevelValue) => void;
 }
 const InternalEmployeeLevel = (props: IProps) => {
-  const { value: { id } = {}, isCoworker = false, onChange } = props;
+  const { value: { id } = {}, onChange } = props;
   const [internalEmployeeLevels, setInternalEmployeeLevels] = useState<
     { id: number; name: string }[]
   >([]);
@@ -46,7 +45,7 @@ const InternalEmployeeLevel = (props: IProps) => {
 
   const fetchInternalEmployeeLevels = async () => {
     const { code, data } = await Get(
-      formatUrl("/api/internal_employee_levels")
+      formatUrl("/api/internal_employee_levels"),
     );
     if (code === 0) {
       setInternalEmployeeLevels(data.internal_employee_levels);
@@ -67,7 +66,7 @@ const InternalEmployeeLevel = (props: IProps) => {
       formatUrl("/api/internal_employee_levels"),
       {
         name: inputName,
-      }
+      },
     );
 
     if (code === 0) {

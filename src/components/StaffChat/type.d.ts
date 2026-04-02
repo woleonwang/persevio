@@ -10,12 +10,10 @@ export type TChatType =
   | "jobInterviewFeedback"
   | "jobTalentEvaluateFeedback";
 
-export type TUserRole = "staff" | "coworker" | "candidate" | "trial_user";
 export interface IProps {
   chatType: TChatType;
   jobId: number;
   sessionId?: string;
-  userRole?: TUserRole;
   share?: boolean;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;

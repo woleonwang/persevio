@@ -986,7 +986,6 @@ const StaffChat: React.FC<IProps> = (props) => {
                   handleJobRequirementFormDrawerOpen(false);
                 }
               }}
-              userRole="staff"
             />
           ) : realRequirementFormVisible ? (
             <JrdRealRequirementForm
@@ -1326,7 +1325,6 @@ const StaffChat: React.FC<IProps> = (props) => {
                   handleJobRequirementFormDrawerOpen(false);
                 }
               }}
-              userRole="staff"
             />
           )}
 

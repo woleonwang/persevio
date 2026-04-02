@@ -28,7 +28,6 @@ export type TCity = {
 
 export interface IProps {
   cities: TCity[];
-  isCoworker?: boolean;
   value?: TValue;
   canDelete?: boolean;
   onChange?: (val: TValue) => void;
@@ -45,12 +44,11 @@ export type TValueWithKey = {
 };
 
 export interface IMultiProps {
-  isCoworker?: boolean;
   value?: TValueWithKey[];
   onChange?: (val: TValueWithKey[]) => void;
 }
 const MultipleCityAndAddressSelect = (props: IMultiProps) => {
-  const { value, isCoworker = false, onChange } = props;
+  const { value, onChange } = props;
   const [cities, setCities] = useState<TCity[]>([]);
   const { t: originalT } = useTranslation();
   // const t = (key: string, params?: Record<string, string>): string => {
@@ -80,8 +78,8 @@ const MultipleCityAndAddressSelect = (props: IMultiProps) => {
   const onSingleChange = (key: string, newValue: TValue) => {
     onChange?.(
       (value ?? []).map((item) =>
-        item.key === key ? { ...item, ...newValue } : item
-      )
+        item.key === key ? { ...item, ...newValue } : item,
+      ),
     );
   };
 
@@ -98,7 +96,6 @@ const MultipleCityAndAddressSelect = (props: IMultiProps) => {
           <CityAndAddressSelect
             key={item.key}
             cities={cities}
-            isCoworker={isCoworker}
             value={item}
             canDelete={value.length > 1}
             onChange={(value) => onSingleChange(item.key, value)}
@@ -118,7 +115,6 @@ const CityAndAddressSelect = (props: IProps) => {
   const {
     cities,
     value: { cityId, addressId } = {},
-    isCoworker = false,
     canDelete = false,
     onChange,
     onCreateRecord,

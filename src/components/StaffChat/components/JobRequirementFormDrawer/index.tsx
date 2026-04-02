@@ -14,7 +14,7 @@ import {
 } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { ReactNode, useEffect, useReducer, useState } from "react";
-import { TRoleOverviewType, TUserRole } from "../../type";
+import { TRoleOverviewType } from "../../type";
 import { Get, Post } from "../../../../utils/request";
 import MarkdownContainer from "../../../MarkdownContainer";
 import dayjs from "dayjs";
@@ -92,7 +92,6 @@ type TGroup = {
 interface IProps {
   open: boolean;
   group?: TRoleOverviewType;
-  userRole: TUserRole;
   onClose: () => void;
   onOk: (result: string) => void;
 }
@@ -104,13 +103,7 @@ type TTeam = {
 };
 
 const JobRequirementFormDrawer = (props: IProps) => {
-  const {
-    open,
-    group: formType = "basic_info",
-    userRole,
-    onClose,
-    onOk,
-  } = props;
+  const { open, group: formType = "basic_info", onClose, onOk } = props;
   const [form] = Form.useForm();
   const [createTeamForm] = Form.useForm();
   const [_, forceUpdate] = useReducer(() => ({}), {});
@@ -192,7 +185,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   "capability_gap",
                   "leadership",
                 ].map((item) =>
-                  getOptions(item, t(`primary_driver_options.${item}`))
+                  getOptions(item, t(`primary_driver_options.${item}`)),
                 ),
                 required: true,
               },
@@ -233,7 +226,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   "people_manager",
                   "business_function_owner",
                 ].map((item) =>
-                  getOptions(item, t(`archetypes_options.${item}`))
+                  getOptions(item, t(`archetypes_options.${item}`)),
                 ),
                 required: true,
               },
@@ -401,7 +394,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("percentage_options.team_management").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
@@ -472,7 +465,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("influence_options.cross_functional").split(
-                              "**"
+                              "**",
                             )[1]
                           }
                         </b>
@@ -520,14 +513,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("key_people_options.working_independently").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
                         </b>
                         {
                           t("key_people_options.working_independently").split(
-                            "："
+                            "：",
                           )[1]
                         }
                       </div>
@@ -562,14 +555,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("key_people_options.company_leadership").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
                         </b>
                         {
                           t("key_people_options.company_leadership").split(
-                            "："
+                            "：",
                           )[1]
                         }
                       </div>
@@ -582,14 +575,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("key_people_options.external_customers").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
                         </b>
                         {
                           t("key_people_options.external_customers").split(
-                            "："
+                            "：",
                           )[1]
                         }
                       </div>
@@ -602,14 +595,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("key_people_options.external_partners").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
                         </b>
                         {
                           t("key_people_options.external_partners").split(
-                            "："
+                            "：",
                           )[1]
                         }
                       </div>
@@ -622,14 +615,14 @@ const JobRequirementFormDrawer = (props: IProps) => {
                         <b>
                           {
                             t("key_people_options.external_stakeholders").split(
-                              "："
+                              "：",
                             )[0]
                           }
                           ：
                         </b>
                         {
                           t("key_people_options.external_stakeholders").split(
-                            "："
+                            "：",
                           )[1]
                         }
                       </div>
@@ -831,7 +824,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   ];
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(
-    (item) => item.key === formType
+    (item) => item.key === formType,
   ) as unknown as TQuestionGroup;
 
   useEffect(() => {
@@ -844,7 +837,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
       setTeams(res.data.teams);
       if (options?.selectedTeamId) {
         const team = res.data.teams.find(
-          (item) => item.id === options.selectedTeamId
+          (item) => item.id === options.selectedTeamId,
         );
         if (team) {
           form.setFieldsValue({
@@ -865,7 +858,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
         {
           name: questions.name,
           detail: JSON.stringify(questions),
-        }
+        },
       );
 
       if (code === 0) {
@@ -880,7 +873,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const canSubmit = () => {
     const values = form.getFieldsValue();
     return Object.values(values).some((value) =>
-      Array.isArray(value) ? value.length > 0 : !!value
+      Array.isArray(value) ? value.length > 0 : !!value,
     );
   };
 
@@ -893,7 +886,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           value: any,
           options?: {
             isSubQuestion?: boolean;
-          }
+          },
         ): string => {
           const { isSubQuestion = false } = options ?? {};
           const outputNoData = question.outputNoData ?? false;
@@ -967,7 +960,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
           if (question.type === "select") {
             const option = (question.options ?? []).find(
-              (item) => item.value === value
+              (item) => item.value === value,
             );
             formattedValue = option?.text ?? option?.label ?? "";
           }
@@ -977,7 +970,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .map(
                 (optionValue: string) =>
                   question.options?.find((item) => item.value === optionValue)
-                    ?.label ?? ""
+                    ?.label ?? "",
               )
               .join(",");
           }
@@ -999,7 +992,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
             .replaceAll("<b>", "")}${
             question.needPriority
               ? ` - ${originalT(
-                  "ideal_profile." + values[`${question.key}_priority`]
+                  "ideal_profile." + values[`${question.key}_priority`],
                 )}`
               : ""
           }\n\n${formattedValue}`;
@@ -1017,7 +1010,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
               .map((question) =>
                 getAnswer(question, values[question.key], {
                   isSubQuestion: true,
-                })
+                }),
               )
               .filter(Boolean);
 
@@ -1035,8 +1028,8 @@ const JobRequirementFormDrawer = (props: IProps) => {
               if (group.needPriority) {
                 questions.push(
                   `- ${originalT(
-                    "ideal_profile." + values[`${group.key}_priority`]
-                  )}`
+                    "ideal_profile." + values[`${group.key}_priority`],
+                  )}`,
                 );
               }
             } else if (group.outputNoData) {
@@ -1045,7 +1038,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
           } else {
             const answer = getAnswer(
               question as TQuestion,
-              values[question.key]
+              values[question.key],
             );
 
             if (answer) {
@@ -1056,7 +1049,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
         if (questions.length > 0) {
           resultStr += `## ${questionGroup.title}\n\n${questions.join(
-            "\n\n"
+            "\n\n",
           )}\n\n`;
         }
 
@@ -1069,7 +1062,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
 
   const checkVisible = (
     dependencies?: TDependence[],
-    field?: FormListFieldData
+    field?: FormListFieldData,
   ) => {
     return (dependencies ?? []).every((dep) => {
       let currentValue = "";
@@ -1112,7 +1105,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const genFormItem = (
     question: TQuestion,
     field?: FormListFieldData,
-    options?: { isSubQuestion?: boolean; deleted?: boolean }
+    options?: { isSubQuestion?: boolean; deleted?: boolean },
   ): ReactNode => {
     const visible = checkVisible(question.dependencies, field);
 
@@ -1168,11 +1161,11 @@ const JobRequirementFormDrawer = (props: IProps) => {
                   validator(
                     _: any,
                     value: Record<string, number>,
-                    callback: any
+                    callback: any,
                   ) {
                     const sum = Object.values(value).reduce(
                       (sum, val) => sum + val,
-                      0
+                      0,
                     );
                     if (sum !== 100) {
                       callback(new Error());
@@ -1183,69 +1176,74 @@ const JobRequirementFormDrawer = (props: IProps) => {
                 },
               ]
             : question.type === "manager_detail"
-            ? [
-                {
-                  validator(
-                    _: any,
-                    value: Record<string, number>,
-                    callback: any
-                  ) {
-                    const typedValue = value as TManangerDetailValue;
-                    if (
-                      !typedValue.jobTitle ||
-                      (mode === "utils" && !typedValue.name)
+              ? [
+                  {
+                    validator(
+                      _: any,
+                      value: Record<string, number>,
+                      callback: any,
                     ) {
-                      callback(new Error());
-                    }
-                    callback();
-                  },
-                  message: t("manager_message"),
-                },
-              ]
-            : question.type === "city_and_address"
-            ? [
-                {
-                  validator(_: any, value, callback: any) {
-                    const typedValue = value as TValue[];
-                    if (
-                      typedValue.find((item) => item.cityId || item.addressId)
-                    ) {
+                      const typedValue = value as TManangerDetailValue;
+                      if (
+                        !typedValue.jobTitle ||
+                        (mode === "utils" && !typedValue.name)
+                      ) {
+                        callback(new Error());
+                      }
                       callback();
-                    } else {
-                      callback(new Error());
-                    }
+                    },
+                    message: t("manager_message"),
                   },
-                  message: t("city_and_address_message"),
-                },
-              ]
-            : question.type === "number_range"
-            ? [
-                {
-                  validator(
-                    _: any,
-                    value: Record<string, number>,
-                    callback: any
-                  ) {
-                    const typedValue = value as { min?: number; max?: number };
-                    if (
-                      (!typedValue.min && typedValue.min !== 0) ||
-                      (!typedValue.max && typedValue.max !== 0)
-                    ) {
-                      callback(new Error());
-                    }
-                    callback();
-                  },
-                  message: t("required_error_message"),
-                },
-              ]
-            : question.required
-            ? [
-                {
-                  required: true,
-                  message: t("required_error_message"),
-                },
-              ]
-            : []
+                ]
+              : question.type === "city_and_address"
+                ? [
+                    {
+                      validator(_: any, value, callback: any) {
+                        const typedValue = value as TValue[];
+                        if (
+                          typedValue.find(
+                            (item) => item.cityId || item.addressId,
+                          )
+                        ) {
+                          callback();
+                        } else {
+                          callback(new Error());
+                        }
+                      },
+                      message: t("city_and_address_message"),
+                    },
+                  ]
+                : question.type === "number_range"
+                  ? [
+                      {
+                        validator(
+                          _: any,
+                          value: Record<string, number>,
+                          callback: any,
+                        ) {
+                          const typedValue = value as {
+                            min?: number;
+                            max?: number;
+                          };
+                          if (
+                            (!typedValue.min && typedValue.min !== 0) ||
+                            (!typedValue.max && typedValue.max !== 0)
+                          ) {
+                            callback(new Error());
+                          }
+                          callback();
+                        },
+                        message: t("required_error_message"),
+                      },
+                    ]
+                  : question.required
+                    ? [
+                        {
+                          required: true,
+                          message: t("required_error_message"),
+                        },
+                      ]
+                    : []
         }
       >
         {question.type === "text" && <Input disabled={deleted} />}
@@ -1334,7 +1332,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
   const genPriority = (
     name: string | number,
     key: string | number,
-    options?: { canNoApply: boolean; deleted?: boolean }
+    options?: { canNoApply: boolean; deleted?: boolean },
   ) => {
     const { canNoApply = false, deleted = false } = options ?? {};
 
@@ -1432,7 +1430,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                               </div>
                             ),
                             children: itemGroup.questions.map((question) =>
-                              genFormItem(question)
+                              genFormItem(question),
                             ),
                             forceRender: true,
                           },
@@ -1454,7 +1452,7 @@ const JobRequirementFormDrawer = (props: IProps) => {
                           {itemGroup.questions.map((question) =>
                             genFormItem(question, undefined, {
                               isSubQuestion: true,
-                            })
+                            }),
                           )}
                         </div>
                       </div>

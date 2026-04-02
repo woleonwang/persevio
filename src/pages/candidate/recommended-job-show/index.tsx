@@ -33,7 +33,7 @@ const RecommendedJobShow = () => {
 
   const fetchRecommendedJob = async () => {
     const { code, data } = await Get(
-      `/api/candidate/recommended_jobs/${recommendedJobId}`
+      `/api/candidate/recommended_jobs/${recommendedJobId}`,
     );
     if (code === 0) {
       setRecommendedJob({
@@ -46,7 +46,7 @@ const RecommendedJobShow = () => {
 
   const updateStatus = async (action: "accept" | "reject") => {
     const { code, data } = await Post(
-      `/api/candidate/recommended_jobs/${recommendedJobId}/${action}`
+      `/api/candidate/recommended_jobs/${recommendedJobId}/${action}`,
     );
     if (code === 0) {
       message.success(originalT("submit_succeed"));
@@ -88,7 +88,7 @@ const RecommendedJobShow = () => {
                     <div
                       className={classnames(
                         styles.status,
-                        styles[recommendedJob.status.toLowerCase()]
+                        styles[recommendedJob.status.toLowerCase()],
                       )}
                     >
                       {recommendedJob.status === "ACCEPTED"
@@ -148,7 +148,6 @@ const RecommendedJobShow = () => {
       >
         <div style={{ height: "100%", display: "flex" }}>
           <JobChatBot
-            userRole="candidate"
             jobId={recommendedJob.job_id}
             sessionId={`${recommendedJob.candidate_id}`}
           />

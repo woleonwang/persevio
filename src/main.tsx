@@ -57,7 +57,6 @@ import PublicTalentDetailPage from "./pages/public/talent/detail";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
 import OrgChart from "./pages/org-chart";
-import Groups from "./pages/groups";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";

@@ -39,7 +39,7 @@ import ManagerDetail, {
 import PercentageInput from "./components/PercentageInput";
 import NumberRange from "./components/NumberRange";
 
-import { TRoleOverviewType, TUserRole } from "../../type";
+import { TRoleOverviewType } from "../../type";
 import styles from "./style.module.less";
 
 type TQuestionGroup = {
@@ -100,7 +100,6 @@ type TGroup = {
 
 interface IProps {
   group?: TRoleOverviewType;
-  userRole: TUserRole;
   onOk: (result: string) => void;
   /** 基础信息提交前写入职位 org_node_id */
   jobId?: number;

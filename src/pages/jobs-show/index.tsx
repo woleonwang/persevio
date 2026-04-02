@@ -234,7 +234,6 @@ const JobsShow = () => {
 
   const ChatRoomArea = (
     <JobChatBot
-      userRole="candidate"
       jobId={parseInt(id ?? "0")}
       sessionId={sessionId}
       enableFullscreen

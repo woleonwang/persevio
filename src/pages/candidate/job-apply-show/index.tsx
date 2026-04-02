@@ -386,7 +386,6 @@ const JobApplyShow = () => {
       >
         <div style={{ height: "100%", display: "flex" }}>
           <JobChatBot
-            userRole="candidate"
             jobId={jobApply.job_id}
             sessionId={`${jobApply.candidate_id}`}
           />

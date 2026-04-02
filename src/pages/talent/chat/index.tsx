@@ -20,7 +20,7 @@ const TalentChat = () => {
   const t = (key: string) => originalT(`talent.${key}`);
 
   const initChatType = (new URLSearchParams(window.location.search).get(
-    "chatType"
+    "chatType",
   ) ?? "interview_designer") as TTalentChatType;
 
   const initRound =
@@ -42,7 +42,7 @@ const TalentChat = () => {
   }, [job, chatType, round]);
 
   const interviewPlan = parseJSON(
-    job?.interview_plan_json
+    job?.interview_plan_json,
   ) as TInterviewPlanDetail;
 
   const totalRound = (interviewPlan.rounds ?? []).length;
@@ -50,7 +50,7 @@ const TalentChat = () => {
   const fetchChatInstance = async () => {
     setIsLoadingInstance(true);
     const { code, data } = await Get(
-      `/api/public/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`
+      `/api/public/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`,
     );
     if (code === 0) {
       setChatInstance(data[chatType]);
@@ -100,7 +100,7 @@ const TalentChat = () => {
           <Button
             onClick={() => {
               navigate(
-                `/app/jobs/${job.id}/talents/${talent.id}/detail?tab=${chatType}&round=${round}`
+                `/app/jobs/${job.id}/talents/${talent.id}/detail?tab=${chatType}&round=${round}`,
               );
             }}
           >
@@ -178,7 +178,6 @@ const TalentChat = () => {
                   key={`${chatType}-${round}`}
                   jobId={job.id}
                   newVersion
-                  userRole="staff"
                   chatType={
                     chatType === "interview_designer"
                       ? "jobInterviewDesign"
