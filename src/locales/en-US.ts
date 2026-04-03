@@ -2125,6 +2125,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     staffListSubtitle: "{{name}} · {{count}} staff",
     staffListEmpty: "No staff assigned to this org node",
     selectOrgNodeHint: "Select an org node on the left",
+    maxDepthExceeded: "Department hierarchy exceeds the maximum depth",
   },
 
   staffs: {

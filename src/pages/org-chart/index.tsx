@@ -156,6 +156,9 @@ const OrgChartPage = () => {
         setExpandedKeys((prev) =>
           Array.from(new Set([...prev, ...keysToExpand])),
         );
+      } else if (code === 10003) {
+        message.error(t("maxDepthExceeded"));
+        await fetchNodes();
       } else {
         message.error(t("updateFailed"));
         await fetchNodes();
@@ -185,6 +188,8 @@ const OrgChartPage = () => {
       if (!expandedKeys.includes(String(addParentId))) {
         setExpandedKeys((prev) => [...prev, String(addParentId)]);
       }
+    } else if (code === 10003) {
+      message.error(t("maxDepthExceeded"));
     } else {
       message.error(t("createFailed"));
     }
