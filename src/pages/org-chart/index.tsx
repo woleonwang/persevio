@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, Space, Spin, Tree, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Space,
+  Spin,
+  Tooltip,
+  Tree,
+  message,
+} from "antd";
 import type { DataNode, TreeProps } from "antd/es/tree";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -215,38 +225,46 @@ const OrgChartPage = () => {
     return (
       <span className={styles.treeNodeRow}>
         <span className={styles.treeNodeTitle}>{titleText}</span>
-        <Space size={4}>
-          <Button
-            type="link"
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              showAddChild(id);
-            }}
-          />
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              showRename(id, titleText);
-            }}
-          />
-          {!isRoot && (
-            <Button
-              type="link"
-              size="small"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(id, titleText);
-              }}
-            />
-          )}
-        </Space>
+        <span className={styles.treeNodeActions}>
+          <Space size={4}>
+            <Tooltip title={t("addChild")}>
+              <Button
+                type="link"
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  showAddChild(id);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title={t("rename")}>
+              <Button
+                type="link"
+                size="small"
+                icon={<EditOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  showRename(id, titleText);
+                }}
+              />
+            </Tooltip>
+            {!isRoot && (
+              <Tooltip title={t("delete")}>
+                <Button
+                  type="link"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(id, titleText);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </Space>
+        </span>
       </span>
     );
   };
