@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Form,
@@ -6,14 +6,17 @@ import {
   Modal,
   Space,
   Spin,
+  Table,
   Tooltip,
   Tree,
   message,
 } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import type { DataNode, TreeProps } from "antd/es/tree";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
+import useStaffs from "@/hooks/useStaffs";
 import { Delete, Get, Post } from "@/utils/request";
 import { buildOrgNodesTreeData, findParentKey } from "@/utils/orgNodes";
 
@@ -38,11 +41,14 @@ const OrgChartPage = () => {
   const { t: originalT } = useTranslation();
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`org_chart.${key}`, params);
+  const { staffs } = useStaffs();
 
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<DataNode[]>([]);
+  const [orgNodes, setOrgNodes] = useState<IOrgNode[]>([]);
   const [rootId, setRootId] = useState<number | null>(null);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addParentId, setAddParentId] = useState<number | null>(null);
@@ -62,14 +68,22 @@ const OrgChartPage = () => {
       "/api/org_nodes",
     );
     if (code === 0 && data?.org_nodes) {
+      setOrgNodes(data.org_nodes);
+      const nodeIds = new Set(data.org_nodes.map((n) => n.id));
       const { root, treeData: td } = buildOrgNodesTreeData(data.org_nodes);
       setTreeData(td as DataNode[]);
       if (root) {
         setRootId(root.id);
         // 不在每次刷新都强制仅展开根节点；避免编辑/删除后父节点被折叠
         setExpandedKeys((prev) => (prev.length ? prev : [String(root.id)]));
+        setSelectedKeys((prev) => {
+          const valid = prev.filter((k) => nodeIds.has(Number(k)));
+          if (valid.length) return valid;
+          return [String(root.id)];
+        });
       } else {
         setRootId(null);
+        setSelectedKeys([]);
       }
     }
     setLoading(false);
@@ -214,6 +228,49 @@ const OrgChartPage = () => {
     });
   };
 
+  const selectedNodeId = useMemo(() => {
+    const k = selectedKeys[0];
+    if (k == null) return null;
+    const id = Number(k);
+    return Number.isNaN(id) ? null : id;
+  }, [selectedKeys]);
+
+  const selectedNodeName = useMemo(() => {
+    if (selectedNodeId == null) return "";
+    return orgNodes.find((n) => n.id === selectedNodeId)?.name ?? "";
+  }, [selectedNodeId, orgNodes]);
+
+  const staffRowsForSelectedNode = useMemo(() => {
+    if (selectedNodeId == null) return [];
+    return staffs.filter((s) => s.org_node_id === selectedNodeId);
+  }, [staffs, selectedNodeId]);
+
+  const staffColumns: ColumnsType<IStaffWithAccount> = useMemo(() => {
+    const tr = (key: string) => originalT(`staffs.${key}`);
+    const renderRoleLabel = (r: string) => {
+      if (r === "admin") return tr("admin");
+      if (r === "hiring_manager") return tr("hiring_manager");
+      if (r === "recruiter" || r === "normal") return tr("recruiter");
+      return tr("normal");
+    };
+    return [
+      { title: tr("name"), dataIndex: "name", key: "name", ellipsis: true },
+      {
+        title: tr("email"),
+        key: "email",
+        ellipsis: true,
+        render: (_: unknown, row: IStaffWithAccount) =>
+          row.account?.username ?? "—",
+      },
+      {
+        title: tr("role"),
+        dataIndex: "role",
+        key: "role",
+        render: (r: string) => renderRoleLabel(r),
+      },
+    ];
+  }, [originalT]);
+
   const titleRender = (nodeData: DataNode) => {
     const id = Number(nodeData.key);
     const isRoot = rootId !== null && id === rootId;
@@ -283,25 +340,62 @@ const OrgChartPage = () => {
         <div className={styles.pageTitle}>{t("title")}</div>
       </div>
 
-      <div className={styles.treeSection}>
-        {treeData.length === 0 ? (
-          <div>{t("empty")}</div>
-        ) : (
-          <Tree
-            className="draggableTree"
-            draggable={
-              rootId !== null
-                ? ({ key }) => String(key) !== String(rootId)
-                : false
-            }
-            blockNode
-            expandedKeys={expandedKeys}
-            onExpand={setExpandedKeys}
-            treeData={treeData}
-            onDrop={onDrop}
-            titleRender={titleRender}
-          />
-        )}
+      <div className={styles.mainBody}>
+        <div className={styles.treeColumn}>
+          <div className={styles.treeScroll}>
+            {treeData.length === 0 ? (
+              <div>{t("empty")}</div>
+            ) : (
+              <Tree
+                draggable={
+                  rootId !== null
+                    ? ({ key }) => String(key) !== String(rootId)
+                    : false
+                }
+                blockNode
+                expandedKeys={expandedKeys}
+                onExpand={setExpandedKeys}
+                selectedKeys={selectedKeys}
+                onSelect={(keys) => {
+                  if (keys.length > 0) setSelectedKeys(keys);
+                }}
+                treeData={treeData}
+                onDrop={onDrop}
+                titleRender={titleRender}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className={styles.staffColumn}>
+          <div className={styles.staffColumnHeader}>{t("staffListTitle")}</div>
+          {selectedNodeId == null ? (
+            <div className={styles.staffColumnSub}>
+              {t("selectOrgNodeHint")}
+            </div>
+          ) : (
+            <>
+              <div className={styles.staffColumnSub}>
+                {t("staffListSubtitle", {
+                  name: selectedNodeName,
+                  count: String(staffRowsForSelectedNode.length),
+                })}
+              </div>
+              <div className={styles.staffTableWrap}>
+                <Table<IStaffWithAccount>
+                  size="small"
+                  rowKey="id"
+                  columns={staffColumns}
+                  dataSource={staffRowsForSelectedNode}
+                  pagination={false}
+                  locale={{
+                    emptyText: t("staffListEmpty"),
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <Modal

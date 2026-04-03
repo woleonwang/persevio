@@ -2121,6 +2121,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     updateFailed: "Update failed",
     dropInvalid: "Invalid drop; list refreshed",
     cannotMoveRoot: "The company root cannot be moved",
+    staffListTitle: "Members",
+    staffListSubtitle: "{{name}} · {{count}} staff",
+    staffListEmpty: "No staff assigned to this org node",
+    selectOrgNodeHint: "Select an org node on the left",
   },
 
   staffs: {
@@ -2131,6 +2135,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     id: "ID",
     name: "Name",
     email: "Email",
+    position: "Position",
+    phone: "Phone",
     role: "Role",
     action: "Action",
     edit: "Edit",
