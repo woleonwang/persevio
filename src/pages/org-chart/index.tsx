@@ -1,24 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Space,
-  Spin,
-  Tree,
-  message,
-} from "antd";
+import { Button, Form, Input, Modal, Space, Spin, Tree, message } from "antd";
 import type { DataNode, TreeProps } from "antd/es/tree";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import { Delete, Get, Post } from "@/utils/request";
-import {
-  buildOrgNodesTreeData,
-  findParentKey,
-  findSiblingKeys,
-} from "@/utils/orgNodes";
+import { buildOrgNodesTreeData, findParentKey } from "@/utils/orgNodes";
 
 import styles from "./style.module.less";
 
@@ -68,9 +55,7 @@ const OrgChartPage = () => {
       if (root) {
         setRootId(root.id);
         // 不在每次刷新都强制仅展开根节点；避免编辑/删除后父节点被折叠
-        setExpandedKeys((prev) =>
-          prev.length ? prev : [String(root.id)],
-        );
+        setExpandedKeys((prev) => (prev.length ? prev : [String(root.id)]));
       } else {
         setRootId(null);
       }
@@ -112,71 +97,45 @@ const OrgChartPage = () => {
       return;
     }
 
-    const cloneTree = (nodes: DataNode[]): DataNode[] =>
-      nodes.map((n) => ({
-        ...n,
-        children: n.children ? cloneTree(n.children as DataNode[]) : undefined,
-      }));
-
-    // 用 clone 版本做“计算”，避免直接改动 state 引用导致 UI 在后端返回前错乱
-    const data = cloneTree(treeData);
     let dragObj: DataNode;
 
-    loop(data, dragKey, (item, index, arr) => {
+    loop(treeData, dragKey, (item, index, arr) => {
       arr.splice(index, 1);
       dragObj = item;
     });
 
+    let dropIndex = 0;
     if (!info.dropToGap) {
-      loop(data, dropKey, (item) => {
+      loop(treeData, dropKey, (item) => {
         item.children = item.children || [];
         item.children.unshift(dragObj!);
-      });
-    } else if (
-      ((info.node as { children?: DataNode[] }).children || []).length >
-        0 &&
-      (info.node as { expanded?: boolean }).expanded &&
-      dropPosition === 1
-    ) {
-      loop(data, dropKey, (item) => {
-        item.children = item.children || [];
-        item.children.unshift(dragObj!);
+        dropIndex = 0;
       });
     } else {
       let ar: DataNode[] = [];
       let i = 0;
-      loop(data, dropKey, (_item, index, arr) => {
+      loop(treeData, dropKey, (_item, index, arr) => {
         ar = arr;
         i = index;
       });
+
       if (dropPosition === -1) {
         ar.splice(i, 0, dragObj!);
+        dropIndex = i;
       } else {
         ar.splice(i + 1, 0, dragObj!);
+        dropIndex = i + 1;
       }
     }
 
     const dragKeyStr = String(dragKey);
-    const parentKey = findParentKey(data as DataNode[], dragKeyStr);
-    const siblings = findSiblingKeys(data as DataNode[], dragKeyStr);
-
-    if (parentKey === null || !siblings) {
-      void fetchNodes();
-      message.error(t("dropInvalid"));
-      return;
-    }
-
-    const sortOrder = siblings.indexOf(dragKeyStr);
-    if (sortOrder < 0) {
-      void fetchNodes();
-      return;
-    }
+    const parentKey = findParentKey(treeData as DataNode[], dragKeyStr);
 
     void (async () => {
       const newParentId = Number(parentKey);
       const { code } = await Post(`/api/org_nodes/${dragKeyStr}`, {
         parent_id: Number(parentKey),
-        sort_order: sortOrder,
+        sort_order: dropIndex,
       });
       if (code === 0) {
         message.success(t("updateSuccess"));
@@ -186,10 +145,12 @@ const OrgChartPage = () => {
         let curKey: string | null = String(newParentId);
         while (curKey) {
           keysToExpand.push(curKey);
-          const p = findParentKey(data as DataNode[], curKey);
+          const p = findParentKey(treeData as DataNode[], curKey);
           curKey = p;
         }
-        setExpandedKeys((prev) => Array.from(new Set([...prev, ...keysToExpand])));
+        setExpandedKeys((prev) =>
+          Array.from(new Set([...prev, ...keysToExpand])),
+        );
       } else {
         message.error(t("updateFailed"));
         await fetchNodes();
