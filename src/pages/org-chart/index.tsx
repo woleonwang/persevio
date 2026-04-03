@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Space, Spin, Tree, message } from "antd";
 import type { DataNode, TreeProps } from "antd/es/tree";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -31,7 +31,6 @@ const OrgChartPage = () => {
 
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<DataNode[]>([]);
-  const [orgNodes, setOrgNodes] = useState<IOrgNode[]>([]);
   const [rootId, setRootId] = useState<number | null>(null);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
 
@@ -43,13 +42,16 @@ const OrgChartPage = () => {
   const [renameNodeId, setRenameNodeId] = useState<number | null>(null);
   const [renameForm] = Form.useForm();
 
-  const fetchNodes = useCallback(async () => {
+  useEffect(() => {
+    fetchNodes();
+  }, []);
+
+  const fetchNodes = async () => {
     setLoading(true);
     const { code, data } = await Get<{ org_nodes: IOrgNode[] }>(
       "/api/org_nodes",
     );
     if (code === 0 && data?.org_nodes) {
-      setOrgNodes(data.org_nodes);
       const { root, treeData: td } = buildOrgNodesTreeData(data.org_nodes);
       setTreeData(td as DataNode[]);
       if (root) {
@@ -61,28 +63,7 @@ const OrgChartPage = () => {
       }
     }
     setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchNodes();
-  }, [fetchNodes]);
-
-  const expandPathTo = useCallback(
-    (targetId: number) => {
-      if (!orgNodes.length) return;
-      const byId = new Map(orgNodes.map((n) => [n.id, n]));
-      const keysToAdd: string[] = [];
-      let cur = byId.get(targetId);
-      while (cur) {
-        keysToAdd.push(String(cur.id));
-        if (cur.parent_id == null) break;
-        cur = byId.get(cur.parent_id);
-      }
-      if (keysToAdd.length === 0) return;
-      setExpandedKeys((prev) => Array.from(new Set([...prev, ...keysToAdd])));
-    },
-    [orgNodes],
-  );
+  };
 
   const onDrop: TreeProps["onDrop"] = (info) => {
     const dropKey = info.node.key;
@@ -176,8 +157,10 @@ const OrgChartPage = () => {
       message.success(t("createSuccess"));
       setAddModalOpen(false);
       await fetchNodes();
-      // 添加成功后自动展开父节点（以及其祖先路径，确保能看到该父节点）。
-      expandPathTo(addParentId);
+      // 添加成功后自动展开父节点
+      if (!expandedKeys.includes(String(addParentId))) {
+        setExpandedKeys((prev) => [...prev, String(addParentId)]);
+      }
     } else {
       message.error(t("createFailed"));
     }
