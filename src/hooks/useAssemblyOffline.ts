@@ -7,7 +7,7 @@ const POINTS_PER_SECOND = 10;
 const getInitialVolumeHistory = () => {
   return Array.from(
     { length: RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND },
-    () => 0
+    () => 0,
   );
 };
 
@@ -16,11 +16,13 @@ const useAssemblyOffline = ({
   disabled,
   disableShortcuts,
   onStartTranscription,
+  lastMessage,
 }: {
   onFinish: (text: string, payloadId: number) => void;
   disabled?: boolean;
   disableShortcuts?: boolean;
   onStartTranscription?: () => void;
+  lastMessage?: string;
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -78,7 +80,7 @@ const useAssemblyOffline = ({
       const interval = setInterval(() => {
         setVolumeHistory((prev) => [
           ...prev.slice(
-            -(RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND - 1)
+            -(RECORD_HISTORY_DURATION_SECONDS * POINTS_PER_SECOND - 1),
           ),
           volumeRef.current,
         ]);
@@ -277,6 +279,7 @@ const useAssemblyOffline = ({
         log("start send");
         const { code, data } = await Post("/api/stt/send", {
           payload: base64String,
+          context: lastMessage,
         });
         log("end send:" + JSON.stringify(data?.result));
         if (code === 0 && data?.result) {

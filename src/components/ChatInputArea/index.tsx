@@ -30,6 +30,8 @@ interface IProps {
   isLoading?: boolean;
   disabledVoiceInput?: boolean;
   isCollapsed?: boolean;
+  /** 对话里最近一条 AI 回复，用于语音转写上下文 */
+  lastMessage?: string;
 }
 
 const ChatInputArea = (props: IProps) => {
@@ -38,6 +40,7 @@ const ChatInputArea = (props: IProps) => {
     isLoading = false,
     disabledVoiceInput = false,
     isCollapsed = false,
+    lastMessage,
   } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -59,6 +62,7 @@ const ChatInputArea = (props: IProps) => {
       onSubmit(result, { voice_payload_id: payloadId });
     },
     disabled: disabledVoiceInput,
+    lastMessage,
   });
   const t = (key: string) => originalT(`chat.${key}`);
 

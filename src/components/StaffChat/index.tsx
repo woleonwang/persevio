@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 
 import {
   Button,
@@ -62,6 +62,12 @@ const StaffChat: React.FC<IProps> = (props) => {
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
+  const lastAiMessageForVoice = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "ai") return messages[i].content;
+    }
+    return undefined;
+  }, [messages]);
   const [isLoading, setIsLoading] = useState(false);
   const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
     "",
@@ -1275,6 +1281,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                     selectOptionsModalOpen
                   }
                   isCollapsed={sideDocumentVisible}
+                  lastMessage={lastAiMessageForVoice}
                 />
               </div>
             </>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { observer } from "mobx-react-lite";
@@ -48,6 +48,12 @@ const CandidateChat: React.FC<IProps> = (props) => {
   const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
+  const lastAiMessageForVoice = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "ai") return messages[i].content;
+    }
+    return undefined;
+  }, [messages]);
   const [isLoading, setIsLoading] = useState(false);
   const [_, setPlayingAudioMessageId] = useState<number>(0);
 
@@ -327,6 +333,7 @@ Shall we start now?`,
           }}
           isLoading={isLoading}
           disabledVoiceInput={isLoading}
+          lastMessage={lastAiMessageForVoice}
         />
       </div>
     </div>
