@@ -15,6 +15,8 @@ import {
   parseJSON,
 } from "@/utils";
 import ListModeTable from "@/components/ListModeTable";
+import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import { buildTalentDetailUrl } from "@/utils";
 
 const Talents: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -133,7 +135,11 @@ const Talents: React.FC = () => {
             items={filteredList}
             onRowClick={(talent) => {
               window.open(
-                `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}?from=talents`,
+                buildTalentDetailUrl(
+                  talent.job_id,
+                  talent.id,
+                  TALENT_DETAIL_FROM.talents,
+                ),
                 "_blank",
               );
             }}

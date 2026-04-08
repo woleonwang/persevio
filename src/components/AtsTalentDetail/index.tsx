@@ -18,11 +18,11 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import {
-  backOrDirect,
   getEvaluateResultLevel,
   getQuery,
   getSourcingChannel,
   parseJSON,
+  buildTalentDetailUrl,
   DEFAULT_TRACKING_SOURCES,
 } from "@/utils";
 import { useNavigate, useParams } from "react-router";
@@ -53,6 +53,7 @@ import ScheduleInterview from "@/assets/icons/schedule-interview";
 import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
 import RichTextWithVoice from "../RichTextWithVoice";
+import { TALENT_DETAIL_FROM } from "@/utils/consts";
 
 type TCustomizedInterview = {
   id: string;
@@ -212,9 +213,12 @@ const AtsTalentDetail: React.FC = () => {
 
   const handleBack = () => {
     const from = getQuery("from");
-    backOrDirect(
-      navigate,
-      from === "talents"
+    if (from === TALENT_DETAIL_FROM.local) {
+      navigate(-1);
+      return;
+    }
+    navigate(
+      from === TALENT_DETAIL_FROM.talents
         ? `/app/talents`
         : `/app/jobs/${job.id}/standard-board?tab=talents`,
     );
@@ -537,7 +541,11 @@ const AtsTalentDetail: React.FC = () => {
 
             if (talent?.job) {
               navigate(
-                `/app/jobs/${talent.job.id}/standard-board/talents/${talent.id}`,
+                buildTalentDetailUrl(
+                  talent.job.id,
+                  talent.id,
+                  TALENT_DETAIL_FROM.local,
+                ),
               );
               forceUpdate();
             }

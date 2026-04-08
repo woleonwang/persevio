@@ -16,6 +16,7 @@ import { SearchOutlined } from "@ant-design/icons";
 
 import { Get, Post } from "@/utils/request";
 import {
+  buildTalentDetailUrl,
   getCandidateCardData,
   getEvaluateResultLevel,
   getQuery,
@@ -583,7 +584,7 @@ const TalentCards = (props: IProps) => {
                 onClick={() => {
                   window.open(
                     item.talent
-                      ? `/app/jobs/${item.talent.job_id}/standard-board/talents/${item.talent.id}`
+                      ? buildTalentDetailUrl(item.talent.job_id, item.talent.id)
                       : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`,
                     "_blank",
                   );

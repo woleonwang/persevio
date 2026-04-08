@@ -14,7 +14,6 @@ const mockDownload = vi.fn();
 const mockGetQuery = vi.fn();
 
 const mockFetchTalent = vi.fn();
-const mockBackOrDirect = vi.fn();
 const mockEvaluateFeedbackProps: { lastOnOpen?: () => void; lastOnChange?: any } = {};
 
 let currentJob: any;
@@ -67,7 +66,6 @@ vi.mock("@/utils", async (importOriginal) => {
   return {
     ...actual,
     getQuery: (...args: any[]) => mockGetQuery(...args),
-    backOrDirect: (...args: any[]) => mockBackOrDirect(...args),
   };
 });
 
@@ -172,7 +170,6 @@ describe("AtsTalentDetail 页面", () => {
     mockDownload.mockReset();
     mockGetQuery.mockReset();
     mockFetchTalent.mockReset();
-    mockBackOrDirect.mockReset();
     mockEvaluateFeedbackProps.lastOnOpen = undefined;
     mockEvaluateFeedbackProps.lastOnChange = undefined;
 
@@ -222,10 +219,19 @@ describe("AtsTalentDetail 页面", () => {
 
     await userEvent.click(screen.getByTestId("back-btn"));
 
-    expect(mockBackOrDirect).toHaveBeenCalledWith(
-      mockNavigate,
-      "/app/talents",
-    );
+    expect(mockNavigate).toHaveBeenCalledWith("/app/talents");
+  });
+
+  it("点击返回按钮：from=local 时返回上一页", async () => {
+    mockGetQuery.mockReturnValue("local");
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+    });
+    await userEvent.click(screen.getByTestId("back-btn"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
   it("点击返回按钮：默认跳转到标准看板 talents tab", async () => {
@@ -237,8 +243,7 @@ describe("AtsTalentDetail 页面", () => {
     });
     await userEvent.click(screen.getByTestId("back-btn"));
 
-    expect(mockBackOrDirect).toHaveBeenCalledWith(
-      mockNavigate,
+    expect(mockNavigate).toHaveBeenCalledWith(
       "/app/jobs/1/standard-board?tab=talents",
     );
   });

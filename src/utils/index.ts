@@ -56,6 +56,7 @@ export const formatInterviewMode = (mode: "ONSITE" | "ONLINE") => {
 };
 
 import { storage, StorageKey } from "./storage";
+import type { TTalentDetailFrom } from "./consts";
 
 export const checkJobDotStatus = (jobId: number, type: string): boolean => {
   const dotStatus = storage.get<Record<number, Record<string, number>>>(
@@ -117,6 +118,15 @@ export const backOrDirect = (navigate: any, path: string) => {
   } else {
     navigate(path);
   }
+};
+
+export const buildTalentDetailUrl = (
+  jobId: number | string,
+  talentId: number | string,
+  from?: TTalentDetailFrom,
+) => {
+  const basePath = `/app/jobs/${jobId}/standard-board/talents/${talentId}`;
+  return from ? `${basePath}?from=${from}` : basePath;
 };
 
 export const checkIsAdmin = (candidate?: ICandidateSettings) => {

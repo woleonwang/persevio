@@ -16,6 +16,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import useJob from "@/hooks/useJob";
 import { Get, Post } from "@/utils/request";
 import {
+  buildTalentDetailUrl,
   EVALUATE_RESULT_LEVEL_KEYS,
   getCandidateCardData,
   getEvaluateResultLevel,
@@ -386,7 +387,7 @@ const JobPipeline = ({
                 isLocked={isStageLocked(stage.id)}
                 onCardClick={(talent) => {
                   window.open(
-                    `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                    buildTalentDetailUrl(talent.job_id, talent.id),
                     "_blank",
                   );
                 }}
@@ -428,7 +429,7 @@ const JobPipeline = ({
               items={filteredList}
               onRowClick={(talent) => {
                 window.open(
-                  `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}`,
+                  buildTalentDetailUrl(talent.job_id, talent.id),
                   "_blank",
                 );
               }}

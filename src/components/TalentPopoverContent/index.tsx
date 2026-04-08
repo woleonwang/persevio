@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import styles from "./style.module.less";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
-import { getEvaluateResultLevel } from "@/utils";
+import { buildTalentDetailUrl, getEvaluateResultLevel } from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 import { Button, message, Modal } from "antd";
 import { useState } from "react";
@@ -17,6 +17,7 @@ import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFe
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
+import { TALENT_DETAIL_FROM } from "@/utils/consts";
 
 interface IProps {
   variant: "pipeline" | "talents";
@@ -126,8 +127,12 @@ const TalentPopoverContent = ({
   };
 
   const handleOpenTalentDetail = () => {
+    const from =
+      variant === "pipeline"
+        ? TALENT_DETAIL_FROM.pipeline
+        : TALENT_DETAIL_FROM.talents;
     window.open(
-      `/app/jobs/${talent.job_id}/standard-board/talents/${talent.id}?from=${variant}`,
+      buildTalentDetailUrl(talent.job_id, talent.id, from),
       "_blank",
     );
   };
