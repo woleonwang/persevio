@@ -7,6 +7,8 @@ import { Get, Post } from "@/utils/request";
 import { tokenStorage } from "@/utils/storage";
 import { deleteQuery, getQuery } from "@/utils";
 import SignContainer from "@/components/SignContainer";
+
+import styles from "./style.module.less";
 interface SigninFormValues {
   username: string;
   password: string;
@@ -122,10 +124,18 @@ const SignIn: React.FC = () => {
           </Button>
         </Form.Item>
 
-        <div>
-          {t("signin.dont_have_account")}
-          <Link to="/signup" style={{ marginLeft: 8, color: "#3682fe" }}>
-            {t("signin.sign_up")}
+        <div className={styles.footerRow}>
+          <span>
+            {t("signin.dont_have_account")}
+            <Link to="/signup" className={styles.signUpLink}>
+              {t("signin.sign_up")}
+            </Link>
+          </span>
+          <Link
+            to="/staff/forgot-password"
+            className={styles.forgotLink}
+          >
+            {t("signin.forgot_password")}
           </Link>
         </div>
       </Form>

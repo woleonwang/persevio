@@ -56,6 +56,8 @@ import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
 import AdminCompanies from "./pages/admin/companies";
 import Staffs from "./pages/staffs";
+import StaffForgotPassword from "./pages/staff/forgot-password";
+import StaffResetPassword from "./pages/staff/reset-password";
 import OrgChart from "./pages/org-chart";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
@@ -280,6 +282,14 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/signup-candidate" element={<SignupCandidate />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
+        <Route
+          path="/staff/forgot-password"
+          element={<StaffForgotPassword />}
+        />
+        <Route
+          path="/staff/reset-password/:token"
+          element={<StaffResetPassword />}
+        />
         <Route path="/apply" element={<Apply />} />
         <Route path="/livekit" element={<LiveKit />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
