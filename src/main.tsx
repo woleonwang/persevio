@@ -82,6 +82,7 @@ import IconDemo from "./pages/icon-demo/index.tsx";
 import InternalSettings from "./pages/internal-settings/index.tsx";
 import Feedback from "./pages/job/feedback/index.tsx";
 import InterviewChat from "./pages/candidate/interview-chat";
+import OnboardPage from "./pages/onboard";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -281,6 +282,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/apply-job/:jobId" element={<ApplyJob />} />
         <Route path="/signup-candidate" element={<SignupCandidate />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/onboard" element={<OnboardPage />} />
         <Route path="/signin" element={<Signin />} />
         <Route
           path="/staff/forgot-password"

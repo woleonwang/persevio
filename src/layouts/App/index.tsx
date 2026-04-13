@@ -206,6 +206,10 @@ const AppLayout = () => {
       if (data.company_status !== "approved") {
         navigate("/signup");
       } else {
+        if (data.onboarding_status !== "done") {
+          navigate("/onboard", { replace: true });
+          return;
+        }
         // 获取职位
         fetchJobs();
         setStaffRole(data.role);

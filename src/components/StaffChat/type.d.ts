@@ -8,7 +8,8 @@ export type TChatType =
   | "jobInterviewPlan"
   | "jobInterviewDesign"
   | "jobInterviewFeedback"
-  | "jobTalentEvaluateFeedback";
+  | "jobTalentEvaluateFeedback"
+  | "companyOnboardingNarrative";
 
 export interface IProps {
   chatType: TChatType;

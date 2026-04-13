@@ -340,6 +340,10 @@ const StaffChat: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/messages`),
       send: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/send`),
     },
+    companyOnboardingNarrative: {
+      get: formatUrl(`/api/onboarding/company-narrative/chat/messages`),
+      send: formatUrl(`/api/onboarding/company-narrative/chat/send`),
+    },
   };
 
   const handleJobRequirementFormDrawerOpen = (open: boolean) => {
@@ -609,7 +613,9 @@ const StaffChat: React.FC<IProps> = (props) => {
     needScrollToBottom.current = true;
     setSideDocumentVisible(false);
     setIsEditingSideDocument(false);
-    await fetchJob();
+    if (chatType !== "companyOnboardingNarrative") {
+      await fetchJob();
+    }
     await fetchMessages();
   };
 
@@ -638,10 +644,12 @@ const StaffChat: React.FC<IProps> = (props) => {
   const fetchMessages = async () => {
     const { code, data } = await Get(apiMapping[chatType as TChatType].get);
     if (code === 0) {
-      const job: IJob = data.job;
-      setJob(job);
+      const currentJob: IJob | undefined = data.job;
+      if (chatType !== "companyOnboardingNarrative") {
+        setJob(currentJob);
+      }
 
-      const messageHistory = formatMessages(data.messages, job);
+      const messageHistory = formatMessages(data.messages, currentJob);
       const isLoading = data.is_invoking === 1;
       setWaitingType(data.waiting_type);
       setIsLoading(isLoading);
@@ -680,6 +688,14 @@ const StaffChat: React.FC<IProps> = (props) => {
       const lastMessage = messageHistory[messageHistory.length - 1];
       if (lastMessage) {
         if (lastMessage.id !== lastMessageIdRef.current) {
+          if (
+            chatType === "companyOnboardingNarrative" &&
+            (lastMessage.extraTags ?? []).some(
+              (tag) => tag.name === "onboarding-narrative-done",
+            )
+          ) {
+            onNextTask?.();
+          }
           // 如果没有打开文档的按钮，则关闭文档
           if (
             lastMessage.role === "ai" &&
@@ -752,7 +768,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const formatMessages = (
     messages: TMessageFromApi[],
-    job: IJob,
+    job?: IJob,
   ): TMessage[] => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
@@ -797,7 +813,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           extraTags: extraTags,
         });
 
-        if (mode === "utils") {
+        if (mode === "utils" && job) {
           // 下一步 按钮
           (item.content.metadata.extra_tags ?? []).forEach((tag) => {
             (

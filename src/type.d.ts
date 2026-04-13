@@ -191,6 +191,7 @@ interface ISettings {
   lang: string;
   company_status: string;
   company_mode: string;
+  onboarding_status?: "stage1" | "stage2" | "stage3" | "done";
   company_recruitment_requirements?: {
     role_type?: string[];
     headcount_number?: string;
@@ -766,7 +767,8 @@ type TExtraTagName =
   | "interview-done"
   | "conversation-done"
   | "job-interview-done"
-  | "discovery-chat-done";
+  | "discovery-chat-done"
+  | "onboarding-narrative-done";
 
 type TExtraTag = {
   name: TExtraTagName;

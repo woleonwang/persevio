@@ -1,0 +1,12 @@
+---
+description: Confirm decision points before outputting implementation plans
+alwaysApply: true
+---
+
+在需要用户拍板的场景中，先提出待确认问题，不要提前输出“改动计划”。
+
+执行要求：
+- 先识别需求中的不确定项、冲突项、或存在多种可行方案的决策点。
+- 先向用户发起确认（可一次性汇总多个拍板问题）。
+- 在用户完成确认前，不输出完整改动计划、不进入计划分解阶段。
+- 用户确认后，再基于确认结果输出最终改动计划。
