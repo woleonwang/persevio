@@ -70,13 +70,11 @@ const stageOptions: { value: string; label: string }[] = [
 ];
 
 const employeeCountOptions: { value: string; label: string }[] = [
-  { value: "1_10", label: "1-10" },
-  { value: "11_50", label: "11-50" },
-  { value: "51_200", label: "51-200" },
-  { value: "201_500", label: "201-500" },
-  { value: "501_1000", label: "501-1000" },
-  { value: "1001_5000", label: "1001-5000" },
-  { value: "5000_plus", label: "5000+" },
+  { label: "1-5", value: "1-5" },
+  { label: "6-10", value: "6-10" },
+  { label: "11-50", value: "11-50" },
+  { label: "51-100", value: "51-100" },
+  { label: "100+", value: "100+" },
 ];
 
 const languageOptions: { value: string; label: string }[] = [

@@ -12,6 +12,7 @@ import { TOnboardingProfile, TOnboardingStage } from "./type";
 
 import logo from "@/assets/logo.png";
 import styles from "./style.module.less";
+import { parseJSON } from "@/utils";
 
 const stageTitles: Record<TOnboardingStage, string> = {
   stage1: "Company basics",
@@ -25,16 +26,6 @@ const stepIndexByStage: Record<TOnboardingStage, number> = {
   stage2: 1,
   stage3: 2,
   done: 2,
-};
-
-/** Map legacy company.size from /api/companies to employee_count_range key */
-const sizeMapping: Record<string, string> = {
-  lte_10: "1_10",
-  "11_to_50": "11_50",
-  "51_to_100": "51_200",
-  "101_to_500": "201_500",
-  "501_to_1000": "501_1000",
-  gte_1001: "1001_5000",
 };
 
 const OnboardPage = () => {
@@ -93,7 +84,7 @@ const OnboardPage = () => {
     }
 
     const { code: settingsCode, data: settingsData } =
-      await Get("/api/settings");
+      await Get<ISettings>("/api/settings");
     if (settingsCode !== 0 || !settingsData) return;
 
     setStage(onboardingData.onboarding_stage);
@@ -102,8 +93,10 @@ const OnboardPage = () => {
       basics.company_name = settingsData.company_name;
     }
     if (!basics.employee_count_range) {
-      basics.employee_count_range =
-        sizeMapping[settingsData.company_size] || undefined;
+      const employeeCountRange = parseJSON(
+        settingsData.company_recruitment_requirements_json,
+      ).headcount_number;
+      basics.employee_count_range = employeeCountRange;
     }
     const materials = onboardingData.profile?.materials ?? {};
     if (!materials.website_url) {

@@ -71,6 +71,7 @@ const JobCreate = () => {
       </div>
 
       <div className={styles.form}>
+        <div className={styles.jobTitle}>Job Title</div>
         <Input
           size="large"
           className={styles.jobNameInput}

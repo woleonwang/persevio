@@ -1715,7 +1715,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
 
   job_list: {
     title: "Job listings",
-    search_placeholder: "Search job name",
+    search_placeholder: "Search job title",
     creator_placeholder: "Creator",
     create_job: "Post a job",
     details: "Details",
@@ -2070,8 +2070,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     filters: {
       talentOrJobName: "Candidate/Job Name:",
       talentOrJobNamePlaceholder: "Filter by candidate/job name",
-      approveStatus: "Application Status:",
-      approveStatusPlaceholder: "Filter by application status",
+      approveStatus: "Screening Status:",
+      approveStatusPlaceholder: "Filter by screening status",
       filter: "Filter",
       clear: "Clear",
     },
