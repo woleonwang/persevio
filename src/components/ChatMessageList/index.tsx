@@ -26,6 +26,7 @@ interface IProps {
     isFirst: boolean,
   ) => React.ReactNode;
   showCustomThinkingText?: () => string;
+  streamingMessage?: string;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -41,6 +42,7 @@ const ChatMessageList = (props: IProps) => {
     showUserTimestamp = false,
     showCustomThinkingText,
     fontSize = 16,
+    streamingMessage,
   } = props;
 
   const [loadingText, setLoadingText] = useState(".");
@@ -176,21 +178,25 @@ const ChatMessageList = (props: IProps) => {
                     )}
                     <div className={styles.messageContent}>
                       {item.id === "fake_ai_id" ? (
-                        <p
-                          dangerouslySetInnerHTML={{
-                            __html: `${loadingText}${
-                              dayjs().diff(
-                                loadingStartedAtRef.current ?? dayjs(),
-                                "second",
-                              ) > 1
-                                ? `(${
-                                    showCustomThinkingText?.() ||
-                                    t("viona_is_thinking")
-                                  })`
-                                : ""
-                            }`,
-                          }}
-                        />
+                        streamingMessage ? (
+                          <MarkdownContainer content={streamingMessage} />
+                        ) : (
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: `${loadingText}${
+                                dayjs().diff(
+                                  loadingStartedAtRef.current ?? dayjs(),
+                                  "second",
+                                ) > 1
+                                  ? `(${
+                                      showCustomThinkingText?.() ||
+                                      t("viona_is_thinking")
+                                    })`
+                                  : ""
+                              }`,
+                            }}
+                          />
+                        )
                       ) : (
                         <MarkdownContainer
                           content={

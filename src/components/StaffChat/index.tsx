@@ -72,6 +72,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
     "",
   );
+  const [streamingLoadingText, setStreamingLoadingText] = useState("");
   const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
@@ -120,6 +121,8 @@ const StaffChat: React.FC<IProps> = (props) => {
   const lastMessageIdRef = useRef<string>();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
+  const streamingLoadingTextRef = useRef("");
+  const streamingAnimatingTimerRef = useRef<ReturnType<typeof setInterval>>();
   const jrdContextDocumentJsonRef = useRef();
   jrdContextDocumentJsonRef.current = parseJSON(job?.jrd_context_document_json);
   const childrenFunctionsRef = useRef<{
@@ -157,20 +160,93 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [showJrdRealRequirementForm, showJrdTargetCandidateProfileForm]);
 
+  const clearStreamingAnimation = () => {
+    if (streamingAnimatingTimerRef.current) {
+      clearInterval(streamingAnimatingTimerRef.current);
+      streamingAnimatingTimerRef.current = undefined;
+    }
+  };
+
+  const animateStreamingLoadingText = (nextText: string) => {
+    const currentText = streamingLoadingTextRef.current;
+
+    if (currentText === nextText) return;
+
+    clearStreamingAnimation();
+
+    if (!nextText) {
+      streamingLoadingTextRef.current = "";
+      setStreamingLoadingText("");
+      return;
+    }
+
+    if (!nextText.startsWith(currentText)) {
+      streamingLoadingTextRef.current = nextText;
+      setStreamingLoadingText(nextText);
+      return;
+    }
+
+    const delta = nextText.slice(currentText.length);
+    if (!delta) return;
+
+    const totalTicks = 15;
+    let tick = 0;
+
+    streamingAnimatingTimerRef.current = setInterval(() => {
+      tick += 1;
+      const revealLength = Math.ceil((delta.length * tick) / totalTicks);
+      const nextDisplayText = currentText + delta.slice(0, revealLength);
+      streamingLoadingTextRef.current = nextDisplayText;
+      setStreamingLoadingText(nextDisplayText);
+
+      if (tick >= totalTicks) {
+        clearStreamingAnimation();
+        streamingLoadingTextRef.current = nextText;
+        setStreamingLoadingText(nextText);
+      }
+    }, 200);
+  };
+
+  const fetchStreamingMessage = async () => {
+    const streamChatType = apiMapping[chatType as TChatType]?.chatType;
+    if (!streamChatType) return;
+
+    const { code, data } = await Get(
+      formatUrl(`/api/jobs/${jobId}/chat/${streamChatType}/streaming_message`),
+    );
+
+    if (code === 0) {
+      animateStreamingLoadingText(data?.message ?? "");
+    }
+  };
+
   useEffect(() => {
     if (isLoading) {
       loadingStartedAtRef.current = dayjs();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
       }, 3000);
+      const intervalFetchStreamingMessage = setInterval(() => {
+        fetchStreamingMessage();
+      }, 3000);
 
       return () => {
         clearInterval(intervalFetchMessage);
+        clearInterval(intervalFetchStreamingMessage);
       };
     } else {
       loadingStartedAtRef.current = undefined;
+      clearStreamingAnimation();
+      streamingLoadingTextRef.current = "";
+      setStreamingLoadingText("");
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    return () => {
+      clearStreamingAnimation();
+    };
+  }, []);
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -297,26 +373,34 @@ const StaffChat: React.FC<IProps> = (props) => {
     navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
-  const apiMapping: Record<TChatType, { get: string; send: string }> = {
+  const apiMapping: Record<
+    TChatType,
+    { get: string; send: string; chatType?: string }
+  > = {
     jobRequirementDoc: {
+      chatType: "JOB_REQUIREMENT",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/send`),
     },
     jobDescription: {
+      chatType: "JOB_DESCRIPTION",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
     },
     jobCompensationDetails: {
+      chatType: "JOB_COMPENSATION_DETAILS",
       get: formatUrl(
         `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`,
       ),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
     },
     jobOutreachMessage: {
+      chatType: "JOB_OUTREACH_MESSAGE",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/send`),
     },
     jobInterviewPlan: {
+      chatType: "JOB_INTERVIEW_PLAN",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
     },
@@ -1059,6 +1143,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                     ? originalT("chat.viona_is_generating_jrd_strategy")
                     : "";
                 }}
+                streamingMessage={streamingLoadingText}
                 renderTagsContent={(item) => {
                   const visibleTags = (item.extraTags ?? [])
                     .map((extraTag) => {
