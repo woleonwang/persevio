@@ -1063,6 +1063,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Copy [Job Requirements] link for HR, hiring managers, interviewers, etc. to define job requirements and generate interview feedback",
     post_job: "Confirm Publish",
     step_create_new_job: "Create New Job",
+    step_role_basics: "Role Basics",
+    step_role_briefing: "Role Briefing",
     step_job_intake: "Job Intake",
     step_draft_jd: "Draft JD",
     step_preview: "Preview",
@@ -1073,6 +1075,27 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     published_success_content:
       "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",
     go_to_job_details_page: "Go to Job Details Page",
+    role_basics_title: "Role Basics",
+    role_basics_hint:
+      "Fill in key role basics first. This information will be saved as your basic info document.",
+    role_briefing_title: "Role Briefing",
+    role_briefing_hint:
+      "Upload supporting materials and/or write your notes. Both parts will be merged and saved as reference.",
+    role_briefing_upload_title: "Upload file",
+    role_briefing_upload_hint:
+      "Click or drag file here to extract text (supports PDF, DOCX, TXT, MD)",
+    role_briefing_manual_title: "Manual input",
+    role_briefing_text_placeholder:
+      "Type role context here, or use voice input to dictate...",
+    role_briefing_submit: "Submit",
+    role_briefing_parse_failed: "Failed to parse file",
+    role_briefing_file_uploaded: "File parsed successfully",
+    role_briefing_file_parsing: "Parsing {{fileName}}...",
+    role_briefing_file_uploaded_name: "Uploaded file: {{fileName}}",
+    role_briefing_empty_content:
+      "Please upload a file or enter text before continuing",
+    role_briefing_file_type_error:
+      "Unsupported file type. Please upload PDF, DOCX, TXT, or MD",
   },
 
   job_chat: {

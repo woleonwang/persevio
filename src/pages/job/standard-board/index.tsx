@@ -13,11 +13,13 @@ import { addQuery, getQuery, infoModal } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
 import JobDetails from "@/components/JobDetails";
 import { Post } from "@/utils/request";
+import RoleBasicsStage from "./components/RoleBasicsStage";
+import RoleBriefingStage from "./components/RoleBriefingStage";
 
-type TJobState = "jrd" | "jd" | "board";
+type TJobState = "roleBasics" | "roleBriefing" | "jrd" | "jd" | "board";
 
 const JobBoard = () => {
-  const { job } = useJob();
+  const { job, fetchJob } = useJob();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_board.${key}`);
@@ -35,9 +37,13 @@ const JobBoard = () => {
       } else if (job.requirement_doc_id) {
         setJobState("jd");
         setMenuCollapse(true);
-      } else {
+      } else if (job.reference_doc_id) {
         setJobState("jrd");
         setMenuCollapse(true);
+      } else if (job.basic_info_doc_id) {
+        setJobState("roleBriefing");
+      } else {
+        setJobState("roleBasics");
       }
     } else {
       setJobState(undefined);
@@ -74,6 +80,14 @@ const JobBoard = () => {
     {
       title: t("step_create_new_job"),
       key: "create",
+    },
+    {
+      title: t("step_role_basics"),
+      key: "roleBasics",
+    },
+    {
+      title: t("step_role_briefing"),
+      key: "roleBriefing",
     },
     {
       title: t("step_job_intake"),
@@ -134,6 +148,22 @@ const JobBoard = () => {
         </div>
       )}
       <div className={styles.body}>
+        {jobState === "roleBasics" && (
+          <RoleBasicsStage
+            jobId={job.id}
+            onSuccess={async () => {
+              await fetchJob();
+            }}
+          />
+        )}
+        {jobState === "roleBriefing" && (
+          <RoleBriefingStage
+            jobId={job.id}
+            onSuccess={async () => {
+              await fetchJob();
+            }}
+          />
+        )}
         {jobState === "jrd" && (
           <StaffChat
             chatType="jobRequirementDoc"
