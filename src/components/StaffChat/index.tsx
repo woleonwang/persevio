@@ -691,7 +691,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           if (
             chatType === "companyOnboardingNarrative" &&
             (lastMessage.extraTags ?? []).some(
-              (tag) => tag.name === "company-onboarding-narrative-done",
+              (tag) => tag.name === "onboarding-narrative-done",
             )
           ) {
             onNextTask?.();
