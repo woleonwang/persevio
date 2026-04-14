@@ -1,35 +1,16 @@
-.container {
-  max-width: 760px;
-  margin: 0 auto;
-}
-
-.headerSection {
-  margin-bottom: 20px;
-}
-
-.title {
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.subTitle {
-  margin-top: 8px;
-  color: #667085;
-}
-
-.formSection {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-}
-
 .twoColumn {
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr 1fr;
 }
 
-.footerSection {
+.footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 50px;
+
+  & > button {
+    flex: 1;
+  }
 }

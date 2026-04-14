@@ -90,85 +90,80 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headerSection}>
-        <div className={styles.title}>Help Viona learn more about your company</div>
-        <div className={styles.subTitle}>
-          Homepage URL is required. Other materials are optional but can improve
-          onboarding quality.
-        </div>
-      </div>
-      <Form
-        form={form}
-        layout="vertical"
-        className={styles.formSection}
-        initialValues={initialValues}
+    <Form
+      form={form}
+      name="onboardCompanyMaterials"
+      autoComplete="off"
+      layout="vertical"
+      initialValues={initialValues}
+    >
+      <Form.Item
+        label="Homepage URL"
+        name="website_url"
+        rules={[
+          { required: true, message: "Please enter homepage URL" },
+          { type: "url", message: "Please enter a valid URL" },
+        ]}
       >
-        <Form.Item
-          label="Homepage URL"
-          name="website_url"
-          rules={[
-            { required: true, message: "Please enter homepage URL" },
-            { type: "url", message: "Please enter a valid URL" },
-          ]}
+        <Input size="large" placeholder="https://example.com" />
+      </Form.Item>
+
+      <Form.Item
+        label="LinkedIn Company Page URL"
+        name="linkedin_url"
+        rules={[{ type: "url", message: "Please enter a valid URL" }]}
+      >
+        <Input
+          size="large"
+          placeholder="https://www.linkedin.com/company/..."
+        />
+      </Form.Item>
+
+      <Form.Item label="Any materials that can help us understand your company">
+        <Upload.Dragger
+          beforeUpload={handleFileUpload}
+          showUploadList={false}
+          accept=".pdf,.docx"
+          multiple={false}
+          className={styles.materialUpload}
+          disabled={isParsingFile || submitting}
         >
-          <Input size="large" placeholder="https://example.com" />
-        </Form.Item>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className={styles.uploadTitle}>
+            Click or drag file to this area to upload
+          </p>
+          <p className={styles.uploadHint}>Supports PDF and DOCX files</p>
+        </Upload.Dragger>
+        {!!uploadedFileName && (
+          <div className={styles.fileNameText}>
+            {isParsingFile
+              ? `Parsing ${uploadedFileName}...`
+              : `Uploaded file: ${uploadedFileName}`}
+          </div>
+        )}
+      </Form.Item>
 
-        <Form.Item
-          label="LinkedIn Company Page URL"
-          name="linkedin_url"
-          rules={[{ type: "url", message: "Please enter a valid URL" }]}
+      <Form.Item name="material_text">
+        <Input.TextArea
+          rows={8}
+          placeholder="Paste any intro docs, culture notes, or company context..."
+        />
+      </Form.Item>
+
+      <div className={styles.footer}>
+        <Button
+          type="primary"
+          size="large"
+          loading={submitting || isParsingFile}
+          onClick={handleSubmit}
+          disabled={isParsingFile}
         >
-          <Input size="large" placeholder="https://www.linkedin.com/company/..." />
-        </Form.Item>
-
-        <Form.Item label="Any materials that can help us understand your company">
-          <Upload.Dragger
-            beforeUpload={handleFileUpload}
-            showUploadList={false}
-            accept=".pdf,.docx"
-            multiple={false}
-            className={styles.materialUpload}
-            disabled={isParsingFile || submitting}
-          >
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className={styles.uploadTitle}>Click or drag file to this area to upload</p>
-            <p className={styles.uploadHint}>
-              Supports PDF and DOCX files
-            </p>
-          </Upload.Dragger>
-          {!!uploadedFileName && (
-            <div className={styles.fileNameText}>
-              {isParsingFile
-                ? `Parsing ${uploadedFileName}...`
-                : `Uploaded file: ${uploadedFileName}`}
-            </div>
-          )}
-        </Form.Item>
-
-        <Form.Item name="material_text">
-          <Input.TextArea
-            rows={8}
-            placeholder="Paste any intro docs, culture notes, or company context..."
-          />
-        </Form.Item>
-
-        <div className={styles.footerSection}>
-          <Button
-            type="primary"
-            size="large"
-            loading={submitting || isParsingFile}
-            onClick={handleSubmit}
-            disabled={isParsingFile}
-          >
-            Continue
-          </Button>
-        </div>
-      </Form>
-    </div>
+          Next
+        </Button>
+      </div>
+    </Form>
   );
 };
 

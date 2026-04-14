@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Form, Input, InputNumber, Select, message } from "antd";
 
-import { Get, Post } from "@/utils/request";
+import { Post } from "@/utils/request";
 import { TOnboardingProfile } from "../../type";
 import styles from "./style.module.less";
 
@@ -22,74 +22,75 @@ type TFormValues = {
   primary_business_languages: string[];
 };
 
-const industryOptions = [
-  "Advertising & Marketing",
-  "Agriculture & Food",
-  "Automotive",
-  "Banking & Financial Services",
-  "Biotechnology",
-  "Consumer Goods & Retail",
-  "Education & EdTech",
-  "Energy & Utilities",
-  "Entertainment & Media",
-  "FinTech",
-  "Gaming",
-  "Healthcare & Health Services",
-  "Hospitality & Travel",
-  "Human Resources & Recruiting",
-  "Insurance",
-  "Logistics & Supply Chain",
-  "Manufacturing",
-  "Nonprofit & Social Impact",
-  "Pharmaceuticals",
-  "SaaS & Enterprise Software",
-  "Telecommunications",
-  "Transportation & Mobility",
-  "Other",
+/** value = key persisted by backend, label = UI copy */
+const industryOptions: { value: string; label: string }[] = [
+  { value: "advertising_marketing", label: "Advertising & Marketing" },
+  { value: "agriculture_food", label: "Agriculture & Food" },
+  { value: "automotive", label: "Automotive" },
+  {
+    value: "banking_financial_services",
+    label: "Banking & Financial Services",
+  },
+  { value: "biotechnology", label: "Biotechnology" },
+  { value: "consumer_goods_retail", label: "Consumer Goods & Retail" },
+  { value: "education_edtech", label: "Education & EdTech" },
+  { value: "energy_utilities", label: "Energy & Utilities" },
+  { value: "entertainment_media", label: "Entertainment & Media" },
+  { value: "fintech", label: "FinTech" },
+  { value: "gaming", label: "Gaming" },
+  {
+    value: "healthcare_health_services",
+    label: "Healthcare & Health Services",
+  },
+  { value: "hospitality_travel", label: "Hospitality & Travel" },
+  {
+    value: "human_resources_recruiting",
+    label: "Human Resources & Recruiting",
+  },
+  { value: "insurance", label: "Insurance" },
+  { value: "logistics_supply_chain", label: "Logistics & Supply Chain" },
+  { value: "manufacturing", label: "Manufacturing" },
+  { value: "nonprofit_social_impact", label: "Nonprofit & Social Impact" },
+  { value: "pharmaceuticals", label: "Pharmaceuticals" },
+  { value: "saas_enterprise_software", label: "SaaS & Enterprise Software" },
+  { value: "telecommunications", label: "Telecommunications" },
+  { value: "transportation_mobility", label: "Transportation & Mobility" },
+  { value: "other", label: "Other" },
 ];
 
-const stageOptions = [
-  "Pre-seed",
-  "Seed",
-  "Series A",
-  "Series B",
-  "Series C+",
-  "Growth (Private)",
-  "Public",
-  "Bootstrapped / Self-Funded",
+const stageOptions: { value: string; label: string }[] = [
+  { value: "pre_seed", label: "Pre-seed" },
+  { value: "seed", label: "Seed" },
+  { value: "series_a", label: "Series A" },
+  { value: "series_b", label: "Series B" },
+  { value: "series_c_plus", label: "Series C+" },
+  { value: "growth_private", label: "Growth (Private)" },
+  { value: "public", label: "Public" },
+  { value: "bootstrapped_self_funded", label: "Bootstrapped / Self-Funded" },
 ];
 
-const employeeCountOptions = [
-  "1-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "501-1000",
-  "1001-5000",
-  "5000+",
+const employeeCountOptions: { value: string; label: string }[] = [
+  { value: "1_10", label: "1-10" },
+  { value: "11_50", label: "11-50" },
+  { value: "51_200", label: "51-200" },
+  { value: "201_500", label: "201-500" },
+  { value: "501_1000", label: "501-1000" },
+  { value: "1001_5000", label: "1001-5000" },
+  { value: "5000_plus", label: "5000+" },
 ];
 
-const languageOptions = [
-  "English",
-  "Mandarin Chinese",
-  "Cantonese",
-  "Malay",
-  "Tamil",
-  "Japanese",
-  "Korean",
-  "French",
-  "German",
-  "Spanish",
+const languageOptions: { value: string; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "zh_mandarin", label: "Mandarin Chinese" },
+  { value: "zh_cantonese", label: "Cantonese" },
+  { value: "ms", label: "Malay" },
+  { value: "ta", label: "Tamil" },
+  { value: "ja", label: "Japanese" },
+  { value: "ko", label: "Korean" },
+  { value: "fr", label: "French" },
+  { value: "de", label: "German" },
+  { value: "es", label: "Spanish" },
 ];
-
-const sizeMapping: Record<string, string> = {
-  lte_10: "1-10",
-  "11_to_50": "11-50",
-  "51_to_100": "51-200",
-  "101_to_500": "201-500",
-  "501_to_1000": "501-1000",
-  gte_1001: "1001-5000",
-};
 
 const StageBasics = ({ profile, onSuccess }: IProps) => {
   const [form] = Form.useForm<TFormValues>();
@@ -115,31 +116,6 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
   useEffect(() => {
     form.setFieldsValue(initialFromProfile);
   }, [form, initialFromProfile]);
-
-  useEffect(() => {
-    prefillFromCompanyInfo();
-  }, []);
-
-  const prefillIfEmpty = (name: keyof TFormValues, value?: string | number) => {
-    if (value === undefined || value === null || value === "") return;
-    const currentValue = form.getFieldValue(name);
-    if (
-      currentValue === undefined ||
-      currentValue === null ||
-      currentValue === "" ||
-      (Array.isArray(currentValue) && currentValue.length === 0)
-    ) {
-      form.setFieldValue(name, value);
-    }
-  };
-
-  const prefillFromCompanyInfo = async () => {
-    const { code, data } = await Get("/api/companies");
-    if (code !== 0 || !data) return;
-
-    prefillIfEmpty("company_name", data.name);
-    prefillIfEmpty("employee_count_range", sizeMapping[data.size] || undefined);
-  };
 
   const handleSubmit = async () => {
     try {
@@ -171,137 +147,151 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headerSection}>
-        <div className={styles.title}>Let&apos;s get Viona up to speed on your company</div>
-        <div className={styles.subTitle}>
-          This takes about 2 minutes. Viona will tailor her conversations to your
-          context.
-        </div>
-      </div>
-      <Form form={form} layout="vertical" className={styles.formSection}>
+    <Form
+      form={form}
+      name="onboardCompanyBasics"
+      autoComplete="off"
+      layout="vertical"
+    >
+      <Form.Item
+        label="Company Name"
+        name="company_name"
+        rules={[{ required: true, message: "Please enter company name" }]}
+      >
+        <Input size="large" />
+      </Form.Item>
+
+      <Form.Item
+        label="Industry"
+        name="industry"
+        rules={[{ required: true, message: "Please select industry" }]}
+      >
+        <Select
+          showSearch
+          size="large"
+          options={industryOptions}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            String(option?.label ?? "")
+              .toLowerCase()
+              .includes(input.trim().toLowerCase())
+          }
+        />
+      </Form.Item>
+
+      <Form.Item shouldUpdate noStyle>
+        {() =>
+          form.getFieldValue("industry") === "other" ? (
+            <Form.Item
+              label="Please specify industry"
+              name="industry_other"
+              rules={[
+                {
+                  required: true,
+                  message: "Please specify your industry",
+                },
+              ]}
+            >
+              <Input size="large" />
+            </Form.Item>
+          ) : null
+        }
+      </Form.Item>
+
+      <Form.Item
+        label="Founded In"
+        name="founded_in"
+        rules={[
+          { required: true, message: "Please enter founded year" },
+          {
+            type: "number",
+            min: 1800,
+            max: currentYear,
+            message: `Please enter a year between 1800 and ${currentYear}`,
+          },
+        ]}
+      >
+        <InputNumber style={{ width: "100%" }} size="large" />
+      </Form.Item>
+
+      <Form.Item
+        label="Company Stage"
+        name="company_stage"
+        rules={[{ required: true, message: "Please select company stage" }]}
+      >
+        <Select size="large" options={stageOptions} optionFilterProp="label" />
+      </Form.Item>
+
+      <Form.Item
+        label="Employee Count"
+        name="employee_count_range"
+        rules={[{ required: true, message: "Please select employee count" }]}
+      >
+        <Select
+          size="large"
+          options={employeeCountOptions}
+          optionFilterProp="label"
+        />
+      </Form.Item>
+
+      <div className={styles.twoColumn}>
         <Form.Item
-          label="Company Name"
-          name="company_name"
-          rules={[{ required: true, message: "Please enter company name" }]}
+          label="HQ City"
+          name="hq_city"
+          rules={[{ required: true, message: "Please enter HQ city" }]}
         >
           <Input size="large" />
         </Form.Item>
-
         <Form.Item
-          label="Industry"
-          name="industry"
-          rules={[{ required: true, message: "Please select industry" }]}
+          label="HQ Country"
+          name="hq_country"
+          rules={[{ required: true, message: "Please enter HQ country" }]}
         >
-          <Select
-            showSearch
-            size="large"
-            options={industryOptions.map((value) => ({ label: value, value }))}
-          />
+          <Input size="large" />
         </Form.Item>
+      </div>
 
-        <Form.Item shouldUpdate noStyle>
-          {() =>
-            form.getFieldValue("industry") === "Other" ? (
-              <Form.Item
-                label="Please specify industry"
-                name="industry_other"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please specify your industry",
-                  },
-                ]}
-              >
-                <Input size="large" />
-              </Form.Item>
-            ) : null
+      <Form.Item
+        label="Primary Business Language(s)"
+        name="primary_business_languages"
+        required
+        rules={[
+          {
+            validator: (_, value: string[]) => {
+              if (Array.isArray(value) && value.length > 0) {
+                return Promise.resolve();
+              }
+              return Promise.reject(
+                new Error("Please select at least one language"),
+              );
+            },
+          },
+        ]}
+      >
+        <Select
+          mode="multiple"
+          size="large"
+          options={languageOptions}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            String(option?.label ?? "")
+              .toLowerCase()
+              .includes(input.trim().toLowerCase())
           }
-        </Form.Item>
+        />
+      </Form.Item>
 
-        <Form.Item
-          label="Founded In"
-          name="founded_in"
-          rules={[
-            { required: true, message: "Please enter founded year" },
-            {
-              type: "number",
-              min: 1800,
-              max: currentYear,
-              message: `Please enter a year between 1800 and ${currentYear}`,
-            },
-          ]}
+      <div className={styles.footer}>
+        <Button
+          type="primary"
+          size="large"
+          loading={submitting}
+          onClick={handleSubmit}
         >
-          <InputNumber style={{ width: "100%" }} size="large" />
-        </Form.Item>
-
-        <Form.Item
-          label="Company Stage"
-          name="company_stage"
-          rules={[{ required: true, message: "Please select company stage" }]}
-        >
-          <Select
-            size="large"
-            options={stageOptions.map((value) => ({ label: value, value }))}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Employee Count"
-          name="employee_count_range"
-          rules={[{ required: true, message: "Please select employee count" }]}
-        >
-          <Select
-            size="large"
-            options={employeeCountOptions.map((value) => ({ label: value, value }))}
-          />
-        </Form.Item>
-
-        <div className={styles.twoColumn}>
-          <Form.Item
-            label="HQ City"
-            name="hq_city"
-            rules={[{ required: true, message: "Please enter HQ city" }]}
-          >
-            <Input size="large" />
-          </Form.Item>
-          <Form.Item
-            label="HQ Country"
-            name="hq_country"
-            rules={[{ required: true, message: "Please enter HQ country" }]}
-          >
-            <Input size="large" />
-          </Form.Item>
-        </div>
-
-        <Form.Item
-          label="Primary Business Language(s)"
-          name="primary_business_languages"
-          rules={[
-            {
-              validator: (_, value: string[]) => {
-                if (Array.isArray(value) && value.length > 0) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("Please select at least one language"));
-              },
-            },
-          ]}
-        >
-          <Select
-            mode="multiple"
-            size="large"
-            options={languageOptions.map((value) => ({ label: value, value }))}
-          />
-        </Form.Item>
-
-        <div className={styles.footerSection}>
-          <Button type="primary" size="large" loading={submitting} onClick={handleSubmit}>
-            Continue
-          </Button>
-        </div>
-      </Form>
-    </div>
+          Next
+        </Button>
+      </div>
+    </Form>
   );
 };
 
