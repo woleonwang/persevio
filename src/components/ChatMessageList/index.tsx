@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { List, Avatar } from "antd";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -30,6 +30,65 @@ interface IProps {
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
+
+const StreamingMarkdownRenderer = memo((props: { content: string }) => {
+  const { content } = props;
+  const [renderText, setRenderText] = useState("");
+  const displayTextRef = useRef("");
+  const timerRef = useRef<ReturnType<typeof setInterval>>();
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = undefined;
+    }
+
+    const targetText = content ?? "";
+    const currentText = displayTextRef.current;
+
+    if (!targetText) {
+      displayTextRef.current = "";
+      setRenderText("");
+      return;
+    }
+
+    if (!targetText.startsWith(currentText)) {
+      displayTextRef.current = targetText;
+      setRenderText(targetText);
+      return;
+    }
+
+    const delta = targetText.slice(currentText.length);
+    if (!delta) return;
+
+    const totalTicks = 60;
+    const interval = 3000 / totalTicks;
+    let tick = 0;
+    timerRef.current = setInterval(() => {
+      tick += 1;
+      const revealLength = Math.ceil((delta.length * tick) / totalTicks);
+      const nextText = currentText + delta.slice(0, revealLength);
+      displayTextRef.current = nextText;
+      setRenderText(nextText);
+
+      if (tick >= totalTicks && timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = undefined;
+      }
+    }, interval);
+  }, [content]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  return <MarkdownContainer content={renderText} />;
+});
+
 const ChatMessageList = (props: IProps) => {
   const {
     messages,
@@ -45,9 +104,12 @@ const ChatMessageList = (props: IProps) => {
     streamingMessage,
   } = props;
 
-  const [loadingText, setLoadingText] = useState(".");
-
   const loadingStartedAtRef = useRef<Dayjs>();
+  const loadingDotsRef = useRef(".");
+  const loadingDotsNodeRef = useRef<HTMLSpanElement | null>(null);
+  const loadingThinkingNodeRef = useRef<HTMLSpanElement | null>(null);
+  const dotsTimerRef = useRef<ReturnType<typeof setInterval>>();
+  const thinkingTimerRef = useRef<ReturnType<typeof setInterval>>();
   const listContainerRef = useRef<HTMLDivElement | null>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messageRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -63,19 +125,67 @@ const ChatMessageList = (props: IProps) => {
   }, [messages]);
 
   useEffect(() => {
+    const clearLoadingTimers = () => {
+      if (dotsTimerRef.current) {
+        clearInterval(dotsTimerRef.current);
+        dotsTimerRef.current = undefined;
+      }
+      if (thinkingTimerRef.current) {
+        clearInterval(thinkingTimerRef.current);
+        thinkingTimerRef.current = undefined;
+      }
+    };
+
     if (isLoading) {
       loadingStartedAtRef.current = dayjs();
-      const intervalText = setInterval(() => {
-        setLoadingText((prev) => (prev === "..." ? "." : prev + "."));
+      loadingDotsRef.current = ".";
+      if (loadingDotsNodeRef.current) {
+        loadingDotsNodeRef.current.textContent = ".";
+      }
+      if (loadingThinkingNodeRef.current) {
+        loadingThinkingNodeRef.current.textContent = "";
+      }
+
+      dotsTimerRef.current = setInterval(() => {
+        loadingDotsRef.current =
+          loadingDotsRef.current === "..." ? "." : loadingDotsRef.current + ".";
+        if (loadingDotsNodeRef.current) {
+          loadingDotsNodeRef.current.textContent = loadingDotsRef.current;
+        }
       }, 500);
+      thinkingTimerRef.current = setInterval(() => {
+        const showThinking =
+          dayjs().diff(loadingStartedAtRef.current ?? dayjs(), "second") > 1;
+        const thinkingText = showThinking
+          ? `(${showCustomThinkingText?.() || t("viona_is_thinking")})`
+          : "";
+
+        if (loadingThinkingNodeRef.current) {
+          loadingThinkingNodeRef.current.textContent = thinkingText;
+        }
+      }, 200);
 
       return () => {
-        clearInterval(intervalText);
+        clearLoadingTimers();
       };
     } else {
       loadingStartedAtRef.current = undefined;
+      clearLoadingTimers();
+      if (loadingDotsNodeRef.current) {
+        loadingDotsNodeRef.current.textContent = ".";
+      }
+      if (loadingThinkingNodeRef.current) {
+        loadingThinkingNodeRef.current.textContent = "";
+      }
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (dotsTimerRef.current) clearInterval(dotsTimerRef.current);
+      if (thinkingTimerRef.current) clearInterval(thinkingTimerRef.current);
+    };
+  }, []);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -179,23 +289,14 @@ const ChatMessageList = (props: IProps) => {
                     <div className={styles.messageContent}>
                       {item.id === "fake_ai_id" ? (
                         streamingMessage ? (
-                          <MarkdownContainer content={streamingMessage} />
-                        ) : (
-                          <p
-                            dangerouslySetInnerHTML={{
-                              __html: `${loadingText}${
-                                dayjs().diff(
-                                  loadingStartedAtRef.current ?? dayjs(),
-                                  "second",
-                                ) > 1
-                                  ? `(${
-                                      showCustomThinkingText?.() ||
-                                      t("viona_is_thinking")
-                                    })`
-                                  : ""
-                              }`,
-                            }}
+                          <StreamingMarkdownRenderer
+                            content={streamingMessage}
                           />
+                        ) : (
+                          <p>
+                            <span ref={loadingDotsNodeRef}>.</span>
+                            <span ref={loadingThinkingNodeRef} />
+                          </p>
                         )
                       ) : (
                         <MarkdownContainer

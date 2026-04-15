@@ -121,8 +121,6 @@ const StaffChat: React.FC<IProps> = (props) => {
   const lastMessageIdRef = useRef<string>();
   const needScrollToBottom = useRef(false);
   const loadingStartedAtRef = useRef<Dayjs>();
-  const streamingLoadingTextRef = useRef("");
-  const streamingAnimatingTimerRef = useRef<ReturnType<typeof setInterval>>();
   const jrdContextDocumentJsonRef = useRef();
   jrdContextDocumentJsonRef.current = parseJSON(job?.jrd_context_document_json);
   const childrenFunctionsRef = useRef<{
@@ -160,53 +158,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [showJrdRealRequirementForm, showJrdTargetCandidateProfileForm]);
 
-  const clearStreamingAnimation = () => {
-    if (streamingAnimatingTimerRef.current) {
-      clearInterval(streamingAnimatingTimerRef.current);
-      streamingAnimatingTimerRef.current = undefined;
-    }
-  };
-
-  const animateStreamingLoadingText = (nextText: string) => {
-    const currentText = streamingLoadingTextRef.current;
-
-    if (currentText === nextText) return;
-
-    clearStreamingAnimation();
-
-    if (!nextText) {
-      streamingLoadingTextRef.current = "";
-      setStreamingLoadingText("");
-      return;
-    }
-
-    if (!nextText.startsWith(currentText)) {
-      streamingLoadingTextRef.current = nextText;
-      setStreamingLoadingText(nextText);
-      return;
-    }
-
-    const delta = nextText.slice(currentText.length);
-    if (!delta) return;
-
-    const totalTicks = 15;
-    let tick = 0;
-
-    streamingAnimatingTimerRef.current = setInterval(() => {
-      tick += 1;
-      const revealLength = Math.ceil((delta.length * tick) / totalTicks);
-      const nextDisplayText = currentText + delta.slice(0, revealLength);
-      streamingLoadingTextRef.current = nextDisplayText;
-      setStreamingLoadingText(nextDisplayText);
-
-      if (tick >= totalTicks) {
-        clearStreamingAnimation();
-        streamingLoadingTextRef.current = nextText;
-        setStreamingLoadingText(nextText);
-      }
-    }, 200);
-  };
-
   const fetchStreamingMessage = async () => {
     const streamChatType = apiMapping[chatType as TChatType]?.chatType;
     if (!streamChatType) return;
@@ -216,7 +167,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     );
 
     if (code === 0) {
-      animateStreamingLoadingText(data?.message ?? "");
+      setStreamingLoadingText(data?.message ?? "");
     }
   };
 
@@ -229,6 +180,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       const intervalFetchStreamingMessage = setInterval(() => {
         fetchStreamingMessage();
       }, 3000);
+      fetchStreamingMessage();
 
       return () => {
         clearInterval(intervalFetchMessage);
@@ -236,17 +188,9 @@ const StaffChat: React.FC<IProps> = (props) => {
       };
     } else {
       loadingStartedAtRef.current = undefined;
-      clearStreamingAnimation();
-      streamingLoadingTextRef.current = "";
       setStreamingLoadingText("");
     }
   }, [isLoading]);
-
-  useEffect(() => {
-    return () => {
-      clearStreamingAnimation();
-    };
-  }, []);
 
   useEffect(() => {
     if (messages.length === 0) return;
