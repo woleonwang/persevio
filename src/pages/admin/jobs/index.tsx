@@ -19,10 +19,8 @@ import { getJobChatbotUrl } from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
-const PAGE_SIZE = 10;
-
 type TRecommendedCandidate = {};
-
+const PAGE_SIZE = 10;
 type TStatus = "creating" | "published" | "unpublished";
 const Jobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
@@ -36,6 +34,7 @@ const Jobs = () => {
     status?: TStatus;
   }>();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState();
 
   const [selectedJob, setSelectedJob] = useState<IJob>();
@@ -63,7 +62,7 @@ const Jobs = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [fetchParams, page]);
+  }, [fetchParams, page, pageSize]);
 
   useEffect(() => {
     if (!selectedJob) {
@@ -89,7 +88,7 @@ const Jobs = () => {
     const { code, data } = await Get(
       `/api/admin/jobs?company_id=${companyId ?? ""}&job_name=${
         jobName ?? ""
-      }&status=${status ?? ""}&page=${page}&size=${PAGE_SIZE}`
+      }&status=${status ?? ""}&page=${page}&size=${pageSize}`,
     );
 
     if (code === 0) {
@@ -100,7 +99,7 @@ const Jobs = () => {
 
   const fetchRecommendedCandidates = async () => {
     const { code, data } = await Get(
-      `/api/admin/jobs/${selectedJob?.id}/recommended_jobs?page=${candidatesPage}&size=${PAGE_SIZE}`
+      `/api/admin/jobs/${selectedJob?.id}/recommended_jobs?page=${candidatesPage}&size=${PAGE_SIZE}`,
     );
     if (code === 0) {
       setRecommendedCandidates(data.recommended_jobs);
@@ -117,7 +116,7 @@ const Jobs = () => {
       `/api/admin/jobs/${selectedJob?.id}/recommended_jobs`,
       {
         candidate_ids: selectedCandidates,
-      }
+      },
     );
     if (code === 0) {
       message.success(t("recommendedCandidates.recommendSuccess"));
@@ -235,7 +234,7 @@ const Jobs = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  getJobChatbotUrl(job.id, job.jd_version?.toString())
+                  getJobChatbotUrl(job.id, job.jd_version?.toString()),
                 );
               }}
               style={{ marginLeft: 12 }}
@@ -345,10 +344,13 @@ const Jobs = () => {
           dataSource={jobs}
           columns={jobTableColumns}
           pagination={{
-            pageSize: PAGE_SIZE,
+            pageSize: pageSize,
             current: page,
             total,
-            onChange: (page) => setPage(page),
+            onChange: (page, pageSize) => {
+              setPage(page);
+              setPageSize(pageSize);
+            },
           }}
           onRow={(job) => {
             return {
@@ -399,6 +401,7 @@ const Jobs = () => {
                 pageSize: PAGE_SIZE,
                 current: candidatesPage,
                 total: candidatesTotal,
+                showSizeChanger: false,
                 onChange: (page) => setCandidatesPage(page),
               }}
             />
