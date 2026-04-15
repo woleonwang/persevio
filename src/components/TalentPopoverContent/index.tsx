@@ -131,10 +131,7 @@ const TalentPopoverContent = ({
       variant === "pipeline"
         ? TALENT_DETAIL_FROM.pipeline
         : TALENT_DETAIL_FROM.talents;
-    window.open(
-      buildTalentDetailUrl(talent.job_id, talent.id, from),
-      "_blank",
-    );
+    window.open(buildTalentDetailUrl(talent.job_id, talent.id, from), "_blank");
   };
 
   return (

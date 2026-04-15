@@ -367,11 +367,13 @@ const JobPipeline = ({
           + {tKey("add_candidate")}
         </Button> */}
       </div>
-      {loading ? (
+
+      {loading && (
         <div className={styles.loading}>
           <Spin />
         </div>
-      ) : viewMode === "kanban" ? (
+      )}
+      {viewMode === "kanban" ? (
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
