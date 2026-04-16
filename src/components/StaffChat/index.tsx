@@ -284,7 +284,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     prevIsLoadingRef.current = isLoading;
 
     // 仅在从 loading -> 非 loading 的瞬间判断
-    if (true || (wasLoading && !isLoading && messages.length > 0)) {
+    if (wasLoading && !isLoading && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage?.role === "ai" && document.hidden) {
         playNotificationBeep();
