@@ -113,6 +113,8 @@ const ChatMessageList = (props: IProps) => {
   const listContainerRef = useRef<HTMLDivElement | null>();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messageRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const showCustomThinkingTextFuncRef = useRef<() => string>();
+  showCustomThinkingTextFuncRef.current = showCustomThinkingText;
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`chat.${key}`);
@@ -157,7 +159,7 @@ const ChatMessageList = (props: IProps) => {
         const showThinking =
           dayjs().diff(loadingStartedAtRef.current ?? dayjs(), "second") > 1;
         const thinkingText = showThinking
-          ? `(${showCustomThinkingText?.() || t("viona_is_thinking")})`
+          ? `(${showCustomThinkingTextFuncRef.current?.() || t("viona_is_thinking")})`
           : "";
 
         if (loadingThinkingNodeRef.current) {
