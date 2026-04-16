@@ -1075,16 +1075,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     published_success_content:
       "Your job is live now and accepts applications! You can view and edit the job details in the Job Details Page. ",
     go_to_job_details_page: "Go to Job Details Page",
-    role_basics_title: "Role Basics",
+    role_basics_title: "Tell Viona about the role",
     role_basics_hint:
-      "Fill in key role basics first. This information will be saved as your basic info document.",
-    role_briefing_title: "Role Briefing",
+      "Share the role basics here. Viona will dive deeper with you in the conversation later.",
+    role_briefing_title: "Brief Viona on the role",
     role_briefing_hint:
-      "Upload supporting materials and/or write your notes. Both parts will be merged and saved as reference.",
-    role_briefing_upload_title: "Upload file",
+      "This is the most important step before the conversation. Share what you alreay have: a JD, notes, meeting transcript, or just a few sentences. The richer the brief, the sharper Viona's questions will be.",
+    role_briefing_upload_title: "Upload what you have",
     role_briefing_upload_hint:
-      "Click or drag file here to extract text (supports PDF, DOCX, TXT, MD)",
-    role_briefing_manual_title: "Manual input",
+      "Drag and drop your JD, notes, meeting memo, anything relavant here.",
+    role_briefing_manual_title: "Tell Viona about the role in your own words",
     role_briefing_text_placeholder:
       "Type role context here, or use voice input to dictate...",
     role_briefing_submit: "Submit",
