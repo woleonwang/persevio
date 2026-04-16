@@ -176,15 +176,11 @@ const StaffChat: React.FC<IProps> = (props) => {
       loadingStartedAtRef.current = dayjs();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
-      }, 3000);
-      const intervalFetchStreamingMessage = setInterval(() => {
         fetchStreamingMessage();
       }, 3000);
-      fetchStreamingMessage();
 
       return () => {
         clearInterval(intervalFetchMessage);
-        clearInterval(intervalFetchStreamingMessage);
       };
     } else {
       loadingStartedAtRef.current = undefined;
