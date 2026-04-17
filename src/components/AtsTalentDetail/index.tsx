@@ -1188,6 +1188,13 @@ const AtsTalentDetail: React.FC = () => {
                   : sourceChannel;
                 description = `Application received via ${sourceChannelText}`;
                 color = "red";
+              } else if (log.event_type === "notify_email") {
+                description = "Reminded to complete Screening via Email";
+                color = "yellow";
+              } else if (log.event_type === "notify_whatsapp_and_email") {
+                description =
+                  "Reminded to complete Screening via WhatsApp and Email";
+                color = "yellow";
               } else {
                 description = "Activity";
                 color = "green";
@@ -1204,7 +1211,7 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.activityContent}>
                     <div className={styles.activityTitle}>{description}</div>
                     <div className={styles.activityDate}>
-                      {dayjs(log.created_at).format("MMM DD, YYYY")}
+                      {dayjs(log.created_at).format("YYYY/MM/DD HH:mm:SS")}
                     </div>
                   </div>
                 </div>

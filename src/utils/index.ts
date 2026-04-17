@@ -378,6 +378,7 @@ export const DEFAULT_TRACKING_SOURCES = [
   "linkedin",
   "jobstreet",
   "mycareersfuture",
+  "persevio",
 ] as const;
 
 export const SOURCING_CHANNEL_KEYS = ["persevio", ...DEFAULT_TRACKING_SOURCES];
