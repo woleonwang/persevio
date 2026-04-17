@@ -1211,7 +1211,7 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.activityContent}>
                     <div className={styles.activityTitle}>{description}</div>
                     <div className={styles.activityDate}>
-                      {dayjs(log.created_at).format("YYYY/MM/DD HH:mm:SS")}
+                      {dayjs(log.created_at).format("YYYY/MM/DD HH:mm:ss")}
                     </div>
                   </div>
                 </div>
