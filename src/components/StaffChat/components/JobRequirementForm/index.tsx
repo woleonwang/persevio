@@ -1,9 +1,4 @@
-import {
-  ReactNode,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { ReactNode, useEffect, useReducer, useState } from "react";
 import {
   Button,
   Collapse,
@@ -44,7 +39,7 @@ import styles from "./style.module.less";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
-  title: string;
+  title?: string;
   questions: (TQuestion | TGroup)[];
 };
 
@@ -178,7 +173,6 @@ const JobRequirementForm = (props: IProps) => {
   const RoleOverviewFormQuestionsGroups: TQuestionGroup[] = [
     {
       key: "basic_info",
-      title: t("basic_information"),
       questions: [
         {
           key: "org_node_id",
@@ -204,7 +198,7 @@ const JobRequirementForm = (props: IProps) => {
             "specialized_expertise",
             "leadership",
           ].map((item) =>
-            getOptions(item, t(`primary_driver_options.${item}`))
+            getOptions(item, t(`primary_driver_options.${item}`)),
           ),
           required: true,
         },
@@ -449,7 +443,7 @@ const JobRequirementForm = (props: IProps) => {
   ];
 
   const questionGroup = RoleOverviewFormQuestionsGroups.find(
-    (item) => item.key === formType
+    (item) => item.key === formType,
   ) as unknown as TQuestionGroup;
 
   useEffect(() => {
@@ -462,7 +456,7 @@ const JobRequirementForm = (props: IProps) => {
       setTeams(res.data.teams);
       if (options?.selectedTeamId) {
         const team = res.data.teams.find(
-          (item) => item.id === options.selectedTeamId
+          (item) => item.id === options.selectedTeamId,
         );
         if (team) {
           form.setFieldsValue({
@@ -478,13 +472,10 @@ const JobRequirementForm = (props: IProps) => {
 
   const createTeam = async () => {
     createTeamForm.validateFields().then(async (questions) => {
-      const { code, data } = await Post<{ team: TTeam }>(
-        `/api/teams`,
-        {
-          name: questions.name,
-          detail: JSON.stringify(questions),
-        }
-      );
+      const { code, data } = await Post<{ team: TTeam }>(`/api/teams`, {
+        name: questions.name,
+        detail: JSON.stringify(questions),
+      });
 
       if (code === 0) {
         message.success(t("create_team_succeed"));
@@ -498,7 +489,7 @@ const JobRequirementForm = (props: IProps) => {
   const canSubmit = () => {
     const values = form.getFieldsValue();
     return Object.values(values).some((value) =>
-      Array.isArray(value) ? value.length > 0 : !!value
+      Array.isArray(value) ? value.length > 0 : !!value,
     );
   };
 
@@ -524,7 +515,7 @@ const JobRequirementForm = (props: IProps) => {
           value: any,
           options?: {
             isSubQuestion?: boolean;
-          }
+          },
         ): string => {
           const { isSubQuestion = false } = options ?? {};
           const outputNoData = question.outputNoData ?? false;
@@ -598,7 +589,7 @@ const JobRequirementForm = (props: IProps) => {
 
           if (question.type === "select") {
             const option = (question.options ?? []).find(
-              (item) => item.value === value
+              (item) => item.value === value,
             );
             formattedValue = option?.text ?? option?.label ?? "";
           }
@@ -607,7 +598,7 @@ const JobRequirementForm = (props: IProps) => {
             formattedValue = value
               .map((optionValue: string) => {
                 const option = question.options?.find(
-                  (item) => item.value === optionValue
+                  (item) => item.value === optionValue,
                 );
                 return option?.text ?? option?.label ?? "";
               })
@@ -639,7 +630,7 @@ const JobRequirementForm = (props: IProps) => {
             .replaceAll("<b>", "")}${
             question.needPriority
               ? ` - ${originalT(
-                  "ideal_profile." + values[`${question.key}_priority`]
+                  "ideal_profile." + values[`${question.key}_priority`],
                 )}`
               : ""
           }\n\n${formattedValue}`;
@@ -657,7 +648,7 @@ const JobRequirementForm = (props: IProps) => {
               .map((question) =>
                 getAnswer(question, values[question.key], {
                   isSubQuestion: true,
-                })
+                }),
               )
               .filter(Boolean);
 
@@ -675,8 +666,8 @@ const JobRequirementForm = (props: IProps) => {
               if (group.needPriority) {
                 questions.push(
                   `- ${originalT(
-                    "ideal_profile." + values[`${group.key}_priority`]
-                  )}`
+                    "ideal_profile." + values[`${group.key}_priority`],
+                  )}`,
                 );
               }
             } else if (group.outputNoData) {
@@ -685,7 +676,7 @@ const JobRequirementForm = (props: IProps) => {
           } else {
             const answer = getAnswer(
               question as TQuestion,
-              values[question.key]
+              values[question.key],
             );
 
             if (answer) {
@@ -696,7 +687,7 @@ const JobRequirementForm = (props: IProps) => {
 
         if (questions.length > 0) {
           resultStr += `## ${questionGroup.title}\n\n${questions.join(
-            "\n\n"
+            "\n\n",
           )}\n\n`;
         }
 
@@ -709,7 +700,7 @@ const JobRequirementForm = (props: IProps) => {
 
   const checkVisible = (
     dependencies?: TDependence[],
-    field?: FormListFieldData
+    field?: FormListFieldData,
   ) => {
     return (dependencies ?? []).every((dep) => {
       let currentValue = "";
@@ -752,7 +743,7 @@ const JobRequirementForm = (props: IProps) => {
   const genFormItem = (
     question: TQuestion,
     field?: FormListFieldData,
-    options?: { isSubQuestion?: boolean; deleted?: boolean }
+    options?: { isSubQuestion?: boolean; deleted?: boolean },
   ): ReactNode => {
     const visible = checkVisible(question.dependencies, field);
 
@@ -808,11 +799,11 @@ const JobRequirementForm = (props: IProps) => {
                   validator(
                     _: any,
                     value: Record<string, number>,
-                    callback: any
+                    callback: any,
                   ) {
                     const sum = Object.values(value).reduce(
                       (sum, val) => sum + val,
-                      0
+                      0,
                     );
                     if (sum !== 100) {
                       callback(new Error());
@@ -823,64 +814,67 @@ const JobRequirementForm = (props: IProps) => {
                 },
               ]
             : question.type === "manager_detail"
-            ? [
-                {
-                  validator(
-                    _: any,
-                    value: Record<string, number>,
-                    callback: any
-                  ) {
-                    const typedValue = value as TManangerDetailValue;
-                    if (!typedValue.jobTitle) {
-                      callback(new Error());
-                    }
-                    callback();
-                  },
-                  message: t("manager_message"),
-                },
-              ]
-            : question.type === "city_and_address"
-            ? [
-                {
-                  validator(_: any, value, callback: any) {
-                    const typedValue = value as TValue[];
-                    if (typedValue.find((item) => item.cityId)) {
-                      callback();
-                    } else {
-                      callback(new Error());
-                    }
-                  },
-                  message: t("city_and_address_message"),
-                },
-              ]
-            : question.type === "number_range"
-            ? [
-                {
-                  validator(
-                    _: any,
-                    value: Record<string, number>,
-                    callback: any
-                  ) {
-                    const typedValue = value as { min?: number; max?: number };
-                    if (
-                      (!typedValue.min && typedValue.min !== 0) ||
-                      (!typedValue.max && typedValue.max !== 0)
+              ? [
+                  {
+                    validator(
+                      _: any,
+                      value: Record<string, number>,
+                      callback: any,
                     ) {
-                      callback(new Error());
-                    }
-                    callback();
+                      const typedValue = value as TManangerDetailValue;
+                      if (!typedValue.jobTitle) {
+                        callback(new Error());
+                      }
+                      callback();
+                    },
+                    message: t("manager_message"),
                   },
-                  message: t("required_error_message"),
-                },
-              ]
-            : question.required
-            ? [
-                {
-                  required: true,
-                  message: t("required_error_message"),
-                },
-              ]
-            : []
+                ]
+              : question.type === "city_and_address"
+                ? [
+                    {
+                      validator(_: any, value, callback: any) {
+                        const typedValue = value as TValue[];
+                        if (typedValue.find((item) => item.cityId)) {
+                          callback();
+                        } else {
+                          callback(new Error());
+                        }
+                      },
+                      message: t("city_and_address_message"),
+                    },
+                  ]
+                : question.type === "number_range"
+                  ? [
+                      {
+                        validator(
+                          _: any,
+                          value: Record<string, number>,
+                          callback: any,
+                        ) {
+                          const typedValue = value as {
+                            min?: number;
+                            max?: number;
+                          };
+                          if (
+                            (!typedValue.min && typedValue.min !== 0) ||
+                            (!typedValue.max && typedValue.max !== 0)
+                          ) {
+                            callback(new Error());
+                          }
+                          callback();
+                        },
+                        message: t("required_error_message"),
+                      },
+                    ]
+                  : question.required
+                    ? [
+                        {
+                          required: true,
+                          message: t("required_error_message"),
+                        },
+                      ]
+                    : []
         }
       >
         {question.type === "text" && <Input disabled={deleted} />}
@@ -978,7 +972,7 @@ const JobRequirementForm = (props: IProps) => {
   const genPriority = (
     name: string | number,
     key: string | number,
-    options?: { canNoApply: boolean; deleted?: boolean }
+    options?: { canNoApply: boolean; deleted?: boolean },
   ) => {
     const { canNoApply = false, deleted = false } = options ?? {};
 
@@ -1011,7 +1005,9 @@ const JobRequirementForm = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>{questionGroup.title}</div>
+      {questionGroup.title && (
+        <div className={styles.title}>{questionGroup.title}</div>
+      )}
       {["reference", "team_context"].includes(formType) && (
         <div
           style={{ color: "#999" }}
@@ -1043,7 +1039,7 @@ const JobRequirementForm = (props: IProps) => {
                           </div>
                         ),
                         children: itemGroup.questions.map((question) =>
-                          genFormItem(question)
+                          genFormItem(question),
                         ),
                         forceRender: true,
                       },
@@ -1063,7 +1059,7 @@ const JobRequirementForm = (props: IProps) => {
                       {itemGroup.questions.map((question) =>
                         genFormItem(question, undefined, {
                           isSubQuestion: true,
-                        })
+                        }),
                       )}
                     </div>
                   </div>
