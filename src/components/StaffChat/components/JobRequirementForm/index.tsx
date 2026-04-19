@@ -686,9 +686,7 @@ const JobRequirementForm = (props: IProps) => {
         });
 
         if (questions.length > 0) {
-          resultStr += `## ${questionGroup.title}\n\n${questions.join(
-            "\n\n",
-          )}\n\n`;
+          resultStr += `## Basic Information\n\n${questions.join("\n\n")}\n\n`;
         }
 
         onOk(resultStr);
