@@ -48,6 +48,7 @@ import JobChat from "./pages/job/chat";
 import JobDocument from "./pages/job/document";
 import JobBoard from "./pages/job/board";
 import JobStandardBoard from "./pages/job/standard-board";
+import JobInternalDocuments from "./pages/job/internal-documents";
 import TalentChat from "./pages/talent/chat";
 import TalentSelect from "./pages/talent/select";
 import TalentDetail from "./pages/talent/detail";
@@ -145,6 +146,10 @@ createRoot(document.getElementById("root")!).render(
           <Route
             path="/app/jobs/:jobId/standard-board"
             element={<JobStandardBoard />}
+          />
+          <Route
+            path="/app/jobs/:jobId/internal-documents"
+            element={<JobInternalDocuments />}
           />
           <Route
             path="/app/jobs/:jobId/standard-board/talents/:talentId"

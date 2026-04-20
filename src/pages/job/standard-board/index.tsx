@@ -1,7 +1,11 @@
-import { Breadcrumb, message, Spin } from "antd";
+import { Breadcrumb, FloatButton, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { CheckCircleFilled, RightOutlined } from "@ant-design/icons";
+import {
+  CheckCircleFilled,
+  FileOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import classnames from "classnames";
 
 import useJob from "@/hooks/useJob";
@@ -26,7 +30,7 @@ const JobBoard = () => {
 
   const [jobState, setJobState] = useState<TJobState>();
 
-  const { setMenuCollapse } = globalStore;
+  const { setMenuCollapse, isAdmin } = globalStore;
 
   const isOld = getQuery("old") === "1";
 
@@ -190,6 +194,14 @@ const JobBoard = () => {
           </div>
         )}
       </div>
+      {isAdmin && (
+        <FloatButton
+          icon={<FileOutlined />}
+          onClick={() => {
+            window.open(`/app/jobs/${job.id}/internal-documents`, "_blank");
+          }}
+        />
+      )}
     </div>
   );
 };
