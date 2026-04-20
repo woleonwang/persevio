@@ -179,41 +179,50 @@ export const downloadText = ({
 export const downloadMarkdownAsPDF = async ({
   name,
   element,
+  options,
 }: {
   name: string;
   element: HTMLElement;
+  options?: {
+    skipWrapper?: boolean;
+    skipAutoSplit?: boolean;
+  };
 }) => {
+  const skipWrapper = options?.skipWrapper ?? false;
+  const skipAutoSplit = options?.skipAutoSplit ?? false;
   try {
     // 创建一个临时的包装容器
     const wrapper = document.createElement("div");
     wrapper.className = "persevio-pdf-wrapper";
     wrapper.style.width = "190mm";
 
-    // 创建 logo 容器
-    const logoContainer = document.createElement("div");
-    logoContainer.style.paddingBottom = "20px";
-    logoContainer.style.borderBottom = "1px solid #e8e8e8";
-    logoContainer.style.marginBottom = "20px";
+    if (!skipWrapper) {
+      // 创建 logo 容器
+      const logoContainer = document.createElement("div");
+      logoContainer.style.paddingBottom = "20px";
+      logoContainer.style.borderBottom = "1px solid #e8e8e8";
+      logoContainer.style.marginBottom = "20px";
 
-    // 创建 logo 图片元素
-    const logoImg = document.createElement("img");
-    logoImg.src = logo;
-    logoImg.style.maxWidth = "200px";
-    logoImg.style.height = "auto";
+      // 创建 logo 图片元素
+      const logoImg = document.createElement("img");
+      logoImg.src = logo;
+      logoImg.style.maxWidth = "200px";
+      logoImg.style.height = "auto";
 
-    // 等待 logo 图片加载完成
-    await new Promise<void>((resolve, reject) => {
-      logoImg.onload = () => resolve();
-      logoImg.onerror = () => reject(new Error("Failed to load logo"));
-      // 如果图片已经在缓存中，可能不会触发 onload
-      if (logoImg.complete) {
-        resolve();
-      }
-    });
+      // 等待 logo 图片加载完成
+      await new Promise<void>((resolve, reject) => {
+        logoImg.onload = () => resolve();
+        logoImg.onerror = () => reject(new Error("Failed to load logo"));
+        // 如果图片已经在缓存中，可能不会触发 onload
+        if (logoImg.complete) {
+          resolve();
+        }
+      });
 
-    // 组装结构
-    logoContainer.appendChild(logoImg);
-    wrapper.appendChild(logoContainer);
+      // 组装结构
+      logoContainer.appendChild(logoImg);
+      wrapper.appendChild(logoContainer);
+    }
 
     // 克隆原始元素并添加到包装容器
     const clonedElement = element.cloneNode(true) as HTMLElement;
@@ -237,10 +246,11 @@ export const downloadMarkdownAsPDF = async ({
         orientation: "portrait",
       },
       pagebreak: {
-        mode: "avoid-all",
+        mode: skipAutoSplit ? "css" : "avoid-all",
       },
     };
 
+    debugger;
     await html2pdf()
       .set(opt as any)
       .from(wrapper)

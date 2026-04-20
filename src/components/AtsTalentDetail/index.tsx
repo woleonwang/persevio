@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import {
   Button,
   Spin,
@@ -24,10 +24,12 @@ import {
   parseJSON,
   buildTalentDetailUrl,
   DEFAULT_TRACKING_SOURCES,
+  downloadMarkdownAsPDF,
 } from "@/utils";
 import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
+import { renderToStaticMarkup } from "react-dom/server";
 import Icon from "@/components/Icon";
 import DownloadIcon from "@/assets/icons/download";
 import Phone from "@/assets/icons/phone";
@@ -120,6 +122,7 @@ const AtsTalentDetail: React.FC = () => {
   const [activeInterviewKeys, setActiveInterviewKeys] = useState<string[]>([
     "round0",
   ]);
+  const pdfReportRef = useRef<HTMLDivElement>(null);
 
   const { job } = useJob();
   const { talent, interviews, fetchTalent } = useTalent();
@@ -203,6 +206,542 @@ const AtsTalentDetail: React.FC = () => {
     talent.evaluate_result_updated_at ||
     talent.viewed_at ||
     talent.feedback_updated_at;
+
+  const downloadReportPdf = async () => {
+    if (!pdfReportRef.current) {
+      message.error("Report is not ready yet.");
+      return;
+    }
+
+    const pdfReqByLevel: Record<
+      "p0" | "p1" | "p2",
+      { assessment?: string; assessment_type?: string }[]
+    > = { p0: [], p1: [], p2: [] };
+    (report.requirements ?? []).forEach((item) => {
+      pdfReqByLevel[item.level].push(item as any);
+    });
+
+    const evalLevel = getEvaluateResultLevel(report);
+    const overallFitLabel = originalT(
+      `job_talents.evaluate_result_options.${evalLevel}`,
+      { caveat: report.overall_recommendation?.caveat ?? "" },
+    );
+
+    const pdfRawSkillsFitLevel =
+      report.overall_recommendation?.skills_fit?.level;
+    type TPdfSkillsFitKey = "ideal" | "good" | "uncertain" | "poor";
+    const pdfSkillsFitKnown: TPdfSkillsFitKey[] = [
+      "ideal",
+      "good",
+      "uncertain",
+      "poor",
+    ];
+    const pdfIsKnownSkillsFit = (
+      level: string | undefined,
+    ): level is TPdfSkillsFitKey =>
+      !!level && pdfSkillsFitKnown.includes(level as TPdfSkillsFitKey);
+    const pdfSkillsFitLabels: Record<TPdfSkillsFitKey, string> = {
+      ideal: "Ideal",
+      good: "Good",
+      uncertain: "Uncertain",
+      poor: "Poor",
+    };
+    const pdfSkillsFitLabel =
+      pdfRawSkillsFitLevel && pdfIsKnownSkillsFit(pdfRawSkillsFitLevel)
+        ? pdfSkillsFitLabels[pdfRawSkillsFitLevel]
+        : pdfRawSkillsFitLevel || "";
+
+    const skillsFitBadgeClass =
+      pdfRawSkillsFitLevel === "poor"
+        ? styles.pdfBadgeRed
+        : pdfRawSkillsFitLevel === "uncertain"
+          ? styles.pdfBadgeOrange
+          : styles.pdfBadgeGray;
+
+    const logisticsLevel =
+      report.overall_recommendation?.logistics_fit?.level ?? "";
+    const logisticsBadgeClass = /no issue|moderate|good|ideal/i.test(
+      logisticsLevel,
+    )
+      ? styles.pdfBadgeOrange
+      : styles.pdfBadgeGray;
+
+    const pdfRawInterestLevel = report.summary?.interest_level?.level;
+    type TPdfInterestKey = "high" | "moderate" | "low" | "unclear";
+    const pdfInterestKnown: TPdfInterestKey[] = [
+      "high",
+      "moderate",
+      "low",
+      "unclear",
+    ];
+    const pdfIsKnownInterest = (
+      level: string | undefined,
+    ): level is TPdfInterestKey =>
+      !!level && pdfInterestKnown.includes(level as TPdfInterestKey);
+    const pdfInterestLabels: Record<TPdfInterestKey, string> = {
+      high: "High",
+      moderate: "Moderate",
+      low: "Low",
+      unclear: "Unclear",
+    };
+    const pdfInterestLabel =
+      pdfRawInterestLevel && pdfIsKnownInterest(pdfRawInterestLevel)
+        ? pdfInterestLabels[pdfRawInterestLevel]
+        : pdfRawInterestLevel || "";
+
+    const interestBadgeClass =
+      pdfRawInterestLevel === "high"
+        ? styles.pdfBadgeGreen
+        : pdfRawInterestLevel === "moderate" || pdfRawInterestLevel === "low"
+          ? styles.pdfBadgeOrange
+          : styles.pdfBadgeGray;
+
+    const headerFitStatusClass =
+      evalLevel === "not_a_fit"
+        ? styles.pdfFitStatusNegative
+        : evalLevel === "maybe" ||
+            evalLevel === "good_fit_with_caveat" ||
+            evalLevel === "ideal_candidate_with_caveat"
+          ? styles.pdfFitStatusWarning
+          : styles.pdfFitStatusPositive;
+
+    const fitPillToneClass =
+      evalLevel === "not_a_fit"
+        ? styles.pdfFitPillNegative
+        : evalLevel === "maybe" ||
+            evalLevel === "good_fit_with_caveat" ||
+            evalLevel === "ideal_candidate_with_caveat"
+          ? styles.pdfFitPillWarning
+          : styles.pdfFitPillPositive;
+
+    const generatedOn = lastUpdated
+      ? dayjs(lastUpdated).format("YYYY/MM/DD")
+      : dayjs().format("YYYY/MM/DD");
+
+    const keyInfoCardTone = [
+      "blue",
+      "cyan",
+      "blue",
+      "lavender",
+      "blue",
+    ] as const;
+    const keyInfoToneClass = (i: number) => {
+      const t = keyInfoCardTone[i % keyInfoCardTone.length];
+      if (t === "blue") return styles.pdfKeyCardBlue;
+      if (t === "cyan") return styles.pdfKeyCardCyan;
+      return styles.pdfKeyCardLavender;
+    };
+
+    const assessmentPillClass = (a?: string) => {
+      if (a === "meets") return styles.pdfAssessmentMeets;
+      if (a === "does_not_meet") return styles.pdfAssessmentNo;
+      return styles.pdfAssessmentPartial;
+    };
+
+    const pdfPriorityToneClass = (level: "p0" | "p1" | "p2") => {
+      if (level === "p0") return styles.pdfPriorityP0;
+      if (level === "p1") return styles.pdfPriorityP1;
+      return styles.pdfPriorityP2;
+    };
+
+    const areasToProbe =
+      report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [];
+
+    const pdfHtml = renderToStaticMarkup(
+        <main className={styles.pdfPage}>
+          <div className={styles.pdfReportStack}>
+            <header className={styles.pdfPageHeader}>
+              <div>
+                <div className={styles.pdfEyebrow}>Candidate Report</div>
+                <h1 className={styles.pdfHeaderTitle}>{talent.name}</h1>
+                <p className={styles.pdfHeaderSubtitle}>
+                  {job.name.replace(/\s*-\s*/g, " – ")}
+                </p>
+              </div>
+              <div className={styles.pdfHeaderMeta}>
+                <div className={styles.pdfMetaLabel}>Generated On</div>
+                <div className={styles.pdfMetaValue}>{generatedOn}</div>
+                <p className={styles.pdfHeaderSubtitleBy}>by Persevio</p>
+              </div>
+            </header>
+
+            <section
+              className={classnames(
+                styles.pdfSectionCard,
+                styles.pdfProfileSnapshot,
+              )}
+              aria-labelledby="pdf-profile-snapshot"
+            >
+              <div className={styles.pdfSectionInner}>
+                <div className={styles.pdfSectionHeadingRow}>
+                  <h2
+                    className={styles.pdfSectionHeading}
+                    id="pdf-profile-snapshot"
+                  >
+                    Profile Snapshot
+                  </h2>
+                </div>
+                <div className={styles.pdfSnapshotGrid}>
+                  {(report.profile_snapshot ?? []).map((snapshot, index) => (
+                    <div
+                      className={styles.pdfSnapshotItem}
+                      key={`${snapshot.title}-${index}`}
+                    >
+                      <h3>{snapshot.title}</h3>
+                      <p>{snapshot.details}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section
+              className={styles.pdfSectionCard}
+              aria-labelledby="pdf-key-info"
+            >
+              <div className={styles.pdfSectionInner}>
+                <div className={styles.pdfSectionHeadingRow}>
+                  <h2 className={styles.pdfSectionHeading} id="pdf-key-info">
+                    Key Information
+                  </h2>
+                </div>
+                <div className={styles.pdfKeyGrid}>
+                  {(report.key_information ?? []).map((information, index) => (
+                    <article
+                      className={classnames(
+                        styles.pdfKeyCard,
+                        keyInfoToneClass(index),
+                      )}
+                      key={`${information.title}-${index}`}
+                    >
+                      <h3>{information.title}</h3>
+                      <p>{information.details}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section
+              className={styles.pdfSectionCard}
+              aria-labelledby="pdf-interview-report"
+            >
+              <div className={styles.pdfReportHead}>
+                <h2 className={styles.pdfRoundTitle} id="pdf-interview-report">
+                  Interview Report: Round 0 - AI Prescreening
+                </h2>
+                <span
+                  className={classnames(
+                    styles.pdfFitStatus,
+                    headerFitStatusClass,
+                  )}
+                >
+                  {overallFitLabel}
+                </span>
+              </div>
+
+              <div className={styles.pdfReportBody}>
+                <div className={styles.pdfSubsectionTitle}>
+                  <span className={styles.pdfDot} aria-hidden />
+                  <span>Evaluation Summary</span>
+                </div>
+
+                <section
+                  className={styles.pdfEvaluationCard}
+                  aria-labelledby="pdf-overall-fit"
+                >
+                  <div className={styles.pdfFitRow}>
+                    <h4 id="pdf-overall-fit">Overall Fit</h4>
+                    <span
+                      className={classnames(
+                        styles.pdfFitPill,
+                        fitPillToneClass,
+                      )}
+                    >
+                      {overallFitLabel}
+                    </span>
+                  </div>
+                  <p className={styles.pdfFitCopy}>
+                    {report.summary?.description || report.thumbnail_summary}
+                  </p>
+
+                  <div className={styles.pdfMetricRow}>
+                    <div className={styles.pdfMetricHead}>
+                      <h5>Skills Fit</h5>
+                      {!!pdfSkillsFitLabel && (
+                        <span
+                          className={classnames(
+                            styles.pdfBadge,
+                            skillsFitBadgeClass,
+                          )}
+                        >
+                          {pdfSkillsFitLabel}
+                        </span>
+                      )}
+                    </div>
+                    <p className={styles.pdfMetricCopy}>
+                      {report.overall_recommendation?.skills_fit?.explanation}
+                    </p>
+                  </div>
+
+                  <div className={styles.pdfMetricRow}>
+                    <div className={styles.pdfMetricHead}>
+                      <h5>Logistical Fit</h5>
+                      {!!logisticsLevel && (
+                        <span
+                          className={classnames(
+                            styles.pdfBadge,
+                            logisticsBadgeClass,
+                          )}
+                        >
+                          {logisticsLevel}
+                        </span>
+                      )}
+                    </div>
+                    <p className={styles.pdfMetricCopy}>
+                      {
+                        report.overall_recommendation?.logistics_fit
+                          ?.explanation
+                      }
+                    </p>
+                  </div>
+
+                  <div className={styles.pdfMetricRow}>
+                    <div className={styles.pdfMetricHead}>
+                      <h5>Interest Level</h5>
+                      {!!pdfInterestLabel && (
+                        <span
+                          className={classnames(
+                            styles.pdfBadge,
+                            interestBadgeClass,
+                          )}
+                        >
+                          {pdfInterestLabel}
+                        </span>
+                      )}
+                    </div>
+                    <p className={styles.pdfMetricCopy}>
+                      {report.summary?.interest_level?.explanation}
+                    </p>
+                  </div>
+                </section>
+
+                <div className={styles.pdfReportSection}>
+                  <div className={styles.pdfSubsectionTitle}>
+                    <span className={styles.pdfDot} aria-hidden />
+                    <span>Candidate Evaluation Report</span>
+                  </div>
+
+                  <div className={styles.pdfReportGrid}>
+                    <div className={styles.pdfSideColumn}>
+                      {(report.key_strengths ?? []).length > 0 && (
+                        <section
+                          className={classnames(
+                            styles.pdfSideCard,
+                            styles.pdfSideCardGreen,
+                          )}
+                        >
+                          <h4>
+                            <span
+                              className={classnames(
+                                styles.pdfIconChip,
+                                styles.pdfIconChipGreen,
+                              )}
+                            >
+                              ✓
+                            </span>
+                            <span>Strengths</span>
+                          </h4>
+                          <ul className={styles.pdfBullets}>
+                            {(report.key_strengths ?? []).map((item, index) => (
+                              <li key={`s-${index}`}>
+                                <strong>{item.title}: </strong>
+                                {item.details}
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+
+                      {(report.potential_gaps ?? []).length > 0 && (
+                        <section
+                          className={classnames(
+                            styles.pdfSideCard,
+                            styles.pdfSideCardRed,
+                          )}
+                        >
+                          <h4>
+                            <span
+                              className={classnames(
+                                styles.pdfIconChip,
+                                styles.pdfIconChipRed,
+                              )}
+                            >
+                              !
+                            </span>
+                            <span>Potential Gaps</span>
+                          </h4>
+                          <ul className={styles.pdfBullets}>
+                            {(report.potential_gaps ?? []).map(
+                              (item, index) => (
+                                <li key={`g-${index}`}>
+                                  <strong>{item.title}: </strong>
+                                  {item.details}
+                                </li>
+                              ),
+                            )}
+                          </ul>
+                        </section>
+                      )}
+
+                      {areasToProbe.length > 0 && (
+                        <section
+                          className={classnames(
+                            styles.pdfSideCard,
+                            styles.pdfSideCardOrange,
+                          )}
+                        >
+                          <h4>
+                            <span
+                              className={classnames(
+                                styles.pdfIconChip,
+                                styles.pdfIconChipOrange,
+                              )}
+                            >
+                              ?
+                            </span>
+                            <span>Areas to Probe in Next Rounds</span>
+                          </h4>
+                          <ul className={styles.pdfBullets}>
+                            {areasToProbe.map((item, index) => (
+                              <li key={`a-${index}`}>
+                                <strong>{item.title}: </strong>
+                                {item.details}
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+                    </div>
+
+                    <div style={{ marginTop: 12 }}>
+                      <section
+                        className={classnames(
+                          styles.pdfTableCard,
+                          styles.pdfRequirementsSummary,
+                        )}
+                      >
+                        <h4>Requirements Summary</h4>
+                        <table className={styles.pdfSummaryTable}>
+                          <thead>
+                            <tr>
+                              <th>Requirement Priorities</th>
+                              <th>No. of Requirements Met</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(["p0", "p1", "p2"] as const).map((level) => {
+                              const items = pdfReqByLevel[level];
+                              if (!items.length) return null;
+                              const meetCount = items.filter(
+                                (item) =>
+                                  item.assessment === "meets" ||
+                                  item.assessment_type === "meets",
+                              ).length;
+                              return (
+                                <tr key={level}>
+                                  <td>
+                                    <span
+                                      className={classnames(
+                                        styles.pdfPriorityPill,
+                                        pdfPriorityToneClass(level),
+                                      )}
+                                    >
+                                      {level.toUpperCase()}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    {meetCount} / {items.length}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </section>
+
+                      <section
+                        className={classnames(
+                          styles.pdfTableCard,
+                          styles.pdfAnalysisCard,
+                        )}
+                      >
+                        <h4>Detailed Requirements Analysis</h4>
+                        <table className={styles.pdfAnalysisTable}>
+                          <thead>
+                            <tr>
+                              <th>Priority</th>
+                              <th>Requirement</th>
+                              <th>Assessment</th>
+                              <th>Reasoning</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(report.requirements ?? []).map((item, index) => {
+                              const assessKey =
+                                item.assessment ?? item.assessment_type;
+                              const prio = item.level as "p0" | "p1" | "p2";
+                              return (
+                                <tr key={index}>
+                                  <td>
+                                    <span
+                                      className={classnames(
+                                        styles.pdfPriorityPill,
+                                        pdfPriorityToneClass(prio),
+                                      )}
+                                    >
+                                      {item.level.toUpperCase()}
+                                    </span>
+                                  </td>
+                                  <td>{item.description}</td>
+                                  <td>
+                                    <span
+                                      className={classnames(
+                                        styles.pdfAssessmentPill,
+                                        assessmentPillClass(assessKey),
+                                      )}
+                                    >
+                                      {originalT(
+                                        `assessment_options.${assessKey}`,
+                                      )}
+                                    </span>
+                                  </td>
+                                  <td>{item.reasoning}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>,
+      );
+
+    pdfReportRef.current.innerHTML = pdfHtml;
+    await downloadMarkdownAsPDF({
+      name: `${talent.name}_talent_report`,
+      element: pdfReportRef.current,
+      options: {
+        skipWrapper: true,
+        skipAutoSplit: true,
+      },
+    });
+  };
 
   const downloadResume = async () => {
     await Download(
@@ -581,6 +1120,15 @@ const AtsTalentDetail: React.FC = () => {
               </Button>
             </>
           )}
+
+          <Button
+            type="primary"
+            icon={<Icon icon={<DownloadIcon />} />}
+            onClick={downloadReportPdf}
+            className={styles.downloadReportBtn}
+          >
+            Download Report
+          </Button>
         </div>
         <section className={styles.interviewsSection}>
           <h2 className={styles.sectionTitle}>Interviews</h2>
@@ -1221,6 +1769,10 @@ const AtsTalentDetail: React.FC = () => {
         ) : (
           <Empty />
         )}
+      </div>
+
+      <div className={styles.pdfHiddenLayer}>
+        <div ref={pdfReportRef} />
       </div>
 
       <Modal

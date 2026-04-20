@@ -11,6 +11,7 @@ const mockNavigate = vi.fn();
 const mockGet = vi.fn();
 const mockPost = vi.fn();
 const mockDownload = vi.fn();
+const mockDownloadMarkdownAsPDF = vi.fn();
 const mockGetQuery = vi.fn();
 
 const mockFetchTalent = vi.fn();
@@ -66,6 +67,7 @@ vi.mock("@/utils", async (importOriginal) => {
   return {
     ...actual,
     getQuery: (...args: any[]) => mockGetQuery(...args),
+    downloadMarkdownAsPDF: (...args: any[]) => mockDownloadMarkdownAsPDF(...args),
   };
 });
 
@@ -168,6 +170,7 @@ describe("AtsTalentDetail 页面", () => {
     mockGet.mockReset();
     mockPost.mockReset();
     mockDownload.mockReset();
+    mockDownloadMarkdownAsPDF.mockReset();
     mockGetQuery.mockReset();
     mockFetchTalent.mockReset();
     mockEvaluateFeedbackProps.lastOnOpen = undefined;
@@ -245,6 +248,27 @@ describe("AtsTalentDetail 页面", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(
       "/app/jobs/1/standard-board?tab=talents",
+    );
+  });
+
+  it("点击 Download Report：调用 downloadMarkdownAsPDF 生成 PDF", async () => {
+    renderPage();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /download report/i }),
+      ).toBeVisible();
+    });
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /download report/i }),
+    );
+
+    expect(mockDownloadMarkdownAsPDF).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "John Doe_talent_report",
+        element: expect.any(HTMLElement),
+      }),
     );
   });
 
