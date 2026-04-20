@@ -348,389 +348,388 @@ const AtsTalentDetail: React.FC = () => {
       report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [];
 
     const pdfHtml = renderToStaticMarkup(
-        <main className={styles.pdfPage}>
-          <div className={styles.pdfReportStack}>
-            <header className={styles.pdfPageHeader}>
-              <div>
-                <div className={styles.pdfEyebrow}>Candidate Report</div>
-                <h1 className={styles.pdfHeaderTitle}>{talent.name}</h1>
-                <p className={styles.pdfHeaderSubtitle}>
-                  {job.name.replace(/\s*-\s*/g, " – ")}
-                </p>
-              </div>
-              <div className={styles.pdfHeaderMeta}>
-                <div className={styles.pdfMetaLabel}>Generated On</div>
-                <div className={styles.pdfMetaValue}>{generatedOn}</div>
-                <p className={styles.pdfHeaderSubtitleBy}>by Persevio</p>
-              </div>
-            </header>
+      <main className={styles.pdfPage}>
+        <div className={styles.pdfReportStack}>
+          <header className={styles.pdfPageHeader}>
+            <div>
+              <div className={styles.pdfEyebrow}>Candidate Report</div>
+              <h1 className={styles.pdfHeaderTitle}>{talent.name}</h1>
+              <p className={styles.pdfHeaderSubtitle}>
+                {job.name.replace(/\s*-\s*/g, " – ")}
+              </p>
+            </div>
+            <div className={styles.pdfHeaderMeta}>
+              <div className={styles.pdfMetaLabel}>Generated On</div>
+              <div className={styles.pdfMetaValue}>{generatedOn}</div>
+              <p className={styles.pdfHeaderSubtitleBy}>by Persevio</p>
+            </div>
+          </header>
 
-            <section
-              className={classnames(
-                styles.pdfSectionCard,
-                styles.pdfProfileSnapshot,
-              )}
-              aria-labelledby="pdf-profile-snapshot"
-            >
-              <div className={styles.pdfSectionInner}>
-                <div className={styles.pdfSectionHeadingRow}>
-                  <h2
-                    className={styles.pdfSectionHeading}
-                    id="pdf-profile-snapshot"
-                  >
-                    Profile Snapshot
-                  </h2>
-                </div>
-                <div className={styles.pdfSnapshotGrid}>
-                  {(report.profile_snapshot ?? []).map((snapshot, index) => (
-                    <div
-                      className={styles.pdfSnapshotItem}
-                      key={`${snapshot.title}-${index}`}
-                    >
-                      <h3>{snapshot.title}</h3>
-                      <p>{snapshot.details}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <section
-              className={styles.pdfSectionCard}
-              aria-labelledby="pdf-key-info"
-            >
-              <div className={styles.pdfSectionInner}>
-                <div className={styles.pdfSectionHeadingRow}>
-                  <h2 className={styles.pdfSectionHeading} id="pdf-key-info">
-                    Key Information
-                  </h2>
-                </div>
-                <div className={styles.pdfKeyGrid}>
-                  {(report.key_information ?? []).map((information, index) => (
-                    <article
-                      className={classnames(
-                        styles.pdfKeyCard,
-                        keyInfoToneClass(index),
-                      )}
-                      key={`${information.title}-${index}`}
-                    >
-                      <h3>{information.title}</h3>
-                      <p>{information.details}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            <section
-              className={styles.pdfSectionCard}
-              aria-labelledby="pdf-interview-report"
-            >
-              <div className={styles.pdfReportHead}>
-                <h2 className={styles.pdfRoundTitle} id="pdf-interview-report">
-                  Interview Report: Round 0 - AI Prescreening
-                </h2>
-                <span
-                  className={classnames(
-                    styles.pdfFitStatus,
-                    headerFitStatusClass,
-                  )}
+          <section
+            className={classnames(
+              styles.pdfSectionCard,
+              styles.pdfProfileSnapshot,
+            )}
+            aria-labelledby="pdf-profile-snapshot"
+          >
+            <div className={styles.pdfSectionInner}>
+              <div className={styles.pdfSectionHeadingRow}>
+                <h2
+                  className={styles.pdfSectionHeading}
+                  id="pdf-profile-snapshot"
                 >
-                  {overallFitLabel}
-                </span>
+                  Profile Snapshot
+                </h2>
+              </div>
+              <div className={styles.pdfSnapshotGrid}>
+                {(report.profile_snapshot ?? []).map((snapshot, index) => (
+                  <div
+                    className={styles.pdfSnapshotItem}
+                    key={`${snapshot.title}-${index}`}
+                  >
+                    <h3>{snapshot.title}</h3>
+                    <p>{snapshot.details}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section
+            className={styles.pdfSectionCard}
+            aria-labelledby="pdf-key-info"
+          >
+            <div className={styles.pdfSectionInner}>
+              <div className={styles.pdfSectionHeadingRow}>
+                <h2 className={styles.pdfSectionHeading} id="pdf-key-info">
+                  Key Information
+                </h2>
+              </div>
+              <div className={styles.pdfKeyGrid}>
+                {(report.key_information ?? []).map((information, index) => (
+                  <article
+                    className={classnames(
+                      styles.pdfKeyCard,
+                      styles.avoidBreak,
+                      keyInfoToneClass(index),
+                    )}
+                    key={`${information.title}-${index}`}
+                  >
+                    <h3>{information.title}</h3>
+                    <p>{information.details}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section
+            className={styles.pdfSectionCard}
+            aria-labelledby="pdf-interview-report"
+          >
+            <div className={styles.pdfReportHead}>
+              <h2 className={styles.pdfRoundTitle} id="pdf-interview-report">
+                Interview Report: Round 0 - AI Prescreening
+              </h2>
+              <span
+                className={classnames(
+                  styles.pdfFitStatus,
+                  headerFitStatusClass,
+                )}
+              >
+                {overallFitLabel}
+              </span>
+            </div>
+
+            <div className={styles.pdfReportBody}>
+              <div className={styles.pdfSubsectionTitle}>
+                <span className={styles.pdfDot} aria-hidden />
+                <span>Evaluation Summary</span>
               </div>
 
-              <div className={styles.pdfReportBody}>
+              <section
+                className={classnames(
+                  styles.pdfEvaluationCard,
+                  styles.avoidBreak,
+                )}
+                aria-labelledby="pdf-overall-fit"
+              >
+                <div className={styles.pdfFitRow}>
+                  <h4 id="pdf-overall-fit">Overall Fit</h4>
+                  <span
+                    className={classnames(styles.pdfFitPill, fitPillToneClass)}
+                  >
+                    {overallFitLabel}
+                  </span>
+                </div>
+                <p className={styles.pdfFitCopy}>
+                  {report.summary?.description || report.thumbnail_summary}
+                </p>
+
+                <div className={styles.pdfMetricRow}>
+                  <div className={styles.pdfMetricHead}>
+                    <h5>Skills Fit</h5>
+                    {!!pdfSkillsFitLabel && (
+                      <span
+                        className={classnames(
+                          styles.pdfBadge,
+                          skillsFitBadgeClass,
+                        )}
+                      >
+                        {pdfSkillsFitLabel}
+                      </span>
+                    )}
+                  </div>
+                  <p className={styles.pdfMetricCopy}>
+                    {report.overall_recommendation?.skills_fit?.explanation}
+                  </p>
+                </div>
+
+                <div className={styles.pdfMetricRow}>
+                  <div className={styles.pdfMetricHead}>
+                    <h5>Logistical Fit</h5>
+                    {!!logisticsLevel && (
+                      <span
+                        className={classnames(
+                          styles.pdfBadge,
+                          logisticsBadgeClass,
+                        )}
+                      >
+                        {logisticsLevel}
+                      </span>
+                    )}
+                  </div>
+                  <p className={styles.pdfMetricCopy}>
+                    {report.overall_recommendation?.logistics_fit?.explanation}
+                  </p>
+                </div>
+
+                <div className={styles.pdfMetricRow}>
+                  <div className={styles.pdfMetricHead}>
+                    <h5>Interest Level</h5>
+                    {!!pdfInterestLabel && (
+                      <span
+                        className={classnames(
+                          styles.pdfBadge,
+                          interestBadgeClass,
+                        )}
+                      >
+                        {pdfInterestLabel}
+                      </span>
+                    )}
+                  </div>
+                  <p className={styles.pdfMetricCopy}>
+                    {report.summary?.interest_level?.explanation}
+                  </p>
+                </div>
+              </section>
+
+              <div className={styles.pdfReportSection}>
                 <div className={styles.pdfSubsectionTitle}>
                   <span className={styles.pdfDot} aria-hidden />
-                  <span>Evaluation Summary</span>
+                  <span>Candidate Evaluation Report</span>
                 </div>
 
-                <section
-                  className={styles.pdfEvaluationCard}
-                  aria-labelledby="pdf-overall-fit"
-                >
-                  <div className={styles.pdfFitRow}>
-                    <h4 id="pdf-overall-fit">Overall Fit</h4>
-                    <span
+                <div className={styles.pdfReportGrid}>
+                  <div className={styles.pdfSideColumn}>
+                    {(report.key_strengths ?? []).length > 0 && (
+                      <section
+                        className={classnames(
+                          styles.pdfSideCard,
+                          styles.pdfSideCardGreen,
+                          styles.avoidBreak,
+                        )}
+                      >
+                        <h4>
+                          <span
+                            className={classnames(
+                              styles.pdfIconChip,
+                              styles.pdfIconChipGreen,
+                            )}
+                          >
+                            ✓
+                          </span>
+                          <span>Strengths</span>
+                        </h4>
+                        <ul className={styles.pdfBullets}>
+                          {(report.key_strengths ?? []).map((item, index) => (
+                            <li key={`s-${index}`}>
+                              <strong>{item.title}: </strong>
+                              {item.details}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
+                    {(report.potential_gaps ?? []).length > 0 && (
+                      <section
+                        className={classnames(
+                          styles.pdfSideCard,
+                          styles.pdfSideCardRed,
+                          styles.avoidBreak,
+                        )}
+                      >
+                        <h4>
+                          <span
+                            className={classnames(
+                              styles.pdfIconChip,
+                              styles.pdfIconChipRed,
+                            )}
+                          >
+                            !
+                          </span>
+                          <span>Potential Gaps</span>
+                        </h4>
+                        <ul className={styles.pdfBullets}>
+                          {(report.potential_gaps ?? []).map((item, index) => (
+                            <li key={`g-${index}`}>
+                              <strong>{item.title}: </strong>
+                              {item.details}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+
+                    {areasToProbe.length > 0 && (
+                      <section
+                        className={classnames(
+                          styles.pdfSideCard,
+                          styles.pdfSideCardOrange,
+                          styles.avoidBreak,
+                        )}
+                      >
+                        <h4>
+                          <span
+                            className={classnames(
+                              styles.pdfIconChip,
+                              styles.pdfIconChipOrange,
+                            )}
+                          >
+                            ?
+                          </span>
+                          <span>Areas to Probe in Next Rounds</span>
+                        </h4>
+                        <ul className={styles.pdfBullets}>
+                          {areasToProbe.map((item, index) => (
+                            <li key={`a-${index}`}>
+                              <strong>{item.title}: </strong>
+                              {item.details}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: 12 }}>
+                    <section
                       className={classnames(
-                        styles.pdfFitPill,
-                        fitPillToneClass,
+                        styles.pdfTableCard,
+                        styles.pdfRequirementsSummary,
                       )}
                     >
-                      {overallFitLabel}
-                    </span>
-                  </div>
-                  <p className={styles.pdfFitCopy}>
-                    {report.summary?.description || report.thumbnail_summary}
-                  </p>
+                      <h4>Requirements Summary</h4>
+                      <table className={styles.pdfSummaryTable}>
+                        <thead>
+                          <tr>
+                            <th>Requirement Priorities</th>
+                            <th>No. of Requirements Met</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(["p0", "p1", "p2"] as const).map((level) => {
+                            const items = pdfReqByLevel[level];
+                            if (!items.length) return null;
+                            const meetCount = items.filter(
+                              (item) =>
+                                item.assessment === "meets" ||
+                                item.assessment_type === "meets",
+                            ).length;
+                            return (
+                              <tr key={level}>
+                                <td>
+                                  <span
+                                    className={classnames(
+                                      styles.pdfPriorityPill,
+                                      pdfPriorityToneClass(level),
+                                    )}
+                                  >
+                                    {level.toUpperCase()}
+                                  </span>
+                                </td>
+                                <td>
+                                  {meetCount} / {items.length}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </section>
 
-                  <div className={styles.pdfMetricRow}>
-                    <div className={styles.pdfMetricHead}>
-                      <h5>Skills Fit</h5>
-                      {!!pdfSkillsFitLabel && (
-                        <span
-                          className={classnames(
-                            styles.pdfBadge,
-                            skillsFitBadgeClass,
-                          )}
-                        >
-                          {pdfSkillsFitLabel}
-                        </span>
+                    <section
+                      className={classnames(
+                        styles.pdfTableCard,
+                        styles.pdfAnalysisCard,
                       )}
-                    </div>
-                    <p className={styles.pdfMetricCopy}>
-                      {report.overall_recommendation?.skills_fit?.explanation}
-                    </p>
-                  </div>
-
-                  <div className={styles.pdfMetricRow}>
-                    <div className={styles.pdfMetricHead}>
-                      <h5>Logistical Fit</h5>
-                      {!!logisticsLevel && (
-                        <span
-                          className={classnames(
-                            styles.pdfBadge,
-                            logisticsBadgeClass,
-                          )}
-                        >
-                          {logisticsLevel}
-                        </span>
-                      )}
-                    </div>
-                    <p className={styles.pdfMetricCopy}>
-                      {
-                        report.overall_recommendation?.logistics_fit
-                          ?.explanation
-                      }
-                    </p>
-                  </div>
-
-                  <div className={styles.pdfMetricRow}>
-                    <div className={styles.pdfMetricHead}>
-                      <h5>Interest Level</h5>
-                      {!!pdfInterestLabel && (
-                        <span
-                          className={classnames(
-                            styles.pdfBadge,
-                            interestBadgeClass,
-                          )}
-                        >
-                          {pdfInterestLabel}
-                        </span>
-                      )}
-                    </div>
-                    <p className={styles.pdfMetricCopy}>
-                      {report.summary?.interest_level?.explanation}
-                    </p>
-                  </div>
-                </section>
-
-                <div className={styles.pdfReportSection}>
-                  <div className={styles.pdfSubsectionTitle}>
-                    <span className={styles.pdfDot} aria-hidden />
-                    <span>Candidate Evaluation Report</span>
-                  </div>
-
-                  <div className={styles.pdfReportGrid}>
-                    <div className={styles.pdfSideColumn}>
-                      {(report.key_strengths ?? []).length > 0 && (
-                        <section
-                          className={classnames(
-                            styles.pdfSideCard,
-                            styles.pdfSideCardGreen,
-                          )}
-                        >
-                          <h4>
-                            <span
-                              className={classnames(
-                                styles.pdfIconChip,
-                                styles.pdfIconChipGreen,
-                              )}
-                            >
-                              ✓
-                            </span>
-                            <span>Strengths</span>
-                          </h4>
-                          <ul className={styles.pdfBullets}>
-                            {(report.key_strengths ?? []).map((item, index) => (
-                              <li key={`s-${index}`}>
-                                <strong>{item.title}: </strong>
-                                {item.details}
-                              </li>
-                            ))}
-                          </ul>
-                        </section>
-                      )}
-
-                      {(report.potential_gaps ?? []).length > 0 && (
-                        <section
-                          className={classnames(
-                            styles.pdfSideCard,
-                            styles.pdfSideCardRed,
-                          )}
-                        >
-                          <h4>
-                            <span
-                              className={classnames(
-                                styles.pdfIconChip,
-                                styles.pdfIconChipRed,
-                              )}
-                            >
-                              !
-                            </span>
-                            <span>Potential Gaps</span>
-                          </h4>
-                          <ul className={styles.pdfBullets}>
-                            {(report.potential_gaps ?? []).map(
-                              (item, index) => (
-                                <li key={`g-${index}`}>
-                                  <strong>{item.title}: </strong>
-                                  {item.details}
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </section>
-                      )}
-
-                      {areasToProbe.length > 0 && (
-                        <section
-                          className={classnames(
-                            styles.pdfSideCard,
-                            styles.pdfSideCardOrange,
-                          )}
-                        >
-                          <h4>
-                            <span
-                              className={classnames(
-                                styles.pdfIconChip,
-                                styles.pdfIconChipOrange,
-                              )}
-                            >
-                              ?
-                            </span>
-                            <span>Areas to Probe in Next Rounds</span>
-                          </h4>
-                          <ul className={styles.pdfBullets}>
-                            {areasToProbe.map((item, index) => (
-                              <li key={`a-${index}`}>
-                                <strong>{item.title}: </strong>
-                                {item.details}
-                              </li>
-                            ))}
-                          </ul>
-                        </section>
-                      )}
-                    </div>
-
-                    <div style={{ marginTop: 12 }}>
-                      <section
-                        className={classnames(
-                          styles.pdfTableCard,
-                          styles.pdfRequirementsSummary,
-                        )}
-                      >
-                        <h4>Requirements Summary</h4>
-                        <table className={styles.pdfSummaryTable}>
-                          <thead>
-                            <tr>
-                              <th>Requirement Priorities</th>
-                              <th>No. of Requirements Met</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {(["p0", "p1", "p2"] as const).map((level) => {
-                              const items = pdfReqByLevel[level];
-                              if (!items.length) return null;
-                              const meetCount = items.filter(
-                                (item) =>
-                                  item.assessment === "meets" ||
-                                  item.assessment_type === "meets",
-                              ).length;
-                              return (
-                                <tr key={level}>
-                                  <td>
-                                    <span
-                                      className={classnames(
-                                        styles.pdfPriorityPill,
-                                        pdfPriorityToneClass(level),
-                                      )}
-                                    >
-                                      {level.toUpperCase()}
-                                    </span>
-                                  </td>
-                                  <td>
-                                    {meetCount} / {items.length}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </section>
-
-                      <section
-                        className={classnames(
-                          styles.pdfTableCard,
-                          styles.pdfAnalysisCard,
-                        )}
-                      >
-                        <h4>Detailed Requirements Analysis</h4>
-                        <table className={styles.pdfAnalysisTable}>
-                          <thead>
-                            <tr>
-                              <th>Priority</th>
-                              <th>Requirement</th>
-                              <th>Assessment</th>
-                              <th>Reasoning</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {(report.requirements ?? []).map((item, index) => {
-                              const assessKey =
-                                item.assessment ?? item.assessment_type;
-                              const prio = item.level as "p0" | "p1" | "p2";
-                              return (
-                                <tr key={index}>
-                                  <td>
-                                    <span
-                                      className={classnames(
-                                        styles.pdfPriorityPill,
-                                        pdfPriorityToneClass(prio),
-                                      )}
-                                    >
-                                      {item.level.toUpperCase()}
-                                    </span>
-                                  </td>
-                                  <td>{item.description}</td>
-                                  <td>
-                                    <span
-                                      className={classnames(
-                                        styles.pdfAssessmentPill,
-                                        assessmentPillClass(assessKey),
-                                      )}
-                                    >
-                                      {originalT(
-                                        `assessment_options.${assessKey}`,
-                                      )}
-                                    </span>
-                                  </td>
-                                  <td>{item.reasoning}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </section>
-                    </div>
+                    >
+                      <h4>Detailed Requirements Analysis</h4>
+                      <table className={styles.pdfAnalysisTable}>
+                        <thead>
+                          <tr>
+                            <th>Priority</th>
+                            <th>Requirement</th>
+                            <th>Assessment</th>
+                            <th>Reasoning</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(report.requirements ?? []).map((item, index) => {
+                            const assessKey =
+                              item.assessment ?? item.assessment_type;
+                            const prio = item.level as "p0" | "p1" | "p2";
+                            return (
+                              <tr key={index} className={styles.avoidBreak}>
+                                <td>
+                                  <span
+                                    className={classnames(
+                                      styles.pdfPriorityPill,
+                                      pdfPriorityToneClass(prio),
+                                    )}
+                                  >
+                                    {item.level.toUpperCase()}
+                                  </span>
+                                </td>
+                                <td>{item.description}</td>
+                                <td>
+                                  <span
+                                    className={classnames(
+                                      styles.pdfAssessmentPill,
+                                      assessmentPillClass(assessKey),
+                                    )}
+                                  >
+                                    {originalT(
+                                      `assessment_options.${assessKey}`,
+                                    )}
+                                  </span>
+                                </td>
+                                <td>{item.reasoning}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </section>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
-        </main>,
-      );
+            </div>
+          </section>
+        </div>
+      </main>,
+    );
 
     pdfReportRef.current.innerHTML = pdfHtml;
     await downloadMarkdownAsPDF({
