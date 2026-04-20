@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import {
   Button,
+  FloatButton,
   Spin,
   Collapse,
   Tabs,
@@ -14,7 +15,7 @@ import {
 import classnames from "classnames";
 import { v4 as uuidv4 } from "uuid";
 
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, FileOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import {
@@ -56,6 +57,7 @@ import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
 import RichTextWithVoice from "../RichTextWithVoice";
 import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import { tokenStorage } from "@/utils/storage";
 
 type TCustomizedInterview = {
   id: string;
@@ -129,6 +131,23 @@ const AtsTalentDetail: React.FC = () => {
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent_details.${key}`);
+  const [isSystemAdmin, setIsSystemAdmin] = useState(false);
+  const canOpenJobApplyInternalDocuments = isSystemAdmin && !!talentIdStr;
+
+  useEffect(() => {
+    const checkIsSystemAdmin = async () => {
+      const token = tokenStorage.getToken("staff");
+      if (!token) {
+        setIsSystemAdmin(false);
+        return;
+      }
+
+      const { code, data } = await Get("/api/settings");
+      setIsSystemAdmin(code === 0 && data?.is_admin === 1);
+    };
+
+    checkIsSystemAdmin();
+  }, []);
 
   useEffect(() => {
     fetchTalentsOfCandidate();
@@ -2001,6 +2020,17 @@ const AtsTalentDetail: React.FC = () => {
           talentId={talent.id ?? 0}
           needConfirm={needConfirmEvaluateFeedbackConversation}
           onCancel={() => setOpenEvaluateFeedbackConversation(false)}
+        />
+      )}
+      {canOpenJobApplyInternalDocuments && (
+        <FloatButton
+          icon={<FileOutlined />}
+          onClick={() => {
+            window.open(
+              `/app/talents/${talentIdStr}/internal-documents`,
+              "_blank",
+            );
+          }}
         />
       )}
     </div>
