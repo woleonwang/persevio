@@ -11,6 +11,9 @@ interface IInternalDocuments {
   similarity_matching_results_json?: string;
   job_requirement_strategy_doc?: string;
   job_intake_context?: string;
+  similarity_matching_context?: string;
+  intake_strategy_context?: string;
+  jrd_generation_context?: string;
 }
 
 const formatContentForDisplay = (content?: string) => {
@@ -60,14 +63,19 @@ const JobInternalDocuments = () => {
   const tabItems = useMemo(
     () => [
       {
-        key: "roleArchetype",
-        label: "Role Archetype",
-        value: docs?.role_archetype,
+        key: "similarityMatchingContext",
+        label: "Similarity Matching Context",
+        value: docs?.similarity_matching_context,
       },
       {
         key: "similarityMatchingResults",
         label: "Similarity Matching Results",
         value: docs?.similarity_matching_results_json,
+      },
+      {
+        key: "intakeStrategyContext",
+        label: "Intake Strategy Context",
+        value: docs?.intake_strategy_context,
       },
       {
         key: "jobRequirementStrategy",
@@ -78,6 +86,16 @@ const JobInternalDocuments = () => {
         key: "jobIntakeContext",
         label: "Job Intake Context",
         value: docs?.job_intake_context,
+      },
+      {
+        key: "jrdGenerationContext",
+        label: "JRD Generation Context",
+        value: docs?.jrd_generation_context,
+      },
+      {
+        key: "roleArchetype",
+        label: "Role Archetype",
+        value: docs?.role_archetype,
       },
     ],
     [docs],
