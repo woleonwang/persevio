@@ -10,7 +10,7 @@ interface IProps extends Options {
 }
 
 const MarkdownContainer = (props: IProps) => {
-  const { content, onClick, id, ...restProps } = props;
+  const { content, onClick, id, components, ...restProps } = props;
 
   if (!content) {
     return null;
@@ -25,6 +25,16 @@ const MarkdownContainer = (props: IProps) => {
       <Markdown
         rehypePlugins={[rehypeRaw]}
         remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ ...anchorProps }) => (
+            <a
+              {...anchorProps}
+              target="_blank"
+              rel={anchorProps.rel ?? "noopener noreferrer"}
+            />
+          ),
+          ...components,
+        }}
         {...restProps}
       >
         {content

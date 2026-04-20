@@ -5,6 +5,7 @@ import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import styles from "./style.module.less";
+import { parseJSON } from "@/utils";
 
 interface IInternalDocuments {
   role_archetype?: string;
@@ -17,14 +18,15 @@ interface IInternalDocuments {
 }
 
 const formatContentForDisplay = (content?: string) => {
-  const trimmed = content?.trim();
+  const trimmed = content
+    ?.trim()
+    ?.replace(/^```json\n/, "")
+    .replace(/\n```$/, "");
   if (!trimmed) return "";
 
   try {
     const parsed = JSON.parse(trimmed);
-    if (typeof parsed === "object" && parsed !== null) {
-      return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
-    }
+    return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
   } catch {
     // keep original content when it is not a valid JSON string
   }
