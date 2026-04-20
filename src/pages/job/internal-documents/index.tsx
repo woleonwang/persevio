@@ -24,7 +24,7 @@ const JobInternalDocuments = () => {
 
       setLoading(true);
       setErrorMessage("");
-      const { code, data, msg } = await Get(
+      const { code, data } = await Get(
         `/api/admin/jobs/${job.id}/internal_documents`,
       );
       setLoading(false);
@@ -33,7 +33,7 @@ const JobInternalDocuments = () => {
         setDocs(data ?? {});
       } else {
         setDocs(undefined);
-        setErrorMessage(msg || "Get internal documents failed");
+        setErrorMessage("Get internal documents failed");
       }
     };
 
