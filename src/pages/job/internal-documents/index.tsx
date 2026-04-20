@@ -10,6 +10,7 @@ interface IInternalDocuments {
   role_archetype?: string;
   similarity_matching_results_json?: string;
   job_requirement_strategy_doc?: string;
+  job_intake_context?: string;
 }
 
 const formatContentForDisplay = (content?: string) => {
@@ -73,6 +74,11 @@ const JobInternalDocuments = () => {
         label: "Job Requirement Strategy",
         value: docs?.job_requirement_strategy_doc,
       },
+      {
+        key: "jobIntakeContext",
+        label: "Job Intake Context",
+        value: docs?.job_intake_context,
+      },
     ],
     [docs],
   );
@@ -103,7 +109,9 @@ const JobInternalDocuments = () => {
               key: item.key,
               label: item.label,
               children: item.value ? (
-                <MarkdownContainer content={formatContentForDisplay(item.value)} />
+                <MarkdownContainer
+                  content={formatContentForDisplay(item.value)}
+                />
               ) : (
                 <Empty description="No content" />
               ),
