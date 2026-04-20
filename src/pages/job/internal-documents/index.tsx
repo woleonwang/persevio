@@ -5,7 +5,6 @@ import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import styles from "./style.module.less";
-import { parseJSON } from "@/utils";
 
 interface IInternalDocuments {
   role_archetype?: string;
