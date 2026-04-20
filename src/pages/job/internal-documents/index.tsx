@@ -12,6 +12,22 @@ interface IInternalDocuments {
   job_requirement_strategy_doc?: string;
 }
 
+const formatContentForDisplay = (content?: string) => {
+  const trimmed = content?.trim();
+  if (!trimmed) return "";
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (typeof parsed === "object" && parsed !== null) {
+      return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
+    }
+  } catch {
+    // keep original content when it is not a valid JSON string
+  }
+
+  return content ?? "";
+};
+
 const JobInternalDocuments = () => {
   const { job } = useJob();
   const [docs, setDocs] = useState<IInternalDocuments>();
@@ -87,7 +103,7 @@ const JobInternalDocuments = () => {
               key: item.key,
               label: item.label,
               children: item.value ? (
-                <MarkdownContainer content={item.value} />
+                <MarkdownContainer content={formatContentForDisplay(item.value)} />
               ) : (
                 <Empty description="No content" />
               ),
