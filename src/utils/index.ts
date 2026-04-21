@@ -231,6 +231,8 @@ export const downloadMarkdownAsPDF = async ({
     // 将包装容器添加到 DOM（但不可见）
     document.body.appendChild(wrapper);
 
+    const wrapperHeight = wrapper.offsetHeight;
+
     const opt: html2pdf.Options = {
       margin: [10, 10, 10, 10],
       filename: `${name}.pdf`,
@@ -242,7 +244,7 @@ export const downloadMarkdownAsPDF = async ({
       },
       jsPDF: {
         unit: "mm",
-        format: "a4",
+        format: [210, Math.ceil(wrapperHeight * 0.27)],
         orientation: "portrait",
       },
       pagebreak: {
