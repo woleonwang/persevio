@@ -342,7 +342,13 @@ const Signup: React.FC = () => {
               }}
             />
           )}
-          {pageState === "binding" && <Binding />}
+          {pageState === "binding" && (
+            <Binding
+              onEmailOtpVerified={() => {
+                setPageState("whatsapp");
+              }}
+            />
+          )}
           {pageState === "whatsapp" && (
             <Whatsapp
               whatsappContactNumber={whatsappContactNumber}
