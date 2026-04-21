@@ -389,9 +389,10 @@ export const DEFAULT_TRACKING_SOURCES = [
   "jobstreet",
   "mycareersfuture",
   "persevio",
+  "email_inbound",
 ] as const;
 
-export const SOURCING_CHANNEL_KEYS = ["persevio", ...DEFAULT_TRACKING_SOURCES];
+export const SOURCING_CHANNEL_KEYS = [...DEFAULT_TRACKING_SOURCES];
 
 export const getSourcingChannel = (sc: string = "persevio"): string => {
   if (sc === "customer") return "direct";

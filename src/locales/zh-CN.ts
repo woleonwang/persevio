@@ -374,6 +374,7 @@ export default {
     linkedin: "LinkedIn",
     jobstreet: "JobStreet",
     mycareersfuture: "MyCareersFuture",
+    email_inbound: "邮件申请",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {

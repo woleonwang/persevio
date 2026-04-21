@@ -383,6 +383,7 @@ export default {
     linkedin: "LinkedIn",
     jobstreet: "JobStreet",
     mycareersfuture: "MyCareersFuture",
+    email_inbound: "Email Inbound",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {

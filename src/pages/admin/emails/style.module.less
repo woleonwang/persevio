@@ -1,0 +1,37 @@
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pageTitle {
+  margin-bottom: 0 !important;
+}
+
+.jsonContent {
+  margin-bottom: 0 !important;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.plainBody {
+  margin-bottom: 0 !important;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.htmlCard {
+  :global(.ant-card-body) {
+    max-height: 800px;
+    overflow: auto;
+  }
+}
+
+.bodyHtml {
+  min-height: 120px;
+}
