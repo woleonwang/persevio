@@ -754,8 +754,13 @@ const AtsTalentDetail: React.FC = () => {
     );
 
     pdfReportRef.current.innerHTML = pdfHtml;
+    const candidateNameNoSpace = talent.name.replace(/\s+/g, "");
+    const jobTitleNoSpace = job.name.replace(/\s+/g, "");
+    const dateText = dayjs().format("YYYYMMDD");
+    const pdfFilename = `CandidateReport_${candidateNameNoSpace}_${jobTitleNoSpace}_${dateText}`;
+
     await downloadMarkdownAsPDF({
-      name: `${talent.name}_talent_report`,
+      name: pdfFilename,
       element: pdfReportRef.current,
       options: {
         skipWrapper: true,
