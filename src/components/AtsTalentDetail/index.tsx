@@ -400,14 +400,17 @@ const AtsTalentDetail: React.FC = () => {
                   Profile Snapshot
                 </h2>
               </div>
-              <div className={styles.pdfSnapshotGrid}>
+              <div className={classnames(styles.pdfSnapshotGrid)}>
                 {(report.profile_snapshot ?? []).map((snapshot, index) => (
                   <div
-                    className={styles.pdfSnapshotItem}
+                    className={classnames(
+                      styles.pdfSnapshotItem,
+                      styles.avoidBreak,
+                    )}
                     key={`${snapshot.title}-${index}`}
                   >
                     <h3>{snapshot.title}</h3>
-                    <p>{snapshot.details}</p>
+                    <p className={styles.avoidBreak}>{snapshot.details}</p>
                   </div>
                 ))}
               </div>
