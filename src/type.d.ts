@@ -81,6 +81,7 @@ interface IJob {
   interview_defaults_json?: string;
 
   org_node_id?: number | null;
+  apply_inbound_email?: string;
 
   admin_jobs?: {
     admin: {

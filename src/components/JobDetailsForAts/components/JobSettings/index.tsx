@@ -440,6 +440,32 @@ const JobSettings = ({ jobId }: IProps) => {
             onChange={(val) => handleUpdateOrgNode(val)}
           />
         </div>
+        <div className={styles.readonlyField}>
+          <div className={styles.sectionTitle}>{tKey("apply_inbound_email")}</div>
+          <div className={styles.readonlyFieldRow}>
+            <Input
+              readOnly
+              value={job?.apply_inbound_email || "-"}
+              placeholder="-"
+            />
+            <Button
+              onClick={async () => {
+                if (!job?.apply_inbound_email) {
+                  message.error(tKey("copy_failed"));
+                  return;
+                }
+                try {
+                  await navigator.clipboard.writeText(job.apply_inbound_email);
+                  message.success(tKey("copy_success"));
+                } catch {
+                  message.error(tKey("copy_failed"));
+                }
+              }}
+            >
+              {tKey("copy")}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className={styles.section}>

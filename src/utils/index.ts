@@ -250,7 +250,6 @@ export const downloadMarkdownAsPDF = async ({
       },
     };
 
-    debugger;
     await html2pdf()
       .set(opt as any)
       .from(wrapper)

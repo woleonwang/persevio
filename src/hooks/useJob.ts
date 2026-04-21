@@ -20,8 +20,7 @@ const useJob = () => {
     const { code, data } = await Get(`/api/jobs/${jobId}`);
 
     if (code === 0) {
-      const job: IJob = data.job ?? data;
-      setJob(job);
+      setJob({ ...data.job, apply_inbound_email: data.apply_inbound_email });
       setUnviewedTalentCount(data.unviewed_talent_count);
     } else {
       message.error("Get job failed");
