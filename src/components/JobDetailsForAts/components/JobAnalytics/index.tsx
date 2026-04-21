@@ -45,7 +45,7 @@ function getTopSource(
   const entries = Object.entries(countBySource);
   if (entries.length === 0) return "--";
   const [topKey] = entries.sort((a, b) => b[1] - a[1])[0];
-  if (SOURCING_CHANNEL_KEYS.includes(topKey)) {
+  if (SOURCING_CHANNEL_KEYS.includes(topKey as any)) {
     return t(`sourcing_channel.${topKey}`);
   } else {
     return topKey;
