@@ -266,7 +266,7 @@ describe("AtsTalentDetail 页面", () => {
 
     expect(mockDownloadMarkdownAsPDF).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: "John Doe_talent_report",
+        name: expect.stringMatching(/^CandidateReport_JohnDoe_TestJob_\d{8}$/),
         element: expect.any(HTMLElement),
       }),
     );
