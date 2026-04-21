@@ -238,7 +238,7 @@ const OAuth = () => {
                     })}
                     onClick={handleMainAction}
                   >
-                    Sign up with your Email
+                    Sign in with your Email
                   </div>
                 </div>
               </div>
