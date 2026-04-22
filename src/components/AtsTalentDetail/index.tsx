@@ -977,6 +977,12 @@ const AtsTalentDetail: React.FC = () => {
     };
   });
 
+  const formattedLinkedinUrl = contact?.linkedin
+    ? contact?.linkedin?.startsWith("http")
+      ? contact.linkedin
+      : `https://${contact.linkedin}`
+    : null;
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -1007,19 +1013,15 @@ const AtsTalentDetail: React.FC = () => {
             {contact.email}
           </a>
         )}
-        {contact?.linkedin && (
+        {formattedLinkedinUrl && (
           <a
-            href={
-              contact.linkedin.startsWith("http")
-                ? contact.linkedin
-                : `https://${contact.linkedin}`
-            }
+            href={formattedLinkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.contactLink}
           >
             <Icon icon={<Link2 />} />
-            {contact.linkedin.replace(/^https?:\/\//, "")}
+            {formattedLinkedinUrl}
           </a>
         )}
       </div>
