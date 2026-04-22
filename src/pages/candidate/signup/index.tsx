@@ -67,9 +67,6 @@ const Signup: React.FC = () => {
       deleteQuery("candidate_token");
     }
 
-    if (jobIdQuery) {
-      setJobId(jobIdQuery);
-    }
     init();
   }, []);
 
@@ -96,7 +93,11 @@ const Signup: React.FC = () => {
         data1.candidate.whatsapp_phone_number || preRegisterInfo.phone || "",
     });
     setIsLoggedIn(true);
-    setJobId(candidate.job_id ?? 0);
+    if (jobIdQuery) {
+      setJobId(jobIdQuery);
+    } else if (candidate.job_id) {
+      setJobId(candidate.job_id);
+    }
 
     // 如果没简历，跳到 resume
     // 如果没绑定邮箱，跳到 binding
