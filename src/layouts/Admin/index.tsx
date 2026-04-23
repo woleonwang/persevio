@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 
-import { BarChartOutlined, SettingOutlined } from "@ant-design/icons";
+import { BarChartOutlined, SettingOutlined, ToolOutlined } from "@ant-design/icons";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
@@ -76,6 +76,12 @@ const AdminLayout = () => {
       title: t("menu.daily_breakdown"),
       path: "/admin/job-daily-stats",
       img: <BarChartOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: t("menu.tools"),
+      path: "/admin/tools",
+      img: <ToolOutlined />,
       requireAdmin: true,
     },
     {

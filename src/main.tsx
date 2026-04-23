@@ -78,6 +78,7 @@ import Admin from "./layouts/Admin/index.tsx";
 import JobDetailsPage from "./pages/admin/job-details/index.tsx";
 import ScopedTalents from "./pages/admin/scoped-talents/index.tsx";
 import EmailDetailsPage from "./pages/admin/emails/index.tsx";
+import AdminTools from "./pages/admin/tools/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
@@ -223,6 +224,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/admin/companies" element={<AdminCompanies />} />
           <Route path="/admin/candidates" element={<AdminCandidates />} />
           <Route path="/admin/emails/:id" element={<EmailDetailsPage />} />
+          <Route path="/admin/tools" element={<AdminTools />} />
           {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
           {/* <Route
             path="/app/candidate-connections"

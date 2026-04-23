@@ -404,6 +404,7 @@ export default {
     candidate_connection_list: "Candidate Connection List",
     company_list: "Company List",
     daily_breakdown: "Daily Job Breakdown",
+    tools: "Tools",
 
     home: "Home",
     profile: "Profile",
@@ -2345,6 +2346,15 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       addSuccess: "Add bonus pool success",
       addFailed: "Add bonus pool failed",
     },
+  },
+
+  admin_tools: {
+    page_title: "Admin Tools",
+    run_reminder_button: "Manually trigger AI interview reminder",
+    confirm_title: "Confirm trigger",
+    confirm_content: "Are you sure you want to manually trigger AI interview reminders?",
+    run_reminder_success: "Triggered successfully",
+    run_reminder_failed: "Trigger failed",
   },
 
   interview_form: {
