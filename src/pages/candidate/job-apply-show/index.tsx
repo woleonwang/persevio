@@ -436,6 +436,7 @@ const JobApplyShow = () => {
                   if (code === 0) {
                     await fetchApplyJob();
                     setWhatsappModeOpen(false);
+                    setInterviewChatDrawerOpen(true);
                   } else {
                     message.error(originalT("submit_failed"));
                   }
