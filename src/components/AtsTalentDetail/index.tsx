@@ -1236,7 +1236,7 @@ const AtsTalentDetail: React.FC = () => {
                 <div className={styles.evalSummaryContent}>
                   <div className={styles.evalOverallText}>
                     <div className={styles.evalOverallLabel}>
-                      <span>Interview Recommendation</span>
+                      <span>Worth Interviewing?</span>
                       <EvaluateResultBadge
                         result={getEvaluateResultLevel(report)}
                       />

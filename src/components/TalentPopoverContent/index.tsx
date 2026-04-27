@@ -191,8 +191,8 @@ const TalentPopoverContent = ({
             {talent && talent.status !== "rejected" && (
               <>
                 <Button
-                  type="primary"
-                  danger
+                  variant="outlined"
+                  color="danger"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!!talent.evaluate_feedback) {
@@ -209,7 +209,8 @@ const TalentPopoverContent = ({
                 </Button>
 
                 <Button
-                  type="primary"
+                  variant="outlined"
+                  color="primary"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsInterviewModalOpen(true);
