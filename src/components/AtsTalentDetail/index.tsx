@@ -240,14 +240,12 @@ const AtsTalentDetail: React.FC = () => {
     (report.requirements ?? []).forEach((item) => {
       pdfReqByLevel[item.level].push({
         assessment: item.assessment,
-        assessment_type: item.assessment_type,
       });
     });
 
     const evalLevel = getEvaluateResultLevel(report);
     const overallFitLabel = originalT(
       `job_talents.evaluate_result_options.${evalLevel}`,
-      { caveat: report.overall_recommendation?.caveat ?? "" },
     );
 
     const pdfRawSkillsFitLevel =
@@ -318,20 +316,16 @@ const AtsTalentDetail: React.FC = () => {
           : styles.pdfBadgeGray;
 
     const headerFitStatusClass =
-      evalLevel === "not_a_fit"
+      evalLevel === "no"
         ? styles.pdfFitStatusNegative
-        : evalLevel === "maybe" ||
-            evalLevel === "good_fit_with_caveat" ||
-            evalLevel === "ideal_candidate_with_caveat"
+        : evalLevel === "maybe" || evalLevel === "yes_but"
           ? styles.pdfFitStatusWarning
           : styles.pdfFitStatusPositive;
 
     const fitPillToneClass =
-      evalLevel === "not_a_fit"
+      evalLevel === "no"
         ? styles.pdfFitPillNegative
-        : evalLevel === "maybe" ||
-            evalLevel === "good_fit_with_caveat" ||
-            evalLevel === "ideal_candidate_with_caveat"
+        : evalLevel === "maybe" || evalLevel === "yes_but"
           ? styles.pdfFitPillWarning
           : styles.pdfFitPillPositive;
 
@@ -365,8 +359,7 @@ const AtsTalentDetail: React.FC = () => {
       return styles.pdfPriorityP2;
     };
 
-    const areasToProbe =
-      report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [];
+    const areasToProbe = report.areas_to_probe_further ?? [];
 
     const pdfHtml = renderToStaticMarkup(
       <main className={styles.pdfPage}>
@@ -716,8 +709,7 @@ const AtsTalentDetail: React.FC = () => {
                         </thead>
                         <tbody>
                           {(report.requirements ?? []).map((item, index) => {
-                            const assessKey =
-                              item.assessment ?? item.assessment_type;
+                            const assessKey = item.assessment;
                             const prio = item.level as "p0" | "p1" | "p2";
                             return (
                               <tr key={index} className={styles.avoidBreak}>
@@ -852,7 +844,6 @@ const AtsTalentDetail: React.FC = () => {
       description: string;
       assessment: string;
       reasoning: string;
-      assessment_type: string;
     }[]
   > = {
     p0: [],
@@ -1228,7 +1219,6 @@ const AtsTalentDetail: React.FC = () => {
                       <span>Overall Fit</span>
                       <EvaluateResultBadge
                         result={getEvaluateResultLevel(report)}
-                        caveat={report.overall_recommendation?.caveat}
                       />
                     </div>
                     <div className={styles.evalOverallDescription}>
@@ -1331,9 +1321,7 @@ const AtsTalentDetail: React.FC = () => {
                           if (!items.length) return null;
 
                           const meetCount = items.filter(
-                            (item) =>
-                              item.assessment === "meets" ||
-                              item.assessment_type === "meets",
+                            (item) => item.assessment === "meets",
                           ).length;
 
                           return (
@@ -1401,9 +1389,7 @@ const AtsTalentDetail: React.FC = () => {
                                   )}
                                 >
                                   {originalT(
-                                    `assessment_options.${
-                                      item.assessment ?? item.assessment_type
-                                    }`,
+                                    `assessment_options.${item.assessment}`,
                                   )}
                                 </div>
                               </div>
@@ -1468,11 +1454,7 @@ const AtsTalentDetail: React.FC = () => {
                       </div>
                     )}
 
-                    {(
-                      report.areas_to_probe_further ??
-                      report.areas_to_probe_futher ??
-                      []
-                    ).length > 0 && (
+                    {(report.areas_to_probe_further ?? []).length > 0 && (
                       <div
                         className={`${styles.evalBlock} ${styles.areasBlock}`}
                       >

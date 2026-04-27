@@ -42,6 +42,7 @@ import EvaluateFeedback from "../EvaluateFeedback";
 import TalentEvaluateFeedbackModal from "../TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
 import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
+import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
 
 interface IProps {
   jobId?: number;
@@ -106,7 +107,7 @@ const TalentCards = (props: IProps) => {
   const [searchName, setSearchName] = useState<string>();
   const [selectedJob, setSelectedJob] = useState<number>();
   const [evaluateResultLevel, setEvaluateResultLevel] =
-    useState<TEvaluateResultLevel>();
+    useState<TInterviewRecommendation>();
   const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
     useState<boolean>(false);
   const [
@@ -397,16 +398,9 @@ const TalentCards = (props: IProps) => {
               onChange={setEvaluateResultLevel}
               style={{ width: 200 }}
               allowClear
-              options={[
-                "ideal_candidate",
-                "ideal_candidate_with_caveat",
-                "good_fit",
-                "good_fit_with_caveat",
-                "maybe",
-                "not_a_fit",
-              ].map((level) => ({
+              options={EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.map((level) => ({
                 label: originalT(
-                  `job_talents.evaluate_result_select_options.${level}`,
+                  `job_talents.evaluate_result_options.${level}`,
                 ),
                 value: level,
               }))}
@@ -598,7 +592,6 @@ const TalentCards = (props: IProps) => {
                     <div className={styles.cardTitleResult}>
                       <EvaluateResultBadge
                         result={getEvaluateResultLevel(evaluateResult)}
-                        caveat={evaluateResult?.overall_recommendation?.caveat}
                       />
                     </div>
                     {!!talent && (
@@ -751,18 +744,16 @@ const TalentCards = (props: IProps) => {
                           Strengths
                         </div>
                         <div>
-                          {(
-                            evaluateResult?.strengths ||
-                            evaluateResult?.strength ||
-                            []
-                          ).map((strength, index) => (
-                            <div
-                              className={styles.evaluateDetailsItemContent}
-                              key={index}
-                            >
-                              {strength.content}
-                            </div>
-                          ))}
+                          {(evaluateResult?.strengths || []).map(
+                            (strength, index) => (
+                              <div
+                                className={styles.evaluateDetailsItemContent}
+                                key={index}
+                              >
+                                {strength.content}
+                              </div>
+                            ),
+                          )}
                         </div>
                       </div>
                       <div
@@ -778,11 +769,7 @@ const TalentCards = (props: IProps) => {
                           />
                           Potential Gaps
                         </div>
-                        {(
-                          evaluateResult?.gaps ||
-                          evaluateResult?.gap ||
-                          []
-                        ).map((gap, index) => (
+                        {(evaluateResult?.gaps || []).map((gap, index) => (
                           <div
                             className={styles.evaluateDetailsItemContent}
                             key={index}

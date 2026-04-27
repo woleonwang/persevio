@@ -17,7 +17,6 @@ import useJob from "@/hooks/useJob";
 import { Get, Post } from "@/utils/request";
 import {
   buildTalentDetailUrl,
-  EVALUATE_RESULT_LEVEL_KEYS,
   getCandidateCardData,
   getEvaluateResultLevel,
   getSourcingChannel,
@@ -28,6 +27,7 @@ import UploadCandidateModal from "./components/UploadCandidateModal";
 import { DraggableCard, DroppableColumn } from "./components/utils";
 import styles from "./style.module.less";
 import {
+  EVALUATE_INTERVIEW_RECOMMENDATION_KEYS,
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,
 } from "@/utils/consts";
@@ -54,7 +54,7 @@ const JobPipeline = ({
   const [sourcingChannels, setSourcingChannels] = useState<string[]>([]);
   const [stageFilters, setStageFilters] = useState<string[]>([]);
   const [evaluateResultLevels, setEvaluateResultLevels] = useState<
-    TEvaluateResultLevel[]
+    TInterviewRecommendation[]
   >([]);
 
   const { options: sourceChannelOptions } = useJobSourceChannelOptions({
@@ -327,8 +327,8 @@ const JobPipeline = ({
           mode="multiple"
           maxTagCount={1}
           allowClear
-          options={EVALUATE_RESULT_LEVEL_KEYS.map((level) => ({
-            label: t(`job_talents.evaluate_result_select_options.${level}`),
+          options={EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.map((level) => ({
+            label: t(`job_talents.evaluate_result_options.${level}`),
             value: level,
           }))}
           style={{ width: 200 }}

@@ -8,14 +8,16 @@ import globalStore from "@/store/global";
 import styles from "./style.module.less";
 import { Get } from "@/utils/request";
 import {
-  EVALUATE_RESULT_LEVEL_KEYS,
   getCandidateCardData,
   getEvaluateResultLevel,
   normalizeTalentField,
   parseJSON,
 } from "@/utils";
 import ListModeTable from "@/components/ListModeTable";
-import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import {
+  EVALUATE_INTERVIEW_RECOMMENDATION_KEYS,
+  TALENT_DETAIL_FROM,
+} from "@/utils/consts";
 import { buildTalentDetailUrl } from "@/utils";
 
 const Talents: React.FC = () => {
@@ -25,7 +27,7 @@ const Talents: React.FC = () => {
   const [searchName, setSearchName] = useState<string>("");
   const [selectedJobId, setSelectedJobId] = useState<number | undefined>();
   const [evaluateResultLevels, setEvaluateResultLevels] = useState<
-    TEvaluateResultLevel[]
+    TInterviewRecommendation[]
   >([]);
 
   const { t } = useTranslation();
@@ -117,8 +119,8 @@ const Talents: React.FC = () => {
           mode="multiple"
           maxTagCount={1}
           allowClear
-          options={EVALUATE_RESULT_LEVEL_KEYS.map((level) => ({
-            label: t(`job_talents.evaluate_result_select_options.${level}`),
+          options={EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.map((level) => ({
+            label: t(`job_talents.evaluate_result_options.${level}`),
             value: level,
           }))}
           style={{ width: 220 }}

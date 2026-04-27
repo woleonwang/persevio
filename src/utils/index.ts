@@ -417,10 +417,13 @@ export const normalizeReport = (report: any): TReport => {
 
   const snapshots = report.profile_snapshot ?? report.snapshots;
   normalizedReport.profile_snapshot = Array.isArray(snapshots)
-    ? snapshots.map((item: { title?: string; details?: string }) => ({
-        title: item?.title ?? "",
-        details: (item?.details as string) ?? "",
-      }))
+    ? snapshots.map(
+        (item: { title?: string; details?: string; content?: string }) => ({
+          title: item?.title ?? "",
+          details:
+            ((item?.details as string) || (item?.content as string)) ?? "",
+        }),
+      )
     : profileSnapshotFromObject;
 
   const potentialGaps = (() => {
@@ -482,7 +485,7 @@ export const normalizeReport = (report: any): TReport => {
         interview_recommendation:
           report.overall_recommendation?.interview_recommendation ??
           {
-            ideal: "absolutely",
+            ideal_candidate: "absolutely",
             good_fit: "yes",
             ideal_candidate_with_caveat: "yes_but",
             good_fit_with_caveat: "maybe",
@@ -543,15 +546,6 @@ export const getCandidateCardData = (item: TCandidateCardSource) => {
     summary,
   };
 };
-
-export const EVALUATE_RESULT_LEVEL_KEYS = [
-  "ideal_candidate",
-  "ideal_candidate_with_caveat",
-  "good_fit",
-  "good_fit_with_caveat",
-  "maybe",
-  "not_a_fit",
-];
 
 export const DEFAULT_TRACKING_SOURCES = [
   "direct",

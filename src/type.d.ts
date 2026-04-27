@@ -476,34 +476,6 @@ type TExtractBasicInfo = {
   }[];
 };
 
-// type TExtractEvaluateResult = {
-//   thumbnail_summary: string;
-//   overall_recommendation: {
-//     result: TEvaluateResultLevel;
-//     caveat?: string;
-//   };
-//   current_compensation: string;
-//   expected_compensation: string;
-//   visa: string;
-//   strengths?: {
-//     content: string;
-//   }[];
-//   gaps?: {
-//     content: string;
-//   }[];
-//   // 兼容老数据
-//   result: TEvaluateResultLevel;
-//   strength?: {
-//     content: string;
-//   }[];
-//   gap?: {
-//     content: string;
-//   }[];
-
-//   // 兼容老数据
-//   summary: string;
-// };
-
 type TTalentListItem = TTalent & {
   basicInfo: TExtractBasicInfo;
   parsedEvaluateResult: TReport;
@@ -870,14 +842,6 @@ type TJobCollaborator = {
   job_id: number;
   staff_id: number;
 };
-
-type TEvaluateResultLevel =
-  | "ideal_candidate"
-  | "good_fit"
-  | "ideal_candidate_with_caveat"
-  | "good_fit_with_caveat"
-  | "maybe"
-  | "not_a_fit";
 
 type TInterviewRecommendation =
   | "absolutely"

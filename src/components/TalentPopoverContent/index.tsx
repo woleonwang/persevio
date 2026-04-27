@@ -153,7 +153,6 @@ const TalentPopoverContent = ({
               <div className={styles.cardTitleResult}>
                 <EvaluateResultBadge
                   result={getEvaluateResultLevel(evaluateResult)}
-                  caveat={evaluateResult?.overall_recommendation?.caveat}
                 />
               </div>
               {!!talent && (
@@ -272,11 +271,7 @@ const TalentPopoverContent = ({
                 Strengths
               </div>
               <div>
-                {(
-                  evaluateResult?.strengths ||
-                  evaluateResult?.strength ||
-                  []
-                ).map((strength, index) => (
+                {(evaluateResult?.strengths || []).map((strength, index) => (
                   <div
                     className={styles.evaluateDetailsItemContent}
                     key={index}
@@ -296,16 +291,11 @@ const TalentPopoverContent = ({
                 />
                 Potential Gaps
               </div>
-              {(evaluateResult?.gaps || evaluateResult?.gap || []).map(
-                (gap, index) => (
-                  <div
-                    className={styles.evaluateDetailsItemContent}
-                    key={index}
-                  >
-                    {gap.content}
-                  </div>
-                ),
-              )}
+              {(evaluateResult?.gaps || []).map((gap, index) => (
+                <div className={styles.evaluateDetailsItemContent} key={index}>
+                  {gap.content}
+                </div>
+              ))}
             </div>
           </div>
         )}

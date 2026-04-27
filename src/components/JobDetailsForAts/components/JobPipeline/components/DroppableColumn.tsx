@@ -7,7 +7,8 @@ import { getInitials } from "./utils";
 import DraggableCard from "./DraggableCard";
 import styles from "../style.module.less";
 import dayjs from "dayjs";
-import { EVALUATE_RESULT_LEVEL_KEYS, getEvaluateResultLevel } from "@/utils";
+import { getEvaluateResultLevel } from "@/utils";
+import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
 
 interface IProps {
   stage: PipelineStage;
@@ -126,15 +127,11 @@ const DroppableColumn = ({
               const fitLevelA = getEvaluateResultLevel(a.parsedEvaluateResult);
               const fitLevelB = getEvaluateResultLevel(b.parsedEvaluateResult);
 
-              if (
-                !a.cachedViewedAt &&
-                fitLevelA !== "not_a_fit" &&
-                b.cachedViewedAt
-              ) {
+              if (!a.cachedViewedAt && fitLevelA !== "no" && b.cachedViewedAt) {
                 return -1;
               } else if (
                 !b.cachedViewedAt &&
-                fitLevelB !== "not_a_fit" &&
+                fitLevelB !== "no" &&
                 a.cachedViewedAt
               ) {
                 return 1;
@@ -142,8 +139,8 @@ const DroppableColumn = ({
                 return dayjs(b.created_at).diff(dayjs(a.created_at));
               } else {
                 return (
-                  EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelA) -
-                  EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelB)
+                  EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.indexOf(fitLevelA) -
+                  EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.indexOf(fitLevelB)
                 );
               }
             })

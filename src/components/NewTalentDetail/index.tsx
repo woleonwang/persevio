@@ -277,7 +277,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
               </div>
             </div>
 
-            {!!report.result || !!report.overall_recommendation ? (
+            {!!report.overall_recommendation ? (
               <div
                 ref={reportContainerRef}
                 className={styles.newReportContainer}
@@ -349,7 +349,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
                   {t("ai_interview_record")}
                 </Button>
               </div>
-              {!!report.result || !!report.overall_recommendation ? (
+              {!!report.overall_recommendation ? (
                 <div ref={reportContainerRef} style={{ marginTop: 12 }}>
                   <Report
                     candidateName={talent.name}

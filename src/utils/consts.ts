@@ -42,3 +42,11 @@ export const SkillsFitKnownKeys: TSkillsFitKey[] = [
   "uncertain",
   "poor",
 ];
+
+export const EVALUATE_INTERVIEW_RECOMMENDATION_KEYS: string[] = [
+  "absolutely",
+  "yes",
+  "yes_but",
+  "maybe",
+  "no",
+];

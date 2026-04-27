@@ -12,17 +12,14 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import List from "@/assets/icons/list";
-import {
-  EVALUATE_RESULT_LEVEL_KEYS,
-  getCandidateCardData,
-  getEvaluateResultLevel,
-} from "@/utils";
+import { getCandidateCardData, getEvaluateResultLevel } from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
 
 import styles from "./style.module.less";
 import globalStore from "@/store/global";
+import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
 
 export type PipelineStageLike = {
   id: string;
@@ -100,8 +97,8 @@ const ListModeTable = ({
       }
 
       return (
-        EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelA) -
-        EVALUATE_RESULT_LEVEL_KEYS.indexOf(fitLevelB)
+        EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.indexOf(fitLevelA) -
+        EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.indexOf(fitLevelB)
       );
     });
   }, [items]);

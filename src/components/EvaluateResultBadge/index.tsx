@@ -9,14 +9,7 @@ import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-  result:
-    | "ideal_candidate"
-    | "good_fit"
-    | "ideal_candidate_with_caveat"
-    | "good_fit_with_caveat"
-    | "maybe"
-    | "not_a_fit";
-  caveat?: string;
+  result: TInterviewRecommendation;
   size?: "small" | "normal";
 }
 
@@ -25,26 +18,20 @@ const EvaluateResultBadge = (props: IProps) => {
   const { t: originalT } = useTranslation();
 
   const t = (key: string, params?: Record<string, string>) =>
-    originalT(
-      size === "small"
-        ? `job_talents.evaluate_result_select_options.${key}`
-        : `job_talents.evaluate_result_options.${key}`,
-      params,
-    );
+    originalT(`job_talents.evaluate_result_options.${key}`, params);
 
-  const iconMappings = {
-    ideal_candidate: <IdealCandidateIcon />,
-    good_fit: <GoodFitIcon />,
-    ideal_candidate_with_caveat: <RecommendWithReservationIcon />,
-    good_fit_with_caveat: <RecommendWithReservationIcon />,
+  const iconMappings: Record<TInterviewRecommendation, React.ReactNode> = {
+    absolutely: <IdealCandidateIcon />,
+    yes: <GoodFitIcon />,
+    yes_but: <RecommendWithReservationIcon />,
     maybe: <RecommendWithReservationIcon />,
-    not_a_fit: <NotAFitIcon />,
+    no: <NotAFitIcon />,
   };
 
   return (
     <div className={classnames(styles.badge, styles[result], styles[size])}>
       {size === "normal" && <Icon icon={iconMappings[result]} />}
-      {t(result, { caveat: props.caveat ?? "" })}
+      {t(result)}
     </div>
   );
 };

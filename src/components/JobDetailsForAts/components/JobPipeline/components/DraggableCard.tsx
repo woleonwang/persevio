@@ -106,14 +106,9 @@ const DraggableCard = ({
           <div className={styles.cardNameWrap}>{name}</div>
           {!item.viewed_at && <span className={styles.newBadge}>NEW!</span>}
         </div>
+        <div>123</div>
         <div className={styles.cardDivider} />
         <div className={styles.cardBody}>
-          <div className={styles.infoRow}>
-            <span className={styles.infoLabel}>Fit</span>
-            <span className={`${styles.infoValue}`}>
-              <EvaluateResultBadge result={fitResult} size="small" />
-            </span>
-          </div>
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Exp</span>
             <span className={styles.infoValue}>{exp}</span>

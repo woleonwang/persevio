@@ -40,9 +40,6 @@ const Report: React.FC<IProps> = (props) => {
       description: string;
       assessment: string;
       reasoning: string;
-
-      // 兼容老数据
-      assessment_type: string;
     }[]
   > = {
     p0: [],
@@ -74,10 +71,7 @@ const Report: React.FC<IProps> = (props) => {
         <div className={styles.overallRecommendation}>
           <div>Overall Recommendation</div>
           <div>
-            <EvaluateResultBadge
-              result={getEvaluateResultLevel(report)}
-              caveat={report?.overall_recommendation?.caveat}
-            />
+            <EvaluateResultBadge result={getEvaluateResultLevel(report)} />
           </div>
         </div>
       </div>
@@ -114,13 +108,10 @@ const Report: React.FC<IProps> = (props) => {
             const items =
               requirementsSummaryMappings[level as "p0" | "p1" | "p2"];
             const meetCount = items.filter(
-              (item) =>
-                item.assessment === "meets" || item.assessment_type === "meets",
+              (item) => item.assessment === "meets",
             ).length;
             const partiallyMeetCount = items.filter(
-              (item) =>
-                item.assessment === "partially_meets" ||
-                item.assessment_type === "partially_meets",
+              (item) => item.assessment === "partially_meets",
             ).length;
             return (
               <div
@@ -171,11 +162,7 @@ const Report: React.FC<IProps> = (props) => {
                   <div>{item.level}</div>
                   <div>{item.description}</div>
                   <div className={styles[item.assessment]}>
-                    {originalT(
-                      `assessment_options.${
-                        item.assessment ?? item.assessment_type
-                      }`,
-                    )}
+                    {originalT(`assessment_options.${item.assessment}`)}
                   </div>
                   <div>{item.reasoning}</div>
                 </div>
@@ -192,16 +179,6 @@ const Report: React.FC<IProps> = (props) => {
                 <span className={styles.listTitle}>{snapshot.title}:</span>
                 <span className={classnames(styles.snapshotContent, "bgNone")}>
                   {snapshot.details}
-                </span>
-              </div>
-            );
-          })}
-          {(report.snapshots ?? []).map((snapshot, index) => {
-            return (
-              <div key={index} className={styles.listItem}>
-                <span className={styles.listTitle}>{snapshot.title}:</span>
-                <span className={classnames(styles.snapshotContent, "bgNone")}>
-                  {snapshot.content}
                 </span>
               </div>
             );
@@ -270,8 +247,7 @@ const Report: React.FC<IProps> = (props) => {
           </div>
         </div>
       )}
-      {(report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [])
-        .length > 0 && (
+      {(report.areas_to_probe_further ?? []).length > 0 && (
         <div className={styles.block}>
           <div className={styles.blockTitle}>Areas to Probe Further</div>
           <div>
