@@ -14,7 +14,7 @@ import TalentPopoverContent from "@/components/TalentPopoverContent";
 import { useTranslation } from "react-i18next";
 import { Post } from "@/utils/request";
 import globalStore from "@/store/global";
-import { LogisticsFitKnownKeys } from "@/utils/consts";
+import { LogisticsFitKnownKeys, SkillsFitKnownKeys } from "@/utils/consts";
 
 interface IProps {
   item: TTalentListItem;
@@ -77,7 +77,9 @@ const DraggableCard = ({
 
   const skillsLevel = evaluateResult?.overall_recommendation?.skills_fit?.level;
   const skillsText = skillsLevel
-    ? t(`job_talents.skills_fit_options.${skillsLevel}`)
+    ? SkillsFitKnownKeys.includes(skillsLevel as TSkillsFitKey)
+      ? t(`job_talents.skills_fit_options.${skillsLevel}`)
+      : skillsLevel
     : "-";
 
   const logisticsRaw =
