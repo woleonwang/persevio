@@ -57,7 +57,11 @@ import ScheduleInterview from "@/assets/icons/schedule-interview";
 import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
 import RichTextWithVoice from "../RichTextWithVoice";
-import { SkillsFitKnownKeys, TALENT_DETAIL_FROM } from "@/utils/consts";
+import {
+  LogisticsFitKnownKeys,
+  SkillsFitKnownKeys,
+  TALENT_DETAIL_FROM,
+} from "@/utils/consts";
 import { tokenStorage } from "@/utils/storage";
 
 type TCustomizedInterview = {
@@ -517,7 +521,11 @@ const AtsTalentDetail: React.FC = () => {
                           )}
                           key={level}
                         >
-                          {level}
+                          {LogisticsFitKnownKeys.includes(
+                            level as TLogisticsFitKey,
+                          )
+                            ? t(`job_talents.logistics_fit_options.${level}`)
+                            : level}
                         </span>
                       ))}
                     </div>
@@ -905,7 +913,9 @@ const AtsTalentDetail: React.FC = () => {
       ? [logisticsLevelsRaw]
       : [];
   const logisticsLevelMeta = logisticsLevels.map((level) => ({
-    label: level,
+    label: LogisticsFitKnownKeys.includes(level as TLogisticsFitKey)
+      ? t(`job_talents.logistics_fit_options.${level}`)
+      : level,
     className:
       level === "no_issues"
         ? styles.evalDetailLevelGood
