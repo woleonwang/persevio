@@ -224,7 +224,7 @@ const TalentPopoverContent = ({
       </div>
 
       {isPipeline && (
-        <div>
+        <div className={styles.signalRowWrap}>
           <div className={styles.cardTitleResult}>
             <div
               className={`${styles.interviewSection} ${styles[`theme-${fitResult}`]}`}
@@ -256,16 +256,18 @@ const TalentPopoverContent = ({
             </div>
           </div>
           {!!talent && (
-            <EvaluateFeedback
-              value={talent.evaluate_feedback}
-              onChange={(value) => {
-                updateTalentEvaluateFeedback(talent.job_id, talent.id, value);
-              }}
-              onOpen={() => {
-                setNeedConfirmEvaluateFeedbackConversation(false);
-                setOpenEvaluateFeedbackConversation(true);
-              }}
-            />
+            <div className={styles.feedbackWrap}>
+              <EvaluateFeedback
+                value={talent.evaluate_feedback}
+                onChange={(value) => {
+                  updateTalentEvaluateFeedback(talent.job_id, talent.id, value);
+                }}
+                onOpen={() => {
+                  setNeedConfirmEvaluateFeedbackConversation(false);
+                  setOpenEvaluateFeedbackConversation(true);
+                }}
+              />
+            </div>
           )}
         </div>
       )}
