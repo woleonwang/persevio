@@ -509,7 +509,7 @@ const AtsTalentDetail: React.FC = () => {
 
                 <div className={styles.pdfMetricRow}>
                   <div className={styles.pdfMetricHead}>
-                    <h5>Logistical Fit</h5>
+                    <h5>Logistics Fit</h5>
                     <div className={styles.pdfMetricBadgeWrap}>
                       {logisticsLevels.map((level) => (
                         <span
@@ -1266,7 +1266,7 @@ const AtsTalentDetail: React.FC = () => {
                   </div>
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
-                      <span>Logistical Fit</span>
+                      <span>Logistics Fit</span>
                       <div className={styles.evalDetailTags}>
                         {logisticsLevelMeta.map((item) => (
                           <div
