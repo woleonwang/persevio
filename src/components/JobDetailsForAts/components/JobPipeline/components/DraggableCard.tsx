@@ -158,13 +158,9 @@ const DraggableCard = ({
         <div className={`${styles.interviewSection} ${interviewThemeClass}`}>
           <div className={styles.interviewRow}>
             <span className={styles.interviewLabel}>Interview?</span>
-            <Tooltip title={interviewLabel}>
-              <span
-                className={`${styles.interviewValue} ${interviewLevelClass}`}
-              >
-                {interviewLabel}
-              </span>
-            </Tooltip>
+            <span className={`${styles.interviewValue} ${interviewLevelClass}`}>
+              {interviewLabel}
+            </span>
           </div>
           <div className={styles.secondaryRow}>
             <span className={styles.secondaryLabel}>Skills</span>
