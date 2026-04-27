@@ -912,9 +912,7 @@ type TReport = {
   }[];
 
   overall_recommendation?: {
-    result: string;
     interview_recommendation?: TInterviewRecommendation;
-    caveat?: string;
     skills_fit: {
       level:
         | "ideal"
@@ -945,14 +943,11 @@ type TReport = {
     description: string;
     assessment: string;
     reasoning: string;
-
-    // 兼容老数据
-    assessment_type: string;
   }[];
 
   profile_snapshot: {
     title: string;
-    details: string;
+    details: string | string[];
   }[];
 
   key_information: {
@@ -961,12 +956,12 @@ type TReport = {
   }[];
 
   ai_interview_summary: {
-    topics_covered: {
+    topics_covered?: {
       narrative: string;
       topics: string[];
     };
-    key_revelations: string[];
-    interview_observations: { title: string; details: string }[];
+    key_revelations?: string[];
+    interview_observations?: { title: string; details: string }[];
   };
   key_strengths: {
     title: string;
@@ -980,23 +975,6 @@ type TReport = {
     title: string;
     details: string;
   }[];
-
-  // 兼容老数据
-  snapshots: {
-    title: string;
-    content: string;
-  }[];
-  areas_to_probe_futher: {
-    title: string;
-    details: string;
-  }[];
-  strength?: {
-    content: string;
-  }[];
-  gap?: {
-    content: string;
-  }[];
-  result: TEvaluateResultLevel;
 };
 
 type TSkillsFitKey =

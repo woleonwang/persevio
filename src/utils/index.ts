@@ -326,28 +326,8 @@ export const getDocumentType = (key: string): string => {
 
 export const getEvaluateResultLevel = (
   report?: TReport,
-): TEvaluateResultLevel => {
-  const interviewRecommendation =
-    report?.overall_recommendation?.interview_recommendation;
-  const recommendationMap: Record<TInterviewRecommendation, TEvaluateResultLevel> =
-    {
-      absolutely: "ideal_candidate",
-      yes: "good_fit",
-      yes_but: "ideal_candidate_with_caveat",
-      maybe: "maybe",
-      no: "not_a_fit",
-    };
-  const mappedResult = interviewRecommendation
-    ? recommendationMap[interviewRecommendation]
-    : undefined;
-  const result =
-    mappedResult ?? report?.overall_recommendation?.result ?? report?.result;
-
-  if (!result) return "maybe";
-
-  return EVALUATE_RESULT_LEVEL_KEYS.includes(result)
-    ? (result as TEvaluateResultLevel)
-    : "maybe";
+): TInterviewRecommendation => {
+  return report?.overall_recommendation?.interview_recommendation ?? "maybe";
 };
 
 const toStringArray = (value: unknown): string[] => {
@@ -360,60 +340,26 @@ const toStringArray = (value: unknown): string[] => {
   return [];
 };
 
-export const normalizeReport = (rawReport: unknown): TReport => {
-  type TLegacyReport = Omit<
-    Partial<TReport>,
-    | "profile_snapshot"
-    | "potential_gaps"
-    | "ai_interview_summary"
-    | "requirements"
-    | "overall_recommendation"
-  > & {
-    strength?: { content?: string }[];
-    gap?: { content?: string }[];
-    profile_snapshot?: TReport["profile_snapshot"] | Record<string, unknown>;
-    potential_gaps?:
-      | TReport["potential_gaps"]
-      | {
-          structural?: { title?: string; details?: string }[];
-          learnable?: { title?: string; details?: string }[];
-        };
-    ai_interview_summary?: {
-      topics_covered?:
-        | string[]
-        | {
-            narrative?: string;
-            topics?: string[];
-          };
-      key_revelations?: string[];
-      interview_observations?: { title: string; details: string }[];
-    };
-    requirements?: (TReport["requirements"][number] & { assessment_type?: string })[];
-    overall_recommendation?: (NonNullable<TReport["overall_recommendation"]> & {
-      logistics_fit?: {
-        level?: string | string[];
-        explanation?: string;
-      };
-    }) | null;
+export const normalizeReport = (report: any): TReport => {
+  const normalizedReport: TReport = {
+    ...report,
   };
-  const report: TLegacyReport =
-    rawReport && typeof rawReport === "object"
-      ? (rawReport as TLegacyReport)
-      : {};
 
-  const strengths = toStringArray(
-    Array.isArray(report.strengths)
-      ? report.strengths.map((item: { content?: string }) => item?.content)
-      : Array.isArray(report.strength)
-        ? report.strength.map((item: { content?: string }) => item?.content)
+  const strengths = report.strengths ?? report.strength;
+  normalizedReport.strengths = toStringArray(
+    Array.isArray(strengths)
+      ? strengths.map((item: { content?: string }) => item?.content)
+      : Array.isArray(strengths)
+        ? strengths.map((item: { content?: string }) => item?.content)
         : [],
   ).map((content) => ({ content }));
 
-  const gaps = toStringArray(
-    Array.isArray(report.gaps)
-      ? report.gaps.map((item: { content?: string }) => item?.content)
-      : Array.isArray(report.gap)
-        ? report.gap.map((item: { content?: string }) => item?.content)
+  const gaps = report.gaps ?? report.gap;
+  normalizedReport.gaps = toStringArray(
+    Array.isArray(gaps)
+      ? gaps.map((item: { content?: string }) => item?.content)
+      : Array.isArray(gaps)
+        ? gaps.map((item: { content?: string }) => item?.content)
         : [],
   ).map((content) => ({ content }));
 
@@ -422,8 +368,8 @@ export const normalizeReport = (rawReport: unknown): TReport => {
     if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
       return [];
     }
-    const result: { title: string; details: string }[] = [];
-    const pushItem = (title: string, details?: string) => {
+    const result: { title: string; details: string | string[] }[] = [];
+    const pushItem = (title: string, details?: string | string[]) => {
       if (!details) return;
       result.push({ title, details });
     };
@@ -450,11 +396,8 @@ export const normalizeReport = (rawReport: unknown): TReport => {
     );
     pushItem("Career Trajectory", snapshotObj.career_trajectory);
     pushItem("Location Trajectory", snapshotObj.location_trajectory);
-    pushItem("Domain Expertise", toStringArray(snapshotObj.domain_expertise).join(", "));
-    pushItem(
-      "Work Environments",
-      toStringArray(snapshotObj.work_environments).join(", "),
-    );
+    pushItem("Domain Expertise", toStringArray(snapshotObj.domain_expertise));
+    pushItem("Work Environments", toStringArray(snapshotObj.work_environments));
     const tenure = snapshotObj.tenure;
     if (tenure && typeof tenure === "object") {
       const tenureLines = [
@@ -464,23 +407,24 @@ export const normalizeReport = (rawReport: unknown): TReport => {
         tenure.gaps ? `Gaps: ${tenure.gaps}` : "",
         tenure.interpretation ? `Interpretation: ${tenure.interpretation}` : "",
       ].filter(Boolean);
-      pushItem("Tenure", tenureLines.join("; "));
+      pushItem("Tenure", tenureLines);
     }
-    pushItem("Education", toStringArray(snapshotObj.education).join(", "));
-    pushItem("Highlights", toStringArray(snapshotObj.highlights).join(", "));
-    pushItem("Flags", toStringArray(snapshotObj.flags).join(", "));
+    pushItem("Education", toStringArray(snapshotObj.education));
+    pushItem("Highlights", toStringArray(snapshotObj.highlights));
+    pushItem("Flags", toStringArray(snapshotObj.flags));
     return result;
   })();
 
-  const profileSnapshot = Array.isArray(report.profile_snapshot)
-    ? report.profile_snapshot.map((item: { title?: string; details?: string }) => ({
+  const snapshots = report.profile_snapshot ?? report.snapshots;
+  normalizedReport.profile_snapshot = Array.isArray(snapshots)
+    ? snapshots.map((item: { title?: string; details?: string }) => ({
         title: item?.title ?? "",
-        details: item?.details ?? "",
+        details: (item?.details as string) ?? "",
       }))
     : profileSnapshotFromObject;
 
   const potentialGaps = (() => {
-    const value = report.potential_gaps;
+    const value = report.potential_gaps ?? report.gap;
     if (Array.isArray(value)) {
       return value.map((item: { title?: string; details?: string }) => ({
         title: item?.title ?? "",
@@ -504,10 +448,13 @@ export const normalizeReport = (rawReport: unknown): TReport => {
     }
     return [];
   })();
+  normalizedReport.potential_gaps = potentialGaps;
 
   const aiTopicsCoveredRaw = report.ai_interview_summary?.topics_covered;
   const topicsCovered =
-    aiTopicsCoveredRaw && typeof aiTopicsCoveredRaw === "object" && !Array.isArray(aiTopicsCoveredRaw)
+    aiTopicsCoveredRaw &&
+    typeof aiTopicsCoveredRaw === "object" &&
+    !Array.isArray(aiTopicsCoveredRaw)
       ? {
           narrative: aiTopicsCoveredRaw.narrative ?? "",
           topics: toStringArray(aiTopicsCoveredRaw.topics),
@@ -516,85 +463,43 @@ export const normalizeReport = (rawReport: unknown): TReport => {
           narrative: "",
           topics: toStringArray(aiTopicsCoveredRaw),
         };
+  if (!normalizedReport.ai_interview_summary) {
+    normalizedReport.ai_interview_summary = {};
+  }
+  normalizedReport.ai_interview_summary.topics_covered = topicsCovered;
 
   const requirements = Array.isArray(report.requirements)
-    ? report.requirements.map((item) => ({
+    ? report.requirements.map((item: any) => ({
         ...item,
         assessment: item.assessment ?? item.assessment_type ?? "",
-        assessment_type: item.assessment_type ?? item.assessment ?? "",
       }))
     : [];
+  normalizedReport.requirements = requirements;
 
-  const logisticsLevels = toStringArray(
-    report.overall_recommendation?.logistics_fit?.level,
-  );
   const normalizedOverallRecommendation = report.overall_recommendation
     ? {
         ...report.overall_recommendation,
-        result:
-          report.overall_recommendation?.result ??
-          (report.overall_recommendation?.interview_recommendation
-            ? ({
-                absolutely: "ideal_candidate",
-                yes: "good_fit",
-                yes_but: "ideal_candidate_with_caveat",
-                maybe: "maybe",
-                no: "not_a_fit",
-              } as Record<TInterviewRecommendation, TEvaluateResultLevel>)[
-                report.overall_recommendation.interview_recommendation
-              ]
-            : undefined) ??
-          report.result,
-        skills_fit: {
-          level: report.overall_recommendation?.skills_fit?.level ?? "uncertain",
-          explanation:
-            report.overall_recommendation?.skills_fit?.explanation ?? "",
-        },
-        logistics_fit: {
-          level: logisticsLevels,
-          explanation:
-            report.overall_recommendation?.logistics_fit?.explanation ?? "",
-        },
-        recruiter_note: report.overall_recommendation?.recruiter_note ?? "",
+        interview_recommendation:
+          report.overall_recommendation?.interview_recommendation ??
+          {
+            ideal: "absolutely",
+            good_fit: "yes",
+            ideal_candidate_with_caveat: "yes_but",
+            good_fit_with_caveat: "maybe",
+            maybe: "maybe",
+            not_a_fit: "no",
+          }[
+            (report.overall_recommendation?.result ||
+              report.result ||
+              "maybe") as string
+          ],
       }
     : undefined;
+  normalizedReport.overall_recommendation = normalizedOverallRecommendation;
 
-  return {
-    ...report,
-    strengths,
-    gaps,
-    requirements,
-    profile_snapshot: profileSnapshot,
-    potential_gaps: potentialGaps,
-    areas_to_probe_further:
-      report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [],
-    ai_interview_summary: {
-      topics_covered: topicsCovered,
-      key_revelations: toStringArray(report.ai_interview_summary?.key_revelations),
-      interview_observations: Array.isArray(
-        report.ai_interview_summary?.interview_observations,
-      )
-        ? report.ai_interview_summary.interview_observations
-        : [],
-    },
-    summary:
-      typeof report.summary === "string"
-        ? {
-            description: report.summary,
-            interest_level: {
-              level: "unclear",
-              explanation: "",
-            },
-          }
-        : (report.summary ?? {
-            description: "",
-            interest_level: {
-              level: "unclear",
-              explanation: "",
-            },
-          }),
-    overall_recommendation: normalizedOverallRecommendation,
-  } as TReport;
+  normalizedReport.areas_to_probe_further =
+    report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [];
+  return normalizedReport;
 };
 
 /** 候选人卡片/搜索：合并 basicInfo 与 evaluate 侧字段 */
@@ -624,8 +529,7 @@ export const getCandidateCardData = (item: TCandidateCardSource) => {
     typeof evaluateResult?.summary === "string"
       ? evaluateResult.summary
       : evaluateResult?.summary?.description || "";
-  const summary =
-    evaluateResult?.thumbnail_summary || summaryText;
+  const summary = evaluateResult?.thumbnail_summary || summaryText;
   return {
     name,
     basicInfo,
