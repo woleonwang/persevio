@@ -20,6 +20,7 @@ import {
   getCandidateCardData,
   getEvaluateResultLevel,
   getSourcingChannel,
+  normalizeReport,
   normalizeTalentField,
   parseJSON,
 } from "@/utils";
@@ -125,7 +126,7 @@ const JobPipeline = ({
       const parsedTalents = (data.talents ?? []).map((t) => ({
         ...t,
         basicInfo: parseJSON(t.basic_info_json),
-        parsedEvaluateResult: parseJSON(t.evaluate_json),
+        parsedEvaluateResult: normalizeReport(parseJSON(t.evaluate_json)),
       }));
 
       setTalents(

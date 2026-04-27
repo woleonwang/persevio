@@ -948,3 +948,14 @@ type TSkillsFitKey =
   | "near_fit"
   | "uncertain"
   | "poor";
+
+type TLogisticsFitKey =
+  | "no_issues"
+  | "location_mismatch"
+  | "work_arrangement_mismatch"
+  | "travel_constraint"
+  | "needs_sponsorship"
+  | "above_budget"
+  | "long_notice"
+  | "availability"
+  | "other_constraint";

@@ -50,3 +50,15 @@ export const EVALUATE_INTERVIEW_RECOMMENDATION_KEYS: string[] = [
   "maybe",
   "no",
 ];
+
+export const LogisticsFitKnownKeys: TLogisticsFitKey[] = [
+  "no_issues",
+  "location_mismatch",
+  "work_arrangement_mismatch",
+  "travel_constraint",
+  "needs_sponsorship",
+  "above_budget",
+  "long_notice",
+  "availability",
+  "other_constraint",
+];
