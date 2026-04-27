@@ -1047,7 +1047,13 @@ const AtsTalentDetail: React.FC = () => {
           {(report.profile_snapshot ?? []).map((snapshot) => (
             <div className={styles.snapshotItem}>
               <span className={styles.snapshotLabel}>{snapshot.title}</span>
-              <span className={styles.snapshotValue}>{snapshot.details}</span>
+              <span className={styles.snapshotValue}>
+                {typeof snapshot.details === "string"
+                  ? snapshot.details
+                  : snapshot.details.map((detail, index) => (
+                      <div key={index}>{detail}</div>
+                    ))}
+              </span>
             </div>
           ))}
         </div>
