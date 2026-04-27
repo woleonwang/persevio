@@ -11,10 +11,11 @@ import { useTranslation } from "react-i18next";
 interface IProps {
   result: TInterviewRecommendation;
   size?: "small" | "normal";
+  withTitle?: boolean;
 }
 
 const EvaluateResultBadge = (props: IProps) => {
-  const { result, size = "normal" } = props;
+  const { result, size = "normal", withTitle = false } = props;
   const { t: originalT } = useTranslation();
 
   const t = (key: string, params?: Record<string, string>) =>
@@ -31,6 +32,7 @@ const EvaluateResultBadge = (props: IProps) => {
   return (
     <div className={classnames(styles.badge, styles[result], styles[size])}>
       {size === "normal" && <Icon icon={iconMappings[result]} />}
+      {withTitle && <span style={{ color: "#666" }}>Interview?</span>}
       {t(result)}
     </div>
   );

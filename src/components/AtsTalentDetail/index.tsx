@@ -454,6 +454,7 @@ const AtsTalentDetail: React.FC = () => {
                   headerFitStatusClass,
                 )}
               >
+                <span style={{ color: "#666" }}>Interview?</span>{" "}
                 {overallFitLabel}
               </span>
             </div>
@@ -472,7 +473,7 @@ const AtsTalentDetail: React.FC = () => {
                 aria-labelledby="pdf-overall-fit"
               >
                 <div className={styles.pdfFitRow}>
-                  <h4 id="pdf-overall-fit">Overall Fit</h4>
+                  <h4 id="pdf-overall-fit">Interview Recommendation</h4>
                   <span
                     className={classnames(styles.pdfFitPill, fitPillToneClass)}
                   >
@@ -1189,6 +1190,7 @@ const AtsTalentDetail: React.FC = () => {
                   </div>
                   <EvaluateResultBadge
                     size="small"
+                    withTitle
                     result={getEvaluateResultLevel(report)}
                   />
                 </div>
@@ -1216,7 +1218,7 @@ const AtsTalentDetail: React.FC = () => {
                 <div className={styles.evalSummaryContent}>
                   <div className={styles.evalOverallText}>
                     <div className={styles.evalOverallLabel}>
-                      <span>Overall Fit</span>
+                      <span>Interview Recommendation</span>
                       <EvaluateResultBadge
                         result={getEvaluateResultLevel(report)}
                       />

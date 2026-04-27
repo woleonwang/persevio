@@ -1790,7 +1790,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       persevio: "Persevio",
       candidate_name: "Candidate Name",
       stage: "Stage",
-      overall_fit: "Overall Fit",
+      overall_fit: "Interview?",
       experience: "Experience",
       visa_status: "Visa Status",
       current_comp: "Current Comp",
