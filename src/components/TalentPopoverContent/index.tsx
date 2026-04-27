@@ -2,7 +2,7 @@ import classnames from "classnames";
 import styles from "./style.module.less";
 import { buildTalentDetailUrl, getEvaluateResultLevel } from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
-import { Button, message, Modal } from "antd";
+import { Button, message, Modal, Tooltip } from "antd";
 import { useState } from "react";
 import { Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
@@ -16,8 +16,11 @@ import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFe
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
-import { TALENT_DETAIL_FROM } from "@/utils/consts";
-import EvaluateResultBadge from "../EvaluateResultBadge";
+import {
+  LogisticsFitKnownKeys,
+  SkillsFitKnownKeys,
+  TALENT_DETAIL_FROM,
+} from "@/utils/consts";
 
 interface IProps {
   variant: "pipeline" | "talents";
@@ -136,6 +139,38 @@ const TalentPopoverContent = ({
     window.open(buildTalentDetailUrl(talent.job_id, talent.id, from), "_blank");
   };
 
+  const getSkillsText = () => {
+    const skillsLevel =
+      evaluateResult?.overall_recommendation?.skills_fit?.level;
+    const skillsText = skillsLevel
+      ? SkillsFitKnownKeys.includes(skillsLevel as TSkillsFitKey)
+        ? t(`skills_fit_options.${skillsLevel}`)
+        : skillsLevel
+      : "-";
+    return skillsText;
+  };
+
+  const getLogisticsText = () => {
+    const logisticsRaw =
+      evaluateResult?.overall_recommendation?.logistics_fit?.level;
+    const logisticsList = Array.isArray(logisticsRaw)
+      ? logisticsRaw
+      : logisticsRaw
+        ? [logisticsRaw]
+        : [];
+    const logisticsText =
+      logisticsList.length > 0
+        ? logisticsList
+            .map((level) =>
+              LogisticsFitKnownKeys.includes(level as TLogisticsFitKey)
+                ? t(`logistics_fit_options.${level}`)
+                : level,
+            )
+            .join(", ")
+        : "-";
+    return logisticsText;
+  };
+
   return (
     <div
       key={talent.id}
@@ -150,33 +185,6 @@ const TalentPopoverContent = ({
           >
             {talent.name || "-"}
           </div>
-          {isPipeline && (
-            <>
-              <div className={styles.cardTitleResult}>
-                <EvaluateResultBadge
-                  result={fitResult}
-                  size="small"
-                  withTitle={true}
-                />
-              </div>
-              {!!talent && (
-                <EvaluateFeedback
-                  value={talent.evaluate_feedback}
-                  onChange={(value) => {
-                    updateTalentEvaluateFeedback(
-                      talent.job_id,
-                      talent.id,
-                      value,
-                    );
-                  }}
-                  onOpen={() => {
-                    setNeedConfirmEvaluateFeedbackConversation(false);
-                    setOpenEvaluateFeedbackConversation(true);
-                  }}
-                />
-              )}
-            </>
-          )}
         </div>
         {isPipeline && (
           <div className={styles.cardHeaderActions}>
@@ -215,6 +223,52 @@ const TalentPopoverContent = ({
         )}
       </div>
 
+      {isPipeline && (
+        <div>
+          <div className={styles.cardTitleResult}>
+            <div
+              className={`${styles.interviewSection} ${styles[`theme-${fitResult}`]}`}
+            >
+              <div className={styles.interviewRow}>
+                <span className={styles.interviewLabel}>Interview?</span>
+                <span
+                  className={`${styles.interviewValue} ${styles[`label-${fitResult}`]}`}
+                >
+                  {t(`evaluate_result_options.${fitResult}`)}
+                </span>
+              </div>
+              <div className={styles.secondaryRow}>
+                <span className={styles.secondaryLabel}>Skills</span>
+                <Tooltip title={getSkillsText()}>
+                  <span className={styles.valueEllipsis}>
+                    {getSkillsText()}
+                  </span>
+                </Tooltip>
+              </div>
+              <div className={styles.secondaryRow}>
+                <span className={styles.secondaryLabel}>Logistics</span>
+                <Tooltip title={getLogisticsText()}>
+                  <span className={styles.valueEllipsis}>
+                    {getLogisticsText()}
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+          {!!talent && (
+            <EvaluateFeedback
+              value={talent.evaluate_feedback}
+              onChange={(value) => {
+                updateTalentEvaluateFeedback(talent.job_id, talent.id, value);
+              }}
+              onOpen={() => {
+                setNeedConfirmEvaluateFeedbackConversation(false);
+                setOpenEvaluateFeedbackConversation(true);
+              }}
+            />
+          )}
+        </div>
+      )}
       <div className={styles.cardContent} onClick={handleOpenTalentDetail}>
         <div className={styles.evaluateSummary}>
           <div className={styles.evaluateSummaryTitle}>
