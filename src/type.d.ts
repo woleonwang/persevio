@@ -879,6 +879,13 @@ type TEvaluateResultLevel =
   | "maybe"
   | "not_a_fit";
 
+type TInterviewRecommendation =
+  | "absolutely"
+  | "yes"
+  | "yes_but"
+  | "maybe"
+  | "no";
+
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
 
 type TCustomSource = {
@@ -892,6 +899,7 @@ type TCustomSource = {
 type TReport = {
   thumbnail_summary: string;
   created_at: string;
+  current_location?: string;
 
   current_compensation: string;
   expected_compensation: string;
@@ -903,15 +911,22 @@ type TReport = {
     content: string;
   }[];
 
-  overall_recommendation: {
+  overall_recommendation?: {
     result: string;
+    interview_recommendation?: TInterviewRecommendation;
     caveat?: string;
     skills_fit: {
-      level: "ideal" | "good" | "uncertain" | "poor";
+      level:
+        | "ideal"
+        | "good"
+        | "overqualified"
+        | "near_fit"
+        | "uncertain"
+        | "poor";
       explanation: string;
     };
     logistics_fit: {
-      level: string;
+      level: string | string[];
       explanation: string;
     };
     recruiter_note: string;
@@ -946,7 +961,10 @@ type TReport = {
   }[];
 
   ai_interview_summary: {
-    topics_covered: string[];
+    topics_covered: {
+      narrative: string;
+      topics: string[];
+    };
     key_revelations: string[];
     interview_observations: { title: string; details: string }[];
   };
@@ -980,3 +998,11 @@ type TReport = {
   }[];
   result: TEvaluateResultLevel;
 };
+
+type TSkillsFitKey =
+  | "ideal"
+  | "good"
+  | "overqualified"
+  | "near_fit"
+  | "uncertain"
+  | "poor";

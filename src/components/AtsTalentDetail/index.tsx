@@ -22,6 +22,7 @@ import {
   getEvaluateResultLevel,
   getQuery,
   getSourcingChannel,
+  normalizeReport,
   parseJSON,
   buildTalentDetailUrl,
   DEFAULT_TRACKING_SOURCES,
@@ -56,7 +57,7 @@ import ScheduleInterview from "@/assets/icons/schedule-interview";
 import ProbeFilled from "@/assets/icons/probe-filled";
 import useJob from "@/hooks/useJob";
 import RichTextWithVoice from "../RichTextWithVoice";
-import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import { SkillsFitKnownKeys, TALENT_DETAIL_FROM } from "@/utils/consts";
 import { tokenStorage } from "@/utils/storage";
 
 type TCustomizedInterview = {
@@ -218,7 +219,7 @@ const AtsTalentDetail: React.FC = () => {
     ? (parseJSON(talent.resume_detail_json) as TTalentResume)
     : null;
 
-  const report = parseJSON(talent.evaluate_json) as TReport;
+  const report = normalizeReport(parseJSON(talent.evaluate_json));
 
   const contact = resumeDetail?.contact_information;
   const lastUpdated =
@@ -237,7 +238,10 @@ const AtsTalentDetail: React.FC = () => {
       { assessment?: string; assessment_type?: string }[]
     > = { p0: [], p1: [], p2: [] };
     (report.requirements ?? []).forEach((item) => {
-      pdfReqByLevel[item.level].push(item as any);
+      pdfReqByLevel[item.level].push({
+        assessment: item.assessment,
+        assessment_type: item.assessment_type,
+      });
     });
 
     const evalLevel = getEvaluateResultLevel(report);
@@ -248,20 +252,15 @@ const AtsTalentDetail: React.FC = () => {
 
     const pdfRawSkillsFitLevel =
       report.overall_recommendation?.skills_fit?.level;
-    type TPdfSkillsFitKey = "ideal" | "good" | "uncertain" | "poor";
-    const pdfSkillsFitKnown: TPdfSkillsFitKey[] = [
-      "ideal",
-      "good",
-      "uncertain",
-      "poor",
-    ];
     const pdfIsKnownSkillsFit = (
       level: string | undefined,
-    ): level is TPdfSkillsFitKey =>
-      !!level && pdfSkillsFitKnown.includes(level as TPdfSkillsFitKey);
-    const pdfSkillsFitLabels: Record<TPdfSkillsFitKey, string> = {
+    ): level is TSkillsFitKey =>
+      !!level && SkillsFitKnownKeys.includes(level as TSkillsFitKey);
+    const pdfSkillsFitLabels: Record<TSkillsFitKey, string> = {
       ideal: "Ideal",
       good: "Good",
+      overqualified: "Overqualified",
+      near_fit: "Near Fit",
       uncertain: "Uncertain",
       poor: "Poor",
     };
@@ -273,17 +272,20 @@ const AtsTalentDetail: React.FC = () => {
     const skillsFitBadgeClass =
       pdfRawSkillsFitLevel === "poor"
         ? styles.pdfBadgeRed
-        : pdfRawSkillsFitLevel === "uncertain"
+        : pdfRawSkillsFitLevel === "uncertain" ||
+            pdfRawSkillsFitLevel === "near_fit"
           ? styles.pdfBadgeOrange
-          : styles.pdfBadgeGray;
+          : pdfRawSkillsFitLevel === "overqualified"
+            ? styles.pdfBadgeBlue
+            : styles.pdfBadgeGray;
 
-    const logisticsLevel =
-      report.overall_recommendation?.logistics_fit?.level ?? "";
-    const logisticsBadgeClass = /no issue|moderate|good|ideal/i.test(
-      logisticsLevel,
-    )
-      ? styles.pdfBadgeOrange
-      : styles.pdfBadgeGray;
+    const logisticsLevelsRaw =
+      report.overall_recommendation?.logistics_fit?.level;
+    const logisticsLevels = Array.isArray(logisticsLevelsRaw)
+      ? logisticsLevelsRaw
+      : logisticsLevelsRaw
+        ? [logisticsLevelsRaw]
+        : [];
 
     const pdfRawInterestLevel = report.summary?.interest_level?.level;
     type TPdfInterestKey = "high" | "moderate" | "low" | "unclear";
@@ -510,16 +512,21 @@ const AtsTalentDetail: React.FC = () => {
                 <div className={styles.pdfMetricRow}>
                   <div className={styles.pdfMetricHead}>
                     <h5>Logistical Fit</h5>
-                    {!!logisticsLevel && (
-                      <span
-                        className={classnames(
-                          styles.pdfBadge,
-                          logisticsBadgeClass,
-                        )}
-                      >
-                        {logisticsLevel}
-                      </span>
-                    )}
+                    <div className={styles.pdfMetricBadgeWrap}>
+                      {logisticsLevels.map((level) => (
+                        <span
+                          className={classnames(
+                            styles.pdfBadge,
+                            level === "no_issues"
+                              ? styles.pdfBadgeGreen
+                              : styles.pdfBadgeOrange,
+                          )}
+                          key={level}
+                        >
+                          {level}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <p className={styles.pdfMetricCopy}>
                     {report.overall_recommendation?.logistics_fit?.explanation}
@@ -854,7 +861,7 @@ const AtsTalentDetail: React.FC = () => {
   };
 
   (report.requirements ?? []).forEach((item) => {
-    requirementsSummaryMappings[item.level].push(item as any);
+    requirementsSummaryMappings[item.level].push(item);
   });
 
   const moveStageOptions: { id: string; name: string }[] = job?.pipeline_stages
@@ -862,30 +869,28 @@ const AtsTalentDetail: React.FC = () => {
     : [];
 
   const rawSkillsFitLevel = report.overall_recommendation?.skills_fit?.level;
-  type TSkillsFitKey = "ideal" | "good" | "uncertain" | "poor";
+
   const skillsFitLabelMap: Record<TSkillsFitKey, string> = {
     ideal: "Ideal",
     good: "Good",
+    overqualified: "Overqualified",
+    near_fit: "Near Fit",
     uncertain: "Uncertain",
     poor: "Poor",
   };
   const skillsFitClassMap: Record<TSkillsFitKey, string> = {
     ideal: "evalDetailLevelIdeal",
     good: "evalDetailLevelGood",
+    overqualified: "evalDetailLevelOverqualified",
+    near_fit: "evalDetailLevelNearFit",
     uncertain: "evalDetailLevelUncertain",
     poor: "evalDetailLevelPoor",
   };
 
-  const skillsFitKnownKeys: TSkillsFitKey[] = [
-    "ideal",
-    "good",
-    "uncertain",
-    "poor",
-  ];
   const isKnownSkillsFitLevel = (
     level: string | undefined,
   ): level is TSkillsFitKey =>
-    !!level && skillsFitKnownKeys.includes(level as TSkillsFitKey);
+    !!level && SkillsFitKnownKeys.includes(level as TSkillsFitKey);
 
   const skillsFitMeta =
     rawSkillsFitLevel && isKnownSkillsFitLevel(rawSkillsFitLevel)
@@ -899,6 +904,21 @@ const AtsTalentDetail: React.FC = () => {
             className: styles.evalDetailLevelNeutral,
           }
         : null;
+
+  const logisticsLevelsRaw =
+    report.overall_recommendation?.logistics_fit?.level;
+  const logisticsLevels = Array.isArray(logisticsLevelsRaw)
+    ? logisticsLevelsRaw
+    : logisticsLevelsRaw
+      ? [logisticsLevelsRaw]
+      : [];
+  const logisticsLevelMeta = logisticsLevels.map((level) => ({
+    label: level,
+    className:
+      level === "no_issues"
+        ? styles.evalDetailLevelGood
+        : styles.evalDetailLevelNeutral,
+  }));
 
   const rawInterestLevel = report.summary?.interest_level?.level;
   type TInterestLevelKey = "high" | "moderate" | "low" | "unclear";
@@ -1237,16 +1257,19 @@ const AtsTalentDetail: React.FC = () => {
                   <div className={styles.evalDetailItem}>
                     <div className={styles.evalDetailTitle}>
                       <span>Logistical Fit</span>
-                      {report.overall_recommendation?.logistics_fit?.level && (
-                        <div
-                          className={classnames(
-                            styles.evalDetailLevel,
-                            styles.evalDetailLevelNeutral,
-                          )}
-                        >
-                          {report.overall_recommendation?.logistics_fit?.level}
-                        </div>
-                      )}
+                      <div className={styles.evalDetailTags}>
+                        {logisticsLevelMeta.map((item) => (
+                          <div
+                            className={classnames(
+                              styles.evalDetailLevel,
+                              item.className,
+                            )}
+                            key={item.label}
+                          >
+                            {item.label}
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     <div className={styles.evalDetailDesc}>
@@ -1496,16 +1519,29 @@ const AtsTalentDetail: React.FC = () => {
                       <div className={styles.aiSummaryBg}>
                         {report.ai_interview_summary && (
                           <>
-                            {(report.ai_interview_summary?.topics_covered ?? [])
-                              .length > 0 && (
+                            {(report.ai_interview_summary?.topics_covered
+                              ?.narrative ||
+                              (
+                                report.ai_interview_summary?.topics_covered
+                                  ?.topics ?? []
+                              ).length > 0) && (
                               <div className={styles.aiSummaryCard}>
                                 <div className={styles.aiSummaryTitle}>
                                   Topics Covered
                                 </div>
+                                {!!report.ai_interview_summary?.topics_covered
+                                  ?.narrative && (
+                                  <p className={styles.aiSummaryNarrative}>
+                                    {
+                                      report.ai_interview_summary
+                                        ?.topics_covered?.narrative
+                                    }
+                                  </p>
+                                )}
                                 <ul className={styles.aiSummaryList}>
                                   {(
-                                    report.ai_interview_summary
-                                      ?.topics_covered ?? []
+                                    report.ai_interview_summary?.topics_covered
+                                      ?.topics ?? []
                                   ).map((item, index) => (
                                     <li key={index}>{item}</li>
                                   ))}

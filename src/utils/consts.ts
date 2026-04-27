@@ -33,3 +33,12 @@ export const TALENT_DETAIL_FROM = {
 
 export type TTalentDetailFrom =
   (typeof TALENT_DETAIL_FROM)[keyof typeof TALENT_DETAIL_FROM];
+
+export const SkillsFitKnownKeys: TSkillsFitKey[] = [
+  "ideal",
+  "good",
+  "overqualified",
+  "near_fit",
+  "uncertain",
+  "poor",
+];

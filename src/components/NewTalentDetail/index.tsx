@@ -4,7 +4,12 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import useTalent from "@/hooks/useTalent";
 import { Download, Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
-import { backOrDirect, downloadMarkdownAsPDF, parseJSON } from "@/utils";
+import {
+  backOrDirect,
+  downloadMarkdownAsPDF,
+  normalizeReport,
+  parseJSON,
+} from "@/utils";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import classnames from "classnames";
@@ -141,7 +146,7 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
     return <Spin />;
   }
 
-  const report = parseJSON(talent.evaluate_json) as TReport;
+  const report = normalizeReport(parseJSON(talent.evaluate_json));
 
   const interviewButtonArea =
     interviews.length === 0 ? (

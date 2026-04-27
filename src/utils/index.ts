@@ -327,13 +327,274 @@ export const getDocumentType = (key: string): string => {
 export const getEvaluateResultLevel = (
   report?: TReport,
 ): TEvaluateResultLevel => {
-  const result = report?.overall_recommendation?.result ?? report?.result;
+  const interviewRecommendation =
+    report?.overall_recommendation?.interview_recommendation;
+  const recommendationMap: Record<TInterviewRecommendation, TEvaluateResultLevel> =
+    {
+      absolutely: "ideal_candidate",
+      yes: "good_fit",
+      yes_but: "ideal_candidate_with_caveat",
+      maybe: "maybe",
+      no: "not_a_fit",
+    };
+  const mappedResult = interviewRecommendation
+    ? recommendationMap[interviewRecommendation]
+    : undefined;
+  const result =
+    mappedResult ?? report?.overall_recommendation?.result ?? report?.result;
 
   if (!result) return "maybe";
 
   return EVALUATE_RESULT_LEVEL_KEYS.includes(result)
     ? (result as TEvaluateResultLevel)
     : "maybe";
+};
+
+const toStringArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === "string");
+  }
+  if (typeof value === "string" && value.trim()) {
+    return [value];
+  }
+  return [];
+};
+
+export const normalizeReport = (rawReport: unknown): TReport => {
+  type TLegacyReport = Omit<
+    Partial<TReport>,
+    | "profile_snapshot"
+    | "potential_gaps"
+    | "ai_interview_summary"
+    | "requirements"
+    | "overall_recommendation"
+  > & {
+    strength?: { content?: string }[];
+    gap?: { content?: string }[];
+    profile_snapshot?: TReport["profile_snapshot"] | Record<string, unknown>;
+    potential_gaps?:
+      | TReport["potential_gaps"]
+      | {
+          structural?: { title?: string; details?: string }[];
+          learnable?: { title?: string; details?: string }[];
+        };
+    ai_interview_summary?: {
+      topics_covered?:
+        | string[]
+        | {
+            narrative?: string;
+            topics?: string[];
+          };
+      key_revelations?: string[];
+      interview_observations?: { title: string; details: string }[];
+    };
+    requirements?: (TReport["requirements"][number] & { assessment_type?: string })[];
+    overall_recommendation?: (NonNullable<TReport["overall_recommendation"]> & {
+      logistics_fit?: {
+        level?: string | string[];
+        explanation?: string;
+      };
+    }) | null;
+  };
+  const report: TLegacyReport =
+    rawReport && typeof rawReport === "object"
+      ? (rawReport as TLegacyReport)
+      : {};
+
+  const strengths = toStringArray(
+    Array.isArray(report.strengths)
+      ? report.strengths.map((item: { content?: string }) => item?.content)
+      : Array.isArray(report.strength)
+        ? report.strength.map((item: { content?: string }) => item?.content)
+        : [],
+  ).map((content) => ({ content }));
+
+  const gaps = toStringArray(
+    Array.isArray(report.gaps)
+      ? report.gaps.map((item: { content?: string }) => item?.content)
+      : Array.isArray(report.gap)
+        ? report.gap.map((item: { content?: string }) => item?.content)
+        : [],
+  ).map((content) => ({ content }));
+
+  const profileSnapshotFromObject = (() => {
+    const snapshot = report.profile_snapshot;
+    if (!snapshot || typeof snapshot !== "object" || Array.isArray(snapshot)) {
+      return [];
+    }
+    const result: { title: string; details: string }[] = [];
+    const pushItem = (title: string, details?: string) => {
+      if (!details) return;
+      result.push({ title, details });
+    };
+    const snapshotObj = snapshot as {
+      total_years_of_experience?: string;
+      career_trajectory?: string;
+      location_trajectory?: string;
+      domain_expertise?: string[];
+      work_environments?: string[];
+      tenure?: {
+        average?: string;
+        longest?: string;
+        shortest?: string;
+        gaps?: string;
+        interpretation?: string | null;
+      };
+      education?: string[];
+      highlights?: string[] | null;
+      flags?: string[] | null;
+    };
+    pushItem(
+      "Total Years of Experience",
+      snapshotObj.total_years_of_experience?.toString(),
+    );
+    pushItem("Career Trajectory", snapshotObj.career_trajectory);
+    pushItem("Location Trajectory", snapshotObj.location_trajectory);
+    pushItem("Domain Expertise", toStringArray(snapshotObj.domain_expertise).join(", "));
+    pushItem(
+      "Work Environments",
+      toStringArray(snapshotObj.work_environments).join(", "),
+    );
+    const tenure = snapshotObj.tenure;
+    if (tenure && typeof tenure === "object") {
+      const tenureLines = [
+        tenure.average ? `Average: ${tenure.average}` : "",
+        tenure.longest ? `Longest: ${tenure.longest}` : "",
+        tenure.shortest ? `Shortest: ${tenure.shortest}` : "",
+        tenure.gaps ? `Gaps: ${tenure.gaps}` : "",
+        tenure.interpretation ? `Interpretation: ${tenure.interpretation}` : "",
+      ].filter(Boolean);
+      pushItem("Tenure", tenureLines.join("; "));
+    }
+    pushItem("Education", toStringArray(snapshotObj.education).join(", "));
+    pushItem("Highlights", toStringArray(snapshotObj.highlights).join(", "));
+    pushItem("Flags", toStringArray(snapshotObj.flags).join(", "));
+    return result;
+  })();
+
+  const profileSnapshot = Array.isArray(report.profile_snapshot)
+    ? report.profile_snapshot.map((item: { title?: string; details?: string }) => ({
+        title: item?.title ?? "",
+        details: item?.details ?? "",
+      }))
+    : profileSnapshotFromObject;
+
+  const potentialGaps = (() => {
+    const value = report.potential_gaps;
+    if (Array.isArray(value)) {
+      return value.map((item: { title?: string; details?: string }) => ({
+        title: item?.title ?? "",
+        details: item?.details ?? "",
+      }));
+    }
+    if (value && typeof value === "object") {
+      const structural = toStringArray(
+        (value.structural ?? []).map(
+          (item: { title?: string; details?: string }) =>
+            `${item?.title ?? ""}: ${item?.details ?? ""}`.trim(),
+        ),
+      ).map((text) => ({ title: "Structural", details: text }));
+      const learnable = toStringArray(
+        (value.learnable ?? []).map(
+          (item: { title?: string; details?: string }) =>
+            `${item?.title ?? ""}: ${item?.details ?? ""}`.trim(),
+        ),
+      ).map((text) => ({ title: "Learnable", details: text }));
+      return [...structural, ...learnable];
+    }
+    return [];
+  })();
+
+  const aiTopicsCoveredRaw = report.ai_interview_summary?.topics_covered;
+  const topicsCovered =
+    aiTopicsCoveredRaw && typeof aiTopicsCoveredRaw === "object" && !Array.isArray(aiTopicsCoveredRaw)
+      ? {
+          narrative: aiTopicsCoveredRaw.narrative ?? "",
+          topics: toStringArray(aiTopicsCoveredRaw.topics),
+        }
+      : {
+          narrative: "",
+          topics: toStringArray(aiTopicsCoveredRaw),
+        };
+
+  const requirements = Array.isArray(report.requirements)
+    ? report.requirements.map((item) => ({
+        ...item,
+        assessment: item.assessment ?? item.assessment_type ?? "",
+        assessment_type: item.assessment_type ?? item.assessment ?? "",
+      }))
+    : [];
+
+  const logisticsLevels = toStringArray(
+    report.overall_recommendation?.logistics_fit?.level,
+  );
+  const normalizedOverallRecommendation = report.overall_recommendation
+    ? {
+        ...report.overall_recommendation,
+        result:
+          report.overall_recommendation?.result ??
+          (report.overall_recommendation?.interview_recommendation
+            ? ({
+                absolutely: "ideal_candidate",
+                yes: "good_fit",
+                yes_but: "ideal_candidate_with_caveat",
+                maybe: "maybe",
+                no: "not_a_fit",
+              } as Record<TInterviewRecommendation, TEvaluateResultLevel>)[
+                report.overall_recommendation.interview_recommendation
+              ]
+            : undefined) ??
+          report.result,
+        skills_fit: {
+          level: report.overall_recommendation?.skills_fit?.level ?? "uncertain",
+          explanation:
+            report.overall_recommendation?.skills_fit?.explanation ?? "",
+        },
+        logistics_fit: {
+          level: logisticsLevels,
+          explanation:
+            report.overall_recommendation?.logistics_fit?.explanation ?? "",
+        },
+        recruiter_note: report.overall_recommendation?.recruiter_note ?? "",
+      }
+    : undefined;
+
+  return {
+    ...report,
+    strengths,
+    gaps,
+    requirements,
+    profile_snapshot: profileSnapshot,
+    potential_gaps: potentialGaps,
+    areas_to_probe_further:
+      report.areas_to_probe_further ?? report.areas_to_probe_futher ?? [],
+    ai_interview_summary: {
+      topics_covered: topicsCovered,
+      key_revelations: toStringArray(report.ai_interview_summary?.key_revelations),
+      interview_observations: Array.isArray(
+        report.ai_interview_summary?.interview_observations,
+      )
+        ? report.ai_interview_summary.interview_observations
+        : [],
+    },
+    summary:
+      typeof report.summary === "string"
+        ? {
+            description: report.summary,
+            interest_level: {
+              level: "unclear",
+              explanation: "",
+            },
+          }
+        : (report.summary ?? {
+            description: "",
+            interest_level: {
+              level: "unclear",
+              explanation: "",
+            },
+          }),
+    overall_recommendation: normalizedOverallRecommendation,
+  } as TReport;
 };
 
 /** 候选人卡片/搜索：合并 basicInfo 与 evaluate 侧字段 */
@@ -359,8 +620,12 @@ export const getCandidateCardData = (item: TCandidateCardSource) => {
     basicInfo?.expected_compensation ||
     "-";
   const fitResult = getEvaluateResultLevel(evaluateResult);
+  const summaryText =
+    typeof evaluateResult?.summary === "string"
+      ? evaluateResult.summary
+      : evaluateResult?.summary?.description || "";
   const summary =
-    evaluateResult?.thumbnail_summary || evaluateResult?.summary || "";
+    evaluateResult?.thumbnail_summary || summaryText;
   return {
     name,
     basicInfo,

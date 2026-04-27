@@ -727,6 +727,18 @@
   border-color: #cceacb;
 }
 
+.pdfBadgeBlue {
+  color: #0369a1;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+.pdfMetricBadgeWrap {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .pdfMetricCopy {
   font-size: 12.5px;
   line-height: 1.5;
@@ -1048,6 +1060,12 @@
       border: 1px solid transparent;
     }
 
+    .evalDetailTags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
     .evalDetailLevelNeutral {
       color: #92400e;
       background-color: #ffedd5;
@@ -1064,6 +1082,18 @@
       color: #2563eb;
       background-color: #dbeafe;
       border-color: #93c5fd;
+    }
+
+    .evalDetailLevelOverqualified {
+      color: #6d28d9;
+      background-color: #ede9fe;
+      border-color: #c4b5fd;
+    }
+
+    .evalDetailLevelNearFit {
+      color: #92400e;
+      background-color: #ffedd5;
+      border-color: #fed7aa;
     }
 
     .evalDetailLevelUncertain {
@@ -1426,6 +1456,13 @@
         padding-left: 18px;
         font-size: 12px;
         color: #666;
+      }
+
+      .aiSummaryNarrative {
+        margin: 0 0 8px;
+        color: #555;
+        font-size: 13px;
+        line-height: 1.6;
       }
 
       .aiSummaryItemTitle {
