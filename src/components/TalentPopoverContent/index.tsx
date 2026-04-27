@@ -2,7 +2,7 @@ import classnames from "classnames";
 import styles from "./style.module.less";
 import { buildTalentDetailUrl, getEvaluateResultLevel } from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
-import { Button, message, Modal, Tooltip } from "antd";
+import { Button, message, Modal } from "antd";
 import { useState } from "react";
 import { Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,7 @@ import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
 import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import EvaluateResultBadge from "../EvaluateResultBadge";
 
 interface IProps {
   variant: "pipeline" | "talents";
@@ -52,23 +53,7 @@ const TalentPopoverContent = ({
   const basicInfo = talent.basicInfo;
   const evaluateResult = talent.parsedEvaluateResult;
   const fitResult = getEvaluateResultLevel(evaluateResult);
-  const interviewLabel = t(`evaluate_result_options.${fitResult}`);
-  const interviewLevelClassMap: Record<TInterviewRecommendation, string> = {
-    absolutely: styles.absolutely,
-    yes: styles.yes,
-    yes_but: styles.yesBut,
-    maybe: styles.maybe,
-    no: styles.no,
-  };
-  const interviewThemeClassMap: Record<TInterviewRecommendation, string> = {
-    absolutely: styles.themeAbsolutely,
-    yes: styles.themeYes,
-    yes_but: styles.themeYesBut,
-    maybe: styles.themeMaybe,
-    no: styles.themeNo,
-  };
-  const interviewLevelClass = interviewLevelClassMap[fitResult] ?? styles.maybe;
-  const interviewThemeClass = interviewThemeClassMap[fitResult] ?? styles.themeMaybe;
+
   const interview = talent.interviews?.[0];
   const job = talent.job;
   const isPipeline = variant === "pipeline";
@@ -168,24 +153,11 @@ const TalentPopoverContent = ({
           {isPipeline && (
             <>
               <div className={styles.cardTitleResult}>
-                <div
-                  className={classnames(styles.interviewSection, interviewThemeClass)}
-                >
-                  <div className={styles.interviewRow}>
-                    <span className={styles.interviewLabel}>Interview?</span>
-                    <Tooltip title={interviewLabel}>
-                      <span
-                        className={classnames(
-                          styles.interviewValue,
-                          styles.valueEllipsis,
-                          interviewLevelClass,
-                        )}
-                      >
-                        {interviewLabel}
-                      </span>
-                    </Tooltip>
-                  </div>
-                </div>
+                <EvaluateResultBadge
+                  result={fitResult}
+                  size="small"
+                  withTitle={true}
+                />
               </div>
               {!!talent && (
                 <EvaluateFeedback
