@@ -316,6 +316,7 @@ export default {
   assessment_options: {
     meets: "Meets",
     partially_meets: "Partially Meets",
+    uncertain: "Uncertain",
     does_not_meet: "Does Not Meet",
   },
 

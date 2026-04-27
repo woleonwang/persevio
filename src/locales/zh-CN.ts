@@ -356,6 +356,7 @@ export default {
   assessment_options: {
     meets: "满足",
     partially_meets: "部分满足",
+    uncertain: "不确定",
     does_not_meet: "不满足",
   },
 

@@ -524,7 +524,9 @@ const AtsTalentDetail: React.FC = () => {
                           {LogisticsFitKnownKeys.includes(
                             level as TLogisticsFitKey,
                           )
-                            ? t(`job_talents.logistics_fit_options.${level}`)
+                            ? originalT(
+                                `job_talents.logistics_fit_options.${level}`,
+                              )
                             : level}
                         </span>
                       ))}
@@ -914,7 +916,7 @@ const AtsTalentDetail: React.FC = () => {
       : [];
   const logisticsLevelMeta = logisticsLevels.map((level) => ({
     label: LogisticsFitKnownKeys.includes(level as TLogisticsFitKey)
-      ? t(`job_talents.logistics_fit_options.${level}`)
+      ? originalT(`job_talents.logistics_fit_options.${level}`)
       : level,
     className:
       level === "no_issues"

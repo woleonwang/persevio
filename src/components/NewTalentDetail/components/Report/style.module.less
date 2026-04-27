@@ -34,7 +34,7 @@
       color: #999;
 
       span {
-        color: #333
+        color: #333;
       }
     }
 
@@ -80,7 +80,7 @@
     &.p0 {
       :global {
         .perse-icon {
-          color: rgba(253, 96, 91, 1)
+          color: rgba(253, 96, 91, 1);
         }
       }
     }
@@ -114,7 +114,7 @@
       align-items: center;
       gap: 8px;
 
-      >div {
+      > div {
         font-size: 14px;
 
         &:first-child {
@@ -138,7 +138,7 @@
     }
 
     .requirementsSummaryHeader {
-      &>div {
+      & > div {
         text-align: center;
         font-weight: bold;
         font-size: 14px;
@@ -146,11 +146,10 @@
     }
 
     .requirementsSummaryItem {
-
       align-items: stretch;
       margin-top: 8px;
 
-      &>div {
+      & > div {
         padding: 12px;
         display: flex;
         align-items: center;
@@ -166,6 +165,10 @@
 
         &.does_not_meet {
           color: rgba(224, 61, 61, 1);
+        }
+
+        &.uncertain {
+          color: rgba(107, 114, 128, 1);
         }
 
         &:nth-child(1) {
@@ -185,8 +188,7 @@
       }
 
       &.p0 {
-        >div {
-
+        > div {
           &:nth-child(1) {
             color: rgba(62, 19, 19, 1);
           }
@@ -200,8 +202,7 @@
       }
 
       &.p1 {
-
-        >div {
+        > div {
           &:nth-child(1) {
             color: rgba(62, 91, 37, 1);
           }
@@ -215,8 +216,7 @@
       }
 
       &.p2 {
-
-        >div {
+        > div {
           &:nth-child(1) {
             color: rgba(91, 72, 59, 1);
           }
@@ -240,7 +240,7 @@
     align-items: center;
     gap: 8px;
 
-    >div {
+    > div {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -266,7 +266,7 @@
     margin-top: 8px;
     align-items: stretch;
 
-    >div {
+    > div {
       padding: 12px;
       border-radius: 12px;
 
@@ -278,7 +278,6 @@
       &:nth-child(2) {
         background-color: rgba(255, 249, 245, 1);
         border: 1px solid rgba(242, 231, 223, 1);
-
       }
     }
   }
@@ -291,7 +290,6 @@
   .areaContent {
     background-color: rgba(231, 241, 255, 1);
   }
-
 
   .listTitle {
     font-weight: bold;
