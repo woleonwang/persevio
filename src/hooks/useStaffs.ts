@@ -1,7 +1,12 @@
 import { Get } from "@/utils/request";
 import { useEffect, useState } from "react";
 
-const useStaffs = () => {
+interface IUseStaffsOptions {
+  includeDeactivated?: boolean;
+}
+
+const useStaffs = (options: IUseStaffsOptions = {}) => {
+  const { includeDeactivated = false } = options;
   const [staffs, setStaffs] = useState<IStaffWithAccount[]>([]);
 
   useEffect(() => {
@@ -13,7 +18,11 @@ const useStaffs = () => {
       "/api/staffs",
     );
     if (code === 0) {
-      setStaffs(data.staffs ?? []);
+      const nextStaffs = (data.staffs ?? []).filter((staff) => {
+        if (includeDeactivated) return true;
+        return staff.status !== "deactivated";
+      });
+      setStaffs(nextStaffs);
     }
   };
 

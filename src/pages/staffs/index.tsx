@@ -7,6 +7,7 @@ import {
   Modal,
   Form,
   Select,
+  Tag,
   message,
 } from "antd";
 import {
@@ -64,6 +65,8 @@ const Staffs: React.FC = () => {
   const [form] = Form.useForm();
   const role = Form.useWatch("role", form);
   const [page, setPage] = useState(1);
+  const [currentUserEmail, setCurrentUserEmail] = useState("");
+  const [currentUserIsAdmin, setCurrentUserIsAdmin] = useState(false);
   const [createdStaffInfo, setCreatedStaffInfo] = useState<{
     name: string;
     email: string;
@@ -81,7 +84,7 @@ const Staffs: React.FC = () => {
       "/api/staffs",
     );
     if (code === 0) {
-      setStaffs(data.staffs);
+      setStaffs(data.staffs ?? []);
     }
 
     setLoading(false);
@@ -89,7 +92,16 @@ const Staffs: React.FC = () => {
 
   useEffect(() => {
     fetchStaffs();
+    fetchCurrentSettings();
   }, []);
+
+  const fetchCurrentSettings = async () => {
+    const { code, data } = await Get<ISettings>("/api/settings");
+    if (code === 0) {
+      setCurrentUserEmail(data.email ?? "");
+      setCurrentUserIsAdmin(data.is_admin === 1);
+    }
+  };
 
   const visibleStaffs = staffs.filter(
     (staff) =>
@@ -270,6 +282,44 @@ const Staffs: React.FC = () => {
     return t("normal");
   };
 
+  const renderStatusTag = (status?: string) => {
+    if (status === "deactivated") {
+      return <Tag>{t("deactivated")}</Tag>;
+    }
+    return <Tag color="success">{t("active")}</Tag>;
+  };
+
+  const handleToggleStatus = async (
+    record: IStaffWithAccount,
+    nextStatus: "active" | "deactivated",
+  ) => {
+    const action = nextStatus === "deactivated" ? "deactivate" : "activate";
+    const { code } = await Post(`/api/staffs/${record.id}/${action}`, {});
+    if (code === 0) {
+      message.success(
+        nextStatus === "deactivated"
+          ? t("deactivateSuccess")
+          : t("activateSuccess"),
+      );
+      fetchStaffs();
+      return;
+    }
+    message.error(t("toggleStatusFailed"));
+  };
+
+  const showDeactivateConfirm = (record: IStaffWithAccount) => {
+    Modal.confirm({
+      title: t("deactivateConfirmTitle", { name: record.name }),
+      content: t("deactivateConfirmDesc"),
+      okText: t("deactivate"),
+      cancelText: t("cancel"),
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        await handleToggleStatus(record, "deactivated");
+      },
+    });
+  };
+
   const columns = [
     {
       title: t("id"),
@@ -297,9 +347,16 @@ const Staffs: React.FC = () => {
       render: (r: string) => renderRoleLabel(r),
     },
     {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      width: 140,
+      render: (status: string) => renderStatusTag(status),
+    },
+    {
       title: t("action"),
       key: "action",
-      width: 120,
+      width: 220,
       render: (_: unknown, record: IStaffWithAccount) => (
         <Space size="small">
           <Button
@@ -309,6 +366,26 @@ const Staffs: React.FC = () => {
           >
             {t("edit")}
           </Button>
+          {currentUserIsAdmin &&
+            record.account.username !== currentUserEmail &&
+            (record.status === "deactivated" ? (
+              <Button
+                type="link"
+                size="small"
+                onClick={() => handleToggleStatus(record, "active")}
+              >
+                {t("activate")}
+              </Button>
+            ) : (
+              <Button
+                type="link"
+                size="small"
+                danger
+                onClick={() => showDeactivateConfirm(record)}
+              >
+                {t("deactivate")}
+              </Button>
+            ))}
         </Space>
       ),
     },

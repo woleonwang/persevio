@@ -630,6 +630,7 @@ interface IStaff {
   position: string;
   phone: string;
   role: string;
+  status?: "active" | "deactivated";
   account_id: number;
   company_id: number;
   org_node_id?: number | null;
