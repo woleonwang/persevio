@@ -8,9 +8,19 @@ export type TalentStageInfo = {
   stage_updated_at?: string;
   created_at?: string;
   feedback_updated_at?: string;
+  evaluate_status?: "pending" | "generating" | "ready" | "failed";
+  evaluate_type?: "resume_based" | "post_interview";
   job_apply?: { interview_finished_at?: string; interview_started_at?: string };
   interviews?: { created_at?: string }[];
 };
+
+export function isInterviewCompleted(talent: TalentStageInfo): boolean {
+  return (
+    !!talent.job_apply?.interview_finished_at &&
+    talent.evaluate_type === "post_interview" &&
+    talent.evaluate_status === "ready"
+  );
+}
 
 /** 与 JobAnalytics 一致：当前阶段进入时间（时间戳），用于计算 days in stage */
 export function getStageEntryTime(
@@ -31,8 +41,8 @@ export function getStageEntryTime(
         ? new Date(talent.job_apply.interview_started_at).getTime()
         : null;
     case "ai_interview_completed":
-      return talent.job_apply?.interview_finished_at
-        ? new Date(talent.job_apply.interview_finished_at).getTime()
+      return isInterviewCompleted(talent)
+        ? new Date(talent.job_apply?.interview_finished_at ?? "").getTime()
         : null;
     case "shortlisted":
       return talent.interviews?.[0]?.created_at
@@ -70,7 +80,7 @@ export function getStageKey(talent: TalentStageInfo): string {
       return "shortlisted";
     }
 
-    if (talent.job_apply?.interview_finished_at) {
+    if (isInterviewCompleted(talent)) {
       return "ai_interview_completed";
     }
     if (talent.job_apply?.interview_started_at) {
@@ -80,4 +90,3 @@ export function getStageKey(talent: TalentStageInfo): string {
   }
   return key;
 }
-

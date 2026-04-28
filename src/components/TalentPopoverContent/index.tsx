@@ -21,6 +21,7 @@ import {
   SkillsFitKnownKeys,
   TALENT_DETAIL_FROM,
 } from "@/utils/consts";
+import { isInterviewCompleted } from "@/utils/talentStage";
 
 interface IProps {
   variant: "pipeline" | "talents";
@@ -124,7 +125,7 @@ const TalentPopoverContent = ({
       return "rejected";
     }
 
-    if (!!talent.job_apply?.interview_finished_at) {
+    if (isInterviewCompleted(talent)) {
       return "screened";
     } else {
       return "not_screened";

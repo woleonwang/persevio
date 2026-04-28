@@ -4,7 +4,11 @@ import { Select, Spin, Table } from "antd";
 import useJob from "@/hooks/useJob";
 import { Get } from "@/utils/request";
 import { getSourcingChannel, parseJSON, SOURCING_CHANNEL_KEYS } from "@/utils";
-import { getStageEntryTime, getStageKey } from "@/utils/talentStage";
+import {
+  getStageEntryTime,
+  getStageKey,
+  isInterviewCompleted,
+} from "@/utils/talentStage";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,
@@ -209,8 +213,7 @@ const JobAnalytics = () => {
       return filteredTalents.filter((t) => !!t.job_apply?.interview_started_at)
         .length;
     } else if (stage.id === "ai_interview_completed") {
-      return filteredTalents.filter((t) => !!t.job_apply?.interview_finished_at)
-        .length;
+      return filteredTalents.filter((t) => isInterviewCompleted(t)).length;
     }
     return funnelCumulativeCounts[index];
   };

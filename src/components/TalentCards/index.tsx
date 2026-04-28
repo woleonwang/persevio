@@ -43,6 +43,7 @@ import TalentEvaluateFeedbackModal from "../TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
 import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
 import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
+import { isInterviewCompleted } from "@/utils/talentStage";
 
 interface IProps {
   jobId?: number;
@@ -184,7 +185,7 @@ const TalentCards = (props: IProps) => {
       return "rejected";
     }
 
-    if (!!talent?.job_apply?.interview_finished_at) {
+    if (isInterviewCompleted(talent)) {
       return "screened";
     } else {
       return "not_screened";
