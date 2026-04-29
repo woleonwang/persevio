@@ -74,6 +74,9 @@ const Signup: React.FC = () => {
     const { code: code1, data: data1 } = await Get(`/api/candidate/settings`);
     // 没注册
     if (code1 !== 0) {
+      if (jobIdQuery) {
+        setJobId(jobIdQuery);
+      }
       setPageState("basic");
       return;
     }
@@ -93,9 +96,7 @@ const Signup: React.FC = () => {
         data1.candidate.whatsapp_phone_number || preRegisterInfo.phone || "",
     });
     setIsLoggedIn(true);
-    if (jobIdQuery) {
-      setJobId(jobIdQuery);
-    } else if (candidate.job_id) {
+    if (candidate.job_id) {
       setJobId(candidate.job_id);
     }
 
