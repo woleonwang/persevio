@@ -1712,6 +1712,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     password_placeholder: "Password",
     signin_succeed: "Sign in succeed",
     username_or_password_incorrect: "Username or password is incorrect",
+    deactivated_account: "This account has been deactivated",
   },
 
   staffPasswordReset: {
@@ -1734,6 +1735,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     invalidEmail: "Please enter a valid email",
     invalidParams: "Invalid request parameters",
     requestFailed: "Request failed",
+    deactivatedAccount: "This account has been deactivated",
     tryLater: "Please try again later",
     invalidOrExpired: "This link is invalid or has expired",
     missingToken:

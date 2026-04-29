@@ -61,6 +61,8 @@ const StaffForgotPassword: React.FC = () => {
         message.error(t("staffPasswordReset.tooFrequent"));
       } else if (code === 10003) {
         message.error(t("staffPasswordReset.tryLater"));
+      } else if (code === 10006) {
+        message.error(t("staffPasswordReset.deactivatedAccount"));
       } else {
         message.error(t("staffPasswordReset.requestFailed"));
       }
@@ -86,10 +88,7 @@ const StaffForgotPassword: React.FC = () => {
             { type: "email", message: t("staffPasswordReset.invalidEmail") },
           ]}
         >
-          <Input
-            placeholder={t("signin.email_placeholder")}
-            size="large"
-          />
+          <Input placeholder={t("signin.email_placeholder")} size="large" />
         </Form.Item>
 
         <Form.Item>

@@ -69,6 +69,8 @@ const SignIn: React.FC = () => {
         message.success(t("signin.signin_succeed"));
         tokenStorage.setToken(data.token, "staff");
         signInSucceed(data.staff.account_role);
+      } else if (code === 10006) {
+        message.error(t("signin.deactivated_account"));
       } else {
         message.error(t("signin.username_or_password_incorrect"));
       }
@@ -83,7 +85,7 @@ const SignIn: React.FC = () => {
       redirect || (role === 0 ? "/app/entry/create-job" : "/admin/jobs"),
       {
         replace: true,
-      }
+      },
     );
   };
 
@@ -131,10 +133,7 @@ const SignIn: React.FC = () => {
               {t("signin.sign_up")}
             </Link>
           </span>
-          <Link
-            to="/staff/forgot-password"
-            className={styles.forgotLink}
-          >
+          <Link to="/staff/forgot-password" className={styles.forgotLink}>
             {t("signin.forgot_password")}
           </Link>
         </div>
