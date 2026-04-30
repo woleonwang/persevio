@@ -2375,11 +2375,23 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   admin_tools: {
     page_title: "Admin Tools",
     run_reminder_button: "Manually trigger AI interview reminder",
+    run_weekly_report_button: "Manually trigger weekly report",
+    run_monthly_report_button: "Manually trigger monthly report",
     confirm_title: "Confirm trigger",
     confirm_content:
       "Are you sure you want to manually trigger AI interview reminders?",
+    confirm_weekly_report_title: "Confirm trigger weekly report",
+    confirm_weekly_report_content:
+      "Are you sure you want to manually trigger the weekly report?",
+    confirm_monthly_report_title: "Confirm trigger monthly report",
+    confirm_monthly_report_content:
+      "Are you sure you want to manually trigger the monthly report?",
     run_reminder_success: "Triggered successfully",
     run_reminder_failed: "Trigger failed",
+    run_weekly_report_success: "Weekly report triggered successfully",
+    run_weekly_report_failed: "Weekly report trigger failed",
+    run_monthly_report_success: "Monthly report triggered successfully",
+    run_monthly_report_failed: "Monthly report trigger failed",
   },
 
   interview_form: {
