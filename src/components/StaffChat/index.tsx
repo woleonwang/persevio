@@ -59,6 +59,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     onNextTask,
     newVersion = false,
     hidePredefinedButtons = false,
+    hideRetry = false,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -1268,7 +1269,8 @@ const StaffChat: React.FC<IProps> = (props) => {
                     !["fake_ai_id", "fake_user_id"].includes(item.id);
                   // 操作区. 用户消息 &&普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
 
-                  const canRetry = isLast && item.messageSubType === "error";
+                  const canRetry =
+                    !hideRetry && isLast && item.messageSubType === "error";
 
                   return canDelete || canRetry ? (
                     <div

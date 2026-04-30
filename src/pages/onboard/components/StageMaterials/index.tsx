@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button, Form, Input, Upload, message } from "antd";
+import { Button, Form, FormRule, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 
 import { Post, PostFormData } from "@/utils/request";
@@ -71,8 +71,8 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
       const values = await form.validateFields();
       setSubmitting(true);
       const { code } = await Post("/api/onboarding/company-materials", {
-        website_url: values.website_url,
-        linkedin_url: values.linkedin_url,
+        website_url: ensureHttpUrl(values.website_url),
+        linkedin_url: ensureHttpUrl(values.linkedin_url),
         material_text: [values.material_text || "", parsedFileText]
           .filter(Boolean)
           .join("\n\n"),
@@ -89,6 +89,12 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
     }
   };
 
+  const ensureHttpUrl = (raw: unknown): string => {
+    const s = String(raw ?? "").trim();
+    if (!s) return "";
+    return /^https?:\/\//i.test(s) ? s : `https://${s}`;
+  };
+
   return (
     <Form
       form={form}
@@ -102,7 +108,13 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
         name="website_url"
         rules={[
           { required: true, message: "Please enter homepage URL" },
-          { type: "url", message: "Please enter a valid URL" },
+          {
+            type: "url",
+            message: "Please enter a valid URL",
+            transform: (value) => {
+              return ensureHttpUrl(value);
+            },
+          },
         ]}
       >
         <Input size="large" placeholder="https://example.com" />
@@ -111,7 +123,15 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
       <Form.Item
         label="LinkedIn Company Page URL"
         name="linkedin_url"
-        rules={[{ type: "url", message: "Please enter a valid URL" }]}
+        rules={[
+          {
+            type: "url",
+            message: "Please enter a valid URL",
+            transform: (value) => {
+              return ensureHttpUrl(value);
+            },
+          },
+        ]}
       >
         <Input
           size="large"

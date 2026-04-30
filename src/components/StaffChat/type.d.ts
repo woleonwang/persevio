@@ -25,6 +25,7 @@ export interface IProps {
   viewDoc?: (docType: string) => void;
   newVersion?: boolean;
   hidePredefinedButtons?: boolean;
+  hideRetry?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

@@ -151,6 +151,7 @@ const OnboardPage = () => {
                 jobId={0}
                 onNextTask={handleNarrativeDone}
                 hidePredefinedButtons
+                hideRetry
               />
             </div>
           )}
