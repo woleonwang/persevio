@@ -91,6 +91,34 @@ interface IJob {
   }[];
 }
 
+interface IKBObservationListItem {
+  id: number;
+  company_id: number;
+  chat_id: number;
+  entity_type: string;
+  entity_id: number;
+  created_at: string;
+}
+
+interface IKBObservation extends IKBObservationListItem {
+  content: string;
+}
+
+interface IKBEntityDocumentListItem {
+  id: number;
+  company_id: number;
+  entity_type: string;
+  entity_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface IKBEntityDocument extends IKBEntityDocumentListItem {
+  claim_md: string;
+  yaml_frontmatter: string;
+  narrative_md: string;
+}
+
 type TPublicJob = {
   id: number;
   name: string;

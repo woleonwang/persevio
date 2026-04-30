@@ -406,6 +406,8 @@ export default {
     company_list: "Company List",
     daily_breakdown: "Daily Job Breakdown",
     tools: "Tools",
+    kb_observation: "KB Observation",
+    kb_entity_document: "KB Entity Document",
 
     home: "Home",
     profile: "Profile",
@@ -2392,6 +2394,55 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     run_weekly_report_failed: "Weekly report trigger failed",
     run_monthly_report_success: "Monthly report triggered successfully",
     run_monthly_report_failed: "Monthly report trigger failed",
+  },
+
+  admin_kb_observations: {
+    pageTitle: "KB Observation List",
+    loading: "Loading...",
+    table: {
+      id: "ID",
+      companyId: "Company ID",
+      chatId: "Chat ID",
+      entityType: "Entity Type",
+      entityId: "Entity ID",
+      createdAt: "Created At",
+      actions: "Actions",
+      view: "View",
+    },
+    drawer: {
+      titlePrefix: "Observation Detail",
+    },
+    messages: {
+      fetchListFailed: "Failed to load KB observation list",
+      fetchDetailFailed: "Failed to load KB observation detail",
+    },
+  },
+
+  admin_kb_entity_documents: {
+    pageTitle: "KB Entity Document List",
+    loading: "Loading...",
+    table: {
+      id: "ID",
+      companyId: "Company ID",
+      entityType: "Entity Type",
+      entityId: "Entity ID",
+      createdAt: "Created At",
+      updatedAt: "Updated At",
+      actions: "Actions",
+      view: "View",
+    },
+    drawer: {
+      titlePrefix: "Entity Document Detail",
+    },
+    tabs: {
+      claim: "Claim",
+      frontmatter: "Frontmatter",
+      narrative: "Narrative",
+    },
+    messages: {
+      fetchListFailed: "Failed to load KB entity document list",
+      fetchDetailFailed: "Failed to load KB entity document detail",
+    },
   },
 
   interview_form: {

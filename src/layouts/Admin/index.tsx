@@ -1,6 +1,11 @@
 import { Outlet, useNavigate } from "react-router";
 
-import { BarChartOutlined, SettingOutlined, ToolOutlined } from "@ant-design/icons";
+import {
+  BarChartOutlined,
+  FileTextOutlined,
+  SettingOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
 import styles from "./style.module.less";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
@@ -82,6 +87,18 @@ const AdminLayout = () => {
       title: t("menu.tools"),
       path: "/admin/tools",
       img: <ToolOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: t("menu.kb_observation"),
+      path: "/admin/kb-observations",
+      img: <FileTextOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: t("menu.kb_entity_document"),
+      path: "/admin/kb-entity-documents",
+      img: <FileTextOutlined />,
       requireAdmin: true,
     },
     {
