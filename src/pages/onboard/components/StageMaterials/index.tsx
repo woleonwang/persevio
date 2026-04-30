@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Button, Form, FormRule, Input, Upload, message } from "antd";
+import { Button, Form, Input, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 
 import { Post, PostFormData } from "@/utils/request";
