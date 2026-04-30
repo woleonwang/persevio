@@ -160,12 +160,21 @@ const StaffChat: React.FC<IProps> = (props) => {
   }, [showJrdRealRequirementForm, showJrdTargetCandidateProfileForm]);
 
   const fetchStreamingMessage = async () => {
-    const streamChatType = apiMapping[chatType as TChatType]?.chatType;
-    if (!streamChatType) return;
+    let streamingUrl;
+    if (apiMapping[chatType as TChatType]?.streaming) {
+      streamingUrl = apiMapping[chatType as TChatType]?.streaming;
+    }
 
-    const { code, data } = await Get(
-      formatUrl(`/api/jobs/${jobId}/chat/${streamChatType}/streaming_message`),
-    );
+    const streamChatType = apiMapping[chatType as TChatType]?.chatType;
+    if (streamChatType) {
+      streamingUrl = formatUrl(
+        `/api/jobs/${jobId}/chat/${streamChatType}/streaming_message`,
+      );
+    }
+
+    if (!streamingUrl) return;
+
+    const { code, data } = await Get(streamingUrl);
 
     if (code === 0) {
       setStreamingLoadingText(data?.message ?? "");
@@ -316,7 +325,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const apiMapping: Record<
     TChatType,
-    { get: string; send: string; chatType?: string }
+    { get: string; send: string; chatType?: string; streaming?: string }
   > = {
     jobRequirementDoc: {
       chatType: "JOB_REQUIREMENT",
@@ -368,6 +377,9 @@ const StaffChat: React.FC<IProps> = (props) => {
     companyOnboardingNarrative: {
       get: formatUrl(`/api/onboarding/company-narrative/chat/messages`),
       send: formatUrl(`/api/onboarding/company-narrative/chat/send`),
+      streaming: formatUrl(
+        `/api/onboarding/company-narrative/chat/streaming_message`,
+      ),
     },
   };
 
