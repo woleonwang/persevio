@@ -78,16 +78,20 @@ const employeeCountOptions: { value: string; label: string }[] = [
 ];
 
 const languageOptions: { value: string; label: string }[] = [
-  { value: "en", label: "English" },
-  { value: "zh_mandarin", label: "Mandarin Chinese" },
+  { value: "id", label: "Bahasa Indonesia" },
   { value: "zh_cantonese", label: "Cantonese" },
-  { value: "ms", label: "Malay" },
-  { value: "ta", label: "Tamil" },
-  { value: "ja", label: "Japanese" },
-  { value: "ko", label: "Korean" },
+  { value: "en", label: "English" },
   { value: "fr", label: "French" },
   { value: "de", label: "German" },
+  { value: "ja", label: "Japanese" },
+  { value: "ko", label: "Korean" },
+  { value: "ms", label: "Malay" },
+  { value: "zh_mandarin", label: "Mandarin Chinese" },
   { value: "es", label: "Spanish" },
+  { value: "tl", label: "Tagalog" },
+  { value: "ta", label: "Tamil" },
+  { value: "th", label: "Thai" },
+  { value: "vi", label: "Vietnamese" },
 ];
 
 const StageBasics = ({ profile, onSuccess }: IProps) => {
@@ -159,11 +163,7 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
         <Input size="large" />
       </Form.Item>
 
-      <Form.Item
-        label="Industry"
-        name="industry"
-        rules={[{ required: true, message: "Please select industry" }]}
-      >
+      <Form.Item label="Industry" name="industry">
         <Select
           showSearch
           size="large"
@@ -200,7 +200,6 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
         label="Founded In"
         name="founded_in"
         rules={[
-          { required: true, message: "Please enter founded year" },
           {
             type: "number",
             min: 1800,
@@ -212,11 +211,7 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
         <InputNumber style={{ width: "100%" }} size="large" />
       </Form.Item>
 
-      <Form.Item
-        label="Company Stage"
-        name="company_stage"
-        rules={[{ required: true, message: "Please select company stage" }]}
-      >
+      <Form.Item label="Company Stage" name="company_stage">
         <Select size="large" options={stageOptions} optionFilterProp="label" />
       </Form.Item>
 
