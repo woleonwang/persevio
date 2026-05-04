@@ -20,6 +20,7 @@ import Delete from "@/assets/icons/delete";
 
 import Calendar from "../Calendar";
 import styles from "./style.module.less";
+import { parseJSONArray } from "@/utils";
 
 type TFormValue = TInterview;
 
@@ -60,7 +61,10 @@ const InterviewForm: React.FC<IProps> = (props) => {
   const readonly = !!interview;
   const init = async () => {
     if (interview) {
-      form.setFieldsValue(interview);
+      form.setFieldsValue({
+        ...interview,
+        time_slots: parseJSONArray(interview.time_slots as unknown as string),
+      });
     } else {
       form.resetFields();
       if (interviewDefaults) {
