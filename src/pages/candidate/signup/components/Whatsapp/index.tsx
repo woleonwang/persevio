@@ -1,8 +1,11 @@
-import { Button, Checkbox, Form } from "antd";
+import { Button, Checkbox, Form, Modal, message } from "antd";
 import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import MarkdownContainer from "@/components/MarkdownContainer";
+import privacyAgreement from "@/utils/privacyAgreement";
+import terms from "@/utils/terms";
 
 interface IProps {
   whatsappContactNumber: {
@@ -16,13 +19,22 @@ interface IProps {
   onSkip: () => void;
   isSubmitting: boolean;
   isWithJob: boolean;
+  requirePlatformTerms?: boolean;
 }
 
 const Whatsapp: React.FC<IProps> = (props: IProps) => {
-  const { whatsappContactNumber, onFinish, onSkip, isSubmitting, isWithJob } =
-    props;
-  const [_, forceUpdate] = useReducer(() => ({}), {});
+  const {
+    whatsappContactNumber,
+    onFinish,
+    onSkip,
+    isSubmitting,
+    isWithJob,
+    requirePlatformTerms = false,
+  } = props;
+  const [, forceUpdate] = useReducer(() => ({}), {});
   const [isAgreed, setIsAgreed] = useState(true);
+  const [isPlatformTermsAgreed, setIsPlatformTermsAgreed] = useState(false);
+  const [termsType, setTermsType] = useState<"terms" | "privacy">();
   const [form] = Form.useForm<{
     whatsappContactNumber: {
       countryCode: string;
@@ -43,8 +55,26 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
     forceUpdate();
   }, [whatsappContactNumber]);
 
-  const onSubmit = () => {
-    form.validateFields().then(async (values) => {
+  const policiesAccepted = !requirePlatformTerms || isPlatformTermsAgreed;
+
+  const warnAgreement = () => {
+    message.warning(t("agreement_required_toast"));
+  };
+
+  const hasMinimumForSubmit = () => {
+    const { whatsappContactNumber: wa } = form.getFieldsValue();
+    return !isSubmitting && !!wa?.countryCode && !!wa?.phoneNumber && isAgreed;
+  };
+
+  const handlePrimaryClick = () => {
+    if (!hasMinimumForSubmit()) {
+      return;
+    }
+    if (!policiesAccepted) {
+      warnAgreement();
+      return;
+    }
+    form.validateFields().then((values) => {
       onFinish({
         whatsappCountryCode: values.whatsappContactNumber.countryCode,
         whatsappPhoneNumber: values.whatsappContactNumber.phoneNumber,
@@ -52,14 +82,12 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
     });
   };
 
-  const canSubmit = () => {
-    const { whatsappContactNumber } = form.getFieldsValue();
-    return (
-      !isSubmitting &&
-      !!whatsappContactNumber?.countryCode &&
-      !!whatsappContactNumber?.phoneNumber &&
-      isAgreed
-    );
+  const handleSkip = () => {
+    if (!policiesAccepted) {
+      warnAgreement();
+      return;
+    }
+    onSkip();
   };
 
   return (
@@ -116,8 +144,38 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           checked={isAgreed}
           onChange={(e) => setIsAgreed(e.target.checked)}
         >
-          I agree to be contacted on Whatsapp regarding my job application
+          {t("agree_whatsapp_contact")}
         </Checkbox>
+        {requirePlatformTerms && (
+          <Checkbox
+            className={styles.platformTermsCheckbox}
+            checked={isPlatformTermsAgreed}
+            onChange={(e) => setIsPlatformTermsAgreed(e.target.checked)}
+          >
+            {t("agree_platform_terms_lead")}
+            <span
+              className={styles.termsLink}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setTermsType("terms");
+              }}
+            >
+              {t("terms_of_service")}
+            </span>
+            {t("agree_platform_terms_conj")}
+            <span
+              className={styles.termsLink}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setTermsType("privacy");
+              }}
+            >
+              {t("privacy_policy")}
+            </span>
+          </Checkbox>
+        )}
       </Form>
       <div
         style={{
@@ -132,20 +190,45 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           size="large"
           style={{ flex: 1, height: 44, borderRadius: 12 }}
           type="primary"
-          disabled={!canSubmit()}
-          onClick={() => {
-            if (!canSubmit()) return;
-            onSubmit();
-          }}
+          disabled={!hasMinimumForSubmit()}
+          onClick={() => handlePrimaryClick()}
         >
           {t("next")}
         </Button>
       </div>
       <div className={styles.webInterview}>
-        <div onClick={() => onSkip()} className={styles.webInterviewLink}>
-          I don't have WhatsApp
+        <div onClick={() => handleSkip()} className={styles.webInterviewLink}>
+          {t("skip_no_whatsapp")}
         </div>
       </div>
+
+      <Modal
+        open={!!termsType}
+        onCancel={() => setTermsType(undefined)}
+        onOk={() => setTermsType(undefined)}
+        title={
+          termsType === "terms"
+            ? t("modal_terms_of_service")
+            : t("modal_privacy_policy")
+        }
+        centered
+        width={"80%"}
+        style={{ maxWidth: 1000, maxHeight: "90vh" }}
+        cancelButtonProps={{
+          style: {
+            display: "none",
+          },
+        }}
+      >
+        <div style={{ maxHeight: "70vh", overflow: "auto" }}>
+          <MarkdownContainer
+            content={(termsType === "terms"
+              ? terms
+              : privacyAgreement
+            ).replaceAll("\n", "\n\n")}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

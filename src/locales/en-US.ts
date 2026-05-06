@@ -253,6 +253,16 @@ const CandidateResume = {
     pattern_message: "Please enter a valid WhatsApp number (digits only)",
     previous_step: "Previous Step",
     next: "Start Discovery Chat",
+    agree_whatsapp_contact:
+      "I agree to be contacted on WhatsApp regarding my job application",
+    agree_platform_terms_lead: "I agree to the ",
+    terms_of_service: "Terms of Service",
+    agree_platform_terms_conj: " and ",
+    privacy_policy: "Privacy Policy",
+    modal_terms_of_service: "Terms of Service",
+    modal_privacy_policy: "Privacy Policy",
+    agreement_required_toast: "Please read and agree to the agreement",
+    skip_no_whatsapp: "I don't have WhatsApp",
   },
 };
 

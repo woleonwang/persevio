@@ -245,6 +245,16 @@ const CandidateResume = {
     pattern_message: "请输入有效的 Whatsapp 账号（仅数字）",
     previous_step: "上一步",
     next: "在 WhatsApp 上聊天",
+    agree_whatsapp_contact:
+      "我同意就我的求职申请通过 WhatsApp 与我联系",
+    agree_platform_terms_lead: "我同意 ",
+    terms_of_service: "服务条款",
+    agree_platform_terms_conj: " 与 ",
+    privacy_policy: "隐私政策",
+    modal_terms_of_service: "服务条款",
+    modal_privacy_policy: "隐私政策",
+    agreement_required_toast: "请先阅读并同意相关协议",
+    skip_no_whatsapp: "我没有 WhatsApp",
   },
 };
 

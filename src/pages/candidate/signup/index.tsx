@@ -18,6 +18,10 @@ import Whatsapp from "./components/Whatsapp";
 
 import styles from "./style.module.less";
 
+/** Email reminder deep links use ?signup_source=email (never deleteQuery — refresh-safe). */
+const SIGNUP_SOURCE_QUERY = "signup_source";
+const SIGNUP_SOURCE_EMAIL = "email";
+
 type TPageState = "basic" | "resume" | "binding" | "whatsapp";
 
 const Signup: React.FC = () => {
@@ -45,6 +49,8 @@ const Signup: React.FC = () => {
   const jobIdStr: string = getQuery("job_id");
   const jobIdQuery = parseInt(jobIdStr ?? "0");
   const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === 1;
+  const isEmailSignupFlow =
+    getQuery(SIGNUP_SOURCE_QUERY) === SIGNUP_SOURCE_EMAIL;
 
   const navigate = useNavigate();
 
@@ -362,6 +368,7 @@ const Signup: React.FC = () => {
               }}
               isSubmitting={isSubmittingWhatsapp}
               isWithJob={!!jobId}
+              requirePlatformTerms={isEmailSignupFlow}
             />
           )}
         </div>
