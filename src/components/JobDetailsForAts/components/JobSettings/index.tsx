@@ -47,7 +47,7 @@ export interface PipelineStage {
 }
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
 }
 
 const LockedStageItem = ({ name }: { name: string }) => (
@@ -265,7 +265,7 @@ const JobSettings = ({ jobId }: IProps) => {
         okText: "Proceed",
         cancelText: "Cancel",
         onOk: async () => {
-          const { code } = await Post(`/api/jobs/${job.id}`, {
+          const { code } = await Post(`/api/jobs/${jobId}`, {
             is_confidential: true,
           });
           if (code === 0) {
@@ -280,7 +280,7 @@ const JobSettings = ({ jobId }: IProps) => {
 
     // 其它情况（开启 -> 关闭 或重复点击）：直接更新
     (async () => {
-      const { code } = await Post(`/api/jobs/${job.id}`, {
+      const { code } = await Post(`/api/jobs/${jobId}`, {
         is_confidential: checked,
       });
       if (code === 0) {

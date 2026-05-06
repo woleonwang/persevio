@@ -3,7 +3,7 @@ import StaffChat from "@/components/StaffChat";
 import styles from "./style.module.less";
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
   talentId: number;
 }
 const Details = (props: IProps) => {

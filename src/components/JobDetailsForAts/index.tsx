@@ -103,7 +103,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
   const togglePostJob = async () => {
     if (!job) return;
 
-    const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+    const { code } = await Post(`/api/jobs/${job.invitation_token}/post_job`, {
       open: job.posted_at ? "0" : "1",
     });
 
@@ -115,7 +115,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
 
   const updateJobName = async () => {
     if (!job) return;
-    const { code } = await Post(`/api/jobs/${job.id}`, {
+    const { code } = await Post(`/api/jobs/${job.invitation_token}`, {
       name: editingJobName,
     });
     if (code === 0) {
@@ -282,7 +282,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
                     }}
                   />
                 ) : (
-                  <AdminTalents jobId={job.id} />
+                  <AdminTalents jobId={job.invitation_token} />
                 )}
               </div>
             ),
@@ -339,7 +339,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             ),
             children: (
               <div className={styles.body}>
-                <JobSettings jobId={job.id} />
+                <JobSettings jobId={job.invitation_token} />
               </div>
             ),
           },
@@ -349,7 +349,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
       <JobCollaboratorModal
         open={isCollaboratorModalOpen}
         onCancel={() => setIsCollaboratorModalOpen(false)}
-        jobId={job.id}
+        jobId={job.invitation_token}
       />
     </div>
   );

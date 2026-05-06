@@ -52,7 +52,9 @@ const ShareToken: React.FC<IProps> = (props) => {
   }, [candidate]);
 
   const fetchShareToken = async () => {
-    const { code, data } = await Get(`/api/candidate/share_tokens/${job.id}`);
+    const { code, data } = await Get(
+      `/api/candidate/share_tokens/${job.candidate_uuid}`,
+    );
     if (code === 0) {
       setShareToken(data.share_token.token);
       setStatus("exists");

@@ -48,9 +48,11 @@ const JobBoard = () => {
   }, [job]);
 
   const fetchTalents = async () => {
+    if (!job) return;
+    const jobSeg = job.invitation_token;
     const { code, data } = await Get<{
       talents: TTalent[];
-    }>(`/api/jobs/${job?.id}/talents`);
+    }>(`/api/jobs/${jobSeg}/talents`);
 
     if (code === 0) {
       setTalents(data.talents);
@@ -60,6 +62,8 @@ const JobBoard = () => {
   if (!job) {
     return <Spin />;
   }
+
+  const jobSeg = job.invitation_token;
 
   const unfinishedCount =
     [
@@ -88,7 +92,7 @@ const JobBoard = () => {
 
         setIsUploading(true);
         const { code, data } = await PostFormData(
-          `/api/jobs/${job.id}/upload_resume_for_interview_design`,
+          `/api/jobs/${jobSeg}/upload_resume_for_interview_design`,
           formData
         );
 
@@ -100,7 +104,7 @@ const JobBoard = () => {
 
         const { talent_name: talentName, resume, resume_path: resumePath } = data;
         const { code: code3, data: data3 } = await Get(
-          `/api/jobs/${job.id}/talents/check_name?name=${talentName}`
+          `/api/jobs/${jobSeg}/talents/check_name?name=${talentName}`
         );
         if (code3 !== 0) {
           message.error(t("upload_failed"));
@@ -118,7 +122,7 @@ const JobBoard = () => {
           return;
         }
 
-        const { code: code2 } = await Post(`/api/jobs/${job.id}/talents`, {
+        const { code: code2 } = await Post(`/api/jobs/${jobSeg}/talents`, {
           resume: resume,
           name: talentName,
           resume_path: resumePath,
@@ -173,7 +177,7 @@ const JobBoard = () => {
               <Switch
                 checked={!!job.posted_at}
                 onChange={async (checked) => {
-                  const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+                  const { code } = await Post(`/api/jobs/${jobSeg}/post_job`, {
                     open: checked ? "1" : "0",
                   });
                   if (code === 0) {
@@ -192,7 +196,7 @@ const JobBoard = () => {
                 onClick={async () => {
                   window.open(
                     getJobChatbotUrl(
-                      job.id,
+                      job.candidate_uuid,
                       job.jd_version?.toString(),
                       "customer"
                     )
@@ -206,7 +210,7 @@ const JobBoard = () => {
             <ShareAltOutlined
               onClick={async () => {
                 await copy(
-                  `${window.origin}/app/jobs/${job.id}/board?token=${
+                  `${window.origin}/app/jobs/${jobSeg}/board?token=${
                     tokenStorage.getToken("staff") || ""
                   }&share=1`
                 );
@@ -230,7 +234,7 @@ const JobBoard = () => {
               <Button
                 onClick={() => {
                   setJobDotStatus(job.id, "job_requirement_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-requirement`);
+                  navigate(`/app/jobs/${jobSeg}/chat/job-requirement`);
                 }}
                 size="large"
                 {...(!!job.requirement_doc_id && {
@@ -251,7 +255,7 @@ const JobBoard = () => {
                 disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_description_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-description`);
+                  navigate(`/app/jobs/${jobSeg}/chat/job-description`);
                 }}
                 size="large"
                 {...(!!job.jd_doc_id && {
@@ -272,7 +276,7 @@ const JobBoard = () => {
                 disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_compensation_details_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-compensation-details`);
+                  navigate(`/app/jobs/${jobSeg}/chat/job-compensation-details`);
                 }}
                 size="large"
                 {...(!!job.compensation_details_doc_id && {
@@ -293,7 +297,7 @@ const JobBoard = () => {
                 disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_outreach_message_chat");
-                  navigate(`/app/jobs/${job.id}/chat/job-outreach-message`);
+                  navigate(`/app/jobs/${jobSeg}/chat/job-outreach-message`);
                 }}
                 size="large"
                 {...(!!job.outreach_message_doc_id && {
@@ -308,7 +312,7 @@ const JobBoard = () => {
               disabled={!job.requirement_doc_id}
               onClick={() => {
                 setJobDotStatus(job.id, "job_interview_plan_chat");
-                navigate(`/app/jobs/${job.id}/chat/job-interview-plan`);
+                navigate(`/app/jobs/${jobSeg}/chat/job-interview-plan`);
               }}
               size="large"
               {...(!!job.interview_plan_doc_id && {
@@ -322,7 +326,7 @@ const JobBoard = () => {
               disabled={!job.interview_plan_doc_id}
               onClick={() => {
                 navigate(
-                  `/app/jobs/${job.id}/talents/select/interview_designer`
+                  `/app/jobs/${jobSeg}/talents/select/interview_designer`
                 );
               }}
               size="large"
@@ -333,7 +337,7 @@ const JobBoard = () => {
               disabled={!job.interview_plan_doc_id}
               onClick={() => {
                 navigate(
-                  `/app/jobs/${job.id}/talents/select/interview_feedback`
+                  `/app/jobs/${jobSeg}/talents/select/interview_feedback`
                 );
               }}
               size="large"
@@ -357,7 +361,7 @@ const JobBoard = () => {
                 // disabled={!job.requirement_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_description_doc");
-                  navigate(`/app/jobs/${job.id}/document/job-requirement`);
+                  navigate(`/app/jobs/${jobSeg}/document/job-requirement`);
                 }}
                 size="large"
               >
@@ -374,7 +378,7 @@ const JobBoard = () => {
                 // disabled={!job.jd_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_description_doc");
-                  navigate(`/app/jobs/${job.id}/document/job-description`);
+                  navigate(`/app/jobs/${jobSeg}/document/job-description`);
                 }}
                 size="large"
               >
@@ -392,7 +396,7 @@ const JobBoard = () => {
                 onClick={() => {
                   setJobDotStatus(job.id, "job_compensation_details_doc");
                   navigate(
-                    `/app/jobs/${job.id}/document/job-compensation-details`
+                    `/app/jobs/${jobSeg}/document/job-compensation-details`
                   );
                 }}
                 size="large"
@@ -410,7 +414,7 @@ const JobBoard = () => {
                 // disabled={!job.jd_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_outreach_message_doc");
-                  navigate(`/app/jobs/${job.id}/document/job-outreach-message`);
+                  navigate(`/app/jobs/${jobSeg}/document/job-outreach-message`);
                 }}
                 size="large"
               >
@@ -427,7 +431,7 @@ const JobBoard = () => {
                 // disabled={!job.interview_plan_doc_id}
                 onClick={() => {
                   setJobDotStatus(job.id, "job_interview_plan_doc");
-                  navigate(`/app/jobs/${job.id}/document/job-interview-plan`);
+                  navigate(`/app/jobs/${jobSeg}/document/job-interview-plan`);
                 }}
                 size="large"
               >
@@ -457,7 +461,7 @@ const JobBoard = () => {
                           type="default"
                           onClick={() => {
                             navigate(
-                              `/app/jobs/${job.id}/talents/${talent.id}/chat`
+                              `/app/jobs/${jobSeg}/talents/${talent.id}/chat`
                             );
                           }}
                           size="large"
@@ -476,7 +480,7 @@ const JobBoard = () => {
                               )
                             ) {
                               const { code } = await Post(
-                                `/api/jobs/${job.id}/talents/${talent.id}/destroy`
+                                `/api/jobs/${jobSeg}/talents/${talent.id}/destroy`
                               );
 
                               if (code === 0) {

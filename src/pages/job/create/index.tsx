@@ -34,7 +34,9 @@ const JobCreate = () => {
       if (code === 0) {
         message.success(t("create_success"));
         fetchJobs();
-        navigate(`/app/jobs/${data.job_id}/standard-board`);
+        navigate(
+          `/app/jobs/${(data as { invitation_token?: string }).invitation_token ?? data.job_id}/standard-board`,
+        );
       }
       isSubmittingRef.current = false;
     }

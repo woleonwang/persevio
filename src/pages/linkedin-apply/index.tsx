@@ -20,12 +20,11 @@ const LinkedinApply: React.FC = () => {
     if (!jobId) {
       return;
     }
-    const { code } = await Get(`/api/public/jobs/${jobId}`);
-    if (code === 0) {
-      navigate(`/jobs/${jobId}`);
-    } else {
-      navigate(`/jobs/${jobId}`);
-    }
+    const { code, data } = await Get<{ candidate_uuid: string }>(
+      `/api/public/jobs/${jobId}`,
+    );
+    const jobKey = code === 0 && data ? data.candidate_uuid : jobId ?? "";
+    navigate(`/jobs/${jobKey}`);
   };
 
   return (

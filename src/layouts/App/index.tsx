@@ -104,10 +104,11 @@ const AppLayout = () => {
             job.name.toLowerCase().includes(searchKeyword.toLowerCase()),
         )
         .map((job) => {
+          const jobSeg = job.invitation_token;
           const path =
             mode === "standard"
-              ? `/app/jobs/${job.id}/standard-board`
-              : `/app/jobs/${job.id}/board`;
+              ? `/app/jobs/${jobSeg}/standard-board`
+              : `/app/jobs/${jobSeg}/board`;
           const isActive = currentPath.startsWith(path);
           return {
             title: job.name,
@@ -121,7 +122,9 @@ const AppLayout = () => {
                   jobName: job.name,
                 }),
                 onOk: async () => {
-                  const { code } = await Post(`/api/jobs/${job.id}/destroy`);
+                  const { code } = await Post(
+                    `/api/jobs/${jobSeg}/destroy`,
+                  );
                   if (code === 0) {
                     message.success(t("submit_succeed"));
                     fetchJobs();

@@ -48,9 +48,10 @@ const TalentChat = () => {
   const totalRound = (interviewPlan.rounds ?? []).length;
 
   const fetchChatInstance = async () => {
+    if (!job || !talent) return;
     setIsLoadingInstance(true);
     const { code, data } = await Get(
-      `/api/public/jobs/${job?.id}/talents/${talent?.id}/${chatType}?round=${round}`,
+      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/${chatType}?round=${round}`,
     );
     if (code === 0) {
       setChatInstance(data[chatType]);
@@ -64,6 +65,8 @@ const TalentChat = () => {
     return <Spin />;
   }
 
+  const jobStaffSeg = job.invitation_token;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -75,7 +78,7 @@ const TalentChat = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            navigate(`/app/jobs/${job.id}/board`);
+            navigate(`/app/jobs/${jobStaffSeg}/board`);
           }}
         />
         {talent.name} - {job.name}
@@ -100,7 +103,7 @@ const TalentChat = () => {
           <Button
             onClick={() => {
               navigate(
-                `/app/jobs/${job.id}/talents/${talent.id}/detail?tab=${chatType}&round=${round}`,
+                `/app/jobs/${jobStaffSeg}/talents/${talent.id}/detail?tab=${chatType}&round=${round}`,
               );
             }}
           >
@@ -154,7 +157,7 @@ const TalentChat = () => {
                   <InterviewDesignerForm
                     key={round}
                     type="edit"
-                    jobId={job.id}
+                    jobId={jobStaffSeg}
                     talentId={talent.id}
                     round={round}
                     interviewDesignerId={chatInstance.id}
@@ -165,7 +168,7 @@ const TalentChat = () => {
                   <InterviewFeedbacksForm
                     key={round}
                     type="edit"
-                    jobId={job.id}
+                    jobId={jobStaffSeg}
                     talentId={talent.id}
                     round={round}
                     interviewFeedbackId={chatInstance.id}
@@ -176,7 +179,7 @@ const TalentChat = () => {
               ) : (
                 <StaffChat
                   key={`${chatType}-${round}`}
-                  jobId={job.id}
+                  jobId={jobStaffSeg}
                   newVersion
                   chatType={
                     chatType === "interview_designer"
@@ -194,7 +197,7 @@ const TalentChat = () => {
               <InterviewDesignerForm
                 key={round}
                 type="create"
-                jobId={job.id}
+                jobId={jobStaffSeg}
                 talentId={talent.id}
                 round={round}
                 onFinish={() => fetchChatInstance()}
@@ -203,7 +206,7 @@ const TalentChat = () => {
               <InterviewFeedbacksForm
                 key={round}
                 type="create"
-                jobId={job.id}
+                jobId={jobStaffSeg}
                 talentId={talent.id}
                 round={round}
                 onFinish={() => fetchChatInstance()}

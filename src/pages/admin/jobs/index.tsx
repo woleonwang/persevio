@@ -234,7 +234,10 @@ const Jobs = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(
-                  getJobChatbotUrl(job.id, job.jd_version?.toString()),
+                  getJobChatbotUrl(
+                    job.candidate_uuid,
+                    job.jd_version?.toString(),
+                  ),
                 );
               }}
               style={{ marginLeft: 12 }}

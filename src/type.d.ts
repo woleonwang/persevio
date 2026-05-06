@@ -34,6 +34,8 @@ interface IJob {
   staff_id: number;
   name: string;
   invitation_token: string;
+  /** 公开职位页、候选人侧 `/jobs/:key` 等路径使用 */
+  candidate_uuid: string;
 
   basic_info_doc_id: number;
   reference_doc_id: number;
@@ -125,6 +127,8 @@ type TPublicJob = {
   name: string;
   interview_plan_json: string;
   language: string;
+  invitation_token: string;
+  candidate_uuid: string;
 };
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
@@ -474,6 +478,8 @@ type TTalent = {
   interviews: TInterview[];
   job?: {
     id: number;
+    invitation_token: string;
+    candidate_uuid: string;
     name: string;
     staff_id: number;
     bonus_pool: number;

@@ -35,7 +35,7 @@ type TTableRow = {
 
 const getStatus = (
   profile: TLinkedinProfileItem,
-  hasTalent: boolean
+  hasTalent: boolean,
 ): TOutreachStatus => {
   if (hasTalent || profile.candidate_id) {
     return "resume_submitted";
@@ -67,7 +67,7 @@ const JobOutreachCampaigns = () => {
   >([]);
   const [talents, setTalents] = useState<TTalent[]>([]);
   const [statusFilter, setStatusFilter] = useState<TOutreachStatus | "all">(
-    "all"
+    "all",
   );
 
   const { t: originalT } = useTranslation();
@@ -90,7 +90,7 @@ const JobOutreachCampaigns = () => {
           (data.linkedin_profiles ?? []).map((p) => ({
             ...p,
             basicInfo: parseJSON(p.basic_info_json),
-          }))
+          })),
         );
       }
       setLoading(false);
@@ -243,7 +243,7 @@ const JobOutreachCampaigns = () => {
                 onClick: () => {
                   if (!job?.id) return;
                   navigate(
-                    `/app/jobs/${job.id}/standard-board/linkedin-profiles/${record.id}`
+                    `/app/jobs/${job.invitation_token}/standard-board/linkedin-profiles/${record.id}`,
                   );
                 },
               };

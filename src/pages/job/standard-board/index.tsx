@@ -58,9 +58,12 @@ const JobBoard = () => {
     if (!job) return;
 
     if (!job.initial_posted_at) {
-      const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
-        open: "1",
-      });
+      const { code } = await Post(
+        `/api/jobs/${job.invitation_token}/post_job`,
+        {
+          open: "1",
+        },
+      );
 
       if (code !== 0) {
         message.error(originalT("submit_failed"));
@@ -79,6 +82,8 @@ const JobBoard = () => {
   if (!job) {
     return <Spin />;
   }
+
+  const jobSeg = job.invitation_token;
 
   const stepItems = [
     {
@@ -154,7 +159,7 @@ const JobBoard = () => {
       <div className={styles.body}>
         {jobState === "roleBasics" && (
           <RoleBasicsStage
-            jobId={job.id}
+            jobId={jobSeg}
             onSuccess={async () => {
               await fetchJob();
             }}
@@ -162,7 +167,7 @@ const JobBoard = () => {
         )}
         {jobState === "roleBriefing" && (
           <RoleBriefingStage
-            jobId={job.id}
+            jobId={jobSeg}
             onSuccess={async () => {
               await fetchJob();
             }}
@@ -171,7 +176,7 @@ const JobBoard = () => {
         {jobState === "jrd" && (
           <StaffChat
             chatType="jobRequirementDoc"
-            jobId={job.id}
+            jobId={jobSeg}
             onNextTask={() => setJobState("jd")}
             key={`jrd-${job.id}`}
             newVersion
@@ -180,7 +185,7 @@ const JobBoard = () => {
         {jobState === "jd" && (
           <StaffChat
             chatType="jobDescription"
-            jobId={job.id}
+            jobId={jobSeg}
             onNextTask={() => {
               postJob();
             }}
@@ -198,7 +203,7 @@ const JobBoard = () => {
         <FloatButton
           icon={<FileOutlined />}
           onClick={() => {
-            window.open(`/app/jobs/${job.id}/internal-documents`, "_blank");
+            window.open(`/app/jobs/${jobSeg}/internal-documents`, "_blank");
           }}
         />
       )}

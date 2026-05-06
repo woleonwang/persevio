@@ -121,7 +121,10 @@ const DraggableCard = ({
 
     setPopoverOpen(open);
     if (open && !item.viewed_at) {
-      await Post(`/api/jobs/${item.job_id}/talents/${item.id}/viewed`, {});
+      await Post(
+        `/api/jobs/${item.job?.invitation_token}/talents/${item.id}/viewed`,
+        {},
+      );
       onViewed?.(item.id);
       fetchUnreadTalentsCount();
     }

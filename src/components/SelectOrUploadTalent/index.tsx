@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
   value?: number;
   onChange?: (val: number) => void;
 }

@@ -299,7 +299,7 @@ export const getJobApplyStatus = (jobApply?: IJobApplyListItem) => {
 };
 
 export const getJobChatbotUrl = (
-  jobId: number,
+  jobKey: string | number,
   version: string,
   sourceChannel?: string,
 ) => {
@@ -307,7 +307,7 @@ export const getJobChatbotUrl = (
     sourceChannel != null && sourceChannel !== ""
       ? `?source_channel=${encodeURIComponent(sourceChannel)}`
       : "";
-  return `${window.origin}/jobs/${jobId}/chat${
+  return `${window.origin}/jobs/${jobKey}/chat${
     version === "0" ? "" : `/${version}`
   }${query}`;
 };

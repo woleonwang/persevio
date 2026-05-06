@@ -2,6 +2,7 @@
 
 export const mockJob: IJob = {
   id: 1,
+  candidate_uuid: 'cuuid-fe-001',
   name: 'Senior Frontend Engineer',
   staff_id: 10,
   posted_at: null,
@@ -20,6 +21,8 @@ export const mockJob: IJob = {
 export const mockJobPosted: IJob = {
   ...mockJob,
   id: 2,
+  invitation_token: 'tok-product-pm-456',
+  candidate_uuid: 'cuuid-product-pm',
   name: 'Product Manager',
   staff_id: 11,           // Bob — distinct from mockJob (Alice, id 10) for filter tests
   posted_at: '2024-01-15T10:00:00Z',

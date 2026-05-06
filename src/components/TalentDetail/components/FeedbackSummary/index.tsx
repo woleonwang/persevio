@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   interviewPlan: TInterviewPlanDetail;
   interviewFeedback: TInterviewFeedback;

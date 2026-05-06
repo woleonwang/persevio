@@ -10,7 +10,7 @@ type TFormValue = {
 
 interface IProps {
   type: "create" | "edit";
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   round: number;
   interviewFeedbackId?: number;

@@ -29,6 +29,8 @@ const chatTypeMappings: Record<TChatType, string> = {
 const JobDocument = (props: IProps) => {
   const { job, chatType, onUpdateDoc, role = "staff" } = props;
 
+  const jobSeg = job.invitation_token;
+
   const [documentContent, setDocumentContent] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingValue, setEditingValue] = useState("");
@@ -45,7 +47,7 @@ const JobDocument = (props: IProps) => {
 
   const fetchDoc = async () => {
     const { code, data } = await Get(
-      `/api/jobs/${job.id}/docs/${chatTypeMappings[chatType]}`,
+      `/api/jobs/${jobSeg}/docs/${chatTypeMappings[chatType]}`,
     );
     if (code === 0) {
       setDocumentContent(data.content);
@@ -56,7 +58,7 @@ const JobDocument = (props: IProps) => {
 
   const fetchConversationRecord = async () => {
     const { code, data } = await Get(
-      `/api/jobs/${job.id}/chat/${
+      `/api/jobs/${jobSeg}/chat/${
         chatType === "jobRequirement" ? "JOB_REQUIREMENT" : "JOB_DESCRIPTION"
       }/messages`,
     );
@@ -67,7 +69,7 @@ const JobDocument = (props: IProps) => {
 
   const updateDoc = async () => {
     const { code } = await Post(
-      `/api/jobs/${job.id}/docs/${chatTypeMappings[chatType]}`,
+      `/api/jobs/${jobSeg}/docs/${chatTypeMappings[chatType]}`,
       {
         content: editingValue,
       },
@@ -125,7 +127,7 @@ const JobDocument = (props: IProps) => {
               icon={<Icon icon={<Share2 />} />}
               onClick={async () => {
                 await copy(
-                  `${window.origin}/jobs/${job.id}/share?show=${chatTypeMappings[chatType]}`,
+                  `${window.origin}/jobs/${job.candidate_uuid}/share?show=${chatTypeMappings[chatType]}`,
                 );
                 message.success(originalT("copied"));
               }}

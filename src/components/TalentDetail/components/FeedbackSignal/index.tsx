@@ -8,7 +8,7 @@ import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   interviewerName: string;
   signalTitle: string;

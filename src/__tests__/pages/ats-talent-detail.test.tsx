@@ -135,6 +135,8 @@ describe("AtsTalentDetail 页面", () => {
   const getDefaultJob = () => ({
     id: 1,
     name: "Test Job",
+    invitation_token: "1",
+    candidate_uuid: "candidate-uuid-1",
     pipeline_stages: JSON.stringify([
       { id: "stage_1", name: "Stage 1" },
       { id: "stage_2", name: "Stage 2" },
@@ -196,7 +198,13 @@ describe("AtsTalentDetail 页面", () => {
               {
                 id: 100,
                 name: "John Doe",
-                job: { id: 1, name: "Test Job", posted_at: null },
+                job: {
+                  id: 1,
+                  name: "Test Job",
+                  posted_at: null,
+                  invitation_token: "1",
+                  candidate_uuid: "candidate-uuid-1",
+                },
               },
             ],
           },

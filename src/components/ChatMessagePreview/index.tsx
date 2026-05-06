@@ -113,7 +113,7 @@ const ChatMessagePreview = (props: {
                   duration={item.duration ?? 0}
                   payloadUrl={
                     role === "staff"
-                      ? `/api/jobs/${talent?.job_id}/talents/${talent?.id}/messages/${item.id}`
+                      ? `/api/jobs/${job!.invitation_token}/talents/${talent!.id}/messages/${item.id}`
                       : `/api/admin/messages/${item.id}`
                   }
                   onPlay={() => {}}

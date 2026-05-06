@@ -61,7 +61,9 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     if (tab) {
       setChatType(tab as TMenu);
     } else {
-      const { code, data } = await Get(`/api/talents?job_id=${job.id}`);
+      const { code, data } = await Get(
+        `/api/talents?job_id=${job.invitation_token}`,
+      );
       if (
         code === 0 &&
         (data.talents.length > 0 || data.linkedin_profiles.length > 0)
@@ -76,7 +78,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const togglePostJob = async () => {
     if (!job) return;
 
-    const { code } = await Post(`/api/jobs/${job.id}/post_job`, {
+    const { code } = await Post(`/api/jobs/${job.invitation_token}/post_job`, {
       open: job.posted_at ? "0" : "1",
     });
 
@@ -88,7 +90,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
 
   const updateJobName = async () => {
     if (!job) return;
-    const { code } = await Post(`/api/jobs/${job.id}`, {
+    const { code } = await Post(`/api/jobs/${job.invitation_token}`, {
       name: editingJobName,
     });
     if (code === 0) {
@@ -188,9 +190,9 @@ const JobDetails = ({ role = "staff" }: IProps) => {
         <div className={styles.right}>
           {chatType === "talents" &&
             (role === "staff" ? (
-              <TalentCards jobId={job.id} />
+              <TalentCards jobId={job.invitation_token} />
             ) : (
-              <AdminTalents jobId={job.id} />
+              <AdminTalents jobId={job.invitation_token} />
             ))}
           {chatType === "settings" && <JobSettings jobId={job.id} />}
           {(chatType === "jobRequirement" || chatType === "jobDescription") && (
@@ -209,7 +211,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
       <JobCollaboratorModal
         open={isCollaboratorModalOpen}
         onCancel={() => setIsCollaboratorModalOpen(false)}
-        jobId={job.id}
+        jobId={job.invitation_token}
       />
     </div>
   );

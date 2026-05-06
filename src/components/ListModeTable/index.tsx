@@ -106,9 +106,14 @@ const ListModeTable = ({
   const wrapCell = (record: TTalentListItem, children: React.ReactNode) => {
     const hasViewed = viewedMap[record.id] ?? !!record.viewed_at;
     const handleOpenChange = async (open: boolean) => {
-      if (open && !hasViewed && !record.viewed_at) {
+      if (
+        open &&
+        !hasViewed &&
+        !record.viewed_at &&
+        record.job?.invitation_token
+      ) {
         await Post(
-          `/api/jobs/${record.job_id}/talents/${record.id}/viewed`,
+          `/api/jobs/${record.job?.invitation_token}/talents/${record.id}/viewed`,
           {},
         );
         setViewedMap((prev) => ({ ...prev, [record.id]: true }));
@@ -142,7 +147,7 @@ const ListModeTable = ({
   ) => {
     if (!onUpdateTalent) return;
     const { code } = await Post(
-      `/api/jobs/${record.job_id}/talents/${record.id}`,
+      `/api/jobs/${record.job?.invitation_token}/talents/${record.id}`,
       {
         status: "rejected",
         feedback,
@@ -159,7 +164,7 @@ const ListModeTable = ({
     if (!onUpdateTalent) return;
     if (!actionRecord || !selectedStageId) return;
     const { code } = await Post(
-      `/api/jobs/${actionRecord.job_id}/talents/${actionRecord.id}/stage`,
+      `/api/jobs/${actionRecord.job?.invitation_token}/talents/${actionRecord.id}/stage`,
       { stage_id: selectedStageId },
     );
     if (code === 0) {

@@ -63,7 +63,7 @@ const TalentPopoverContent = ({
   const isPipeline = variant === "pipeline";
 
   const updateTalentEvaluateFeedback = async (
-    jobId: number,
+    jobId: string | number,
     talentId: number,
     feedback: TEvaluateFeedback,
   ) => {
@@ -90,7 +90,7 @@ const TalentPopoverContent = ({
 
   const updateTalentEvaluateFeedbackReason = async (reason: string) => {
     await Post(
-      `/api/jobs/${talent.job_id}/talents/${talent.id}/evaluate_feedback`,
+      `/api/jobs/${talent.job?.invitation_token}/talents/${talent.id}/evaluate_feedback`,
       {
         evaluate_feedback_reason: reason,
       },
@@ -106,7 +106,7 @@ const TalentPopoverContent = ({
     feedback?: string,
   ) => {
     const { code } = await Post(
-      `/api/jobs/${talent.job_id}/talents/${talent.id}`,
+      `/api/jobs/${talent.job?.invitation_token}/talents/${talent.id}`,
       {
         status: "rejected",
         feedback,
@@ -137,7 +137,10 @@ const TalentPopoverContent = ({
       variant === "pipeline"
         ? TALENT_DETAIL_FROM.pipeline
         : TALENT_DETAIL_FROM.talents;
-    window.open(buildTalentDetailUrl(talent.job_id, talent.id, from), "_blank");
+    window.open(
+      buildTalentDetailUrl(job!.invitation_token, talent.id, from),
+      "_blank",
+    );
   };
 
   const getSkillsText = () => {
@@ -262,7 +265,11 @@ const TalentPopoverContent = ({
               <EvaluateFeedback
                 value={talent.evaluate_feedback}
                 onChange={(value) => {
-                  updateTalentEvaluateFeedback(talent.job_id, talent.id, value);
+                  updateTalentEvaluateFeedback(
+                    talent.job!.invitation_token,
+                    talent.id,
+                    value,
+                  );
                 }}
                 onOpen={() => {
                   setNeedConfirmEvaluateFeedbackConversation(false);
@@ -444,7 +451,7 @@ const TalentPopoverContent = ({
       </div>
 
       <TalentEvaluateFeedbackWithReasonModal
-        jobId={talent.job_id ?? 0}
+        jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
         open={isRejectModalOpen}
         onOk={() => {
@@ -491,7 +498,7 @@ const TalentPopoverContent = ({
 
       <EvaluateFeedbackConversation
         open={openEvaluateFeedbackConversation}
-        jobId={talent.job_id ?? 0}
+        jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
         needConfirm={needConfirmEvaluateFeedbackConversation}
         onCancel={() => setOpenEvaluateFeedbackConversation(false)}

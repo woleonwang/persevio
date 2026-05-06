@@ -341,7 +341,13 @@ const PublicJobs: React.FC = () => {
             ...parseJSON(job.basic_info),
           };
         }),
-        ...MockJobs,
+        ...MockJobs.map((m) => ({
+          ...m,
+          candidate_uuid: `mock-${m.id}`,
+          company_name: "",
+          company_logo: "",
+          version: 0,
+        })),
       ]);
     }
   };

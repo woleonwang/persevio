@@ -55,6 +55,8 @@ const JobChat = () => {
     return <Spin />;
   }
 
+  const jobSeg = job.invitation_token;
+
   return (
     <div className={styles.container}>
       <div className={styles.jobMain}>
@@ -75,7 +77,7 @@ const JobChat = () => {
               cursor: "pointer",
             }}
             onClick={() => {
-              navigate(`/app/jobs/${job.id}/board`);
+              navigate(`/app/jobs/${jobSeg}/board`);
             }}
           />
           <span style={{ fontSize: 20, fontWeight: "bold" }}>{job.name}</span> -{" "}
@@ -84,10 +86,10 @@ const JobChat = () => {
         <div className={styles.chatWrapper}>
           <StaffChat
             key={chatType}
-            jobId={job.id}
+            jobId={jobSeg}
             chatType={chatTypeMappings[chatType] as TChatType}
             viewDoc={(docType: string) => {
-              navigate(`/app/jobs/${job.id}/document/${docType}`);
+              navigate(`/app/jobs/${jobSeg}/document/${docType}`);
             }}
           />
         </div>

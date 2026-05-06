@@ -184,13 +184,17 @@ const Signup: React.FC = () => {
         const sourceChannel = sourceChannelMapping?.[jobIdFromQuery];
         params = {
           ...params,
-          job_id: jobIdFromQuery,
           share_token: shareToken,
           linkedin_profile_id: linkedinProfileId
             ? parseInt(linkedinProfileId)
             : undefined,
           source_channel: sourceChannel,
         };
+        if (jobIdFromQuery.length === 36) {
+          params.candidate_uuid = jobIdFromQuery;
+        } else {
+          params.job_id = parseInt(jobIdFromQuery);
+        }
       }
 
       const { code, data } = await Post(`/api/candidate/register`, params);

@@ -138,7 +138,7 @@ const Talents: React.FC = () => {
             onRowClick={(talent) => {
               window.open(
                 buildTalentDetailUrl(
-                  talent.job_id,
+                  talent.job!.invitation_token,
                   talent.id,
                   TALENT_DETAIL_FROM.talents,
                 ),

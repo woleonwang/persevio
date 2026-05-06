@@ -781,7 +781,7 @@ const AtsTalentDetail: React.FC = () => {
 
   const downloadResume = async () => {
     await Download(
-      `/api/jobs/${job?.id}/talents/${talent?.id}/download_resume`,
+      `/api/jobs/${job!.invitation_token}/talents/${talent!.id}/download_resume`,
       `${talent.name}_resume`,
     );
   };
@@ -795,14 +795,14 @@ const AtsTalentDetail: React.FC = () => {
     navigate(
       from === TALENT_DETAIL_FROM.talents
         ? `/app/talents`
-        : `/app/jobs/${job.id}/standard-board?tab=talents`,
+        : `/app/jobs/${job!.invitation_token}/standard-board?tab=talents`,
     );
   };
 
   const handleMoveStage = async () => {
     if (!job || !talent || !selectedStageId) return;
     const { code } = await Post(
-      `/api/jobs/${job.id}/talents/${talent.id}/stage`,
+      `/api/jobs/${job.invitation_token}/talents/${talent.id}/stage`,
       { stage_id: selectedStageId },
     );
     if (code === 0) {
@@ -814,10 +814,13 @@ const AtsTalentDetail: React.FC = () => {
   };
 
   const updateTalentStatus = async (feedback?: string) => {
-    const { code } = await Post(`/api/jobs/${job?.id}/talents/${talent?.id}`, {
-      status: "rejected",
-      feedback,
-    });
+    const { code } = await Post(
+      `/api/jobs/${job!.invitation_token}/talents/${talent!.id}`,
+      {
+        status: "rejected",
+        feedback,
+      },
+    );
     if (code === 0) {
       fetchTalent();
       setIsRejectModalOpen(false);
@@ -828,7 +831,7 @@ const AtsTalentDetail: React.FC = () => {
   const updateTalentEvaluateFeedback = async (feedback: TEvaluateFeedback) => {
     setOpenEvaluateFeedbackReason(true);
     const { code } = await Post(
-      `/api/jobs/${job?.id}/talents/${talent?.id}/evaluate_feedback`,
+      `/api/jobs/${job!.invitation_token}/talents/${talent!.id}/evaluate_feedback`,
       { evaluate_feedback: feedback },
     );
     if (code === 0) fetchTalent();
@@ -837,7 +840,7 @@ const AtsTalentDetail: React.FC = () => {
   const updateTalentEvaluateFeedbackReason = async (reason: string) => {
     if (!job || !talent) return;
     const { code } = await Post(
-      `/api/jobs/${job.id}/talents/${talent.id}/evaluate_feedback`,
+      `/api/jobs/${job.invitation_token}/talents/${talent.id}/evaluate_feedback`,
       { evaluate_feedback_reason: reason },
     );
     if (code === 0) {
@@ -1136,16 +1139,14 @@ const AtsTalentDetail: React.FC = () => {
               (t) => t.id.toString() === key,
             );
 
-            if (talent?.job) {
-              navigate(
-                buildTalentDetailUrl(
-                  talent.job.id,
-                  talent.id,
-                  TALENT_DETAIL_FROM.local,
-                ),
-              );
-              forceUpdate();
-            }
+            navigate(
+              buildTalentDetailUrl(
+                talent!.job!.invitation_token,
+                talent!.id,
+                TALENT_DETAIL_FROM.local,
+              ),
+            );
+            forceUpdate();
           }}
         />
         <div className={styles.jobApplyActions}>

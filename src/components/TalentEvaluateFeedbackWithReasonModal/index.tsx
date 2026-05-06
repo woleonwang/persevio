@@ -16,7 +16,7 @@ import SlightlyOff from "@/assets/icons/slightly-off";
 import Inaccurate from "@/assets/icons/inaccurate";
 
 interface IProps {
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   open: boolean;
   onCancel: () => void;

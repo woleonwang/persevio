@@ -9,7 +9,7 @@ import { Post, PostFormData } from "@/utils/request";
 import styles from "./style.module.less";
 
 type IProps = {
-  jobId: number;
+  jobId: string | number;
   onSuccess: () => void;
 };
 

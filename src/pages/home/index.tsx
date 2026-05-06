@@ -91,6 +91,7 @@ const Speeches = [
 
 interface JobPosting extends TJobBasicInfo {
   id: number;
+  candidate_uuid: string;
   name: string;
   company_name: string;
   company_logo: string;

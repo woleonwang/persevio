@@ -15,7 +15,7 @@ import {
 } from "@/utils/consts";
 import { FUNNEL_COLORS, FUNNEL_BG_COLORS } from "./colors";
 import styles from "./style.module.less";
-import useJobSourceChanneOptions from "@/hooks/useJobSourceChannelOptions";
+import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
 
 const HOURS_PER_DAY = 24;
 const MS_PER_HOUR = 60 * 60 * 1000;
@@ -68,8 +68,8 @@ const JobAnalytics = () => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.analytics_section.${key}`);
   const pipelineTKey = (key: string) => t(`pipeline_section.${key}`);
-  const { options: sourceChannelOptions } = useJobSourceChanneOptions({
-    jobId: job?.id,
+  const { options: sourceChannelOptions } = useJobSourceChannelOptions({
+    jobId: job ? job.invitation_token : undefined,
   });
 
   const allStages = useMemo(() => {

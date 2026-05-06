@@ -101,7 +101,7 @@ const JobList = () => {
                   }),
                   onOk: async () => {
                     const { code } = await Post(
-                      `/api/jobs/${record.id}/destroy`,
+                      `/api/jobs/${record.invitation_token}/destroy`,
                     );
                     if (code === 0) {
                       message.success(originalT("submit_succeed"));
@@ -118,7 +118,9 @@ const JobList = () => {
             <Button
               type="link"
               onClick={() => {
-                navigate(`/app/jobs/${record.id}/standard-board`);
+                navigate(
+                  `/app/jobs/${record.invitation_token}/standard-board`,
+                );
               }}
             >
               {t("details")}
@@ -129,7 +131,7 @@ const JobList = () => {
                 onClick={() => {
                   window.open(
                     getJobChatbotUrl(
-                      record.id,
+                      record.candidate_uuid,
                       record.jd_version?.toString(),
                       "customer",
                     ),

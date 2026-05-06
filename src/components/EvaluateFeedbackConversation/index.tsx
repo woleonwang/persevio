@@ -7,7 +7,7 @@ import styles from "./style.module.less";
 
 interface IProps {
   open: boolean;
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   onCancel: () => void;
   needConfirm?: boolean;

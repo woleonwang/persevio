@@ -21,14 +21,17 @@ const TalentSelect = () => {
   const onSubmit = (talentId: number) => {
     if (!job) return;
 
+    const jobSeg = job.invitation_token;
     navigate(
-      `/app/jobs/${job.id}/talents/${talentId}/chat?chatType=${chatType}`
+      `/app/jobs/${jobSeg}/talents/${talentId}/chat?chatType=${chatType}`,
     );
   };
 
   if (!job) {
     return <Spin />;
   }
+
+  const jobSeg = job.invitation_token;
 
   return (
     <div className={styles.container}>
@@ -41,7 +44,7 @@ const TalentSelect = () => {
             cursor: "pointer",
           }}
           onClick={() => {
-            navigate(`/app/jobs/${job.id}/board`);
+            navigate(`/app/jobs/${jobSeg}/board`);
           }}
         />
         <div>{job.name}</div>
@@ -57,7 +60,7 @@ const TalentSelect = () => {
           </div>
           <div style={{ marginTop: 20 }}>
             <SelectOrUploadTalent
-              jobId={job.id}
+              jobId={jobSeg}
               onChange={(val) => {
                 onSubmit(val);
               }}

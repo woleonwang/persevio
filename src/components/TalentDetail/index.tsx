@@ -145,7 +145,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/jobs/${job.id}/talents/${talent.id}/messages`
+      `/api/jobs/${job.invitation_token}/talents/${talent.id}/messages`
     );
     if (code === 0) {
       setTalentChatMessages(data.messages);
@@ -156,7 +156,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/public/jobs/${job.id}/talents/${talent.id}/interview_designer?round=${roundKey}`
+      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_designer?round=${roundKey}`
     );
     if (code === 0) {
       setInterviewDesigner(data.interview_designer);
@@ -169,7 +169,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/public/jobs/${job.id}/talents/${talent.id}/interview_feedbacks`
+      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_feedbacks`
     );
     if (code === 0) {
       setInterviewFeedbacks(data.interview_feedbacks);
@@ -180,7 +180,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !interviewDesigner) return;
 
     const { code } = await Post(
-      `/api/jobs/${job.id}/interview_designers/${interviewDesigner.id}/doc`,
+      `/api/jobs/${job.invitation_token}/interview_designers/${interviewDesigner.id}/doc`,
       {
         content: editingInterviewDesignerValue,
       }
@@ -199,7 +199,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!talent) return;
 
     await Download(
-      `/api/jobs/${job?.id}/talents/${talent?.id}/download_resume`,
+      `/api/jobs/${job!.invitation_token}/talents/${talent.id}/download_resume`,
       `${talent.name}_resume`
     );
   };
@@ -231,7 +231,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
   const handleShare = async () => {
     await copy(
-      `${window.origin}/jobs/${job?.id}/talents/${talent?.id}/detail?round=${roundKey}&tab=interview_designer&round=${roundKey}`
+      `${window.origin}/jobs/${job!.candidate_uuid}/talents/${talent!.id}/detail?round=${roundKey}&tab=interview_designer&round=${roundKey}`
     );
     message.success(t("link_copied"));
   };
@@ -245,7 +245,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
   const handleDesignerChat = () => {
     navigate(
-      `/app/jobs/${job?.id}/talents/${talent?.id}/chat?chatType=interview_designer&round=${roundKey}`
+      `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat?chatType=interview_designer&round=${roundKey}`
     );
   };
 
@@ -253,11 +253,11 @@ const TalentDetail: React.FC<IProps> = (props) => {
     form.validateFields().then(async (values) => {
       const { status, feedback } = values;
       const { code } = await Post(
-        `/api/jobs/${job?.id}/talents/${talent?.id}`,
+        `/api/jobs/${job!.invitation_token}/talents/${talent!.id}`,
         {
           status,
           feedback,
-        }
+        },
       );
 
       if (code === 0) {
@@ -275,10 +275,10 @@ const TalentDetail: React.FC<IProps> = (props) => {
       )
     ) {
       const { code } = await Post(
-        `/api/jobs/${job?.id}/talents/${talent?.id}`,
+        `/api/jobs/${job!.invitation_token}/talents/${talent!.id}`,
         {
           status: action === "accept" ? "accepted" : "rejected",
-        }
+        },
       );
 
       if (code === 0) {
@@ -340,7 +340,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   return (
                     <div className={styles.card} key={interviewFeedback.id}>
                       <FeedbackSignal
-                        jobId={job.id}
+                        jobId={job!.invitation_token}
                         talentId={talent.id}
                         interviewerName={
                           interviewFeedbackDetail.interviewer_name ??
@@ -454,7 +454,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     return (
                       <div className={styles.card} key={interviewFeedback.id}>
                         <FeedbackSignalNew
-                          jobId={job.id}
+                          jobId={job!.invitation_token}
                           interviewerName={
                             interviewFeedbackDetail.interviewer_name ??
                             round.interviewer
@@ -513,7 +513,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${job.id}/talents/${talent.id}/chat`
+                `/app/jobs/${job.invitation_token}/talents/${talent.id}/chat`
               );
             }}
           />
@@ -756,7 +756,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <ShareAltOutlined
                     onClick={async () => {
                       await copy(
-                        `${window.origin}/jobs/${job.id}/talents/${talent.id}/detail?tab=interview_feedback`
+                        `${window.origin}/jobs/${job.candidate_uuid}/talents/${talent.id}/detail?tab=interview_feedback`
                       );
                       message.success(t("link_copied"));
                     }}
@@ -871,7 +871,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                                       type="primary"
                                       onClick={() => {
                                         navigate(
-                                          `/app/jobs/${job?.id}/talents/${talent?.id}/chat/?chatType=interview_feedback&round=${currentRound}`
+                                          `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat/?chatType=interview_feedback&round=${currentRound}`
                                         );
                                       }}
                                       style={{ marginLeft: 12 }}
@@ -889,7 +889,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
                       return (
                         <FeedbackSummary
-                          jobId={job.id}
+                          jobId={job!.invitation_token}
                           talentId={talent.id}
                           interviewPlan={interviewPlan}
                           interviewFeedback={interviewFeedback}
@@ -942,7 +942,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                               key={signal.title}
                             >
                               <FeedbackCustomizeSignal
-                                jobId={job.id}
+                                jobId={job!.invitation_token}
                                 interviewerName={
                                   interviewFeedbackDetail.interviewer_name ??
                                   interviewPlan.rounds[feedback.round - 1]
@@ -996,7 +996,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                               key={signal.title}
                             >
                               <FeedbackCustomizeSignal
-                                jobId={job.id}
+                                jobId={job!.invitation_token}
                                 interviewerName={
                                   interviewFeedbackDetail.interviewer_name ??
                                   interviewPlan.rounds[feedback.round - 1]

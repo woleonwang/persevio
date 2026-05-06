@@ -18,7 +18,7 @@ type TFeedback = {
 
 interface IProps {
   type: "create" | "edit";
-  jobId: number;
+  jobId: string | number;
   talentId: number;
   round: number;
   interviewDesignerId?: number;

@@ -19,7 +19,7 @@ import EditableMarkdown from "../EditableMarkdown";
 import ChatMessagePreview from "../ChatMessagePreview";
 
 interface IProps {
-  jobId?: number;
+  jobId?: string | number;
   hideHeader?: boolean;
   filterParams?: {
     talentOrJobName?: string;

@@ -46,7 +46,7 @@ import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
 import { isInterviewCompleted } from "@/utils/talentStage";
 
 interface IProps {
-  jobId?: number;
+  jobId?: string | number;
 }
 
 type TDataSourceItem = {
@@ -219,7 +219,7 @@ const TalentCards = (props: IProps) => {
 
   const updateTalentStatus = async (talent: TTalentItem, feedback?: string) => {
     const { code } = await Post(
-      `/api/jobs/${talent.job_id}/talents/${talent.id}`,
+      `/api/jobs/${talent.job!.invitation_token}/talents/${talent.id}`,
       {
         status: "rejected",
         feedback,
@@ -234,7 +234,7 @@ const TalentCards = (props: IProps) => {
   };
 
   const updateTalentEvaluateFeedback = async (
-    jobId: number,
+    jobId: string | number,
     talentId: number,
     feedback: TEvaluateFeedback,
   ) => {
@@ -267,7 +267,7 @@ const TalentCards = (props: IProps) => {
   const updateTalentEvaluateFeedbackReason = async (reason: string) => {
     if (selectedTalent) {
       const { code } = await Post(
-        `/api/jobs/${selectedTalent?.job_id}/talents/${selectedTalent?.id}/evaluate_feedback`,
+        `/api/jobs/${selectedTalent!.job!.invitation_token}/talents/${selectedTalent!.id}/evaluate_feedback`,
         {
           evaluate_feedback_reason: reason,
         },
@@ -577,10 +577,11 @@ const TalentCards = (props: IProps) => {
                 key={item.talent?.id || item.linkedinProfile?.id}
                 className={styles.card}
                 onClick={() => {
+                  const seg = job!.invitation_token;
                   window.open(
                     item.talent
-                      ? buildTalentDetailUrl(item.talent.job_id, item.talent.id)
-                      : `/app/jobs/${item.linkedinProfile?.job_id}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`,
+                      ? buildTalentDetailUrl(seg, item.talent.id)
+                      : `/app/jobs/${seg}/standard-board/linkedin-profiles/${item.linkedinProfile?.id}`,
                     "_blank",
                   );
                 }}
@@ -600,7 +601,7 @@ const TalentCards = (props: IProps) => {
                         value={item.talent?.evaluate_feedback}
                         onChange={(value) => {
                           updateTalentEvaluateFeedback(
-                            talent.job_id,
+                            talent.job!.invitation_token,
                             talent.id,
                             value,
                           );
@@ -914,7 +915,7 @@ const TalentCards = (props: IProps) => {
       )}
 
       <TalentEvaluateFeedbackWithReasonModal
-        jobId={selectedTalent?.job_id ?? 0}
+        jobId={selectedTalent!.job!.invitation_token}
         talentId={selectedTalent?.id ?? 0}
         open={isRejectModalOpen}
         onOk={() => {
@@ -963,7 +964,7 @@ const TalentCards = (props: IProps) => {
 
       <EvaluateFeedbackConversation
         open={openEvaluateFeedbackConversation}
-        jobId={selectedTalent?.job_id ?? 0}
+        jobId={selectedTalent!.job!.invitation_token}
         talentId={selectedTalent?.id ?? 0}
         needConfirm={needConfirmEvaluateFeedbackConversation}
         onCancel={() => setOpenEvaluateFeedbackConversation(false)}

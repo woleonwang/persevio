@@ -72,7 +72,7 @@ function pickFromBasicInfo(info: Record<string, unknown>) {
 
 interface IProps {
   open: boolean;
-  jobId: number;
+  jobId: string | number;
   onCancel: () => void;
   onSuccess: () => void;
 }

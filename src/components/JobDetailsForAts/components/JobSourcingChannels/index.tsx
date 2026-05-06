@@ -31,7 +31,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   const [customSourceName, setCustomSourceName] = useState("");
 
   const { customSources, fetchCustomSources } = useJobSourceChannelOptions({
-    jobId: job?.id,
+    jobId: job ? job.invitation_token : undefined,
   });
 
   const { t: originalT } = useTranslation();
@@ -39,8 +39,12 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     originalT(`job_details.sourcing_channels_section.${key}`);
 
   const getJobUrl = (source: string) => {
-    if (!job?.id) return "";
-    return getJobChatbotUrl(job.id, job.jd_version?.toString(), source);
+    if (!job) return "";
+    return getJobChatbotUrl(
+      job.candidate_uuid,
+      job.jd_version?.toString(),
+      source,
+    );
   };
 
   const customSourceUrl = getJobUrl("persevio");
@@ -67,7 +71,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
   };
 
   const applyService = async (type: "boost" | "outreach") => {
-    const { code } = await Post(`/api/jobs/${job?.id}`, {
+    const { code } = await Post(`/api/jobs/${job!.invitation_token}`, {
       [type === "boost" ? "apply_boosting" : "apply_outreach_campaign"]: true,
     });
 
@@ -181,7 +185,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
       ),
       onOk: async () => {
         const { code } = await Post(
-          `/api/jobs/${job!.id}/custom_sources/${id}/destroy`,
+          `/api/jobs/${job!.invitation_token}/custom_sources/${id}/destroy`,
         );
         if (code === 0) {
           message.success(originalT("delete_success"));
@@ -256,10 +260,13 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
 
   const handleGenerateUrl = async () => {
     const name = customSourceName.trim();
-    if (!name || !job?.id) return;
-    const { code } = await Post(`/api/jobs/${job.id}/custom_sources`, {
-      name,
-    });
+    if (!name || !job) return;
+    const { code } = await Post(
+      `/api/jobs/${job.invitation_token}/custom_sources`,
+      {
+        name,
+      },
+    );
     if (code === 0) {
       message.success(originalT("create_succeed"));
       fetchCustomSources();

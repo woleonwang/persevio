@@ -71,7 +71,7 @@ const JobPipeline = ({
   >([]);
 
   const { options: sourceChannelOptions } = useJobSourceChannelOptions({
-    jobId: job?.id,
+    jobId: job ? job.invitation_token : undefined,
   });
 
   const [viewMode, setViewMode] = useState<"list" | "kanban">("kanban");
@@ -280,7 +280,7 @@ const JobPipeline = ({
     );
 
     const { code } = await Post(
-      `/api/jobs/${job!.id}/talents/${talentId}/stage`,
+      `/api/jobs/${job!.invitation_token}/talents/${talentId}/stage`,
       { stage_id: newStageId },
     );
 
@@ -422,7 +422,7 @@ const JobPipeline = ({
                 isLocked={isStageLocked(stage.id)}
                 onCardClick={(talent) => {
                   window.open(
-                    buildTalentDetailUrl(talent.job_id, talent.id),
+                    buildTalentDetailUrl(job!.invitation_token, talent.id),
                     "_blank",
                   );
                 }}
@@ -473,7 +473,7 @@ const JobPipeline = ({
               items={filteredList}
               onRowClick={(talent) => {
                 window.open(
-                  buildTalentDetailUrl(talent.job_id, talent.id),
+                  buildTalentDetailUrl(job!.invitation_token, talent.id),
                   "_blank",
                 );
               }}
@@ -486,7 +486,7 @@ const JobPipeline = ({
       {job && (
         <UploadCandidateModal
           open={uploadCandidateModalOpen}
-          jobId={job.id}
+          jobId={job.invitation_token}
           onCancel={() => setUploadCandidateModalOpen(false)}
           onSuccess={() => void fetchTalents()}
         />

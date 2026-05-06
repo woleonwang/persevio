@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 
 export interface JobPosting extends TJobBasicInfo {
   id: number;
+  candidate_uuid: string;
   name: string;
   company_name: string;
   company_logo: string;
@@ -127,7 +128,9 @@ const PublicJobCard = ({ job }: { job: JobPosting }) => {
 
   const handleJobClick = (job: JobPosting) => {
     if (job.id < 10000) {
-      window.open(getJobChatbotUrl(job.id, job.version.toString()));
+      window.open(
+        getJobChatbotUrl(job.candidate_uuid, job.version.toString()),
+      );
     }
   };
 

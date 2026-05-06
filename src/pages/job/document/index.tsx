@@ -86,7 +86,7 @@ const JobDocument = () => {
     if (!job) return;
 
     const { code, data } = await Get(
-      `/api/jobs/${job?.id}/docs/${chatTypeMappings[chatType]}`
+      `/api/jobs/${job.invitation_token}/docs/${chatTypeMappings[chatType]}`,
     );
     if (code === 0) {
       setDocumentContent(data.content);
@@ -98,11 +98,12 @@ const JobDocument = () => {
   };
 
   const updateDoc = async () => {
+    if (!job) return;
     const { code } = await Post(
-      `/api/jobs/${job?.id}/docs/${chatTypeMappings[chatType]}`,
+      `/api/jobs/${job.invitation_token}/docs/${chatTypeMappings[chatType]}`,
       {
         content: editingValue,
-      }
+      },
     );
     if (code === 0) {
       message.success(t("submit_succeed"));
@@ -145,6 +146,8 @@ const JobDocument = () => {
     return <Spin />;
   }
 
+  const jobSeg = job.invitation_token;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -157,8 +160,8 @@ const JobDocument = () => {
           onClick={() => {
             navigate(
               mode === "standard"
-                ? `/app/jobs/${job.id}/standard-board`
-                : `/app/jobs/${job.id}/board`
+                ? `/app/jobs/${jobSeg}/standard-board`
+                : `/app/jobs/${jobSeg}/board`,
             );
           }}
         />
@@ -181,7 +184,7 @@ const JobDocument = () => {
                   type={chatType === item ? "primary" : "default"}
                   onClick={() => {
                     setJobDotStatus(job.id, item);
-                    navigate(`/app/jobs/${job.id}/document/${item}`);
+                    navigate(`/app/jobs/${jobSeg}/document/${item}`);
                   }}
                   style={{
                     width: "100%",
@@ -218,7 +221,7 @@ const JobDocument = () => {
                 <ShareAltOutlined
                   onClick={async () => {
                     await copy(
-                      `${window.origin}/jobs/${job.id}/share?show=${chatTypeMappings[chatType]}`
+                      `${window.origin}/jobs/${job.candidate_uuid}/share?show=${chatTypeMappings[chatType]}`
                     );
                     message.success(t("link_copied"));
                   }}
@@ -240,7 +243,7 @@ const JobDocument = () => {
                   <Button
                     type="primary"
                     onClick={() => {
-                      navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                      navigate(`/app/jobs/${jobSeg}/chat/${chatType}`);
                     }}
                     style={{ marginLeft: "12px" }}
                   >
@@ -274,7 +277,7 @@ const JobDocument = () => {
                             type="primary"
                             onClick={() => {
                               navigate(
-                                `/app/jobs/${job.id}/chat/job-requirement`
+                                `/app/jobs/${jobSeg}/chat/job-requirement`,
                               );
                             }}
                             style={{ marginLeft: "12px" }}
@@ -290,7 +293,7 @@ const JobDocument = () => {
                           <Button
                             type="primary"
                             onClick={() => {
-                              navigate(`/app/jobs/${job.id}/chat/${chatType}`);
+                              navigate(`/app/jobs/${jobSeg}/chat/${chatType}`);
                             }}
                             style={{ marginLeft: "12px" }}
                           >

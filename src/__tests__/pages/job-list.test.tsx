@@ -252,7 +252,7 @@ describe("JobList 页面", () => {
     await user.click(detailButtons[0]);
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/app/jobs/${mockJobList[0].id}/standard-board`,
+      `/app/jobs/${mockJobList[0].invitation_token}/standard-board`,
     );
   });
 });

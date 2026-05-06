@@ -53,6 +53,7 @@ type TJobDescription = {
 
 export type TJob = {
   id: number;
+  candidate_uuid: string;
   name: string;
   company_id: number;
   updated_at: string;
