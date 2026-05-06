@@ -33,6 +33,7 @@ interface IJob {
   company_id: number;
   staff_id: number;
   name: string;
+  invitation_token: string;
 
   basic_info_doc_id: number;
   reference_doc_id: number;
