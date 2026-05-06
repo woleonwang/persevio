@@ -143,7 +143,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
       </div>
       <div className={styles.webInterview}>
         <div onClick={() => onSkip()} className={styles.webInterviewLink}>
-          I don't have Whatsapp
+          I don't have WhatsApp
         </div>
       </div>
     </div>

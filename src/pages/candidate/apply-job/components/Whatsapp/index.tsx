@@ -20,8 +20,13 @@ interface IProps {
 }
 
 const Whatsapp: React.FC<IProps> = (props: IProps) => {
-  const { whatsappContactNumber, onFinish, onBack, onChooseInterviewMode, isSubmitting } =
-    props;
+  const {
+    whatsappContactNumber,
+    onFinish,
+    onBack,
+    onChooseInterviewMode,
+    isSubmitting,
+  } = props;
   const [_, forceUpdate] = useReducer(() => ({}), {});
   const [isAgreed, setIsAgreed] = useState(true);
   const [form] = Form.useForm<{
@@ -154,7 +159,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
           onClick={() => onChooseInterviewMode("ai")}
           className={styles.webInterviewLink}
         >
-          I don't have Whatsapp
+          I don't have WhatsApp
         </div>
       </div>
       {isDebug && (
