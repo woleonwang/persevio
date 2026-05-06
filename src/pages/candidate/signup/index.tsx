@@ -44,10 +44,10 @@ const Signup: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
-  const [jobId, setJobId] = useState<number>(0);
+  const [jobId, setJobId] = useState<string>("");
 
   const jobIdStr: string = getQuery("job_id");
-  const jobIdQuery = parseInt(jobIdStr ?? "0");
+  const jobIdFromQuery = jobIdStr?.trim() ?? "";
   const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === 1;
   const isEmailSignupFlow =
     getQuery(SIGNUP_SOURCE_QUERY) === SIGNUP_SOURCE_EMAIL;
@@ -80,8 +80,8 @@ const Signup: React.FC = () => {
     const { code: code1, data: data1 } = await Get(`/api/candidate/settings`);
     // 没注册
     if (code1 !== 0) {
-      if (jobIdQuery) {
-        setJobId(jobIdQuery);
+      if (jobIdFromQuery) {
+        setJobId(jobIdFromQuery);
       }
       setPageState("basic");
       return;
@@ -103,7 +103,7 @@ const Signup: React.FC = () => {
     });
     setIsLoggedIn(true);
     if (candidate.job_id) {
-      setJobId(candidate.job_id);
+      setJobId(String(candidate.job_id));
     }
 
     // 如果没简历，跳到 resume
@@ -134,7 +134,7 @@ const Signup: React.FC = () => {
   };
 
   const fetchJobApply = async (
-    jobId: number,
+    jobId: string | number,
   ): Promise<IJobApply | undefined> => {
     if (!jobId) {
       return undefined;
@@ -170,10 +170,10 @@ const Signup: React.FC = () => {
         internal,
       };
 
-      if (jobIdQuery) {
+      if (jobIdFromQuery) {
         const shareTokenMapping =
           storage.get<Record<string, string>>(StorageKey.SHARE_TOKEN, {}) || {};
-        const shareToken = shareTokenMapping[jobIdQuery];
+        const shareToken = shareTokenMapping[jobIdFromQuery];
         const linkedinProfileId = storage.get<string>(
           StorageKey.LINKEDIN_PROFILE_ID,
         );
@@ -181,10 +181,10 @@ const Signup: React.FC = () => {
           StorageKey.SOURCE_CHANNEL,
           {},
         );
-        const sourceChannel = sourceChannelMapping?.[jobIdQuery];
+        const sourceChannel = sourceChannelMapping?.[jobIdFromQuery];
         params = {
           ...params,
-          job_id: jobIdQuery,
+          job_id: jobIdFromQuery,
           share_token: shareToken,
           linkedin_profile_id: linkedinProfileId
             ? parseInt(linkedinProfileId)
@@ -331,7 +331,7 @@ const Signup: React.FC = () => {
                 onSubmitBasicInfo(params);
               }}
               initValues={preRegisterInfo}
-              jobId={jobIdQuery}
+              jobId={jobIdFromQuery || jobId}
             />
           )}
           {pageState === "resume" && (

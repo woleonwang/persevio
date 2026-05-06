@@ -2,20 +2,23 @@ import { Get } from "@/utils/request";
 import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+
 const useJob = () => {
-  const { jobId: jobIdStr } = useParams<{
+  const { jobId } = useParams<{
     jobId: string;
   }>();
-  const jobId = parseInt(jobIdStr ?? "0");
 
   const [job, setJob] = useState<IJob>();
   const [unviewedTalentCount, setUnviewedTalentCount] = useState(0);
 
   useEffect(() => {
-    fetchJob();
+    if (!jobId) return;
+    void fetchJob();
   }, [jobId]);
 
   const fetchJob = async () => {
+    if (!jobId) return;
+
     setJob(undefined);
     const { code, data } = await Get(`/api/jobs/${jobId}`);
 
@@ -27,7 +30,13 @@ const useJob = () => {
     }
   };
 
-  return { job, fetchJob, unviewedTalentCount, setUnviewedTalentCount };
+  return {
+    job,
+    fetchJob,
+    unviewedTalentCount,
+    setUnviewedTalentCount,
+    jobId,
+  };
 };
 
 export default useJob;

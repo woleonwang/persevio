@@ -13,7 +13,8 @@ export type TChatType =
 
 export interface IProps {
   chatType: TChatType;
-  jobId: number;
+  /** 路由或接口路径中的 job 标识：数字 id、invitation_token、candidate_uuid 等 */
+  jobId: string | number;
   sessionId?: string;
   share?: boolean;
   onChangeTab?: onChangeTabFunction;

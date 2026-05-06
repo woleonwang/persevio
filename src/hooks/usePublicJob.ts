@@ -2,19 +2,22 @@ import { Get } from "@/utils/request";
 import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+
 const usePublicJob = () => {
-  const { jobId: jobIdStr } = useParams<{
+  const { jobId } = useParams<{
     jobId: string;
   }>();
-  const jobId = parseInt(jobIdStr ?? "0");
 
   const [job, setJob] = useState<TPublicJob>();
 
   useEffect(() => {
-    fetchJob();
+    if (!jobId) return;
+    void fetchJob();
   }, [jobId]);
 
   const fetchJob = async () => {
+    if (!jobId) return;
+
     const { code, data } = await Get(`/api/public/jobs/${jobId}/share`);
 
     if (code === 0) {
@@ -25,7 +28,7 @@ const usePublicJob = () => {
     }
   };
 
-  return { job, fetchJob };
+  return { job, fetchJob, jobId };
 };
 
 export default usePublicJob;

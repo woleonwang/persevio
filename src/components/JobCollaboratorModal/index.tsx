@@ -8,7 +8,7 @@ import useStaffs from "@/hooks/useStaffs";
 interface IProps {
   open: boolean;
   onCancel: () => void;
-  jobId: number;
+  jobId: string | number;
 }
 
 const JobCollaboratorModal = ({ open, onCancel, jobId }: IProps) => {

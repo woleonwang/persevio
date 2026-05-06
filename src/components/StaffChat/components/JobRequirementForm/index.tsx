@@ -97,7 +97,7 @@ interface IProps {
   group?: TRoleOverviewType;
   onOk: (result: string) => void;
   /** 基础信息提交前写入职位 org_node_id */
-  jobId?: number;
+  jobId?: string | number;
 }
 
 type TTeam = {

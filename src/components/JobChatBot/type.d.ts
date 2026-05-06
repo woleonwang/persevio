@@ -1,5 +1,5 @@
 export interface IProps {
-  jobId: number;
+  jobId: string | number;
   sessionId?: string;
   onChangeTab?: onChangeTabFunction;
   onNextTask?: () => void;

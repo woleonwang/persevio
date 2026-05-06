@@ -5,21 +5,23 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 const useTalent = () => {
-  const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
+  const { talentId: talentIdStr, jobId } = useParams<{
     talentId: string;
     jobId: string;
   }>();
   const talentId = parseInt(talentIdStr ?? "0");
-  const jobId = parseInt(jobIdStr ?? "0");
 
   const [talent, setTalent] = useState<TTalent>();
   const [interviews, setInterviews] = useState<TInterviewWithFeedback[]>([]);
 
   useEffect(() => {
-    fetchTalent();
-  }, [talentIdStr]);
+    if (!jobId) return;
+    void fetchTalent();
+  }, [talentIdStr, jobId]);
 
   const fetchTalent = async () => {
+    if (!jobId) return;
+
     const { code, data } = await Get(`/api/jobs/${jobId}/talents/${talentId}`);
 
     if (code === 0) {
@@ -42,7 +44,7 @@ const useTalent = () => {
     }
   };
 
-  return { talent, interviews, fetchTalent };
+  return { talent, interviews, fetchTalent, jobId };
 };
 
 export default useTalent;

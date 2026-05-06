@@ -10,7 +10,11 @@ export type TJobSourceChannelOption = {
   type: "preset" | "custom";
 };
 
-const useJobSourceChannelOptions = ({ jobId }: { jobId?: number }) => {
+const useJobSourceChannelOptions = ({
+  jobId,
+}: {
+  jobId?: string | number;
+}) => {
   const { t } = useTranslation();
   const [customSources, setCustomSources] = useState<TCustomSource[]>([]);
 

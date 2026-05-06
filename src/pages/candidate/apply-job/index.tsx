@@ -44,7 +44,7 @@ const ApplyJob: React.FC = () => {
   const [isSubmittingWhatsapp, setIsSubmittingWhatsapp] = useState(false);
 
   const { jobId: jobIdStr } = useParams();
-  const jobId = parseInt(jobIdStr ?? "0");
+  const jobId = jobIdStr ?? "";
 
   const navigate = useNavigate();
 

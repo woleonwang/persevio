@@ -8,7 +8,7 @@ import { Link } from "react-router";
 interface IProps {
   initValues: IPreRegisterInfo;
   onFinish: (params: IPreRegisterInfo) => void;
-  jobId?: number;
+  jobId?: string | number;
 }
 
 type TFormValues = {

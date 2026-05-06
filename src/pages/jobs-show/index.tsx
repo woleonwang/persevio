@@ -234,7 +234,7 @@ const JobsShow = () => {
 
   const ChatRoomArea = (
     <JobChatBot
-      jobId={parseInt(id ?? "0")}
+      jobId={id ?? ""}
       sessionId={sessionId}
       enableFullscreen
     />
@@ -361,7 +361,7 @@ const JobsShow = () => {
                             const { code, data } = await Post(
                               "/api/candidate/job_applies",
                               {
-                                job_id: parseInt(id as string),
+                                job_id: id as string,
                                 source_channel: sourceChannel,
                               },
                             );
