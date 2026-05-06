@@ -341,12 +341,12 @@ const JobPipeline = ({
           options={[{ value: undefined, label: tKey("rank_by") }]}
         /> */}
         <div className={styles.filterRowRight}>
-          <Button
+          {/* <Button
             type="default"
             onClick={() => setUploadCandidateModalOpen(true)}
           >
             {tKey("upload_candidate")}
-          </Button>
+          </Button> */}
           <div className={styles.viewToggle}>
             <Button
               className={styles.viewToggleBtn}
