@@ -2065,7 +2065,7 @@ const AtsTalentDetail: React.FC = () => {
       {!!talent && (
         <EvaluateFeedbackConversation
           open={openEvaluateFeedbackConversation}
-          jobId={talent.job_id ?? 0}
+          jobId={job.invitation_token}
           talentId={talent.id ?? 0}
           needConfirm={needConfirmEvaluateFeedbackConversation}
           onCancel={() => setOpenEvaluateFeedbackConversation(false)}

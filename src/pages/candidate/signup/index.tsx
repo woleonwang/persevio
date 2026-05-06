@@ -251,7 +251,7 @@ const Signup: React.FC = () => {
 
   const copyLink = async () => {
     await copy(
-      `${window.location.href}?candidate_token=${
+      `${window.location.href}${window.location.search.startsWith("?") ? "&" : "?"}candidate_token=${
         tokenStorage.getToken("candidate") || ""
       }`,
     );

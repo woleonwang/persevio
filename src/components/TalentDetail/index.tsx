@@ -34,11 +34,11 @@ import styles from "./style.module.less";
 import FeedbackSummary from "./components/FeedbackSummary";
 import FeedbackSignal from "./components/FeedbackSignal";
 import FeedbackCustomizeSignal from "./components/FeedbackCustomizeSignal";
-import usePublicJob from "@/hooks/usePublicJob";
 import EvaluateResult from "./components/EvaluateResult";
 import FeedbackSignalNew from "./components/FeedbackSignalNew";
 import { observer } from "mobx-react-lite";
 import ChatMessagePreview from "../ChatMessagePreview";
+import useJob from "@/hooks/useJob";
 
 const { Title, Text } = Typography;
 
@@ -47,7 +47,7 @@ interface IProps {
 }
 
 const TalentDetail: React.FC<IProps> = (props) => {
-  const { job } = usePublicJob();
+  const { job } = useJob();
   const { talent, fetchTalent } = usePublicTalent();
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`talent.${key}`);
@@ -120,10 +120,6 @@ const TalentDetail: React.FC<IProps> = (props) => {
         setRoundKey(initRound);
       }
 
-      if (isPreview) {
-        i18n.changeLanguage(job.language);
-      }
-
       setScoreCardVersion(interviewPlan.signals?.[0]?.groupKey ? "2" : "1");
 
       // 刷新未读候选人状态
@@ -145,7 +141,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/jobs/${job.invitation_token}/talents/${talent.id}/messages`
+      `/api/jobs/${job.invitation_token}/talents/${talent.id}/messages`,
     );
     if (code === 0) {
       setTalentChatMessages(data.messages);
@@ -156,7 +152,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_designer?round=${roundKey}`
+      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_designer?round=${roundKey}`,
     );
     if (code === 0) {
       setInterviewDesigner(data.interview_designer);
@@ -169,7 +165,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
     if (!job || !talent) return;
 
     const { code, data } = await Get(
-      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_feedbacks`
+      `/api/public/jobs/${job.candidate_uuid}/talents/${talent.id}/interview_feedbacks`,
     );
     if (code === 0) {
       setInterviewFeedbacks(data.interview_feedbacks);
@@ -183,7 +179,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
       `/api/jobs/${job.invitation_token}/interview_designers/${interviewDesigner.id}/doc`,
       {
         content: editingInterviewDesignerValue,
-      }
+      },
     );
 
     if (code === 0) {
@@ -200,7 +196,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
     await Download(
       `/api/jobs/${job!.invitation_token}/talents/${talent.id}/download_resume`,
-      `${talent.name}_resume`
+      `${talent.name}_resume`,
     );
   };
 
@@ -231,7 +227,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
   const handleShare = async () => {
     await copy(
-      `${window.origin}/jobs/${job!.candidate_uuid}/talents/${talent!.id}/detail?round=${roundKey}&tab=interview_designer&round=${roundKey}`
+      `${window.origin}/jobs/${job!.candidate_uuid}/talents/${talent!.id}/detail?round=${roundKey}&tab=interview_designer&round=${roundKey}`,
     );
     message.success(t("link_copied"));
   };
@@ -245,7 +241,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
   const handleDesignerChat = () => {
     navigate(
-      `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat?chatType=interview_designer&round=${roundKey}`
+      `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat?chatType=interview_designer&round=${roundKey}`,
     );
   };
 
@@ -271,7 +267,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
   const updateTalentStatus = async (action: "accept" | "reject") => {
     if (
       confirm(
-        "确定要" + (action === "accept" ? "通过" : "拒绝") + "该候选人吗？"
+        "确定要" + (action === "accept" ? "通过" : "拒绝") + "该候选人吗？",
       )
     ) {
       const { code } = await Post(
@@ -289,7 +285,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
   };
 
   const interviewPlan = parseJSON(
-    job?.interview_plan_json
+    job?.interview_plan_json,
   ) as TInterviewPlanDetail;
 
   const totalRound = (interviewPlan.rounds ?? []).length;
@@ -305,10 +301,10 @@ const TalentDetail: React.FC<IProps> = (props) => {
       <div>
         {[
           ...(interviewPlan.signals ?? []).filter(
-            (item) => item.level === "must_have"
+            (item) => item.level === "must_have",
           ),
           ...(interviewPlan.signals ?? []).filter(
-            (item) => item.level === "good_to_have"
+            (item) => item.level === "good_to_have",
           ),
         ].map((signal) => {
           return (
@@ -317,7 +313,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 <div
                   className={classnames(
                     styles.signalLevel,
-                    styles[signal.level]
+                    styles[signal.level],
                   )}
                 >
                   {signalLevelMappings[signal.level]}
@@ -328,13 +324,13 @@ const TalentDetail: React.FC<IProps> = (props) => {
               <div className={styles.interviewPanelContainer}>
                 {(interviewPlan.rounds ?? []).map((round, index) => {
                   const interviewFeedback = interviewFeedbacks?.find(
-                    (feedback) => feedback.round === index + 1
+                    (feedback) => feedback.round === index + 1,
                   );
 
                   if (!interviewFeedback) return <></>;
 
                   const interviewFeedbackDetail = parseJSON(
-                    interviewFeedback.feedback_json
+                    interviewFeedback.feedback_json,
                   ) as TInterviewFeedbackDetail;
 
                   return (
@@ -418,7 +414,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
 
     const findSignalsByGroupKey = (groupKey: string) => {
       return (interviewPlan.signals ?? []).filter(
-        (item) => item.groupKey === groupKey
+        (item) => item.groupKey === groupKey,
       );
     };
 
@@ -432,7 +428,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <div
                     className={classnames(
                       styles.signalLevel,
-                      styles[signal.level]
+                      styles[signal.level],
                     )}
                   >
                     {signalLevelMappings[signal.level]}
@@ -442,13 +438,13 @@ const TalentDetail: React.FC<IProps> = (props) => {
                 <div className={styles.interviewPanelContainer}>
                   {(interviewPlan.rounds ?? []).map((round, index) => {
                     const interviewFeedback = interviewFeedbacks?.find(
-                      (feedback) => feedback.round === index + 1
+                      (feedback) => feedback.round === index + 1,
                     );
 
                     if (!interviewFeedback) return <></>;
 
                     const interviewFeedbackDetail = parseJSON(
-                      interviewFeedback.feedback_json
+                      interviewFeedback.feedback_json,
                     ) as TInterviewFeedbackDetail;
 
                     return (
@@ -513,7 +509,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${job.invitation_token}/talents/${talent.id}/chat`
+                `/app/jobs/${job.invitation_token}/talents/${talent.id}/chat`,
               );
             }}
           />
@@ -647,7 +643,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                       key: `${index + 1}`,
                       label: t("round_label").replace(
                         "{{round}}",
-                        `${index + 1}`
+                        `${index + 1}`,
                       ),
                     }))}
                     style={{ flex: "none" }}
@@ -656,7 +652,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     <Text type="secondary" className={styles.updatedAt}>
                       {t("update_time")}
                       {dayjs(interviewDesigner.updated_at).format(
-                        "YYYY-MM-DD HH:mm:ss"
+                        "YYYY-MM-DD HH:mm:ss",
                       )}
                     </Text>
                   )}
@@ -756,7 +752,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <ShareAltOutlined
                     onClick={async () => {
                       await copy(
-                        `${window.origin}/jobs/${job.candidate_uuid}/talents/${talent.id}/detail?tab=interview_feedback`
+                        `${window.origin}/jobs/${job.candidate_uuid}/talents/${talent.id}/detail?tab=interview_feedback`,
                       );
                       message.success(t("link_copied"));
                     }}
@@ -790,7 +786,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                       <Form.Item
                         name="status"
                         label={t(
-                          "overall_recruitment_committee_recommendation"
+                          "overall_recruitment_committee_recommendation",
                         )}
                         rules={[{ required: true }]}
                       >
@@ -830,7 +826,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                       <div style={{ marginTop: 6 }}>
                         {
                           talentStatusOptions.find(
-                            (item) => item.value === talent?.status
+                            (item) => item.value === talent?.status,
                           )?.label
                         }
                       </div>
@@ -848,7 +844,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                     {new Array(totalRound).fill(0).map((_, index) => {
                       const currentRound = index + 1;
                       const interviewFeedback = interviewFeedbacks?.find(
-                        (item) => item.round === currentRound
+                        (item) => item.round === currentRound,
                       );
 
                       if (!interviewFeedback?.feedback_json) {
@@ -871,7 +867,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                                       type="primary"
                                       onClick={() => {
                                         navigate(
-                                          `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat/?chatType=interview_feedback&round=${currentRound}`
+                                          `/app/jobs/${job!.invitation_token}/talents/${talent!.id}/chat/?chatType=interview_feedback&round=${currentRound}`,
                                         );
                                       }}
                                       style={{ marginLeft: 12 }}
@@ -931,7 +927,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <div>
                     {interviewFeedbacks.map((feedback) => {
                       const interviewFeedbackDetail = parseJSON(
-                        feedback.feedback_json
+                        feedback.feedback_json,
                       ) as TInterviewFeedbackDetail;
 
                       return (interviewFeedbackDetail.other_signals ?? []).map(
@@ -956,7 +952,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                               />
                             </div>
                           );
-                        }
+                        },
                       );
                     })}
                   </div>
@@ -983,7 +979,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                   <div>
                     {interviewFeedbacks.map((feedback) => {
                       const interviewFeedbackDetail = parseJSON(
-                        feedback.feedback_json
+                        feedback.feedback_json,
                       ) as TInterviewFeedbackDetail;
                       return (interviewFeedbackDetail.dangers ?? []).map(
                         (signal) => {
@@ -991,7 +987,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                             <div
                               className={classnames(
                                 styles.signalContainer,
-                                styles.danger
+                                styles.danger,
                               )}
                               key={signal.title}
                             >
@@ -1010,7 +1006,7 @@ const TalentDetail: React.FC<IProps> = (props) => {
                               />
                             </div>
                           );
-                        }
+                        },
                       );
                     })}
                   </div>

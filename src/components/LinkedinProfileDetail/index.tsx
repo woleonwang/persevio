@@ -9,14 +9,14 @@ import classnames from "classnames";
 import { observer } from "mobx-react-lite";
 
 import styles from "./style.module.less";
-import usePublicJob from "@/hooks/usePublicJob";
+import useJob from "@/hooks/useJob";
 
 interface IProps {
   isPreview?: boolean;
 }
 
 const LinkedinProfileDetail: React.FC<IProps> = (props) => {
-  const { job } = usePublicJob();
+  const { job } = useJob();
 
   const [linkedinProfile, setLinkedinProfile] = useState<TLinkedinProfile>();
 
@@ -34,7 +34,7 @@ const LinkedinProfileDetail: React.FC<IProps> = (props) => {
   }, [linkedinProfileId]);
   const fetchLinkedinProfile = async () => {
     const { code, data } = await Get(
-      `/api/jobs/${jobId}/linkedin_profiles/${linkedinProfileId}`
+      `/api/jobs/${jobId}/linkedin_profiles/${linkedinProfileId}`,
     );
     if (code === 0) {
       setLinkedinProfile(data.linkedin_profile);
@@ -58,7 +58,7 @@ const LinkedinProfileDetail: React.FC<IProps> = (props) => {
             onClick={async () => {
               backOrDirect(
                 navigate,
-                `/app/jobs/${jobId}/standard-board?tab=talents`
+                `/app/jobs/${jobId}/standard-board?tab=talents`,
               );
             }}
           />

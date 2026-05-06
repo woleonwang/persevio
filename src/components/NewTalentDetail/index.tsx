@@ -18,7 +18,6 @@ import { observer } from "mobx-react-lite";
 import DownloadIcon from "@/assets/icons/download";
 
 import styles from "./style.module.less";
-import usePublicJob from "@/hooks/usePublicJob";
 import ChatMessagePreview from "../ChatMessagePreview";
 import Tabs from "../Tabs";
 import Icon from "../Icon";
@@ -29,12 +28,10 @@ import { TTalentResume } from "./type";
 import TalentEvaluateFeedbackWithReasonModal from "../TalentEvaluateFeedbackWithReasonModal";
 import TalentEvaluateFeedbackModal from "../TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "../EvaluateFeedbackConversation";
+import useJob from "@/hooks/useJob";
 
-interface IProps {
-  isPreview?: boolean;
-}
-const NewTalentDetail: React.FC<IProps> = (props) => {
-  const { job } = usePublicJob();
+const NewTalentDetail: React.FC = () => {
+  const { job } = useJob();
   const { talent, interviews, fetchTalent } = useTalent();
   const { t: originalT, i18n } = useTranslation();
 
@@ -42,7 +39,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const t = (key: string) => originalT(`talent_details.${key}`);
   const reportContainerRef = useRef<HTMLDivElement>(null);
-  const { isPreview } = props;
 
   const [isAIInterviewRecordDrawerOpen, setIsAIInterviewRecordDrawerOpen] =
     useState(false);
@@ -67,10 +63,6 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   useEffect(() => {
     // 初始化
     if (job && talent) {
-      if (isPreview) {
-        i18n.changeLanguage(job.language);
-      }
-
       // 刷新未读候选人状态
       globalStore.refreshUnreadTalentsCount();
 
@@ -180,21 +172,19 @@ const NewTalentDetail: React.FC<IProps> = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {!isPreview && (
-          <ArrowLeftOutlined
-            style={{
-              fontSize: 20,
-              cursor: "pointer",
-            }}
-            className={styles.desktopVisible}
-            onClick={async () => {
-              backOrDirect(
-                navigate,
-                `/app/jobs/${job.invitation_token}/standard-board?tab=talents`,
-              );
-            }}
-          />
-        )}
+        <ArrowLeftOutlined
+          style={{
+            fontSize: 20,
+            cursor: "pointer",
+          }}
+          className={styles.desktopVisible}
+          onClick={async () => {
+            backOrDirect(
+              navigate,
+              `/app/jobs/${job.invitation_token}/standard-board?tab=talents`,
+            );
+          }}
+        />
         <div>
           {talent.name} - {job.name}
         </div>
