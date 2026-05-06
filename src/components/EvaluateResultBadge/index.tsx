@@ -7,6 +7,7 @@ import NotAFitIcon from "@/assets/icons/not-a-fit";
 
 import styles from "./style.module.less";
 import { useTranslation } from "react-i18next";
+import { getQuery } from "@/utils";
 
 interface IProps {
   result: TInterviewRecommendation;
@@ -15,11 +16,14 @@ interface IProps {
 }
 
 const EvaluateResultBadge = (props: IProps) => {
-  const { result, size = "normal", withTitle = false } = props;
+  const { result: resultProp, size = "normal", withTitle = false } = props;
   const { t: originalT } = useTranslation();
 
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`job_talents.evaluate_result_options.${key}`, params);
+
+  const resultQuery = getQuery("level") as TInterviewRecommendation;
+  const result = resultQuery || resultProp;
 
   const iconMappings: Record<TInterviewRecommendation, React.ReactNode> = {
     absolutely: <IdealCandidateIcon />,
