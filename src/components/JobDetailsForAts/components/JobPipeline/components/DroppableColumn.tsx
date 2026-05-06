@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -19,6 +20,9 @@ interface IProps {
   onGoToReachedOut: () => void;
   renderReachedOutSummary?: boolean;
   onMarkViewed?: (talentId: number) => void;
+  unsuitableCollapseEnabled?: boolean;
+  showUnsuitableExpanded?: boolean;
+  onToggleUnsuitableExpanded?: () => void;
 }
 
 const DroppableColumn = ({
@@ -30,6 +34,9 @@ const DroppableColumn = ({
   onGoToReachedOut,
   renderReachedOutSummary,
   onMarkViewed,
+  unsuitableCollapseEnabled,
+  showUnsuitableExpanded,
+  onToggleUnsuitableExpanded,
 }: IProps) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `stage-${stage.id}`,
@@ -38,7 +45,8 @@ const DroppableColumn = ({
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { t } = useTranslation();
-  const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
+  const tKey = (key: string, params: Record<string, string> = {}) =>
+    t(`job_details.pipeline_section.${key}`, params);
 
   const clearScrollTimer = useCallback(() => {
     if (!scrollTimerRef.current) {
@@ -122,8 +130,9 @@ const DroppableColumn = ({
           </div>
         )}
         {!renderReachedOutSummary &&
-          (items as TTalentListItem[])
-            .sort((a, b) => {
+          (() => {
+            const talents = items as TTalentListItem[];
+            const sorted = [...talents].sort((a, b) => {
               const fitLevelA = getEvaluateResultLevel(a.parsedEvaluateResult);
               const fitLevelB = getEvaluateResultLevel(b.parsedEvaluateResult);
 
@@ -143,9 +152,9 @@ const DroppableColumn = ({
                   EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.indexOf(fitLevelB)
                 );
               }
-            })
-            .map((item) => {
-              const talent = item as TTalentListItem;
+            });
+
+            const renderTalentCard = (talent: TTalentListItem) => {
               const isRejected = talent.stageKey === "rejected";
               return (
                 <DraggableCard
@@ -158,7 +167,51 @@ const DroppableColumn = ({
                   onViewed={onMarkViewed}
                 />
               );
-            })}
+            };
+
+            if (!unsuitableCollapseEnabled) {
+              return sorted.map(renderTalentCard);
+            }
+
+            const suitable: TTalentListItem[] = [];
+            const unsuitable: TTalentListItem[] = [];
+            for (const t of sorted) {
+              if (getEvaluateResultLevel(t.parsedEvaluateResult) === "no") {
+                unsuitable.push(t);
+              } else {
+                suitable.push(t);
+              }
+            }
+
+            if (unsuitable.length === 0) {
+              return sorted.map(renderTalentCard);
+            }
+
+            const expanded = showUnsuitableExpanded === true;
+            const n = unsuitable.length;
+
+            return (
+              <>
+                {suitable.map(renderTalentCard)}
+                <div
+                  className={styles.unsuitableToggleBar}
+                  onClick={() => onToggleUnsuitableExpanded?.()}
+                >
+                  {expanded ? (
+                    <CaretUpOutlined className={styles.unsuitableToggleIcon} />
+                  ) : (
+                    <CaretDownOutlined
+                      className={styles.unsuitableToggleIcon}
+                    />
+                  )}
+                  {expanded
+                    ? tKey("hide_unsuitable", { count: String(n) })
+                    : tKey("show_unsuitable", { count: String(n) })}
+                </div>
+                {expanded ? unsuitable.map(renderTalentCard) : null}
+              </>
+            );
+          })()}
       </div>
     </div>
   );

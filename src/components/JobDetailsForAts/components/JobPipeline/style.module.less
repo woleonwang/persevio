@@ -126,6 +126,32 @@
   gap: 8px;
 }
 
+.unsuitableToggleBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 0;
+  color: #5b6b8c;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    color: @primary-color;
+  }
+}
+
+.unsuitableToggleIcon {
+  font-size: 10px;
+}
+
 .candidateCard {
   background: #fff;
   border-radius: 8px;

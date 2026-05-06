@@ -37,6 +37,20 @@ import { storage, StorageKey } from "@/utils/storage";
 import ListModeTable from "@/components/ListModeTable";
 import { getStageKey } from "@/utils/talentStage";
 
+type TUnsuitableExpandedByJob = Record<string, Record<string, boolean>>;
+
+const PIPELINE_KANBAN_UNSUITABLE_TOGGLE_STAGE_IDS = [
+  "applied",
+  "started_ai_interview",
+  "ai_interview_completed",
+  "rejected",
+] as const;
+
+const isPipelineKanbanUnsuitableToggleStage = (stageId: string) =>
+  (PIPELINE_KANBAN_UNSUITABLE_TOGGLE_STAGE_IDS as readonly string[]).includes(
+    stageId,
+  );
+
 const JobPipeline = ({
   onChangeTab,
   onMarkViewed,
@@ -66,6 +80,10 @@ const JobPipeline = ({
   const [activeId, setActiveId] = useState<number>();
   const [uploadCandidateModalOpen, setUploadCandidateModalOpen] =
     useState(false);
+
+  const [unsuitableExpandedByStage, setUnsuitableExpandedByStage] = useState<
+    Record<string, boolean>
+  >({});
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -112,6 +130,38 @@ const JobPipeline = ({
   useEffect(() => {
     fetchTalents();
   }, [job?.id]);
+
+  useEffect(() => {
+    if (!job?.id) return;
+    const all =
+      storage.get<TUnsuitableExpandedByJob>(
+        StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED,
+      ) ?? {};
+    setUnsuitableExpandedByStage(all[String(job.id)] ?? {});
+  }, [job?.id]);
+
+  const persistUnsuitableExpanded = (
+    jobId: number,
+    nextByStage: Record<string, boolean>,
+  ) => {
+    const all =
+      storage.get<TUnsuitableExpandedByJob>(
+        StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED,
+      ) ?? {};
+    storage.set(StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED, {
+      ...all,
+      [String(jobId)]: nextByStage,
+    });
+  };
+
+  const handleToggleUnsuitableExpanded = (stageId: string) => {
+    if (!job?.id) return;
+    setUnsuitableExpandedByStage((prev) => {
+      const next = { ...prev, [stageId]: !prev[stageId] };
+      persistUnsuitableExpanded(job.id, next);
+      return next;
+    });
+  };
 
   const fetchTalents = async () => {
     if (!job?.id) return;
@@ -402,6 +452,15 @@ const JobPipeline = ({
                   onChangeTab("outreachCampaigns");
                 }}
                 onMarkViewed={handleMarkViewed}
+                unsuitableCollapseEnabled={isPipelineKanbanUnsuitableToggleStage(
+                  stage.id,
+                )}
+                showUnsuitableExpanded={
+                  unsuitableExpandedByStage[stage.id] === true
+                }
+                onToggleUnsuitableExpanded={() =>
+                  handleToggleUnsuitableExpanded(stage.id)
+                }
               />
             ))}
           </div>

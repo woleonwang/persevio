@@ -1847,6 +1847,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       submit_create_candidate: "Add Candidate",
       create_candidate_success: "Candidate added successfully",
       create_candidate_failed: "Failed to add candidate",
+      show_unsuitable: "Show {{count}} unsuitable",
+      hide_unsuitable: "Hide {{count}} unsuitable",
     },
     sourcing_channels: "Sourcing Channels",
     sourcing_channels_section: {
