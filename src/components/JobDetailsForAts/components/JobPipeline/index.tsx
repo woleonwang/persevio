@@ -37,8 +37,6 @@ import { storage, StorageKey } from "@/utils/storage";
 import ListModeTable from "@/components/ListModeTable";
 import { getStageKey } from "@/utils/talentStage";
 
-type TUnsuitableExpandedByJob = Record<string, Record<string, boolean>>;
-
 const PIPELINE_KANBAN_UNSUITABLE_TOGGLE_STAGE_IDS = [
   "applied",
   "started_ai_interview",
@@ -132,33 +130,17 @@ const JobPipeline = ({
   }, [job?.id]);
 
   useEffect(() => {
-    if (!job?.id) return;
-    const all =
-      storage.get<TUnsuitableExpandedByJob>(
+    setUnsuitableExpandedByStage(
+      storage.get<Record<string, boolean>>(
         StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED,
-      ) ?? {};
-    setUnsuitableExpandedByStage(all[String(job.id)] ?? {});
-  }, [job?.id]);
-
-  const persistUnsuitableExpanded = (
-    jobId: number,
-    nextByStage: Record<string, boolean>,
-  ) => {
-    const all =
-      storage.get<TUnsuitableExpandedByJob>(
-        StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED,
-      ) ?? {};
-    storage.set(StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED, {
-      ...all,
-      [String(jobId)]: nextByStage,
-    });
-  };
+      ) ?? {},
+    );
+  }, []);
 
   const handleToggleUnsuitableExpanded = (stageId: string) => {
-    if (!job?.id) return;
     setUnsuitableExpandedByStage((prev) => {
       const next = { ...prev, [stageId]: !prev[stageId] };
-      persistUnsuitableExpanded(job.id, next);
+      storage.set(StorageKey.JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED, next);
       return next;
     });
   };

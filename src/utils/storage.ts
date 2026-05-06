@@ -23,7 +23,7 @@ export enum StorageKey {
 
   // Job 相关本地配置
   JOB_PIPELINE_VIEW_MODE = "jobPipelineViewMode",
-  /** jobId -> stageId -> 是否展开「不匹配」候选人卡片 */
+  /** stageId -> Kanban 是否展开「不匹配」候选人（跨职位共用） */
   JOB_PIPELINE_KANBAN_UNSUITABLE_EXPANDED = "jobPipelineKanbanUnsuitableExpanded",
 
   // 是否是测试账号
