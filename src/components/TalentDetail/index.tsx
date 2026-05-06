@@ -49,7 +49,7 @@ interface IProps {
 const TalentDetail: React.FC<IProps> = (props) => {
   const { job } = useJob();
   const { talent, fetchTalent } = usePublicTalent();
-  const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent.${key}`);
 
   const { isPreview } = props;

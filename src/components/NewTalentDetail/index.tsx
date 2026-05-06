@@ -33,7 +33,7 @@ import useJob from "@/hooks/useJob";
 const NewTalentDetail: React.FC = () => {
   const { job } = useJob();
   const { talent, interviews, fetchTalent } = useTalent();
-  const { t: originalT, i18n } = useTranslation();
+  const { t: originalT } = useTranslation();
 
   const [tabKey, setTabKey] = useState<"resume" | "report">("resume");
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
