@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { SOURCING_CHANNEL_KEYS } from "@/utils";
+import { DEFAULT_TRACKING_SOURCES } from "@/utils";
 import { Get } from "@/utils/request";
 
 export type TJobSourceChannelOption = {
@@ -10,11 +10,7 @@ export type TJobSourceChannelOption = {
   type: "preset" | "custom";
 };
 
-const useJobSourceChannelOptions = ({
-  jobId,
-}: {
-  jobId?: string | number;
-}) => {
+const useJobSourceChannelOptions = ({ jobId }: { jobId?: string | number }) => {
   const { t } = useTranslation();
   const [customSources, setCustomSources] = useState<TCustomSource[]>([]);
 
@@ -31,13 +27,12 @@ const useJobSourceChannelOptions = ({
   };
 
   const options: TJobSourceChannelOption[] = useMemo(() => {
-    const presetOptions: TJobSourceChannelOption[] = SOURCING_CHANNEL_KEYS.map(
-      (key) => ({
+    const presetOptions: TJobSourceChannelOption[] =
+      DEFAULT_TRACKING_SOURCES.map((key) => ({
         value: key,
         label: t(`sourcing_channel.${key}`),
         type: "preset",
-      }),
-    );
+      }));
 
     const customOptions: TJobSourceChannelOption[] = (customSources ?? []).map(
       (cs) => ({

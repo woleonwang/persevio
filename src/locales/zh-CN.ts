@@ -245,8 +245,7 @@ const CandidateResume = {
     pattern_message: "请输入有效的 Whatsapp 账号（仅数字）",
     previous_step: "上一步",
     next: "在 WhatsApp 上聊天",
-    agree_whatsapp_contact:
-      "我同意就我的求职申请通过 WhatsApp 与我联系",
+    agree_whatsapp_contact: "我同意就我的求职申请通过 WhatsApp 与我联系",
     agree_platform_terms_lead: "我同意 ",
     terms_of_service: "服务条款",
     agree_platform_terms_conj: " 与 ",
@@ -386,6 +385,12 @@ export default {
     jobstreet: "JobStreet",
     mycareersfuture: "MyCareersFuture",
     email_inbound: "邮件申请",
+    jobstreet_email: "Jobstreet (邮箱)",
+    indeed_email: "Indeed (邮箱)",
+    linkedin_email: "LinkedIn (邮箱)",
+    fast_jobs_email: "Fast Jobs (邮箱)",
+    my_careers_future_email: "MyCareersFuture (邮箱)",
+    glassdoor_email: "Glassdoor (邮箱)",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {

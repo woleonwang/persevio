@@ -392,9 +392,15 @@ export default {
     persevio: "Persevio",
     direct: "Direct",
     linkedin: "LinkedIn",
-    jobstreet: "JobStreet",
+    jobstreet: "Jobstreet",
     mycareersfuture: "MyCareersFuture",
     email_inbound: "Email Inbound",
+    jobstreet_email: "Jobstreet (Email)",
+    indeed_email: "Indeed (Email)",
+    linkedin_email: "LinkedIn (Email)",
+    fast_jobs_email: "Fast Jobs (Email)",
+    my_careers_future_email: "MyCareersFuture (Email)",
+    glassdoor_email: "Glassdoor (Email)",
   },
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
