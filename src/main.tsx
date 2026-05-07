@@ -89,6 +89,7 @@ import InternalSettings from "./pages/internal-settings/index.tsx";
 import Feedback from "./pages/job/feedback/index.tsx";
 import InterviewChat from "./pages/candidate/interview-chat";
 import OnboardPage from "./pages/onboard";
+import TermsOfService from "./pages/terms-of-service/index.tsx";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -316,6 +317,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/apply" element={<Apply />} />
         <Route path="/livekit" element={<LiveKit />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/l/:shortLink" element={<ShortLink />} />
         <Route path="/demo" element={<Feedback />} />
         <Route
