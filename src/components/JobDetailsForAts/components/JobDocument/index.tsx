@@ -127,7 +127,7 @@ const JobDocument = (props: IProps) => {
               icon={<Icon icon={<Share2 />} />}
               onClick={async () => {
                 await copy(
-                  `${window.origin}/jobs/${job.candidate_uuid}/share?show=${chatTypeMappings[chatType]}`,
+                  `${window.origin}/jobs/${job.invitation_token}/share?show=${chatTypeMappings[chatType]}`,
                 );
                 message.success(originalT("copied"));
               }}
