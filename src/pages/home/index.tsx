@@ -115,7 +115,7 @@ const Home = () => {
     const jobs: JobPosting[] = data.jobs;
 
     const { code: code2, data: data2 } = await Get(
-      "/api/public/system_config/recommended_job_ids"
+      "/api/public/system_config/recommended_job_ids",
     );
     if (code2 !== 0 || !data2.value) {
       return;
@@ -130,7 +130,7 @@ const Home = () => {
             ...job,
             ...parseJSON(job.basic_info),
           };
-        })
+        }),
     );
   };
 
@@ -475,6 +475,9 @@ const Home = () => {
               <h4 className={styles.footerTitle}>Company</h4>
               <a href="#" className={styles.footerLink}>
                 About us
+              </a>
+              <a href="/terms-of-service" className={styles.footerLink}>
+                Terms of Service
               </a>
               <a href="/privacy-policy" className={styles.footerLink}>
                 Privacy Policy
