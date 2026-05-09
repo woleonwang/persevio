@@ -109,7 +109,7 @@ const Signup: React.FC = () => {
     // 如果没简历，跳到 resume
     // 如果没绑定邮箱，跳到 binding
     // 如果没确认 WA，跳到 whatsapp
-    // 否则跳到 dashboarr
+    // 否则跳到 dashboard
     if (!candidate.resume_path) {
       setPageState("resume");
     } else if (isTempAccount(candidate)) {

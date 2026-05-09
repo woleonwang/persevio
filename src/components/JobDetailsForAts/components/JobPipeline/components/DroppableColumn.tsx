@@ -155,12 +155,11 @@ const DroppableColumn = ({
             });
 
             const renderTalentCard = (talent: TTalentListItem) => {
-              const isRejected = talent.stageKey === "rejected";
               return (
                 <DraggableCard
                   key={talent.id}
                   item={talent}
-                  isDraggable={!isRejected}
+                  isDraggable
                   disabledPopover={isColumnScrolling}
                   onCardClick={() => onCardClick(talent)}
                   onUpdateTalent={onUpdateTalent}

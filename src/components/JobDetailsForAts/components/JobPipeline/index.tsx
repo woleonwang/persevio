@@ -257,13 +257,10 @@ const JobPipeline = ({
     const item = talents.find((i) => i.id === itemId);
     if (!item) return;
 
-    const currentStageKey = getStageKey(item);
-    // rejected 阶段的候选人不可拖动
-    if (currentStageKey === "rejected") return;
-
     const talentId = item.id;
     const prevStageId = item.stage_id;
     const prevStageKey = item.stageKey;
+    const prevStatus = item.status;
     const newStageId =
       targetStageId === "ai_interview_completed" ? "" : targetStageId;
 
@@ -273,6 +270,7 @@ const JobPipeline = ({
         const newTalent = {
           ...t,
           stage_id: newStageId,
+          status: "evaluate_succeed",
         };
         newTalent.stageKey = getStageKey(newTalent);
         return newTalent;
@@ -288,7 +286,12 @@ const JobPipeline = ({
       setTalents((prev) =>
         prev.map((t) =>
           t.id === talentId
-            ? { ...t, stage_id: prevStageId, stageKey: prevStageKey }
+            ? {
+                ...t,
+                stage_id: prevStageId,
+                stageKey: prevStageKey,
+                status: prevStatus,
+              }
             : t,
         ),
       );
