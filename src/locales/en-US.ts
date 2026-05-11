@@ -2040,6 +2040,17 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     reject_reason_label:
       "Tell us why this candidate is not a fit so we can calibrate our search",
     reject_reason_required: "Please enter reason",
+    reject_reason_type_label: "Reason",
+    reject_reason_not_shortlisted: "Not Shortlisted",
+    reject_reason_failed_interview: "Failed Interview",
+    reject_reason_headcount_freeze: "Headcount Freeze",
+    reject_reason_candidate_withdrew: "Candidate Withdrew",
+    reject_reason_others: "Others",
+    reject_feedback_prompt:
+      "What should we know to better source/screen candidates for this role?",
+    reject_feedback_placeholder:
+      "For example, our assessment is not accurate/the role is evolved and you'd like to adjust or update the job requirements/ or anything at all.",
+    reject_submit_failed: "Submit failed",
   },
 
   admin_talents: {

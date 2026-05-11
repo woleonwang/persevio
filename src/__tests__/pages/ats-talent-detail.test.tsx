@@ -315,7 +315,7 @@ describe("AtsTalentDetail 页面", () => {
     );
   });
 
-  it("Reject：evaluate_feedback 存在时直接请求更新状态", async () => {
+  it("Reject：evaluate_feedback 已存在时仍打开 reject modal（不再跳过弹窗直接拒绝）", async () => {
     currentTalent = { ...getDefaultTalent(), evaluate_feedback: "approve" };
     renderPage();
 
@@ -328,10 +328,11 @@ describe("AtsTalentDetail 页面", () => {
       screen.getByRole("button", { name: /talent_details\.action_reject/i }),
     );
 
-    expect(mockPost).toHaveBeenCalledWith("/api/jobs/1/talents/100", {
-      status: "rejected",
-      feedback: undefined,
-    });
+    expect(await screen.findByTestId("reject-modal")).toBeInTheDocument();
+    expect(mockPost).not.toHaveBeenCalledWith(
+      "/api/jobs/1/talents/100",
+      expect.anything(),
+    );
   });
 
   it("Add Note：直接保存空内容时提示校验错误", async () => {

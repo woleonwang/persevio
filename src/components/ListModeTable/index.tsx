@@ -156,25 +156,6 @@ const ListModeTable = ({
     );
   };
 
-  const updateTalentStatus = async (
-    record: TTalentListItem,
-    feedback?: string,
-  ) => {
-    if (!onUpdateTalent) return;
-    const { code } = await Post(
-      `/api/jobs/${record.job?.invitation_token}/talents/${record.id}`,
-      {
-        status: "rejected",
-        feedback,
-      },
-    );
-    if (code === 0) {
-      onUpdateTalent();
-      setRejectOpen(false);
-      message.success(t("job_details.saveSuccess"));
-    }
-  };
-
   const handleMoveStageOk = async () => {
     if (!onUpdateTalent) return;
     if (!actionRecord || !selectedStageId) return;
@@ -335,14 +316,7 @@ const ListModeTable = ({
                         danger: true,
                         onClick: () => {
                           setActionRecord(record);
-                          if (record.evaluate_feedback) {
-                            updateTalentStatus(
-                              record,
-                              record.evaluate_feedback_reason,
-                            );
-                          } else {
-                            setRejectOpen(true);
-                          }
+                          setRejectOpen(true);
                         },
                       },
                     ]
@@ -570,7 +544,7 @@ const ListModeTable = ({
 
           {actionRecord && (
             <TalentEvaluateFeedbackWithReasonModal
-              jobId={actionRecord.job_id}
+              jobId={actionRecord.job?.invitation_token ?? actionRecord.job_id}
               talentId={actionRecord.id}
               open={rejectOpen}
               onOk={() => {

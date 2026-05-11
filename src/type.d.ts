@@ -902,6 +902,14 @@ type TInterviewRecommendation =
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
 
+/** 与后端 model.TalentRejectReasonType 一致 */
+type TTalentRejectReasonType =
+  | "not_shortlisted"
+  | "did_not_pass_interview"
+  | "headcount_freeze"
+  | "candidate_withdrew"
+  | "other";
+
 type TCustomSource = {
   id: number;
   job_id: number;

@@ -101,25 +101,6 @@ const TalentPopoverContent = ({
     message.success("Update success");
   };
 
-  const updateTalentStatus = async (
-    talent: TTalentListItem,
-    feedback?: string,
-  ) => {
-    const { code } = await Post(
-      `/api/jobs/${talent.job?.invitation_token}/talents/${talent.id}`,
-      {
-        status: "rejected",
-        feedback,
-      },
-    );
-
-    if (code === 0) {
-      onUpdateTalent();
-      setIsRejectModalOpen(false);
-      message.success("Update talent status success");
-    }
-  };
-
   const getStatus = (talent: TTalentListItem): string => {
     if (talent.status === "rejected") {
       return "rejected";
@@ -199,14 +180,7 @@ const TalentPopoverContent = ({
                   color="danger"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!!talent.evaluate_feedback) {
-                      updateTalentStatus(
-                        talent,
-                        talent.evaluate_feedback_reason,
-                      );
-                    } else {
-                      setIsRejectModalOpen(true);
-                    }
+                    setIsRejectModalOpen(true);
                   }}
                 >
                   Reject
@@ -456,8 +430,6 @@ const TalentPopoverContent = ({
         open={isRejectModalOpen}
         onOk={() => {
           setIsRejectModalOpen(false);
-          setNeedConfirmEvaluateFeedbackConversation(true);
-          setOpenEvaluateFeedbackConversation(true);
           onUpdateTalent();
         }}
         onCancel={() => setIsRejectModalOpen(false)}

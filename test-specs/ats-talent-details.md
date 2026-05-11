@@ -38,8 +38,7 @@
   - `interviews[0].mode === 'written'` 或 `interviews[0].scheduled_at` 存在：按钮文案 `interview_scheduled`，点击打开 Interview modal。
   - 否则：按钮文案 `awaiting_candidate_confirm`，点击打开 Interview modal。
 - `Reject` 点击逻辑：
-  - 若 `talent.evaluate_feedback` 已存在：直接调用 `updateTalentStatus()`。
-  - 否则：打开 `TalentEvaluateFeedbackWithReasonModal`（`setIsRejectModalOpen(true)`）。
+  - 始终打开 `TalentEvaluateFeedbackWithReasonModal`（`setIsRejectModalOpen(true)`）；不再根据 `evaluate_feedback` 跳过弹窗。
 
 ### 5) Interviews（Collapse + Round 渲染 + Round 反馈交互）
 
@@ -119,6 +118,7 @@
 ### 11) Reject/Evaluate Feedback 相关弹窗链路
 
 - `TalentEvaluateFeedbackWithReasonModal`（仅在 `!!talent` 时渲染）：
+  - 必选「拒绝原因」(`reject_reason_type`) 后才可提交；提交 Post `/talents/:id` 携带 `status: rejected`、`feedback`、`reject_reason_type`。
   - onOk：关闭 reject modal，`needConfirm=true`、打开 `EvaluateFeedbackConversation`，并 `fetchTalent()`。
 - `TalentEvaluateFeedbackModal`（reason 弹窗）：
   - open 由 `updateTalentEvaluateFeedback` 控制（先开 reason，再 Post evaluate_feedback）。

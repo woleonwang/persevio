@@ -813,21 +813,6 @@ const AtsTalentDetail: React.FC = () => {
     }
   };
 
-  const updateTalentStatus = async (feedback?: string) => {
-    const { code } = await Post(
-      `/api/jobs/${job!.invitation_token}/talents/${talent!.id}`,
-      {
-        status: "rejected",
-        feedback,
-      },
-    );
-    if (code === 0) {
-      fetchTalent();
-      setIsRejectModalOpen(false);
-      message.success(t("update_success"));
-    }
-  };
-
   const updateTalentEvaluateFeedback = async (feedback: TEvaluateFeedback) => {
     setOpenEvaluateFeedbackReason(true);
     const { code } = await Post(
@@ -1167,11 +1152,7 @@ const AtsTalentDetail: React.FC = () => {
               <Button
                 danger
                 onClick={() => {
-                  if (talent?.evaluate_feedback) {
-                    updateTalentStatus();
-                  } else {
-                    setIsRejectModalOpen(true);
-                  }
+                  setIsRejectModalOpen(true);
                 }}
                 className={styles.rejectBtn}
               >
@@ -2040,13 +2021,11 @@ const AtsTalentDetail: React.FC = () => {
 
       {!!talent && (
         <TalentEvaluateFeedbackWithReasonModal
-          jobId={talent.job_id ?? 0}
+          jobId={job.invitation_token}
           talentId={talent.id ?? 0}
           open={isRejectModalOpen}
           onOk={() => {
             setIsRejectModalOpen(false);
-            setNeedConfirmEvaluateFeedbackConversation(true);
-            setOpenEvaluateFeedbackConversation(true);
             fetchTalent();
           }}
           onCancel={() => setIsRejectModalOpen(false)}

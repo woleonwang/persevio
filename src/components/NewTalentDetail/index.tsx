@@ -89,23 +89,6 @@ const NewTalentDetail: React.FC = () => {
       `${talent.name}_resume`,
     );
   };
-  const updateTalentStatus = async (feedback?: string) => {
-    if (!job || !talent) return;
-    const { code } = await Post(
-      `/api/jobs/${job.invitation_token}/talents/${talent.id}`,
-      {
-        status: "rejected",
-        feedback,
-      },
-    );
-
-    if (code === 0) {
-      fetchTalent();
-      setIsRejectModalOpen(false);
-      message.success(t("update_success"));
-    }
-  };
-
   const updateTalentEvaluateFeedback = async (feedback: TEvaluateFeedback) => {
     if (!job || !talent) return;
     setOpenEvaluateFeedbackReason(true);
@@ -203,12 +186,7 @@ const NewTalentDetail: React.FC = () => {
                     type="primary"
                     onClick={() => {
                       if (!talent) return;
-
-                      if (!!talent.evaluate_feedback) {
-                        updateTalentStatus();
-                      } else {
-                        setIsRejectModalOpen(true);
-                      }
+                      setIsRejectModalOpen(true);
                     }}
                     style={{ flex: "auto" }}
                     size="large"
@@ -384,11 +362,7 @@ const NewTalentDetail: React.FC = () => {
                 type="primary"
                 color="danger"
                 onClick={() => {
-                  if (!!talent?.evaluate_feedback) {
-                    updateTalentStatus();
-                  } else {
-                    setIsRejectModalOpen(true);
-                  }
+                  setIsRejectModalOpen(true);
                 }}
                 style={{ flex: "auto" }}
                 size="large"

@@ -1,19 +1,30 @@
 import { Button, message, Modal } from "antd";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import classnames from "classnames";
 
 import TextAreaWithVoice from "../TextAreaWithVoice";
-import Icon from "../Icon";
-import GoodFitOutlined from "@/assets/icons/good-fit-outlined";
 
 import styles from "./style.module.less";
-import SlightlyOffOutline from "@/assets/icons/slightly-off-outline";
-import InaccurateOutline from "@/assets/icons/inaccurate-outline";
 
 import { Post } from "@/utils/request";
-import GoodFit from "@/assets/icons/good-fit";
-import SlightlyOff from "@/assets/icons/slightly-off";
-import Inaccurate from "@/assets/icons/inaccurate";
+
+const REJECT_REASON_OPTIONS: {
+  value: TTalentRejectReasonType;
+  labelKey: string;
+}[] = [
+  { value: "not_shortlisted", labelKey: "reject_reason_not_shortlisted" },
+  {
+    value: "did_not_pass_interview",
+    labelKey: "reject_reason_failed_interview",
+  },
+  { value: "headcount_freeze", labelKey: "reject_reason_headcount_freeze" },
+  {
+    value: "candidate_withdrew",
+    labelKey: "reject_reason_candidate_withdrew",
+  },
+  { value: "other", labelKey: "reject_reason_others" },
+];
 
 interface IProps {
   jobId: string | number;
@@ -25,14 +36,18 @@ interface IProps {
 
 const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
   const { jobId, talentId, open, onCancel, onOk } = props;
+  const { t } = useTranslation();
+  const tDetail = (key: string) => t(`talent_details.${key}`);
 
-  const [evaluateFeedback, setEvaluateFeedback] = useState<TEvaluateFeedback>();
+  const [rejectReasonType, setRejectReasonType] = useState<
+    TTalentRejectReasonType | undefined
+  >();
   const [evaluateFeedbackReason, setEvaluateFeedbackReason] =
     useState<string>("");
 
   useEffect(() => {
     if (open) {
-      setEvaluateFeedback(undefined);
+      setRejectReasonType(undefined);
       setEvaluateFeedbackReason("");
     }
   }, [open]);
@@ -42,42 +57,28 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
       open={open}
       onCancel={onCancel}
       onOk={async () => {
+        if (!rejectReasonType) return;
+
         const { code } = await Post(`/api/jobs/${jobId}/talents/${talentId}`, {
           status: "rejected",
           feedback: evaluateFeedbackReason,
+          reject_reason_type: rejectReasonType,
         });
 
         if (code === 0) {
-          if (evaluateFeedback) {
-            const { code } = await Post(
-              `/api/jobs/${jobId}/talents/${talentId}/evaluate_feedback`,
-              {
-                evaluate_feedback: evaluateFeedback,
-                evaluate_feedback_reason: evaluateFeedbackReason,
-              },
-            );
-
-            if (code === 0) {
-              onOk();
-              message.success("Submit success");
-            } else {
-              message.error("Submit failed");
-            }
-          } else {
-            message.success("Submit success");
-            onCancel();
-          }
+          message.success(tDetail("update_success"));
+          onOk();
         } else {
-          message.error("Submit failed");
+          message.error(tDetail("reject_submit_failed"));
         }
       }}
-      title="Reject Candidate"
+      title={tDetail("reject_candidate_title")}
       width={800}
       centered
       okButtonProps={{
-        disabled: !!evaluateFeedback && !evaluateFeedbackReason,
+        disabled: !rejectReasonType,
       }}
-      okText="Reject"
+      okText={tDetail("action_reject")}
       cancelButtonProps={{
         style: {
           display: "none",
@@ -85,69 +86,43 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
       }}
     >
       <div>
-        <div className={styles.evaluateFeedbackTitle}>
-          In order to recommend more suitable candidates for you going forward,
-          could you kindly confirm whether the referral report for Viona this
-          time is accurate?
+        <div className={styles.reasonFieldLabel}>
+          <span className={styles.requiredStar} aria-hidden>
+            *
+          </span>
+          {tDetail("reject_reason_type_label")}
         </div>
-        <div className={styles.evaluateFeedback}>
-          {(
-            [
-              "accurate",
-              "slightly_inaccurate",
-              "inaccurate",
-            ] as TEvaluateFeedback[]
-          ).map((item) => {
-            const isActive = evaluateFeedback === item;
-            const textMapping = {
-              accurate: "Accurate",
-              slightly_inaccurate: "Slightly Off",
-              inaccurate: "Inaccurate",
-            };
-            const icon =
-              item === "accurate" ? (
-                isActive ? (
-                  <GoodFit />
-                ) : (
-                  <GoodFitOutlined />
-                )
-              ) : item === "slightly_inaccurate" ? (
-                isActive ? (
-                  <SlightlyOff />
-                ) : (
-                  <SlightlyOffOutline />
-                )
-              ) : isActive ? (
-                <Inaccurate />
-              ) : (
-                <InaccurateOutline />
-              );
+        <div
+          className={styles.reasonPillsRow}
+          role="radiogroup"
+          aria-label={tDetail("reject_reason_type_label")}
+        >
+          {REJECT_REASON_OPTIONS.map(({ value, labelKey }) => {
+            const selected = rejectReasonType === value;
             return (
               <Button
-                key={item}
-                className={classnames(
-                  styles.evaluateFeedbackItem,
-                  styles[item],
-                  { [styles.active]: isActive },
-                )}
-                onClick={() => setEvaluateFeedback(item)}
-                variant={isActive ? "filled" : "outlined"}
-                color={isActive ? "primary" : "default"}
+                key={value}
+                role="radio"
+                className={classnames(styles.reasonPill, {
+                  [styles.selected]: selected,
+                })}
+                variant={selected ? "filled" : "outlined"}
+                color={selected ? "primary" : "default"}
+                onClick={() => setRejectReasonType(value)}
               >
-                <Icon icon={icon} className={styles.icon} />
-                <span>{textMapping[item as keyof typeof textMapping]}</span>
+                {tDetail(labelKey)}
               </Button>
             );
           })}
         </div>
       </div>
       <div className={styles.evaluateFeedbackReason}>
-        What should we know to better source/screen candidates for this role?
+        {tDetail("reject_feedback_prompt")}
       </div>
       <TextAreaWithVoice
         value={evaluateFeedbackReason}
         onChange={setEvaluateFeedbackReason}
-        placeholder="For example, our assessment is not accurate/the role is evolved and you'd like to adjust or update the job requirements/ or anything at all."
+        placeholder={tDetail("reject_feedback_placeholder")}
       />
     </Modal>
   );

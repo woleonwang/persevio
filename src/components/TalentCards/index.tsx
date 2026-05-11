@@ -217,22 +217,6 @@ const TalentCards = (props: IProps) => {
     return talentItem.talent?.job_id || talentItem.linkedinProfile?.job_id;
   };
 
-  const updateTalentStatus = async (talent: TTalentItem, feedback?: string) => {
-    const { code } = await Post(
-      `/api/jobs/${talent.job!.invitation_token}/talents/${talent.id}`,
-      {
-        status: "rejected",
-        feedback,
-      },
-    );
-
-    if (code === 0) {
-      fetchTalents();
-      setIsRejectModalOpen(false);
-      message.success("Update talent status success");
-    }
-  };
-
   const updateTalentEvaluateFeedback = async (
     jobId: string | number,
     talentId: number,
@@ -623,15 +607,8 @@ const TalentCards = (props: IProps) => {
                             danger
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!!item.talent?.evaluate_feedback) {
-                                updateTalentStatus(
-                                  item.talent,
-                                  item.talent.evaluate_feedback_reason,
-                                );
-                              } else {
-                                setSelectedTalent(item.talent);
-                                setIsRejectModalOpen(true);
-                              }
+                              setSelectedTalent(item.talent);
+                              setIsRejectModalOpen(true);
                             }}
                           >
                             Reject

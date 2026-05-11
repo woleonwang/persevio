@@ -1,72 +1,43 @@
 @import "@/mixin.module.less";
 
-.evaluateFeedbackTitle {
+.reasonFieldLabel {
   font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: bold;
 
-  span {
+  .requiredStar {
     color: rgba(224, 61, 61, 1);
     margin-right: 4px;
   }
 }
 
-.evaluateFeedback {
+.reasonPillsRow {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.evaluateFeedbackItem {
-  flex: 1;
-  height: 52px;
+.reasonPill {
+  height: auto;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  outline: none !important;
+  line-height: 1.4;
 
-
-
-  &:hover:not(.active) {
-    background-color: transparent;
-
-    &.accurate {
-      color: @primary-color !important;
-    }
-
-    &.slightly_inaccurate {
-      border-color: rgba(249, 169, 48, 1) !important;
-      color: rgba(249, 169, 48, 1) !important;
-    }
-
-    &.inaccurate {
-      border-color: rgba(224, 61, 61, 1) !important;
-      color: rgba(224, 61, 61, 1) !important;
-    }
+  &:hover,
+  &.selected {
+    border-color: @primary-color;
   }
 
-  &.active {
-    color: white !important;
-    border: none !important;
-
-    &.accurate {
-      background-color: @primary-color !important;
-    }
-
-    &.slightly_inaccurate {
-      background-color: rgba(249, 169, 48, 1) !important;
-    }
-
-    &.inaccurate {
-      background-color: rgba(224, 61, 61, 1) !important;
-    }
-  }
-
-  .icon {
-    font-size: 20px;
-
+  &:global(.ant-btn:focus),
+  &:global(.ant-btn:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
   }
 }
 
 .evaluateFeedbackReason {
-  margin-top: 44px;
+  margin-top: 24px;
   margin-bottom: 12px;
   font-weight: bold;
 }
