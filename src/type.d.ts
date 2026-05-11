@@ -875,10 +875,18 @@ type TLinkedinProfile = {
   };
 };
 
+type TJobCollaboratorRole = "owner" | "recruiter" | "hiring_manager";
+
 type TJobCollaborator = {
   id: number;
   job_id: number;
   staff_id: number;
+  role?: TJobCollaboratorRole;
+  staff?: IStaffWithAccount;
+};
+
+type TJobCollaboratorsResponse = {
+  job_collaborators: TJobCollaborator[];
 };
 
 type TInterviewRecommendation =

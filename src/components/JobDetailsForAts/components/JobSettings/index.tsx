@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Button, Input, message, Select, Switch } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import {
   DndContext,
@@ -39,6 +39,14 @@ const DEFAULT_STAGES = [
 
 const REJECTED_STAGE_NAME = "Rejected";
 
+const COLLABORATOR_ROLE_OPTIONS: {
+  value: TJobCollaboratorRole;
+  labelKey: "role_recruiter" | "role_hiring_manager";
+}[] = [
+  { value: "recruiter", labelKey: "role_recruiter" },
+  { value: "hiring_manager", labelKey: "role_hiring_manager" },
+];
+
 export interface PipelineStage {
   id: string;
   name: string;
@@ -49,6 +57,12 @@ export interface PipelineStage {
 interface IProps {
   jobId: string | number;
 }
+
+type AddCollaboratorSelectOption = {
+  value: number;
+  label: string;
+  staffEmail: string;
+};
 
 const LockedStageItem = ({ name }: { name: string }) => (
   <div className={classnames(styles.stageItem, styles.stageItemLocked)}>
@@ -143,25 +157,28 @@ const SortableStageItem = ({
 const JobSettings = ({ jobId }: IProps) => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_settings.${key}`);
-  const tCollab = (key: string) =>
-    t(`job_details.job_collaborator_modal.${key}`);
-
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [customizedPipelineStages, setCustomizedPipelineStages] = useState<
     PipelineStage[]
   >([]);
-
-  const [selectedStaffIds, setSelectedStaffIds] = useState<number[]>([]);
+  const [collaborators, setCollaborators] = useState<TJobCollaborator[]>([]);
   const [newStaffId, setNewStaffId] = useState<number | undefined>(undefined);
+  const [newCollaboratorRole, setNewCollaboratorRole] =
+    useState<TJobCollaboratorRole>("hiring_manager");
   const [collabUpdating, setCollabUpdating] = useState(false);
 
   const [orgNodeId, setOrgNodeId] = useState<number | undefined>(undefined);
   const [orgNodeUpdating, setOrgNodeUpdating] = useState(false);
 
   const { job, fetchJob } = useJob();
-  const { staffs } = useStaffs();
+  const { staffs } = useStaffs({
+    includeDeactivated: true,
+  });
+
+  const getStaffEmail = (staff: IStaffWithAccount) =>
+    staff.account?.username || staff.phone || "-";
 
   const defaultStages: PipelineStage[] = DEFAULT_STAGES.map((name, i) => ({
     id: `default-${i}`,
@@ -196,34 +213,30 @@ const JobSettings = ({ jobId }: IProps) => {
   }, [jobId]);
 
   const fetchCollaborators = async () => {
-    const { code, data } = await Get<{ job_collaborators: TJobCollaborator[] }>(
+    const { code, data } = await Get<TJobCollaboratorsResponse>(
       `/api/jobs/${jobId}/collaborators`,
     );
     if (code === 0) {
-      setSelectedStaffIds(
-        data.job_collaborators.map((collab) => collab.staff_id),
-      );
+      setCollaborators(data.job_collaborators ?? []);
     }
   };
 
-  const handleUpdateCollaborators = async (staffIds: number[]) => {
+  const handleAddCollaborator = async () => {
+    if (!newStaffId) return;
+
     setCollabUpdating(true);
     const { code } = await Post(`/api/jobs/${jobId}/collaborators`, {
-      staff_ids: staffIds,
+      staff_id: newStaffId,
+      role: newCollaboratorRole,
     });
     if (code === 0) {
-      setSelectedStaffIds(staffIds);
-      message.success(t("job_details.saveSuccess"));
+      message.success(tKey("save_success"));
+      setNewStaffId(undefined);
+      await fetchCollaborators();
     } else {
       message.error(tKey("save_failed"));
     }
     setCollabUpdating(false);
-  };
-
-  const handleAddCollaborator = () => {
-    if (!newStaffId || selectedStaffIds.includes(newStaffId)) return;
-    handleUpdateCollaborators([...selectedStaffIds, newStaffId]);
-    setNewStaffId(undefined);
   };
 
   const handleToggleConfidential = (checked: boolean) => {
@@ -318,28 +331,164 @@ const JobSettings = ({ jobId }: IProps) => {
     setOrgNodeUpdating(false);
   };
 
-  const handleRemoveCollaborator = (staffId: number) => {
-    const staff = staffs.find((s) => s.id === staffId);
+  const handleRemoveCollaborator = (collaborator: TJobCollaborator) => {
+    const staffName =
+      collaborator.staff?.name ||
+      staffs.find((staff) => staff.id === collaborator.staff_id)?.name ||
+      "";
     confirmModal({
       title: tKey("remove_collaborator_title"),
       content: tKey("remove_collaborator_content").replace(
         "{{name}}",
-        staff?.name || "",
+        staffName,
       ),
-      onOk: () => {
-        handleUpdateCollaborators(
-          selectedStaffIds.filter((id) => id !== staffId),
+      onOk: async () => {
+        setCollabUpdating(true);
+        const { code } = await Post(
+          `/api/jobs/${jobId}/collaborators/${collaborator.id}/destroy`,
         );
+        if (code === 0) {
+          message.success(tKey("save_success"));
+          await fetchCollaborators();
+        } else {
+          message.error(tKey("save_failed"));
+        }
+        setCollabUpdating(false);
       },
     });
   };
 
-  const collaboratorStaffs = selectedStaffIds
-    .map((id) => staffs.find((s) => s.id === id))
-    .filter(Boolean) as IStaff[];
-  const staffOptions = staffs
-    .filter((s) => !selectedStaffIds.includes(s.id))
-    .map((s) => ({ value: s.id, label: s.name }));
+  const handleUpdateCollaboratorRole = async (
+    collaborator: TJobCollaborator,
+    role: TJobCollaboratorRole,
+  ) => {
+    if (collaborator.role === role) return;
+
+    setCollabUpdating(true);
+    const { code } = await Post(
+      `/api/jobs/${jobId}/collaborators/${collaborator.id}`,
+      { role },
+    );
+    if (code === 0) {
+      message.success(tKey("save_success"));
+      await fetchCollaborators();
+    } else {
+      message.error(tKey("save_failed"));
+    }
+    setCollabUpdating(false);
+  };
+
+  const assignedStaffIds = useMemo(() => {
+    const staffIds = new Set<number>();
+    collaborators.forEach((collaborator) => {
+      staffIds.add(collaborator.staff_id);
+    });
+    return staffIds;
+  }, [collaborators]);
+
+  const collaboratorCards = useMemo(() => {
+    const cards: Array<{
+      key: string;
+      staff: IStaffWithAccount;
+      isOwner: boolean;
+      collaborator?: TJobCollaborator;
+    }> = [];
+
+    const ownerStaff = staffs.find((staff) => staff.id === job?.staff_id);
+    if (ownerStaff) {
+      cards.push({
+        key: `owner-${ownerStaff.id}`,
+        staff: ownerStaff,
+        isOwner: true,
+      });
+    }
+
+    [...collaborators]
+      .sort((left, right) => {
+        if (left.role === right.role) {
+          return left.id - right.id;
+        }
+        if (left.role === "recruiter") return -1;
+        if (right.role === "recruiter") return 1;
+        return left.id - right.id;
+      })
+      .forEach((collaborator) => {
+        const staff = staffs.find(
+          (staff) => staff.id === collaborator.staff_id,
+        );
+        if (!staff) return;
+
+        cards.push({
+          key: `collaborator-${collaborator.id}`,
+          collaborator,
+          staff,
+          isOwner: false,
+        });
+      });
+
+    return cards;
+  }, [job, collaborators, staffs]);
+
+  const addCollaboratorSelectOptions = useMemo<AddCollaboratorSelectOption[]>(
+    () =>
+      staffs
+        .filter(
+          (staff) =>
+            !assignedStaffIds.has(staff.id) && staff.status === "active",
+        )
+        .map((staff) => ({
+          value: staff.id,
+          label: staff.name,
+          staffEmail: getStaffEmail(staff),
+        })),
+    [staffs, assignedStaffIds],
+  );
+
+  const roleOptions = COLLABORATOR_ROLE_OPTIONS.map((option) => ({
+    value: option.value,
+    label: tKey(option.labelKey),
+  }));
+
+  const renderRoleTag = (
+    role: TJobCollaboratorRole,
+    collaborator?: TJobCollaborator,
+  ) => {
+    const roleClassName =
+      role === "owner"
+        ? styles.roleTagOwner
+        : role === "recruiter"
+          ? styles.roleTagRecruiter
+          : styles.roleTagHiringManager;
+
+    const label =
+      role === "owner"
+        ? tKey("role_owner")
+        : role === "recruiter"
+          ? tKey("role_recruiter")
+          : tKey("role_hiring_manager");
+
+    if (!collaborator) {
+      return (
+        <span className={classnames(styles.roleTag, roleClassName)}>
+          {label}
+        </span>
+      );
+    }
+
+    return (
+      <Select
+        className={classnames(styles.roleTagSelect, roleClassName)}
+        value={role}
+        options={roleOptions}
+        onChange={(nextRole: TJobCollaboratorRole) =>
+          handleUpdateCollaboratorRole(collaborator, nextRole)
+        }
+        disabled={collabUpdating}
+        popupMatchSelectWidth={false}
+        variant="borderless"
+      />
+    );
+  };
 
   const saveStages = async (newStages: PipelineStage[]) => {
     const { code } = await Post(`/api/jobs/${jobId}`, {
@@ -441,7 +590,9 @@ const JobSettings = ({ jobId }: IProps) => {
           />
         </div>
         <div className={styles.readonlyField}>
-          <div className={styles.sectionTitle}>{tKey("apply_inbound_email")}</div>
+          <div className={styles.sectionTitle}>
+            {tKey("apply_inbound_email")}
+          </div>
           <div className={styles.readonlyFieldRow}>
             <Input
               readOnly
@@ -513,62 +664,112 @@ const JobSettings = ({ jobId }: IProps) => {
       </div>
 
       <div className={styles.section}>
-        <div className={styles.sectionTitle}>
-          {tKey("assigned_collaborators")}
+        <div
+          className={classnames(
+            styles.sectionTitle,
+            styles.collaboratorSectionTitle,
+          )}
+        >
+          {tKey("collaborators")}
         </div>
-        <div className={styles.collaboratorCards}>
-          {collaboratorStaffs.map((staff) => (
-            <div key={staff.id} className={styles.collaboratorCard}>
-              <div className={styles.collaboratorAvatar}>
-                {getInitials(staff.name)}
-              </div>
-              <div className={styles.collaboratorInfo}>
-                <div className={styles.collaboratorName}>{staff.name}</div>
-                <div className={styles.collaboratorEmail}>
-                  {(staff as IStaffWithAccount)?.account?.username ||
-                    staff.phone ||
-                    "-"}
-                </div>
-              </div>
-              <Button
-                variant="outlined"
-                color="danger"
-                icon={<Icon icon={<Delete />} style={{ fontSize: 16 }} />}
-                onClick={() => handleRemoveCollaborator(staff.id)}
-                loading={collabUpdating}
-              >
-                {tKey("remove")}
-              </Button>
-            </div>
-          ))}
-        </div>
-        <div className={styles.addCollaborator}>
-          <div className={styles.sectionTitle}>{tKey("add_collaborator")}</div>
-          <div className={styles.addCollaboratorRow}>
-            <Select
-              placeholder={tCollab("select_placeholder")}
-              options={staffOptions}
+        <div className={styles.collaboratorAddRow}>
+          <div className={styles.addComposer}>
+            <Select<number, AddCollaboratorSelectOption>
+              className={styles.collaboratorSearch}
+              placeholder={tKey("add_collaborator_placeholder")}
+              options={addCollaboratorSelectOptions}
               value={newStaffId}
               onChange={setNewStaffId}
-              style={{ width: 784 }}
               showSearch
               allowClear
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
+              suffixIcon={<SearchOutlined className={styles.searchIcon} />}
+              listItemHeight={48}
+              optionRender={(oriOption) => {
+                const data = oriOption.data as AddCollaboratorSelectOption;
+                return (
+                  <div className={styles.collaboratorSelectOption}>
+                    <div className={styles.collaboratorSelectOptionName}>
+                      {data.label}
+                    </div>
+                    <div className={styles.collaboratorSelectOptionEmail}>
+                      {data.staffEmail}
+                    </div>
+                  </div>
+                );
+              }}
+              labelRender={(props) => {
+                const staff = staffs.find((s) => s.id === props.value);
+                return staff?.name ?? String(props.label ?? "");
+              }}
+              filterOption={(input, option) => {
+                const q = input.trim().toLowerCase();
+                if (!q) return true;
+                if (!option) return false;
+                const data = option as AddCollaboratorSelectOption;
+                const name = String(data.label ?? "").toLowerCase();
+                const email = String(data.staffEmail ?? "").toLowerCase();
+                return name.includes(q) || email.includes(q);
+              }}
             />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAddCollaborator}
-              loading={collabUpdating}
-              disabled={!newStaffId}
-            >
-              {tKey("add")}
-            </Button>
+            <Select
+              className={styles.addRoleSelect}
+              value={newCollaboratorRole}
+              options={roleOptions}
+              onChange={setNewCollaboratorRole}
+            />
           </div>
+          <Button
+            className={styles.addCollaboratorBtn}
+            variant="outlined"
+            color="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAddCollaborator}
+            loading={collabUpdating}
+            disabled={!newStaffId}
+          >
+            {tKey("add")}
+          </Button>
+        </div>
+        <div className={styles.collaboratorCards}>
+          {collaboratorCards.map(({ key, staff, isOwner, collaborator }) => {
+            return (
+              <div key={key} className={styles.collaboratorCard}>
+                <div
+                  className={classnames(styles.collaboratorAvatar, {
+                    [styles.collaboratorAvatarOwner]: isOwner,
+                  })}
+                >
+                  {getInitials(staff.name)}
+                </div>
+                <div className={styles.collaboratorInfo}>
+                  <div className={styles.collaboratorNameRow}>
+                    <div className={styles.collaboratorName}>{staff.name}</div>
+                    <div className={styles.roleTags}>
+                      {isOwner && renderRoleTag("owner")}
+                      {!isOwner &&
+                        collaborator?.role &&
+                        renderRoleTag(collaborator.role, collaborator)}
+                    </div>
+                  </div>
+                  <div className={styles.collaboratorEmail}>
+                    {getStaffEmail(staff)}
+                  </div>
+                </div>
+                {!isOwner && collaborator && (
+                  <Button
+                    className={styles.removeCollaboratorBtn}
+                    variant="outlined"
+                    color="danger"
+                    icon={<Icon icon={<Delete />} style={{ fontSize: 16 }} />}
+                    onClick={() => handleRemoveCollaborator(collaborator)}
+                    loading={collabUpdating}
+                  >
+                    {tKey("remove")}
+                  </Button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
