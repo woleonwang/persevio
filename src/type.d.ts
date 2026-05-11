@@ -484,12 +484,14 @@ type TTalent = {
     candidate_uuid: string;
     name: string;
     staff_id: number;
-    bonus_pool: number;
+    bonus_pool?: number;
     posted_at?: string;
+    initial_posted_at?: string;
     company?: {
       id: number;
       name: string;
     };
+    collaborators?: TJobCollaborator[];
   };
   created_at: string;
   viewed_at: string;

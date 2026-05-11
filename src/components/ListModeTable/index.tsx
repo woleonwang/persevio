@@ -45,6 +45,20 @@ const getCurrentWorkExperience = (
   return arr.find((w) => w.is_present) ?? arr[0];
 };
 
+const getAppliedJobRecruiterRows = (
+  record: TTalentListItem,
+): { staffId: number; name: string }[] => {
+  const job = record.job;
+  if (!job?.initial_posted_at) return [];
+  return (job.collaborators ?? [])
+    .filter((c) => c.role === "recruiter")
+    .map((c) => ({
+      staffId: c.staff_id,
+      name: (c.staff?.name ?? "").trim(),
+    }))
+    .filter((row) => row.name);
+};
+
 const ListModeTable = ({
   variant = "pipeline",
   allStages = [],
@@ -55,6 +69,7 @@ const ListModeTable = ({
 }: IProps) => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
+  const tCandidateList = (key: string) => t(`candidate_list_page.${key}`);
 
   const [viewedMap, setViewedMap] = useState<Record<number, boolean>>({});
 
@@ -358,7 +373,7 @@ const ListModeTable = ({
 
   const talentsColumns: ColumnsType<TTalentListItem> = [
     {
-      title: "Candidate",
+      title: tCandidateList("columns.candidate"),
       dataIndex: "name",
       width: 180,
       render: (_: unknown, record) => {
@@ -376,9 +391,9 @@ const ListModeTable = ({
       },
     },
     {
-      title: "Job Title",
+      title: tCandidateList("columns.last_job_title"),
       dataIndex: "job_title",
-      width: 220,
+      width: 200,
       render: (_: unknown, record) => {
         const work = getCurrentWorkExperience(
           record.basicInfo?.work_experiences,
@@ -391,9 +406,9 @@ const ListModeTable = ({
       },
     },
     {
-      title: "Company",
+      title: tCandidateList("columns.last_company"),
       dataIndex: "company",
-      width: 220,
+      width: 200,
       render: (_: unknown, record) => {
         const work = getCurrentWorkExperience(
           record.basicInfo?.work_experiences,
@@ -406,7 +421,38 @@ const ListModeTable = ({
       },
     },
     {
-      title: "Experience",
+      title: tCandidateList("columns.applied_for"),
+      dataIndex: "applied_job_name",
+      width: 200,
+      render: (_: unknown, record) =>
+        wrapCell(
+          record,
+          <span className={styles.ellipsis}>{record.job?.name ?? "-"}</span>,
+        ),
+    },
+    {
+      title: tCandidateList("columns.recruiters"),
+      dataIndex: "applied_job_recruiters",
+      width: 220,
+      render: (_: unknown, record) => {
+        const rows = getAppliedJobRecruiterRows(record);
+        if (!rows.length) {
+          return wrapCell(record, "-");
+        }
+        return wrapCell(
+          record,
+          <div className={styles.recruiterChipWrap}>
+            {rows.map((row) => (
+              <span key={row.staffId} className={styles.personChip}>
+                {row.name}
+              </span>
+            ))}
+          </div>,
+        );
+      },
+    },
+    {
+      title: tCandidateList("columns.experience"),
       dataIndex: "experience",
       width: 160,
       render: (_: unknown, record) => {
@@ -415,7 +461,7 @@ const ListModeTable = ({
       },
     },
     {
-      title: "Visa Status",
+      title: tCandidateList("columns.visa_status"),
       dataIndex: "visa_status",
       width: 160,
       render: (_: unknown, record) => {
@@ -427,7 +473,7 @@ const ListModeTable = ({
       },
     },
     {
-      title: "Current Comp",
+      title: tCandidateList("columns.current_comp"),
       dataIndex: "comp",
       width: 180,
       render: (_: unknown, record) => {

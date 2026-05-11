@@ -2133,6 +2133,21 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
+  candidate_list_page: {
+    title: "Candidate List",
+    all_jobs: "All Jobs",
+    columns: {
+      candidate: "Candidate",
+      last_job_title: "Last Job Title",
+      last_company: "Last Company",
+      applied_for: "Applied for",
+      recruiters: "Recruiters",
+      experience: "Experience",
+      visa_status: "Visa Status",
+      current_comp: "Current Comp",
+    },
+  },
+
   scoped_talents: {
     pageTitle: "Candidate List",
     filters: {

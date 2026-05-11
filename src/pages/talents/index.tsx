@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Input, Select, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -14,6 +14,7 @@ import {
   parseJSON,
 } from "@/utils";
 import ListModeTable from "@/components/ListModeTable";
+import useStaffs from "@/hooks/useStaffs";
 import {
   EVALUATE_INTERVIEW_RECOMMENDATION_KEYS,
   TALENT_DETAIL_FROM,
@@ -29,8 +30,10 @@ const Talents: React.FC = () => {
   const [evaluateResultLevels, setEvaluateResultLevels] = useState<
     TInterviewRecommendation[]
   >([]);
+  const [selectedRecruiterId, setSelectedRecruiterId] = useState<number>();
 
   const { t } = useTranslation();
+  const { staffs } = useStaffs({ includeDeactivated: true });
 
   useEffect(() => {
     // 刷新未读候选人状态
@@ -61,6 +64,29 @@ const Talents: React.FC = () => {
     setLoading(false);
   };
 
+  const staffFilterOptions = useMemo(
+    () =>
+      staffs.map((staff) => ({
+        label: staff.name,
+        value: staff.id,
+      })),
+    [staffs],
+  );
+
+  const staffSelectFilterOption = useCallback(
+    (input: string, option?: { value?: number }) => {
+      const staff = staffs.find((s) => s.id === option?.value);
+      if (!staff) return false;
+      const needle = input.toLowerCase();
+      const email = staff.account?.username ?? "";
+      return (
+        staff.name.toLowerCase().includes(needle) ||
+        email.toLowerCase().includes(needle)
+      );
+    },
+    [staffs],
+  );
+
   const filteredList = useMemo(() => {
     return talents
       .filter((item) => {
@@ -83,12 +109,19 @@ const Talents: React.FC = () => {
         if (evaluateResultLevels.length === 0) return true;
         const level = getEvaluateResultLevel(item.parsedEvaluateResult);
         return evaluateResultLevels.includes(level);
+      })
+      .filter((item) => {
+        if (selectedRecruiterId == null) return true;
+        return (item.job?.collaborators ?? []).some(
+          (c) =>
+            c.role === "recruiter" && c.staff_id === selectedRecruiterId,
+        );
       });
-  }, [talents, searchName, evaluateResultLevels]);
+  }, [talents, searchName, evaluateResultLevels, selectedRecruiterId]);
 
   return (
     <div className={styles.candidatesContainer}>
-      <div className={styles.pageTitle}>Candidate List</div>
+      <div className={styles.pageTitle}>{t("candidate_list_page.title")}</div>
       <div className={styles.filterRow}>
         <Input
           className={styles.searchInput}
@@ -101,7 +134,7 @@ const Talents: React.FC = () => {
         />
         <Select
           className={styles.filterSelect}
-          placeholder="All Jobs"
+          placeholder={t("candidate_list_page.all_jobs")}
           value={selectedJobId}
           onChange={setSelectedJobId}
           allowClear
@@ -110,6 +143,18 @@ const Talents: React.FC = () => {
             label: j.name,
           }))}
           style={{ width: 260 }}
+        />
+        <Select
+          className={styles.filterSelect}
+          placeholder={t("job_list.recruiter_placeholder")}
+          value={selectedRecruiterId}
+          onChange={setSelectedRecruiterId}
+          allowClear
+          options={staffFilterOptions}
+          autoClearSearchValue
+          showSearch
+          filterOption={staffSelectFilterOption}
+          style={{ width: 220 }}
         />
         <Select
           className={styles.filterSelect}
