@@ -88,9 +88,9 @@ describe("JobList 页面", () => {
     });
   });
 
-  // ── 创建人下拉过滤 ────────────────────────────────────────────────────────
+  // ── Recruiter 下拉过滤 ────────────────────────────────────────────────────────
 
-  it("选择创建人后只显示对应职位", async () => {
+  it("选择招聘专员后只显示其担任 Recruiter 的职位", async () => {
     // Use PointerEventsCheckLevel.Never so userEvent ignores pointer-events CSS
     const { PointerEventsCheckLevel } =
       await import("@testing-library/user-event");
@@ -106,8 +106,10 @@ describe("JobList 页面", () => {
     });
 
     // Open the antd Select dropdown in a stable way
-    const creatorPlaceholder = screen.getByText("job_list.creator_placeholder");
-    const selectRoot = creatorPlaceholder.closest(".ant-select");
+    const recruiterPlaceholder = screen.getByText(
+      "job_list.recruiter_placeholder",
+    );
+    const selectRoot = recruiterPlaceholder.closest(".ant-select");
     const selector = selectRoot?.querySelector(".ant-select-selector");
     expect(selector).toBeTruthy();
     fireEvent.mouseDown(selector as Element);

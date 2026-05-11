@@ -54,7 +54,56 @@
 
     .actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 4px;
+      align-items: center;
     }
   }
+}
+
+.personChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: #f1f2f4;
+  font-size: 13px;
+  color: #262626;
+  line-height: 1.4;
+  max-width: 100%;
+}
+
+.chipWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 320px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.published {
+  background: #f6ffed;
+  color: #389e0d;
+  border: 1px solid #b7eb8f;
+}
+
+.unpublished {
+  background: #f5f5f5;
+  color: #8c8c8c;
+  border: 1px solid #d9d9d9;
+}
+
+.delisted {
+  background: #fff7e6;
+  color: #d46b08;
+  border: 1px solid #ffd591;
 }

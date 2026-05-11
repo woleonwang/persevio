@@ -42,15 +42,75 @@ export const mockJobFull: IJob = {
 }
 
 export const mockJobList = [
-  { ...mockJob, total_candidates: 5, candidates_passed_screening: 2 },
-  { ...mockJobPosted, total_candidates: 12, candidates_passed_screening: 4 },
+  {
+    ...mockJob,
+    total_candidates: 5,
+    candidates_passed_screening: 2,
+    collaborators: [
+      {
+        id: 901,
+        job_id: mockJob.id,
+        staff_id: 10,
+        role: 'recruiter' as const,
+      },
+    ],
+  },
+  {
+    ...mockJobPosted,
+    total_candidates: 12,
+    candidates_passed_screening: 4,
+    collaborators: [
+      {
+        id: 902,
+        job_id: mockJobPosted.id,
+        staff_id: 11,
+        role: 'recruiter' as const,
+      },
+    ],
+  },
 ]
 
 // ─── Mock Staffs ──────────────────────────────────────────────────────────────
 
-export const mockStaffs: IStaff[] = [
-  { id: 10, name: 'Alice' },
-  { id: 11, name: 'Bob' },
+export const mockStaffs: IStaffWithAccount[] = [
+  {
+    id: 10,
+    name: 'Alice',
+    position: '',
+    phone: '',
+    role: 'admin',
+    status: 'active',
+    account_id: 100,
+    company_id: 1,
+    created_at: '',
+    updated_at: '',
+    account: {
+      id: 100,
+      username: 'alice@example.com',
+      is_admin: 0,
+      created_at: '',
+      updated_at: '',
+    },
+  },
+  {
+    id: 11,
+    name: 'Bob',
+    position: '',
+    phone: '',
+    role: 'admin',
+    status: 'active',
+    account_id: 101,
+    company_id: 1,
+    created_at: '',
+    updated_at: '',
+    account: {
+      id: 101,
+      username: 'bob@example.com',
+      is_admin: 0,
+      created_at: '',
+      updated_at: '',
+    },
+  },
 ]
 
 // ─── Mock Talents ─────────────────────────────────────────────────────────────

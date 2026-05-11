@@ -92,6 +92,8 @@ interface IJob {
       name: string;
     };
   }[];
+
+  collaborators?: TJobCollaborator[];
 }
 
 interface IKBObservationListItem {

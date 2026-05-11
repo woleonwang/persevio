@@ -1772,7 +1772,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_list: {
     title: "Job listings",
     search_placeholder: "Search job title",
-    creator_placeholder: "Creator",
+    owner_placeholder: "Owner",
+    recruiter_placeholder: "Recruiter",
     create_job: "Post a job",
     details: "Details",
     go_to_listing: "Go to your listing",
@@ -1780,7 +1781,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       id: "ID",
       job_title: "Job Title",
       post_status: "Post status",
-      creator: "Creator",
+      owner: "Owner",
+      recruiters: "Recruiters",
       post_time: "Post Time",
       total_candidates: "Total Candidates",
       candidates_passed_screening: "Candidates Passed Screening",
@@ -1789,6 +1791,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     post_status: {
       published: "Published",
       unpublished: "Unpublished",
+      delisted: "Delisted",
     },
     empty: {
       description_line_1: "Post your first job here,",

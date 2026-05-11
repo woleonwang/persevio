@@ -1,7 +1,7 @@
 import { Button, Empty, Input, message, Modal, Select, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import classnames from "classnames";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -14,17 +14,36 @@ import Flash from "@/assets/icons/flash";
 import Icon from "@/components/Icon";
 import useStaffs from "@/hooks/useStaffs";
 import { Get, Post } from "@/utils/request";
+
 interface IJobListItem extends IJob {
   total_candidates: number;
   candidates_passed_screening: number;
 }
 
+const getRecruiterEntries = (
+  job: IJobListItem,
+  staffsList: IStaffWithAccount[],
+): { staffId: number; name: string }[] => {
+  if (!job.initial_posted_at) return [];
+  return (job.collaborators ?? [])
+    .filter((c) => c.role === "recruiter")
+    .map((c) => ({
+      staffId: c.staff_id,
+      name:
+        c.staff?.name ??
+        staffsList.find((s) => s.id === c.staff_id)?.name ??
+        "",
+    }))
+    .filter((row) => row.name);
+};
+
 const JobList = () => {
   const [jobs, setJobs] = useState<IJobListItem[]>([]);
   const [searchName, setSearchName] = useState<string>();
-  const [selectedCreatorId, setSelectedCreatorId] = useState<number>();
+  const [selectedOwnerId, setSelectedOwnerId] = useState<number>();
+  const [selectedRecruiterId, setSelectedRecruiterId] = useState<number>();
 
-  const { staffs } = useStaffs();
+  const { staffs } = useStaffs({ includeDeactivated: true });
 
   const navigate = useNavigate();
 
@@ -53,21 +72,50 @@ const JobList = () => {
       dataIndex: "name",
     },
     {
-      title: t("columns.creator"),
-      dataIndex: "creator",
-      render: (_: string, record: IJobListItem) => {
-        return staffs.find((staff) => staff.id === record.staff_id)?.name;
+      title: t("columns.owner"),
+      dataIndex: "staff_id",
+      render: (_: number, record: IJobListItem) => {
+        const name = staffs.find((staff) => staff.id === record.staff_id)?.name;
+        return name ? <span className={styles.personChip}>{name}</span> : "-";
+      },
+    },
+    {
+      title: t("columns.recruiters"),
+      dataIndex: "collaborators",
+      width: 200,
+      render: (_: unknown, record: IJobListItem) => {
+        const rows = getRecruiterEntries(record, staffs);
+        if (!rows.length) return "-";
+        return (
+          <div className={styles.chipWrap}>
+            {rows.map((row) => (
+              <span key={row.staffId} className={styles.personChip}>
+                {row.name}
+              </span>
+            ))}
+          </div>
+        );
       },
     },
     {
       title: t("columns.post_status"),
       dataIndex: "posted_at",
-      render: (postedAt: string) => {
-        return postedAt ? (
-          <div className={classnames(styles.tag, styles.published)}>
-            {t("post_status.published")}
-          </div>
-        ) : (
+      render: (_: string, record: IJobListItem) => {
+        if (record.posted_at) {
+          return (
+            <div className={classnames(styles.tag, styles.published)}>
+              {t("post_status.published")}
+            </div>
+          );
+        }
+        if (record.initial_posted_at) {
+          return (
+            <div className={classnames(styles.tag, styles.delisted)}>
+              {t("post_status.delisted")}
+            </div>
+          );
+        }
+        return (
           <div className={classnames(styles.tag, styles.unpublished)}>
             {t("post_status.unpublished")}
           </div>
@@ -84,6 +132,7 @@ const JobList = () => {
     {
       title: t("columns.total_candidates"),
       dataIndex: "total_candidates",
+      width: 180,
     },
     {
       title: t("columns.actions"),
@@ -93,6 +142,31 @@ const JobList = () => {
           <div className={styles.actions}>
             <Button
               type="link"
+              onClick={() => {
+                navigate(`/app/jobs/${record.invitation_token}/standard-board`);
+              }}
+            >
+              {t("details")}
+            </Button>
+            {record.posted_at && (
+              <Button
+                type="link"
+                onClick={() => {
+                  window.open(
+                    getJobChatbotUrl(
+                      record.candidate_uuid,
+                      record.jd_version?.toString(),
+                      "customer",
+                    ),
+                  );
+                }}
+              >
+                {t("go_to_listing")}
+              </Button>
+            )}
+            <Button
+              type="link"
+              danger
               onClick={() => {
                 Modal.confirm({
                   title: originalT("app_layout.delete_job"),
@@ -115,37 +189,49 @@ const JobList = () => {
             >
               {originalT("delete")}
             </Button>
-            <Button
-              type="link"
-              onClick={() => {
-                navigate(
-                  `/app/jobs/${record.invitation_token}/standard-board`,
-                );
-              }}
-            >
-              {t("details")}
-            </Button>
-            {record.posted_at && (
-              <Button
-                type="link"
-                onClick={() => {
-                  window.open(
-                    getJobChatbotUrl(
-                      record.candidate_uuid,
-                      record.jd_version?.toString(),
-                      "customer",
-                    ),
-                  );
-                }}
-              >
-                {t("go_to_listing")}
-              </Button>
-            )}
           </div>
         );
       },
     },
   ];
+
+  const filteredJobs = useMemo(() => {
+    const q = (searchName ?? "").trim().toLowerCase();
+    return jobs.filter((job) => {
+      const nameOk = !q || job.name.toLowerCase().includes(q);
+      const ownerOk =
+        selectedOwnerId == null || job.staff_id === selectedOwnerId;
+      const recruiterOk =
+        selectedRecruiterId == null ||
+        (job.collaborators ?? []).some(
+          (c) => c.role === "recruiter" && c.staff_id === selectedRecruiterId,
+        );
+      return nameOk && ownerOk && recruiterOk;
+    });
+  }, [jobs, searchName, selectedOwnerId, selectedRecruiterId]);
+
+  const staffFilterOptions = useMemo(
+    () =>
+      staffs.map((staff) => ({
+        label: staff.name,
+        value: staff.id,
+      })),
+    [staffs],
+  );
+
+  const staffSelectFilterOption = useCallback(
+    (input: string, option?: { value?: number }) => {
+      const staff = staffs.find((s) => s.id === option?.value);
+      if (!staff) return false;
+      const needle = input.toLowerCase();
+      const email = staff.account?.username ?? "";
+      return (
+        staff.name.toLowerCase().includes(needle) ||
+        email.toLowerCase().includes(needle)
+      );
+    },
+    [staffs],
+  );
 
   const isEmpty = jobs.length === 0;
 
@@ -178,38 +264,33 @@ const JobList = () => {
             </div>
             <div className={styles.filterItem}>
               <Select
-                placeholder={t("creator_placeholder")}
-                value={selectedCreatorId}
-                onChange={setSelectedCreatorId}
+                placeholder={t("owner_placeholder")}
+                value={selectedOwnerId}
+                onChange={setSelectedOwnerId}
                 style={{ width: 200 }}
                 allowClear
-                options={staffs.map((staff) => ({
-                  label: staff.name,
-                  value: staff.id,
-                }))}
+                options={staffFilterOptions}
                 autoClearSearchValue
                 showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
+                filterOption={staffSelectFilterOption}
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <Select
+                placeholder={t("recruiter_placeholder")}
+                value={selectedRecruiterId}
+                onChange={setSelectedRecruiterId}
+                style={{ width: 200 }}
+                allowClear
+                options={staffFilterOptions}
+                autoClearSearchValue
+                showSearch
+                filterOption={staffSelectFilterOption}
               />
             </div>
           </div>
           <div className={styles.table}>
-            <Table
-              dataSource={jobs.filter((job) => {
-                return (
-                  job.name.includes(searchName ?? "") &&
-                  (selectedCreatorId
-                    ? job.staff_id === selectedCreatorId
-                    : true)
-                );
-              })}
-              columns={columns}
-              rowKey="id"
-            />
+            <Table dataSource={filteredJobs} columns={columns} rowKey="id" />
           </div>
         </>
       ) : (
