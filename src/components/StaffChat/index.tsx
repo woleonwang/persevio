@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import {
   Button,
@@ -55,6 +55,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     jobInterviewDesignerId,
     jobInterviewFeedbackId,
     talentId,
+    jrdEditConversationId,
     viewDoc,
     onNextTask,
     newVersion = false,
@@ -63,12 +64,12 @@ const StaffChat: React.FC<IProps> = (props) => {
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
-  const lastAiMessageForVoice = useMemo(() => {
+  const lastAiMessageForVoice = (() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === "ai") return messages[i].content;
     }
     return undefined;
-  }, [messages]);
+  })();
   const [isLoading, setIsLoading] = useState(false);
   const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
     "",
@@ -147,7 +148,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     initConversation();
-  }, [jobId]);
+  }, [jobId, chatType, jrdEditConversationId]);
 
   useEffect(() => {
     if (!showJrdRealRequirementForm && !showJrdTargetCandidateProfileForm) {
@@ -374,6 +375,20 @@ const StaffChat: React.FC<IProps> = (props) => {
       get: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/messages`),
       send: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/send`),
     },
+    jobJrdEdit:
+      jrdEditConversationId != null
+        ? {
+            get: formatUrl(
+              `/api/jobs/${jobId}/jrd-edit-conversations/${jrdEditConversationId}/messages`,
+            ),
+            send: formatUrl(
+              `/api/jobs/${jobId}/jrd-edit-conversations/${jrdEditConversationId}/send`,
+            ),
+            streaming: formatUrl(
+              `/api/jobs/${jobId}/jrd-edit-conversations/${jrdEditConversationId}/streaming_message`,
+            ),
+          }
+        : { get: "", send: "", streaming: "" },
     companyOnboardingNarrative: {
       get: formatUrl(`/api/onboarding/company-narrative/chat/messages`),
       send: formatUrl(`/api/onboarding/company-narrative/chat/send`),
@@ -650,7 +665,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     needScrollToBottom.current = true;
     setSideDocumentVisible(false);
     setIsEditingSideDocument(false);
-    if (chatType !== "companyOnboardingNarrative") {
+    if (
+      chatType !== "companyOnboardingNarrative" &&
+      chatType !== "jobJrdEdit"
+    ) {
       await fetchJob();
     }
     await fetchMessages();
@@ -682,7 +700,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     const { code, data } = await Get(apiMapping[chatType as TChatType].get);
     if (code === 0) {
       const currentJob: IJob | undefined = data.job;
-      if (chatType !== "companyOnboardingNarrative") {
+      if (
+        chatType !== "companyOnboardingNarrative" &&
+        chatType !== "jobJrdEdit"
+      ) {
         setJob(currentJob);
       }
 
@@ -1276,6 +1297,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                   const canDelete =
                     !!profile?.is_admin &&
                     chatType !== "jobTalentEvaluateFeedback" &&
+                    chatType !== "jobJrdEdit" &&
                     item.role === "user" &&
                     item.messageType === "normal" &&
                     !["fake_ai_id", "fake_user_id"].includes(item.id);

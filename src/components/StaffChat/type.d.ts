@@ -9,6 +9,7 @@ export type TChatType =
   | "jobInterviewDesign"
   | "jobInterviewFeedback"
   | "jobTalentEvaluateFeedback"
+  | "jobJrdEdit"
   | "companyOnboardingNarrative";
 
 export interface IProps {
@@ -22,6 +23,8 @@ export interface IProps {
   jobInterviewDesignerId?: number;
   jobInterviewFeedbackId?: number;
   talentId?: number;
+  /** `chatType === "jobJrdEdit"` 时必填，对应 jrd-edit-conversations 的会话 id */
+  jrdEditConversationId?: number;
   hideSidebar?: boolean;
   viewDoc?: (docType: string) => void;
   newVersion?: boolean;

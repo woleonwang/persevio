@@ -783,7 +783,8 @@ type TExtraTagName =
   | "conversation-done"
   | "job-interview-done"
   | "discovery-chat-done"
-  | "onboarding-narrative-done";
+  | "onboarding-narrative-done"
+  | "refined-jrd";
 
 type TExtraTag = {
   name: TExtraTagName;

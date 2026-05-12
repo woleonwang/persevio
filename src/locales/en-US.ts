@@ -1973,6 +1973,11 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     post_job: "Post",
     job_posting: "Go to Your Listing",
     conversation_record: "Conversation Record",
+    edit_with_stars: "Edit",
+    chat_with_viona_menu: "Chat with Viona",
+    manually_edit: "Manually Edit",
+    refining_job_requirements: "Refining Job Requirements",
+    jrd_edit_chat_failed: "Could not open JRD chat. Please try again.",
     publish_job_hint:
       "Please unpost the job first, then edit the JD content, and then republish it.",
     assignHunters: "Assign Hunters",

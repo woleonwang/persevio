@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Drawer, message, Tooltip } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { Button, Drawer, Dropdown, message, Tooltip } from "antd";
 
 import styles from "./style.module.less";
 import { Get, Post } from "@/utils/request";
@@ -8,10 +9,13 @@ import { copy, downloadMarkdownAsPDF } from "@/utils";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import ChatMessagePreview from "@/components/ChatMessagePreview";
+import JobJrdEditVionaNotifier from "@/components/JobJrdEditVionaNotifier";
 import Download from "@/assets/icons/download";
 import Share2 from "@/assets/icons/share2";
 import Copy from "@/assets/icons/copy";
 import Icon from "@/components/Icon";
+import Pen from "@/assets/icons/pen";
+import TwoStar from "@/assets/icons/two-star";
 
 type TChatType = "jobRequirement" | "jobDescription";
 
@@ -36,6 +40,7 @@ const JobDocument = (props: IProps) => {
   const [editingValue, setEditingValue] = useState("");
   const [showConversationRecord, setShowConversationRecord] = useState(false);
   const [chatMessages, setChatMessages] = useState<TMessageFromApi[]>([]);
+  const [jrdVionaNotifierOpen, setJrdVionaNotifierOpen] = useState(false);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_details.${key}`);
@@ -107,7 +112,53 @@ const JobDocument = (props: IProps) => {
         </div>
         {!!documentContent && (
           <div className={styles.operations}>
-            {role === "staff" && (
+            {role === "staff" && chatType === "jobRequirement" && (
+              <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
+                <Dropdown
+                  disabled={disabledEdit}
+                  menu={{
+                    items: [
+                      {
+                        key: "viona",
+                        label: (
+                          <span className={styles.chatWithVionaMenuItem}>
+                            <Icon
+                              icon={<TwoStar />}
+                              style={{ marginRight: 8 }}
+                            />
+                            {originalT("job_details.chat_with_viona_menu")}
+                          </span>
+                        ),
+                        onClick: () => setJrdVionaNotifierOpen(true),
+                      },
+                      {
+                        key: "manual",
+                        label: (
+                          <span className={styles.chatWithVionaMenuItem}>
+                            <Icon icon={<Pen />} style={{ marginRight: 8 }} />
+                            {originalT("job_details.manually_edit")}
+                          </span>
+                        ),
+                        onClick: () => {
+                          setEditingValue(documentContent);
+                          setIsEditing(true);
+                        },
+                      },
+                    ],
+                  }}
+                  trigger={["click"]}
+                >
+                  <Button type="default" disabled={disabledEdit}>
+                    <Icon icon={<TwoStar />} />
+                    <span style={{ marginLeft: 6 }}>
+                      {t("edit_with_stars")}
+                    </span>
+                    <DownOutlined style={{ marginLeft: 6, fontSize: 12 }} />
+                  </Button>
+                </Dropdown>
+              </Tooltip>
+            )}
+            {role === "staff" && chatType === "jobDescription" && (
               <Tooltip title={disabledEdit ? t("publish_job_hint") : ""}>
                 <Button
                   type="default"
@@ -118,7 +169,7 @@ const JobDocument = (props: IProps) => {
                   }}
                   disabled={disabledEdit}
                 >
-                  Edit
+                  {t("edit")}
                 </Button>
               </Tooltip>
             )}
@@ -199,6 +250,12 @@ const JobDocument = (props: IProps) => {
       >
         <ChatMessagePreview messages={chatMessages} job={job} />
       </Drawer>
+
+      <JobJrdEditVionaNotifier
+        open={jrdVionaNotifierOpen}
+        jobId={jobSeg}
+        onClose={() => setJrdVionaNotifierOpen(false)}
+      />
     </div>
   );
 };
