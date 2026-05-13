@@ -122,9 +122,7 @@ const AppLayout = () => {
                   jobName: job.name,
                 }),
                 onOk: async () => {
-                  const { code } = await Post(
-                    `/api/jobs/${jobSeg}/destroy`,
-                  );
+                  const { code } = await Post(`/api/jobs/${jobSeg}/destroy`);
                   if (code === 0) {
                     message.success(t("submit_succeed"));
                     fetchJobs();
@@ -216,7 +214,7 @@ const AppLayout = () => {
         // 获取职位
         fetchJobs();
         setStaffRole(data.role);
-        setIsAdmin(data.is_admin === 1);
+        setIsAdmin(data.is_admin === 1 || data.is_admin === 2);
         setMode(data.company_mode);
       }
     } else {
