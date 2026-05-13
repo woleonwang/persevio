@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AudioOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import classnames from "classnames";
@@ -17,12 +17,23 @@ interface IProps {
   minHeight?: number;
   style?: React.CSSProperties;
   className?: string;
+  /** 挂载后尝试聚焦编辑器（用于内联 Add Feedback / Add Note） */
+  autoFocus?: boolean;
 }
 
 const RichTextWithVoice: React.FC<IProps> = (props) => {
-  const { value, onChange, minHeight = 200, style, className } = props;
+  const { value, onChange, minHeight = 200, style, className, autoFocus } =
+    props;
   const editorRef = useRef<MDXEditorMethods | null>(null);
   const editorWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!autoFocus) return;
+    const id = window.setTimeout(() => {
+      editorRef.current?.focus?.();
+    }, 120);
+    return () => window.clearTimeout(id);
+  }, [autoFocus]);
 
   const {
     startTranscription,

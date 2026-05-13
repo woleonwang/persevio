@@ -32,10 +32,12 @@ interface IProps {
   open: boolean;
   onCancel: () => void;
   onOk: () => void;
+  /** 若传入则替代默认的 update_success 提示（例如拒绝成功后） */
+  successMessage?: string;
 }
 
 const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
-  const { jobId, talentId, open, onCancel, onOk } = props;
+  const { jobId, talentId, open, onCancel, onOk, successMessage } = props;
   const { t } = useTranslation();
   const tDetail = (key: string) => t(`talent_details.${key}`);
 
@@ -66,7 +68,7 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
         });
 
         if (code === 0) {
-          message.success(tDetail("update_success"));
+          message.success(successMessage ?? tDetail("update_success"));
           onOk();
         } else {
           message.error(tDetail("reject_submit_failed"));
