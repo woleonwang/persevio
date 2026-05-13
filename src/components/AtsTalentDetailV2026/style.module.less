@@ -29,27 +29,8 @@
   width: 650px;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background-color: rgba(246, 246, 246, 1);
   overflow: hidden;
-}
-
-.rightDock {
-  flex-shrink: 0;
-  padding: 16px 24px 0;
-  border-bottom: 1px solid #ebecee;
-  background: #fff;
-  z-index: 20;
-}
-
-.rightTabScroll {
-  flex: 1;
-  overflow: auto;
-  padding: 0 24px 32px;
-}
-
-.topHeaderContainer {
-  padding: 14px 20px;
-  border-bottom: 1px dashed #ebecee;
 }
 
 .topHeader {
@@ -260,11 +241,83 @@
   }
 }
 
+.jobsAppliedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 24px;
+  background-color: #fff;
+
+  .jobsAppliedTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .jobTitleLinkIcon {
+    font-size: 20px;
+    color: @primary-color;
+    cursor: pointer;
+  }
+}
+
+.stageMenuItem {
+  &.selected {
+    color: @primary-color !important;
+  }
+  &.locked {
+    color: #9ca3af;
+  }
+}
+
+.applicationsTrigger {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  height: auto;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3682fe;
+  &:hover {
+    color: #1d6fea;
+    background: transparent !important;
+  }
+}
+
+.applicationsChevron {
+  font-size: 10px;
+  margin-left: 4px;
+  color: #9ca3af;
+}
+
+.rightTabScroll {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 24px 32px;
+}
+
+.topHeaderContainer {
+  padding: 14px 20px;
+  border-bottom: 1px dashed #ebecee;
+}
+
+.jobsAppliedContent {
+  margin: 24px 32px;
+  flex: 1;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .jobTitleRow {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 2px;
 }
 
 .jobTitle {
@@ -290,17 +343,35 @@
 }
 
 .metaLine {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 13px;
   color: #6b7280;
+  line-height: 1.5;
 }
 
 .actionsRow {
-  margin-top: 14px;
+  margin-top: 16px;
+  margin-bottom: 2px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.actionsRowLeft {
+  flex-shrink: 0;
+}
+
+.actionsRowRight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .scheduleAwaiting {
@@ -310,11 +381,33 @@
 }
 
 .tabsUnderline {
+  margin-top: 14px;
   :global(.ant-tabs-nav) {
     margin-bottom: 0;
+    padding: 0 20px;
   }
   :global(.ant-tabs-nav::before) {
     border-bottom-color: #e8eaef;
+  }
+  :global(.ant-tabs-ink-bar) {
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: #3682fe;
+  }
+  :global(.ant-tabs-tab) {
+    padding: 12px 0;
+    margin: 0 22px 0 0;
+  }
+  :global(.ant-tabs-tab:last-of-type) {
+    margin-right: 0;
+  }
+  :global(.ant-tabs-tab-btn) {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  :global(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+    font-weight: 600;
+    color: #111827;
   }
 }
 
@@ -345,14 +438,35 @@
   color: #111827;
 }
 
+.feedbackRoundHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .feedbackRoundCount {
   font-size: 13px;
   color: #6b7280;
 }
 
+.feedbackRoundChevron {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
 .feedbackRoundBody {
   padding: 0 14px 14px;
   border-top: 1px solid #f0f1f4;
+}
+
+.addFeedbackAboveList {
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.newRoundButton {
+  margin-top: 12px;
 }
 
 .round0Row {
@@ -395,18 +509,28 @@
   color: #9ca3af;
 }
 
-.addEditorWrap {
-  margin-top: 10px;
-}
-
-.saveRow {
-  margin-top: 14px;
+.addFeedbackModal {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
 }
 
-.notesSaveRow {
-  margin-top: 14px;
+.addFeedbackField {
+  gap: 8px;
+}
+
+.addFeedbackLabel {
+  font-size: 14px;
+}
+
+.addFeedbackContent {
+  flex: 1;
+  margin-top: 8px;
+}
+
+.roundInput {
+  font-size: 14px;
 }
 
 .activitySection {

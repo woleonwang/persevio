@@ -13,13 +13,4 @@ export const formatLastUpdated = (dateStr?: string) => {
   return dayjs(dateStr).format("MMM DD, YYYY");
 };
 
-export const isStageMoveTargetLocked = (stageName: string) => {
-  const n = stageName.trim().toLowerCase();
-  if (n === "applied") return true;
-  if (n === "rejected") return true;
-  if (n.includes("started") && n.includes("ai interview")) return true;
-  if (n.includes("ai interview") && n.includes("completed")) return true;
-  return false;
-};
-
 export const portalGetPopupContainer = () => document.body;

@@ -17,7 +17,6 @@ import {
   ArrowLeftOutlined,
   CheckOutlined,
   DownOutlined,
-  ExportOutlined,
   FileOutlined,
   RightOutlined,
   UpOutlined,
@@ -53,7 +52,11 @@ import {
   parseJSON,
   DEFAULT_TRACKING_SOURCES,
 } from "@/utils";
-import { TALENT_DETAIL_FROM } from "@/utils/consts";
+import {
+  PREFIX_DEFAULT_STAGE_KEYS,
+  SUFFIX_DEFAULT_STAGE_KEYS,
+  TALENT_DETAIL_FROM,
+} from "@/utils/consts";
 import { tokenStorage } from "@/utils/storage";
 import { getEvaluateResultLevel } from "@/utils";
 
@@ -64,7 +67,6 @@ import styles from "./style.module.less";
 import {
   formatLastUpdated,
   getInitials,
-  isStageMoveTargetLocked,
   portalGetPopupContainer,
 } from "./utils/helpers";
 
@@ -105,23 +107,20 @@ function AtsTalentDetailV2026ViewBase() {
   const [openRoundIds, setOpenRoundIds] = useState<string[]>([]);
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
 
-  const [editingFeedbackRoundKey, setEditingFeedbackRoundKey] = useState<
-    string | null
-  >(null);
+  const [isAddFeedbackModalOpen, setIsAddFeedbackModalOpen] = useState(false);
+  const [addFeedbackForInterviewId, setAddFeedbackForInterviewId] = useState<
+    number | string | undefined
+  >(undefined);
+  const [addFeedbackExistingRoundName, setAddFeedbackExistingRoundName] =
+    useState("");
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvanceStatus, setNewFeedbackAdvanceStatus] = useState<
     "advance" | "hold" | "reject"
   >("hold");
+  const [newFeedbackRound, setNewFeedbackRound] = useState("");
 
-  const [editingNote, setEditingNote] = useState(false);
+  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
-
-  const [isNewRoundModalOpen, setIsNewRoundModalOpen] = useState(false);
-  const [newRoundName, setNewRoundName] = useState("");
-  const [newRoundFeedback, setNewRoundFeedback] = useState("");
-  const [newRoundAdvance, setNewRoundAdvance] = useState<
-    "advance" | "hold" | "reject"
-  >("hold");
 
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -242,9 +241,21 @@ function AtsTalentDetailV2026ViewBase() {
       : `https://${contact.linkedin}`
     : null;
 
-  const moveStageOptions: { id: string; name: string }[] = job.pipeline_stages
-    ? JSON.parse(job.pipeline_stages)
-    : [];
+  const moveStageOptions: { id: string; name: string; disabled: boolean }[] = [
+    ...PREFIX_DEFAULT_STAGE_KEYS.filter((key) => key !== "reached_out").map(
+      (key) => ({
+        id: key,
+        name: originalT(`pipeline_section.${key}`),
+        disabled: true,
+      }),
+    ),
+    ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
+    ...SUFFIX_DEFAULT_STAGE_KEYS.map((key) => ({
+      id: key,
+      name: originalT(`pipeline_section.${key}`),
+      disabled: true,
+    })),
+  ];
 
   const handleBack = () => {
     const from = getQuery("from");
@@ -260,7 +271,7 @@ function AtsTalentDetailV2026ViewBase() {
   };
 
   const handleMoveStageTo = async (stageId: string) => {
-    if (!talent || stageId === talent.stage_id) return;
+    if (!talent) return;
     const { code } = await Post(
       `/api/jobs/${job.invitation_token}/talents/${talent.id}/stage`,
       { stage_id: stageId },
@@ -340,6 +351,12 @@ function AtsTalentDetailV2026ViewBase() {
     ...interviews,
     ...customizedInterviews,
   ];
+
+  const totalFeedbackCount = interviewRounds.reduce(
+    (sum, round) => sum + round.feedback_records.length,
+    0,
+  );
+  const notesCount = notes.length;
 
   const toggleRoundOpen = (id: string) => {
     setOpenRoundIds((prev) =>
@@ -438,26 +455,33 @@ function AtsTalentDetailV2026ViewBase() {
   };
 
   const stageMenuItems = moveStageOptions.map((opt) => {
-    const locked = isStageMoveTargetLocked(opt.name);
-    const isCurrent = opt.id === talent.stage_id;
-    const disabled = isCurrent || locked;
+    const isCurrent =
+      talent.status === "rejected"
+        ? opt.id === "rejected"
+        : opt.id === talent.stage_id;
+    const locked = isCurrent || opt.disabled;
     return {
       key: opt.id,
-      disabled,
+      disabled: locked,
       label: (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {isCurrent && <CheckOutlined style={{ fontSize: 12 }} />}
-          <span style={{ opacity: locked && !isCurrent ? 0.45 : 1 }}>
-            {opt.name}
-          </span>
+        <div
+          className={classnames(
+            styles.stageMenuItem,
+            { [styles.selected]: isCurrent },
+            { [styles.locked]: locked },
+          )}
+        >
+          {opt.name}
         </div>
       ),
     };
   });
 
   const currentStageName =
-    moveStageOptions.find((s) => s.id === talent.stage_id)?.name ??
-    t("status_unknown");
+    talent.status === "rejected"
+      ? "Rejected"
+      : (moveStageOptions.find((s) => s.id === talent.stage_id)?.name ??
+        t("status_unknown"));
 
   const snapshotCards = (report.profile_snapshot ?? [])
     .filter((snap) => snap.title.trim() !== "Total Years of Experience")
@@ -486,53 +510,89 @@ function AtsTalentDetailV2026ViewBase() {
     ) : null;
   });
 
-  const saveInlineFeedback = async (
+  const closeAddFeedbackModal = () => {
+    setIsAddFeedbackModalOpen(false);
+    setNewFeedbackContent("");
+    setNewFeedbackAdvanceStatus("hold");
+    setNewFeedbackRound("");
+    setAddFeedbackForInterviewId(undefined);
+    setAddFeedbackExistingRoundName("");
+  };
+
+  const openAddFeedbackForNewRound = () => {
+    setAddFeedbackForInterviewId(undefined);
+    setAddFeedbackExistingRoundName("");
+    setNewFeedbackRound("");
+    setNewFeedbackContent("");
+    setNewFeedbackAdvanceStatus("hold");
+    setIsAddFeedbackModalOpen(true);
+  };
+
+  const openAddFeedbackForRound = (
     round: TInterviewWithFeedback | TCustomizedInterview,
   ) => {
+    setAddFeedbackForInterviewId(round.id);
+    if (typeof round.id === "number") {
+      setAddFeedbackExistingRoundName("");
+    } else {
+      setAddFeedbackExistingRoundName(
+        (round as TCustomizedInterview).name ?? "",
+      );
+    }
+    setNewFeedbackRound("");
+    setNewFeedbackContent("");
+    setNewFeedbackAdvanceStatus("hold");
+    setIsAddFeedbackModalOpen(true);
+  };
+
+  const submitAddFeedbackFromModal = async () => {
+    if (!addFeedbackForInterviewId && !newFeedbackRound.trim()) {
+      message.error("Please enter interview round.");
+      throw new Error("validation");
+    }
     if (!newFeedbackContent.trim()) {
       message.error("Please enter feedback.");
-      return;
+      throw new Error("validation");
     }
-    const id = round.id;
-    const isForRealInterview = typeof id === "number";
+
+    const isForRealInterview =
+      addFeedbackForInterviewId !== undefined &&
+      addFeedbackForInterviewId !== null &&
+      typeof addFeedbackForInterviewId === "number";
+    const newUuid = uuidv4();
+
+    const customizedRound = isForRealInterview
+      ? newFeedbackRound
+      : typeof addFeedbackForInterviewId === "string"
+        ? (addFeedbackExistingRoundName || newFeedbackRound).trim()
+        : newFeedbackRound.trim();
+
+    const customizedKey = isForRealInterview
+      ? undefined
+      : typeof addFeedbackForInterviewId === "string"
+        ? String(addFeedbackForInterviewId)
+        : newUuid;
+
     const { code } = await Post(
       isForRealInterview
-        ? `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${id}/feedback_records`
+        ? `/api/jobs/${jobIdStr}/talents/${talentIdStr}/interviews/${addFeedbackForInterviewId}/feedback_records`
         : `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
       {
         content: newFeedbackContent.trim(),
         advance_status: newFeedbackAdvanceStatus,
-        customized_round: isForRealInterview
-          ? undefined
-          : ((round as TCustomizedInterview).name ?? ""),
-        customized_round_key: isForRealInterview ? undefined : String(id),
+        customized_round: customizedRound,
+        customized_round_key: customizedKey,
       },
     );
+
     if (code === 0) {
       message.success("Feedback added");
-      setEditingFeedbackRoundKey(null);
-      setNewFeedbackContent("");
-      setNewFeedbackAdvanceStatus("hold");
+      if (!addFeedbackForInterviewId) {
+        setOpenRoundIds((prev) => [...prev, newUuid]);
+      }
+      closeAddFeedbackModal();
       void fetchInterviewFeedbackRecords();
       void fetchTalent();
-      void fetchActiveLogs();
-    }
-  };
-
-  const saveNote = async () => {
-    if (!newNoteContent.trim()) {
-      message.error("Please enter note.");
-      return;
-    }
-    const { code } = await Post(
-      `/api/jobs/${jobIdStr}/talents/${talentIdStr}/notes`,
-      { content: newNoteContent.trim() },
-    );
-    if (code === 0) {
-      message.success("Note added");
-      setEditingNote(false);
-      setNewNoteContent("");
-      void fetchTalentNotes();
       void fetchActiveLogs();
     }
   };
@@ -753,91 +813,111 @@ function AtsTalentDetailV2026ViewBase() {
       </div>
 
       <div className={styles.rightColumn}>
-        <div className={styles.rightDock}>
-          <div className={styles.jobTitleRow}>
-            <h2 className={styles.jobTitle}>{job.name}</h2>
-            {job.posted_at ? (
-              <span
-                className={classnames(styles.statusTag, styles.statusActive)}
-              >
-                Active
-              </span>
-            ) : (
-              <span
-                className={classnames(styles.statusTag, styles.statusClosed)}
-              >
-                Closed
-              </span>
-            )}
-            <Tooltip
-              title="Open job"
-              getPopupContainer={portalGetPopupContainer}
-            >
-              <Button
-                type="text"
-                size="small"
-                className={styles.iconBtn16}
-                icon={<ExportOutlined style={{ fontSize: 16 }} />}
-                onClick={() =>
-                  navigate(`/app/jobs/${job.invitation_token}/standard-board`)
-                }
-              />
-            </Tooltip>
-          </div>
-          <div className={styles.metaLine}>
-            Applied on {dayjs(talent.created_at).format("YYYY/MM/DD")} · Source:{" "}
-            {sourceChannelText}
-          </div>
+        <div className={styles.jobsAppliedHeader}>
+          <span className={styles.jobsAppliedTitle}>{t("jobs_applied")}</span>
+          <Dropdown
+            menu={applicationsMenu}
+            getPopupContainer={portalGetPopupContainer}
+          >
+            <Button type="text" className={styles.applicationsTrigger}>
+              {originalT("talent_details.applications_count", {
+                count: talentsOfCandidate.length,
+              })}{" "}
+              <DownOutlined className={styles.applicationsChevron} />
+            </Button>
+          </Dropdown>
+        </div>
 
-          <div className={styles.actionsRow}>
-            <Dropdown
-              menu={applicationsMenu}
-              getPopupContainer={portalGetPopupContainer}
-            >
-              <Button>
-                {talentsOfCandidate.length} Applications <RightOutlined />
-              </Button>
-            </Dropdown>
-
-            <Tooltip
-              title="Move Stage"
-              getPopupContainer={portalGetPopupContainer}
-            >
-              <Dropdown
-                menu={{
-                  items: stageMenuItems,
-                  onClick: ({ key }) => void handleMoveStageTo(key),
-                }}
+        <div className={styles.jobsAppliedContent}>
+          <div
+            style={{
+              padding: "24px 20px",
+              backgroundColor: "rgba(247, 249, 255, 1)",
+              border: "1px solid rgba(227, 236, 249, 1)",
+            }}
+          >
+            <div className={styles.jobTitleRow}>
+              <h2 className={styles.jobTitle}>{job.name}</h2>
+              {job.posted_at ? (
+                <span
+                  className={classnames(styles.statusTag, styles.statusActive)}
+                >
+                  Active
+                </span>
+              ) : (
+                <span
+                  className={classnames(styles.statusTag, styles.statusClosed)}
+                >
+                  Closed
+                </span>
+              )}
+              <Tooltip
+                title="Open job"
                 getPopupContainer={portalGetPopupContainer}
               >
-                <Button>
-                  Stage: {currentStageName} <RightOutlined />
-                </Button>
-              </Dropdown>
-            </Tooltip>
+                <Icon
+                  icon={<Link2 />}
+                  className={styles.jobTitleLinkIcon}
+                  onClick={() =>
+                    window.open(
+                      `/app/jobs/${job.invitation_token}/standard-board`,
+                      "_blank",
+                    )
+                  }
+                />
+              </Tooltip>
+            </div>
+            <div className={styles.metaLine}>
+              {originalT("talent_details.applied_meta", {
+                date: dayjs(talent.created_at).format("YYYY-MM-DD"),
+                source: sourceChannelText,
+              })}
+            </div>
 
-            {scheduleButton}
-
-            <Tooltip
-              title={
-                talent.status === "rejected"
-                  ? "To restore this candidate, move them to another Stage"
-                  : undefined
-              }
-              getPopupContainer={portalGetPopupContainer}
-            >
-              <span>
-                <Button
-                  danger
-                  disabled={talent.status === "rejected"}
-                  onClick={() => setIsRejectModalOpen(true)}
+            <div className={styles.actionsRow}>
+              <div className={styles.actionsRowLeft}>
+                <Tooltip
+                  title="Move Stage"
+                  getPopupContainer={portalGetPopupContainer}
                 >
-                  {talent.status === "rejected"
-                    ? "Rejected"
-                    : t("action_reject")}
-                </Button>
-              </span>
-            </Tooltip>
+                  <Dropdown
+                    menu={{
+                      items: stageMenuItems,
+                      onClick: ({ key }) => handleMoveStageTo(key),
+                    }}
+                    getPopupContainer={portalGetPopupContainer}
+                  >
+                    <Button>
+                      {currentStageName} <DownOutlined />
+                    </Button>
+                  </Dropdown>
+                </Tooltip>
+              </div>
+              <div className={styles.actionsRowRight}>
+                {scheduleButton}
+                <Tooltip
+                  title={
+                    talent.status === "rejected"
+                      ? "To restore this candidate, move them to another Stage"
+                      : undefined
+                  }
+                  getPopupContainer={portalGetPopupContainer}
+                >
+                  <span>
+                    <Button
+                      danger
+                      variant="outlined"
+                      disabled={talent.status === "rejected"}
+                      onClick={() => setIsRejectModalOpen(true)}
+                    >
+                      {talent.status === "rejected"
+                        ? "Rejected"
+                        : t("action_reject")}
+                    </Button>
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
           </div>
 
           <Tabs
@@ -850,260 +930,236 @@ function AtsTalentDetailV2026ViewBase() {
             items={[
               {
                 key: "interview_feedback",
-                label: "Interview Feedback",
+                label: originalT(
+                  "talent_details.tab_interview_feedback_count",
+                  {
+                    count: totalFeedbackCount,
+                  },
+                ),
                 children: null,
               },
-              { key: "notes", label: "Notes", children: null },
-              { key: "activity", label: "Activity", children: null },
+              {
+                key: "notes",
+                label: originalT("talent_details.tab_notes_count", {
+                  count: notesCount,
+                }),
+                children: null,
+              },
+              {
+                key: "activity",
+                label: originalT("talent_details.tab_activity"),
+                children: null,
+              },
             ]}
           />
-        </div>
 
-        <div className={styles.rightTabScroll}>
-          {rightTab === "interview_feedback" && (
-            <div>
-              <div
-                className={styles.round0Row}
-                onClick={() => setAiDrawerOpen(true)}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span className={styles.feedbackRoundTitle}>
-                    Round 0: AI Prescreening
-                  </span>
-                  <EvaluateResultBadge
-                    size="small"
-                    withTitle
-                    result={getEvaluateResultLevel(report)}
-                  />
+          <div className={styles.rightTabScroll}>
+            {rightTab === "interview_feedback" && (
+              <div>
+                <div
+                  className={styles.round0Row}
+                  onClick={() => setAiDrawerOpen(true)}
+                >
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    <span className={styles.feedbackRoundTitle}>
+                      Round 0: AI Prescreening
+                    </span>
+                    <EvaluateResultBadge
+                      size="small"
+                      withTitle
+                      result={getEvaluateResultLevel(report)}
+                    />
+                  </div>
+                  <RightOutlined />
                 </div>
-                <RightOutlined />
-              </div>
 
-              {interviewRounds.map((round) => {
-                const idStr = String(round.id);
-                const open = openRoundIds.includes(idStr);
-                const headerTitle = (round as TCustomizedInterview).name
-                  ? `Interview Round: ${(round as TCustomizedInterview).name}`
-                  : "Round 1: Interview";
-                const count = round.feedback_records.length;
-                return (
-                  <div key={idStr} className={styles.feedbackRoundBlock}>
-                    <div
-                      className={styles.feedbackRoundHeader}
-                      onClick={() => toggleRoundOpen(idStr)}
-                    >
-                      <span className={styles.feedbackRoundTitle}>
-                        {headerTitle}
-                      </span>
-                      <span className={styles.feedbackRoundCount}>{count}</span>
-                    </div>
-                    {open && (
-                      <div className={styles.feedbackRoundBody}>
-                        {round.feedback_records.map((record) => (
-                          <div key={record.id} className={styles.feedbackCard}>
-                            <div className={styles.feedbackCardMeta}>
-                              <span className={styles.feedbackAuthor}>
-                                {record.staff?.name || "-"}
-                              </span>
-                              <span className={styles.feedbackDate}>
-                                {dayjs(record.created_at).format(
-                                  "MMM DD, YYYY",
-                                )}
-                              </span>
-                            </div>
-                            <MarkdownContainer content={record.content} />
-                            <div style={{ marginTop: 8 }}>
-                              <span
-                                style={{
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  color: "#6b7280",
-                                }}
-                              >
-                                {record.advance_status === "advance"
-                                  ? "Advance"
-                                  : record.advance_status === "hold"
-                                    ? "Hold"
-                                    : "Reject"}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-
-                        {editingFeedbackRoundKey === idStr ? (
-                          <div className={styles.addEditorWrap}>
-                            <RichTextWithVoice
-                              autoFocus
-                              value={newFeedbackContent}
-                              onChange={setNewFeedbackContent}
-                              minHeight={220}
+                {interviewRounds.map((round) => {
+                  const idStr = String(round.id);
+                  const open = openRoundIds.includes(idStr);
+                  const headerTitle = (round as TCustomizedInterview).name
+                    ? `Interview Round: ${(round as TCustomizedInterview).name}`
+                    : "Round 1: Interview";
+                  const count = round.feedback_records.length;
+                  return (
+                    <div key={idStr} className={styles.feedbackRoundBlock}>
+                      <div
+                        className={styles.feedbackRoundHeader}
+                        onClick={() => toggleRoundOpen(idStr)}
+                      >
+                        <span className={styles.feedbackRoundTitle}>
+                          {headerTitle}
+                        </span>
+                        <div className={styles.feedbackRoundHeaderRight}>
+                          <span className={styles.feedbackRoundCount}>
+                            {count}
+                          </span>
+                          {open ? (
+                            <UpOutlined
+                              className={styles.feedbackRoundChevron}
                             />
-                            <div className={styles.saveRow}>
-                              <Radio.Group
-                                value={newFeedbackAdvanceStatus}
-                                onChange={(e) =>
-                                  setNewFeedbackAdvanceStatus(e.target.value)
-                                }
-                                options={[
-                                  { label: "Advance", value: "advance" },
-                                  { label: "Hold", value: "hold" },
-                                  { label: "Reject", value: "reject" },
-                                ]}
-                              />
-                            </div>
-                            <div className={styles.saveRow}>
-                              <Button
-                                type="primary"
-                                onClick={() => void saveInlineFeedback(round)}
-                              >
-                                Save
-                              </Button>
-                              <Button
-                                onClick={() => {
-                                  setEditingFeedbackRoundKey(null);
-                                  setNewFeedbackContent("");
-                                }}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
+                          ) : (
+                            <DownOutlined
+                              className={styles.feedbackRoundChevron}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      {open && (
+                        <div className={styles.feedbackRoundBody}>
                           <Button
                             block
-                            style={{ marginTop: 10 }}
-                            onClick={() => {
-                              setEditingFeedbackRoundKey(idStr);
-                              setNewFeedbackContent("");
-                              setNewFeedbackAdvanceStatus("hold");
+                            variant="outlined"
+                            color="primary"
+                            className={styles.addFeedbackAboveList}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openAddFeedbackForRound(round);
                             }}
                           >
                             + Add Feedback
                           </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                          {[...round.feedback_records]
+                            .sort(
+                              (a, b) =>
+                                dayjs(b.created_at).valueOf() -
+                                dayjs(a.created_at).valueOf(),
+                            )
+                            .map((record) => (
+                              <div
+                                key={record.id}
+                                className={styles.feedbackCard}
+                              >
+                                <div className={styles.feedbackCardMeta}>
+                                  <span className={styles.feedbackAuthor}>
+                                    {record.staff?.name || "-"}
+                                  </span>
+                                  <span className={styles.feedbackDate}>
+                                    {dayjs(record.created_at).format(
+                                      "MMM DD, YYYY",
+                                    )}
+                                  </span>
+                                </div>
+                                <MarkdownContainer content={record.content} />
+                                <div style={{ marginTop: 8 }}>
+                                  <span
+                                    style={{
+                                      fontSize: 12,
+                                      fontWeight: 600,
+                                      color: "#6b7280",
+                                    }}
+                                  >
+                                    {record.advance_status === "advance"
+                                      ? "Advance"
+                                      : record.advance_status === "hold"
+                                        ? "Hold"
+                                        : "Reject"}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
 
-              <Button
-                style={{ marginTop: 8 }}
-                onClick={() => {
-                  setNewRoundName("");
-                  setNewRoundFeedback("");
-                  setNewRoundAdvance("hold");
-                  setIsNewRoundModalOpen(true);
-                }}
-              >
-                + Create New Interview Round
-              </Button>
-            </div>
-          )}
-
-          {rightTab === "notes" && (
-            <div>
-              {notes.map((note) => (
-                <div key={note.id} className={styles.feedbackCard}>
-                  <div className={styles.feedbackCardMeta}>
-                    <span
-                      className={styles.feedbackAuthor}
-                      style={{ fontWeight: 600 }}
-                    >
-                      {note.staff?.name || "-"}
-                    </span>
-                    <span className={styles.feedbackDate}>
-                      {dayjs(note.created_at).format("MMM DD, YYYY")}
-                    </span>
-                  </div>
-                  <MarkdownContainer content={note.content} />
-                </div>
-              ))}
-
-              {editingNote ? (
-                <div className={styles.addEditorWrap}>
-                  <RichTextWithVoice
-                    autoFocus
-                    value={newNoteContent}
-                    onChange={setNewNoteContent}
-                    minHeight={220}
-                  />
-                  <div className={styles.notesSaveRow}>
-                    <Button type="primary" onClick={() => void saveNote()}>
-                      Save
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setEditingNote(false);
-                        setNewNoteContent("");
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ) : (
                 <Button
                   block
-                  style={{ marginTop: 12 }}
+                  variant="outlined"
+                  color="primary"
+                  className={styles.newRoundButton}
+                  onClick={openAddFeedbackForNewRound}
+                  style={{ height: 40 }}
+                >
+                  {t("new_interview_round")}
+                </Button>
+              </div>
+            )}
+
+            {rightTab === "notes" && (
+              <div>
+                {notes.map((note) => (
+                  <div key={note.id} className={styles.feedbackCard}>
+                    <div className={styles.feedbackCardMeta}>
+                      <span
+                        className={styles.feedbackAuthor}
+                        style={{ fontWeight: 600 }}
+                      >
+                        {note.staff?.name || "-"}
+                      </span>
+                      <span className={styles.feedbackDate}>
+                        {dayjs(note.created_at).format("MMM DD, YYYY")}
+                      </span>
+                    </div>
+                    <MarkdownContainer content={note.content} />
+                  </div>
+                ))}
+
+                <Button
+                  block
+                  variant="outlined"
+                  color="primary"
+                  style={{ marginTop: 12, height: 40 }}
                   onClick={() => {
-                    setEditingNote(true);
                     setNewNoteContent("");
+                    setIsAddNoteModalOpen(true);
                   }}
                 >
                   + Add Note
                 </Button>
-              )}
-            </div>
-          )}
+              </div>
+            )}
 
-          {rightTab === "activity" && (
-            <div className={styles.activitySection}>
-              <h3 className={styles.sectionHeading}>Activity Log</h3>
-              {activeLogs.length === 0 ? (
-                <div style={{ color: "#9ca3af", marginTop: 12 }}>
-                  No activity
-                </div>
-              ) : (
-                <div className={styles.activityList}>
-                  {activeLogs.map((log) => {
-                    const color = activityColor(log);
-                    const dotToneClass =
-                      color === "green"
-                        ? styles.activityDotGreen
-                        : color === "blue"
-                          ? styles.activityDotBlue
-                          : color === "yellow"
-                            ? styles.activityDotYellow
-                            : styles.activityDotRed;
-                    return (
-                      <div key={log.id} className={styles.activityItem}>
-                        <div className={styles.activityDotWrapper}>
-                          <span
-                            className={classnames(
-                              styles.activityDot,
-                              dotToneClass,
-                            )}
-                          />
-                          <span className={styles.activityLine} />
-                        </div>
-                        <div className={styles.activityContent}>
-                          <div className={styles.activityTitle}>
-                            {activityDescription(log)}
+            {rightTab === "activity" && (
+              <div className={styles.activitySection}>
+                <h3 className={styles.sectionHeading}>Activity Log</h3>
+                {activeLogs.length === 0 ? (
+                  <div style={{ color: "#9ca3af", marginTop: 12 }}>
+                    No activity
+                  </div>
+                ) : (
+                  <div className={styles.activityList}>
+                    {activeLogs.map((log) => {
+                      const color = activityColor(log);
+                      const dotToneClass =
+                        color === "green"
+                          ? styles.activityDotGreen
+                          : color === "blue"
+                            ? styles.activityDotBlue
+                            : color === "yellow"
+                              ? styles.activityDotYellow
+                              : styles.activityDotRed;
+                      return (
+                        <div key={log.id} className={styles.activityItem}>
+                          <div className={styles.activityDotWrapper}>
+                            <span
+                              className={classnames(
+                                styles.activityDot,
+                                dotToneClass,
+                              )}
+                            />
+                            <span className={styles.activityLine} />
                           </div>
-                          <div className={styles.activityDate}>
-                            {dayjs(log.created_at).format(
-                              "YYYY/MM/DD HH:mm:ss",
-                            )}
+                          <div className={styles.activityContent}>
+                            <div className={styles.activityTitle}>
+                              {activityDescription(log)}
+                            </div>
+                            <div className={styles.activityDate}>
+                              {dayjs(log.created_at).format(
+                                "YYYY/MM/DD HH:mm:ss",
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -1139,63 +1195,92 @@ function AtsTalentDetailV2026ViewBase() {
       </Drawer>
 
       <Modal
-        title="Create New Interview Round"
-        open={isNewRoundModalOpen}
+        title="Add Feedback"
+        open={isAddFeedbackModalOpen}
         centered
-        onCancel={() => setIsNewRoundModalOpen(false)}
+        onCancel={closeAddFeedbackModal}
+        onOk={() => submitAddFeedbackFromModal()}
+        okText="Save"
+      >
+        <div className={styles.addFeedbackModal}>
+          {!addFeedbackForInterviewId && (
+            <div className={styles.addFeedbackField}>
+              <div className={styles.addFeedbackLabel}>Interview Round</div>
+              <div className={styles.addFeedbackContent}>
+                <Input
+                  className={styles.roundInput}
+                  value={newFeedbackRound}
+                  onChange={(e) => setNewFeedbackRound(e.target.value)}
+                  placeholder="e.g. Round 1, Round 2"
+                />
+              </div>
+            </div>
+          )}
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Feedback</div>
+            <div className={styles.addFeedbackContent}>
+              <RichTextWithVoice
+                value={newFeedbackContent}
+                onChange={setNewFeedbackContent}
+                minHeight={300}
+              />
+            </div>
+          </div>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Advance</div>
+            <div className={styles.addFeedbackContent}>
+              <Radio.Group
+                value={newFeedbackAdvanceStatus}
+                onChange={(e) => setNewFeedbackAdvanceStatus(e.target.value)}
+                options={[
+                  { label: "Advance", value: "advance" },
+                  { label: "Hold", value: "hold" },
+                  { label: "Reject", value: "reject" },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        title="Add Note"
+        open={isAddNoteModalOpen}
+        centered
+        onCancel={() => {
+          setIsAddNoteModalOpen(false);
+          setNewNoteContent("");
+        }}
         onOk={async () => {
-          if (!newRoundName.trim()) {
-            message.error("Please enter interview round.");
-            return;
+          if (!newNoteContent.trim()) {
+            message.error("Please enter note.");
+            throw new Error("validation");
           }
-          if (!newRoundFeedback.trim()) {
-            message.error("Please enter feedback.");
-            return;
-          }
-          const newUuid = uuidv4();
           const { code } = await Post(
-            `/api/jobs/${jobIdStr}/talents/${talentIdStr}/feedback_records`,
-            {
-              content: newRoundFeedback.trim(),
-              advance_status: newRoundAdvance,
-              customized_round: newRoundName.trim(),
-              customized_round_key: newUuid,
-            },
+            `/api/jobs/${jobIdStr}/talents/${talentIdStr}/notes`,
+            { content: newNoteContent.trim() },
           );
           if (code === 0) {
-            message.success("Feedback added");
-            setIsNewRoundModalOpen(false);
-            setOpenRoundIds((prev) => [...prev, newUuid]);
-            void fetchInterviewFeedbackRecords();
-            void fetchTalent();
+            message.success("Note added");
+            setIsAddNoteModalOpen(false);
+            setNewNoteContent("");
+            void fetchTalentNotes();
             void fetchActiveLogs();
           }
         }}
         okText="Save"
       >
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ marginBottom: 6 }}>Interview Round</div>
-          <Input
-            value={newRoundName}
-            onChange={(e) => setNewRoundName(e.target.value)}
-            placeholder="e.g. Negotiation"
-          />
-        </div>
-        <RichTextWithVoice
-          value={newRoundFeedback}
-          onChange={setNewRoundFeedback}
-          minHeight={240}
-        />
-        <div style={{ marginTop: 12 }}>
-          <Radio.Group
-            value={newRoundAdvance}
-            onChange={(e) => setNewRoundAdvance(e.target.value)}
-            options={[
-              { label: "Advance", value: "advance" },
-              { label: "Hold", value: "hold" },
-              { label: "Reject", value: "reject" },
-            ]}
-          />
+        <div className={styles.addFeedbackModal}>
+          <div className={styles.addFeedbackField}>
+            <div className={styles.addFeedbackLabel}>Note</div>
+            <div className={styles.addFeedbackContent}>
+              <RichTextWithVoice
+                value={newNoteContent}
+                onChange={setNewNoteContent}
+                minHeight={300}
+              />
+            </div>
+          </div>
         </div>
       </Modal>
 

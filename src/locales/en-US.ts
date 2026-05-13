@@ -2056,6 +2056,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     reject_feedback_placeholder:
       "For example, our assessment is not accurate/the role is evolved and you'd like to adjust or update the job requirements/ or anything at all.",
     reject_submit_failed: "Submit failed",
+    jobs_applied: "Jobs Applied",
+    applications_count: "{{count}} Applications",
+    applied_meta: "Applied on: {{date}} | Source: {{source}}",
+    tab_interview_feedback_count: "Interview Feedback ({{count}})",
+    tab_notes_count: "Notes ({{count}})",
+    tab_activity: "Activity",
+    new_interview_round: "+ New Round",
   },
 
   admin_talents: {
