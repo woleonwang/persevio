@@ -129,7 +129,7 @@ function parseParenSuffixTagRows(
 function parseTenureLabelValueRows(
   details: string | string[],
 ): TSnapshotListRow[] {
-  const lines = toDetailLines(details);
+  const lines = typeof details === "string" ? details.split(";") : details;
   return lines
     .map((line) => {
       const m = line.match(/^([^:]+):\s*(.+)$/);

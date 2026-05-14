@@ -81,6 +81,7 @@ import {
   TTalentResume,
 } from "@/components/AtsTalentDetail/type";
 import globalStore from "@/store/global";
+import { getStageKey } from "@/utils/talentStage";
 
 function AtsTalentDetailV2026ViewBase() {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
@@ -463,10 +464,8 @@ function AtsTalentDetailV2026ViewBase() {
   });
 
   const currentStageName =
-    talent.status === "rejected"
-      ? "Rejected"
-      : (moveStageOptions.find((s) => s.id === talent.stage_id)?.name ??
-        t("status_unknown"));
+    moveStageOptions.find((s) => s.id === getStageKey(talent))?.name ??
+    getStageKey(talent);
 
   const snapshotCards = (report.profile_snapshot ?? [])
     .filter((snap) => snap.title.trim() !== "Total Years of Experience")
@@ -702,7 +701,9 @@ function AtsTalentDetailV2026ViewBase() {
             <div
               className={classnames(
                 styles.resumeShell,
-                resumeExpanded ? styles.resumeShellExpanded : styles.resumeCollapsed,
+                resumeExpanded
+                  ? styles.resumeShellExpanded
+                  : styles.resumeCollapsed,
               )}
             >
               <div className={styles.resumeInner}>
@@ -912,7 +913,13 @@ function AtsTalentDetailV2026ViewBase() {
                   onClick={() => setAiDrawerOpen(true)}
                 >
                   <div
-                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flex: 1,
+                      gap: 10,
+                      justifyContent: "space-between",
+                    }}
                   >
                     <span className={styles.feedbackRoundTitle}>
                       Round 0: AI Prescreening
