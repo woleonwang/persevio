@@ -673,34 +673,36 @@ function AtsTalentDetailV2026ViewBase() {
             </div>
           )}
           <section className={styles.resumeSection}>
-            {resumeExpanded && (
+            <div
+              className={classnames(
+                styles.resumeSectionHeaderAnimated,
+                resumeExpanded && styles.resumeSectionHeaderAnimatedOpen,
+              )}
+              aria-hidden={!resumeExpanded}
+            >
               <div className={styles.resumeSectionHeader}>
                 <h2 className={styles.sectionHeading}>Resume</h2>
                 <div className={styles.resumeToolbar}>
-                  {resumeExpanded && (
-                    <div className={styles.resumeMeta}>
-                      Uploaded on{" "}
-                      {talent.created_at
-                        ? dayjs(talent.created_at).format("YYYY/MM/DD")
-                        : "—"}
-                    </div>
-                  )}
-                  {resumeExpanded && (
-                    <Button
-                      type="primary"
-                      icon={<Icon icon={<DownloadIcon />} />}
-                      onClick={() => void downloadResume()}
-                    >
-                      Download PDF
-                    </Button>
-                  )}
+                  <div className={styles.resumeMeta}>
+                    Uploaded on{" "}
+                    {talent.created_at
+                      ? dayjs(talent.created_at).format("YYYY/MM/DD")
+                      : "—"}
+                  </div>
+                  <Button
+                    type="primary"
+                    icon={<Icon icon={<DownloadIcon />} />}
+                    onClick={() => void downloadResume()}
+                  >
+                    Download PDF
+                  </Button>
                 </div>
               </div>
-            )}
+            </div>
             <div
               className={classnames(
                 styles.resumeShell,
-                !resumeExpanded && styles.resumeCollapsed,
+                resumeExpanded ? styles.resumeShellExpanded : styles.resumeCollapsed,
               )}
             >
               <div className={styles.resumeInner}>
@@ -710,21 +712,25 @@ function AtsTalentDetailV2026ViewBase() {
                   <MarkdownContainer content={talent.parsed_content || ""} />
                 )}
               </div>
-              {!resumeExpanded && (
-                <>
-                  <div className={styles.resumeFade} />
-                  <div className={styles.floatingResumeCta}>
-                    <Button
-                      variant="outlined"
-                      shape="round"
-                      onClick={() => setResumeExpanded(true)}
-                    >
-                      View Full Resume{" "}
-                      <DownOutlined style={{ color: "#c1c1c1" }} />
-                    </Button>
-                  </div>
-                </>
-              )}
+              <div
+                className={classnames(
+                  styles.resumeCollapsedOverlay,
+                  !resumeExpanded && styles.resumeCollapsedOverlayVisible,
+                )}
+                aria-hidden={resumeExpanded}
+              >
+                <div className={styles.resumeFade} />
+                <div className={styles.floatingResumeCta}>
+                  <Button
+                    variant="outlined"
+                    shape="round"
+                    onClick={() => setResumeExpanded(true)}
+                  >
+                    View Full Resume{" "}
+                    <DownOutlined style={{ color: "#c1c1c1" }} />
+                  </Button>
+                </div>
+              </div>
             </div>
           </section>
 
