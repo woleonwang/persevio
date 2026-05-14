@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 
-import legacyStyles from "../AtsTalentDetail/style.module.less";
+import legacyStyles from "@/components/AtsTalentDetail/style.module.less";
 import Icon from "@/components/Icon";
 import StrengthFilled from "@/assets/icons/strength-filled";
 import GapsFilled from "@/assets/icons/gaps-filled";

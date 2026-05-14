@@ -12,5 +12,3 @@ export const formatLastUpdated = (dateStr?: string) => {
   if (!dateStr) return null;
   return dayjs(dateStr).format("MMM DD, YYYY");
 };
-
-export const portalGetPopupContainer = () => document.body;

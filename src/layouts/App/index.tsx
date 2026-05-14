@@ -64,6 +64,7 @@ const AppLayout = () => {
     fetchJobs,
     fetchUnreadTalentsCount,
     setMode,
+    setUseNewTalentDetailsPage,
   } = globalStore;
 
   useEffect(() => {
@@ -201,6 +202,8 @@ const AppLayout = () => {
 
       // 根据语言设置 antd locale
       setAntdLocale(lang as "zh-CN" | "en-US");
+
+      setUseNewTalentDetailsPage(data.use_new_talent_details_page === true);
 
       setInited(true);
 

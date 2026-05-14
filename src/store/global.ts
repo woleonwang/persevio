@@ -21,6 +21,8 @@ class GlobalStore {
 
   isAdmin = false;
 
+  useNewTalentDetailsPage = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -67,6 +69,10 @@ class GlobalStore {
 
   setIsAdmin = (isAdmin: boolean) => {
     this.isAdmin = isAdmin;
+  };
+
+  setUseNewTalentDetailsPage = (value: boolean) => {
+    this.useNewTalentDetailsPage = value;
   };
 }
 

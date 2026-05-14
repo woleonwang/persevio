@@ -25,6 +25,7 @@ const TalentEvaluateFeedbackModal = (props: IProps) => {
       onCancel={onCancel}
       onOk={() => onOk(value)}
       width={800}
+      zIndex={10000}
       centered
       title="What should we know to better source/screen candidates for this role?"
       okButtonProps={{

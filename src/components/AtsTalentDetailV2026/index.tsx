@@ -15,7 +15,6 @@ import {
 import classnames from "classnames";
 import {
   ArrowLeftOutlined,
-  CheckOutlined,
   DownOutlined,
   FileOutlined,
   RightOutlined,
@@ -28,11 +27,6 @@ import { useNavigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 
 import Icon from "@/components/Icon";
-import Phone from "@/assets/icons/phone";
-import MailCheck from "@/assets/icons/mail-check";
-import Link2 from "@/assets/icons/link2";
-import DownloadIcon from "@/assets/icons/download";
-import ScheduleInterview from "@/assets/icons/schedule-interview";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import Resume from "@/components/AtsTalentDetail/components/Resume";
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
@@ -41,6 +35,14 @@ import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
 import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
+
+import Phone from "@/assets/icons/phone";
+import MailCheck from "@/assets/icons/mail-check";
+import Link2 from "@/assets/icons/link2";
+import DownloadIcon from "@/assets/icons/download";
+import ScheduleInterview from "@/assets/icons/schedule-interview";
+import Bag from "@/assets/icons/bag";
+
 import useTalent from "@/hooks/useTalent";
 import useJob from "@/hooks/useJob";
 import { Download, Get, Post } from "@/utils/request";
@@ -51,38 +53,35 @@ import {
   normalizeReport,
   parseJSON,
   DEFAULT_TRACKING_SOURCES,
+  getEvaluateResultLevel,
 } from "@/utils";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
   SUFFIX_DEFAULT_STAGE_KEYS,
   TALENT_DETAIL_FROM,
 } from "@/utils/consts";
-import { tokenStorage } from "@/utils/storage";
-import { getEvaluateResultLevel } from "@/utils";
+import legacyPdfStyles from "@/components/AtsTalentDetail/style.module.less";
 
-import legacyPdfStyles from "../AtsTalentDetail/style.module.less";
-import AiPrescreeningDrawerBody from "./AiPrescreeningDrawerBody";
-import { downloadTalentReportPdf } from "./downloadTalentReportPdf";
-import styles from "./style.module.less";
+import AiPrescreeningDrawerBody from "./components/AiPrescreeningDrawerBody";
+import ListCard from "./components/TimelineCard";
+import { downloadTalentReportPdf } from "./utils/downloadTalentReportPdf";
+import { formatLastUpdated, getInitials } from "./utils/helpers";
 import {
-  formatLastUpdated,
-  getInitials,
-  portalGetPopupContainer,
-} from "./utils/helpers";
+  getKeyInformationListRender,
+  getProfileSnapshotListRender,
+  parseTotalYearsOfExperience,
+} from "./utils/snapshotListParsers";
+
+import styles from "./style.module.less";
 
 import { type TCustomizedInterview } from "./types";
 import {
   TActiveLog,
   TTalentNote,
   TTalentResume,
-} from "../AtsTalentDetail/type";
-import ListCard from "./components/TimelineCard";
-import {
-  getKeyInformationListRender,
-  getProfileSnapshotListRender,
-  parseTotalYearsOfExperience,
-} from "./utils/snapshotListParsers";
-import Bag from "@/assets/icons/bag";
+} from "@/components/AtsTalentDetail/type";
+import globalStore from "@/store/global";
+
 function AtsTalentDetailV2026ViewBase() {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
     talentId: string;
@@ -111,8 +110,7 @@ function AtsTalentDetailV2026ViewBase() {
   const [addFeedbackForInterviewId, setAddFeedbackForInterviewId] = useState<
     number | string | undefined
   >(undefined);
-  const [addFeedbackExistingRoundName, setAddFeedbackExistingRoundName] =
-    useState("");
+
   const [newFeedbackContent, setNewFeedbackContent] = useState("");
   const [newFeedbackAdvanceStatus, setNewFeedbackAdvanceStatus] = useState<
     "advance" | "hold" | "reject"
@@ -135,7 +133,7 @@ function AtsTalentDetailV2026ViewBase() {
     setNeedConfirmEvaluateFeedbackConversation,
   ] = useState(false);
 
-  const [isSystemAdmin, setIsSystemAdmin] = useState(false);
+  const isSystemAdmin = globalStore.isAdmin;
   const pdfReportRef = useRef<HTMLDivElement>(null);
 
   const { job } = useJob();
@@ -145,19 +143,6 @@ function AtsTalentDetailV2026ViewBase() {
   const t = (key: string) => originalT(`talent_details.${key}`);
 
   const canOpenJobApplyInternalDocuments = isSystemAdmin && !!talentIdStr;
-
-  useEffect(() => {
-    const checkIsSystemAdmin = async () => {
-      const token = tokenStorage.getToken("staff");
-      if (!token) {
-        setIsSystemAdmin(false);
-        return;
-      }
-      const { code, data } = await Get("/api/settings");
-      setIsSystemAdmin(code === 0 && data?.is_admin === 1);
-    };
-    checkIsSystemAdmin();
-  }, []);
 
   useEffect(() => {
     fetchTalentsOfCandidate();
@@ -241,22 +226,6 @@ function AtsTalentDetailV2026ViewBase() {
       : `https://${contact.linkedin}`
     : null;
 
-  const moveStageOptions: { id: string; name: string; disabled: boolean }[] = [
-    ...PREFIX_DEFAULT_STAGE_KEYS.filter((key) => key !== "reached_out").map(
-      (key) => ({
-        id: key,
-        name: originalT(`pipeline_section.${key}`),
-        disabled: true,
-      }),
-    ),
-    ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
-    ...SUFFIX_DEFAULT_STAGE_KEYS.map((key) => ({
-      id: key,
-      name: originalT(`pipeline_section.${key}`),
-      disabled: true,
-    })),
-  ];
-
   const handleBack = () => {
     const from = getQuery("from");
     if (from === TALENT_DETAIL_FROM.local) {
@@ -278,8 +247,8 @@ function AtsTalentDetailV2026ViewBase() {
     );
     if (code === 0) {
       message.success("Stage Moved");
-      void fetchTalent();
-      void fetchActiveLogs();
+      fetchTalent();
+      fetchActiveLogs();
     }
   };
 
@@ -289,7 +258,7 @@ function AtsTalentDetailV2026ViewBase() {
       `/api/jobs/${job.invitation_token}/talents/${talent.id}/evaluate_feedback`,
       { evaluate_feedback: feedback },
     );
-    if (code === 0) void fetchTalent();
+    if (code === 0) fetchTalent();
   };
 
   const updateTalentEvaluateFeedbackReason = async (reason: string) => {
@@ -299,7 +268,7 @@ function AtsTalentDetailV2026ViewBase() {
       { evaluate_feedback_reason: reason },
     );
     if (code === 0) {
-      void fetchTalent();
+      fetchTalent();
       setOpenEvaluateFeedbackConversation(true);
       setNeedConfirmEvaluateFeedbackConversation(true);
       message.success(t("update_success"));
@@ -380,7 +349,6 @@ function AtsTalentDetailV2026ViewBase() {
           ? "Awaiting candidate's confirmation of interview details"
           : undefined
       }
-      getPopupContainer={portalGetPopupContainer}
     >
       <span>
         <Button
@@ -414,11 +382,12 @@ function AtsTalentDetailV2026ViewBase() {
     items: talentsOfCandidate.map((row) => ({
       key: String(row.id),
       label: (
-        <div>
+        <div
+          className={classnames(styles.menuItem, {
+            [styles.selected]: row.id === talent.id,
+          })}
+        >
           <div className={styles.menuJobRow}>
-            {row.id === talent.id && (
-              <CheckOutlined style={{ color: "#3682fe", fontSize: 12 }} />
-            )}
             <span className={styles.menuPrimary}>{row.job?.name}</span>
             {row.job?.posted_at ? (
               <span
@@ -453,6 +422,22 @@ function AtsTalentDetailV2026ViewBase() {
       forceUpdate();
     },
   };
+
+  const moveStageOptions: { id: string; name: string; disabled: boolean }[] = [
+    ...PREFIX_DEFAULT_STAGE_KEYS.filter((key) => key !== "reached_out").map(
+      (key) => ({
+        id: key,
+        name: originalT(`pipeline_section.${key}`),
+        disabled: true,
+      }),
+    ),
+    ...(job.pipeline_stages ? JSON.parse(job.pipeline_stages) : []),
+    ...SUFFIX_DEFAULT_STAGE_KEYS.map((key) => ({
+      id: key,
+      name: originalT(`pipeline_section.${key}`),
+      disabled: true,
+    })),
+  ];
 
   const stageMenuItems = moveStageOptions.map((opt) => {
     const isCurrent =
@@ -516,15 +501,9 @@ function AtsTalentDetailV2026ViewBase() {
     setNewFeedbackAdvanceStatus("hold");
     setNewFeedbackRound("");
     setAddFeedbackForInterviewId(undefined);
-    setAddFeedbackExistingRoundName("");
   };
 
   const openAddFeedbackForNewRound = () => {
-    setAddFeedbackForInterviewId(undefined);
-    setAddFeedbackExistingRoundName("");
-    setNewFeedbackRound("");
-    setNewFeedbackContent("");
-    setNewFeedbackAdvanceStatus("hold");
     setIsAddFeedbackModalOpen(true);
   };
 
@@ -532,46 +511,26 @@ function AtsTalentDetailV2026ViewBase() {
     round: TInterviewWithFeedback | TCustomizedInterview,
   ) => {
     setAddFeedbackForInterviewId(round.id);
-    if (typeof round.id === "number") {
-      setAddFeedbackExistingRoundName("");
-    } else {
-      setAddFeedbackExistingRoundName(
-        (round as TCustomizedInterview).name ?? "",
-      );
-    }
-    setNewFeedbackRound("");
-    setNewFeedbackContent("");
-    setNewFeedbackAdvanceStatus("hold");
     setIsAddFeedbackModalOpen(true);
   };
 
   const submitAddFeedbackFromModal = async () => {
     if (!addFeedbackForInterviewId && !newFeedbackRound.trim()) {
       message.error("Please enter interview round.");
-      throw new Error("validation");
     }
     if (!newFeedbackContent.trim()) {
       message.error("Please enter feedback.");
-      throw new Error("validation");
     }
 
     const isForRealInterview =
-      addFeedbackForInterviewId !== undefined &&
-      addFeedbackForInterviewId !== null &&
+      !!addFeedbackForInterviewId &&
       typeof addFeedbackForInterviewId === "number";
-    const newUuid = uuidv4();
 
-    const customizedRound = isForRealInterview
-      ? newFeedbackRound
-      : typeof addFeedbackForInterviewId === "string"
-        ? (addFeedbackExistingRoundName || newFeedbackRound).trim()
-        : newFeedbackRound.trim();
+    const newUuid = uuidv4();
 
     const customizedKey = isForRealInterview
       ? undefined
-      : typeof addFeedbackForInterviewId === "string"
-        ? String(addFeedbackForInterviewId)
-        : newUuid;
+      : (addFeedbackForInterviewId ?? newUuid);
 
     const { code } = await Post(
       isForRealInterview
@@ -580,8 +539,8 @@ function AtsTalentDetailV2026ViewBase() {
       {
         content: newFeedbackContent.trim(),
         advance_status: newFeedbackAdvanceStatus,
-        customized_round: customizedRound,
-        customized_round_key: customizedKey,
+        customized_round: newFeedbackRound,
+        customized_round_key: isForRealInterview ? undefined : customizedKey,
       },
     );
 
@@ -591,9 +550,9 @@ function AtsTalentDetailV2026ViewBase() {
         setOpenRoundIds((prev) => [...prev, newUuid]);
       }
       closeAddFeedbackModal();
-      void fetchInterviewFeedbackRecords();
-      void fetchTalent();
-      void fetchActiveLogs();
+      fetchInterviewFeedbackRecords();
+      fetchTalent();
+      fetchActiveLogs();
     }
   };
 
@@ -693,10 +652,7 @@ function AtsTalentDetailV2026ViewBase() {
                 </a>
               )}
             </div>
-            <Tooltip
-              title="Download Report"
-              getPopupContainer={portalGetPopupContainer}
-            >
+            <Tooltip title="Download Report">
               <Button
                 variant="outlined"
                 color="primary"
@@ -815,16 +771,13 @@ function AtsTalentDetailV2026ViewBase() {
       <div className={styles.rightColumn}>
         <div className={styles.jobsAppliedHeader}>
           <span className={styles.jobsAppliedTitle}>{t("jobs_applied")}</span>
-          <Dropdown
-            menu={applicationsMenu}
-            getPopupContainer={portalGetPopupContainer}
-          >
-            <Button type="text" className={styles.applicationsTrigger}>
+          <Dropdown menu={applicationsMenu}>
+            <div className={styles.applicationsTrigger}>
               {originalT("talent_details.applications_count", {
                 count: talentsOfCandidate.length,
               })}{" "}
               <DownOutlined className={styles.applicationsChevron} />
-            </Button>
+            </div>
           </Dropdown>
         </div>
 
@@ -851,10 +804,7 @@ function AtsTalentDetailV2026ViewBase() {
                   Closed
                 </span>
               )}
-              <Tooltip
-                title="Open job"
-                getPopupContainer={portalGetPopupContainer}
-              >
+              <Tooltip title="Open job">
                 <Icon
                   icon={<Link2 />}
                   className={styles.jobTitleLinkIcon}
@@ -876,16 +826,12 @@ function AtsTalentDetailV2026ViewBase() {
 
             <div className={styles.actionsRow}>
               <div className={styles.actionsRowLeft}>
-                <Tooltip
-                  title="Move Stage"
-                  getPopupContainer={portalGetPopupContainer}
-                >
+                <Tooltip title="Move Stage">
                   <Dropdown
                     menu={{
                       items: stageMenuItems,
                       onClick: ({ key }) => handleMoveStageTo(key),
                     }}
-                    getPopupContainer={portalGetPopupContainer}
                   >
                     <Button>
                       {currentStageName} <DownOutlined />
@@ -901,7 +847,6 @@ function AtsTalentDetailV2026ViewBase() {
                       ? "To restore this candidate, move them to another Stage"
                       : undefined
                   }
-                  getPopupContainer={portalGetPopupContainer}
                 >
                   <span>
                     <Button
@@ -1335,7 +1280,7 @@ function AtsTalentDetailV2026ViewBase() {
       <TalentEvaluateFeedbackModal
         open={openEvaluateFeedbackReason}
         onOk={(value) => {
-          void updateTalentEvaluateFeedbackReason(value);
+          updateTalentEvaluateFeedbackReason(value);
           setOpenEvaluateFeedbackReason(false);
         }}
         onCancel={() => setOpenEvaluateFeedbackReason(false)}

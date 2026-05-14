@@ -59,6 +59,7 @@ const EvaluateFeedbackConversation = (props: IProps) => {
           setConformModalOpen(false);
           openConversation();
         }}
+        zIndex={10000}
         okText="Yes, start chat with Viona"
         cancelText="No, just submit feedback"
         wrapClassName={styles.evaluateFeedbackConversationModal}
