@@ -13,6 +13,7 @@ import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import { getEvaluateResultLevel } from "@/utils";
 import { LogisticsFitKnownKeys, SkillsFitKnownKeys } from "@/utils/consts";
 import { Tabs } from "antd";
+import newStyles from "./style.module.less";
 
 const styles = legacyStyles;
 
@@ -240,7 +241,60 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
         ]}
       />
       <div style={{ flex: 1, overflow: "auto" }} id="scroll-container">
-        <div id="requiredQuestions-section"></div>
+        <div
+          className={newStyles.requiredQuestionsSection}
+          id="requiredQuestions-section"
+        >
+          <div className={newStyles.requiredQuestionsCard}>
+            <div className={newStyles.requiredQuestionsHeaderRow}>
+              <div
+                className={classnames(
+                  newStyles.requiredQuestionsHeading,
+                  styles.bluePoint,
+                )}
+              >
+                Required Questions
+              </div>
+            </div>
+            {(report.hiring_manager_questions ?? []).length > 0 ? (
+              (report.hiring_manager_questions ?? []).map((item, index) => (
+                <div
+                  key={index}
+                  className={newStyles.hiringManagerQuestionBlock}
+                >
+                  <div className={newStyles.hiringManagerQuestionRow}>
+                    <span className={newStyles.hiringManagerQuestionIndex}>
+                      Q{index + 1}
+                    </span>
+                    <div className={newStyles.hiringManagerQuestionText}>
+                      {item.question}
+                    </div>
+                  </div>
+                  <div className={newStyles.responseContextBox}>
+                    <div className={newStyles.responseContextLabel}>
+                      Response Context
+                    </div>
+                    <div className={newStyles.responseContextBody}>
+                      {item.response_context || "—"}
+                    </div>
+                  </div>
+                  <div className={newStyles.candidateAnswerBox}>
+                    <div className={newStyles.candidateAnswerLabel}>
+                      Candidate Answer
+                    </div>
+                    <div className={classnames(newStyles.candidateAnswerBody)}>
+                      {item.candidate_answer}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={newStyles.requiredQuestionsEmpty}>
+                No required questions for this evaluation.
+              </div>
+            )}
+          </div>
+        </div>
         <div className={styles.evalSummaryCard} id="evaluationSummary-section">
           <div
             className={classnames(

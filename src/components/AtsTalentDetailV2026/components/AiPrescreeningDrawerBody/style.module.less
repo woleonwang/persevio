@@ -1,0 +1,101 @@
+@import "@/mixin.module.less";
+
+.requiredQuestionsSection {
+  padding: 0 16px 8px;
+}
+
+.requiredQuestionsCard {
+  padding-bottom: 8px;
+}
+
+.requiredQuestionsHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.requiredQuestionsHeading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f3137;
+}
+
+.hiringManagerQuestionBlock + .hiringManagerQuestionBlock {
+  margin-top: 20px;
+}
+
+.hiringManagerQuestionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.hiringManagerQuestionIndex {
+  width: 28px;
+  height: 24px;
+  border-radius: 6px 6px 0 6px;
+  background: @primary-color;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hiringManagerQuestionText {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f3137;
+  line-height: 1.45;
+}
+
+.responseContextBox {
+  background: @page-bg;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.responseContextLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: @text-secondary;
+  margin-bottom: 6px;
+}
+
+.responseContextBody {
+  font-size: 14px;
+  color: @text-secondary;
+  white-space: pre-wrap;
+}
+
+.candidateAnswerBox {
+  background: @primary-bg;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.candidateAnswerLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: @primary-color;
+  margin-bottom: 6px;
+}
+
+.candidateAnswerBody {
+  font-size: 14px;
+  color: rgba(129, 143, 166, 1);
+  white-space: pre-wrap;
+}
+
+.requiredQuestionsEmpty {
+  font-size: 13px;
+  color: #999;
+  padding: 20px 8px 12px;
+  text-align: center;
+}

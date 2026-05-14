@@ -962,6 +962,14 @@ type TReport = {
     };
   };
 
+  hiring_manager_questions?:
+    | {
+        question: string;
+        response_context: string;
+        candidate_answer: string | null;
+      }[]
+    | null;
+
   requirements: {
     level: "p0" | "p1" | "p2";
     description: string;
