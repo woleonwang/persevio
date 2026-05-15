@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { AudioOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import classnames from "classnames";
+import { v4 as uuidv4 } from "uuid";
 
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import Pause from "@/assets/icons/pause";
@@ -22,8 +23,14 @@ interface IProps {
 }
 
 const RichTextWithVoice: React.FC<IProps> = (props) => {
-  const { value, onChange, minHeight = 200, style, className, autoFocus } =
-    props;
+  const {
+    value,
+    onChange,
+    minHeight = 200,
+    style,
+    className,
+    autoFocus,
+  } = props;
   const editorRef = useRef<MDXEditorMethods | null>(null);
   const editorWrapRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +41,17 @@ const RichTextWithVoice: React.FC<IProps> = (props) => {
     }, 120);
     return () => window.clearTimeout(id);
   }, [autoFocus]);
+
+  useEffect(() => {
+    const handleClick = () => {
+      editorRef.current?.focus?.();
+    };
+    editorWrapRef.current?.addEventListener("click", handleClick);
+
+    return () => {
+      editorWrapRef.current?.removeEventListener("click", handleClick);
+    };
+  }, []);
 
   const {
     startTranscription,

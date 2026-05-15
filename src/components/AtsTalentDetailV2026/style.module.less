@@ -238,8 +238,8 @@
   break-inside: avoid;
   padding: 16px 16px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(242, 242, 242, 1);
-  background: #fff;
+  border: 1px solid #e3ecf9;
+  background: #f7f9ff;
   margin-bottom: 16px;
   transition: box-shadow 0.2s ease;
   display: flex;
@@ -274,6 +274,7 @@
     height: 74px;
     border-radius: 50%;
     background: linear-gradient(180deg, #fafafd 0%, #e8f1fe 100%);
+    border: 1px solid #e3ecf9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -551,6 +552,32 @@
   color: #9ca3af;
 }
 
+.advanceBadge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #d1fae5;
+  background-color: #ecfdf5;
+}
+
+.advanceYes {
+  color: @green-color;
+  background-color: rgba(242, 255, 234, 1);
+  border-color: rgba(38, 188, 93, 0.2);
+}
+
+.advanceHold {
+  color: #b45309;
+  border-color: #fef3c7;
+  background-color: #fffbeb;
+}
+
+.advanceNo {
+  color: #991b1b;
+  border-color: #fee2e2;
+  background-color: #fef2f2;
+}
+
 .addFeedbackModal {
   display: flex;
   flex-direction: column;
@@ -614,7 +641,7 @@
 .activityLine {
   flex: 1;
   width: 2px;
-  background: #e5e7eb;
+  background: #e8f0ff;
 }
 
 .activityContent {

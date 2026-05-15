@@ -5,6 +5,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  :global {
+    .mdxeditor-root-contenteditable {
+      flex: auto;
+    }
+  }
 }
 
 .editorWrap {

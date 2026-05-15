@@ -661,10 +661,18 @@ function AtsTalentDetailV2026ViewBase() {
           </div>
         </div>
 
-        <div className={styles.leftScroll}>
+        <div className={styles.leftScroll} id="left-scroll-container">
           {resumeExpanded && (
             <div className={styles.floatingResumeCta}>
-              <Button onClick={() => setResumeExpanded(false)}>
+              <Button
+                onClick={() => {
+                  setResumeExpanded(false);
+                  document.getElementById("left-scroll-container")?.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                  });
+                }}
+              >
                 Collapse Resume <UpOutlined style={{ color: "#c1c1c1" }} />
               </Button>
             </div>
@@ -1001,11 +1009,15 @@ function AtsTalentDetailV2026ViewBase() {
                                 <MarkdownContainer content={record.content} />
                                 <div style={{ marginTop: 8 }}>
                                   <span
-                                    style={{
-                                      fontSize: 12,
-                                      fontWeight: 600,
-                                      color: "#6b7280",
-                                    }}
+                                    className={classnames(
+                                      styles.advanceBadge,
+                                      record.advance_status === "advance" &&
+                                        styles.advanceYes,
+                                      record.advance_status === "hold" &&
+                                        styles.advanceHold,
+                                      record.advance_status === "reject" &&
+                                        styles.advanceNo,
+                                    )}
                                   >
                                     {record.advance_status === "advance"
                                       ? "Advance"
@@ -1037,6 +1049,18 @@ function AtsTalentDetailV2026ViewBase() {
 
             {rightTab === "notes" && (
               <div>
+                <Button
+                  block
+                  variant="outlined"
+                  color="primary"
+                  style={{ marginTop: 12, height: 40 }}
+                  onClick={() => {
+                    setNewNoteContent("");
+                    setIsAddNoteModalOpen(true);
+                  }}
+                >
+                  + Add Note
+                </Button>
                 {notes.map((note) => (
                   <div key={note.id} className={styles.feedbackCard}>
                     <div className={styles.feedbackCardMeta}>
@@ -1053,19 +1077,6 @@ function AtsTalentDetailV2026ViewBase() {
                     <MarkdownContainer content={note.content} />
                   </div>
                 ))}
-
-                <Button
-                  block
-                  variant="outlined"
-                  color="primary"
-                  style={{ marginTop: 12, height: 40 }}
-                  onClick={() => {
-                    setNewNoteContent("");
-                    setIsAddNoteModalOpen(true);
-                  }}
-                >
-                  + Add Note
-                </Button>
               </div>
             )}
 
@@ -1121,7 +1132,23 @@ function AtsTalentDetailV2026ViewBase() {
       </div>
 
       <Drawer
-        title="Round 0: AI Prescreening"
+        title={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>Round 0: AI Prescreening</div>
+            <div>
+              <EvaluateResultBadge
+                withTitle
+                result={getEvaluateResultLevel(report)}
+              />
+            </div>
+          </div>
+        }
         placement="right"
         width={880}
         open={aiDrawerOpen}
@@ -1182,6 +1209,7 @@ function AtsTalentDetailV2026ViewBase() {
                 onChange={setNewFeedbackContent}
                 minHeight={300}
                 autoFocus={true}
+                style={{ maxHeight: 400 }}
               />
             </div>
           </div>
@@ -1239,6 +1267,7 @@ function AtsTalentDetailV2026ViewBase() {
                 onChange={setNewNoteContent}
                 minHeight={300}
                 autoFocus={true}
+                style={{ maxHeight: 400 }}
               />
             </div>
           </div>
