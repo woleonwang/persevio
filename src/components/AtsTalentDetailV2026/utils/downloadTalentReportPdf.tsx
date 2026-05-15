@@ -159,6 +159,7 @@ export async function downloadTalentReportPdf({
   };
 
   const areasToProbe = report.areas_to_probe_further ?? [];
+  const hiringManagerQuestions = report.hiring_manager_questions ?? [];
 
   const pdfHtml = renderToStaticMarkup(
     <main className={styles.pdfPage}>
@@ -267,6 +268,57 @@ export async function downloadTalentReportPdf({
           </div>
 
           <div className={styles.pdfReportBody}>
+            <div className={styles.pdfRequiredQuestionsWrap}>
+              <div className={styles.pdfSubsectionTitle}>
+                <span className={styles.pdfDot} aria-hidden />
+                <span>Required Questions</span>
+              </div>
+              <div className={styles.pdfRequiredQuestionsCard}>
+                {hiringManagerQuestions.length > 0 ? (
+                  hiringManagerQuestions.map((item, index) => (
+                    <div
+                      key={index}
+                      className={classnames(
+                        styles.pdfHmQuestionBlock,
+                        styles.avoidBreak,
+                      )}
+                    >
+                      <div className={styles.pdfHmQuestionRow}>
+                        <span className={styles.pdfHmQuestionIndex}>
+                          Q{index + 1}
+                        </span>
+                        <div className={styles.pdfHmQuestionText}>
+                          {item.question}
+                        </div>
+                      </div>
+                      <div className={styles.pdfResponseContextBox}>
+                        <div className={styles.pdfResponseContextLabel}>
+                          Response Context
+                        </div>
+                        <div className={styles.pdfResponseContextBody}>
+                          {item.response_context?.trim()
+                            ? item.response_context
+                            : "—"}
+                        </div>
+                      </div>
+                      <div className={styles.pdfCandidateAnswerBox}>
+                        <div className={styles.pdfCandidateAnswerLabel}>
+                          Candidate Answer
+                        </div>
+                        <div className={styles.pdfCandidateAnswerBody}>
+                          {item.candidate_answer ?? ""}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.pdfRequiredQuestionsEmpty}>
+                    No required questions for this evaluation.
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className={styles.pdfSubsectionTitle}>
               <span className={styles.pdfDot} aria-hidden />
               <span>Evaluation Summary</span>
