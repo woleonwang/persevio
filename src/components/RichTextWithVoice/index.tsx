@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AudioOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import classnames from "classnames";
-import { v4 as uuidv4 } from "uuid";
 
 import useAssemblyOffline from "@/hooks/useAssemblyOffline";
 import Pause from "@/assets/icons/pause";
