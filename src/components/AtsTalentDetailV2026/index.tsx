@@ -1158,6 +1158,7 @@ function AtsTalentDetailV2026ViewBase() {
         onCancel={closeAddFeedbackModal}
         onOk={() => submitAddFeedbackFromModal()}
         okText="Save"
+        destroyOnClose
       >
         <div className={styles.addFeedbackModal}>
           {!addFeedbackForInterviewId && (
@@ -1180,6 +1181,7 @@ function AtsTalentDetailV2026ViewBase() {
                 value={newFeedbackContent}
                 onChange={setNewFeedbackContent}
                 minHeight={300}
+                autoFocus={true}
               />
             </div>
           </div>
@@ -1226,6 +1228,7 @@ function AtsTalentDetailV2026ViewBase() {
           }
         }}
         okText="Save"
+        destroyOnClose
       >
         <div className={styles.addFeedbackModal}>
           <div className={styles.addFeedbackField}>
@@ -1235,6 +1238,7 @@ function AtsTalentDetailV2026ViewBase() {
                 value={newNoteContent}
                 onChange={setNewNoteContent}
                 minHeight={300}
+                autoFocus={true}
               />
             </div>
           </div>
