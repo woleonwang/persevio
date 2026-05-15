@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Dropdown, Modal, Popover, Select, Table, message } from "antd";
+import {
+  Button,
+  Dropdown,
+  Modal,
+  Popover,
+  Select,
+  Table,
+  Tooltip,
+  message,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -417,9 +426,9 @@ const ListModeTable = ({
           record,
           <div className={styles.recruiterChipWrap}>
             {rows.map((row) => (
-              <span key={row.staffId} className={styles.personChip}>
-                {row.name}
-              </span>
+              <Tooltip key={row.staffId} title={row.name}>
+                <span className={styles.personChip}>{row.name}</span>
+              </Tooltip>
             ))}
           </div>,
         );

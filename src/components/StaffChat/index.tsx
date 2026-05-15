@@ -80,6 +80,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [profile, setProfile] = useState<ISettings>();
+  const [conversationFinished, setConversationFinished] = useState(false);
 
   // 表单抽屉
   const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
@@ -638,6 +639,15 @@ const StaffChat: React.FC<IProps> = (props) => {
         setShowJrdTargetCandidateProfileForm(true);
         messageListScrollTopRef.current =
           document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
+      },
+      autoTrigger: true,
+    },
+
+    {
+      key: "refined-jrd",
+      style: "hidden",
+      handler: () => {
+        setConversationFinished(true);
       },
       autoTrigger: true,
     },
@@ -1351,9 +1361,10 @@ const StaffChat: React.FC<IProps> = (props) => {
                   onSubmit={(value, options) => {
                     sendMessage(value, options);
                   }}
-                  isLoading={isLoading}
+                  isLoading={isLoading || conversationFinished}
                   disabledVoiceInput={
                     isLoading ||
+                    conversationFinished ||
                     showJobRequirementFormDrawer ||
                     selectOptionsModalOpen
                   }

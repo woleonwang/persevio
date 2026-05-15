@@ -75,7 +75,7 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
         }
       }}
       title={tDetail("reject_candidate_title")}
-      width={800}
+      width={850}
       centered
       okButtonProps={{
         disabled: !rejectReasonType,

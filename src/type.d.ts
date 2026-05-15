@@ -850,7 +850,7 @@ type TSupportTag = {
     handler: () => void;
   }[];
   autoTrigger?: boolean;
-  style?: "inline-button" | "block-button" | "button-with-text";
+  style?: "inline-button" | "block-button" | "button-with-text" | "hidden";
 };
 
 type TLinkedinProfile = {

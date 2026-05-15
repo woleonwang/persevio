@@ -1,4 +1,13 @@
-import { Button, Empty, Input, message, Modal, Select, Table } from "antd";
+import {
+  Button,
+  Empty,
+  Input,
+  message,
+  Modal,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -76,7 +85,15 @@ const JobList = () => {
       dataIndex: "staff_id",
       render: (_: number, record: IJobListItem) => {
         const name = staffs.find((staff) => staff.id === record.staff_id)?.name;
-        return name ? <span className={styles.personChip}>{name}</span> : "-";
+        return name ? (
+          <div className={styles.chipWrap}>
+            <Tooltip title={name}>
+              <span className={styles.personChip}>{name}</span>
+            </Tooltip>
+          </div>
+        ) : (
+          "-"
+        );
       },
     },
     {
@@ -89,9 +106,9 @@ const JobList = () => {
         return (
           <div className={styles.chipWrap}>
             {rows.map((row) => (
-              <span key={row.staffId} className={styles.personChip}>
-                {row.name}
-              </span>
+              <Tooltip key={row.staffId} title={row.name}>
+                <span className={styles.personChip}>{row.name}</span>
+              </Tooltip>
             ))}
           </div>
         );

@@ -25,7 +25,7 @@ interface IProps {
         before_text?: string;
         after_text?: string;
       };
-    }
+    },
   ) => void;
   isLoading?: boolean;
   disabledVoiceInput?: boolean;
@@ -127,6 +127,7 @@ const ChatInputArea = (props: IProps) => {
                     minRows: 1,
                     maxRows: 6,
                   }}
+                  disabled={isLoading}
                 />
                 <div
                   className={classnames(styles.sendButton, {
@@ -267,6 +268,7 @@ const ChatInputArea = (props: IProps) => {
                   minRows: 1,
                   maxRows: 6,
                 }}
+                disabled={isLoading}
               />
               <div
                 className={classnames(styles.sendButton, {
@@ -297,8 +299,8 @@ const ChatInputArea = (props: IProps) => {
                 {isRecording
                   ? t("recording")
                   : isTranscribing
-                  ? t("transcribing")
-                  : null}
+                    ? t("transcribing")
+                    : null}
               </div>
               {isRecordingOrTranscribing && (
                 <div

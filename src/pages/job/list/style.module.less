@@ -62,7 +62,7 @@
 }
 
 .personChip {
-  display: inline-flex;
+  display: inline-block;
   align-items: center;
   padding: 2px 8px;
   border-radius: 100px;
@@ -70,7 +70,10 @@
   font-size: 13px;
   color: #262626;
   line-height: 1.4;
-  max-width: 100%;
+  white-space: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chipWrap {

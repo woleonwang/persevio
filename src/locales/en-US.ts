@@ -2047,7 +2047,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     reject_reason_required: "Please enter reason",
     reject_reason_type_label: "Reason",
     reject_reason_not_shortlisted: "Not Shortlisted",
-    reject_reason_failed_interview: "Failed Interview",
+    reject_reason_failed_interview: "Did Not Pass Interview",
     reject_reason_headcount_freeze: "Headcount Freeze",
     reject_reason_candidate_withdrew: "Candidate Withdrew",
     reject_reason_others: "Others",
