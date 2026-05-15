@@ -789,6 +789,7 @@ function AtsTalentDetailV2026ViewBase() {
         <div className={styles.jobsAppliedContent}>
           <div
             style={{
+              borderRadius: "12px 12px 0 0",
               padding: "24px 20px",
               backgroundColor: "rgba(247, 249, 255, 1)",
               border: "1px solid rgba(227, 236, 249, 1)",
