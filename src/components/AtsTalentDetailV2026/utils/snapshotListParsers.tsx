@@ -209,6 +209,6 @@ export const parseTotalYearsOfExperience = (
   years: string;
   duration: string;
 } => {
-  const [years, duration] = text.split(",").map((s) => s.trim());
+  const [years, duration] = (text ?? "").split(",").map((s) => s.trim());
   return { years: years ?? "", duration: duration ?? "" };
 };
