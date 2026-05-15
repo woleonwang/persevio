@@ -628,7 +628,10 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
                 </div>
               </div>
             </div>
-            <div className={styles.aiSummaryRight}>
+            <div
+              className={styles.aiSummaryRight}
+              style={{ maxHeight: "fit-content" }}
+            >
               <div className={classnames(styles.aiTranscriptHeader)}>
                 AI Interview Transcript
               </div>

@@ -27,6 +27,7 @@ interface IProps {
   ) => React.ReactNode;
   showCustomThinkingText?: () => string;
   streamingMessage?: string;
+  preview?: boolean;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -102,6 +103,7 @@ const ChatMessageList = (props: IProps) => {
     showCustomThinkingText,
     fontSize = 16,
     streamingMessage,
+    preview = false,
   } = props;
 
   const loadingStartedAtRef = useRef<Dayjs>();
@@ -240,8 +242,9 @@ const ChatMessageList = (props: IProps) => {
               style={{
                 ...(isLast
                   ? {
-                      minHeight:
-                        (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
+                      minHeight: preview
+                        ? 0
+                        : (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
                       alignItems: "flex-start",
                     }
                   : {}),

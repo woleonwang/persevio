@@ -364,9 +364,7 @@ function AtsTalentDetailV2026ViewBase() {
         >
           {interviews.length === 0
             ? t("schedule_interview")
-            : isInterviewScheduled
-              ? "Interview Information"
-              : t("awaiting_candidate_confirm")}
+            : "Interview Information"}
         </Button>
       </span>
     </Tooltip>
