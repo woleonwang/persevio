@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
 import { TreeSelect } from "antd";
 import type { TreeDataNode, TreeSelectProps } from "antd";
 
 import { Get } from "@/utils/request";
+import globalStore from "@/store/global";
 import {
-  buildOrgNodesTreeSelectData,
+  buildOrgNodesTreeData,
   collectTreeExpandKeysForVisibleLevels,
   orgNodesToIdTitleMap,
 } from "@/utils/orgNodes";
@@ -18,7 +20,7 @@ export type OrgNodeTreeSelectProps = Omit<
   onCatalogLoaded?: (nodes: IOrgNode[]) => void;
 };
 
-const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
+const OrgNodeTreeSelect = observer((props: OrgNodeTreeSelectProps) => {
   const {
     multiple,
     onCatalogLoaded,
@@ -29,34 +31,48 @@ const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
     ...rest
   } = props;
 
+  const { staffRole, visibleOrgNodeIds, orgNodeId } = globalStore;
+
   const [loading, setLoading] = useState(true);
-  const [treeData, setTreeData] = useState<TreeSelectProps["treeData"]>([]);
+  const [orgNodes, setOrgNodes] = useState<IOrgNode[]>([]);
   const [treeExpandedKeys, setTreeExpandedKeys] = useState<number[]>([]);
-  const hasAppliedDefaultExpandRef = useRef(false);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      hasAppliedDefaultExpandRef.current = false;
       const res = await Get<{ org_nodes: IOrgNode[] }>("/api/org_nodes");
       if (res.code === 0 && res.data?.org_nodes?.length) {
         const nodes = res.data.org_nodes;
-        const treeData = buildOrgNodesTreeSelectData(nodes);
-        const expandedKeys = collectTreeExpandKeysForVisibleLevels(
-          treeData as unknown as TreeDataNode[],
-        );
-        setTreeData(treeData);
+        setOrgNodes(nodes);
         onCatalogLoaded?.(nodes);
-        setTreeExpandedKeys(expandedKeys);
       } else {
-        setTreeData([]);
+        setOrgNodes([]);
         onCatalogLoaded?.([]);
       }
       setLoading(false);
     })();
   }, []);
 
-  console.log("treeExpandedKeys", treeExpandedKeys);
+  const { treeData } = useMemo(() => {
+    if (!orgNodes.length) return { treeData: [] };
+
+    if (staffRole === "recruiter") {
+      return buildOrgNodesTreeData(orgNodes, [orgNodeId, ...visibleOrgNodeIds]);
+    } else {
+      return buildOrgNodesTreeData(orgNodes);
+    }
+  }, [orgNodes, staffRole, orgNodeId, visibleOrgNodeIds]);
+
+  useEffect(() => {
+    if (!treeData.length) {
+      setTreeExpandedKeys([]);
+      return;
+    }
+    setTreeExpandedKeys(
+      collectTreeExpandKeysForVisibleLevels(treeData as TreeDataNode[]),
+    );
+  }, [treeData]);
+
   return (
     <TreeSelect
       allowClear={allowClear}
@@ -66,7 +82,6 @@ const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
       treeData={treeData}
       treeExpandedKeys={treeExpandedKeys}
       onTreeExpand={(keys) => {
-        console.log("keys", keys);
         setTreeExpandedKeys(Array.from(new Set(keys as number[])));
       }}
       multiple={multiple}
@@ -77,7 +92,7 @@ const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
       {...rest}
     />
   );
-};
+});
 
 export default OrgNodeTreeSelect;
 

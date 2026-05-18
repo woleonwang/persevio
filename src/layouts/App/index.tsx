@@ -218,7 +218,7 @@ const AppLayout = () => {
         setEmail(data.email);
         setOrgNodeId(data.org_node_id);
         setMode(data.company_mode);
-        setVisibleOrgNodeIds(data.visible_org_node_ids);
+        setVisibleOrgNodeIds(data.visible_org_node_ids ?? []);
       }
     } else {
       navigate(`/signin?redirect=${getCurrentUrl()}`);

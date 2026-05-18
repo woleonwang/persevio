@@ -25,7 +25,10 @@ export function collectTreeExpandKeysForVisibleLevels(
 }
 
 /** 将扁平 org_nodes 转为 antd Tree / TreeSelect 用的树；根节点 parent_id 为 null */
-export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
+export function buildOrgNodesTreeData(
+  nodes: IOrgNode[],
+  visibleOrgNodeIds?: number[],
+): {
   root: IOrgNode | undefined;
   treeData: TreeDataNode[];
 } {
@@ -33,6 +36,11 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
   if (!root) {
     return { root: undefined, treeData: [] };
   }
+
+  const { displayIds, selectableIds } = buildRecruiterOrgNodeScope(
+    nodes,
+    visibleOrgNodeIds,
+  );
 
   const byParent = new Map<number | null, IOrgNode[]>();
   for (const n of nodes) {
@@ -46,11 +54,15 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
 
   const build = (parentId: number): TreeDataNode[] => {
     const list = byParent.get(parentId) ?? [];
-    return list.map((n) => ({
-      title: n.name,
-      key: n.id,
-      children: build(n.id),
-    }));
+    return list
+      .map((n) => ({
+        title: n.name,
+        key: n.id,
+        value: n.id,
+        children: build(n.id),
+        disabled: !selectableIds.has(n.id),
+      }))
+      .filter((n) => displayIds.has(n.key));
   };
 
   const treeData: TreeDataNode[] = [
@@ -58,6 +70,7 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
       title: root.name,
       key: root.id,
       children: build(root.id),
+      disabled: !selectableIds.has(root.id),
     },
   ];
 
@@ -66,19 +79,6 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
 
 export function orgNodesToIdTitleMap(nodes: IOrgNode[]): Map<number, string> {
   return new Map(nodes.map((n) => [n.id, n.name]));
-}
-
-/** 从子树收集节点 id（含根） */
-function collectSubtreeIds(node: TreeDataNode): Set<number> {
-  const ids = new Set<number>();
-  const id = Number(node.key);
-  if (!Number.isNaN(id)) ids.add(id);
-  for (const child of (node.children as TreeDataNode[] | undefined) ?? []) {
-    for (const childId of collectSubtreeIds(child)) {
-      ids.add(childId);
-    }
-  }
-  return ids;
 }
 
 /** 选中节点及其所有后代节点 id（含自身） */
@@ -123,16 +123,88 @@ export function findParentKey(
   return null;
 }
 
-/** TreeSelect：含 value 字段供选择 */
-export function buildOrgNodesTreeSelectData(nodes: IOrgNode[]) {
-  const { treeData } = buildOrgNodesTreeData(nodes);
-  const addValue = (data: TreeDataNode[]): TreeDataNode[] =>
-    data.map((n) => ({
-      ...n,
-      value: Number(n.key),
-      children: n.children?.length
-        ? addValue(n.children as TreeDataNode[])
-        : undefined,
-    }));
-  return addValue(treeData);
+/** 收集某节点的所有祖先 id（不含自身） */
+function collectAncestorOrgNodeIds(
+  nodeId: number,
+  nodes: IOrgNode[],
+): number[] {
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const ancestorIds: number[] = [];
+  let current = byId.get(nodeId);
+  while (current?.parent_id != null) {
+    ancestorIds.push(current.parent_id);
+    current = byId.get(current.parent_id);
+  }
+  return ancestorIds;
+}
+
+/** 收集某节点的所有后代 id（不含自身） */
+function collectDescendantOrgNodeIdsFromFlat(
+  nodeId: number,
+  nodes: IOrgNode[],
+): number[] {
+  const childrenByParent = new Map<number, IOrgNode[]>();
+  for (const n of nodes) {
+    if (n.parent_id == null) continue;
+    if (!childrenByParent.has(n.parent_id)) {
+      childrenByParent.set(n.parent_id, []);
+    }
+    childrenByParent.get(n.parent_id)!.push(n);
+  }
+
+  const descendantIds: number[] = [];
+  const stack = [nodeId];
+  while (stack.length) {
+    const id = stack.pop()!;
+    for (const child of childrenByParent.get(id) ?? []) {
+      descendantIds.push(child.id);
+      stack.push(child.id);
+    }
+  }
+  return descendantIds;
+}
+
+/** 从子树收集节点 id（含根） */
+function collectSubtreeIds(node: TreeDataNode): Set<number> {
+  const ids = new Set<number>();
+  const id = Number(node.key);
+  if (!Number.isNaN(id)) ids.add(id);
+  for (const child of (node.children as TreeDataNode[] | undefined) ?? []) {
+    for (const childId of collectSubtreeIds(child)) {
+      ids.add(childId);
+    }
+  }
+  return ids;
+}
+
+/**
+ * recruiter 范围：
+ * - 展示：所在部门 + 可见部门 + 各自全部子部门 + 各自全部祖先
+ * - 可选：所在部门 + 可见部门 + 各自全部子部门（祖先仅作路径展示则禁用）
+ */
+function buildRecruiterOrgNodeScope(
+  nodes: IOrgNode[],
+  visibleOrgNodeIds?: number[],
+): { displayIds: Set<number>; selectableIds: Set<number> } {
+  const displayIds = new Set<number>();
+  const selectableIds = new Set<number>();
+  const seeds = Array.from(new Set(visibleOrgNodeIds));
+
+  for (const seedId of seeds) {
+    selectableIds.add(seedId);
+    displayIds.add(seedId);
+    for (const descendantId of collectDescendantOrgNodeIdsFromFlat(
+      seedId,
+      nodes,
+    )) {
+      selectableIds.add(descendantId);
+      displayIds.add(descendantId);
+    }
+
+    for (const ancestorId of collectAncestorOrgNodeIds(seedId, nodes)) {
+      displayIds.add(ancestorId);
+    }
+  }
+
+  return { displayIds, selectableIds };
 }
