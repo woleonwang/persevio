@@ -36,6 +36,7 @@ import NumberRange from "./components/NumberRange";
 
 import { TRoleOverviewType } from "../../type";
 import styles from "./style.module.less";
+import globalStore from "@/store/global";
 
 type TQuestionGroup = {
   key: TRoleOverviewType;
@@ -119,8 +120,15 @@ const JobRequirementForm = (props: IProps) => {
 
   const { t: originalT } = useTranslation();
 
+  const { orgNodeId } = globalStore;
+
   useEffect(() => {
     form.resetFields();
+    if (orgNodeId) {
+      form.setFieldsValue({
+        org_node_id: orgNodeId,
+      });
+    }
     forceUpdate();
   }, [formType, form]);
 
@@ -178,7 +186,7 @@ const JobRequirementForm = (props: IProps) => {
           key: "org_node_id",
           type: "org_node",
           question: t("org_node_question"),
-          required: false,
+          required: true,
         },
         {
           key: "headcount_number",

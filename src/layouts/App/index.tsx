@@ -60,6 +60,7 @@ const AppLayout = () => {
     setMenuCollapse,
     setStaffRole,
     setIsAdmin,
+    setOrgNodeId,
     setEmail,
     setAntdLocale,
     fetchJobs,
@@ -214,6 +215,7 @@ const AppLayout = () => {
         setStaffRole(data.role);
         setIsAdmin(data.is_admin === 1 || data.is_admin === 2);
         setEmail(data.email);
+        setOrgNodeId(data.org_node_id);
         setMode(data.company_mode);
       }
     } else {

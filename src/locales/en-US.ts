@@ -685,9 +685,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
   job_requirement_form: {
     tips: "You <b style='color: black'>don't have to answer every question below</b>, but more information from you will help me form a more accurate initial understanding of the role, which leads to a more productive conversation.",
     basic_information: "Basic information",
-    org_node_question:
-      "Which organization / department does this role belong to?",
-    org_node_placeholder: "Select org node (optional)",
+    org_node_question: "Which team does this role belong to?",
+    org_node_placeholder: "Select org node",
     org_node_save_failed:
       "Could not save the job's org assignment. Please try again.",
 

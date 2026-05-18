@@ -25,6 +25,8 @@ class GlobalStore {
 
   email = "";
 
+  orgNodeId = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -75,6 +77,10 @@ class GlobalStore {
 
   setEmail = (email: string) => {
     this.email = email;
+  };
+
+  setOrgNodeId = (orgNodeId: number) => {
+    this.orgNodeId = orgNodeId;
   };
 
   setUseNewTalentDetailsPage = (value: boolean) => {
