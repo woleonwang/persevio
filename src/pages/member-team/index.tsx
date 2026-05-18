@@ -128,13 +128,9 @@ const MemberTeamPage = () => {
     [orgNodes],
   );
 
-  const { t: originalT } = useTranslation();
-  const tOrg = (key: string, params?: Record<string, string>) =>
-    originalT(`org_chart.${key}`, params);
-  const tMember = (key: string, params?: Record<string, string>) =>
+  const { t: originalT, i18n } = useTranslation();
+  const t = (key: string, params?: Record<string, string>) =>
     originalT(`member_team.${key}`, params);
-  const tStaff = (key: string, params?: Record<string, string>) =>
-    originalT(`staffs.${key}`, params);
 
   useEffect(() => {
     fetchNodes();
@@ -180,8 +176,8 @@ const MemberTeamPage = () => {
 
   const scopedOrgNodeIds = useMemo(() => {
     if (selectedNodeId == null) return null;
-    return collectDescendantOrgNodeIds(selectedNodeId, orgNodes);
-  }, [selectedNodeId, orgNodes]);
+    return collectDescendantOrgNodeIds(selectedNodeId, treeData as DataNode[]);
+  }, [selectedNodeId, treeData]);
 
   const membersForSelectedScope = useMemo(() => {
     if (scopedOrgNodeIds == null) return [];
@@ -216,7 +212,7 @@ const MemberTeamPage = () => {
 
     if (dragKey === dropKey) return;
     if (String(dragKey) === String(rootId)) {
-      message.warning(tOrg("cannotMoveRoot"));
+      message.warning(t("cannotMoveRoot"));
       return;
     }
 
@@ -261,7 +257,7 @@ const MemberTeamPage = () => {
         sort_order: dropIndex,
       });
       if (code === 0) {
-        message.success(tOrg("updateSuccess"));
+        message.success(t("teamUpdateSuccess"));
         await fetchNodes();
         const keysToExpand: string[] = [];
         let curKey: string | null = String(newParentId);
@@ -274,10 +270,10 @@ const MemberTeamPage = () => {
           Array.from(new Set([...prev, ...keysToExpand])),
         );
       } else if (code === 10003) {
-        message.error(tOrg("maxDepthExceeded"));
+        message.error(t("maxDepthExceeded"));
         await fetchNodes();
       } else {
-        message.error(tOrg("updateFailed"));
+        message.error(t("teamUpdateFailed"));
         await fetchNodes();
       }
     })();
@@ -298,16 +294,16 @@ const MemberTeamPage = () => {
       parent_id: addParentId,
     });
     if (code === 0) {
-      message.success(tOrg("createSuccess"));
+      message.success(t("teamCreateSuccess"));
       setAddModalOpen(false);
       await fetchNodes();
       if (!expandedKeys.includes(String(addParentId))) {
         setExpandedKeys((prev) => [...prev, String(addParentId)]);
       }
     } else if (code === 10003) {
-      message.error(tOrg("maxDepthExceeded"));
+      message.error(t("maxDepthExceeded"));
     } else {
-      message.error(tOrg("createFailed"));
+      message.error(t("teamCreateFailed"));
     }
   };
 
@@ -325,25 +321,25 @@ const MemberTeamPage = () => {
       name,
     });
     if (code === 0) {
-      message.success(tOrg("renameSuccess"));
+      message.success(t("renameSuccess"));
       setRenameModalOpen(false);
       await fetchNodes();
     } else {
-      message.error(tOrg("renameFailed"));
+      message.error(t("renameFailed"));
     }
   };
 
   const handleDeleteNode = (id: number, title: React.ReactNode) => {
     Modal.confirm({
-      title: tOrg("deleteTitle"),
-      content: tOrg("deleteConfirm", { name: String(title) }),
+      title: t("deleteTitle"),
+      content: t("deleteConfirm", { name: String(title) }),
       onOk: async () => {
         const { code } = await Delete(`/api/org_nodes/${id}`);
         if (code === 0) {
-          message.success(tOrg("deleteSuccess"));
+          message.success(t("deleteSuccess"));
           await fetchNodes();
         } else {
-          message.error(tOrg("deleteFailed"));
+          message.error(t("deleteFailed"));
         }
       },
     });
@@ -418,14 +414,14 @@ const MemberTeamPage = () => {
   const copyToClipboard = async () => {
     if (!createdStaffInfo) return;
     const loginUrl = `${window.location.origin}/signin`;
-    const copyText = tStaff("loginInfoTemplate", {
+    const copyText = t("loginInfoTemplate", {
       loginUrl,
       name: createdStaffInfo.name,
       email: createdStaffInfo.email,
       password: createdStaffInfo.password,
     });
     await copy(copyText);
-    message.success(tStaff("copySuccess"));
+    message.success(t("copySuccess"));
   };
 
   const handleCreateMember = async () => {
@@ -461,9 +457,9 @@ const MemberTeamPage = () => {
         setIsSuccessModalVisible(true);
         await fetchStaffs();
       } else if (code === 10002) {
-        message.error(tStaff("staffExists"));
+        message.error(t("staffExists"));
       } else {
-        message.error(tStaff("createFailed"));
+        message.error(t("memberCreateFailed"));
       }
     } catch {
       // validation failed
@@ -488,11 +484,11 @@ const MemberTeamPage = () => {
 
       const { code } = await Post(`/api/staffs/${editingStaff.id}`, updateData);
       if (code === 0) {
-        message.success(tStaff("updateSuccess"));
+        message.success(t("memberUpdateSuccess"));
         handleMemberModalCancel();
         await fetchStaffs();
       } else {
-        message.error(tStaff("updateFailed"));
+        message.error(t("memberUpdateFailed"));
       }
     } catch {
       // validation failed
@@ -508,21 +504,21 @@ const MemberTeamPage = () => {
     if (code === 0) {
       message.success(
         nextStatus === "deactivated"
-          ? tStaff("deactivateSuccess")
-          : tStaff("activateSuccess"),
+          ? t("deactivateSuccess")
+          : t("activateSuccess"),
       );
       await fetchStaffs();
       return;
     }
-    message.error(tStaff("toggleStatusFailed"));
+    message.error(t("toggleStatusFailed"));
   };
 
   const showDeactivateConfirm = (record: IStaffWithAccount) => {
     Modal.confirm({
-      title: tStaff("deactivateConfirmTitle", { name: record.name }),
-      content: tStaff("deactivateConfirmDesc"),
-      okText: tStaff("deactivate"),
-      cancelText: tStaff("cancel"),
+      title: t("deactivateConfirmTitle", { name: record.name }),
+      content: t("deactivateConfirmDesc"),
+      okText: t("deactivate"),
+      cancelText: t("cancel"),
       okButtonProps: { danger: true },
       onOk: async () => {
         await handleToggleStatus(record, "deactivated");
@@ -531,48 +527,48 @@ const MemberTeamPage = () => {
   };
 
   const renderRoleLabel = (r: string) => {
-    if (r === "admin") return tStaff("admin");
-    if (r === "hiring_manager") return tStaff("hiring_manager");
-    if (r === "recruiter" || r === "normal") return tStaff("recruiter");
-    return tStaff("normal");
+    if (r === "admin") return t("admin");
+    if (r === "hiring_manager") return t("hiring_manager");
+    if (r === "recruiter" || r === "normal") return t("recruiter");
+    return t("normal");
   };
 
   const renderStatusTag = (status?: string) => {
     if (status === "deactivated") {
-      return <Tag>{tStaff("deactivated")}</Tag>;
+      return <Tag>{t("deactivated")}</Tag>;
     }
-    return <Tag color="success">{tStaff("active")}</Tag>;
+    return <Tag color="success">{t("active")}</Tag>;
   };
 
   const memberColumns: ColumnsType<IStaffWithAccount> = useMemo(
     () => [
       {
-        title: tStaff("id"),
+        title: t("id"),
         dataIndex: "id",
         key: "id",
         width: 80,
       },
       {
-        title: tStaff("name"),
+        title: t("name"),
         dataIndex: "name",
         key: "name",
         width: 120,
       },
       {
-        title: tStaff("email"),
+        title: t("email"),
         key: "email",
         width: 200,
         render: (_: unknown, row) => row.account?.username ?? "—",
       },
       {
-        title: tStaff("role"),
+        title: t("role"),
         dataIndex: "role",
         key: "role",
         width: 140,
         render: (r: string) => renderRoleLabel(r),
       },
       {
-        title: tMember("team"),
+        title: t("team"),
         key: "team",
         width: 140,
         render: (_: unknown, row) =>
@@ -581,14 +577,14 @@ const MemberTeamPage = () => {
             : "—",
       },
       {
-        title: tStaff("status"),
+        title: t("status"),
         dataIndex: "status",
         key: "status",
         width: 120,
         render: (status: string) => renderStatusTag(status),
       },
       {
-        title: tStaff("action"),
+        title: t("action"),
         key: "action",
         width: 200,
         render: (_: unknown, record) => (
@@ -598,7 +594,7 @@ const MemberTeamPage = () => {
               size="small"
               onClick={() => showEditMemberModal(record)}
             >
-              {tStaff("edit")}
+              {t("edit")}
             </Button>
             {currentUserIsAdmin &&
               record.account.username !== currentUserEmail &&
@@ -608,7 +604,7 @@ const MemberTeamPage = () => {
                   size="small"
                   onClick={() => handleToggleStatus(record, "active")}
                 >
-                  {tStaff("activate")}
+                  {t("activate")}
                 </Button>
               ) : (
                 <Button
@@ -617,14 +613,14 @@ const MemberTeamPage = () => {
                   danger
                   onClick={() => showDeactivateConfirm(record)}
                 >
-                  {tStaff("deactivate")}
+                  {t("deactivate")}
                 </Button>
               ))}
           </Space>
         ),
       },
     ],
-    [currentUserEmail, currentUserIsAdmin, orgNodeNameById, originalT],
+    [currentUserEmail, currentUserIsAdmin, orgNodeNameById, i18n.language],
   );
 
   const titleRender = (nodeData: DataNode) => {
@@ -640,7 +636,7 @@ const MemberTeamPage = () => {
         <span className={styles.treeNodeTitle}>{titleText}</span>
         <span className={styles.treeNodeActions}>
           <Space size={4}>
-            <Tooltip title={tOrg("addChild")}>
+            <Tooltip title={t("addChild")}>
               <Button
                 type="link"
                 size="small"
@@ -651,7 +647,7 @@ const MemberTeamPage = () => {
                 }}
               />
             </Tooltip>
-            <Tooltip title={tOrg("rename")}>
+            <Tooltip title={t("rename")}>
               <Button
                 type="link"
                 size="small"
@@ -663,7 +659,7 @@ const MemberTeamPage = () => {
               />
             </Tooltip>
             {!isRoot && (
-              <Tooltip title={tOrg("delete")}>
+              <Tooltip title={t("delete")}>
                 <Button
                   type="link"
                   size="small"
@@ -693,14 +689,14 @@ const MemberTeamPage = () => {
   return (
     <div className={styles.memberTeamPage}>
       <div className={styles.headerSection}>
-        <h1 className={styles.pageTitle}>{tMember("title")}</h1>
+        <h1 className={styles.pageTitle}>{t("title")}</h1>
       </div>
 
       <div className={styles.mainBody}>
         <div className={styles.treeColumn}>
           <div className={styles.treeScroll}>
             {treeData.length === 0 ? (
-              <div>{tOrg("empty")}</div>
+              <div>{t("empty")}</div>
             ) : (
               <Tree
                 draggable={
@@ -727,17 +723,15 @@ const MemberTeamPage = () => {
         </div>
 
         <div className={styles.membersColumn}>
-          <div className={styles.membersColumnHeader}>
-            {tMember("membersTitle")}
-          </div>
+          <div className={styles.membersColumnHeader}>{t("membersTitle")}</div>
           {selectedNodeId == null ? (
             <div className={styles.membersColumnSub}>
-              {tOrg("selectOrgNodeHint")}
+              {t("selectOrgNodeHint")}
             </div>
           ) : (
             <>
               <div className={styles.membersColumnSub}>
-                {tMember("membersSubtitle", {
+                {t("membersSubtitle", {
                   name: selectedNodeName,
                   count: String(membersForSelectedScope.length),
                 })}
@@ -746,7 +740,7 @@ const MemberTeamPage = () => {
               <div className={styles.filterSection}>
                 <div className={styles.searchSection}>
                   <Input
-                    placeholder={tMember("searchPlaceholder")}
+                    placeholder={t("searchPlaceholder")}
                     prefix={<SearchOutlined />}
                     value={searchTerm}
                     onChange={(e) => {
@@ -763,7 +757,7 @@ const MemberTeamPage = () => {
                     icon={<PlusOutlined />}
                     onClick={showCreateMemberModal}
                   >
-                    {tMember("createMember")}
+                    {t("createMember")}
                   </Button>
                 </div>
               </div>
@@ -778,7 +772,7 @@ const MemberTeamPage = () => {
                     total: visibleMembers.length,
                     showQuickJumper: true,
                     showTotal: (total, range) =>
-                      originalT("pagination_total", {
+                      i18n.t("pagination_total", {
                         rangeStart: String(range[0]),
                         rangeEnd: String(range[1]),
                         total: String(total),
@@ -787,7 +781,7 @@ const MemberTeamPage = () => {
                     onChange: (p) => setPage(p),
                   }}
                   locale={{
-                    emptyText: tMember("membersEmpty"),
+                    emptyText: t("membersEmpty"),
                   }}
                 />
               </div>
@@ -797,50 +791,50 @@ const MemberTeamPage = () => {
       </div>
 
       <Modal
-        title={tOrg("addChildModalTitle")}
+        title={t("addChildModalTitle")}
         open={addModalOpen}
         onOk={submitAdd}
         onCancel={() => setAddModalOpen(false)}
-        okText={tOrg("confirm")}
-        cancelText={tOrg("cancel")}
+        okText={t("confirm")}
+        cancelText={t("cancel")}
       >
         <Form form={addForm} layout="vertical">
           <Form.Item
             name="name"
-            label={tOrg("nodeName")}
-            rules={[{ required: true, message: tOrg("nameRequired") }]}
+            label={t("nodeName")}
+            rules={[{ required: true, message: t("nodeNameRequired") }]}
           >
-            <Input placeholder={tOrg("namePlaceholder")} />
+            <Input placeholder={t("nodeNamePlaceholder")} />
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title={tOrg("renameModalTitle")}
+        title={t("renameModalTitle")}
         open={renameModalOpen}
         onOk={submitRename}
         onCancel={() => setRenameModalOpen(false)}
-        okText={tOrg("confirm")}
-        cancelText={tOrg("cancel")}
+        okText={t("confirm")}
+        cancelText={t("cancel")}
       >
         <Form form={renameForm} layout="vertical">
           <Form.Item
             name="name"
-            label={tOrg("nodeName")}
-            rules={[{ required: true, message: tOrg("nameRequired") }]}
+            label={t("nodeName")}
+            rules={[{ required: true, message: t("nodeNameRequired") }]}
           >
-            <Input placeholder={tOrg("namePlaceholder")} />
+            <Input placeholder={t("nodeNamePlaceholder")} />
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title={isEditMode ? tStaff("editStaff") : tMember("createMember")}
+        title={isEditMode ? t("editMember") : t("createMember")}
         open={isMemberModalOpen}
         onOk={isEditMode ? handleUpdateMember : handleCreateMember}
         onCancel={handleMemberModalCancel}
-        okText={isEditMode ? tStaff("update") : tStaff("confirm")}
-        cancelText={tStaff("cancel")}
+        okText={isEditMode ? t("update") : t("confirm")}
+        cancelText={t("cancel")}
         width={560}
       >
         <Form
@@ -849,56 +843,53 @@ const MemberTeamPage = () => {
           initialValues={{ role: "recruiter" }}
         >
           <Form.Item
-            label={tStaff("name")}
+            label={t("name")}
             name="name"
-            rules={[{ required: true, message: tStaff("nameRequired") }]}
+            rules={[{ required: true, message: t("nameRequired") }]}
           >
-            <Input placeholder={tStaff("namePlaceholder")} />
+            <Input placeholder={t("namePlaceholder")} />
           </Form.Item>
 
           <Form.Item
-            label={tStaff("email")}
+            label={t("email")}
             name="email"
             rules={[
-              { required: true, message: tStaff("emailRequired") },
-              { type: "email", message: tStaff("emailInvalid") },
+              { required: true, message: t("emailRequired") },
+              { type: "email", message: t("emailInvalid") },
             ]}
           >
-            <Input
-              placeholder={tStaff("emailPlaceholder")}
-              disabled={isEditMode}
-            />
+            <Input placeholder={t("emailPlaceholder")} disabled={isEditMode} />
           </Form.Item>
 
           <Form.Item
-            label={tStaff("role")}
+            label={t("role")}
             name="role"
-            rules={[{ required: true, message: tStaff("roleRequired") }]}
+            rules={[{ required: true, message: t("roleRequired") }]}
           >
-            <Select placeholder={tStaff("rolePlaceholder")}>
-              <Option value="admin">{tStaff("admin")}</Option>
-              <Option value="recruiter">{tStaff("recruiter")}</Option>
-              <Option value="hiring_manager">{tStaff("hiring_manager")}</Option>
+            <Select placeholder={t("rolePlaceholder")}>
+              <Option value="admin">{t("admin")}</Option>
+              <Option value="recruiter">{t("recruiter")}</Option>
+              <Option value="hiring_manager">{t("hiring_manager")}</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label={tStaff("orgNode")} name="org_node_id">
+          <Form.Item label={t("orgNode")} name="org_node_id">
             <OrgNodeTreeSelect
               style={{ width: "100%" }}
-              placeholder={tStaff("orgNodePlaceholder")}
+              placeholder={t("orgNodePlaceholder")}
               allowClear
             />
           </Form.Item>
 
           {memberRole === "recruiter" && (
             <Form.Item
-              label={tStaff("visibilityScope")}
+              label={t("visibilityScope")}
               name="visibility_org_node_ids"
             >
               <OrgNodeTreeSelect
                 style={{ width: "100%" }}
                 multiple
-                placeholder={tStaff("visibilityPlaceholder")}
+                placeholder={t("visibilityPlaceholder")}
                 allowClear
               />
             </Form.Item>
@@ -906,9 +897,9 @@ const MemberTeamPage = () => {
 
           {!isEditMode && (
             <Form.Item
-              label={tStaff("passwordLabel")}
+              label={t("passwordLabel")}
               name="password"
-              rules={[{ required: true, message: tStaff("passwordRequired") }]}
+              rules={[{ required: true, message: t("passwordRequired") }]}
             >
               <Input readOnly />
             </Form.Item>
@@ -925,7 +916,7 @@ const MemberTeamPage = () => {
         }}
         footer={[
           <Button key="copy" type="primary" onClick={copyToClipboard}>
-            {tStaff("copyLoginInfo")}
+            {t("copyLoginInfo")}
           </Button>,
           <Button
             key="done"
@@ -935,7 +926,7 @@ const MemberTeamPage = () => {
               setCreatedStaffInfo(undefined);
             }}
           >
-            {tStaff("confirm")}
+            {t("confirm")}
           </Button>,
         ]}
         width={400}
@@ -945,7 +936,7 @@ const MemberTeamPage = () => {
           <CheckCircleOutlined
             style={{ fontSize: 24, color: "#52c41a", marginTop: 2 }}
           />
-          <p style={{ margin: 0, fontSize: 16 }}>{tStaff("successMessage")}</p>
+          <p style={{ margin: 0, fontSize: 16 }}>{t("successMessage")}</p>
         </div>
       </Modal>
     </div>
