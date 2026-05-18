@@ -44,6 +44,31 @@ export function orgNodesToIdTitleMap(nodes: IOrgNode[]): Map<number, string> {
   return new Map(nodes.map((n) => [n.id, n.name]));
 }
 
+/** 选中节点及其所有后代节点 id（含自身） */
+export function collectDescendantOrgNodeIds(
+  nodeId: number,
+  nodes: IOrgNode[],
+): Set<number> {
+  const ids = new Set<number>([nodeId]);
+  const childrenByParent = new Map<number, IOrgNode[]>();
+  for (const n of nodes) {
+    if (n.parent_id == null) continue;
+    if (!childrenByParent.has(n.parent_id)) {
+      childrenByParent.set(n.parent_id, []);
+    }
+    childrenByParent.get(n.parent_id)!.push(n);
+  }
+  const stack = [nodeId];
+  while (stack.length) {
+    const id = stack.pop()!;
+    for (const child of childrenByParent.get(id) ?? []) {
+      ids.add(child.id);
+      stack.push(child.id);
+    }
+  }
+  return ids;
+}
+
 /** 查找节点父级 key；根节点返回 null */
 export function findParentKey(
   tree: TreeDataNode[],

@@ -414,6 +414,7 @@ export default {
     account_management: "Account Management",
     group_management: "Group Management",
     org_chart: "Org chart",
+    member_team: "Member & Team",
     job_management: "Job Management",
     talent_management: "Talent Management",
     job_apply_management: "Application Management",
@@ -2227,6 +2228,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     pagination: {
       total: "{{start}}-{{end}} of {{total}} items",
     },
+  },
+
+  member_team: {
+    title: "Member & Team",
+    membersTitle: "Members",
+    membersSubtitle: "{{name}} · {{count}} members",
+    membersEmpty: "No members in this team scope",
+    searchPlaceholder: "Member name, account email",
+    createMember: "Create Member",
+    team: "Team",
   },
 
   org_chart: {

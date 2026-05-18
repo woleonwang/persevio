@@ -23,6 +23,8 @@ class GlobalStore {
 
   useNewTalentDetailsPage = false;
 
+  email = "";
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -69,6 +71,10 @@ class GlobalStore {
 
   setIsAdmin = (isAdmin: boolean) => {
     this.isAdmin = isAdmin;
+  };
+
+  setEmail = (email: string) => {
+    this.email = email;
   };
 
   setUseNewTalentDetailsPage = (value: boolean) => {

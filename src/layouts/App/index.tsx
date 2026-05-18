@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { ApartmentOutlined, FileDoneOutlined } from "@ant-design/icons";
+import { ApartmentOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import styles from "./style.module.less";
@@ -60,6 +60,7 @@ const AppLayout = () => {
     setMenuCollapse,
     setStaffRole,
     setIsAdmin,
+    setEmail,
     setAntdLocale,
     fetchJobs,
     fetchUnreadTalentsCount,
@@ -151,14 +152,8 @@ const AppLayout = () => {
       badge: unreadTalentsCount > 0 ? unreadTalentsCount : undefined,
     },
     {
-      title: t("menu.account_management"),
-      path: "/app/staffs",
-      img: <FileDoneOutlined />,
-      requireStaffAdmin: true,
-    },
-    {
-      title: t("menu.org_chart"),
-      path: "/app/org-chart",
+      title: t("menu.member_team"),
+      path: "/app/member-team",
       img: <ApartmentOutlined />,
       requireStaffAdmin: true,
     },
@@ -218,6 +213,7 @@ const AppLayout = () => {
         fetchJobs();
         setStaffRole(data.role);
         setIsAdmin(data.is_admin === 1 || data.is_admin === 2);
+        setEmail(data.email);
         setMode(data.company_mode);
       }
     } else {

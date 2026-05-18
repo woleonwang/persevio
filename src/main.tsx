@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import dayjs from "dayjs";
@@ -57,10 +57,9 @@ import PublicJobs from "./pages/public/jobs";
 import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
 import AdminCompanies from "./pages/admin/companies";
-import Staffs from "./pages/staffs";
 import StaffForgotPassword from "./pages/staff/forgot-password";
 import StaffResetPassword from "./pages/staff/reset-password";
-import OrgChart from "./pages/org-chart";
+import MemberTeam from "./pages/member-team";
 import CandidateConnections from "./pages/candidate/connections";
 import NetworkProfile from "./pages/candidate/network-pofile/index.tsx";
 import ApplyJobTest from "./pages/candidate/apply-job-test/index.tsx";
@@ -205,9 +204,8 @@ createRoot(document.getElementById("root")!).render(
 
           {/* 公司知识库 */}
           <Route path="/app/company" element={<CompanyKnowledge />} />
-          {/* 面试官管理 */}
-          <Route path="/app/staffs" element={<Staffs />} />
-          <Route path="/app/org-chart" element={<OrgChart />} />
+          {/* 成员与团队 */}
+          <Route path="/app/member-team" element={<MemberTeam />} />
           {/* Group 管理 */}
           {/* <Route path="/app/groups" element={<Groups />} /> */}
           {/* HR端设置 */}
