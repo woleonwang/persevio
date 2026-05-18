@@ -2,9 +2,13 @@ import type { TreeDataNode } from "antd";
 
 export const DEFAULT_ORG_TREE_VISIBLE_LEVELS = 3;
 
+export type OrgNodeTreeData = TreeDataNode & {
+  value: number;
+};
+
 /** 收集需展开的节点 key，使树默认可见 maxVisibleLevels 层（根为第 1 层） */
 export function collectTreeExpandKeysForVisibleLevels(
-  treeData: TreeDataNode[],
+  treeData: OrgNodeTreeData[],
   maxVisibleLevels = DEFAULT_ORG_TREE_VISIBLE_LEVELS,
 ): number[] {
   if (maxVisibleLevels <= 1) return [];
@@ -30,7 +34,7 @@ export function buildOrgNodesTreeData(
   visibleOrgNodeIds?: number[],
 ): {
   root: IOrgNode | undefined;
-  treeData: TreeDataNode[];
+  treeData: OrgNodeTreeData[];
 } {
   const root = nodes.find((n) => !n.parent_id);
   if (!root) {
@@ -52,7 +56,7 @@ export function buildOrgNodesTreeData(
     arr.sort((a, b) => a.sort_order - b.sort_order);
   }
 
-  const build = (parentId: number): TreeDataNode[] => {
+  const build = (parentId: number): OrgNodeTreeData[] => {
     const list = byParent.get(parentId) ?? [];
     return list
       .map((n) => ({
@@ -60,17 +64,18 @@ export function buildOrgNodesTreeData(
         key: n.id,
         value: n.id,
         children: build(n.id),
-        disabled: !selectableIds.has(n.id),
+        disabled: visibleOrgNodeIds && !selectableIds.has(n.id),
       }))
-      .filter((n) => displayIds.has(n.key));
+      .filter((n) => !visibleOrgNodeIds || displayIds.has(n.key));
   };
 
-  const treeData: TreeDataNode[] = [
+  const treeData: OrgNodeTreeData[] = [
     {
       title: root.name,
       key: root.id,
+      value: root.id,
       children: build(root.id),
-      disabled: !selectableIds.has(root.id),
+      disabled: visibleOrgNodeIds && !selectableIds.has(root.id),
     },
   ];
 

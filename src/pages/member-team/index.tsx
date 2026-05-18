@@ -150,9 +150,7 @@ const MemberTeamPage = () => {
       if (root) {
         setRootId(root.id);
         setExpandedKeys((prev) =>
-          prev.length
-            ? prev
-            : collectTreeExpandKeysForVisibleLevels(td as DataNode[]),
+          prev.length ? prev : collectTreeExpandKeysForVisibleLevels(td),
         );
         setSelectedKeys((prev) => {
           const valid = prev.filter((k) => nodeIds.has(k));

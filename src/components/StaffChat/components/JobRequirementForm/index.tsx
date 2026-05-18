@@ -923,6 +923,7 @@ const JobRequirementForm = (props: IProps) => {
               setOrgNodeTitleMap(orgNodesToIdTitleMap(nodes))
             }
             disabled={staffRole === "hiring_manager"}
+            allowCreate
           />
         )}
         {question.type === "percentage" && (
