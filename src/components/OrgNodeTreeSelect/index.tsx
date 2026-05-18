@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TreeSelect } from "antd";
-import type { TreeSelectProps } from "antd";
+import type { TreeDataNode, TreeSelectProps } from "antd";
 
 import { Get } from "@/utils/request";
 import {
   buildOrgNodesTreeSelectData,
+  collectTreeExpandKeysForVisibleLevels,
   orgNodesToIdTitleMap,
 } from "@/utils/orgNodes";
 
@@ -18,21 +19,35 @@ export type OrgNodeTreeSelectProps = Omit<
 };
 
 const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
-  const { multiple, onCatalogLoaded, allowClear = true, showSearch = true } =
-    props;
-  const { treeLine = { showLeafIcon: false }, placeholder, ...rest } = props;
+  const {
+    multiple,
+    onCatalogLoaded,
+    allowClear = false,
+    showSearch = true,
+    treeLine = { showLeafIcon: false },
+    placeholder,
+    ...rest
+  } = props;
 
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<TreeSelectProps["treeData"]>([]);
+  const [treeExpandedKeys, setTreeExpandedKeys] = useState<number[]>([]);
+  const hasAppliedDefaultExpandRef = useRef(false);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
+      hasAppliedDefaultExpandRef.current = false;
       const res = await Get<{ org_nodes: IOrgNode[] }>("/api/org_nodes");
       if (res.code === 0 && res.data?.org_nodes?.length) {
         const nodes = res.data.org_nodes;
-        setTreeData(buildOrgNodesTreeSelectData(nodes));
+        const treeData = buildOrgNodesTreeSelectData(nodes);
+        const expandedKeys = collectTreeExpandKeysForVisibleLevels(
+          treeData as unknown as TreeDataNode[],
+        );
+        setTreeData(treeData);
         onCatalogLoaded?.(nodes);
+        setTreeExpandedKeys(expandedKeys);
       } else {
         setTreeData([]);
         onCatalogLoaded?.([]);
@@ -41,6 +56,7 @@ const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
     })();
   }, []);
 
+  console.log("treeExpandedKeys", treeExpandedKeys);
   return (
     <TreeSelect
       allowClear={allowClear}
@@ -48,6 +64,11 @@ const OrgNodeTreeSelect = (props: OrgNodeTreeSelectProps) => {
       treeLine={treeLine}
       loading={loading}
       treeData={treeData}
+      treeExpandedKeys={treeExpandedKeys}
+      onTreeExpand={(keys) => {
+        console.log("keys", keys);
+        setTreeExpandedKeys(Array.from(new Set(keys as number[])));
+      }}
       multiple={multiple}
       treeCheckable={multiple}
       treeCheckStrictly={multiple}

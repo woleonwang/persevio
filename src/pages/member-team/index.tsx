@@ -30,6 +30,7 @@ import { copy } from "@/utils";
 import {
   buildOrgNodesTreeData,
   collectDescendantOrgNodeIds,
+  collectTreeExpandKeysForVisibleLevels,
   findParentKey,
   orgNodesToIdTitleMap,
 } from "@/utils/orgNodes";
@@ -90,8 +91,8 @@ const MemberTeamPage = () => {
   const [treeData, setTreeData] = useState<DataNode[]>([]); // 部门树数据
   const [orgNodes, setOrgNodes] = useState<IOrgNode[]>([]); // 部门列表
   const [rootId, setRootId] = useState<number | null>(null); // 根部门ID
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]); // 展开的部门
-  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]); // 选中的部门
+  const [expandedKeys, setExpandedKeys] = useState<number[]>([]); // 展开的部门
+  const [selectedKeys, setSelectedKeys] = useState<number[]>([]); // 选中的部门
 
   /** 右侧成员列表 相关 state */
   const { staffs, fetchStaffs } = useStaffs({ includeDeactivated: true }); // 全量员工列表
@@ -145,14 +146,18 @@ const MemberTeamPage = () => {
       setOrgNodes(data.org_nodes);
       const nodeIds = new Set(data.org_nodes.map((n) => n.id));
       const { root, treeData: td } = buildOrgNodesTreeData(data.org_nodes);
-      setTreeData(td as DataNode[]);
+      setTreeData(td);
       if (root) {
         setRootId(root.id);
-        setExpandedKeys((prev) => (prev.length ? prev : [String(root.id)]));
+        setExpandedKeys((prev) =>
+          prev.length
+            ? prev
+            : collectTreeExpandKeysForVisibleLevels(td as DataNode[]),
+        );
         setSelectedKeys((prev) => {
-          const valid = prev.filter((k) => nodeIds.has(Number(k)));
+          const valid = prev.filter((k) => nodeIds.has(k));
           if (valid.length) return valid;
-          return [String(root.id)];
+          return [root.id];
         });
       } else {
         setRootId(null);
@@ -247,7 +252,7 @@ const MemberTeamPage = () => {
       }
     }
 
-    const dragKeyStr = String(dragKey);
+    const dragKeyStr = Number(dragKey);
     const parentKey = findParentKey(treeData as DataNode[], dragKeyStr);
 
     (async () => {
@@ -259,8 +264,8 @@ const MemberTeamPage = () => {
       if (code === 0) {
         message.success(t("teamUpdateSuccess"));
         await fetchNodes();
-        const keysToExpand: string[] = [];
-        let curKey: string | null = String(newParentId);
+        const keysToExpand: number[] = [];
+        let curKey: number | null = newParentId;
         while (curKey) {
           keysToExpand.push(curKey);
           const p = findParentKey(treeData as DataNode[], curKey);
@@ -297,8 +302,8 @@ const MemberTeamPage = () => {
       message.success(t("teamCreateSuccess"));
       setAddModalOpen(false);
       await fetchNodes();
-      if (!expandedKeys.includes(String(addParentId))) {
-        setExpandedKeys((prev) => [...prev, String(addParentId)]);
+      if (!expandedKeys.includes(addParentId)) {
+        setExpandedKeys((prev) => [...prev, addParentId]);
       }
     } else if (code === 10003) {
       message.error(t("maxDepthExceeded"));
@@ -706,11 +711,13 @@ const MemberTeamPage = () => {
                 }
                 blockNode
                 expandedKeys={expandedKeys}
-                onExpand={setExpandedKeys}
+                onExpand={(keys) => {
+                  setExpandedKeys(keys.map(Number));
+                }}
                 selectedKeys={selectedKeys}
                 onSelect={(keys) => {
                   if (keys.length > 0) {
-                    setSelectedKeys(keys);
+                    setSelectedKeys(keys.map(Number));
                     setPage(1);
                   }
                 }}
@@ -873,11 +880,14 @@ const MemberTeamPage = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item label={t("orgNode")} name="org_node_id">
+          <Form.Item
+            label={t("orgNode")}
+            name="org_node_id"
+            rules={[{ required: true, message: t("orgNodeRequired") }]}
+          >
             <OrgNodeTreeSelect
               style={{ width: "100%" }}
               placeholder={t("orgNodePlaceholder")}
-              allowClear
             />
           </Form.Item>
 

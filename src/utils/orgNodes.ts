@@ -1,5 +1,29 @@
 import type { TreeDataNode } from "antd";
 
+export const DEFAULT_ORG_TREE_VISIBLE_LEVELS = 3;
+
+/** 收集需展开的节点 key，使树默认可见 maxVisibleLevels 层（根为第 1 层） */
+export function collectTreeExpandKeysForVisibleLevels(
+  treeData: TreeDataNode[],
+  maxVisibleLevels = DEFAULT_ORG_TREE_VISIBLE_LEVELS,
+): number[] {
+  if (maxVisibleLevels <= 1) return [];
+
+  const keys: number[] = [];
+  const walk = (nodes: TreeDataNode[], depth: number) => {
+    for (const node of nodes) {
+      const children = node.children as TreeDataNode[] | undefined;
+      if (!children?.length) continue;
+      if (depth < maxVisibleLevels - 1) {
+        keys.push(node.key as number);
+        walk(children, depth + 1);
+      }
+    }
+  };
+  walk(treeData, 0);
+  return keys;
+}
+
 /** 将扁平 org_nodes 转为 antd Tree / TreeSelect 用的树；根节点 parent_id 为 null */
 export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
   root: IOrgNode | undefined;
@@ -24,7 +48,7 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
     const list = byParent.get(parentId) ?? [];
     return list.map((n) => ({
       title: n.name,
-      key: String(n.id),
+      key: n.id,
       children: build(n.id),
     }));
   };
@@ -32,7 +56,7 @@ export function buildOrgNodesTreeData(nodes: IOrgNode[]): {
   const treeData: TreeDataNode[] = [
     {
       title: root.name,
-      key: String(root.id),
+      key: root.id,
       children: build(root.id),
     },
   ];
@@ -62,11 +86,11 @@ export function collectDescendantOrgNodeIds(
   nodeId: number,
   treeData: TreeDataNode[],
 ): Set<number> {
-  const targetKey = String(nodeId);
+  const targetKey = nodeId;
 
   const findSubtree = (nodes: TreeDataNode[]): Set<number> | null => {
     for (const node of nodes) {
-      if (String(node.key) === targetKey) {
+      if (node.key === targetKey) {
         return collectSubtreeIds(node);
       }
       const children = node.children as TreeDataNode[] | undefined;
@@ -84,37 +108,16 @@ export function collectDescendantOrgNodeIds(
 /** 查找节点父级 key；根节点返回 null */
 export function findParentKey(
   tree: TreeDataNode[],
-  targetKey: string,
-): string | null {
+  targetKey: number,
+): number | null {
   for (const node of tree) {
     const children = node.children as TreeDataNode[] | undefined;
-    if (children?.some((c) => String(c.key) === targetKey)) {
-      return String(node.key);
+    if (children?.some((c) => c.key === targetKey)) {
+      return node.key as number;
     }
     if (children?.length) {
       const r = findParentKey(children, targetKey);
       if (r !== null) return r;
-    }
-  }
-  return null;
-}
-
-/** 与目标同父的兄弟节点 key 顺序（含自身） */
-export function findSiblingKeys(
-  tree: TreeDataNode[],
-  targetKey: string,
-): string[] | null {
-  for (const node of tree) {
-    if (String(node.key) === targetKey) {
-      return tree.map((n) => String(n.key));
-    }
-    const children = node.children as TreeDataNode[] | undefined;
-    if (children?.length) {
-      if (children.some((c) => String(c.key) === targetKey)) {
-        return children.map((c) => String(c.key));
-      }
-      const r = findSiblingKeys(children, targetKey);
-      if (r) return r;
     }
   }
   return null;
