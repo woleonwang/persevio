@@ -26,7 +26,6 @@ import { tokenStorage } from "@/utils/storage";
 import SelectOptionsForm from "./components/SelectOptionsForm";
 import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
-import JrdSteps from "./components/JrdSteps";
 import JobRequirementForm from "./components/JobRequirementForm";
 import EditableMarkdown from "../EditableMarkdown";
 import Icon from "../Icon";
@@ -75,7 +74,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     "",
   );
   const [streamingLoadingText, setStreamingLoadingText] = useState("");
-  const [jrdProgress, setJrdProgress] = useState<number>(0);
+  // const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
@@ -736,22 +735,22 @@ const StaffChat: React.FC<IProps> = (props) => {
         return;
       }
 
-      if (chatType === "jobRequirementDoc") {
-        const tagPrograss = {
-          "cddreq-done": 1,
-          "sourcing-done": 2,
-        };
+      // if (chatType === "jobRequirementDoc") {
+      //   const tagPrograss = {
+      //     "cddreq-done": 1,
+      //     "sourcing-done": 2,
+      //   };
 
-        let progress = 0;
-        messageHistory.forEach((message) => {
-          (message.extraTags ?? []).forEach((tag) => {
-            if (Object.keys(tagPrograss).includes(tag.name)) {
-              progress = tagPrograss[tag.name as keyof typeof tagPrograss];
-            }
-          });
-        });
-        setJrdProgress(progress);
-      }
+      //   let progress = 0;
+      //   messageHistory.forEach((message) => {
+      //     (message.extraTags ?? []).forEach((tag) => {
+      //       if (Object.keys(tagPrograss).includes(tag.name)) {
+      //         progress = tagPrograss[tag.name as keyof typeof tagPrograss];
+      //       }
+      //     });
+      //   });
+      //   setJrdProgress(progress);
+      // }
       // 自动执行标签逻辑
       const lastMessage = messageHistory[messageHistory.length - 1];
       if (lastMessage) {
@@ -1061,9 +1060,9 @@ const StaffChat: React.FC<IProps> = (props) => {
           [styles.collapsed]: sideDocumentVisible,
         })}
       >
-        {chatType === "jobRequirementDoc" && (
+        {/* {chatType === "jobRequirementDoc" && (
           <JrdSteps current={jrdProgress} collapse={sideDocumentVisible} />
-        )}
+        )} */}
 
         <div className={styles.chatArea}>
           {basicFormVisible ? (
