@@ -120,7 +120,7 @@ const JobRequirementForm = (props: IProps) => {
 
   const { t: originalT } = useTranslation();
 
-  const { orgNodeId } = globalStore;
+  const { orgNodeId, staffRole } = globalStore;
 
   useEffect(() => {
     form.resetFields();
@@ -130,7 +130,7 @@ const JobRequirementForm = (props: IProps) => {
       });
     }
     forceUpdate();
-  }, [formType, form]);
+  }, [formType, form, orgNodeId]);
 
   const t = (key: string, params?: Record<string, string>): string => {
     return originalT(`job_requirement_form.${key}`, params);
@@ -922,6 +922,7 @@ const JobRequirementForm = (props: IProps) => {
             onCatalogLoaded={(nodes) =>
               setOrgNodeTitleMap(orgNodesToIdTitleMap(nodes))
             }
+            disabled={staffRole === "hiring_manager"}
           />
         )}
         {question.type === "percentage" && (

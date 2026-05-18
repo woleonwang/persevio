@@ -17,7 +17,7 @@ class GlobalStore {
 
   antdLocale: "zh-CN" | "en-US" = "en-US";
 
-  staffRole: "normal" | "admin" = "normal";
+  staffRole: "hiring_manager" | "admin" | "recruiter" = "hiring_manager";
 
   isAdmin = false;
 
@@ -26,6 +26,8 @@ class GlobalStore {
   email = "";
 
   orgNodeId = 0;
+
+  visibleOrgNodeIds: number[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -67,7 +69,7 @@ class GlobalStore {
     this.mode = mode;
   };
 
-  setStaffRole = (role: "normal" | "admin") => {
+  setStaffRole = (role: "hiring_manager" | "admin" | "recruiter") => {
     this.staffRole = role;
   };
 
@@ -81,6 +83,10 @@ class GlobalStore {
 
   setOrgNodeId = (orgNodeId: number) => {
     this.orgNodeId = orgNodeId;
+  };
+
+  setVisibleOrgNodeIds = (visibleOrgNodeIds: number[]) => {
+    this.visibleOrgNodeIds = visibleOrgNodeIds;
   };
 
   setUseNewTalentDetailsPage = (value: boolean) => {
