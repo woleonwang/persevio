@@ -8,9 +8,7 @@ import { confirmModal, copy, getJobChatbotUrl } from "@/utils";
 import Icon from "@/components/Icon";
 import styles from "./style.module.less";
 import ButtonGroup from "antd/es/button/button-group";
-import BoostJob from "@/assets/icons/boost-job";
 import OutreachCampaign from "@/assets/icons/outreach-campaign";
-import StartBoost from "@/assets/icons/start-boost";
 import { Post } from "@/utils/request";
 import Copy from "@/assets/icons/copy";
 import Delete from "@/assets/icons/delete";
@@ -70,9 +68,9 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     window.open(customSourceUrl, "_blank");
   };
 
-  const applyService = async (type: "boost" | "outreach") => {
+  const applyService = async () => {
     const { code } = await Post(`/api/jobs/${job!.invitation_token}`, {
-      [type === "boost" ? "apply_boosting" : "apply_outreach_campaign"]: true,
+      apply_outreach_campaign: true,
     });
 
     if (code === 0) {
@@ -80,52 +78,6 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     } else {
       message.error(originalT("submit_failed"));
     }
-  };
-
-  const handleBoostClick = () => {
-    confirmModal({
-      styles: {
-        content: {
-          width: 600,
-        },
-      },
-      rootClassName: styles.conformModal,
-      title: t("boost_modal_title"),
-      content: (
-        <div style={{ marginTop: 8 }}>
-          <p
-            style={{ marginBottom: 12 }}
-            dangerouslySetInnerHTML={{ __html: t("boost_modal_desc") }}
-          />
-          <ul style={{ paddingLeft: 20, marginBottom: 16 }}>
-            <li>{t("boost_modal_point_1")}</li>
-            <li>{t("boost_modal_point_2")}</li>
-            <li>{t("boost_modal_point_3")}</li>
-            <li>{t("boost_modal_point_4")}</li>
-          </ul>
-          <div
-            style={{
-              marginTop: 8,
-              padding: 12,
-              borderRadius: 8,
-              background: "#F3F4F6",
-            }}
-          >
-            <div style={{ fontWeight: 600, marginBottom: 4 }}>
-              {t("boost_modal_pricing_title")}
-            </div>
-            <div
-              style={{ fontSize: 13, color: "#4B5563" }}
-              dangerouslySetInnerHTML={{
-                __html: t("boost_modal_pricing_desc"),
-              }}
-            />
-          </div>
-        </div>
-      ),
-      okText: t("boost_modal_confirm"),
-      onOk: () => applyService("boost"),
-    });
   };
 
   const handleOutreachClick = () => {
@@ -164,7 +116,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
         </div>
       ),
       okText: t("outreach_modal_contact_sales"),
-      onOk: () => applyService("outreach"),
+      onOk: applyService,
     });
   };
 
@@ -321,33 +273,6 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
               { value: "delisted", label: "Delist" },
             ]}
           />
-        </div>
-      </div>
-
-      {/* Boost Your Job */}
-      <div className={styles.section}>
-        <div className={styles.sectionLeft}>
-          <div className={styles.sectionTitle}>
-            <Icon icon={<BoostJob />} className={styles.boost} />
-            {t("boost_title")}
-          </div>
-          <p className={styles.sectionDesc}>{t("boost_desc")}</p>
-        </div>
-        <div className={styles.sectionRight}>
-          <div className={styles.boostBtnWrap}>
-            <Button
-              type="primary"
-              className={styles.boostBtn}
-              icon={<Icon icon={<StartBoost />} />}
-              onClick={handleBoostClick}
-            >
-              {t("start_boosting")}
-            </Button>
-            <div className={styles.boostPricing}>
-              <span>{t("no_upfront_cost")}</span>
-              {/* <span>{t("flat_fee_per_hire")}</span> */}
-            </div>
-          </div>
         </div>
       </div>
 

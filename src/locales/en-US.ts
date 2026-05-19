@@ -1867,27 +1867,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       copy_url: "Copy URL",
       view_posting: "View Posting",
       take_down: "Delist",
-      boost_title: "Boost Your Job",
-      boost_desc:
-        "We'll actively promote your role on Persevio and across the web — including LinkedIn, JobStreet, job communities, and social media — to attract more qualified active candidates to apply.",
-      no_upfront_cost: "No upfront cost. Pay only when you hire.",
-      flat_fee_per_hire: "SGD 500 flat fee per hire.",
-      start_boosting: "Start Boosting",
-      boost_modal_title: "Boost Your Job",
-      boost_modal_desc:
-        "By activating Boost Your Job, Persevio will actively promote your job listing across multiple channels to attract more qualified candidates:",
-      boost_modal_point_1: "Featured placement on Persevio's job board",
-      boost_modal_point_2:
-        "Promotion on LinkedIn, JobStreet, and other major job boards",
-      boost_modal_point_3:
-        "Social media campaigns targeting relevant professionals",
-      boost_modal_point_4:
-        "Distribution to relevant job communities and forums",
-      boost_modal_pricing_title: "Pricing",
-      boost_modal_pricing_desc:
-        "Zero upfront cost. You only pay a flat fee per successful hire made through Persevio's boosted promotion channels.",
-      boost_modal_contact_sales: "Contact Sales",
-      boost_modal_confirm: "I Agree — Start Boosting",
       outreach_title: "Outreach Campaigns",
       outreach_desc:
         "Target passive candidates who aren't actively looking. We'll proactively reach out to suitable candidates in Persevio's database and across the web, leveraging referrals and all possible channels to find the best match for your role. Success-based pricing — you only pay when you hire.",
