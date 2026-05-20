@@ -186,16 +186,18 @@ const TalentPopoverContent = ({
                   Reject
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsInterviewModalOpen(true);
-                  }}
-                >
-                  {interview ? "Interview Information" : "Schedule Interview"}
-                </Button>
+                {false && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsInterviewModalOpen(true);
+                    }}
+                  >
+                    {interview ? "Interview Information" : "Schedule Interview"}
+                  </Button>
+                )}
               </>
             )}
           </div>

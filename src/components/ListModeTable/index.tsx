@@ -316,6 +316,7 @@ const ListModeTable = ({
                     setActionRecord(record);
                     setInterviewOpen(true);
                   },
+                  hidden: true,
                 },
                 ...(record.status !== "rejected"
                   ? [
@@ -330,7 +331,7 @@ const ListModeTable = ({
                       },
                     ]
                   : []),
-              ];
+              ].filter((item) => !item.hidden);
 
               return (
                 <div

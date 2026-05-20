@@ -1139,7 +1139,7 @@ const AtsTalentDetail: React.FC = () => {
             <Tag color="red">{t("status_rejected")}</Tag>
           ) : (
             <>
-              {interviewButtonArea}
+              {false && interviewButtonArea}
               <Button
                 variant="outlined"
                 color="primary"

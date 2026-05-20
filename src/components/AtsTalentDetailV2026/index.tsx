@@ -854,7 +854,7 @@ function AtsTalentDetailV2026ViewBase() {
                 </Tooltip>
               </div>
               <div className={styles.actionsRowRight}>
-                {scheduleButton}
+                {false && scheduleButton}
                 <Tooltip
                   title={
                     talent.status === "rejected"
