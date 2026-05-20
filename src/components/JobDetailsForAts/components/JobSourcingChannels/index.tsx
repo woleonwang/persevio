@@ -45,7 +45,7 @@ const JobSourcingChannels = ({ togglePostJob }: IProps) => {
     );
   };
 
-  const customSourceUrl = getJobUrl("persevio");
+  const customSourceUrl = getJobUrl("direct");
 
   const handleCopyUrl = async (url: string) => {
     await copy(url);

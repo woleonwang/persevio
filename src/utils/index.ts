@@ -571,8 +571,8 @@ export const SOURCING_CHANNEL_KEYS = [
 ];
 
 export const getSourcingChannel = (sc: string = "persevio"): string => {
-  if (sc === "customer") return "direct";
-  if (sc === "system" || sc === "delivery" || sc === "") return "persevio";
+  if (sc === "customer" || sc === "") return "direct";
+  if (sc === "system" || sc === "delivery") return "persevio";
   return sc;
 };
 

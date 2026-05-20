@@ -1939,7 +1939,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     job_requirement_hint:
       "When Viona introduces this role to candidates, she will reference the information in this document. You can edit the information here to control how Viona introduces this role to potential candidates.",
     talents: "Candidates",
-    settings: "Settings",
+    settings: "Job Settings",
     share_position: "Copy Link",
     copy_document: "Copy document",
     unpost_job_title: "Unpost this Job?",
