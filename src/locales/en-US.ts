@@ -2050,9 +2050,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     tab_assigned_recruiters: "Assigned Recruiters",
     assign_recruiter_placeholder: "Assign Recruiter...",
     no_assigned_recruiters: "No assigned recruiters",
-    remove_assigned_recruiter_title: "Remove Assigned Recruiter",
-    remove_assigned_recruiter_content:
-      'Are you sure you want to remove assigned recruiter "{{name}}"?',
     new_interview_round: "+ New Round",
   },
 

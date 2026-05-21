@@ -70,33 +70,22 @@ const AssignedRecruitersTab = ({
     return staffs.find((staff) => staff.id === staffId);
   };
 
-  const handleRemoveRecruiter = (recruiter: TTalentRecruiter) => {
-    const name = getStaff(recruiter.staff_id)?.name || "-";
+  const handleRemoveRecruiter = async (recruiter: TTalentRecruiter) => {
+    setUpdating(true);
+    const { code } = await Post(
+      `/api/jobs/${jobId}/talents/${talentId}/recruiters/${recruiter.id}/destroy`,
+    );
+    setUpdating(false);
 
-    Modal.confirm({
-      title: tKey("remove_assigned_recruiter_title"),
-      content: tKey("remove_assigned_recruiter_content").replace(
-        "{{name}}",
-        name,
-      ),
-      onOk: async () => {
-        setUpdating(true);
-        const { code } = await Post(
-          `/api/jobs/${jobId}/talents/${talentId}/recruiters/${recruiter.id}/destroy`,
-        );
-        setUpdating(false);
+    if (code === 0) {
+      onTalentRecruitersChange(
+        talentRecruiters.filter((item) => item.id !== recruiter.id),
+      );
+      message.success(t("job_talents.assigned_recruiters_save_success"));
+      return;
+    }
 
-        if (code === 0) {
-          onTalentRecruitersChange(
-            talentRecruiters.filter((item) => item.id !== recruiter.id),
-          );
-          message.success(t("job_talents.assigned_recruiters_save_success"));
-          return;
-        }
-
-        message.error(t("job_talents.assigned_recruiters_save_failed"));
-      },
-    });
+    message.error(t("job_talents.assigned_recruiters_save_failed"));
   };
 
   const addRecruiterSelectOptions: AddRecruiterSelectOption[] = jobCollaborators
