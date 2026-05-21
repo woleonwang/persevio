@@ -112,9 +112,8 @@ const Talents: React.FC = () => {
       })
       .filter((item) => {
         if (selectedRecruiterId == null) return true;
-        return (item.job?.collaborators ?? []).some(
-          (c) =>
-            c.role === "recruiter" && c.staff_id === selectedRecruiterId,
+        return (item.talent_recruiters ?? []).some(
+          (c) => c.staff_id === selectedRecruiterId,
         );
       });
   }, [talents, searchName, evaluateResultLevels, selectedRecruiterId]);
@@ -146,7 +145,7 @@ const Talents: React.FC = () => {
         />
         <Select
           className={styles.filterSelect}
-          placeholder={t("job_list.recruiter_placeholder")}
+          placeholder={t("talents.assigned_recruiter_placeholder")}
           value={selectedRecruiterId}
           onChange={setSelectedRecruiterId}
           allowClear

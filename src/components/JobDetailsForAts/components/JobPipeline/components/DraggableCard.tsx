@@ -135,6 +135,7 @@ const DraggableCard = ({
       content={
         <TalentPopoverContent
           variant="pipeline"
+          mode="pipeline"
           talent={item}
           onUpdateTalent={onUpdateTalent}
         />

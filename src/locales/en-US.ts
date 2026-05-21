@@ -1539,6 +1539,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     status_evaluate_succeed: "Pending",
     status_accepted: "Accepted",
     status_rejected: "Rejected",
+    assigned_recruiter_placeholder: "Assigned Recruiters",
   },
 
   interview_designer: {
@@ -1823,6 +1824,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       candidate_name: "Candidate Name",
       stage: "Stage",
       overall_fit: "Interview?",
+      assigned_recruiters: "Assigned Recruiters",
       experience: "Experience",
       visa_status: "Visa Status",
       current_comp: "Current Comp",

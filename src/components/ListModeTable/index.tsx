@@ -54,16 +54,14 @@ const getCurrentWorkExperience = (
   return arr.find((w) => w.is_present) ?? arr[0];
 };
 
-const getAppliedJobRecruiterRows = (
+const getAssignedTalentRecruiterRows = (
   record: TTalentListItem,
 ): { staffId: number; name: string }[] => {
-  const job = record.job;
-  if (!job?.initial_posted_at) return [];
-  return (job.collaborators ?? [])
-    .filter((c) => c.role === "recruiter")
-    .map((c) => ({
-      staffId: c.staff_id,
-      name: (c.staff?.name ?? "").trim(),
+  return [...(record.talent_recruiters ?? [])]
+    .sort((left, right) => left.id - right.id)
+    .map((item) => ({
+      staffId: item.staff_id,
+      name: (item.staff?.name ?? "").trim(),
     }))
     .filter((row) => row.name);
 };
@@ -153,6 +151,7 @@ const ListModeTable = ({
             variant={variant}
             talent={record}
             onUpdateTalent={onUpdateTalent ?? (() => {})}
+            mode="table"
           />
         }
         trigger="hover"
@@ -239,6 +238,27 @@ const ListModeTable = ({
         );
       },
       width: 160,
+    },
+    {
+      title: tKey("assigned_recruiters"),
+      dataIndex: "assigned_recruiters",
+      width: 220,
+      render: (_: unknown, record: TTalentListItem) => {
+        const rows = getAssignedTalentRecruiterRows(record);
+        if (!rows.length) {
+          return wrapCell(record, "-");
+        }
+        return wrapCell(
+          record,
+          <div className={styles.recruiterChipWrap}>
+            {rows.map((row) => (
+              <Tooltip key={row.staffId} title={row.name}>
+                <span className={styles.personChip}>{row.name}</span>
+              </Tooltip>
+            ))}
+          </div>,
+        );
+      },
     },
     {
       title: tKey("experience"),
@@ -415,11 +435,11 @@ const ListModeTable = ({
         ),
     },
     {
-      title: tCandidateList("columns.recruiters"),
-      dataIndex: "applied_job_recruiters",
+      title: tKey("assigned_recruiters"),
+      dataIndex: "assigned_recruiters",
       width: 220,
-      render: (_: unknown, record) => {
-        const rows = getAppliedJobRecruiterRows(record);
+      render: (_: unknown, record: TTalentListItem) => {
+        const rows = getAssignedTalentRecruiterRows(record);
         if (!rows.length) {
           return wrapCell(record, "-");
         }

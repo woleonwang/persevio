@@ -23,6 +23,7 @@ import {
 
 interface IProps {
   variant: "pipeline" | "talents";
+  mode: "pipeline" | "table";
   talent: TTalentListItem;
   onUpdateTalent: () => void;
 }
@@ -31,6 +32,7 @@ const TalentPopoverContent = ({
   variant,
   talent: talentProps,
   onUpdateTalent,
+  mode,
 }: IProps) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
@@ -346,6 +348,9 @@ const TalentPopoverContent = ({
                   ...prev,
                   talent_recruiters: talentRecruiters,
                 }));
+                if (mode === "table") {
+                  onUpdateTalent();
+                }
               }}
             />
           )}
