@@ -2051,6 +2051,13 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     assign_recruiter_placeholder: "Assign Recruiter...",
     no_assigned_recruiters: "No assigned recruiters",
     new_interview_round: "+ New Round",
+    download_report_in: "Download Candidate Report in",
+    download_report_english: "English",
+    download_report_chinese: "Chinese (Simplified)",
+    download_report_native: "Native",
+    download_report_ai_translated: "AI Translated",
+    download_report_translating: "Translating report...",
+    download_report_translate_failed: "Failed to translate report.",
   },
 
   admin_talents: {

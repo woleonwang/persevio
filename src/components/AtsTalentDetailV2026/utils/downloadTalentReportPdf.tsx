@@ -7,6 +7,12 @@ import { message } from "antd";
 import { downloadMarkdownAsPDF, getEvaluateResultLevel } from "@/utils";
 import { LogisticsFitKnownKeys } from "@/utils/consts";
 import { SkillsFitKnownKeys } from "@/utils/consts";
+import { Post } from "@/utils/request";
+
+import { trPdf } from "./talentReportPdfClassNames";
+import "./talentReportPdf.less";
+
+export type TReportDownloadLocale = "en" | "zh";
 
 export type DownloadTalentReportPdfArgs = {
   pdfReportRef: React.RefObject<HTMLDivElement | null>;
@@ -15,7 +21,9 @@ export type DownloadTalentReportPdfArgs = {
   report: TReport;
   lastUpdated?: string;
   originalT: (key: string) => string;
-  styles: Record<string, string>;
+  locale?: TReportDownloadLocale;
+  jobId: string;
+  talentId: string;
 };
 
 export async function downloadTalentReportPdf({
@@ -25,7 +33,9 @@ export async function downloadTalentReportPdf({
   report,
   lastUpdated,
   originalT,
-  styles,
+  locale = "en",
+  jobId,
+  talentId,
 }: DownloadTalentReportPdfArgs) {
   if (!pdfReportRef.current) {
     message.error("Report is not ready yet.");
@@ -47,8 +57,7 @@ export async function downloadTalentReportPdf({
     `job_talents.evaluate_result_options.${evalLevel}`,
   );
 
-  const pdfRawSkillsFitLevel =
-    report.overall_recommendation?.skills_fit?.level;
+  const pdfRawSkillsFitLevel = report.overall_recommendation?.skills_fit?.level;
   const pdfIsKnownSkillsFit = (
     level: string | undefined,
   ): level is TSkillsFitKey =>
@@ -68,13 +77,13 @@ export async function downloadTalentReportPdf({
 
   const skillsFitBadgeClass =
     pdfRawSkillsFitLevel === "poor"
-      ? styles.pdfBadgeRed
+      ? trPdf.badgeRed
       : pdfRawSkillsFitLevel === "uncertain" ||
           pdfRawSkillsFitLevel === "near_fit"
-        ? styles.pdfBadgeOrange
+        ? trPdf.badgeOrange
         : pdfRawSkillsFitLevel === "overqualified"
-          ? styles.pdfBadgeBlue
-          : styles.pdfBadgeGray;
+          ? trPdf.badgeBlue
+          : trPdf.badgeGray;
 
   const logisticsLevelsRaw =
     report.overall_recommendation?.logistics_fit?.level;
@@ -109,111 +118,105 @@ export async function downloadTalentReportPdf({
 
   const interestBadgeClass =
     pdfRawInterestLevel === "high"
-      ? styles.pdfBadgeGreen
+      ? trPdf.badgeGreen
       : pdfRawInterestLevel === "moderate" || pdfRawInterestLevel === "low"
-        ? styles.pdfBadgeOrange
-        : styles.pdfBadgeGray;
+        ? trPdf.badgeOrange
+        : trPdf.badgeGray;
 
   const headerFitStatusClass =
     evalLevel === "no"
-      ? styles.pdfFitStatusNegative
+      ? trPdf.fitStatusNegative
       : evalLevel === "maybe" || evalLevel === "yes_but"
-        ? styles.pdfFitStatusWarning
-        : styles.pdfFitStatusPositive;
+        ? trPdf.fitStatusWarning
+        : trPdf.fitStatusPositive;
 
   const fitPillToneClass =
     evalLevel === "no"
-      ? styles.pdfFitPillNegative
+      ? trPdf.fitPillNegative
       : evalLevel === "maybe" || evalLevel === "yes_but"
-        ? styles.pdfFitPillWarning
-        : styles.pdfFitPillPositive;
+        ? trPdf.fitPillWarning
+        : trPdf.fitPillPositive;
 
   const generatedOn = lastUpdated
     ? dayjs(lastUpdated).format("YYYY/MM/DD")
     : dayjs().format("YYYY/MM/DD");
 
-  const keyInfoCardTone = [
-    "blue",
-    "cyan",
-    "blue",
-    "lavender",
-    "blue",
-  ] as const;
+  const keyInfoCardTone = ["blue", "cyan", "blue", "lavender", "blue"] as const;
   const keyInfoToneClass = (i: number) => {
     const t = keyInfoCardTone[i % keyInfoCardTone.length];
-    if (t === "blue") return styles.pdfKeyCardBlue;
-    if (t === "cyan") return styles.pdfKeyCardCyan;
-    return styles.pdfKeyCardLavender;
+    if (t === "blue") return trPdf.keyCardBlue;
+    if (t === "cyan") return trPdf.keyCardCyan;
+    return trPdf.keyCardLavender;
   };
 
   const assessmentPillClass = (a?: string) => {
-    if (a === "meets") return styles.pdfAssessmentMeets;
-    if (a === "does_not_meet") return styles.pdfAssessmentNo;
-    return styles.pdfAssessmentPartial;
+    if (a === "meets") return trPdf.assessmentMeets;
+    if (a === "does_not_meet") return trPdf.assessmentNo;
+    return trPdf.assessmentPartial;
   };
 
   const pdfPriorityToneClass = (level: "p0" | "p1" | "p2") => {
-    if (level === "p0") return styles.pdfPriorityP0;
-    if (level === "p1") return styles.pdfPriorityP1;
-    return styles.pdfPriorityP2;
+    if (level === "p0") return trPdf.priorityP0;
+    if (level === "p1") return trPdf.priorityP1;
+    return trPdf.priorityP2;
   };
 
   const areasToProbe = report.areas_to_probe_further ?? [];
   const hiringManagerQuestions = report.hiring_manager_questions ?? [];
 
   const pdfHtml = renderToStaticMarkup(
-    <main className={styles.pdfPage}>
-      <div className={styles.pdfReportStack}>
-        <header className={styles.pdfPageHeader}>
+    <main className={trPdf.page}>
+      <div className={trPdf.reportStack}>
+        <header className={trPdf.pageHeader}>
           <div>
-            <div className={styles.pdfEyebrow}>Candidate Report</div>
-            <h1 className={styles.pdfHeaderTitle}>{talent.name}</h1>
-            <p className={styles.pdfHeaderSubtitle}>
+            <div className={trPdf.eyebrow}>Candidate Report</div>
+            <h1 className={trPdf.headerTitle}>{talent.name}</h1>
+            <p className={trPdf.headerSubtitle}>
               {job.name.replace(/\s*-\s*/g, " – ")}
             </p>
           </div>
-          <div className={styles.pdfHeaderMeta}>
-            <div className={styles.pdfMetaLabel}>Generated On</div>
-            <div className={styles.pdfMetaValue}>{generatedOn}</div>
-            <p className={styles.pdfHeaderSubtitleBy}>by Persevio</p>
+          <div className={trPdf.headerMeta}>
+            <div className={trPdf.metaLabel}>Generated On</div>
+            <div className={trPdf.metaValue}>{generatedOn}</div>
+            <p className={trPdf.headerSubtitleBy}>by Persevio</p>
           </div>
         </header>
 
         <section
           className={classnames(
-            styles.pdfSectionCard,
-            styles.pdfProfileSnapshot,
+            trPdf.sectionCard,
+            trPdf.profileSnapshot,
           )}
           aria-labelledby="pdf-profile-snapshot"
         >
-          <div className={styles.pdfSectionInner}>
-            <div className={styles.pdfSectionHeadingRow}>
+          <div className={trPdf.sectionInner}>
+            <div className={trPdf.sectionHeadingRow}>
               <h2
-                className={styles.pdfSectionHeading}
+                className={trPdf.sectionHeading}
                 id="pdf-profile-snapshot"
               >
                 Profile Snapshot
               </h2>
             </div>
-            <div className={classnames(styles.pdfSnapshotGrid)}>
+            <div className={classnames(trPdf.snapshotGrid)}>
               {(report.profile_snapshot ?? []).map((snapshot, index) => (
                 <div
                   className={classnames(
-                    styles.pdfSnapshotItem,
-                    styles.avoidBreak,
+                    trPdf.snapshotItem,
+                    trPdf.avoidBreak,
                   )}
                   key={`${snapshot.title}-${index}`}
                 >
-                    <h3>{snapshot.title}</h3>
-                    {Array.isArray(snapshot.details) ? (
-                      <ul className={styles.avoidBreak}>
-                        {snapshot.details.map((d, i) => (
-                          <li key={i}>{d}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className={styles.avoidBreak}>{snapshot.details}</p>
-                    )}
+                  <h3>{snapshot.title}</h3>
+                  {Array.isArray(snapshot.details) ? (
+                    <ul className={trPdf.avoidBreak}>
+                      {snapshot.details.map((d, i) => (
+                        <li key={i}>{d}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className={trPdf.avoidBreak}>{snapshot.details}</p>
+                  )}
                 </div>
               ))}
             </div>
@@ -221,135 +224,134 @@ export async function downloadTalentReportPdf({
         </section>
 
         <section
-          className={styles.pdfSectionCard}
+          className={trPdf.sectionCard}
           aria-labelledby="pdf-key-info"
         >
-          <div className={styles.pdfSectionInner}>
-            <div className={styles.pdfSectionHeadingRow}>
-              <h2 className={styles.pdfSectionHeading} id="pdf-key-info">
+          <div className={trPdf.sectionInner}>
+            <div className={trPdf.sectionHeadingRow}>
+              <h2 className={trPdf.sectionHeading} id="pdf-key-info">
                 Key Information
               </h2>
             </div>
-            <div className={styles.pdfKeyGrid}>
-              {(report.key_information ?? []).map((information, index) => (
-                <article
-                  className={classnames(
-                    styles.pdfKeyCard,
-                    styles.avoidBreak,
-                    keyInfoToneClass(index),
-                  )}
-                  key={`${information.title}-${index}`}
-                >
-                  <h3>{information.title}</h3>
-                  <p>{information.details}</p>
-                </article>
-              ))}
+            <div className={trPdf.keyGrid}>
+              {(report.key_information ?? [])
+                .filter((information) => information.title !== "Compensation")
+                .map((information, index) => (
+                  <article
+                    className={classnames(
+                      trPdf.keyCard,
+                      trPdf.avoidBreak,
+                      keyInfoToneClass(index),
+                    )}
+                    key={`${information.title}-${index}`}
+                  >
+                    <h3>{information.title}</h3>
+                    <p>{information.details}</p>
+                  </article>
+                ))}
             </div>
           </div>
         </section>
 
         <section
-          className={styles.pdfSectionCard}
+          className={trPdf.sectionCard}
           aria-labelledby="pdf-interview-report"
         >
-          <div className={styles.pdfReportHead}>
-            <h2 className={styles.pdfRoundTitle} id="pdf-interview-report">
+          <div className={trPdf.reportHead}>
+            <h2 className={trPdf.roundTitle} id="pdf-interview-report">
               Interview Report: Round 0 - AI Prescreening
             </h2>
             <span
-              className={classnames(
-                styles.pdfFitStatus,
-                headerFitStatusClass,
-              )}
+              className={classnames(trPdf.fitStatus, headerFitStatusClass)}
             >
               <span style={{ color: "#666" }}>Interview?</span>{" "}
               {overallFitLabel}
             </span>
           </div>
 
-          <div className={styles.pdfReportBody}>
-            <div className={styles.pdfRequiredQuestionsWrap}>
-              <div className={styles.pdfSubsectionTitle}>
-                <span className={styles.pdfDot} aria-hidden />
+          <div className={trPdf.reportBody}>
+            <div className={trPdf.requiredQuestionsWrap}>
+              <div className={trPdf.subsectionTitle}>
+                <span className={trPdf.dot} aria-hidden />
                 <span>Required Questions</span>
               </div>
-              <div className={styles.pdfRequiredQuestionsCard}>
+              <div className={trPdf.requiredQuestionsCard}>
                 {hiringManagerQuestions.length > 0 ? (
                   hiringManagerQuestions.map((item, index) => (
                     <div
                       key={index}
                       className={classnames(
-                        styles.pdfHmQuestionBlock,
-                        styles.avoidBreak,
+                        trPdf.hmQuestionBlock,
+                        trPdf.avoidBreak,
                       )}
                     >
-                      <div className={styles.pdfHmQuestionRow}>
-                        <span className={styles.pdfHmQuestionIndex}>
+                      <div className={trPdf.hmQuestionRow}>
+                        <span className={trPdf.hmQuestionIndex}>
                           Q{index + 1}
                         </span>
-                        <div className={styles.pdfHmQuestionText}>
+                        <div className={trPdf.hmQuestionText}>
                           {item.question}
                         </div>
                       </div>
-                      <div className={styles.pdfResponseContextBox}>
-                        <div className={styles.pdfResponseContextLabel}>
+                      <div className={trPdf.responseContextBox}>
+                        <div className={trPdf.responseContextLabel}>
                           Response Context
                         </div>
-                        <div className={styles.pdfResponseContextBody}>
+                        <div className={trPdf.responseContextBody}>
                           {item.response_context?.trim()
                             ? item.response_context
                             : "—"}
                         </div>
                       </div>
-                      <div className={styles.pdfCandidateAnswerBox}>
-                        <div className={styles.pdfCandidateAnswerLabel}>
+                      <div className={trPdf.candidateAnswerBox}>
+                        <div className={trPdf.candidateAnswerLabel}>
                           Candidate Answer
                         </div>
-                        <div className={styles.pdfCandidateAnswerBody}>
+                        <div className={trPdf.candidateAnswerBody}>
                           {item.candidate_answer ?? ""}
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className={styles.pdfRequiredQuestionsEmpty}>
+                  <div className={trPdf.requiredQuestionsEmpty}>
                     No required questions for this evaluation.
                   </div>
                 )}
               </div>
             </div>
 
-            <div className={styles.pdfSubsectionTitle}>
-              <span className={styles.pdfDot} aria-hidden />
+            <div className={trPdf.subsectionTitle}>
+              <span className={trPdf.dot} aria-hidden />
               <span>Evaluation Summary</span>
             </div>
 
             <section
               className={classnames(
-                styles.pdfEvaluationCard,
-                styles.avoidBreak,
+                trPdf.evaluationCard,
+                trPdf.avoidBreak,
               )}
               aria-labelledby="pdf-overall-fit"
             >
-              <div className={styles.pdfFitRow}>
+              <div className={trPdf.fitRow}>
                 <h4 id="pdf-overall-fit">Interview Recommendation</h4>
                 <span
-                  className={classnames(styles.pdfFitPill, fitPillToneClass)}
+                  className={classnames(trPdf.fitPill, fitPillToneClass)}
                 >
                   {overallFitLabel}
                 </span>
               </div>
-              <p className={styles.pdfFitCopy}>
+              <p className={trPdf.fitCopy}>
                 {report.summary?.description || report.thumbnail_summary}
               </p>
 
-              <div className={styles.pdfMetricRow}>
-                <div className={styles.pdfMetricHead}>
+              <div className={trPdf.metricRow}>
+                <div className={trPdf.metricHead}>
                   <h5>Skills Fit</h5>
                   {!!pdfSkillsFitLabel && (
                     <span
                       className={classnames(
-                        styles.pdfBadge,
+                        trPdf.badge,
                         skillsFitBadgeClass,
                       )}
                     >
@@ -357,22 +359,22 @@ export async function downloadTalentReportPdf({
                     </span>
                   )}
                 </div>
-                <p className={styles.pdfMetricCopy}>
+                <p className={trPdf.metricCopy}>
                   {report.overall_recommendation?.skills_fit?.explanation}
                 </p>
               </div>
 
-              <div className={styles.pdfMetricRow}>
-                <div className={styles.pdfMetricHead}>
+              <div className={trPdf.metricRow}>
+                <div className={trPdf.metricHead}>
                   <h5>Logistics Fit</h5>
-                  <div className={styles.pdfMetricBadgeWrap}>
+                  <div className={trPdf.metricBadgeWrap}>
                     {logisticsLevels.map((level) => (
                       <span
                         className={classnames(
-                          styles.pdfBadge,
+                          trPdf.badge,
                           level === "no_issues"
-                            ? styles.pdfBadgeGreen
-                            : styles.pdfBadgeOrange,
+                            ? trPdf.badgeGreen
+                            : trPdf.badgeOrange,
                         )}
                         key={level}
                       >
@@ -387,18 +389,18 @@ export async function downloadTalentReportPdf({
                     ))}
                   </div>
                 </div>
-                <p className={styles.pdfMetricCopy}>
+                <p className={trPdf.metricCopy}>
                   {report.overall_recommendation?.logistics_fit?.explanation}
                 </p>
               </div>
 
-              <div className={styles.pdfMetricRow}>
-                <div className={styles.pdfMetricHead}>
+              <div className={trPdf.metricRow}>
+                <div className={trPdf.metricHead}>
                   <h5>Interest Level</h5>
                   {!!pdfInterestLabel && (
                     <span
                       className={classnames(
-                        styles.pdfBadge,
+                        trPdf.badge,
                         interestBadgeClass,
                       )}
                     >
@@ -406,40 +408,40 @@ export async function downloadTalentReportPdf({
                     </span>
                   )}
                 </div>
-                <p className={styles.pdfMetricCopy}>
+                <p className={trPdf.metricCopy}>
                   {report.summary?.interest_level?.explanation}
                 </p>
               </div>
             </section>
 
-            <div className={styles.pdfReportSection}>
-              <div className={styles.pdfSubsectionTitle}>
-                <span className={styles.pdfDot} aria-hidden />
+            <div className={trPdf.reportSection}>
+              <div className={trPdf.subsectionTitle}>
+                <span className={trPdf.dot} aria-hidden />
                 <span>Candidate Evaluation Report</span>
               </div>
 
-              <div className={styles.pdfReportGrid}>
-                <div className={styles.pdfSideColumn}>
+              <div className={trPdf.reportGrid}>
+                <div className={trPdf.sideColumn}>
                   {(report.key_strengths ?? []).length > 0 && (
                     <section
                       className={classnames(
-                        styles.pdfSideCard,
-                        styles.pdfSideCardGreen,
-                        styles.avoidBreak,
+                        trPdf.sideCard,
+                        trPdf.sideCardGreen,
+                        trPdf.avoidBreak,
                       )}
                     >
                       <h4>
                         <span
                           className={classnames(
-                            styles.pdfIconChip,
-                            styles.pdfIconChipGreen,
+                            trPdf.iconChip,
+                            trPdf.iconChipGreen,
                           )}
                         >
                           ✓
                         </span>
                         <span>Strengths</span>
                       </h4>
-                      <ul className={styles.pdfBullets}>
+                      <ul className={trPdf.bullets}>
                         {(report.key_strengths ?? []).map((item, index) => (
                           <li key={`s-${index}`}>
                             <strong>{item.title}: </strong>
@@ -453,23 +455,23 @@ export async function downloadTalentReportPdf({
                   {(report.potential_gaps ?? []).length > 0 && (
                     <section
                       className={classnames(
-                        styles.pdfSideCard,
-                        styles.pdfSideCardRed,
-                        styles.avoidBreak,
+                        trPdf.sideCard,
+                        trPdf.sideCardRed,
+                        trPdf.avoidBreak,
                       )}
                     >
                       <h4>
                         <span
                           className={classnames(
-                            styles.pdfIconChip,
-                            styles.pdfIconChipRed,
+                            trPdf.iconChip,
+                            trPdf.iconChipRed,
                           )}
                         >
                           !
                         </span>
                         <span>Potential Gaps</span>
                       </h4>
-                      <ul className={styles.pdfBullets}>
+                      <ul className={trPdf.bullets}>
                         {(report.potential_gaps ?? []).map((item, index) => (
                           <li key={`g-${index}`}>
                             <strong>{item.title}: </strong>
@@ -483,23 +485,23 @@ export async function downloadTalentReportPdf({
                   {areasToProbe.length > 0 && (
                     <section
                       className={classnames(
-                        styles.pdfSideCard,
-                        styles.pdfSideCardOrange,
-                        styles.avoidBreak,
+                        trPdf.sideCard,
+                        trPdf.sideCardOrange,
+                        trPdf.avoidBreak,
                       )}
                     >
                       <h4>
                         <span
                           className={classnames(
-                            styles.pdfIconChip,
-                            styles.pdfIconChipOrange,
+                            trPdf.iconChip,
+                            trPdf.iconChipOrange,
                           )}
                         >
                           ?
                         </span>
                         <span>Areas to Probe in Next Rounds</span>
                       </h4>
-                      <ul className={styles.pdfBullets}>
+                      <ul className={trPdf.bullets}>
                         {areasToProbe.map((item, index) => (
                           <li key={`a-${index}`}>
                             <strong>{item.title}: </strong>
@@ -514,12 +516,12 @@ export async function downloadTalentReportPdf({
                 <div style={{ marginTop: 12 }}>
                   <section
                     className={classnames(
-                      styles.pdfTableCard,
-                      styles.pdfRequirementsSummary,
+                      trPdf.tableCard,
+                      trPdf.requirementsSummary,
                     )}
                   >
                     <h4>Requirements Summary</h4>
-                    <table className={styles.pdfSummaryTable}>
+                    <table className={trPdf.summaryTable}>
                       <thead>
                         <tr>
                           <th>Requirement Priorities</th>
@@ -540,7 +542,7 @@ export async function downloadTalentReportPdf({
                               <td>
                                 <span
                                   className={classnames(
-                                    styles.pdfPriorityPill,
+                                    trPdf.priorityPill,
                                     pdfPriorityToneClass(level),
                                   )}
                                 >
@@ -559,12 +561,12 @@ export async function downloadTalentReportPdf({
 
                   <section
                     className={classnames(
-                      styles.pdfTableCard,
-                      styles.pdfAnalysisCard,
+                      trPdf.tableCard,
+                      trPdf.analysisCard,
                     )}
                   >
                     <h4>Detailed Requirements Analysis</h4>
-                    <table className={styles.pdfAnalysisTable}>
+                    <table className={trPdf.analysisTable}>
                       <thead>
                         <tr>
                           <th>Priority</th>
@@ -578,11 +580,11 @@ export async function downloadTalentReportPdf({
                           const assessKey = item.assessment;
                           const prio = item.level as "p0" | "p1" | "p2";
                           return (
-                            <tr key={index} className={styles.avoidBreak}>
+                            <tr key={index} className={trPdf.avoidBreak}>
                               <td>
                                 <span
                                   className={classnames(
-                                    styles.pdfPriorityPill,
+                                    trPdf.priorityPill,
                                     pdfPriorityToneClass(prio),
                                   )}
                                 >
@@ -593,13 +595,11 @@ export async function downloadTalentReportPdf({
                               <td>
                                 <span
                                   className={classnames(
-                                    styles.pdfAssessmentPill,
+                                    trPdf.assessmentPill,
                                     assessmentPillClass(assessKey),
                                   )}
                                 >
-                                  {originalT(
-                                    `assessment_options.${assessKey}`,
-                                  )}
+                                  {originalT(`assessment_options.${assessKey}`)}
                                 </span>
                               </td>
                               <td>{item.reasoning}</td>
@@ -618,10 +618,35 @@ export async function downloadTalentReportPdf({
     </main>,
   );
 
-  pdfReportRef.current.innerHTML = pdfHtml;
+  let reportHtml = pdfHtml;
+
+  if (locale === "zh") {
+    const hideLoading = message.loading(
+      originalT("talent_details.download_report_translating"),
+      0,
+    );
+    try {
+      const { code, data } = await Post<{ html: string }>(
+        `/api/jobs/${jobId}/talents/${talentId}/translate_html`,
+        { html: pdfHtml },
+      );
+      if (code !== 0 || !data?.html) {
+        message.error(
+          originalT("talent_details.download_report_translate_failed"),
+        );
+        return;
+      }
+      reportHtml = data.html;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  pdfReportRef.current.innerHTML = reportHtml;
   const candidateNameNoSpace = talent.name.replace(/\s+/g, "");
   const jobTitleNoSpace = job.name.replace(/\s+/g, "");
-  const pdfFilename = `CandidateReport_${candidateNameNoSpace}_${jobTitleNoSpace}_${dayjs().format("YYYYMMDD")}`;
+  const localeSuffix = locale === "zh" ? "_zh" : "";
+  const pdfFilename = `CandidateReport_${candidateNameNoSpace}_${jobTitleNoSpace}_${dayjs().format("YYYYMMDD")}${localeSuffix}`;
 
   await downloadMarkdownAsPDF({
     name: pdfFilename,

@@ -1,0 +1,685 @@
+@import "@/mixin.module.less";
+
+.trPdfPage {
+  max-width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  color: #2f3137;
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  p,
+  ul {
+    margin: 0;
+  }
+}
+
+.trPdfAvoidBreak {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+.trPdfReportStack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trPdfPageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8edf5;
+}
+
+.trPdfEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3a7cff;
+
+  &::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #3a7cff;
+  }
+}
+
+.trPdfHeaderTitle {
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #2f3137;
+}
+
+.trPdfHeaderSubtitle {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #6f7786;
+}
+
+.trPdfHeaderSubtitleBy {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #6f7786;
+}
+
+.trPdfHeaderMeta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.trPdfMetaLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6f7786;
+}
+
+.trPdfMetaValue {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2f3137;
+}
+
+.trPdfSectionCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #dfe4ee;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.trPdfSectionInner {
+  padding: 20px 22px;
+}
+
+.trPdfSectionHeading {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #2f3137;
+}
+
+.trPdfSectionHeadingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed #dfe4ee;
+}
+
+.trPdfProfileSnapshot {
+  background: linear-gradient(90deg, #f5f7fd 0%, #f9fbff 52%, #f1faff 100%);
+}
+
+.trPdfSnapshotGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 22px;
+  padding-top: 18px;
+}
+
+.trPdfSnapshotItem {
+  h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #8d94a3;
+  }
+
+  p {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 600;
+    color: #2f3137;
+  }
+}
+
+.trPdfKeyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 18px;
+}
+
+.trPdfKeyCard {
+  position: relative;
+  min-height: 92px;
+  border-radius: 14px;
+  padding: 14px 16px;
+  overflow: hidden;
+
+  h3 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5d6572;
+  }
+
+  p {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 500;
+    color: #2f3137;
+  }
+}
+
+.trPdfKeyCardBlue {
+  background: #cdeeff;
+}
+
+.trPdfKeyCardCyan {
+  background: #d6f6f4;
+}
+
+.trPdfKeyCardLavender {
+  background: #dcd7ff;
+}
+
+.trPdfReportHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8edf5;
+  background: #fbfbfc;
+}
+
+.trPdfRoundTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2f3137;
+}
+
+.trPdfFitStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.trPdfFitStatusNegative {
+  color: #e4584d;
+  background: #fff2ef;
+}
+
+.trPdfFitStatusWarning {
+  color: #d98b2f;
+  background: #fff5e7;
+}
+
+.trPdfFitStatusPositive {
+  color: #21b05f;
+  background: #effbef;
+}
+
+.trPdfReportBody {
+  padding: 18px 20px 20px;
+}
+
+.trPdfRequiredQuestionsWrap {
+  margin-bottom: 18px;
+}
+
+.trPdfRequiredQuestionsCard {
+  margin-top: 12px;
+  padding-bottom: 4px;
+}
+
+.trPdfHmQuestionBlock + .trPdfHmQuestionBlock {
+  margin-top: 20px;
+}
+
+.trPdfHmQuestionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.trPdfHmQuestionIndex {
+  width: 28px;
+  height: 24px;
+  border-radius: 6px 6px 0 6px;
+  background: @primary-color;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trPdfHmQuestionText {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f3137;
+  line-height: 1.45;
+}
+
+.trPdfResponseContextBox {
+  background: @page-bg;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.trPdfResponseContextLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: @text-secondary;
+  margin-bottom: 6px;
+}
+
+.trPdfResponseContextBody {
+  font-size: 14px;
+  color: @text-secondary;
+  white-space: pre-wrap;
+}
+
+.trPdfCandidateAnswerBox {
+  background: @primary-bg;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.trPdfCandidateAnswerLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: @primary-color;
+  margin-bottom: 6px;
+}
+
+.trPdfCandidateAnswerBody {
+  font-size: 14px;
+  color: rgba(129, 143, 166, 1);
+  white-space: pre-wrap;
+}
+
+.trPdfRequiredQuestionsEmpty {
+  font-size: 13px;
+  color: #999;
+  padding: 16px 8px 8px;
+  text-align: center;
+}
+
+.trPdfSubsectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2f3137;
+}
+
+.trPdfDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #3a7cff;
+  box-shadow: 0 0 0 4px rgba(58, 124, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.trPdfEvaluationCard {
+  margin-top: 14px;
+  border: 1px solid #dbe4f6;
+  border-radius: 16px;
+  background: #f7f9ff;
+  padding: 12px 16px 8px;
+}
+
+.trPdfFitRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2f3137;
+  }
+}
+
+.trPdfFitPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trPdfFitPillNegative {
+  color: #e4584d;
+  background: #ffe9e5;
+}
+
+.trPdfFitPillWarning {
+  color: #b16a1d;
+  background: #fff5e7;
+}
+
+.trPdfFitPillPositive {
+  color: #3f9a4a;
+  background: #eefbef;
+}
+
+.trPdfFitCopy {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2f3137;
+}
+
+.trPdfMetricRow {
+  padding: 12px 0;
+  border-top: 1px dashed #d7dff0;
+}
+
+.trPdfFitCopy + .trPdfMetricRow {
+  border-top: none;
+}
+
+.trPdfMetricHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+
+  h5 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2f3137;
+  }
+}
+
+.trPdfBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trPdfBadgeRed {
+  color: #e4584d;
+  background: #fff2ef;
+  border-color: #f2c3bc;
+}
+
+.trPdfBadgeOrange {
+  color: #b16a1d;
+  background: #fff5e7;
+  border-color: #f0cd9c;
+}
+
+.trPdfBadgeGray {
+  color: #677180;
+  background: #edf0f4;
+  border-color: #d6dbe4;
+}
+
+.trPdfBadgeGreen {
+  color: #3f9a4a;
+  background: #eefbef;
+  border-color: #cceacb;
+}
+
+.trPdfBadgeBlue {
+  color: #0369a1;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+.trPdfMetricBadgeWrap {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.trPdfMetricCopy {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #596170;
+}
+
+.trPdfReportSection {
+  margin-top: 18px;
+}
+
+.trPdfReportGrid {
+  margin-top: 14px;
+}
+
+.trPdfTableCard {
+  border: 1px solid #dfe4ee;
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2f3137;
+  }
+}
+
+.trPdfRequirementsSummary {
+  padding: 14px 16px;
+}
+
+.trPdfSummaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 12px;
+
+  th,
+  td {
+    padding: 11px 10px;
+    border: 1px solid #e8edf5;
+    text-align: left;
+    vertical-align: top;
+    color: #2f3137;
+  }
+
+  th {
+    background: #fafbfd;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+.trPdfPriorityPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trPdfPriorityP0 {
+  color: #57302a;
+  background: #fff4f2;
+  border: 1px solid #f1d8d2;
+}
+
+.trPdfPriorityP1 {
+  color: #3f5d32;
+  background: #f4fbf2;
+  border: 1px solid #d3e9cb;
+}
+
+.trPdfPriorityP2 {
+  color: #655c4c;
+  background: #fbf8f3;
+  border: 1px solid #ece2d3;
+}
+
+.trPdfAnalysisCard {
+  margin-top: 14px;
+  padding: 14px 16px;
+}
+
+.trPdfAnalysisTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 11.5px;
+
+  th,
+  td {
+    padding: 10px 10px;
+    border: 1px solid #e8edf5;
+    vertical-align: top;
+    text-align: left;
+    color: #2f3137;
+  }
+
+  th {
+    background: #fafbfd;
+    font-weight: 700;
+  }
+}
+
+.trPdfAssessmentPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trPdfAssessmentMeets {
+  color: #3f9a4a;
+  background: #eefbef;
+  border: 1px solid #cceacb;
+}
+
+.trPdfAssessmentNo {
+  color: #d4584d;
+  background: #fff1ef;
+  border: 1px solid #f1c2bc;
+}
+
+.trPdfAssessmentPartial {
+  color: #b16a1d;
+  background: #fff5e7;
+  border: 1px solid #f0cd9c;
+}
+
+.trPdfSideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.trPdfSideCard {
+  padding: 14px 16px;
+  border: 1px solid #dfe4ee;
+  border-radius: 16px;
+  background: #ffffff;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2f3137;
+  }
+}
+
+.trPdfSideCardGreen {
+  background: #f5fff7;
+  border-color: #b8ecc8;
+}
+
+.trPdfSideCardRed {
+  background: #fff8f7;
+  border-color: #f2b8b0;
+}
+
+.trPdfSideCardOrange {
+  background: #fffaf0;
+  border-color: #f0cd9c;
+}
+
+.trPdfIconChip {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 11px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.trPdfIconChipGreen {
+  background: #59bf71;
+}
+
+.trPdfIconChipRed {
+  background: #df6258;
+}
+
+.trPdfIconChipOrange {
+  background: #e0a23b;
+}
+
+.trPdfBullets {
+  margin-top: 10px;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #2f3137;
+
+  li + li {
+    margin-top: 8px;
+  }
+}

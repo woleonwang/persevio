@@ -60,7 +60,6 @@ import {
   SUFFIX_DEFAULT_STAGE_KEYS,
   TALENT_DETAIL_FROM,
 } from "@/utils/consts";
-import legacyPdfStyles from "@/components/AtsTalentDetail/style.module.less";
 
 import AiPrescreeningDrawerBody from "./components/AiPrescreeningDrawerBody";
 import AssignedRecruitersTab from "./components/AssignedRecruitersTab";
@@ -277,7 +276,8 @@ function AtsTalentDetailV2026ViewBase() {
     }
   };
 
-  const downloadReportPdf = async () => {
+  const downloadReportPdf = async (locale: "en" | "zh" = "en") => {
+    if (!jobIdStr || !talentIdStr) return;
     await downloadTalentReportPdf({
       pdfReportRef,
       talent,
@@ -285,7 +285,9 @@ function AtsTalentDetailV2026ViewBase() {
       report,
       lastUpdated,
       originalT,
-      styles: legacyPdfStyles as Record<string, string>,
+      locale,
+      jobId: jobIdStr,
+      talentId: talentIdStr,
     });
   };
 
@@ -650,15 +652,58 @@ function AtsTalentDetailV2026ViewBase() {
                 </a>
               )}
             </div>
-            <Tooltip title="Download Report">
+            <Dropdown
+              trigger={["hover"]}
+              placement="bottomRight"
+              dropdownRender={() => (
+                <div className={styles.downloadReportDropdown}>
+                  <div className={styles.downloadReportDropdownHeader}>
+                    {t("download_report_in")}
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.downloadReportDropdownItem}
+                    onClick={() => void downloadReportPdf("en")}
+                  >
+                    <span className={styles.downloadReportDropdownLabel}>
+                      {t("download_report_english")}
+                    </span>
+                    <span
+                      className={classnames(
+                        styles.downloadReportBadge,
+                        styles.downloadReportBadgeNative,
+                      )}
+                    >
+                      {t("download_report_native")}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.downloadReportDropdownItem}
+                    onClick={() => void downloadReportPdf("zh")}
+                  >
+                    <span className={styles.downloadReportDropdownLabel}>
+                      {t("download_report_chinese")}
+                    </span>
+                    <span
+                      className={classnames(
+                        styles.downloadReportBadge,
+                        styles.downloadReportBadgeAi,
+                      )}
+                    >
+                      {t("download_report_ai_translated")}
+                    </span>
+                  </button>
+                </div>
+              )}
+            >
               <Button
                 variant="outlined"
                 color="primary"
                 className={styles.iconBtn16}
                 icon={<Icon icon={<DownloadIcon />} />}
-                onClick={() => void downloadReportPdf()}
               />
-            </Tooltip>
+            </Dropdown>
           </div>
         </div>
 
