@@ -510,7 +510,7 @@ type TTalentRecruiter = {
   staff_id: number;
   created_at: string;
   updated_at: string;
-  staff?: Pick<IStaff, "id" | "name" | "status">;
+  staff: Pick<IStaff, "id" | "name" | "status">;
 };
 
 // JobPipeline / Talents list 通用候选人类型

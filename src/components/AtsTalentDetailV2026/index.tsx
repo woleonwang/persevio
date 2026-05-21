@@ -63,6 +63,7 @@ import {
 import legacyPdfStyles from "@/components/AtsTalentDetail/style.module.less";
 
 import AiPrescreeningDrawerBody from "./components/AiPrescreeningDrawerBody";
+import AssignedRecruitersTab from "./components/AssignedRecruitersTab";
 import ListCard from "./components/TimelineCard";
 import { downloadTalentReportPdf } from "./utils/downloadTalentReportPdf";
 import { formatLastUpdated, getInitials } from "./utils/helpers";
@@ -102,7 +103,7 @@ function AtsTalentDetailV2026ViewBase() {
 
   const [resumeExpanded, setResumeExpanded] = useState(false);
   const [rightTab, setRightTab] = useState<
-    "interview_feedback" | "notes" | "activity"
+    "interview_feedback" | "notes" | "activity" | "assigned_recruiters"
   >("interview_feedback");
   const [openRoundIds, setOpenRoundIds] = useState<string[]>([]);
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
@@ -138,7 +139,7 @@ function AtsTalentDetailV2026ViewBase() {
   const pdfReportRef = useRef<HTMLDivElement>(null);
 
   const { job } = useJob();
-  const { talent, interviews, fetchTalent } = useTalent();
+  const { talent, interviews, fetchTalent, updateTalent } = useTalent();
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent_details.${key}`);
@@ -883,7 +884,13 @@ function AtsTalentDetailV2026ViewBase() {
             className={styles.tabsUnderline}
             activeKey={rightTab}
             onChange={(k) =>
-              setRightTab(k as "interview_feedback" | "notes" | "activity")
+              setRightTab(
+                k as
+                  | "interview_feedback"
+                  | "notes"
+                  | "activity"
+                  | "assigned_recruiters",
+              )
             }
             animated={{ inkBar: true, tabPane: false }}
             items={[
@@ -907,6 +914,11 @@ function AtsTalentDetailV2026ViewBase() {
               {
                 key: "activity",
                 label: originalT("talent_details.tab_activity"),
+                children: null,
+              },
+              {
+                key: "assigned_recruiters",
+                label: originalT("talent_details.tab_assigned_recruiters"),
                 children: null,
               },
             ]}
@@ -1126,6 +1138,18 @@ function AtsTalentDetailV2026ViewBase() {
                   </div>
                 )}
               </div>
+            )}
+
+            {rightTab === "assigned_recruiters" && (
+              <AssignedRecruitersTab
+                jobId={jobIdStr!}
+                talentId={talent.id}
+                talentRecruiters={talent.talent_recruiters ?? []}
+                jobCollaborators={job.collaborators}
+                onTalentRecruitersChange={(talentRecruiters) => {
+                  updateTalent({ talent_recruiters: talentRecruiters });
+                }}
+              />
             )}
           </div>
         </div>

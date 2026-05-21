@@ -44,7 +44,11 @@ const useTalent = () => {
     }
   };
 
-  return { talent, interviews, fetchTalent, jobId };
+  const updateTalent = (patch: Partial<TTalent>) => {
+    setTalent((prev) => (prev ? { ...prev, ...patch } : prev));
+  };
+
+  return { talent, interviews, fetchTalent, updateTalent, jobId };
 };
 
 export default useTalent;
