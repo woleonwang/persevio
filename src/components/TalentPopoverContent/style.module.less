@@ -420,68 +420,7 @@
   border-top: 1px dashed rgba(235, 236, 238, 1);
   padding: 20px;
 
-  .cardFooterContent {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .cardFooterStatus {
-    padding: 4px 16px;
-    border-radius: 16px;
-    width: fit-content;
-    font-size: 14px;
-
-    &.rejected {
-      color: rgba(224, 61, 61, 1);
-      background-color: rgba(255, 242, 242, 1);
-    }
-
-    &.interview_scheduled,
-    &.waiting_for_screening,
-    &.interview_created {
-      background-color: rgba(237, 242, 255, 1);
-      color: @primary-color;
-    }
-  }
-
-  .cardFooterInterviewInfo {
-    display: flex;
-    gap: 24px;
-    margin-top: 12px;
-
-    .cardFooterInterviewInfoItem {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-
-      > div:first-child {
-        font-weight: bold;
-      }
-    }
-  }
-
-  .right {
-    display: flex;
-    font-size: 14px;
-
-    .border {
-      margin-right: 24px;
-      padding-right: 24px;
-      border-right: 1px solid rgba(235, 236, 238, 1);
-    }
-
-    .cardFooterSourceChannel {
-      margin-left: 24px;
-      padding-left: 24px;
-      border-left: 1px solid rgba(235, 236, 238, 1);
-      color: @primary-color;
-    }
-  }
-
   .cardFooterFeedback {
-    margin-top: 20px;
     background-color: rgba(255, 242, 242, 1);
     padding: 12px;
     border-radius: 8px;
@@ -491,6 +430,101 @@
       color: rgba(224, 61, 61, 1);
       font-weight: bold;
       margin-right: 8px;
+    }
+  }
+
+  .cardFooterFeedbackWithAssignedRecruiters {
+    margin-top: 20px;
+  }
+}
+
+.assignedRecruitersRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.assignedRecruitersLabel {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: @text-secondary;
+  line-height: 32px;
+  font-weight: bold;
+}
+
+.assignedRecruitersChipArea {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(54, 130, 254, 0.08);
+  }
+}
+
+.assignedRecruitersEditor {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.assignedRecruitersActions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.assignedRecruitersChipWrap {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.personChip {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: #f1f2f4;
+  font-size: 13px;
+  color: #262626;
+  line-height: 1.4;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assignedRecruitersPlaceholder {
+  color: rgba(0, 0, 0, 0.25);
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.assignedRecruitersSelect {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+
+  :global {
+    .ant-select-selector {
+      flex-wrap: nowrap;
+    }
+
+    .ant-select-selection-overflow {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
     }
   }
 }

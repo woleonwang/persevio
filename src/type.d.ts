@@ -500,6 +500,17 @@ type TTalent = {
   stage_updated_at?: string;
   evaluate_feedback: TEvaluateFeedback;
   evaluate_feedback_reason: string;
+  talent_recruiters?: TTalentRecruiter[];
+};
+
+type TTalentRecruiter = {
+  id: number;
+  job_id: number;
+  talent_id: number;
+  staff_id: number;
+  created_at: string;
+  updated_at: string;
+  staff?: Pick<IStaff, "id" | "name" | "status">;
 };
 
 // JobPipeline / Talents list 通用候选人类型

@@ -1187,6 +1187,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     search_placeholder: "Candidate name",
     job_placeholder: "Job",
     level_placeholder: "Match Level",
+    assigned_recruiters: "Assigned Recruiters",
+    assigned_recruiters_placeholder: "Click to assign...",
+    assigned_recruiters_save_success: "Saved successfully",
+    assigned_recruiters_save_failed: "Failed to save assigned recruiters",
   },
 
   job_document: {
