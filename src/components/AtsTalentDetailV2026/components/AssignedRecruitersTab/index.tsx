@@ -163,7 +163,7 @@ const AssignedRecruitersTab = ({
         </Button>
       </div>
 
-      <div className={styles.recruiterCardsWrap}>
+      <div>
         {talentRecruiters.length === 0 ? (
           <div className={styles.emptyState}>
             {tKey("no_assigned_recruiters")}
