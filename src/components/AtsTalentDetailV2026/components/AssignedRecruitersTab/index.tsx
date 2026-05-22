@@ -4,6 +4,7 @@ import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import Icon from "@/components/Icon";
+import RecruiterSelectNotFoundContent from "@/components/RecruiterSelectNotFoundContent";
 import Delete from "@/assets/icons/delete";
 import { Post } from "@/utils/request";
 import { getInitials } from "@/components/AtsTalentDetailV2026/utils/helpers";
@@ -112,6 +113,7 @@ const AssignedRecruitersTab = ({
             className={styles.recruiterSearch}
             placeholder={tKey("assign_recruiter_placeholder")}
             options={addRecruiterSelectOptions}
+            notFoundContent={<RecruiterSelectNotFoundContent />}
             value={newStaffId}
             onChange={setNewStaffId}
             showSearch

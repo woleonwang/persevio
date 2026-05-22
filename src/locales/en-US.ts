@@ -1191,6 +1191,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     assigned_recruiters_placeholder: "Click to assign...",
     assigned_recruiters_save_success: "Saved successfully",
     assigned_recruiters_save_failed: "Failed to save assigned recruiters",
+    recruiter_select_empty_hint:
+      "Please add Recruiters to Collaborators in Job Settings first",
   },
 
   job_document: {

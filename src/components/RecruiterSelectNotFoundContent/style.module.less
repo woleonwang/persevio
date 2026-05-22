@@ -1,0 +1,31 @@
+@import "@/mixin.module.less";
+
+.empty {
+  margin: 8px 0;
+
+  :global(.ant-empty-image) {
+    height: 40px;
+    margin-bottom: 8px;
+  }
+
+  :global(.ant-empty-description) {
+    margin: 0;
+  }
+}
+
+.description {
+  text-align: center;
+}
+
+.title {
+  color: @text-secondary;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.hint {
+  margin-top: 4px;
+  color: @text-tertiary;
+  font-size: 12px;
+  line-height: 18px;
+}

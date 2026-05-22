@@ -3,6 +3,7 @@ import { Button, Select, message } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { Post } from "@/utils/request";
+import RecruiterSelectNotFoundContent from "@/components/RecruiterSelectNotFoundContent";
 import styles from "./style.module.less";
 
 interface IProps {
@@ -114,6 +115,7 @@ const AssignedRecruiters = ({
             placeholder={t("assigned_recruiters_placeholder")}
             value={draftStaffIds}
             options={selectableOptions}
+            notFoundContent={<RecruiterSelectNotFoundContent />}
             optionFilterProp="label"
             placement="topLeft"
             getPopupContainer={() =>
