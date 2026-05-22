@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal, Select, message } from "antd";
+import { Button, Select, message } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
