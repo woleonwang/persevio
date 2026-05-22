@@ -645,7 +645,7 @@ export async function downloadTalentReportPdf({
   pdfReportRef.current.innerHTML = reportHtml;
   const candidateNameNoSpace = talent.name.replace(/\s+/g, "");
   const jobTitleNoSpace = job.name.replace(/\s+/g, "");
-  const localeSuffix = locale === "zh" ? "_zh" : "";
+  const localeSuffix = locale === "zh" ? "_zh-CN" : "";
   const pdfFilename = `CandidateReport_${candidateNameNoSpace}_${jobTitleNoSpace}_${dayjs().format("YYYYMMDD")}${localeSuffix}`;
 
   await downloadMarkdownAsPDF({
