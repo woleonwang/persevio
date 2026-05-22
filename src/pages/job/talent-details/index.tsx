@@ -20,11 +20,7 @@ const TalentDetails: React.FC = () => {
     return <AtsTalentDetail />;
   }
 
-  if (globalStore.useNewTalentDetailsPage) {
-    return <AtsTalentDetailV2026 />;
-  }
-
-  return <AtsTalentDetail />;
+  return <AtsTalentDetailV2026 />;
 };
 
 export default observer(TalentDetails);
