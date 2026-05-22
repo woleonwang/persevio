@@ -841,6 +841,7 @@ const MemberTeamPage = () => {
         okText={isEditMode ? t("update") : t("confirm")}
         cancelText={t("cancel")}
         width={560}
+        destroyOnClose
       >
         <Form
           form={memberForm}
