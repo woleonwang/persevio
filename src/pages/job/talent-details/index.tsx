@@ -3,7 +3,6 @@ import NewTalentDetail from "@/components/NewTalentDetail";
 import { getQuery } from "@/utils";
 import AtsTalentDetail from "@/components/AtsTalentDetail";
 import AtsTalentDetailV2026 from "@/components/AtsTalentDetailV2026";
-import globalStore from "@/store/global";
 import { observer } from "mobx-react-lite";
 
 const TalentDetails: React.FC = () => {

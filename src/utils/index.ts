@@ -244,7 +244,7 @@ export const downloadMarkdownAsPDF = async ({
       },
       jsPDF: {
         unit: "mm",
-        format: [210, Math.ceil(wrapperHeight * 0.27)],
+        format: [210, Math.ceil(wrapperHeight * 0.28)],
         orientation: "portrait",
       },
       pagebreak: {
