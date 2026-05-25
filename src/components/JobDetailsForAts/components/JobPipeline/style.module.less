@@ -15,6 +15,15 @@
   flex-wrap: wrap;
 }
 
+.filterRowMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
 .searchInput {
   width: 220px;
 }
@@ -45,6 +54,12 @@
   &:last-child {
     border-radius: 0 6px 6px 0;
   }
+}
+
+.inBatchBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .addCandidateBtn {
@@ -654,14 +669,6 @@
   &:hover {
     color: #333;
   }
-}
-
-.moveStageSelectWrap {
-  padding: 8px 0;
-}
-
-.moveStageSelect {
-  width: 100%;
 }
 
 .listBoardEmpty {

@@ -4,10 +4,8 @@ import {
   Dropdown,
   Modal,
   Popover,
-  Select,
   Table,
   Tooltip,
-  message,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
@@ -20,6 +18,9 @@ import {
 import EvaluateResultBadge from "@/components/EvaluateResultBadge";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
+import MoveStageModal, {
+  type MoveStageOption,
+} from "@/components/MoveStageModal";
 import List from "@/assets/icons/list";
 import { getCandidateCardData, getEvaluateResultLevel } from "@/utils";
 import { Post } from "@/utils/request";
@@ -30,11 +31,7 @@ import styles from "./style.module.less";
 import globalStore from "@/store/global";
 import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
 
-export type PipelineStageLike = {
-  id: string;
-  name: string;
-  isDefault?: boolean;
-};
+export type PipelineStageLike = MoveStageOption;
 
 export type ListModeTableVariant = "pipeline" | "talents";
 
@@ -45,6 +42,8 @@ interface IProps {
   onMarkViewed?: () => void;
   onRowClick: (item: TTalentListItem) => void;
   onUpdateTalent?: () => void;
+  selectedRowKeys?: number[];
+  onSelectedRowKeysChange?: (keys: number[]) => void;
 }
 
 const getCurrentWorkExperience = (
@@ -73,6 +72,8 @@ const ListModeTable = ({
   onRowClick,
   onUpdateTalent,
   onMarkViewed,
+  selectedRowKeys,
+  onSelectedRowKeysChange,
 }: IProps) => {
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -93,13 +94,6 @@ const ListModeTable = ({
   const [moveStageOpen, setMoveStageOpen] = useState(false);
   const [interviewOpen, setInterviewOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
-  const [selectedStageId, setSelectedStageId] = useState<string | undefined>();
-
-  const customStages = allStages.filter((s) => !s.isDefault);
-  const moveStageOptions =
-    customStages.length > 0
-      ? customStages
-      : allStages.filter((s) => s.id !== "rejected");
 
   useEffect(() => {
     const next: Record<number, boolean> = {};
@@ -162,21 +156,6 @@ const ListModeTable = ({
         <span className={styles.cellTrigger}>{children}</span>
       </Popover>
     );
-  };
-
-  const handleMoveStageOk = async () => {
-    if (!onUpdateTalent) return;
-    if (!actionRecord || !selectedStageId) return;
-    const { code } = await Post(
-      `/api/jobs/${actionRecord.job?.invitation_token}/talents/${actionRecord.id}/stage`,
-      { stage_id: selectedStageId },
-    );
-    if (code === 0) {
-      onUpdateTalent();
-      setMoveStageOpen(false);
-      setActionRecord(null);
-      message.success(t("job_details.saveSuccess"));
-    }
   };
 
   const pipelineColumns: ColumnsType<TTalentListItem> = [
@@ -323,7 +302,6 @@ const ListModeTable = ({
                   label: tKey("move_stage"),
                   onClick: () => {
                     setActionRecord(record);
-                    setSelectedStageId(undefined);
                     setMoveStageOpen(true);
                   },
                 },
@@ -500,42 +478,42 @@ const ListModeTable = ({
           scroll={{ x: "max-content" }}
           rowKey="id"
           pagination={{ pageSize: 10, showSizeChanger: false }}
+          rowSelection={
+            enablePipelineActions
+              ? {
+                  selectedRowKeys,
+                  preserveSelectedRowKeys: true,
+                  onChange: (keys) =>
+                    onSelectedRowKeysChange?.(keys as number[]),
+                }
+              : undefined
+          }
           onRow={(record) => ({
             onClick: () => onRowClick(record),
           })}
         />
       </div>
 
+      {enablePipelineActions && actionRecord && (
+        <MoveStageModal
+          open={moveStageOpen}
+          jobId={actionRecord.job?.invitation_token ?? actionRecord.job_id}
+          talentId={actionRecord.id}
+          allStages={allStages}
+          onCancel={() => {
+            setMoveStageOpen(false);
+            setActionRecord(null);
+          }}
+          onOk={() => {
+            onUpdateTalent?.();
+            setMoveStageOpen(false);
+            setActionRecord(null);
+          }}
+        />
+      )}
+
       {enablePipelineActions && (
         <>
-          <Modal
-            title={tKey("move_stage_modal_title")}
-            open={moveStageOpen}
-            onCancel={() => {
-              setMoveStageOpen(false);
-              setActionRecord(null);
-            }}
-            onOk={handleMoveStageOk}
-            okText={t("job_details.save")}
-            okButtonProps={{
-              disabled: !selectedStageId,
-            }}
-            destroyOnClose
-          >
-            <div className={styles.moveStageSelectWrap}>
-              <Select
-                className={styles.moveStageSelect}
-                placeholder={tKey("move_stage_modal_title")}
-                value={selectedStageId}
-                onChange={setSelectedStageId}
-                options={moveStageOptions.map((s) => ({
-                  value: s.id,
-                  label: s.name,
-                }))}
-              />
-            </div>
-          </Modal>
-
           <Modal
             open={interviewOpen}
             onCancel={() => {

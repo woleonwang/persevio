@@ -26,9 +26,16 @@ const REJECT_REASON_OPTIONS: {
   { value: "other", labelKey: "reject_reason_others" },
 ];
 
+type TBatchTalentOperationResult = {
+  success_count: number;
+  skipped_count: number;
+  failed_count: number;
+};
+
 interface IProps {
   jobId: string | number;
-  talentId: number;
+  talentId?: number;
+  talentIds?: number[];
   open: boolean;
   onCancel: () => void;
   onOk: () => void;
@@ -37,9 +44,11 @@ interface IProps {
 }
 
 const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
-  const { jobId, talentId, open, onCancel, onOk, successMessage } = props;
+  const { jobId, talentId, talentIds, open, onCancel, onOk, successMessage } =
+    props;
   const { t } = useTranslation();
-  const tDetail = (key: string) => t(`talent_details.${key}`);
+  const tDetail = (key: string, options?: Record<string, unknown>) =>
+    t(`talent_details.${key}`, options);
 
   const [rejectReasonType, setRejectReasonType] = useState<
     TTalentRejectReasonType | undefined
@@ -54,6 +63,32 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
     }
   }, [open]);
 
+  const showBatchRejectFeedback = (result: TBatchTalentOperationResult) => {
+    const { success_count, skipped_count, failed_count } = result;
+
+    if (skipped_count === 0 && failed_count === 0) {
+      message.success(
+        tDetail("batch_reject_success", { count: success_count }),
+      );
+      return;
+    }
+
+    const parts = [
+      tDetail("batch_reject_result_rejected", { count: success_count }),
+    ];
+    if (skipped_count > 0) {
+      parts.push(
+        tDetail("batch_reject_result_skipped", { count: skipped_count }),
+      );
+    }
+    if (failed_count > 0) {
+      parts.push(
+        tDetail("batch_reject_result_failed", { count: failed_count }),
+      );
+    }
+    message.warning(parts.join(", "));
+  };
+
   return (
     <Modal
       open={open}
@@ -61,14 +96,32 @@ const TalentEvaluateFeedbackWithReasonModal = (props: IProps) => {
       onOk={async () => {
         if (!rejectReasonType) return;
 
-        const { code } = await Post(`/api/jobs/${jobId}/talents/${talentId}`, {
-          status: "rejected",
-          feedback: evaluateFeedbackReason,
-          reject_reason_type: rejectReasonType,
-        });
+        const isBatch = !!talentIds?.length;
+        const { code, data } = isBatch
+          ? await Post<TBatchTalentOperationResult>(
+              `/api/jobs/${jobId}/talents/batch/reject`,
+              {
+                talent_ids: talentIds,
+                feedback: evaluateFeedbackReason,
+                reject_reason_type: rejectReasonType,
+              },
+            )
+          : await Post(`/api/jobs/${jobId}/talents/${talentId}`, {
+              status: "rejected",
+              feedback: evaluateFeedbackReason,
+              reject_reason_type: rejectReasonType,
+            });
 
         if (code === 0) {
-          message.success(successMessage ?? tDetail("update_success"));
+          if (isBatch) {
+            showBatchRejectFeedback({
+              success_count: data?.success_count ?? 0,
+              skipped_count: data?.skipped_count ?? 0,
+              failed_count: data?.failed_count ?? 0,
+            });
+          } else {
+            message.success(successMessage ?? tDetail("update_success"));
+          }
           onOk();
         } else {
           message.error(tDetail("reject_submit_failed"));

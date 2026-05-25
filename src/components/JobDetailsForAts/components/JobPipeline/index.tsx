@@ -10,8 +10,8 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, Input, message, Select, Spin } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Empty, Input, message, Select, Spin } from "antd";
+import { DownOutlined, SearchOutlined } from "@ant-design/icons";
 
 import useJob from "@/hooks/useJob";
 import { Get, Post } from "@/utils/request";
@@ -36,6 +36,8 @@ import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
 import { storage, StorageKey } from "@/utils/storage";
 import ListModeTable from "@/components/ListModeTable";
 import { getStageKey } from "@/utils/talentStage";
+import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
+import MoveStageModal from "@/components/MoveStageModal";
 
 const PIPELINE_KANBAN_UNSUITABLE_TOGGLE_STAGE_IDS = [
   "applied",
@@ -82,6 +84,10 @@ const JobPipeline = ({
   const [unsuitableExpandedByStage, setUnsuitableExpandedByStage] = useState<
     Record<string, boolean>
   >({});
+
+  const [selectedTalentIds, setSelectedTalentIds] = useState<number[]>([]);
+  const [batchMoveStageOpen, setBatchMoveStageOpen] = useState(false);
+  const [batchRejectOpen, setBatchRejectOpen] = useState(false);
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -233,8 +239,11 @@ const JobPipeline = ({
 
   const handleChangeViewMode = (mode: "list" | "kanban") => {
     setViewMode(mode);
+    setSelectedTalentIds([]);
     storage.set<"list" | "kanban">(StorageKey.JOB_PIPELINE_VIEW_MODE, mode);
   };
+
+  const hasBatchSelection = selectedTalentIds.length > 0;
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as number);
@@ -324,84 +333,100 @@ const JobPipeline = ({
   return (
     <div className={styles.container}>
       <div className={styles.filterRow}>
-        <Input
-          className={styles.searchInput}
-          placeholder={tKey("search_placeholder")}
-          prefix={<SearchOutlined />}
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          allowClear
-          style={{ width: 200 }}
-        />
-        <Select
-          className={styles.filterSelect}
-          placeholder={tKey("all_sourcing_channels")}
-          value={sourcingChannels}
-          onChange={setSourcingChannels}
-          mode="multiple"
-          maxTagCount={1}
-          allowClear
-          options={sourceChannelOptions}
-          style={{ width: 200 }}
-        />
-        <Select
-          className={styles.filterSelect}
-          placeholder={tKey("all_stages")}
-          value={stageFilters}
-          onChange={setStageFilters}
-          mode="multiple"
-          maxTagCount={1}
-          allowClear
-          options={allStages.map((s) => ({ value: s.id, label: s.name }))}
-          style={{ width: 180 }}
-        />
-        <Select
-          className={styles.filterSelect}
-          placeholder={tKey("all_fit_levels")}
-          value={evaluateResultLevels}
-          onChange={setEvaluateResultLevels}
-          mode="multiple"
-          maxTagCount={1}
-          allowClear
-          options={EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.map((level) => ({
-            label: t(`job_talents.evaluate_result_options.${level}`),
-            value: level,
-          }))}
-          style={{ width: 200 }}
-        />
-        {/* <Select
-          className={styles.filterSelect}
-          placeholder={tKey("rank_by")}
-          allowClear
-          options={[{ value: undefined, label: tKey("rank_by") }]}
-        /> */}
-        <div className={styles.filterRowRight}>
-          {/* <Button
-            type="default"
-            onClick={() => setUploadCandidateModalOpen(true)}
+        <div className={styles.viewToggle}>
+          <Button
+            className={styles.viewToggleBtn}
+            type={viewMode === "list" ? "primary" : "default"}
+            onClick={() => handleChangeViewMode("list")}
           >
-            {tKey("upload_candidate")}
-          </Button> */}
-          <div className={styles.viewToggle}>
-            <Button
-              className={styles.viewToggleBtn}
-              type={viewMode === "list" ? "primary" : "default"}
-              onClick={() => handleChangeViewMode("list")}
-            >
-              {tKey("list")}
-            </Button>
-            <Button
-              className={styles.viewToggleBtn}
-              type={viewMode === "kanban" ? "primary" : "default"}
-              onClick={() => handleChangeViewMode("kanban")}
-            >
-              {tKey("kanban")}
-            </Button>
-          </div>
+            {tKey("list")}
+          </Button>
+          <Button
+            className={styles.viewToggleBtn}
+            type={viewMode === "kanban" ? "primary" : "default"}
+            onClick={() => handleChangeViewMode("kanban")}
+          >
+            {tKey("kanban")}
+          </Button>
         </div>
-        {/* <Button type="primary" className={styles.addCandidateBtn}>
-          + {tKey("add_candidate")}
-        </Button> */}
+        <div className={styles.filterRowMain}>
+          <Input
+            className={styles.searchInput}
+            placeholder={tKey("search_placeholder")}
+            prefix={<SearchOutlined />}
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            allowClear
+            style={{ width: 200 }}
+          />
+          <Select
+            className={styles.filterSelect}
+            placeholder={tKey("all_sourcing_channels")}
+            value={sourcingChannels}
+            onChange={setSourcingChannels}
+            mode="multiple"
+            maxTagCount={1}
+            allowClear
+            options={sourceChannelOptions}
+            style={{ width: 200 }}
+          />
+          <Select
+            className={styles.filterSelect}
+            placeholder={tKey("all_stages")}
+            value={stageFilters}
+            onChange={setStageFilters}
+            mode="multiple"
+            maxTagCount={1}
+            allowClear
+            options={allStages.map((s) => ({ value: s.id, label: s.name }))}
+            style={{ width: 180 }}
+          />
+          <Select
+            className={styles.filterSelect}
+            placeholder={tKey("all_fit_levels")}
+            value={evaluateResultLevels}
+            onChange={setEvaluateResultLevels}
+            mode="multiple"
+            maxTagCount={1}
+            allowClear
+            options={EVALUATE_INTERVIEW_RECOMMENDATION_KEYS.map((level) => ({
+              label: t(`job_talents.evaluate_result_options.${level}`),
+              value: level,
+            }))}
+            style={{ width: 200 }}
+          />
+        </div>
+        {viewMode === "list" && (
+          <div className={styles.filterRowRight}>
+            <Dropdown
+              trigger={["hover"]}
+              menu={{
+                items: [
+                  {
+                    key: "move_stage",
+                    label: tKey("move_stage"),
+                    disabled: !hasBatchSelection,
+                    onClick: () => {
+                      setBatchMoveStageOpen(true);
+                    },
+                  },
+                  {
+                    key: "reject",
+                    label: tKey("reject"),
+                    danger: true,
+                    disabled: !hasBatchSelection,
+                    onClick: () => setBatchRejectOpen(true),
+                  },
+                ],
+              }}
+            >
+              <Button className={styles.inBatchBtn} variant="outlined">
+                {tKey("in_batch")}
+                <DownOutlined />
+              </Button>
+            </Dropdown>
+          </div>
+        )}
       </div>
 
       {loading && (
@@ -474,6 +499,8 @@ const JobPipeline = ({
             <ListModeTable
               allStages={allStages}
               items={filteredList}
+              selectedRowKeys={selectedTalentIds}
+              onSelectedRowKeysChange={setSelectedTalentIds}
               onRowClick={(talent) => {
                 window.open(
                   buildTalentDetailUrl(job!.invitation_token, talent.id),
@@ -492,6 +519,33 @@ const JobPipeline = ({
           jobId={job.invitation_token}
           onCancel={() => setUploadCandidateModalOpen(false)}
           onSuccess={() => void fetchTalents()}
+        />
+      )}
+      {job && (
+        <MoveStageModal
+          open={batchMoveStageOpen}
+          jobId={job.invitation_token}
+          talentIds={selectedTalentIds}
+          allStages={allStages}
+          onCancel={() => setBatchMoveStageOpen(false)}
+          onOk={() => {
+            setBatchMoveStageOpen(false);
+            setSelectedTalentIds([]);
+            fetchTalents();
+          }}
+        />
+      )}
+      {job && (
+        <TalentEvaluateFeedbackWithReasonModal
+          jobId={job.invitation_token}
+          talentIds={selectedTalentIds}
+          open={batchRejectOpen}
+          onOk={() => {
+            setBatchRejectOpen(false);
+            setSelectedTalentIds([]);
+            fetchTalents();
+          }}
+          onCancel={() => setBatchRejectOpen(false)}
         />
       )}
     </div>

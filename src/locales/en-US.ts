@@ -1827,6 +1827,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       rank_by: "Rank by",
       list: "List",
       kanban: "Kanban",
+      in_batch: "in Batch",
       add_candidate: "Add Candidate",
       candidates_reached_out: "candidates reached out",
       click_to_view_details: "Click to view details",
@@ -2051,6 +2052,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     reject_feedback_placeholder:
       "For example, our assessment is not accurate/the role is evolved and you'd like to adjust or update the job requirements/ or anything at all.",
     reject_submit_failed: "Submit failed",
+    batch_reject_success: "Rejected successfully: {{count}}",
+    batch_reject_result_rejected: "Rejected: {{count}}",
+    batch_reject_result_skipped: "Skipped: {{count}} (already rejected)",
+    batch_reject_result_failed: "Failed: {{count}}",
     jobs_applied: "Jobs Applied",
     applications_count: "{{count}} Applications",
     applied_meta: "Applied on: {{date}} | Source: {{source}}",
