@@ -304,6 +304,7 @@ type TMenu = {
     active: boolean;
     onRemove?: () => void;
     badge?: boolean;
+    unpublished?: boolean;
   }[];
 };
 

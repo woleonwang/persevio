@@ -1,58 +1,81 @@
 @import "@/mixin.module.less";
 
+@color-bg-hover: #f3f3f3;
+@color-bg-selected: #efefef;
+@color-border-light: #f2f2f2;
+@color-text-secondary: #666666;
+@color-sidebar-indicator: #354052;
+
 .menuWrapper {
-  width: 260px;
-  transition: width 0.3s;
+  flex: none;
+  width: 280px;
   overflow: hidden;
-  margin-right: -12px;
+
+  &.collapsed {
+    width: 62px;
+    margin-right: -8px;
+
+    .menu {
+      padding: 26px 0 8px;
+      width: 62px;
+
+      .collapseIcon {
+        background-color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      .header {
+        justify-content: center;
+        padding-left: 0;
+      }
+
+      .menuItemContainer {
+        padding-left: 12px;
+      }
+
+      .menuItem {
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+      }
+    }
+  }
 }
 
 .menu {
   flex: none;
-  width: 260px;
+  width: 280px;
   height: 100%;
-  padding: 28px 12px 28px 0;
+  padding: 26px 12px 8px 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  min-height: 0;
   position: relative;
-
-  &.collapse {
-    width: fit-content;
-    padding: 28px 0;
-    width: 70px;
-
-    .header {
-      justify-content: center;
-      padding-left: 12px;
-    }
-
-    .menuItemWrapper {
-      margin-top: 20px;
-    }
-
-    .menuItemContainer {
-      padding-left: 12px;
-    }
-
-    .menuItem {
-      justify-content: center;
-    }
-  }
 }
 
 .header {
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-left: 20px;
+  height: 40px;
+  margin-bottom: 20px;
 
   .logo {
-    width: 156px;
+    width: 150px;
+    flex: none;
   }
 
   .collapseIcon {
-    font-size: 22px;
+    font-size: 20px;
     color: #c1c1c1;
     cursor: pointer;
     z-index: 1;
@@ -63,106 +86,241 @@
   }
 }
 
-.menuItemWrapper {
-  flex: auto;
-  overflow: auto;
-  margin-top: 34px;
+.navSection {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .menuItemContainer {
-  padding-left: 20px;
-  margin-bottom: 8px;
+  padding-left: 12px;
+}
 
-  .menuItem {
-    border-radius: 12px;
-    padding: 16px;
-    color: #333;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    border: 1px solid transparent;
+.menuItem {
+  border-radius: 10px;
+  height: 42px;
+  padding: 0 10px;
+  gap: 8px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.28px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid transparent;
 
-    &.active,
+  &:hover:not(.active) {
+    background-color: @color-bg-hover;
+    font-weight: 400;
+    color: #333333;
+    border-color: transparent;
+  }
+
+  &.active {
+    background-color: #ffffff;
+    font-weight: 400;
+    color: #333333;
+    border: 1px solid @color-border-light;
+
     &:hover {
-      background-color: white;
-      font-weight: bold;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  &.active::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 11px;
+    width: 4px;
+    height: 20px;
+    background-color: @color-sidebar-indicator;
+    border-radius: 0 6px 6px 0;
+  }
+
+  :global {
+    .perse-icon {
+      font-size: 20px;
       color: #333333;
-      border: 1px solid #ebecee;
-    }
-
-    &.active::before {
-      content: "";
-      position: absolute;
-      left: -21px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 20px;
-      background-color: #333333;
-      border-radius: 0 12px 12px 0;
-    }
-
-    :global {
-      .perse-icon {
-        font-size: 24px;
-        color: #333333;
-      }
     }
   }
 }
 
-.subMenuContainer {
-  margin-top: 8px;
-  max-height: 300px;
-  overflow: auto;
-  margin-left: 28px;
+.menuItemLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jobsSection {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 22px;
   padding-left: 12px;
-  border-left: 1px solid #ebecee;
+
+  &.focused::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 4px;
+    height: 20px;
+    border-radius: 0 6px 6px 0;
+    background: @color-sidebar-indicator;
+  }
+}
+
+.jobsHeader {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 8px 0 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: 0.28px;
+  cursor: pointer;
+
+  &:hover {
+    background: @color-bg-hover;
+  }
+}
+
+.jobsHeaderTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jobsSearchButton {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: @color-text-secondary;
+  font-size: 13px;
+}
+
+.jobsSearchInput {
+  flex: none;
+  margin-top: 2px;
+
+  :global {
+    .ant-input {
+      height: 36px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+}
+
+.jobsListWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+  }
+}
+
+.jobsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 10px;
+  padding-bottom: 20px;
 }
 
 .subMenuItem {
   cursor: pointer;
-  border-radius: 12px;
-  padding: 7px 10px;
+  border-radius: 10px;
+  min-height: 32px;
+  padding: 5px 42px 5px 22px;
   font-size: 14px;
-  color: rgba(102, 102, 102, 1);
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.28px;
+  color: @color-text-secondary;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
   border: 1px solid transparent;
   position: relative;
+  margin-left: -10px;
 
-  &.badge::after {
+  &::before {
     content: "";
-    width: 8px;
-    height: 8px;
-    background-color: @red-color;
-    border-radius: 50%;
     position: absolute;
-    left: 2px;
-    top: 8px;
+    left: 10px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border: 1px solid #c1c1c1;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+
+  &.hasStatus .subMenuTitle {
+    padding-right: 94px;
+  }
+
+  &.hasChange.hasStatus .subMenuTitle {
+    padding-right: 104px;
   }
 
   &.active,
   &:hover {
-    background-color: white;
-    font-weight: bold;
+    background-color: @color-bg-hover;
+    font-weight: 400;
     color: #333333;
-    border: 1px solid #ebecee;
+    border-color: transparent;
+  }
+
+  &.active {
+    background-color: @color-bg-selected;
   }
 
   &:hover {
     .deleteIcon {
       visibility: visible;
     }
+
+    .jobChangeDot,
+    .jobStatusBadge {
+      opacity: 0;
+    }
   }
 
   .deleteIcon {
     visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
     color: #999;
     background-color: #f5f6f9;
     padding: 5px;
@@ -170,8 +328,110 @@
 
     :global {
       .perse-icon {
+        font-size: 14px;
         transition: none;
       }
+    }
+  }
+}
+
+.jobChangeDot {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e03d3d;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.subMenuItem.hasStatus .jobChangeDot {
+  right: 88px;
+}
+
+.jobStatusBadge {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border: 1px solid rgba(54, 130, 254, 0.28);
+  border-radius: 999px;
+  background: #f3f7ff;
+  color: @primary-color;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.24px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.subMenuTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footerSection {
+  flex: none;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.footerItemContainer {
+  padding-left: 12px;
+  position: relative;
+}
+
+.footerSwitch {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: @color-text-secondary;
+  font-size: 16px;
+}
+
+.menuWrapper.collapsed {
+  .logo {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .menuItemLabel,
+  .jobsSection,
+  .footerSwitch {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .menuItem.active::before {
+    display: none;
+  }
+
+  .jobsSection {
+    flex: 0 0 0;
+    min-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+  }
+
+  :global {
+    .ant-badge {
+      opacity: 0;
     }
   }
 }
@@ -189,13 +449,59 @@
   }
 
   .subMenuItem {
-    padding: 10px 12px;
+    padding: 8px 12px 8px 22px;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileVisible {
+    display: none !important;
+  }
+
+  .menuWrapper {
+    transition: width 0.3s ease;
   }
 }
 
 @media (max-width: 768px) {
-  .menuWrapper,
-  .menu {
-    display: none;
+  .desktopVisible {
+    display: none !important;
+  }
+
+  .menuWrapper {
+    width: 62px;
+    overflow: visible;
+
+    &.collapsed {
+      .menu {
+        width: 62px;
+        background: transparent !important;
+      }
+
+      .mask {
+        display: none;
+      }
+    }
+
+    .mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .menu {
+      position: fixed;
+      width: 260px;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background-color: #f9f9f9;
+      z-index: 1000;
+    }
   }
 }

@@ -119,6 +119,7 @@ const AppLayout = () => {
             path,
             active: isActive,
             badge: unreadTalentsJobIds.includes(job.id),
+            unpublished: !job.initial_posted_at,
             onRemove: () => {
               Modal.confirm({
                 title: t("app_layout.delete_job"),
