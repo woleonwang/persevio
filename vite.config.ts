@@ -8,15 +8,15 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     proxy: {
-      // "/api": {
-      //   target: "http://localhost:10808",
-      //   changeOrigin: true,
-      //   rewrite: (path) => path.replace(/^\/api/, ""),
-      // },
       "/api": {
-        target: "https://dev.persevio.ai",
+        target: "http://localhost:10808",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      // "/api": {
+      //   target: "https://dev.persevio.ai",
+      //   changeOrigin: true,
+      // },
       // "/api": {
       //   target: "https://www.persevio.ai",
       //   changeOrigin: true,

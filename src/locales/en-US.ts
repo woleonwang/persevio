@@ -1035,6 +1035,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     viona_title: "AI Recruiter",
     ready_message:
       "I'm ready to get this search started. To begin, what is the <span>job title</span> for the role we're hiring for?",
+    ready_message_prefix:
+      "I'm ready to get this search started. To begin, what is the ",
+    ready_message_emphasis: "job title",
+    ready_message_suffix: " for the role we're hiring for?",
+    try_asking: "Try asking:",
+    suggestion_1: "Software Engineer",
+    suggestion_2: "Sales Manager",
+    composer_placeholder: "Enter the offical job title of the role only",
     share_message: "Invite your co-workers to this page by sharing this link.",
     share_link: "Share the link",
     copy_success: "Copied successfully",

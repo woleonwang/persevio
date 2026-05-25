@@ -1,28 +1,33 @@
 @primary-color: #3682fe;
 
-.container {
-  width: 1000px;
-  margin: 60px;
-  padding: 24px 20px;
-  border-radius: 16px;
-  align-items: center;
+.page {
+  flex: 1;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  min-height: 100%;
+  padding: 24px 24px 32px;
+  overflow: auto;
 }
 
-.vionaContainer {
+.assistantScene {
+  width: min(770px, 100%);
   display: flex;
   flex-direction: column;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.avatarWrap {
+  width: 144px;
+  height: 144px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 1px dashed #ebecee;
-  padding-right: 20px;
-  margin-right: 40px;
-
-  & > div {
-    text-align: center;
-  }
 }
 
 .vionaVideo {
@@ -34,87 +39,199 @@
   background-size: contain;
 }
 
-.vionaName {
-  font-size: 20px;
-  font-weight: bold;
+.profileName {
+  margin: 0;
   color: #333;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 30px;
 }
 
-.vionaTitle {
-  font-size: 14px;
+.profileRole {
+  margin: 0;
   color: #999;
-  width: 150px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
 }
 
-.readyMessage {
-  font-size: 30px;
-  & > span {
-    color: @primary-color;
+.prompt {
+  margin-top: 12px;
+}
+
+.promptDivider {
+  margin-top: 20px;
+  height: 1px;
+  background: #ebecee;
+}
+
+.suggestionsLabel {
+  margin: 0 0 12px;
+  color: #999;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.suggestionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestionChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px;
+  background: #f5f6f8;
+  color: #666;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #eef0f3;
+    outline: none;
+  }
+
+  &:active {
+    background: #ebecee;
   }
 }
 
-.shareMessage {
-  font-size: 16px;
-  color: #999;
-  margin-top: 6px;
-}
-
-.shareLink {
-  color: @primary-color;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 8px;
+.composer {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.shareLinkIcon {
-  font-size: 24px;
-  position: relative;
-}
-
-.form {
+  justify-content: space-between;
+  gap: 10px;
   width: 100%;
-  margin-top: 54px;
+  min-height: 60px;
+  margin-top: 40px;
+  padding: 4px 10px 4px 24px;
+  border: 1px solid #dfe2e8;
+  border-radius: 44px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  &:focus-within {
+    border-color: rgba(54, 130, 254, 0.5);
+    box-shadow: 0 2px 12px rgba(54, 130, 254, 0.1);
+  }
+}
+
+.composerLeft {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
+}
 
-  .jobTitle {
-    font-size: 20px;
-    font-weight: bold;
-    color: #666;
-    flex: none;
-    display: flex;
-    align-items: center;
+.composerLabel {
+  flex: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.composerDivider {
+  flex: none;
+  width: 1px;
+  height: 24px;
+  background: #dfe2e8;
+}
+
+.composerInput {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #333;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+
+  &::placeholder {
+    color: #b8bcc4;
+    font-weight: 400;
   }
 }
 
-.jobNameInput {
-  border-radius: 20px;
-  width: 100%;
-  height: 60px;
-  padding-left: 24px;
+.suffixButton {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  flex: none;
+  line-height: 1;
 
-  .suffixButton {
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
-    position: relative;
-    right: -8px;
-
-    &.disabled {
-      border: none;
-      background-color: #d9d9d9;
-    }
+  :global(.ant-btn-icon) {
+    margin-inline: 0 !important;
   }
 
-  .suffixIcon {
-    font-size: 30px !important;
-    color: white;
+  &.disabled {
+    border: none;
+    background-color: #f6f6f6 !important;
+  }
+}
 
-    &.disabled {
-      color: #333;
-    }
+.suffixIcon {
+  font-size: 18px !important;
+  color: white;
+
+  &.disabled {
+    color: #333;
+  }
+}
+
+@media (min-width: 769px) {
+  .prompt {
+    padding: 0 24px;
+  }
+
+  .promptDivider {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+
+  .suggestions {
+    margin: 18px 24px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .assistantScene {
+    width: 100%;
+    min-height: calc(100vh - 280px);
+    position: relative;
+  }
+
+  .profile {
+    justify-content: center;
+  }
+
+  .promptDivider {
+    margin-top: 20px;
+  }
+
+  .suggestions {
+    margin-top: 18px;
+  }
+
+  .composer {
+    margin-top: 60px;
   }
 }
