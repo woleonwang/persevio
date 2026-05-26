@@ -95,10 +95,8 @@ const Talents: React.FC = () => {
         const card = getCandidateCardData(item);
         const haystack = [
           item.name ?? "",
-          normalizeTalentField(card.location),
           normalizeTalentField(card.visa),
           normalizeTalentField(card.comp),
-          normalizeTalentField(card.expectedCompensation),
           normalizeTalentField(card.exp),
         ]
           .join(" ")
