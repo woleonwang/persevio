@@ -1782,6 +1782,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Confirm deletion of 【{{jobName}}】. Note: Deleted content cannot be restored.",
     search_placeholder: "Please enter",
     loading: "Loading...",
+    expand_sidebar: "Expand sidebar",
+    collapse_sidebar: "Collapse sidebar",
+    view_all: "View all",
   },
 
   job_list: {

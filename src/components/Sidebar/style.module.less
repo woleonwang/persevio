@@ -232,6 +232,25 @@
   }
 }
 
+.jobsViewAllButton {
+  flex: none;
+  margin-right: 8px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: @text-tertiary;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.28px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    color: @text-secondary;
+  }
+}
+
 .jobsHeaderTitle {
   flex: 1 1 auto;
   min-width: 0;
@@ -242,13 +261,8 @@
 
 .jobsSearchButton {
   flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  color: @color-text-secondary;
-  font-size: 13px;
+  color: @text-primary;
+  font-size: 16px;
 }
 
 .jobsSearchInput {

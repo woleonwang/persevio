@@ -1,15 +1,16 @@
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
-import { SearchOutlined, UserSwitchOutlined } from "@ant-design/icons";
+import { UserSwitchOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
 import { useMemo, useState } from "react";
-import { Badge, Input, Tooltip } from "antd";
+import { Badge, Button, Input, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import Delete from "@/assets/icons/delete";
 import { observer } from "mobx-react-lite";
 import Collapse from "@/assets/icons/collapse";
+import Search from "@/assets/icons/search";
 
 interface ISidebarProps {
   collapsed: boolean;
@@ -112,6 +113,7 @@ const Sidebar = (props: ISidebarProps) => {
     if (!jobsMenu) return null;
 
     const isActive = jobsMenu.path && currentPath.startsWith(jobsMenu.path);
+    const hasSearchKeyword = Boolean(searchKeyword?.trim());
 
     return (
       <div
@@ -124,11 +126,22 @@ const Sidebar = (props: ISidebarProps) => {
           onClick={() => jobsMenu.path && navigate(jobsMenu.path)}
         >
           <span className={styles.jobsHeaderTitle}>{jobsMenu.title}</span>
-          <SearchOutlined
+          {hasSearchKeyword && (
+            <div
+              className={styles.jobsViewAllButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSearchKeyword?.("");
+              }}
+            >
+              {t("app_layout.view_all")}
+            </div>
+          )}
+          <Icon
+            icon={<Search />}
             className={styles.jobsSearchButton}
             onClick={(e) => {
               e.stopPropagation();
-              setSearchKeyword?.("");
               setShowSearch((current) => !current);
             }}
           />
@@ -215,15 +228,27 @@ const Sidebar = (props: ISidebarProps) => {
               setHovered((hovered) => !hovered);
             }}
           />
-          <Icon
-            icon={<Collapse />}
-            className={classnames(styles.collapseIcon, styles.desktopVisible, {
-              [styles.pined]: !collapsed,
-            })}
-            onClick={() => {
-              setCollapsed(!collapsed);
-            }}
-          />
+          <Tooltip
+            title={
+              collapsed
+                ? t("app_layout.expand_sidebar")
+                : t("app_layout.collapse_sidebar")
+            }
+          >
+            <Icon
+              icon={<Collapse />}
+              className={classnames(
+                styles.collapseIcon,
+                styles.desktopVisible,
+                {
+                  [styles.pined]: !collapsed,
+                },
+              )}
+              onClick={() => {
+                setCollapsed(!collapsed);
+              }}
+            />
+          </Tooltip>
         </div>
         <div className={styles.navSection}>
           {primaryMenu.map((item) => renderMenuItem(item))}
