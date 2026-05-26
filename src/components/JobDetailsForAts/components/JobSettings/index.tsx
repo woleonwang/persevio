@@ -54,6 +54,8 @@ export interface PipelineStage {
   isDefault: boolean;
 }
 
+type PipelineStageUpdateType = "add" | "remove" | "rename" | "reorder";
+
 interface IProps {
   jobId: string | number;
 }
@@ -323,11 +325,10 @@ const JobSettings = ({ jobId }: IProps) => {
     });
     if (code === 0) {
       message.success(t("save_success"));
-      fetchJob();
     } else {
       message.error(t("save_failed"));
-      fetchJob();
     }
+    fetchJob();
     setOrgNodeUpdating(false);
   };
 
@@ -490,15 +491,22 @@ const JobSettings = ({ jobId }: IProps) => {
     );
   };
 
-  const saveStages = async (newStages: PipelineStage[]) => {
-    const { code } = await Post(`/api/jobs/${jobId}`, {
+  const saveStages = async (
+    newStages: PipelineStage[],
+    updateType: PipelineStageUpdateType,
+    stageId: string,
+  ) => {
+    const { code } = await Post(`/api/jobs/${jobId}/pipeline_stages`, {
       pipeline_stages: JSON.stringify(newStages),
+      update_type: updateType,
+      stage_id: stageId,
     });
     if (code === 0) {
       message.success(t("save_success"));
     } else {
       message.error(t("save_failed"));
     }
+    fetchJob();
   };
 
   const handleAddStage = () => {
@@ -522,13 +530,15 @@ const JobSettings = ({ jobId }: IProps) => {
     const stage = customizedPipelineStages.find((s) => s.id === id);
     if (editingName.trim() === "" || !stage) return;
     const newName = editingName.trim();
+    const updateType: PipelineStageUpdateType =
+      stage.name === "" ? "add" : "rename";
     const newStages = customizedPipelineStages.map((s) =>
       s.id === id ? { ...s, name: newName || s.name } : s,
     );
     setCustomizedPipelineStages(newStages);
     setEditingId(null);
     setEditingName("");
-    saveStages(newStages);
+    saveStages(newStages, updateType, id);
   };
 
   const handleDelete = (id: string) => {
@@ -545,7 +555,7 @@ const JobSettings = ({ jobId }: IProps) => {
           .map((s, i) => ({ ...s, order: i }));
         setCustomizedPipelineStages(newStages);
         setEditingId(null);
-        saveStages(newStages);
+        saveStages(newStages, "remove", id);
       },
     });
   };
@@ -566,7 +576,7 @@ const JobSettings = ({ jobId }: IProps) => {
       ...reordered.map((s, i) => ({ ...s, order: defaultStages.length + i })),
     ];
     setCustomizedPipelineStages(newStages);
-    saveStages(newStages);
+    saveStages(newStages, "reorder", active.id as string);
   };
 
   const sensors = useSensors(
