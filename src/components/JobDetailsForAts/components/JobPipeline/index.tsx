@@ -243,8 +243,6 @@ const JobPipeline = ({
     storage.set<"list" | "kanban">(StorageKey.JOB_PIPELINE_VIEW_MODE, mode);
   };
 
-  const hasBatchSelection = selectedTalentIds.length > 0;
-
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as number);
   };
