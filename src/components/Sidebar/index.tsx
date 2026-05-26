@@ -103,7 +103,7 @@ const Sidebar = (props: ISidebarProps) => {
           {isCollapsedView ? null : (
             <span className={styles.menuItemLabel}>{item.title}</span>
           )}
-          {item.badge && <Badge count={item.badge} style={{ marginLeft: 8 }} />}
+          {item.badge && <Badge count={item.badge} className={styles.badge} />}
         </div>
       </div>
     );

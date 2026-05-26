@@ -44,7 +44,37 @@
         width: 40px;
         height: 40px;
         padding: 0;
+
+        .badge {
+          position: absolute;
+          right: -4px;
+          top: 0;
+        }
       }
+    }
+
+    .logo {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .menuItemLabel,
+    .jobsSection,
+    .footerSwitch {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .menuItem.active::before {
+      display: none;
+    }
+
+    .jobsSection {
+      flex: 0 0 0;
+      min-height: 0;
+      margin-top: 0;
+      overflow: hidden;
     }
   }
 }
@@ -402,38 +432,6 @@
   align-items: center;
   color: @color-text-secondary;
   font-size: 16px;
-}
-
-.menuWrapper.collapsed {
-  .logo {
-    width: 0;
-    opacity: 0;
-    overflow: hidden;
-  }
-
-  .menuItemLabel,
-  .jobsSection,
-  .footerSwitch {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .menuItem.active::before {
-    display: none;
-  }
-
-  .jobsSection {
-    flex: 0 0 0;
-    min-height: 0;
-    margin-top: 0;
-    overflow: hidden;
-  }
-
-  :global {
-    .ant-badge {
-      opacity: 0;
-    }
-  }
 }
 
 .collapseSubMenuContainer {

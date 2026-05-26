@@ -1,6 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import { ApartmentOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import logo from "../../assets/logo.png";
 import styles from "./style.module.less";
@@ -19,6 +18,7 @@ import CompanyInfo from "@/assets/icons/company-info";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
 import Settings from "@/assets/icons/settings";
+import OrgChat from "@/assets/icons/org-chat";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -157,7 +157,7 @@ const AppLayout = () => {
     {
       title: t("menu.member_team"),
       path: "/app/member-team",
-      img: <ApartmentOutlined />,
+      img: <OrgChat />,
       requireStaffAdmin: true,
     },
     // {
