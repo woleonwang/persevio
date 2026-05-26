@@ -32,6 +32,7 @@ interface IJob {
   id: number;
   company_id: number;
   staff_id: number;
+  creator_id: number;
   name: string;
   invitation_token: string;
   /** 公开职位页、候选人侧 `/jobs/:key` 等路径使用 */
@@ -905,6 +906,36 @@ type TJobCollaborator = {
 
 type TJobCollaboratorsResponse = {
   job_collaborators: TJobCollaborator[];
+};
+
+type TJobActiveLogEventType =
+  | "create"
+  | "delist"
+  | "publish"
+  | "pipeline_stage_add"
+  | "pipeline_stage_rename"
+  | "pipeline_stage_remove"
+  | "pipeline_stage_reorder"
+  | "collaborator_add"
+  | "collaborator_edit"
+  | "collaborator_remove"
+  | "confidentiality_set"
+  | "custom_source_add"
+  | "jrd_edit_ai"
+  | "jrd_edit_manual"
+  | "jd_edit_manual";
+
+type TJobActiveLog = {
+  id: number;
+  job_id: number;
+  staff_id: number;
+  event_type: TJobActiveLogEventType | string;
+  content: string;
+  created_at: string;
+  staff?: {
+    id: number;
+    name: string;
+  };
 };
 
 type TInterviewRecommendation =

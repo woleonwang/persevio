@@ -14,6 +14,8 @@
   - `handleXxx`（事件处理）
   - `showXxx`（打开弹窗等）
 - 常见列表页状态结构：`list + loading + search + page + modal + form + editingItem`
+- 组件中，如无必要，默认不使用 useMemo、useCallback
+- 工具函数，如不被多个组件调用，不单独抽文件，放在调用的组件内部
 
 ## 2) 页面结构（管理页）
 
@@ -55,6 +57,7 @@
 - CSS 类名使用 camelCase（如 `headerSection`、`tableSection`）。
 - 需要覆盖 antd 内部样式时，使用 `:global(.ant-...)`。
 - 常见布局方式为 flex，列表区常见 `flex: auto + overflow: auto`。
+- 颜色尽量使用 mixin.module.less 里定义的公共变量
 
 ## 7) 路由与菜单
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Button, Input, message, Select, Switch } from "antd";
+import dayjs from "dayjs";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import {
@@ -29,6 +30,7 @@ import useJob from "@/hooks/useJob";
 import useStaffs from "@/hooks/useStaffs";
 import { getInitials } from "../JobPipeline/components/utils";
 import OrgNodeTreeSelect from "@/components/OrgNodeTreeSelect";
+import JobActivityLogsModal from "./components/JobActivityLogsModal";
 
 const DEFAULT_STAGES = [
   "Reached Out",
@@ -173,6 +175,7 @@ const JobSettings = ({ jobId }: IProps) => {
 
   const [orgNodeId, setOrgNodeId] = useState<number | undefined>(undefined);
   const [orgNodeUpdating, setOrgNodeUpdating] = useState(false);
+  const [activityLogsOpen, setActivityLogsOpen] = useState(false);
 
   const { job, fetchJob } = useJob();
   const { staffs } = useStaffs({
@@ -585,6 +588,9 @@ const JobSettings = ({ jobId }: IProps) => {
     }),
   );
 
+  const getStaffNameById = (staffId: number): string =>
+    staffs.find((staff) => staff.id === staffId)?.name ?? "-";
+
   return (
     <div className={styles.container}>
       <div className={styles.section}>
@@ -790,6 +796,37 @@ const JobSettings = ({ jobId }: IProps) => {
           onChange={handleToggleConfidential}
         />
       </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>{tKey("activity")}</div>
+        <div className={styles.createdByRow}>
+          <div>{tKey("created_by_prefix")}</div>
+          <div className={styles.staffChip}>
+            {getStaffNameById(job?.creator_id ?? 0)}
+          </div>
+          <div>{tKey("created_on")}</div>
+          <div>
+            {job?.created_at
+              ? dayjs(job.created_at).format("YYYY/MM/DD HH:mm")
+              : "-"}
+          </div>
+        </div>
+        <Button
+          variant="outlined"
+          color="primary"
+          className={styles.viewActivityLogsBtn}
+          onClick={() => setActivityLogsOpen(true)}
+        >
+          {tKey("view_activity_logs")}
+        </Button>
+      </div>
+
+      <JobActivityLogsModal
+        open={activityLogsOpen}
+        jobId={jobId}
+        staffs={staffs}
+        onClose={() => setActivityLogsOpen(false)}
+      />
     </div>
   );
 };
