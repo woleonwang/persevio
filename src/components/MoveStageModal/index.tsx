@@ -32,7 +32,8 @@ const MoveStageModal = ({
   allStages,
 }: IProps) => {
   const { t } = useTranslation();
-  const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
+  const tKey = (key: string, options?: Record<string, unknown>) =>
+    t(`job_details.pipeline_section.${key}`, options);
 
   const [selectedStageId, setSelectedStageId] = useState<string | undefined>();
 
@@ -53,7 +54,7 @@ const MoveStageModal = ({
     if (!selectedStageId) return;
 
     const isBatch = !!talentIds?.length;
-    const { code } = isBatch
+    const { code, data } = isBatch
       ? await Post(`/api/jobs/${jobId}/talents/batch/stage`, {
           talent_ids: talentIds,
           stage_id: selectedStageId,
@@ -63,7 +64,13 @@ const MoveStageModal = ({
         });
 
     if (code === 0) {
-      message.success(t("save_success"));
+      if (isBatch) {
+        message.success(
+          tKey("batch_move_stage_success", { count: data?.success_count ?? 0 }),
+        );
+      } else {
+        message.success(t("save_success"));
+      }
       onOk();
     } else {
       message.error(t("save_failed"));

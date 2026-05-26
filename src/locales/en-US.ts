@@ -283,7 +283,7 @@ export default {
   close: "Close",
   add: "Add",
   create_succeed: "Create succeed!",
-  save_success: "Save successful",
+  save_success: "Saved successfully",
   save_failed: "Save failed",
   create: "Create",
   update: "Update",
@@ -1875,6 +1875,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       create_candidate_failed: "Failed to add candidate",
       show_unsuitable: "Show {{count}} unsuitable",
       hide_unsuitable: "Hide {{count}} unsuitable",
+      batch_move_stage_success: "Moved successfully: {{count}}",
+      please_select_talents: "Please select candidates to continue",
+      selected_talents_already_rejected:
+        "No action taken - all selected candidates are already rejected",
     },
     sourcing_channels: "Sourcing Channels",
     sourcing_channels_section: {

@@ -405,8 +405,11 @@ const JobPipeline = ({
                   {
                     key: "move_stage",
                     label: tKey("move_stage"),
-                    disabled: !hasBatchSelection,
                     onClick: () => {
+                      if (selectedTalentIds.length === 0) {
+                        message.warning(tKey("please_select_talents"));
+                        return;
+                      }
                       setBatchMoveStageOpen(true);
                     },
                   },
@@ -414,8 +417,27 @@ const JobPipeline = ({
                     key: "reject",
                     label: tKey("reject"),
                     danger: true,
-                    disabled: !hasBatchSelection,
-                    onClick: () => setBatchRejectOpen(true),
+                    onClick: () => {
+                      if (selectedTalentIds.length === 0) {
+                        message.warning(tKey("please_select_talents"));
+                        return;
+                      }
+
+                      if (
+                        selectedTalentIds.every(
+                          (id) =>
+                            talents.find((t) => t.id === id)?.status ===
+                            "rejected",
+                        )
+                      ) {
+                        message.warning(
+                          tKey("selected_talents_already_rejected"),
+                        );
+                        return;
+                      }
+
+                      setBatchRejectOpen(true);
+                    },
                   },
                 ],
               }}
