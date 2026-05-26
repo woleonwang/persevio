@@ -5,7 +5,7 @@ import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
 import { useMemo, useState } from "react";
-import { Badge, Button, Input, Tooltip } from "antd";
+import { Badge, Input, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import Delete from "@/assets/icons/delete";
 import { observer } from "mobx-react-lite";
