@@ -85,7 +85,7 @@ const normalizeIntOrZero = (v: unknown): number => {
 
 const MemberTeamPage = () => {
   const [orgLoading, setOrgLoading] = useState(true);
-  const { isAdmin: currentUserIsAdmin, email: currentUserEmail } = globalStore;
+  const { staffRole, email: currentUserEmail } = globalStore;
 
   /** 左侧部门树 相关 state */
   const [treeData, setTreeData] = useState<DataNode[]>([]); // 部门树数据
@@ -132,6 +132,8 @@ const MemberTeamPage = () => {
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string, params?: Record<string, string>) =>
     originalT(`member_team.${key}`, params);
+
+  const currentUserIsAdmin = staffRole === "admin";
 
   useEffect(() => {
     fetchNodes();
