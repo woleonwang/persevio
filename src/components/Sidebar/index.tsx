@@ -1,5 +1,4 @@
 import classnames from "classnames";
-import { PushpinOutlined, PushpinFilled } from "@ant-design/icons";
 import logo from "@/assets/logo.png";
 import { SearchOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
@@ -217,7 +216,7 @@ const Sidebar = (props: ISidebarProps) => {
             }}
           />
           <Icon
-            icon={!collapsed ? <PushpinFilled /> : <PushpinOutlined />}
+            icon={<Collapse />}
             className={classnames(styles.collapseIcon, styles.desktopVisible, {
               [styles.pined]: !collapsed,
             })}
