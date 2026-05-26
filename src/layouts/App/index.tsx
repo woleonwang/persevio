@@ -95,6 +95,7 @@ const AppLayout = () => {
       title: t("menu.newRole"),
       path: "/app/entry/create-job",
       img: <NewChat />,
+      alwaysHighlighted: true,
     },
     {
       title: t("menu.jobs"),

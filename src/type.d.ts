@@ -299,6 +299,7 @@ type TMenu = {
   requireSuperAdmin?: boolean;
   key?: string;
   badge?: number;
+  alwaysHighlighted?: boolean;
   children?: {
     title: string;
     path: string;
