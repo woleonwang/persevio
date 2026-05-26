@@ -60,11 +60,11 @@ const AssignedRecruitersTab = ({
     if (code === 0 && data?.talent_recruiter) {
       onTalentRecruitersChange([...talentRecruiters, data.talent_recruiter]);
       setNewStaffId(undefined);
-      message.success(t("job_talents.assigned_recruiters_save_success"));
+      message.success(t("save_success"));
       return;
     }
 
-    message.error(t("job_talents.assigned_recruiters_save_failed"));
+    message.error(t("save_failed"));
   };
 
   const getStaff = (staffId: number) => {
@@ -82,11 +82,11 @@ const AssignedRecruitersTab = ({
       onTalentRecruitersChange(
         talentRecruiters.filter((item) => item.id !== recruiter.id),
       );
-      message.success(t("job_talents.assigned_recruiters_save_success"));
+      message.success(t("save_success"));
       return;
     }
 
-    message.error(t("job_talents.assigned_recruiters_save_failed"));
+    message.error(t("save_failed"));
   };
 
   const addRecruiterSelectOptions: AddRecruiterSelectOption[] = jobCollaborators

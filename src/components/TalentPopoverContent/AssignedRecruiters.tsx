@@ -90,12 +90,12 @@ const AssignedRecruiters = ({
 
     if (code === 0 && data?.talent_recruiters) {
       onUpdate(data.talent_recruiters);
-      message.success(t("assigned_recruiters_save_success"));
+      message.success(originalT("save_success"));
       setIsEditing(false);
       return;
     }
 
-    message.error(t("assigned_recruiters_save_failed"));
+    message.error(originalT("save_failed"));
   };
 
   return (

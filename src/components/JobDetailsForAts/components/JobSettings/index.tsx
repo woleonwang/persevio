@@ -230,11 +230,11 @@ const JobSettings = ({ jobId }: IProps) => {
       role: newCollaboratorRole,
     });
     if (code === 0) {
-      message.success(tKey("save_success"));
+      message.success(t("save_success"));
       setNewStaffId(undefined);
       await fetchCollaborators();
     } else {
-      message.error(tKey("save_failed"));
+      message.error(t("save_failed"));
     }
     setCollabUpdating(false);
   };
@@ -282,7 +282,7 @@ const JobSettings = ({ jobId }: IProps) => {
             is_confidential: true,
           });
           if (code === 0) {
-            message.success(t("job_details.saveSuccess"));
+            message.success(t("save_success"));
             fetchJob();
           }
         },
@@ -297,7 +297,7 @@ const JobSettings = ({ jobId }: IProps) => {
         is_confidential: checked,
       });
       if (code === 0) {
-        message.success(t("job_details.saveSuccess"));
+        message.success(t("save_success"));
         fetchJob();
       }
     })();
@@ -322,10 +322,10 @@ const JobSettings = ({ jobId }: IProps) => {
       org_node_id: nextId,
     });
     if (code === 0) {
-      message.success(tKey("save_success"));
+      message.success(t("save_success"));
       fetchJob();
     } else {
-      message.error(tKey("save_failed"));
+      message.error(t("save_failed"));
       fetchJob();
     }
     setOrgNodeUpdating(false);
@@ -348,10 +348,10 @@ const JobSettings = ({ jobId }: IProps) => {
           `/api/jobs/${jobId}/collaborators/${collaborator.id}/destroy`,
         );
         if (code === 0) {
-          message.success(tKey("save_success"));
+          message.success(t("save_success"));
           await fetchCollaborators();
         } else {
-          message.error(tKey("save_failed"));
+          message.error(t("save_failed"));
         }
         setCollabUpdating(false);
       },
@@ -370,10 +370,10 @@ const JobSettings = ({ jobId }: IProps) => {
       { role },
     );
     if (code === 0) {
-      message.success(tKey("save_success"));
+      message.success(t("save_success"));
       await fetchCollaborators();
     } else {
-      message.error(tKey("save_failed"));
+      message.error(t("save_failed"));
     }
     setCollabUpdating(false);
   };
@@ -495,9 +495,9 @@ const JobSettings = ({ jobId }: IProps) => {
       pipeline_stages: JSON.stringify(newStages),
     });
     if (code === 0) {
-      message.success(tKey("save_success"));
+      message.success(t("save_success"));
     } else {
-      message.error(tKey("save_failed"));
+      message.error(t("save_failed"));
     }
   };
 

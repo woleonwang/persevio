@@ -806,7 +806,7 @@ const AtsTalentDetail: React.FC = () => {
       { stage_id: selectedStageId },
     );
     if (code === 0) {
-      message.success(originalT("job_details.saveSuccess"));
+      message.success(originalT("save_success"));
       setIsMoveStageModalOpen(false);
       fetchTalent();
       fetchActiveLogs();

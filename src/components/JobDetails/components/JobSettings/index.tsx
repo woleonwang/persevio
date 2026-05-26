@@ -34,7 +34,7 @@ const JobSettings = (props: IProps) => {
     const { code, data } = await Get(`/api/admin/jobs/${jobId}/settings`);
     if (code === 0) {
       setSelectedHunters(
-        (data.admin_jobs ?? []).map((job: TAdminJob) => job.admin_id)
+        (data.admin_jobs ?? []).map((job: TAdminJob) => job.admin_id),
       );
     }
   };
@@ -51,7 +51,7 @@ const JobSettings = (props: IProps) => {
       hunter_ids: selectedHunters,
     });
     if (code === 0) {
-      message.success(t("saveSuccess"));
+      message.success(originalT("save_success"));
     }
   };
 

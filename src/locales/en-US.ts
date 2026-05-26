@@ -283,6 +283,8 @@ export default {
   close: "Close",
   add: "Add",
   create_succeed: "Create succeed!",
+  save_success: "Save successful",
+  save_failed: "Save failed",
   create: "Create",
   update: "Update",
   update_failed: "Update failed",
@@ -1197,8 +1199,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     level_placeholder: "Match Level",
     assigned_recruiters: "Assigned Recruiters",
     assigned_recruiters_placeholder: "Click to assign...",
-    assigned_recruiters_save_success: "Saved successfully",
-    assigned_recruiters_save_failed: "Failed to save assigned recruiters",
     recruiter_select_empty_hint:
       "Please add Recruiters to Collaborators in Job Settings first",
   },
@@ -1978,7 +1978,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Please unpost the job first, then edit the JD content, and then republish it.",
     assignHunters: "Assign Hunters",
     save: "Save",
-    saveSuccess: "Save successful",
     job_collaborator_modal: {
       title: "Job Collaborators",
       description:
@@ -1996,8 +1995,6 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Drag to reorder stages. The first 4 stages are locked and cannot be moved or deleted.",
     add_stage: "Add Stage",
     loading: "Loading...",
-    save_success: "Saved successfully",
-    save_failed: "Save failed",
     delete_stage_title: "Delete Stage",
     delete_stage_content: 'Are you sure you want to delete stage "{{name}}"?',
     unnamed_stage: "Unnamed",

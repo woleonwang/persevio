@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Dropdown,
-  Modal,
-  Popover,
-  Table,
-  Tooltip,
-} from "antd";
+import { Button, Dropdown, Modal, Popover, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
@@ -160,7 +153,10 @@ const ListModeTable = ({
 
   const pipelineColumns: ColumnsType<TTalentListItem> = [
     {
-      title: tKey("candidate_name"),
+      title:
+        (selectedRowKeys ?? []).length === 0
+          ? tKey("candidate_name")
+          : `${selectedRowKeys?.length} selected`,
       dataIndex: "name",
       width: 180,
       render: (_: unknown, record: TTalentListItem) => {
@@ -477,7 +473,15 @@ const ListModeTable = ({
           dataSource={sortedTalents}
           scroll={{ x: "max-content" }}
           rowKey="id"
-          pagination={{ pageSize: 10, showSizeChanger: false }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: false,
+            showTotal: (total, range) => (
+              <span>
+                {range[0]}-{range[1]} of {total} items
+              </span>
+            ),
+          }}
           rowSelection={
             enablePipelineActions
               ? {

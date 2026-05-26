@@ -63,10 +63,10 @@ const MoveStageModal = ({
         });
 
     if (code === 0) {
-      message.success(t("job_details.saveSuccess"));
+      message.success(t("save_success"));
       onOk();
     } else {
-      message.error(t("job_settings.save_failed"));
+      message.error(t("save_failed"));
     }
   };
 

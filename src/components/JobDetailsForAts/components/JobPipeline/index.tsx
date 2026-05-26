@@ -304,9 +304,9 @@ const JobPipeline = ({
             : t,
         ),
       );
-      message.error(t("job_settings.save_failed"));
+      message.error(t("save_failed"));
     } else {
-      message.success(t("job_details.saveSuccess"));
+      message.success(t("save_success"));
     }
   };
 
