@@ -1,14 +1,14 @@
 @import "@/mixin.module.less";
 
-@color-bg-hover: #f3f3f3;
-@color-bg-selected: #efefef;
-@color-border-light: #f2f2f2;
+@color-bg-hover: rgba(243, 243, 243, 1);
+@color-bg-selected: rgba(239, 239, 239, 1);
+@color-border-light: rgba(242, 242, 242, 1);
 @color-text-secondary: #666666;
 @color-sidebar-indicator: #354052;
 
 .menuWrapper {
   flex: none;
-  width: 280px;
+  width: 272px;
   overflow: hidden;
 
   &.collapsed {
@@ -28,6 +28,7 @@
         align-items: center;
         justify-content: center;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        margin-right: 0;
       }
 
       .header {
@@ -44,12 +45,6 @@
         width: 40px;
         height: 40px;
         padding: 0;
-
-        .badge {
-          position: absolute;
-          right: -4px;
-          top: 0;
-        }
       }
     }
 
@@ -85,9 +80,9 @@
 
 .menu {
   flex: none;
-  width: 280px;
+  width: 272px;
   height: 100%;
-  padding: 26px 12px 8px 0;
+  padding: 26px 4px 8px 0;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -109,10 +104,11 @@
   }
 
   .collapseIcon {
-    font-size: 16px;
+    font-size: 18px;
     color: #c1c1c1;
     cursor: pointer;
     z-index: 1;
+    margin-right: 4px;
 
     &.pined {
       color: @primary-color;
@@ -135,40 +131,36 @@
   border-radius: 10px;
   height: 42px;
   padding: 0 10px;
-  gap: 8px;
-  color: #333;
+  color: @text-primary;
   font-size: 14px;
-  font-weight: 400;
   line-height: 22px;
-  letter-spacing: 0.28px;
   display: flex;
   align-items: center;
+  gap: 8px;
   cursor: pointer;
   position: relative;
   border: 1px solid transparent;
 
-  &:hover:not(.active) {
+  &:hover:not(.alwaysHighlighted) {
     background-color: @color-bg-hover;
     font-weight: 400;
     color: #333333;
     border-color: transparent;
   }
 
-  &.active {
-    background-color: #ffffff;
-    font-weight: 400;
-    color: #333333;
-    border: 1px solid @color-border-light;
+  &.alwaysHighlighted {
+    background-color: white !important;
+    border: 1px solid rgba(242, 242, 242, 1) !important;
+  }
 
-    &:hover {
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    }
+  &.active {
+    background-color: @color-bg-selected;
   }
 
   &.active::before {
     content: "";
     position: absolute;
-    left: -12px;
+    left: -13px;
     top: 11px;
     width: 4px;
     height: 20px;
@@ -180,6 +172,7 @@
     .perse-icon {
       font-size: 20px;
       color: #333333;
+      position: relative;
     }
   }
 }
@@ -200,16 +193,23 @@
   min-height: 0;
   margin-top: 22px;
   padding-left: 12px;
+  padding-bottom: 4px;
 
-  &.focused::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 6px;
-    width: 4px;
-    height: 20px;
-    border-radius: 0 6px 6px 0;
-    background: @color-sidebar-indicator;
+  &.active {
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 4px;
+      height: 20px;
+      border-radius: 0 6px 6px 0;
+      background: @color-sidebar-indicator;
+    }
+
+    .jobsHeader {
+      background-color: @color-bg-selected;
+    }
   }
 }
 
@@ -228,7 +228,11 @@
   cursor: pointer;
 
   &:hover {
-    background: @color-bg-hover;
+    background: @color-bg-hover !important;
+
+    .jobsViewAllButton {
+      display: block;
+    }
   }
 }
 
@@ -245,10 +249,7 @@
   letter-spacing: 0.28px;
   cursor: pointer;
   white-space: nowrap;
-
-  &:hover {
-    color: @text-secondary;
-  }
+  display: none;
 }
 
 .jobsHeaderTitle {
@@ -267,16 +268,11 @@
 
 .jobsSearchInput {
   flex: none;
-  margin-top: 2px;
-
-  :global {
-    .ant-input {
-      height: 36px;
-      border-radius: 10px;
-      font-size: 12px;
-      line-height: 18px;
-    }
-  }
+  height: 36px;
+  border-radius: 10px;
+  font-size: 12px;
+  border-color: @color-border-light;
+  margin: 2px 0;
 }
 
 .jobsListWrap {
@@ -315,7 +311,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  border: 1px solid transparent;
   position: relative;
   margin-left: -10px;
 
@@ -324,8 +319,8 @@
     position: absolute;
     left: 10px;
     top: 50%;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     border: 1px solid #c1c1c1;
     border-radius: 50%;
     transform: translateY(-50%);
@@ -344,7 +339,6 @@
     background-color: @color-bg-hover;
     font-weight: 400;
     color: #333333;
-    border-color: transparent;
   }
 
   &.active {
@@ -370,7 +364,7 @@
     right: 8px;
     transform: translateY(-50%);
     color: #999;
-    background-color: #f5f6f9;
+    background-color: white;
     padding: 5px;
     border-radius: 8px;
 
@@ -434,14 +428,15 @@
   margin-top: auto;
   padding-top: 8px;
   position: relative;
+  border-top: 1px solid @color-border-light;
 
   &::before {
     content: "";
     position: absolute;
     left: -12px;
     right: -12px;
-    bottom: 100%;
-    height: 50px;
+    bottom: 102%;
+    height: 80px;
     pointer-events: none;
     background: linear-gradient(
       180deg,

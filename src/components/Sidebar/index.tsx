@@ -23,8 +23,6 @@ interface ISidebarProps {
   switchTooltip?: string;
 }
 
-const NAV_ICON_SIZE = 20;
-
 const Sidebar = (props: ISidebarProps) => {
   const {
     collapsed,
@@ -39,6 +37,8 @@ const Sidebar = (props: ISidebarProps) => {
 
   const [showSearch, setShowSearch] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [showJobs, setShowJobs] = useState(true);
+
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -95,11 +95,14 @@ const Sidebar = (props: ISidebarProps) => {
       <div className={styles.menuItemContainer} key={item.title}>
         <div
           className={classnames(styles.menuItem, {
+            [styles.alwaysHighlighted]: item.alwaysHighlighted,
             [styles.active]: isActive,
           })}
           onClick={item.path ? () => navigate(item.path as string) : undefined}
         >
-          <Icon icon={item.img} style={{ fontSize: NAV_ICON_SIZE }} />
+          {isCollapsedView && item.badge ? null : (
+            <Icon icon={item.img} style={item.iconStyle} />
+          )}
           {isCollapsedView ? null : (
             <span className={styles.menuItemLabel}>{item.title}</span>
           )}
@@ -113,60 +116,65 @@ const Sidebar = (props: ISidebarProps) => {
     if (!jobsMenu) return null;
 
     const isActive = jobsMenu.path && currentPath.startsWith(jobsMenu.path);
-    const hasSearchKeyword = Boolean(searchKeyword?.trim());
 
     return (
       <div
         className={classnames(styles.jobsSection, {
-          [styles.focused]: isActive,
+          [styles.active]: isActive,
         })}
       >
         <div
           className={styles.jobsHeader}
-          onClick={() => jobsMenu.path && navigate(jobsMenu.path)}
+          onClick={() => {
+            if (showJobs) {
+              setShowJobs(false);
+              setShowSearch(false);
+            } else {
+              setShowJobs(true);
+            }
+          }}
         >
           <span className={styles.jobsHeaderTitle}>{jobsMenu.title}</span>
-          {hasSearchKeyword && (
-            <div
-              className={styles.jobsViewAllButton}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSearchKeyword?.("");
-              }}
-            >
-              {t("app_layout.view_all")}
-            </div>
-          )}
+          <div
+            className={styles.jobsViewAllButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(jobsMenu.path as string);
+            }}
+          >
+            {t("app_layout.view_all")}
+          </div>
           <Icon
             icon={<Search />}
             className={styles.jobsSearchButton}
             onClick={(e) => {
               e.stopPropagation();
               setShowSearch((current) => !current);
+              setShowJobs(true);
             }}
           />
         </div>
         {showSearch && (
-          <div className={styles.jobsSearchInput}>
-            <Input
-              placeholder={t("app_layout.search_placeholder")}
-              onChange={(e) => {
-                setSearchKeyword?.(e.target.value);
-              }}
-              value={searchKeyword}
-              allowClear
-              size="small"
-              style={{ height: 36 }}
-            />
+          <Input
+            placeholder={t("app_layout.search_placeholder")}
+            onChange={(e) => {
+              setSearchKeyword?.(e.target.value);
+            }}
+            value={searchKeyword}
+            allowClear
+            size="small"
+            className={styles.jobsSearchInput}
+          />
+        )}
+        {showJobs && (
+          <div className={styles.jobsListWrap}>
+            <div className={styles.jobsList}>
+              {jobsMenu.children?.length
+                ? renderSubMenuItems(jobsMenu.children)
+                : null}
+            </div>
           </div>
         )}
-        <div className={styles.jobsListWrap}>
-          <div className={styles.jobsList}>
-            {jobsMenu.children?.length
-              ? renderSubMenuItems(jobsMenu.children)
-              : null}
-          </div>
-        </div>
       </div>
     );
   };
@@ -183,7 +191,7 @@ const Sidebar = (props: ISidebarProps) => {
               })}
               onClick={() => navigate(item.path)}
             >
-              <Icon icon={item.img} style={{ fontSize: NAV_ICON_SIZE }} />
+              <Icon icon={item.img} />
               {isCollapsedView ? null : (
                 <span className={styles.menuItemLabel}>{item.title}</span>
               )}
@@ -222,7 +230,6 @@ const Sidebar = (props: ISidebarProps) => {
           <img src={logo} className={styles.logo} alt="persevio" />
           <Icon
             icon={<Collapse />}
-            style={{ fontSize: 16, color: "#c1c1c1" }}
             className={classnames(styles.collapseIcon, styles.mobileVisible)}
             onTouchEnd={() => {
               setHovered((hovered) => !hovered);

@@ -96,6 +96,9 @@ const AppLayout = () => {
       path: "/app/entry/create-job",
       img: <NewChat />,
       alwaysHighlighted: true,
+      iconStyle: {
+        top: "-1px",
+      },
     },
     {
       title: t("menu.jobs"),

@@ -49,10 +49,8 @@ const PromptTypewriter = ({ segments }: PromptTypewriterProps) => {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const isTyping = visibleCount < chars.length;
-
   return (
-    <p className={classnames(styles.promptText, isTyping && styles.isTyping)}>
+    <p className={classnames(styles.promptText, styles.isTyping)}>
       {chars.map((item, index) => {
         const charClassName = classnames(
           styles.typewriterChar,
@@ -68,7 +66,7 @@ const PromptTypewriter = ({ segments }: PromptTypewriterProps) => {
         return (
           <Fragment key={index}>
             {charNode}
-            {isTyping && index === visibleCount - 1 && (
+            {index === visibleCount - 1 && (
               <span className={styles.typewriterCaret} aria-hidden />
             )}
           </Fragment>

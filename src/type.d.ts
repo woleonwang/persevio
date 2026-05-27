@@ -300,6 +300,7 @@ type TMenu = {
   key?: string;
   badge?: number;
   alwaysHighlighted?: boolean;
+  iconStyle?: React.CSSProperties;
   children?: {
     title: string;
     path: string;

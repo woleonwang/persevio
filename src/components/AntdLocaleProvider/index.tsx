@@ -21,6 +21,27 @@ const AntdLocaleProvider = ({ children }: { children: React.ReactNode }) => {
           borderRadiusLG: 12,
           controlHeightLG: 44,
         },
+        components: {
+          Input: {
+            hoverBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeShadow: "none",
+            errorActiveShadow: "none",
+            warningActiveShadow: "none",
+          },
+          Select: {
+            hoverBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeOutlineColor: "none",
+          },
+          InputNumber: {
+            hoverBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeBorderColor: "rgba(54, 130, 254, 0.5)",
+            activeShadow: "none",
+            errorActiveShadow: "none",
+            warningActiveShadow: "none",
+          },
+        },
       }}
       locale={locale}
     >
