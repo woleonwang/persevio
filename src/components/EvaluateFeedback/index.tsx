@@ -5,7 +5,6 @@ import GoodFitOutlined from "@/assets/icons/good-fit-outlined";
 import Inaccurate from "@/assets/icons/inaccurate";
 import InaccurateOutline from "@/assets/icons/inaccurate-outline";
 import GoodFit from "@/assets/icons/good-fit";
-import SlightlyOffOutline from "@/assets/icons/slightly-off-outline";
 import SlightlyOff from "@/assets/icons/slightly-off";
 
 import styles from "./style.module.less";
@@ -20,7 +19,7 @@ const EvaluateFeedback = (props: IProps) => {
 
   const _onChange = (
     e: React.MouseEvent<HTMLSpanElement>,
-    value: TEvaluateFeedback
+    value: TEvaluateFeedback,
   ) => {
     e.stopPropagation();
     onChange?.(value);
@@ -38,11 +37,6 @@ const EvaluateFeedback = (props: IProps) => {
           icon={<GoodFitOutlined />}
           className={classnames(styles.goodFitIconOutline, styles.icon)}
           onClick={(e) => _onChange(e, "accurate")}
-        />
-        <Icon
-          icon={<SlightlyOffOutline />}
-          className={classnames(styles.slightlyOffIconOutline, styles.icon)}
-          onClick={(e) => _onChange(e, "slightly_inaccurate")}
         />
         <Icon
           icon={<InaccurateOutline />}
