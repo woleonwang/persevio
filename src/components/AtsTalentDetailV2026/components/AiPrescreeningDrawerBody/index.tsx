@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,7 @@ import { getEvaluateResultLevel } from "@/utils";
 import { LogisticsFitKnownKeys, SkillsFitKnownKeys } from "@/utils/consts";
 import { Tabs } from "antd";
 import newStyles from "./style.module.less";
+import dayjs, { Dayjs } from "dayjs";
 
 const styles = legacyStyles;
 
@@ -39,10 +40,17 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
   onEvaluateFeedbackChange,
   onOpenEvaluateFeedbackConversation,
 }) => {
+  const [forcedActiveKey, setForcedActiveKey] = useState<TActiveKey | null>(
+    null,
+  );
   const { t: originalT } = useTranslation();
   const [visibleSections, setVisibleSections] = useState<TActiveKey[]>([]);
+  const forcedActiveKeySettedAtRef = useRef<Dayjs>();
 
   useEffect(() => {
+    const container = document.getElementById("scroll-container");
+    if (!container) return;
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -65,7 +73,7 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
         }
       },
       {
-        root: document.getElementById("scroll-container"),
+        root: container,
         rootMargin: "-1px 0px 0px 0px",
       },
     );
@@ -82,8 +90,20 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
       }
     });
 
+    const handleScroll = () => {
+      if (
+        forcedActiveKeySettedAtRef.current &&
+        dayjs().diff(forcedActiveKeySettedAtRef.current, "second") > 0.5
+      ) {
+        forcedActiveKeySettedAtRef.current = undefined;
+        setForcedActiveKey(null);
+      }
+    };
+    container.addEventListener("scroll", handleScroll);
+
     return () => {
       io.disconnect();
+      container.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -218,8 +238,10 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
         style={{
           margin: "0 15px",
         }}
-        activeKey={activeKey}
+        activeKey={forcedActiveKey || activeKey}
         onTabClick={(key) => {
+          setForcedActiveKey(key as TActiveKey);
+          forcedActiveKeySettedAtRef.current = dayjs();
           scrollToSection(key as TActiveKey);
         }}
         items={[
