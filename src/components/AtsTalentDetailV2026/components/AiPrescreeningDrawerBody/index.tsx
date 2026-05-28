@@ -66,6 +66,7 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
       },
       {
         root: document.getElementById("scroll-container"),
+        rootMargin: "-1px 0px 0px 0px",
       },
     );
 
@@ -200,9 +201,7 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
     ].filter((key) => {
       return visibleSections.includes(key as TActiveKey);
     });
-    return visibles.length > 0
-      ? visibles[visibles.length - 1]
-      : "requiredQuestions";
+    return visibles.length > 0 ? visibles[0] : "requiredQuestions";
   }, [visibleSections]);
 
   return (
@@ -220,7 +219,9 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
           margin: "0 15px",
         }}
         activeKey={activeKey}
-        onChange={(key) => scrollToSection(key as TActiveKey)}
+        onTabClick={(key) => {
+          scrollToSection(key as TActiveKey);
+        }}
         items={[
           {
             key: "requiredQuestions",
