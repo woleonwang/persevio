@@ -200,9 +200,7 @@ const AiPrescreeningDrawerBody: React.FC<IAiPrescreeningDrawerBodyProps> = ({
     ].filter((key) => {
       return visibleSections.includes(key as TActiveKey);
     });
-    return visibles.length > 0
-      ? visibles[visibles.length - 1]
-      : "requiredQuestions";
+    return visibles.length > 0 ? visibles[0] : "requiredQuestions";
   }, [visibleSections]);
 
   return (
