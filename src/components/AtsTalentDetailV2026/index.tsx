@@ -325,10 +325,10 @@ function AtsTalentDetailV2026ViewBase() {
     ...customizedInterviews,
   ];
 
-  const totalFeedbackCount = interviewRounds.reduce(
-    (sum, round) => sum + round.feedback_records.length,
-    0,
-  );
+  // const totalFeedbackCount = interviewRounds.reduce(
+  //   (sum, round) => sum + round.feedback_records.length,
+  //   0,
+  // );
   const notesCount = notes.length;
 
   const toggleRoundOpen = (id: string) => {
