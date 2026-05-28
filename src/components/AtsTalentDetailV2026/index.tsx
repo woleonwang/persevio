@@ -941,12 +941,7 @@ function AtsTalentDetailV2026ViewBase() {
             items={[
               {
                 key: "interview_feedback",
-                label: originalT(
-                  "talent_details.tab_interview_feedback_count",
-                  {
-                    count: totalFeedbackCount,
-                  },
-                ),
+                label: originalT("talent_details.tab_interview_feedback_count"),
                 children: null,
               },
               {

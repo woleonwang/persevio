@@ -2110,7 +2110,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     jobs_applied: "Jobs Applied",
     applications_count: "{{count}} Applications",
     applied_meta: "Applied on: {{date}} | Source: {{source}}",
-    tab_interview_feedback_count: "Interview Feedback ({{count}})",
+    tab_interview_feedback_count: "Interview Feedback",
     tab_notes_count: "Notes ({{count}})",
     tab_activity: "Activity",
     tab_assigned_recruiters: "Assigned Recruiters",
