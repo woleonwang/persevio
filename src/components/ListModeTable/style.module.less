@@ -14,6 +14,11 @@
     padding: 10px 16px;
   }
 
+  :global(.ant-table-tbody > tr > td.ant-table-selection-column),
+  :global(.ant-table-thead > tr > th.ant-table-selection-column) {
+    padding: 0;
+  }
+
   :global(.ant-table-thead > tr > th) {
     background: #fafafa;
     font-weight: 600;
@@ -95,4 +100,17 @@
   &:hover {
     color: #333;
   }
+}
+
+.selectionCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.selectionCellVisual {
+  pointer-events: none;
 }

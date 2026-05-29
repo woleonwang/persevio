@@ -489,11 +489,64 @@ const ListModeTable = ({
                   preserveSelectedRowKeys: true,
                   onChange: (keys) =>
                     onSelectedRowKeysChange?.(keys as number[]),
+                  columnTitle: (originNode) => {
+                    const pageKeys = sortedTalents.map((talent) => talent.id);
+                    const keys = selectedRowKeys ?? [];
+                    const allPageSelected =
+                      pageKeys.length > 0 &&
+                      pageKeys.every((id) => keys.includes(id));
+
+                    return (
+                      <div
+                        className={styles.selectionCell}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectedRowKeysChange?.(
+                            allPageSelected
+                              ? keys.filter((k) => !pageKeys.includes(k))
+                              : [...new Set([...keys, ...pageKeys])],
+                          );
+                        }}
+                      >
+                        <span className={styles.selectionCellVisual}>
+                          {originNode}
+                        </span>
+                      </div>
+                    );
+                  },
+                  renderCell: (_checked, record, _index, originNode) => (
+                    <div
+                      className={styles.selectionCell}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const keys = selectedRowKeys ?? [];
+                        const id = record.id;
+                        onSelectedRowKeysChange?.(
+                          keys.includes(id)
+                            ? keys.filter((k) => k !== id)
+                            : [...keys, id],
+                        );
+                      }}
+                    >
+                      <span className={styles.selectionCellVisual}>
+                        {originNode}
+                      </span>
+                    </div>
+                  ),
                 }
               : undefined
           }
           onRow={(record) => ({
-            onClick: () => onRowClick(record),
+            onClick: (e) => {
+              if (
+                (e.target as HTMLElement).closest(
+                  ".ant-table-selection-column",
+                )
+              ) {
+                return;
+              }
+              onRowClick(record);
+            },
           })}
         />
       </div>

@@ -10,6 +10,7 @@ import styles from "../style.module.less";
 import dayjs from "dayjs";
 import { getEvaluateResultLevel } from "@/utils";
 import { EVALUATE_INTERVIEW_RECOMMENDATION_KEYS } from "@/utils/consts";
+import { Tooltip } from "antd";
 
 interface IProps {
   stage: PipelineStage;
@@ -84,7 +85,9 @@ const DroppableColumn = ({
       }}
     >
       <div className={styles.columnHeader}>
-        <span className={styles.columnTitle}>{stage.name}</span>
+        <Tooltip title={stage.name}>
+          <span className={styles.columnTitle}>{stage.name}</span>
+        </Tooltip>
         <div className={styles.columnHeaderRight}>
           <span className={styles.columnCount}>{items.length}</span>
           {unreadCount > 0 && (

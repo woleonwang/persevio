@@ -30,7 +30,7 @@ const JobBoard = () => {
 
   const [jobState, setJobState] = useState<TJobState>();
 
-  const { setMenuCollapse, isAdmin } = globalStore;
+  const { setMenuCollapse, fetchJobs, isAdmin } = globalStore;
 
   const isOld = getQuery("old") === "1";
 
@@ -65,7 +65,9 @@ const JobBoard = () => {
         },
       );
 
-      if (code !== 0) {
+      if (code === 0) {
+        fetchJobs();
+      } else {
         message.error(originalT("submit_failed"));
         return;
       }
