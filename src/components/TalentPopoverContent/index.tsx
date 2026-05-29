@@ -49,6 +49,10 @@ const TalentPopoverContent = ({
     needConfirmEvaluateFeedbackConversation,
     setNeedConfirmEvaluateFeedbackConversation,
   ] = useState<boolean>(false);
+  const [
+    sourceEvaluateFeedbackConversation,
+    setSourceEvaluateFeedbackConversation,
+  ] = useState<"reject" | "evaluate_feedback">("evaluate_feedback");
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
@@ -60,6 +64,7 @@ const TalentPopoverContent = ({
   const interview = talent.interviews?.[0];
   const job = talent.job;
   const isPipeline = variant === "pipeline";
+  const hasRejected = !!talent.reject_reason_type;
 
   const updateTalentEvaluateFeedback = async (
     jobId: string | number,
@@ -95,6 +100,7 @@ const TalentPopoverContent = ({
       },
     );
 
+    setSourceEvaluateFeedbackConversation("evaluate_feedback");
     setOpenEvaluateFeedbackConversation(true);
     setNeedConfirmEvaluateFeedbackConversation(true);
     message.success("Update success");
@@ -236,6 +242,7 @@ const TalentPopoverContent = ({
                   );
                 }}
                 onOpen={() => {
+                  setSourceEvaluateFeedbackConversation("evaluate_feedback");
                   setNeedConfirmEvaluateFeedbackConversation(false);
                   setOpenEvaluateFeedbackConversation(true);
                 }}
@@ -370,8 +377,16 @@ const TalentPopoverContent = ({
         jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
         open={isRejectModalOpen}
+        successMessage="Application Rejected"
         onOk={() => {
           setIsRejectModalOpen(false);
+          setTalent((prev) => ({ ...prev, status: "rejected" }));
+          onUpdateTalent();
+          if (!hasRejected) {
+            setSourceEvaluateFeedbackConversation("reject");
+            setNeedConfirmEvaluateFeedbackConversation(true);
+            setOpenEvaluateFeedbackConversation(true);
+          }
         }}
         onCancel={() => setIsRejectModalOpen(false)}
       />
@@ -410,6 +425,7 @@ const TalentPopoverContent = ({
       />
 
       <EvaluateFeedbackConversation
+        source={sourceEvaluateFeedbackConversation}
         open={openEvaluateFeedbackConversation}
         jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
