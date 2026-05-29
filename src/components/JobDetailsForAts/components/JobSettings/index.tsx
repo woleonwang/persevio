@@ -802,7 +802,7 @@ const JobSettings = ({ jobId }: IProps) => {
         <div className={styles.createdByRow}>
           <div>{tKey("created_by_prefix")}</div>
           <div className={styles.staffChip}>
-            {getStaffNameById(job?.creator_id ?? 0)}
+            {getStaffNameById(job?.creator_id || job?.staff_id || 0)}
           </div>
           <div>{tKey("created_on")}</div>
           <div>
