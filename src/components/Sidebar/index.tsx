@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import logo from "@/assets/logo.png";
-import { UserSwitchOutlined } from "@ant-design/icons";
 import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
