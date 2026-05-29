@@ -54,6 +54,7 @@ import {
   parseJSON,
   DEFAULT_TRACKING_SOURCES,
   getEvaluateResultLevel,
+  shouldOpenRejectCalibrationConversation,
 } from "@/utils";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
@@ -610,7 +611,10 @@ function AtsTalentDetailV2026ViewBase() {
     return "Activity";
   };
 
-  const hasRejected = !!talent.reject_reason_type;
+  const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
+    rejectReasonType: talent.reject_reason_type,
+    evaluateResult: report,
+  });
 
   return (
     <div className={styles.pageRoot}>
@@ -1389,7 +1393,7 @@ function AtsTalentDetailV2026ViewBase() {
             setIsRejectModalOpen(false);
             fetchTalent();
             fetchActiveLogs();
-            if (!hasRejected) {
+            if (shouldOpenRejectCalibration) {
               setSourceEvaluateFeedbackConversation("reject");
               setNeedConfirmEvaluateFeedbackConversation(true);
               setOpenEvaluateFeedbackConversation(true);
