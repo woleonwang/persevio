@@ -128,12 +128,14 @@ const Register: React.FC<IProps> = (props) => {
     }
 
     form.validateFields().then(async (values: SignupFormValues) => {
-      const { username, password, verify_code } = values;
+      const { verify_code } = values;
+      const username = (values.username ?? "").trim();
+      const password = (values.password ?? "").trim();
 
       if (!isInternal) {
         const { code } = await Post("/api/precheck_verify_code", {
-          verify_key: values.username,
-          verify_code: values.verify_code,
+          verify_key: username,
+          verify_code: verify_code,
         });
 
         if (code !== 0) {

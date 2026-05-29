@@ -432,9 +432,11 @@ const MemberTeamPage = () => {
   const handleCreateMember = async () => {
     try {
       const values = await memberForm.validateFields();
+      const email = (values.email ?? "").trim();
+      const password = (values.password ?? "").trim();
       const createData: Record<string, unknown> = {
-        username: values.email,
-        password: values.password,
+        username: email,
+        password: password,
         name: values.name,
         role: values.role,
       };
@@ -454,8 +456,8 @@ const MemberTeamPage = () => {
       if (code === 0) {
         setCreatedStaffInfo({
           name: values.name,
-          email: values.email,
-          password: values.password,
+          email: email,
+          password: password,
         });
         setIsMemberModalOpen(false);
         memberForm.resetFields();
