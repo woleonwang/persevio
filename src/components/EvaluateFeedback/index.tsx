@@ -8,6 +8,8 @@ import GoodFit from "@/assets/icons/good-fit";
 import SlightlyOff from "@/assets/icons/slightly-off";
 
 import styles from "./style.module.less";
+import Tooltip from "antd/es/tooltip";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   value?: TEvaluateFeedback;
@@ -16,6 +18,7 @@ interface IProps {
 }
 const EvaluateFeedback = (props: IProps) => {
   const { value, onChange, onOpen } = props;
+  const { t } = useTranslation();
 
   const _onChange = (
     e: React.MouseEvent<HTMLSpanElement>,
@@ -33,16 +36,20 @@ const EvaluateFeedback = (props: IProps) => {
   if (!value) {
     return (
       <div className={styles.evaluateFeedback}>
-        <Icon
-          icon={<GoodFitOutlined />}
-          className={classnames(styles.goodFitIconOutline, styles.icon)}
-          onClick={(e) => _onChange(e, "accurate")}
-        />
-        <Icon
-          icon={<InaccurateOutline />}
-          className={classnames(styles.inaccurateIconOutline, styles.icon)}
-          onClick={(e) => _onChange(e, "inaccurate")}
-        />
+        <Tooltip title={t("talent_details.looks_accurate")}>
+          <Icon
+            icon={<GoodFitOutlined />}
+            className={classnames(styles.goodFitIconOutline, styles.icon)}
+            onClick={(e) => _onChange(e, "accurate")}
+          />
+        </Tooltip>
+        <Tooltip title={t("talent_details.looks_inaccurate")}>
+          <Icon
+            icon={<InaccurateOutline />}
+            className={classnames(styles.inaccurateIconOutline, styles.icon)}
+            onClick={(e) => _onChange(e, "inaccurate")}
+          />
+        </Tooltip>
       </div>
     );
   }

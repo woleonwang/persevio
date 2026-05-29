@@ -133,6 +133,10 @@ function AtsTalentDetailV2026ViewBase() {
     needConfirmEvaluateFeedbackConversation,
     setNeedConfirmEvaluateFeedbackConversation,
   ] = useState(false);
+  const [
+    sourceEvaluateFeedbackConversation,
+    setSourceEvaluateFeedbackConversation,
+  ] = useState<"reject" | "evaluate_feedback">("evaluate_feedback");
 
   const isSystemAdmin = globalStore.isAdmin;
   const pdfReportRef = useRef<HTMLDivElement>(null);
@@ -270,6 +274,7 @@ function AtsTalentDetailV2026ViewBase() {
     );
     if (code === 0) {
       fetchTalent();
+      setSourceEvaluateFeedbackConversation("evaluate_feedback");
       setOpenEvaluateFeedbackConversation(true);
       setNeedConfirmEvaluateFeedbackConversation(true);
       message.success(t("update_success"));
@@ -604,6 +609,8 @@ function AtsTalentDetailV2026ViewBase() {
     }
     return "Activity";
   };
+
+  const hasRejected = !!talent.reject_reason_type;
 
   return (
     <div className={styles.pageRoot}>
@@ -1235,6 +1242,7 @@ function AtsTalentDetailV2026ViewBase() {
             talentChatMessages={talentChatMessages}
             onEvaluateFeedbackChange={updateTalentEvaluateFeedback}
             onOpenEvaluateFeedbackConversation={() => {
+              setSourceEvaluateFeedbackConversation("evaluate_feedback");
               setNeedConfirmEvaluateFeedbackConversation(false);
               setOpenEvaluateFeedbackConversation(true);
             }}
@@ -1379,8 +1387,13 @@ function AtsTalentDetailV2026ViewBase() {
           successMessage="Application Rejected"
           onOk={() => {
             setIsRejectModalOpen(false);
-            void fetchTalent();
-            void fetchActiveLogs();
+            fetchTalent();
+            fetchActiveLogs();
+            if (!hasRejected) {
+              setSourceEvaluateFeedbackConversation("reject");
+              setNeedConfirmEvaluateFeedbackConversation(true);
+              setOpenEvaluateFeedbackConversation(true);
+            }
           }}
           onCancel={() => setIsRejectModalOpen(false)}
         />
@@ -1397,6 +1410,7 @@ function AtsTalentDetailV2026ViewBase() {
 
       {!!talent && (
         <EvaluateFeedbackConversation
+          source={sourceEvaluateFeedbackConversation}
           open={openEvaluateFeedbackConversation}
           jobId={job.invitation_token}
           talentId={talent.id ?? 0}

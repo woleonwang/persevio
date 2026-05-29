@@ -11,9 +11,17 @@ interface IProps {
   talentId: number;
   onCancel: () => void;
   needConfirm?: boolean;
+  source?: "reject" | "evaluate_feedback";
 }
 const EvaluateFeedbackConversation = (props: IProps) => {
-  const { open, jobId, talentId, onCancel, needConfirm } = props;
+  const {
+    open,
+    jobId,
+    talentId,
+    onCancel,
+    needConfirm,
+    source = "evaluate_feedback",
+  } = props;
   const [conformModalOpen, setConformModalOpen] = useState<boolean>(false);
   const [notificationApi, contextHolder] = notification.useNotification();
 
@@ -34,7 +42,9 @@ const EvaluateFeedbackConversation = (props: IProps) => {
     notificationApi.destroy();
     notificationApi.open({
       message: "Refining Job Requirements",
-      description: <Details jobId={jobId} talentId={talentId} />,
+      description: (
+        <Details jobId={jobId} talentId={talentId} source={source} />
+      ),
       icon: null,
       duration: null,
       placement: "bottomRight",

@@ -505,6 +505,7 @@ type TTalent = {
   evaluate_feedback: TEvaluateFeedback;
   evaluate_feedback_reason: string;
   talent_recruiters?: TTalentRecruiter[];
+  reject_reason_type?: TTalentRejectReasonType;
 };
 
 type TTalentRecruiter = {
