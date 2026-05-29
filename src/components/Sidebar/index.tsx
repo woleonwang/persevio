@@ -11,6 +11,7 @@ import Delete from "@/assets/icons/delete";
 import { observer } from "mobx-react-lite";
 import Collapse from "@/assets/icons/collapse";
 import Search from "@/assets/icons/search";
+import StaffSwitch from "@/assets/icons/staff-switch";
 
 interface ISidebarProps {
   collapsed: boolean;
@@ -198,9 +199,11 @@ const Sidebar = (props: ISidebarProps) => {
             </div>
             {onSwitch && (
               <Tooltip title={switchTooltip}>
-                <div className={styles.footerSwitch} onClick={onSwitch}>
-                  <UserSwitchOutlined />
-                </div>
+                <Icon
+                  icon={<StaffSwitch />}
+                  className={styles.footerSwitch}
+                  onClick={onSwitch}
+                />
               </Tooltip>
             )}
           </div>
