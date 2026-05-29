@@ -950,6 +950,15 @@ type TInterviewRecommendation =
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
 
+type TCalibrationConversationSource = "reject" | "evaluate_feedback";
+
+type TStartCalibrationConversationParams = {
+  jobId: string | number;
+  talentId: number;
+  source: TCalibrationConversationSource;
+  needConfirm: boolean;
+};
+
 /** 与后端 model.TalentRejectReasonType 一致 */
 type TTalentRejectReasonType =
   | "not_shortlisted"

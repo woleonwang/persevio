@@ -35,6 +35,9 @@ interface IProps {
   onMarkViewed?: () => void;
   onRowClick: (item: TTalentListItem) => void;
   onUpdateTalent?: () => void;
+  onStartCalibrationConversation: (
+    params: TStartCalibrationConversationParams,
+  ) => void;
   selectedRowKeys?: number[];
   onSelectedRowKeysChange?: (keys: number[]) => void;
 }
@@ -64,6 +67,7 @@ const ListModeTable = ({
   items,
   onRowClick,
   onUpdateTalent,
+  onStartCalibrationConversation,
   onMarkViewed,
   selectedRowKeys,
   onSelectedRowKeysChange,
@@ -138,6 +142,7 @@ const ListModeTable = ({
             variant={variant}
             talent={record}
             onUpdateTalent={onUpdateTalent ?? (() => {})}
+            onStartCalibrationConversation={onStartCalibrationConversation}
             mode="table"
           />
         }
