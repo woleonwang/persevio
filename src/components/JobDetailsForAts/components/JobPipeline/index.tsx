@@ -38,6 +38,7 @@ import ListModeTable from "@/components/ListModeTable";
 import { getStageKey } from "@/utils/talentStage";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import MoveStageModal from "@/components/MoveStageModal";
+import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
 
 const PIPELINE_KANBAN_UNSUITABLE_TOGGLE_STAGE_IDS = [
   "applied",
@@ -88,6 +89,18 @@ const JobPipeline = ({
   const [selectedTalentIds, setSelectedTalentIds] = useState<number[]>([]);
   const [batchMoveStageOpen, setBatchMoveStageOpen] = useState(false);
   const [batchRejectOpen, setBatchRejectOpen] = useState(false);
+  const [calibrationConversation, setCalibrationConversation] =
+    useState<TStartCalibrationConversationParams | null>(null);
+
+  const handleStartCalibrationConversation = (
+    params: TStartCalibrationConversationParams,
+  ) => {
+    setCalibrationConversation(params);
+  };
+
+  const handleCloseCalibrationConversation = () => {
+    setCalibrationConversation(null);
+  };
 
   const { t } = useTranslation();
   const tKey = (key: string) => t(`job_details.pipeline_section.${key}`);
@@ -475,6 +488,9 @@ const JobPipeline = ({
                 onUpdateTalent={() => {
                   fetchTalents();
                 }}
+                onStartCalibrationConversation={
+                  handleStartCalibrationConversation
+                }
                 renderReachedOutSummary={stage.id === "reached_out"}
                 onGoToReachedOut={() => {
                   onChangeTab("outreachCampaigns");
@@ -501,6 +517,7 @@ const JobPipeline = ({
                   disabledPopover
                   onCardClick={() => {}}
                   onUpdateTalent={() => {}}
+                  onStartCalibrationConversation={() => {}}
                   onViewed={() => {}}
                 />
               </div>
@@ -526,6 +543,9 @@ const JobPipeline = ({
                 );
               }}
               onUpdateTalent={fetchTalents}
+              onStartCalibrationConversation={
+                handleStartCalibrationConversation
+              }
               onMarkViewed={onMarkViewed}
             />
           )}
@@ -564,6 +584,16 @@ const JobPipeline = ({
             fetchTalents();
           }}
           onCancel={() => setBatchRejectOpen(false)}
+        />
+      )}
+      {job && calibrationConversation && (
+        <EvaluateFeedbackConversation
+          open
+          jobId={calibrationConversation.jobId}
+          talentId={calibrationConversation.talentId}
+          source={calibrationConversation.source}
+          needConfirm={calibrationConversation.needConfirm}
+          onCancel={handleCloseCalibrationConversation}
         />
       )}
     </div>

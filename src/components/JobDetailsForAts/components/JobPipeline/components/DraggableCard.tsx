@@ -22,6 +22,9 @@ interface IProps {
   disabledPopover?: boolean;
   onCardClick: (item: TTalentListItem) => void;
   onUpdateTalent: () => void;
+  onStartCalibrationConversation: (
+    params: TStartCalibrationConversationParams,
+  ) => void;
   onViewed?: (talentId: number) => void;
 }
 
@@ -31,6 +34,7 @@ const DraggableCard = ({
   disabledPopover,
   onCardClick,
   onUpdateTalent,
+  onStartCalibrationConversation,
   onViewed,
 }: IProps) => {
   const { fetchUnreadTalentsCount } = globalStore;
@@ -138,6 +142,7 @@ const DraggableCard = ({
           mode="pipeline"
           talent={item}
           onUpdateTalent={onUpdateTalent}
+          onStartCalibrationConversation={onStartCalibrationConversation}
         />
       }
       trigger="hover"

@@ -188,6 +188,7 @@ const Talents: React.FC = () => {
               );
             }}
             onUpdateTalent={fetchTalents}
+            onStartCalibrationConversation={() => {}}
           />
         )}
       </div>

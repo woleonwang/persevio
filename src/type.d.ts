@@ -505,6 +505,7 @@ type TTalent = {
   evaluate_feedback: TEvaluateFeedback;
   evaluate_feedback_reason: string;
   talent_recruiters?: TTalentRecruiter[];
+  reject_reason_type?: TTalentRejectReasonType;
 };
 
 type TTalentRecruiter = {
@@ -948,6 +949,15 @@ type TInterviewRecommendation =
   | "no";
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
+
+type TCalibrationConversationSource = "reject" | "evaluate_feedback";
+
+type TStartCalibrationConversationParams = {
+  jobId: string | number;
+  talentId: number;
+  source: TCalibrationConversationSource;
+  needConfirm: boolean;
+};
 
 /** 与后端 model.TalentRejectReasonType 一致 */
 type TTalentRejectReasonType =

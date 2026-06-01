@@ -18,6 +18,9 @@ interface IProps {
   isLocked: boolean;
   onCardClick: (item: TTalentListItem) => void;
   onUpdateTalent: () => void;
+  onStartCalibrationConversation: (
+    params: TStartCalibrationConversationParams,
+  ) => void;
   onGoToReachedOut: () => void;
   renderReachedOutSummary?: boolean;
   onMarkViewed?: (talentId: number) => void;
@@ -32,6 +35,7 @@ const DroppableColumn = ({
   isLocked,
   onCardClick,
   onUpdateTalent,
+  onStartCalibrationConversation,
   onGoToReachedOut,
   renderReachedOutSummary,
   onMarkViewed,
@@ -166,6 +170,9 @@ const DroppableColumn = ({
                   disabledPopover={isColumnScrolling}
                   onCardClick={() => onCardClick(talent)}
                   onUpdateTalent={onUpdateTalent}
+                  onStartCalibrationConversation={
+                    onStartCalibrationConversation
+                  }
                   onViewed={onMarkViewed}
                 />
               );

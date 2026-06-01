@@ -1,6 +1,10 @@
 import classnames from "classnames";
 import styles from "./style.module.less";
-import { buildTalentDetailUrl, getEvaluateResultLevel } from "@/utils";
+import {
+  buildTalentDetailUrl,
+  getEvaluateResultLevel,
+  shouldOpenRejectCalibrationConversation,
+} from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 import { Button, message, Modal, Tooltip } from "antd";
 import { useRef, useState } from "react";
@@ -13,7 +17,6 @@ import Ghost from "@/assets/icons/ghost";
 import TalentEvaluateFeedbackWithReasonModal from "@/components/TalentEvaluateFeedbackWithReasonModal";
 import InterviewForm from "@/components/NewTalentDetail/components/InterviewForm";
 import TalentEvaluateFeedbackModal from "@/components/TalentEvaluateFeedbackModal";
-import EvaluateFeedbackConversation from "@/components/EvaluateFeedbackConversation";
 import AssignedRecruiters from "@/components/TalentPopoverContent/AssignedRecruiters";
 import {
   LogisticsFitKnownKeys,
@@ -26,12 +29,16 @@ interface IProps {
   mode: "pipeline" | "table";
   talent: TTalentListItem;
   onUpdateTalent: () => void;
+  onStartCalibrationConversation: (
+    params: TStartCalibrationConversationParams,
+  ) => void;
 }
 
 const TalentPopoverContent = ({
   variant,
   talent: talentProps,
   onUpdateTalent,
+  onStartCalibrationConversation,
   mode,
 }: IProps) => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -41,14 +48,6 @@ const TalentPopoverContent = ({
 
   const [openEvaluateFeedbackReason, setOpenEvaluateFeedbackReason] =
     useState<boolean>(false);
-  const [
-    openEvaluateFeedbackConversation,
-    setOpenEvaluateFeedbackConversation,
-  ] = useState<boolean>(false);
-  const [
-    needConfirmEvaluateFeedbackConversation,
-    setNeedConfirmEvaluateFeedbackConversation,
-  ] = useState<boolean>(false);
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_talents.${key}`);
@@ -60,6 +59,21 @@ const TalentPopoverContent = ({
   const interview = talent.interviews?.[0];
   const job = talent.job;
   const isPipeline = variant === "pipeline";
+  const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
+    rejectReasonType: talent.reject_reason_type,
+    evaluateResult,
+  });
+
+  const startCalibrationConversation = (
+    source: TCalibrationConversationSource,
+    needConfirm: boolean,
+  ) => {
+    const jobId = talent.job?.invitation_token;
+    const talentId = talent.id ?? 0;
+    if (!jobId) return;
+
+    onStartCalibrationConversation({ jobId, talentId, source, needConfirm });
+  };
 
   const updateTalentEvaluateFeedback = async (
     jobId: string | number,
@@ -95,8 +109,7 @@ const TalentPopoverContent = ({
       },
     );
 
-    setOpenEvaluateFeedbackConversation(true);
-    setNeedConfirmEvaluateFeedbackConversation(true);
+    startCalibrationConversation("evaluate_feedback", true);
     message.success("Update success");
   };
 
@@ -236,8 +249,7 @@ const TalentPopoverContent = ({
                   );
                 }}
                 onOpen={() => {
-                  setNeedConfirmEvaluateFeedbackConversation(false);
-                  setOpenEvaluateFeedbackConversation(true);
+                  startCalibrationConversation("evaluate_feedback", false);
                 }}
               />
             </div>
@@ -370,8 +382,14 @@ const TalentPopoverContent = ({
         jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
         open={isRejectModalOpen}
+        successMessage="Application Rejected"
         onOk={() => {
           setIsRejectModalOpen(false);
+          setTalent((prev) => ({ ...prev, status: "rejected" }));
+          onUpdateTalent();
+          if (shouldOpenRejectCalibration) {
+            startCalibrationConversation("reject", true);
+          }
         }}
         onCancel={() => setIsRejectModalOpen(false)}
       />
@@ -407,14 +425,6 @@ const TalentPopoverContent = ({
           setOpenEvaluateFeedbackReason(false);
         }}
         onCancel={() => setOpenEvaluateFeedbackReason(false)}
-      />
-
-      <EvaluateFeedbackConversation
-        open={openEvaluateFeedbackConversation}
-        jobId={talent.job!.invitation_token}
-        talentId={talent.id ?? 0}
-        needConfirm={needConfirmEvaluateFeedbackConversation}
-        onCancel={() => setOpenEvaluateFeedbackConversation(false)}
       />
     </div>
   );

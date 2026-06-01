@@ -330,6 +330,19 @@ export const getEvaluateResultLevel = (
   return report?.overall_recommendation?.interview_recommendation ?? "maybe";
 };
 
+const REJECT_CALIBRATION_SUITABLE_RECOMMENDATIONS: readonly TInterviewRecommendation[] =
+  ["absolutely", "yes", "yes_but"];
+
+/** 首次拒绝且 AI 面试建议为 Absolutely / Yes / Yes, but 时，才弹出校准对话 */
+export const shouldOpenRejectCalibrationConversation = (params: {
+  rejectReasonType?: TTalentRejectReasonType;
+  evaluateResult?: TReport;
+}): boolean => {
+  if (params.rejectReasonType) return false;
+  const level = getEvaluateResultLevel(params.evaluateResult);
+  return REJECT_CALIBRATION_SUITABLE_RECOMMENDATIONS.includes(level);
+};
+
 const toStringArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value.filter((item) => typeof item === "string");

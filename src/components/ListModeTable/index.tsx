@@ -15,7 +15,11 @@ import MoveStageModal, {
   type MoveStageOption,
 } from "@/components/MoveStageModal";
 import List from "@/assets/icons/list";
-import { getCandidateCardData, getEvaluateResultLevel } from "@/utils";
+import {
+  getCandidateCardData,
+  getEvaluateResultLevel,
+  shouldOpenRejectCalibrationConversation,
+} from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
 import TalentPopoverContent from "@/components/TalentPopoverContent";
@@ -35,6 +39,9 @@ interface IProps {
   onMarkViewed?: () => void;
   onRowClick: (item: TTalentListItem) => void;
   onUpdateTalent?: () => void;
+  onStartCalibrationConversation: (
+    params: TStartCalibrationConversationParams,
+  ) => void;
   selectedRowKeys?: number[];
   onSelectedRowKeysChange?: (keys: number[]) => void;
 }
@@ -64,6 +71,7 @@ const ListModeTable = ({
   items,
   onRowClick,
   onUpdateTalent,
+  onStartCalibrationConversation,
   onMarkViewed,
   selectedRowKeys,
   onSelectedRowKeysChange,
@@ -138,6 +146,7 @@ const ListModeTable = ({
             variant={variant}
             talent={record}
             onUpdateTalent={onUpdateTalent ?? (() => {})}
+            onStartCalibrationConversation={onStartCalibrationConversation}
             mode="table"
           />
         }
@@ -612,10 +621,28 @@ const ListModeTable = ({
               jobId={actionRecord.job?.invitation_token ?? actionRecord.job_id}
               talentId={actionRecord.id}
               open={rejectOpen}
+              successMessage="Application Rejected"
               onOk={() => {
+                const record = actionRecord;
+                const shouldOpenCalibration =
+                  shouldOpenRejectCalibrationConversation({
+                    rejectReasonType: record.reject_reason_type,
+                    evaluateResult: record.parsedEvaluateResult,
+                  });
+                const jobId = record.job?.invitation_token;
+
                 setRejectOpen(false);
                 setActionRecord(null);
                 onUpdateTalent?.();
+
+                if (shouldOpenCalibration && jobId) {
+                  onStartCalibrationConversation({
+                    jobId,
+                    talentId: record.id,
+                    source: "reject",
+                    needConfirm: true,
+                  });
+                }
               }}
               onCancel={() => {
                 setRejectOpen(false);

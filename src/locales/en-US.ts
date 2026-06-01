@@ -2124,6 +2124,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     download_report_ai_translated: "AI Translated",
     download_report_translating: "Translating report...",
     download_report_translate_failed: "Failed to translate report.",
+    looks_accurate: "Looks accurate",
+    looks_inaccurate: "Looks inaccurate",
   },
 
   admin_talents: {
