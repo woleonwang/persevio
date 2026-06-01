@@ -73,7 +73,7 @@ const AppLayout = () => {
   useEffect(() => {
     init();
     const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
-    if (window.innerWidth < 768) {
+    if (window.innerWidth <= 1280) {
       setMenuCollapse(true);
     } else {
       setMenuCollapse(menuCollapse === "1");

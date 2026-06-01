@@ -481,7 +481,7 @@
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1281px) {
   .mobileVisible {
     display: none !important;
   }
@@ -491,7 +491,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
   .desktopVisible {
     display: none !important;
   }
@@ -504,6 +504,7 @@
       .menu {
         width: 62px;
         background: transparent !important;
+        transition: none;
       }
 
       .mask {
@@ -529,6 +530,7 @@
       bottom: 0;
       background-color: #f9f9f9;
       z-index: 1000;
+      transition: width 0.3s ease;
     }
   }
 }

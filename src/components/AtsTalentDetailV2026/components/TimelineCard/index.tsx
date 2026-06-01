@@ -69,10 +69,10 @@ const ListCard: React.FC<IProps> = (props) => {
                           {row.subTitle}
                         </div>
                       ) : null}
+                      {row.tag ? (
+                        <span className={styles.tag}>{row.tag}</span>
+                      ) : null}
                     </div>
-                    {row.tag ? (
-                      <span className={styles.tag}>{row.tag}</span>
-                    ) : null}
                   </div>
                 </div>
               </div>

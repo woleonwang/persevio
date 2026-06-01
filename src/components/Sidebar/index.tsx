@@ -216,10 +216,6 @@ const Sidebar = (props: ISidebarProps) => {
       className={classnames(styles.menuWrapper, {
         [styles.collapsed]: isCollapsedView,
       })}
-      onMouseEnter={() => collapsed && setHovered(true)}
-      onMouseLeave={() => {
-        setHovered(false);
-      }}
     >
       <div
         className={styles.mask}
@@ -227,7 +223,13 @@ const Sidebar = (props: ISidebarProps) => {
           setHovered(false);
         }}
       />
-      <div className={classnames(styles.menu)}>
+      <div
+        className={classnames(styles.menu)}
+        onMouseEnter={() => collapsed && setHovered(true)}
+        onMouseLeave={() => {
+          setHovered(false);
+        }}
+      >
         <div className={styles.header}>
           <img src={logo} className={styles.logo} alt="persevio" />
           <Icon

@@ -38,7 +38,11 @@ const AdminLayout = () => {
   useEffect(() => {
     init();
     const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
-    setMenuCollapse(menuCollapse === "1");
+    if (window.innerWidth <= 1280) {
+      setMenuCollapse(true);
+    } else {
+      setMenuCollapse(menuCollapse === "1");
+    }
   }, []);
 
   const setAndCacheMenuCollapse = (collapse: boolean) => {
