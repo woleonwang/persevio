@@ -1,7 +1,8 @@
 import { Modal, notification } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import VionaVideo from "@/assets/banner-video.mp4";
 import Details from "./components/Details";
+import { Post } from "@/utils/request";
 
 import styles from "./style.module.less";
 
@@ -28,6 +29,7 @@ const EvaluateFeedbackConversation = (props: IProps) => {
   useEffect(() => {
     if (open) {
       if (needConfirm) {
+        logCalibrationEvent("request_calibration");
         setConformModalOpen(true);
       } else {
         openConversation();
@@ -37,6 +39,15 @@ const EvaluateFeedbackConversation = (props: IProps) => {
       notificationApi.destroy();
     }
   }, [open]);
+
+  const logCalibrationEvent = (
+    eventType: "request_calibration" | "accept_calibration",
+  ) => {
+    Post(`/api/jobs/${jobId}/talents/${talentId}/manual_event_logs`, {
+      event_type: eventType,
+      params: JSON.stringify({ source }),
+    });
+  };
 
   const openConversation = () => {
     notificationApi.destroy();
@@ -68,6 +79,7 @@ const EvaluateFeedbackConversation = (props: IProps) => {
         onOk={() => {
           setConformModalOpen(false);
           openConversation();
+          logCalibrationEvent("accept_calibration");
         }}
         zIndex={10000}
         okText="Yes, start chat with Viona"
