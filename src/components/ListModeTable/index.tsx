@@ -548,9 +548,7 @@ const ListModeTable = ({
           onRow={(record) => ({
             onClick: (e) => {
               if (
-                (e.target as HTMLElement).closest(
-                  ".ant-table-selection-column",
-                )
+                (e.target as HTMLElement).closest(".ant-table-selection-column")
               ) {
                 return;
               }
@@ -639,7 +637,7 @@ const ListModeTable = ({
                   onStartCalibrationConversation({
                     jobId,
                     talentId: record.id,
-                    source: "reject",
+                    source: "reject_calibration",
                     needConfirm: true,
                   });
                 }

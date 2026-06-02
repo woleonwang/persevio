@@ -950,7 +950,9 @@ type TInterviewRecommendation =
 
 type TEvaluateFeedback = "accurate" | "slightly_inaccurate" | "inaccurate";
 
-type TCalibrationConversationSource = "reject" | "evaluate_feedback";
+type TCalibrationConversationSource =
+  | "reject_calibration"
+  | "evaluate_feedback";
 
 type TStartCalibrationConversationParams = {
   jobId: string | number;

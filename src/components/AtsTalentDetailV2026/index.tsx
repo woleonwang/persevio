@@ -137,7 +137,7 @@ function AtsTalentDetailV2026ViewBase() {
   const [
     sourceEvaluateFeedbackConversation,
     setSourceEvaluateFeedbackConversation,
-  ] = useState<"reject" | "evaluate_feedback">("evaluate_feedback");
+  ] = useState<"reject_calibration" | "evaluate_feedback">("evaluate_feedback");
 
   const isSystemAdmin = globalStore.isAdmin;
   const pdfReportRef = useRef<HTMLDivElement>(null);
@@ -1394,7 +1394,7 @@ function AtsTalentDetailV2026ViewBase() {
             fetchTalent();
             fetchActiveLogs();
             if (shouldOpenRejectCalibration) {
-              setSourceEvaluateFeedbackConversation("reject");
+              setSourceEvaluateFeedbackConversation("reject_calibration");
               setNeedConfirmEvaluateFeedbackConversation(true);
               setOpenEvaluateFeedbackConversation(true);
             }

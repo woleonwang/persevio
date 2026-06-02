@@ -1,5 +1,5 @@
 import { Modal, notification } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import VionaVideo from "@/assets/banner-video.mp4";
 import Details from "./components/Details";
 import { Post } from "@/utils/request";
@@ -12,7 +12,7 @@ interface IProps {
   talentId: number;
   onCancel: () => void;
   needConfirm?: boolean;
-  source?: "reject" | "evaluate_feedback";
+  source?: "reject_calibration" | "evaluate_feedback";
 }
 const EvaluateFeedbackConversation = (props: IProps) => {
   const {

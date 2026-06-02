@@ -388,7 +388,7 @@ const TalentPopoverContent = ({
           setTalent((prev) => ({ ...prev, status: "rejected" }));
           onUpdateTalent();
           if (shouldOpenRejectCalibration) {
-            startCalibrationConversation("reject", true);
+            startCalibrationConversation("reject_calibration", true);
           }
         }}
         onCancel={() => setIsRejectModalOpen(false)}

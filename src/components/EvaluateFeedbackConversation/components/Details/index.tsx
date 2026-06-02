@@ -7,17 +7,19 @@ import { Post } from "@/utils/request";
 interface IProps {
   jobId: string | number;
   talentId: number;
-  source: "reject" | "evaluate_feedback";
+  source: "reject_calibration" | "evaluate_feedback";
 }
 const Details = (props: IProps) => {
   const { jobId, talentId, source } = props;
 
   const [jrdConversationId, setJrdConversationId] = useState<number>();
   const chatType =
-    source === "reject" ? "jobJrdEdit" : "jobTalentEvaluateFeedback";
+    source === "reject_calibration"
+      ? "jobJrdEdit"
+      : "jobTalentEvaluateFeedback";
 
   useEffect(() => {
-    if (source === "reject") {
+    if (source === "reject_calibration") {
       createJrdConversation();
     }
   }, [source]);
@@ -35,7 +37,7 @@ const Details = (props: IProps) => {
     }
   };
 
-  if (source === "reject" && !jrdConversationId) {
+  if (source === "reject_calibration" && !jrdConversationId) {
     return null;
   }
 
