@@ -192,7 +192,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
             (role === "staff" ? (
               <TalentCards jobId={job.invitation_token} />
             ) : (
-              <AdminTalents jobId={job.invitation_token} />
+              <AdminTalents jobId={job.id} />
             ))}
           {chatType === "settings" && <JobSettings jobId={job.id} />}
           {(chatType === "jobRequirement" || chatType === "jobDescription") && (
