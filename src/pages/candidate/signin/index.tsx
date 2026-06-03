@@ -53,7 +53,7 @@ const CandidateSignIn: React.FC = () => {
         navigate(`/signup-candidate`, { replace: true });
       } else if (signinJobId) {
         const { code, data } = await Post("/api/candidate/job_applies", {
-          job_id: parseInt(signinJobId),
+          job_id: signinJobId,
         });
         if (code === 0) {
           navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`, {
