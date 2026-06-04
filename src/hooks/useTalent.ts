@@ -4,7 +4,8 @@ import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-const useTalent = () => {
+const useTalent = (options: { skipViewedAt?: boolean } = {}) => {
+  const { skipViewedAt = false } = options;
   const { talentId: talentIdStr, jobId } = useParams<{
     talentId: string;
     jobId: string;
@@ -22,7 +23,10 @@ const useTalent = () => {
   const fetchTalent = async () => {
     if (!jobId) return;
 
-    const { code, data } = await Get(`/api/jobs/${jobId}/talents/${talentId}`);
+    const query = skipViewedAt ? "?skip_viewed_at=1" : "";
+    const { code, data } = await Get(
+      `/api/jobs/${jobId}/talents/${talentId}${query}`,
+    );
 
     if (code === 0) {
       const talent = data.talent;

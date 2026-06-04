@@ -141,12 +141,48 @@ function AtsTalentDetailV2026ViewBase() {
 
   const isSystemAdmin = globalStore.isAdmin;
   const pdfReportRef = useRef<HTMLDivElement>(null);
+  const autoExportReportQuery = getQuery("auto_export_report");
+  const autoExportTriggeredRef = useRef(false);
 
   const { job } = useJob();
-  const { talent, interviews, fetchTalent, updateTalent } = useTalent();
+  const { talent, interviews, fetchTalent, updateTalent } = useTalent({
+    skipViewedAt: autoExportReportQuery === "1",
+  });
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent_details.${key}`);
+
+  useEffect(() => {
+    if (
+      autoExportTriggeredRef.current ||
+      !job ||
+      !talent ||
+      !jobIdStr ||
+      !talentIdStr ||
+      !pdfReportRef.current ||
+      autoExportReportQuery !== "1"
+    )
+      return;
+
+    autoExportTriggeredRef.current = true;
+    const report = normalizeReport(parseJSON(talent.evaluate_json));
+    const lastUpdated =
+      talent.evaluate_result_updated_at ||
+      talent.viewed_at ||
+      talent.feedback_updated_at;
+
+    void downloadTalentReportPdf({
+      pdfReportRef,
+      talent,
+      job,
+      report,
+      lastUpdated,
+      originalT,
+      locale: "en",
+      jobId: jobIdStr,
+      talentId: talentIdStr,
+    });
+  }, [job, talent]);
 
   const canOpenJobApplyInternalDocuments = isSystemAdmin && !!talentIdStr;
 
