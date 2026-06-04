@@ -265,6 +265,7 @@ interface ICandidateSettings {
 
   network_profile_finished_at?: string;
   pre_register_info?: string;
+  session_id?: string;
   job_id?: number;
   interview_finished_at?: string;
   insight_json?: string;

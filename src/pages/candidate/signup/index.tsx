@@ -10,7 +10,14 @@ import {
 } from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import Step from "@/components/Step";
-import { copy, deleteQuery, getQuery, isTempAccount, parseJSON } from "@/utils";
+import {
+  copy,
+  deleteQuery,
+  getOrCreateSessionId,
+  getQuery,
+  isTempAccount,
+  parseJSON,
+} from "@/utils";
 import { tokenStorage, storage, StorageKey } from "@/utils/storage";
 import Icon from "@/components/Icon";
 import logo from "@/assets/logo.png";
@@ -188,6 +195,7 @@ const Signup: React.FC = () => {
       let params: Record<string, unknown> = {
         ...basicInfo,
         internal,
+        session_id: getOrCreateSessionId(),
       };
 
       if (jobIdFromQuery) {
