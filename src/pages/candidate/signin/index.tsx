@@ -4,6 +4,10 @@ import classnames from "classnames";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 
+import {
+  CandidateEventName,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import { deleteQuery, getQuery, isTempAccount } from "@/utils";
 import { storage, StorageKey, tokenStorage } from "@/utils/storage";
@@ -17,7 +21,7 @@ const CandidateSignIn: React.FC = () => {
   const { t: originalT, i18n } = useTranslation();
   const t = (key: string) => originalT(`candidate_sign.${key}`);
 
-  const jobIdStr: string = getQuery("job_id");
+  const jobIdStr: string = getQuery("job_id")?.trim();
 
   useEffect(() => {
     const error = getQuery("error");
@@ -70,6 +74,15 @@ const CandidateSignIn: React.FC = () => {
       setPending(false);
     }
   };
+
+  useEffect(() => {
+    if (pending) return;
+
+    trackCandidateEvent(CandidateEventName.LoginPageView, {
+      entry_source: jobIdStr ? "job_page" : "home_page",
+      ...(jobIdStr ? { job_id: jobIdStr } : {}),
+    });
+  }, [pending, jobIdStr]);
 
   if (pending) {
     return null;

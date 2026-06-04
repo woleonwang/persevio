@@ -19,6 +19,9 @@ const getTokenByUrl = (url: string): string | null => {
   if (url.startsWith("/api/candidate")) {
     return tokenStorage.getToken("candidate");
   }
+  if (url.startsWith("/api/public/candidate")) {
+    return tokenStorage.getToken("candidate") || "";
+  }
   return tokenStorage.getToken("staff");
 };
 

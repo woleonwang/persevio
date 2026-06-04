@@ -11,17 +11,21 @@ import {
   Spin,
   Tooltip,
 } from "antd";
-import { v4 as uuidV4 } from "uuid";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 
 import JobChatBot from "@/components/JobChatBot";
+import {
+  CandidateEventName,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import {
   copy,
   getCompanyLogo,
+  getOrCreateSessionId,
   getQuery,
   isTempAccount,
   parseJSON,
@@ -105,15 +109,14 @@ const JobsShow = () => {
     };
   }, []);
 
-  const sessionId = useMemo(() => {
-    let value = storage.get<string>(StorageKey.SESSION_ID);
-    if (!value) {
-      value = uuidV4();
-      storage.set(StorageKey.SESSION_ID, value);
+  useEffect(() => {
+    if (status !== "success" || isPreview) {
+      return;
     }
+    trackCandidateEvent(CandidateEventName.JobApplyPageView, { job_id: id });
+  }, [status]);
 
-    return value;
-  }, []);
+  const sessionId = getOrCreateSessionId();
 
   const currentTime = useMemo(() => {
     return dayjs().format("YYYY/MM/DD HH:mm:ss");
@@ -234,11 +237,7 @@ const JobsShow = () => {
   }
 
   const ChatRoomArea = (
-    <JobChatBot
-      jobId={id ?? ""}
-      sessionId={sessionId}
-      enableFullscreen
-    />
+    <JobChatBot jobId={id ?? ""} sessionId={sessionId} enableFullscreen />
   );
 
   return (

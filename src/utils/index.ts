@@ -1,5 +1,6 @@
 import { Modal, ModalFuncProps } from "antd";
 import html2pdf from "html2pdf.js";
+import { v4 as uuidV4 } from "uuid";
 import logo from "@/assets/logo.png";
 
 export const copy = async (text: string) => {
@@ -594,4 +595,13 @@ export const getCompanyLogo = (logo: string = "") => {
     return "/company-logo/persevio.png";
   }
   return logo.startsWith("http") ? logo : `/api/logo/${logo}`;
+};
+
+export const getOrCreateSessionId = (): string => {
+  let sessionId = storage.get<string>(StorageKey.SESSION_ID);
+  if (!sessionId) {
+    sessionId = uuidV4();
+    storage.set(StorageKey.SESSION_ID, sessionId);
+  }
+  return sessionId;
 };
