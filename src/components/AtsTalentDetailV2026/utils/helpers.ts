@@ -8,7 +8,12 @@ export const getInitials = (name: string) => {
   return name.slice(0, 1).toUpperCase();
 };
 
-export const formatLastUpdated = (dateStr?: string) => {
-  if (!dateStr) return null;
-  return dayjs(dateStr).format("MMM DD, YYYY");
+export const formatLastUpdated = (
+  dateStr: string,
+  options: { withTime?: boolean } = {},
+) => {
+  const { withTime = false } = options;
+  return dayjs(dateStr).format(
+    withTime ? "MMM DD, YYYY HH:mm:ss" : "MMM DD, YYYY",
+  );
 };

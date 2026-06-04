@@ -17,7 +17,6 @@ import {
   ArrowLeftOutlined,
   DownOutlined,
   FileOutlined,
-  RightOutlined,
   UpOutlined,
 } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
@@ -83,6 +82,7 @@ import {
 } from "@/components/AtsTalentDetail/type";
 import globalStore from "@/store/global";
 import { getStageKey } from "@/utils/talentStage";
+import Right from "@/assets/icons/right";
 
 function AtsTalentDetailV2026ViewBase() {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
@@ -448,7 +448,7 @@ function AtsTalentDetailV2026ViewBase() {
             )}
           </div>
           <div className={styles.menuSecondary}>
-            Applied on {dayjs(row.created_at).format("YYYY/MM/DD")}
+            Applied on {formatLastUpdated(row.created_at)}
           </div>
         </div>
       ),
@@ -699,58 +699,14 @@ function AtsTalentDetailV2026ViewBase() {
                 </a>
               )}
             </div>
-            <Dropdown
-              trigger={["hover"]}
-              placement="bottomRight"
-              dropdownRender={() => (
-                <div className={styles.downloadReportDropdown}>
-                  <div className={styles.downloadReportDropdownHeader}>
-                    {t("download_report_in")}
-                  </div>
-                  <button
-                    type="button"
-                    className={styles.downloadReportDropdownItem}
-                    onClick={() => void downloadReportPdf("en")}
-                  >
-                    <span className={styles.downloadReportDropdownLabel}>
-                      {t("download_report_english")}
-                    </span>
-                    <span
-                      className={classnames(
-                        styles.downloadReportBadge,
-                        styles.downloadReportBadgeNative,
-                      )}
-                    >
-                      {t("download_report_native")}
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.downloadReportDropdownItem}
-                    onClick={() => void downloadReportPdf("zh")}
-                  >
-                    <span className={styles.downloadReportDropdownLabel}>
-                      {t("download_report_chinese")}
-                    </span>
-                    <span
-                      className={classnames(
-                        styles.downloadReportBadge,
-                        styles.downloadReportBadgeAi,
-                      )}
-                    >
-                      {t("download_report_ai_translated")}
-                    </span>
-                  </button>
-                </div>
-              )}
+            <Button
+              variant="outlined"
+              color="primary"
+              icon={<Icon icon={<DownloadIcon />} />}
+              onClick={() => void downloadResume()}
             >
-              <Button
-                variant="outlined"
-                color="primary"
-                className={styles.iconBtn16}
-                icon={<Icon icon={<DownloadIcon />} />}
-              />
-            </Dropdown>
+              Resume
+            </Button>
           </div>
         </div>
 
@@ -784,16 +740,9 @@ function AtsTalentDetailV2026ViewBase() {
                   <div className={styles.resumeMeta}>
                     Uploaded on{" "}
                     {talent.created_at
-                      ? dayjs(talent.created_at).format("YYYY/MM/DD")
+                      ? formatLastUpdated(talent.created_at)
                       : "—"}
                   </div>
-                  <Button
-                    type="primary"
-                    icon={<Icon icon={<DownloadIcon />} />}
-                    onClick={() => void downloadResume()}
-                  >
-                    Download PDF
-                  </Button>
                 </div>
               </div>
             </div>
@@ -926,7 +875,7 @@ function AtsTalentDetailV2026ViewBase() {
             </div>
             <div className={styles.metaLine}>
               {originalT("talent_details.applied_meta", {
-                date: dayjs(talent.created_at).format("YYYY-MM-DD"),
+                date: formatLastUpdated(talent.created_at),
                 source: sourceChannelText,
               })}
             </div>
@@ -1023,20 +972,99 @@ function AtsTalentDetailV2026ViewBase() {
                       display: "flex",
                       alignItems: "center",
                       flex: 1,
-                      gap: 10,
                       justifyContent: "space-between",
                     }}
                   >
-                    <span className={styles.feedbackRoundTitle}>
+                    <span
+                      className={styles.feedbackRoundTitle}
+                      style={{ flex: "auto" }}
+                    >
                       Round 0: AI Prescreening
                     </span>
-                    <EvaluateResultBadge
-                      size="small"
-                      withTitle
-                      result={getEvaluateResultLevel(report)}
-                    />
+                    <div
+                      style={{
+                        flex: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                      }}
+                    >
+                      <EvaluateResultBadge
+                        size="small"
+                        result={getEvaluateResultLevel(report)}
+                      />
+                      <Dropdown
+                        trigger={["hover"]}
+                        placement="bottomRight"
+                        dropdownRender={() => (
+                          <div className={styles.downloadReportDropdown}>
+                            <div
+                              className={styles.downloadReportDropdownHeader}
+                            >
+                              Last updated:&nbsp;
+                              {formatLastUpdated(
+                                talent.evaluate_result_updated_at ??
+                                  talent.created_at,
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              className={styles.downloadReportDropdownItem}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadReportPdf("en");
+                              }}
+                            >
+                              <span
+                                className={styles.downloadReportDropdownLabel}
+                              >
+                                {t("download_report_english")}
+                              </span>
+                              <span
+                                className={classnames(
+                                  styles.downloadReportBadge,
+                                  styles.downloadReportBadgeNative,
+                                )}
+                              >
+                                {t("download_report_native")}
+                              </span>
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.downloadReportDropdownItem}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                downloadReportPdf("zh");
+                              }}
+                            >
+                              <span
+                                className={styles.downloadReportDropdownLabel}
+                              >
+                                {t("download_report_chinese")}
+                              </span>
+                              <span
+                                className={classnames(
+                                  styles.downloadReportBadge,
+                                  styles.downloadReportBadgeAi,
+                                )}
+                              >
+                                {t("download_report_ai_translated")}
+                              </span>
+                            </button>
+                          </div>
+                        )}
+                      >
+                        <Icon
+                          icon={<DownloadIcon />}
+                          className={styles.iconBtn16}
+                        />
+                      </Dropdown>
+                      <div
+                        style={{ borderLeft: "1px solid #ebecee", height: 12 }}
+                      />
+                      <Icon icon={<Right />} className={styles.iconBtnRight} />
+                    </div>
                   </div>
-                  <RightOutlined />
                 </div>
 
                 {interviewRounds.map((round) => {
@@ -1100,9 +1128,7 @@ function AtsTalentDetailV2026ViewBase() {
                                     {record.staff?.name || "-"}
                                   </span>
                                   <span className={styles.feedbackDate}>
-                                    {dayjs(record.created_at).format(
-                                      "MMM DD, YYYY",
-                                    )}
+                                    {formatLastUpdated(record.created_at)}
                                   </span>
                                 </div>
                                 <MarkdownContainer content={record.content} />
@@ -1170,7 +1196,7 @@ function AtsTalentDetailV2026ViewBase() {
                         {note.staff?.name || "-"}
                       </span>
                       <span className={styles.feedbackDate}>
-                        {dayjs(note.created_at).format("MMM DD, YYYY")}
+                        {formatLastUpdated(note.created_at)}
                       </span>
                     </div>
                     <MarkdownContainer content={note.content} />
@@ -1197,7 +1223,7 @@ function AtsTalentDetailV2026ViewBase() {
                             ? styles.activityDotBlue
                             : color === "yellow"
                               ? styles.activityDotYellow
-                              : styles.activityDotRed;
+                              : styles.activtyDotRed;
                       return (
                         <div key={log.id} className={styles.activityItem}>
                           <div className={styles.activityDotWrapper}>
@@ -1214,9 +1240,9 @@ function AtsTalentDetailV2026ViewBase() {
                               {activityDescription(log)}
                             </div>
                             <div className={styles.activityDate}>
-                              {dayjs(log.created_at).format(
-                                "YYYY/MM/DD HH:mm:ss",
-                              )}
+                              {formatLastUpdated(log.created_at, {
+                                withTime: true,
+                              })}
                             </div>
                           </div>
                         </div>

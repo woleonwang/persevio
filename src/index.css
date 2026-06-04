@@ -1,7 +1,8 @@
 :root {
-  font-family: "Sora", "PingFang SC", "Lantinghei SC", "Microsoft YaHei",
-    "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB",
-    微软雅黑, STHeiti, SimSun, sans-serif !important;
+  font-family:
+    "Sora", "PingFang SC", "Lantinghei SC", "Microsoft YaHei", "HanHei SC",
+    "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti,
+    SimSun, sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
 
@@ -174,6 +175,22 @@ img {
 .ant-slider .ant-slider-rail,
 .ant-slider:hover .ant-slider-rail {
   background: white;
+}
+
+.ant-btn.ant-btn-color-primary.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ) {
+  border-color: rgba(54, 130, 254, 0.5);
+}
+
+.ant-btn.ant-btn-color-primary.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover,
+.ant-btn.ant-btn-color-primary.ant-btn-variant-outlined:not(:disabled):not(
+    .ant-btn-disabled
+  ):active {
+  background-color: rgba(237, 242, 255, 1);
+  border-color: #3682fe;
 }
 
 @media (max-width: 768px) {

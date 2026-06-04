@@ -30,7 +30,7 @@
   min-width: 507px;
   display: flex;
   flex-direction: column;
-  background-color: rgba(246, 246, 246, 1);
+  background-color: @divider-color;
   overflow: hidden;
 }
 
@@ -114,16 +114,24 @@
 }
 
 .iconBtn16 {
-  :global(.perse-icon) {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+  font-size: 20px;
+  color: @text-quaternary;
+  padding: 2px;
+  border-radius: 4px;
+  &:hover {
+    color: @text-primary;
+    background-color: @page-bg;
   }
+}
+
+.iconBtnRight {
+  font-size: 20px;
+  color: @text-quaternary;
 }
 
 .downloadReportDropdown {
   min-width: 280px;
-  padding: 8px 0;
+  padding: 8px 4px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -131,26 +139,26 @@
 
 .downloadReportDropdownHeader {
   padding: 4px 16px 8px;
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 14px;
+  color: @text-tertiary;
 }
 
 .downloadReportDropdownItem {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
   padding: 8px 16px;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: left;
   font-size: 14px;
-  color: #111827;
+  color: @text-primary;
+  width: 100%;
 
   &:hover {
-    background: #eef4ff;
-    color: @primary-color;
+    background: @page-bg;
   }
 }
 
@@ -397,7 +405,7 @@
 }
 
 .jobsAppliedContent {
-  margin: 24px 32px;
+  margin: 20px;
   flex: 1;
   background-color: #fff;
   border-radius: 12px;
