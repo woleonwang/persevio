@@ -30,6 +30,7 @@ export interface IProps {
   newVersion?: boolean;
   hidePredefinedButtons?: boolean;
   hideRetry?: boolean;
+  autoStart?: boolean;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

@@ -49,6 +49,7 @@ const Details = (props: IProps) => {
         jobId={jobId}
         talentId={talentId}
         hidePredefinedButtons
+        autoStart
       />
     </div>
   );

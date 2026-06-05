@@ -60,6 +60,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     newVersion = false,
     hidePredefinedButtons = false,
     hideRetry = false,
+    autoStart = false,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -721,11 +722,7 @@ const StaffChat: React.FC<IProps> = (props) => {
       setWaitingType(data.waiting_type);
       setIsLoading(isLoading);
 
-      if (
-        messageHistory.length === 0 &&
-        !isLoading &&
-        chatType === "jobTalentEvaluateFeedback"
-      ) {
+      if (messageHistory.length === 0 && !isLoading && autoStart) {
         sendMessage("Start", {
           metadata: {
             hide_for_roles: ["staff"],
