@@ -72,18 +72,28 @@ const AppLayout = () => {
 
   useEffect(() => {
     init();
-    const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
-    if (window.innerWidth <= 1280) {
-      setMenuCollapse(true);
-    } else {
-      setMenuCollapse(menuCollapse === "1");
-    }
+    resetMenuCollapse();
+
+    const handleResize = () => {
+      resetMenuCollapse();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     // 获取未读候选人数量
     fetchUnreadTalentsCount();
   }, []);
+
+  const resetMenuCollapse = () => {
+    const menuCollapse = String(storage.get(StorageKey.MENU_COLLAPSE));
+    if (window.innerWidth <= 1280) {
+      setMenuCollapse(true);
+    } else {
+      setMenuCollapse(menuCollapse === "1");
+    }
+  };
 
   const setAndCacheMenuCollapse = (collapse: boolean) => {
     setMenuCollapse(collapse);
