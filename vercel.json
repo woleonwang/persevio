@@ -31,6 +31,18 @@
       ]
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap.xml"
+    },
+    {
+      "source": "/jobs/:id/chat",
+      "destination": "/api/jobs-chat?id=:id"
+    },
+    {
+      "source": "/jobs/:id/chat/:version",
+      "destination": "/api/jobs-chat?id=:id&version=:version"
+    },
+    {
       "source": "/:path*",
       "destination": "/"
     }

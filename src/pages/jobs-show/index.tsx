@@ -116,6 +116,43 @@ const JobsShow = () => {
     trackCandidateEvent(CandidateEventName.JobApplyPageView, { job_id: id });
   }, [status]);
 
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    const canonicalUrl = `${window.location.origin}/jobs/${id}/chat`;
+    let canonicalLink = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    );
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.rel = "canonical";
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.href = canonicalUrl;
+
+    let robotsMeta = document.querySelector<HTMLMetaElement>(
+      'meta[name="robots"]',
+    );
+    if (!robotsMeta) {
+      robotsMeta = document.createElement("meta");
+      robotsMeta.name = "robots";
+      document.head.appendChild(robotsMeta);
+    }
+
+    if (status === "success" && job && company) {
+      document.title = `${job.name} - ${company.name} | Persevio`;
+      robotsMeta.content = isPreview ? "noindex, nofollow" : "index, follow";
+      return;
+    }
+
+    if (status === "error") {
+      document.title = "Job Not Found | Persevio";
+      robotsMeta.content = "noindex, nofollow";
+    }
+  }, [status, job, company, id, isPreview]);
+
   const sessionId = getOrCreateSessionId();
 
   const currentTime = useMemo(() => {
