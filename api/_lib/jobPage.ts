@@ -116,6 +116,7 @@ const buildJobBodyHtml = (options: {
           color: #1f1f1f;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           line-height: 1.6;
+          opacity: 0;
         }
         .jobsChatSeo h1 {
           margin: 0 0 8px;
