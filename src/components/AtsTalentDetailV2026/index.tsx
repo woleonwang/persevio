@@ -954,7 +954,11 @@ function AtsTalentDetailV2026ViewBase() {
               },
               {
                 key: "assigned_recruiters",
-                label: originalT("talent_details.tab_assigned_recruiters"),
+                label: (
+                  <span style={{ marginRight: 50 }}>
+                    {originalT("talent_details.tab_assigned_recruiters")}
+                  </span>
+                ),
                 children: null,
               },
             ]}
