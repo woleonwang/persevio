@@ -10,6 +10,7 @@ interface IJobApplyInternalDocuments {
   interview_strategy_doc?: string;
   strategy_generation_context?: string;
   interview_conversation_context?: string;
+  initial_impression_json?: string;
 }
 
 const formatContentForDisplay = (content?: string) => {
@@ -72,6 +73,11 @@ const JobApplyInternalDocuments = () => {
         key: "interviewConversationContext",
         label: "Interview Conversation Context",
         value: docs?.interview_conversation_context,
+      },
+      {
+        key: "initialImpression",
+        label: "Initial Impression",
+        value: docs?.initial_impression_json,
       },
     ],
     [docs],
