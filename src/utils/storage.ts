@@ -252,13 +252,14 @@ export const tokenStorage = {
    * 获取 token
    */
   getToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
+    role: "staff" | "candidate" | "coworker" | "trial_user" | "admin" = "staff",
   ): string | null => {
     const keyMap = {
       staff: StorageKey.TOKEN,
       candidate: StorageKey.CANDIDATE_TOKEN,
       coworker: StorageKey.COWORKER_TOKEN,
       trial_user: StorageKey.TRIAL_USER_UUID,
+      admin: StorageKey.ADMIN_TOKEN,
     };
     const result = storage.get<string>(keyMap[role]);
     // 确保返回字符串类型

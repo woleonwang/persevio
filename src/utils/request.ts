@@ -27,14 +27,16 @@ const getTokenByUrl = (url: string): string | null => {
 
 export const Get = async <T = any>(
   url: string,
-  params?: Record<string, unknown>
+  params?: Record<string, unknown>,
 ) => {
   try {
+    const isAdmin = url.startsWith("/api/admin");
     const response = await instance.get<{ code: number; data: T }>(url, {
       params,
       headers: {
         "Content-Type": "application/json",
         Authorization: getTokenByUrl(url) || "",
+        "X-Admin-Token": isAdmin ? tokenStorage.getToken("admin") || "" : "",
       },
     });
     return response.data;
@@ -77,7 +79,7 @@ export const Download = async (url: string, fileName: string) => {
 
 export const Post = async <T = any>(
   url: string,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ) => {
   let response;
   try {
@@ -112,7 +114,11 @@ export const PostFormData = async <T = any>(url: string, data: FormData) => {
 export const Delete = async <T = any>(url: string) => {
   let response;
   try {
-    response = await instance.delete<{ code: number; data?: T; message?: string }>(url, {
+    response = await instance.delete<{
+      code: number;
+      data?: T;
+      message?: string;
+    }>(url, {
       headers: {
         "Content-Type": "application/json",
         Authorization: getTokenByUrl(url) || "",
