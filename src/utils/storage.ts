@@ -7,6 +7,7 @@ export enum StorageKey {
   CANDIDATE_TOKEN = "candidate_token",
   COWORKER_TOKEN = "coworker_token",
   TRIAL_USER_UUID = "trial_user_uuid",
+  ADMIN_TOKEN = "admin_token",
 
   // 会话相关
   SESSION_ID = "sessionId",
@@ -268,13 +269,14 @@ export const tokenStorage = {
    * 移除 token
    */
   removeToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
+    role: "staff" | "candidate" | "coworker" | "trial_user" | "admin" = "staff",
   ) => {
     const keyMap = {
       staff: StorageKey.TOKEN,
       candidate: StorageKey.CANDIDATE_TOKEN,
       coworker: StorageKey.COWORKER_TOKEN,
       trial_user: StorageKey.TRIAL_USER_UUID,
+      admin: StorageKey.ADMIN_TOKEN,
     };
     return storage.remove(keyMap[role]);
   },

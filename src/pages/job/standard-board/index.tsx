@@ -19,6 +19,7 @@ import JobDetails from "@/components/JobDetails";
 import { Post } from "@/utils/request";
 import RoleBasicsStage from "./components/RoleBasicsStage";
 import RoleBriefingStage from "./components/RoleBriefingStage";
+import { storage, StorageKey } from "@/utils/storage";
 
 type TJobState = "roleBasics" | "roleBriefing" | "jrd" | "jd" | "board";
 
@@ -31,6 +32,8 @@ const JobBoard = () => {
   const [jobState, setJobState] = useState<TJobState>();
 
   const { setMenuCollapse, fetchJobs, isAdmin } = globalStore;
+
+  const isFromAdmin = !!storage.get(StorageKey.ADMIN_TOKEN);
 
   const isOld = getQuery("old") === "1";
 
@@ -201,7 +204,7 @@ const JobBoard = () => {
           </div>
         )}
       </div>
-      {isAdmin && (
+      {(isAdmin || isFromAdmin) && (
         <FloatButton
           icon={<FileOutlined />}
           onClick={() => {

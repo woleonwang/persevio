@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import globalStore from "@/store/global";
-import { tokenStorage } from "../../utils/storage";
+import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 
 const Settings = () => {
   const [form] = Form.useForm();
@@ -69,7 +69,7 @@ const Settings = () => {
                 };
               }),
             };
-          })
+          }),
       );
     }
   };
@@ -126,7 +126,9 @@ const Settings = () => {
       staff_id: parseInt(staffId),
     });
     if (code === 0) {
+      const adminToken = tokenStorage.getToken("staff");
       tokenStorage.setToken(data.token, "staff");
+      storage.set(StorageKey.ADMIN_TOKEN, adminToken);
       window.location.reload();
     } else {
       message.error("login failed");
@@ -135,6 +137,7 @@ const Settings = () => {
 
   const logout = () => {
     tokenStorage.removeToken("staff");
+    tokenStorage.removeToken("admin");
     navigate("/signin");
   };
 
