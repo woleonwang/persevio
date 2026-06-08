@@ -83,6 +83,7 @@ import {
 import globalStore from "@/store/global";
 import { getStageKey } from "@/utils/talentStage";
 import Right from "@/assets/icons/right";
+import { storage, StorageKey } from "@/utils/storage";
 
 function AtsTalentDetailV2026ViewBase() {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
@@ -184,7 +185,10 @@ function AtsTalentDetailV2026ViewBase() {
     });
   }, [job, talent]);
 
-  const canOpenJobApplyInternalDocuments = isSystemAdmin && !!talentIdStr;
+  const isFromAdmin = !!storage.get(StorageKey.ADMIN_TOKEN);
+
+  const canOpenJobApplyInternalDocuments =
+    (isSystemAdmin || isFromAdmin) && !!talentIdStr;
 
   useEffect(() => {
     fetchTalentsOfCandidate();
