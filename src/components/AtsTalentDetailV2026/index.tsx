@@ -84,6 +84,7 @@ import globalStore from "@/store/global";
 import { getStageKey } from "@/utils/talentStage";
 import Right from "@/assets/icons/right";
 import { storage, StorageKey } from "@/utils/storage";
+import NameChip from "../NameChip";
 
 function AtsTalentDetailV2026ViewBase() {
   const { talentId: talentIdStr, jobId: jobIdStr } = useParams<{
@@ -628,7 +629,7 @@ function AtsTalentDetailV2026ViewBase() {
       }
     })();
     if (log.event_type === "update_stage") {
-      return `Moved to ${content.stage_name} stage`;
+      return `Moved to ${content.stage_name} stage by`;
     }
     if (log.event_type === "add_feedback") {
       return `${log.staff?.name ?? ""} added interview feedback`;
@@ -649,6 +650,13 @@ function AtsTalentDetailV2026ViewBase() {
       return "Reminded to complete Screening via WhatsApp and Email";
     }
     return "Activity";
+  };
+
+  const activityBy = (log: TActiveLog) => {
+    if (log.event_type === "update_stage") {
+      return log.staff?.name ?? "";
+    }
+    return "";
   };
 
   const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
@@ -1246,6 +1254,7 @@ function AtsTalentDetailV2026ViewBase() {
                           <div className={styles.activityContent}>
                             <div className={styles.activityTitle}>
                               {activityDescription(log)}
+                              <NameChip name={activityBy(log)} />
                             </div>
                             <div className={styles.activityDate}>
                               {formatLastUpdated(log.created_at, {
