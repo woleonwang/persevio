@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 import {
   Button,
   Drawer,
@@ -607,6 +607,7 @@ function AtsTalentDetailV2026ViewBase() {
     log: TActiveLog,
   ): "red" | "blue" | "green" | "yellow" => {
     if (
+      log.event_type === "reject" ||
       log.event_type === "start_interview" ||
       log.event_type === "finish_interview" ||
       log.event_type === "create"
@@ -620,22 +621,49 @@ function AtsTalentDetailV2026ViewBase() {
     return "green";
   };
 
-  const activityDescription = (log: TActiveLog) => {
-    const content = (() => {
-      try {
-        return JSON.parse(log.content || "{}") as { stage_name?: string };
-      } catch {
-        return {};
-      }
-    })();
+  const rejectReasonLabelKey = (
+    reasonType: TTalentRejectReasonType,
+  ): string => {
+    const map: Record<TTalentRejectReasonType, string> = {
+      not_shortlisted: "reject_reason_not_shortlisted",
+      did_not_pass_interview: "reject_reason_failed_interview",
+      headcount_freeze: "reject_reason_headcount_freeze",
+      candidate_withdrew: "reject_reason_candidate_withdrew",
+      other: "reject_reason_others",
+    };
+    return map[reasonType] ?? "reject_reason_others";
+  };
+
+  const activityDescription = (log: TActiveLog): ReactNode => {
+    let content = parseJSON(log.content);
+    const staffName = log.staff?.name ?? "";
+
     if (log.event_type === "update_stage") {
-      return `Moved to ${content.stage_name} stage by`;
+      return (
+        <>
+          Moved to {content.stage_name} stage by <NameChip name={staffName} />
+        </>
+      );
+    }
+    if (log.event_type === "reject") {
+      const reasonLabel = content.reject_reason_type
+        ? t(rejectReasonLabelKey(content.reject_reason_type))
+        : "-";
+      const feedback = (content.feedback ?? "").trim();
+      return (
+        <>
+          Rejected by <NameChip name={staffName} />
+          .&nbsp;Reason: {reasonLabel}
+          ,&nbsp;
+          {feedback || ""}
+        </>
+      );
     }
     if (log.event_type === "add_feedback") {
-      return `${log.staff?.name ?? ""} added interview feedback`;
+      return `${staffName} added interview feedback`;
     }
     if (log.event_type === "add_note") {
-      return `${log.staff?.name ?? ""} added a note`;
+      return `${staffName} added a note`;
     }
     if (log.event_type === "start_interview") return "AI prescreening started";
     if (log.event_type === "finish_interview")
@@ -650,13 +678,6 @@ function AtsTalentDetailV2026ViewBase() {
       return "Reminded to complete Screening via WhatsApp and Email";
     }
     return "Activity";
-  };
-
-  const activityBy = (log: TActiveLog) => {
-    if (log.event_type === "update_stage") {
-      return log.staff?.name ?? "";
-    }
-    return "";
   };
 
   const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
@@ -1254,7 +1275,6 @@ function AtsTalentDetailV2026ViewBase() {
                           <div className={styles.activityContent}>
                             <div className={styles.activityTitle}>
                               {activityDescription(log)}
-                              <NameChip name={activityBy(log)} />
                             </div>
                             <div className={styles.activityDate}>
                               {formatLastUpdated(log.created_at, {
