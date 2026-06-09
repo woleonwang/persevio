@@ -1231,7 +1231,7 @@ function AtsTalentDetailV2026ViewBase() {
                             ? styles.activityDotBlue
                             : color === "yellow"
                               ? styles.activityDotYellow
-                              : styles.activtyDotRed;
+                              : styles.activityDotRed;
                       return (
                         <div key={log.id} className={styles.activityItem}>
                           <div className={styles.activityDotWrapper}>
