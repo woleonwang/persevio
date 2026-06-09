@@ -84,6 +84,8 @@ import KBObservations from "./pages/admin/kb-observations/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
+import CreditConfigListPage from "./pages/admin/credit-configs/index.tsx";
+import CreditConfigEditPage from "./pages/admin/credit-configs/edit.tsx";
 import IconDemo from "./pages/icon-demo/index.tsx";
 import InternalSettings from "./pages/internal-settings/index.tsx";
 import Feedback from "./pages/job/feedback/index.tsx";
@@ -224,6 +226,9 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/admin/talents" element={<ScopedTalents />} />
           {/* 管理员企业审核列表 */}
           <Route path="/admin/companies" element={<AdminCompanies />} />
+          <Route path="/admin/credit-configs" element={<CreditConfigListPage />} />
+          <Route path="/admin/credit-configs/new" element={<CreditConfigEditPage />} />
+          <Route path="/admin/credit-configs/:id/edit" element={<CreditConfigEditPage />} />
           <Route path="/admin/candidates" element={<AdminCandidates />} />
           <Route path="/admin/emails/:id" element={<EmailDetailsPage />} />
           <Route

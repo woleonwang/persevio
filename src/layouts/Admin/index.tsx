@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router";
 
 import {
   BarChartOutlined,
+  DollarOutlined,
   FileTextOutlined,
   SettingOutlined,
   ToolOutlined,
@@ -119,6 +120,12 @@ const AdminLayout = () => {
       path: "/admin/companies",
       img: <CompanyList />,
       requireSuperAdmin: true,
+    },
+    {
+      title: t("menu.credit_config"),
+      path: "/admin/credit-configs",
+      img: <DollarOutlined />,
+      requireAdmin: true,
     },
   ].filter((item) => !item.requireSuperAdmin || isSuperAdmin);
 
