@@ -24,7 +24,13 @@ const ChatMessagesPage = () => {
         `/api/admin/chats/${id}/messages`,
       );
       if (code === 0) {
-        setMessages(data.messages ?? []);
+        setMessages(
+          (data.messages ?? []).filter((item) => {
+            const hideForRoles = item.content.metadata.hide_for_roles ?? [];
+            // 过滤对该角色隐藏的消息
+            return !hideForRoles.includes("staff");
+          }),
+        );
         setLoaded(true);
       } else {
         message.error("Failed to fetch chat messages");
