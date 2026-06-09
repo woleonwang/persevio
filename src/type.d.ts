@@ -526,6 +526,9 @@ type TExtractBasicInfo = {
   current_compensation: string;
   expected_compensation: string;
   visa: string;
+  email: string;
+  phone_number: string;
+  country_code: string;
   work_experiences: {
     company_name: string;
     job_title: string;

@@ -21,7 +21,6 @@ import {
   getEvaluateResultLevel,
   getSourcingChannel,
   normalizeReport,
-  normalizeTalentField,
   parseJSON,
 } from "@/utils";
 import UploadCandidateModal from "./components/UploadCandidateModal";
@@ -66,7 +65,7 @@ const JobPipeline = ({
     [],
   );
 
-  const [searchName, setSearchName] = useState<string>("");
+  const [searchKeywords, setSearchKeywords] = useState<string>("");
   const [sourcingChannels, setSourcingChannels] = useState<string[]>([]);
   const [stageFilters, setStageFilters] = useState<string[]>([]);
   const [evaluateResultLevels, setEvaluateResultLevels] = useState<
@@ -195,18 +194,27 @@ const JobPipeline = ({
   const filteredList = useMemo(() => {
     return talents
       .filter((item) => {
-        if (!searchName) return true;
-        const query = searchName.trim().toLowerCase();
+        if (!searchKeywords) return true;
+        const query = searchKeywords.trim().toLowerCase();
         const card = getCandidateCardData(item);
-        const haystack = [
-          item.name ?? "",
-          normalizeTalentField(card.visa),
-          normalizeTalentField(card.comp),
-          normalizeTalentField(card.exp),
-        ]
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(query);
+        if (query === card.basicInfo?.email) return true;
+
+        const queryWithoutSpace = query.replace(/\s/g, "");
+        if (queryWithoutSpace === card.basicInfo?.phone_number) return true;
+
+        const queryWithCountryCode = queryWithoutSpace.startsWith("+")
+          ? queryWithoutSpace
+          : "+" + queryWithoutSpace;
+        if (
+          queryWithCountryCode ===
+          (card.basicInfo?.country_code ?? "") +
+            (card.basicInfo?.phone_number ?? "")
+        )
+          return true;
+
+        if ((item.name ?? "").includes(query)) return true;
+
+        return false;
       })
       .filter((item) => {
         if (sourcingChannels.length === 0) return true;
@@ -225,7 +233,7 @@ const JobPipeline = ({
       });
   }, [
     talents,
-    searchName,
+    searchKeywords,
     sourcingChannels,
     stageFilters,
     evaluateResultLevels,
@@ -363,8 +371,8 @@ const JobPipeline = ({
             className={styles.searchInput}
             placeholder={tKey("search_placeholder")}
             prefix={<SearchOutlined />}
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
+            value={searchKeywords}
+            onChange={(e) => setSearchKeywords(e.target.value)}
             allowClear
             style={{ width: 200 }}
           />
