@@ -10,6 +10,9 @@
 @accent: #398ffb;
 @accentSoft: #e9f1fe;
 @danger: #b23b22;
+@reportCream: #fbf7ee;
+@sandDisc: #efe6d3;
+@sandGlyph: #8a7b5c;
 
 .page {
   min-height: 100vh;
@@ -641,6 +644,529 @@
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+@keyframes wrapPen {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-8deg);
+  }
+
+  50% {
+    transform: translateX(3px) rotate(-2deg);
+  }
+}
+
+.wrapPage {
+  margin: -4px -16px 0;
+}
+
+.wrapThankYou {
+  padding: 26px 22px 24px;
+  background: linear-gradient(180deg, #fbf4e4 0%, @bg 100%);
+  border-bottom: 1px solid @line;
+}
+
+.wrapWhatsappBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 16px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: fade(#25d366, 12%);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #1b8f4d;
+}
+
+.wrapThankYouHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wrapThankYouCopy {
+  min-width: 0;
+}
+
+.wrapPercyLabel {
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: @accent;
+}
+
+.wrapThankYouTitle {
+  margin: 8px 0 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: @ink;
+  text-wrap: balance;
+}
+
+.wrapThankYouBody {
+  margin: 15px 0 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: @sub;
+  max-width: 560px;
+  text-wrap: pretty;
+}
+
+.wrapSection {
+  padding: 26px 22px;
+  border-bottom: 1px solid @line;
+}
+
+.wrapSectionLast {
+  padding: 28px 22px 32px;
+}
+
+.wrapEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.wrapEyebrowDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: @accent;
+  flex-shrink: 0;
+}
+
+.wrapEyebrowMute .wrapEyebrowDot {
+  background: @faint;
+}
+
+.wrapEyebrowLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: @accent;
+}
+
+.wrapEyebrowMute .wrapEyebrowLabel {
+  color: @faint;
+}
+
+.wrapCard {
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid @line;
+  background: @surface;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.05);
+}
+
+.wrapActionRow {
+  display: flex;
+  gap: 13px;
+  position: relative;
+  padding-bottom: 18px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.wrapActionConnector {
+  position: absolute;
+  left: 18px;
+  top: 38px;
+  bottom: 0;
+  width: 2px;
+  background: @line;
+}
+
+.wrapActionGlyph {
+  width: 37px;
+  height: 37px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapActionToneDone {
+  background: #e7f4ec;
+  color: #1b8f4d;
+  border: 1px solid fade(#1b8f4d, 20%);
+}
+
+.wrapActionToneProgress {
+  background: @accentSoft;
+  color: @accent;
+  border: 1px solid fade(@accent, 20%);
+}
+
+.wrapActionToneOpen {
+  background: @accentSoft;
+  color: @accent;
+  border: 1px solid fade(@accent, 20%);
+}
+
+.wrapActionGlyphAnim {
+  display: flex;
+  animation: wrapPen 1.3s ease-in-out infinite;
+}
+
+.wrapActionCopy {
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.wrapActionTitleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.wrapActionTitle {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.25;
+  color: @ink;
+  letter-spacing: -0.01em;
+}
+
+.wrapActionPill {
+  flex-shrink: 0;
+  margin-top: 1px;
+  white-space: nowrap;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.wrapActionSub {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: @sub;
+}
+
+.wrapReportBlock {
+  margin-top: 13px;
+  border-radius: 12px;
+  background: @reportCream;
+  border: 1px solid @line;
+  overflow: hidden;
+}
+
+.wrapReportBlockInner {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wrapReportDivider {
+  height: 1px;
+  background: @line;
+}
+
+.wrapReportListTitle {
+  margin-bottom: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: @accent;
+}
+
+.wrapReportListTitleFlag {
+  color: @sandGlyph;
+}
+
+.wrapReportItems {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.wrapReportItem {
+  display: flex;
+  gap: 10px;
+}
+
+.wrapReportDisc {
+  width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  background: @accentSoft;
+  color: @accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapReportDiscFlag {
+  background: @sandDisc;
+  color: @sandGlyph;
+}
+
+.wrapReportItemText {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+  color: @ink;
+  text-wrap: pretty;
+}
+
+.wrapReportDisclaimer {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 11px 15px;
+  border-top: 1px solid @line;
+  background: #f7f1e4;
+}
+
+.wrapReportDisclaimerIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: @faint;
+  display: flex;
+}
+
+.wrapReportDisclaimerText {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: @faint;
+  font-style: italic;
+}
+
+.wrapBeyondIntro {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.wrapBeyondIntroCopy {
+  min-width: 0;
+  flex: 1;
+}
+
+.wrapBeyondHeadline {
+  margin: 2px 0 8px;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+  color: @ink;
+  text-wrap: balance;
+}
+
+.wrapBeyondBody {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.wrapLeadCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 11px;
+  border-radius: 14px;
+  border: 1px solid @line;
+  background: @surface;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.05);
+}
+
+.wrapLeadIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: @accentSoft;
+  color: @accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapLeadCopy {
+  min-width: 0;
+}
+
+.wrapLeadTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.wrapLeadTitle {
+  font-weight: 700;
+  font-size: 15px;
+  color: @ink;
+  line-height: 1.2;
+}
+
+.wrapLeadBadge {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: @accentSoft;
+  color: @accent;
+}
+
+.wrapLeadText {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.wrapBeyondGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+
+.wrapBeyondCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 15px;
+  border-radius: 14px;
+  border: 1px solid @line;
+  background: @surface;
+}
+
+.wrapBeyondCardIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: @accentSoft;
+  color: @accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapBeyondCardTitle {
+  font-weight: 700;
+  font-size: 14px;
+  color: @ink;
+  line-height: 1.25;
+}
+
+.wrapBeyondCardText {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.wrapSpeakCard {
+  padding: 17px;
+  border-radius: 16px;
+  border: 1px solid fade(@accent, 18%);
+  background: @accentSoft;
+}
+
+.wrapSpeakHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.wrapSpeakIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: @accent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapSpeakTitle {
+  font-weight: 700;
+  font-size: 15px;
+  color: @ink;
+  line-height: 1.2;
+}
+
+.wrapSpeakText {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.wrapSpeakTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wrapSpeakTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: @surface;
+  border: 1px solid @line;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: @ink;
+}
+
+.wrapSpeakTagDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: @accent;
+}
+
+.wrapFinishBar {
+  padding: 28px 22px 0;
+}
+
+.wrapFinishButton:global(.ant-btn) {
+  width: 100% !important;
+  margin: 0 !important;
 }
 
 .contentColumnWide .footerBar {
@@ -2028,6 +2554,91 @@
 
   .serifTitle {
     font-size: 30px;
+  }
+
+  .wrapPage {
+    margin: -8px -24px 0;
+  }
+
+  .wrapThankYou {
+    padding: 34px 36px 30px;
+  }
+
+  .wrapThankYouHead {
+    gap: 18px;
+  }
+
+  .wrapThankYouTitle {
+    font-size: 30px;
+  }
+
+  .wrapThankYouBody {
+    margin-top: 18px;
+    font-size: 16px;
+  }
+
+  .wrapSection {
+    padding: 30px 36px;
+  }
+
+  .wrapSectionLast {
+    padding: 34px 36px 38px;
+  }
+
+  .wrapCard {
+    padding: 22px 24px;
+  }
+
+  .wrapReportBlockInner {
+    padding: 16px 18px;
+  }
+
+  .wrapBeyondIntro {
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .wrapBeyondHeadline {
+    font-size: 26px;
+  }
+
+  .wrapBeyondBody {
+    font-size: 16px;
+  }
+
+  .wrapLeadCard {
+    gap: 14px;
+    padding: 18px 20px;
+  }
+
+  .wrapLeadTitle {
+    font-size: 16px;
+  }
+
+  .wrapBeyondGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .wrapBeyondCard {
+    flex-direction: column;
+    gap: 11px;
+    padding: 17px 16px;
+  }
+
+  .wrapSpeakCard {
+    padding: 20px 22px;
+  }
+
+  .wrapSpeakHead {
+    gap: 14px;
+  }
+
+  .wrapSpeakTitle {
+    font-size: 16px;
+  }
+
+  .wrapFinishBar {
+    padding: 28px 36px 0;
   }
 
   .desktopVisible {
