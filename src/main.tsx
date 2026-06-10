@@ -23,6 +23,7 @@ import SnakeGame from "./pages/snake";
 
 import SignInCandidate from "./pages/candidate/signin";
 import SignupCandidate from "./pages/candidate/signup";
+import SignupCandidateV2 from "./pages/candidate/signup-v2";
 
 import CandidateResume from "./pages/candidate/candidate-resume";
 
@@ -311,6 +312,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/signin-candidate" element={<SignInCandidate />} />
         <Route path="/apply-job/:jobId" element={<ApplyJob />} />
         <Route path="/signup-candidate" element={<SignupCandidate />} />
+        <Route path="/signup-candidate-v2" element={<SignupCandidateV2 />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/onboard" element={<OnboardPage />} />
         <Route path="/signin" element={<Signin />} />

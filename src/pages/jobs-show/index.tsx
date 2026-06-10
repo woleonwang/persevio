@@ -25,6 +25,7 @@ import MarkdownContainer from "@/components/MarkdownContainer";
 import {
   copy,
   getCompanyLogo,
+  getCandidateSignupPath,
   getOrCreateSessionId,
   getQuery,
   isTempAccount,
@@ -377,7 +378,7 @@ const JobsShow = () => {
                         if (isTempAccount(candidate)) {
                           // 没走完注册流程
                           message.info(t("complete_registration_first"));
-                          navigate(`/signup-candidate`, {
+                          navigate(getCandidateSignupPath(id as string, version), {
                             replace: true,
                           });
                         } else {
@@ -412,7 +413,7 @@ const JobsShow = () => {
                           }
                         }
                       } else {
-                        navigate(`/signup-candidate?job_id=${id}`, {
+                        navigate(getCandidateSignupPath(id as string, version), {
                           replace: true,
                         });
                       }

@@ -146,6 +146,26 @@ interface IJobApply {
   interview_mode: "ai" | "human" | "whatsapp";
   whatsapp_number_confirmed_at?: string;
   switch_mode_reason?: string;
+  initial_impression_json?: string;
+  interview_strategy_status?: string;
+  interview_recommendation?: string;
+}
+
+interface IInitialImpression {
+  summary: string;
+  what_stands_out: string[];
+  areas_to_explore: string[];
+}
+
+type TSignupV2Tier = "strong" | "middle" | "weak" | "incomplete";
+
+interface IJobApplySurvey {
+  id: number;
+  job_apply_id: number;
+  overall_experience?: string;
+  questions_relevant?: string;
+  experience_accurate?: string;
+  improvement_feedback?: string;
 }
 
 // 候选人侧

@@ -1,0 +1,862 @@
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500&display=swap");
+
+@bg: #faf5ea;
+@surface: #ffffff;
+@ink: #221c12;
+@sub: #6e6655;
+@faint: #a89d86;
+@line: #ece3d1;
+@fieldBorder: #dfd6c2;
+@accent: #398ffb;
+@accentSoft: #e9f1fe;
+@danger: #b23b22;
+
+.page {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: @bg;
+  color: @ink;
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid @line;
+  background: fade(@bg, 92%);
+  backdrop-filter: blur(10px);
+}
+
+.headerCenter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.logo {
+  height: 22px;
+  width: auto;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.stepLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @faint;
+  white-space: nowrap;
+}
+
+.main {
+  flex: auto;
+  overflow: auto;
+  overflow-x: hidden;
+  min-width: 0;
+}
+
+.contentColumn {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.contentColumnWide {
+  max-width: 860px;
+}
+
+.serifTitle {
+  margin: 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: @ink;
+}
+
+.bodyText {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @sub;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @sub;
+}
+
+.requiredMark {
+  color: @danger;
+}
+
+.fieldInput {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid @fieldBorder;
+  border-radius: 11px;
+  background: @surface;
+  font-size: 15px;
+  color: @ink;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: @accent;
+    box-shadow: 0 0 0 3px fade(@accent, 18%);
+  }
+
+  &.fieldError {
+    border-color: @danger;
+  }
+}
+
+.formSection {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.formField {
+  min-width: 0;
+}
+
+.antFieldInput {
+  width: 100%;
+
+  :global(.ant-input) {
+    height: 48px;
+    border-radius: 11px;
+    border-color: @fieldBorder;
+    font-size: 15px;
+    color: @ink;
+    box-shadow: none;
+
+    &:hover {
+      border-color: @fieldBorder;
+    }
+
+    &:focus {
+      border-color: @accent;
+      box-shadow: 0 0 0 3px fade(@accent, 18%);
+    }
+  }
+}
+
+.phoneFieldWrap {
+  min-width: 0;
+  width: 100%;
+
+  :global(.ant-select) {
+    flex: 0 0 200px !important;
+    width: 200px !important;
+    min-width: 200px !important;
+  }
+
+  :global(.ant-input) {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 48px;
+    border-radius: 11px;
+    font-size: 15px;
+  }
+
+  :global(.ant-select-selector) {
+    height: 48px !important;
+    border-radius: 11px !important;
+  }
+}
+
+.fieldErrorText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: @danger;
+}
+
+.primaryButton:global(.ant-btn) {
+  height: 52px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.whoIsPercyLink:global(.ant-btn-link) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: auto;
+  padding: 0;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: @accent;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: none;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: @accent;
+    opacity: 0.85;
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.whoIsPercyIcon {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.3px solid @accent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.whoIsPercyLabel {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.inlineLink:global(.ant-btn-link) {
+  height: auto;
+  padding: 0;
+  font-size: 11px;
+  color: @faint;
+  text-decoration: underline;
+
+  &:hover,
+  &:focus {
+    color: @faint;
+    opacity: 0.85;
+  }
+}
+
+.providerButton:global(.ant-btn) {
+  height: 48px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.optionButton:global(.ant-btn) {
+  min-width: 88px;
+  height: 40px;
+  border-radius: 11px;
+}
+
+.footerBar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 12;
+  width: min(560px, 100%);
+  padding: 16px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, fade(@bg, 0%) 0%, @bg 35%);
+}
+
+.contentColumnWide .footerBar {
+  width: min(860px, 100%);
+}
+
+.progressDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.progressDot {
+  height: 3px;
+  border-radius: 2px;
+  background: @line;
+  width: 10px;
+  transition: all 0.2s;
+
+  &.progressDotActive {
+    width: 22px;
+    background: @accent;
+  }
+
+  &.progressDotDone {
+    width: 10px;
+    background: @accent;
+    opacity: 0.4;
+  }
+}
+
+.jobHeader {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.jobLogo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: @surface;
+  border: 1px solid @line;
+}
+
+.jobLogoFallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: @surface;
+  border: 1px solid @line;
+  color: @sub;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.jobHeaderCard {
+  @media (min-width: 768px) {
+    padding: 13px 16px;
+    border-radius: 14px;
+    background: @surface;
+    border: 1px solid @line;
+    box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+    margin-bottom: 26px;
+  }
+}
+
+.jobMeta {
+  min-width: 0;
+}
+
+.jobEyebrow {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @faint;
+  margin-bottom: 1px;
+}
+
+.jobTitleRow {
+  font-size: 13.5px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jobTitleText {
+  color: @ink;
+  font-weight: 600;
+}
+
+.jobCompanyDot {
+  color: @faint;
+  font-weight: 500;
+}
+
+.variableToken {
+  color: #2c5fe0;
+  background: rgba(44, 95, 224, 0.1);
+  border-bottom: 1.5px dashed rgba(44, 95, 224, 0.55);
+  border-radius: 3px 3px 0 0;
+  padding: 0 0.18em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.percyRow {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  min-width: 0;
+}
+
+.percyColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.percyAvatarRing {
+  border-radius: 50%;
+  overflow: hidden;
+  background: @surface;
+  box-shadow: 0 0 0 3px @surface, 0 0 0 4.5px @accentSoft,
+    0 8px 18px rgba(40, 30, 15, 0.12);
+}
+
+.percyAvatarImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 12%;
+}
+
+.percyWaveImg {
+  display: block;
+  filter: drop-shadow(0 8px 16px rgba(40, 30, 15, 0.16));
+}
+
+.percyName {
+  color: @accent;
+  font-weight: 600;
+}
+
+
+.speechBubble {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 13px 16px;
+  border-radius: 16px;
+  border: 1px solid @line;
+  background: @surface;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: @sub;
+}
+
+.speechBubbleTail {
+  position: absolute;
+  top: 22px;
+  left: -7px;
+  width: 14px;
+  height: 14px;
+  background: @surface;
+  transform: rotate(45deg);
+  border-left: 1px solid @line;
+  border-bottom: 1px solid @line;
+}
+
+.card {
+  border-radius: 14px;
+  border: 1px solid @line;
+  background: @surface;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+}
+
+.highlightPhrase {
+  box-shadow: inset 0 -0.5em 0 @accentSoft;
+  font-weight: 600;
+  color: @ink;
+}
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  min-width: 0;
+}
+
+.uploadZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 20px;
+  border-radius: 14px;
+  border: 1.5px dashed @fieldBorder;
+  background: @surface;
+  text-align: center;
+  cursor: pointer;
+}
+
+.uploadZoneIconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: @accentSoft;
+  color: @accent;
+}
+
+.uploadZoneIcon {
+  display: inline-flex;
+  font-size: 28px;
+  color: @accent;
+}
+
+.uploadZoneTitle {
+  font-weight: 600;
+  color: @ink;
+}
+
+.uploadZoneHint {
+  margin-top: 4px;
+  font-size: 13px;
+  color: @faint;
+}
+
+.uploadedFileCard {
+  border-radius: 14px;
+  border: 1px solid @fieldBorder;
+  background: @surface;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+}
+
+.uploadedFileMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.uploadedFileIconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: @accentSoft;
+  color: @accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadedFileMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.uploadedFileName {
+  font-weight: 600;
+  font-size: 14px;
+  color: @ink;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uploadedFileStatus {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: @faint;
+}
+
+.uploadedFileCheck {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: @accent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.uploadedFileActions {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid @line;
+}
+
+.replaceLink:global(.ant-btn-link) {
+  height: auto;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: @accent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover,
+  &:focus {
+    color: @accent;
+    opacity: 0.85;
+  }
+}
+
+.removeLink:global(.ant-btn-link) {
+  height: auto;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: @danger;
+
+  &:hover,
+  &:focus {
+    color: @danger;
+    opacity: 0.85;
+  }
+}
+
+.uploadedProgressBar {
+  margin-top: 12px;
+  height: 4px;
+  border-radius: 999px;
+  background: @line;
+  overflow: hidden;
+}
+
+.uploadedProgressFill {
+  height: 100%;
+  background: @accent;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.uploadedNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 0 2px;
+}
+
+.uploadedNoteCheck {
+  margin-top: 1px;
+  flex-shrink: 0;
+  color: @accent;
+}
+
+.sheetBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(20, 16, 10, 0.35);
+  backdrop-filter: blur(3px);
+}
+
+.sheetPanel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 21;
+  max-height: 88vh;
+  overflow: auto;
+  padding: 20px 16px 28px;
+  border-radius: 20px 20px 0 0;
+  background: @surface;
+  box-shadow: 0 -12px 40px rgba(40, 30, 15, 0.12);
+}
+
+.modalPanel {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 22;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 32px);
+  max-width: 420px;
+  max-height: 80vh;
+  overflow: auto;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: @surface;
+  box-shadow: 0 20px 60px rgba(40, 30, 15, 0.18);
+}
+
+.floatingCta {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  z-index: 11;
+  width: min(560px, 100vw);
+  padding: 0 16px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+}
+
+.transitionWrap {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.pulseRing {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 24px;
+}
+
+.assessSummaryCard {
+  padding: 18px 20px;
+  border-left: 4px solid @accent;
+}
+
+.pointRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+}
+
+.pointDiscBlue,
+.pointDiscSand {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pointDiscBlue {
+  background: @accentSoft;
+  color: @accent;
+}
+
+.pointDiscSand {
+  background: #efe6d3;
+  color: #8a7b5c;
+}
+
+.desktopVisible {
+  display: none;
+}
+
+.mobileVisible {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .stickyHeader {
+    padding: 18px 40px;
+  }
+
+  .contentColumn {
+    padding: 32px 24px 80px;
+  }
+
+  .nameRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .uploadZoneIconWrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+  }
+
+  .uploadZoneIcon {
+    font-size: 32px;
+  }
+
+  .jobLogo,
+  .jobLogoFallback {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 17px;
+  }
+
+  .jobTitleRow {
+    font-size: 15px;
+  }
+
+  .serifTitle {
+    font-size: 30px;
+  }
+
+  .desktopVisible {
+    display: block;
+  }
+
+  .mobileVisible {
+    display: none;
+  }
+
+  .footerBar {
+    position: static;
+    left: auto;
+    width: 100%;
+    padding: 0;
+    transform: none;
+    background: transparent;
+    margin-top: 24px;
+  }
+
+  .floatingCta {
+    position: static;
+    left: auto;
+    width: 100%;
+    padding: 0;
+    transform: none;
+    margin-top: 24px;
+  }
+
+  .sheetPanel {
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 48px);
+    max-width: 480px;
+    border-radius: 16px;
+  }
+}

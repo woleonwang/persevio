@@ -48,6 +48,24 @@ export const isDevelopment = (): boolean => {
   return process.env.NODE_ENV === "development";
 };
 
+export const isNonProductionEnv = (): boolean => {
+  return process.env.NODE_ENV !== "production";
+};
+
+export const getCandidateSignupPath = (
+  jobId: string | number,
+  version?: string | number,
+): string => {
+  const base = isNonProductionEnv()
+    ? "/signup-candidate-v2"
+    : "/signup-candidate";
+  const params = new URLSearchParams({ job_id: String(jobId) });
+  if (version !== undefined && String(version) !== "") {
+    params.set("version", String(version));
+  }
+  return `${base}?${params.toString()}`;
+};
+
 export const parseJd = (originalJd: string) => {
   return originalJd.replaceAll(/<chatbot-delete>.*<\/chatbot-delete>/g, "");
 };
