@@ -4,7 +4,6 @@ import {
   InputNumber,
   Segmented,
   Select,
-  Space,
   Table,
   Tag,
   Typography,
@@ -207,9 +206,9 @@ const ConfigEditForm = ({
               <Tag className={styles.inheritTag}>{t("inherit")}</Tag>
             </div>
           ) : (
-            <Space direction="vertical" style={{ width: "100%" }}>
+            <div className={styles.validityRow}>
               <Select
-                style={{ width: "100%" }}
+                className={styles.validityModeSelect}
                 value={validity.mode}
                 options={validityPresetOptions}
                 onChange={(mode) =>
@@ -221,16 +220,16 @@ const ConfigEditForm = ({
                 }
               />
               {validity.mode === "custom" ? (
-                <Space.Compact style={{ width: "100%" }}>
+                <>
                   <InputNumber
+                    className={styles.validityCustomValue}
                     min={1}
                     precision={0}
-                    style={{ width: "50%" }}
                     value={validity.custom_value ?? undefined}
                     onChange={(value) => updateValidity({ custom_value: value ?? null })}
                   />
                   <Select
-                    style={{ width: "50%" }}
+                    className={styles.validityCustomUnit}
                     value={validity.custom_unit ?? "months"}
                     options={CREDIT_CONFIG_VALIDITY_UNITS.map((unit) => ({
                       label: t(`validityUnit.${unit}`),
@@ -238,9 +237,9 @@ const ConfigEditForm = ({
                     }))}
                     onChange={(custom_unit) => updateValidity({ custom_unit })}
                   />
-                </Space.Compact>
+                </>
               ) : null}
-            </Space>
+            </div>
           )}
         </div>
       </Card>
@@ -281,11 +280,14 @@ const ConfigEditForm = ({
                   </div>
                 ) : (
                   <InputNumber
-                    min={1}
+                    min={0}
                     precision={0}
                     value={field.value ?? undefined}
                     onChange={(value) =>
-                      updatePricingField(record.key, { value: value ?? null, inherit: false })
+                      updatePricingField(record.key, {
+                        value: value == null ? null : Math.max(0, Math.floor(value)),
+                        inherit: false,
+                      })
                     }
                   />
                 ),

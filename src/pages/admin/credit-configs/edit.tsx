@@ -151,10 +151,7 @@ const CreditConfigEditPage = () => {
 
       if (response.code === 0) {
         message.success(t("messages.saveSuccess"));
-        const nextId = isNew ? response.data?.id : Number(id);
-        if (isNew && nextId) {
-          navigate(`/admin/credit-configs/${nextId}/edit`, { replace: true });
-        }
+        navigate("/admin/credit-configs");
       } else {
         message.error(t("messages.saveFailed"));
       }

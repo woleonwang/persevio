@@ -326,13 +326,6 @@ const CreditConfigListPage = () => {
     <div className={adminStyles.adminContainer}>
       <div className={styles.pageHeader}>
         <div className={styles.pageTitle}>{t("pageTitle")}</div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate("/admin/credit-configs/new")}
-        >
-          {t("newCustomConfig")}
-        </Button>
       </div>
 
       <div className={styles.mainScroll}>
@@ -364,37 +357,46 @@ const CreditConfigListPage = () => {
           <div className={styles.sectionTitle}>{t("customSectionTitle")}</div>
         </div>
         <div className={styles.filterBar}>
-          <div className={styles.filterItem}>
-            <span>{t("filters.configName")}</span>
-            <Input
-              allowClear
-              style={{ width: 220 }}
-              value={nameFilter}
-              onChange={(e) => {
-                setNameFilter(e.target.value);
-                setCustomPage(1);
-              }}
-            />
+          <div className={styles.filterGroup}>
+            <div className={styles.filterItem}>
+              <span>{t("filters.configName")}</span>
+              <Input
+                allowClear
+                style={{ width: 220 }}
+                value={nameFilter}
+                onChange={(e) => {
+                  setNameFilter(e.target.value);
+                  setCustomPage(1);
+                }}
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <span>{t("filters.appliedCompany")}</span>
+              <Select
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                style={{ width: 260 }}
+                placeholder={t("filters.selectCompany")}
+                value={companyFilter}
+                options={companies.map((item) => ({
+                  label: item.name,
+                  value: item.id,
+                }))}
+                onChange={(value) => {
+                  setCompanyFilter(value);
+                  setCustomPage(1);
+                }}
+              />
+            </div>
           </div>
-          <div className={styles.filterItem}>
-            <span>{t("filters.appliedCompany")}</span>
-            <Select
-              allowClear
-              showSearch
-              optionFilterProp="label"
-              style={{ width: 260 }}
-              placeholder={t("filters.selectCompany")}
-              value={companyFilter}
-              options={companies.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))}
-              onChange={(value) => {
-                setCompanyFilter(value);
-                setCustomPage(1);
-              }}
-            />
-          </div>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate("/admin/credit-configs/new")}
+          >
+            {t("newCustomConfig")}
+          </Button>
         </div>
         <Table
           className={styles.configTable}

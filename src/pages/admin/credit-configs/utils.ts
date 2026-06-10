@@ -256,6 +256,16 @@ export function validateCreditConfigFields(fields: ICreditConfigFields, isCustom
     return null;
   };
 
+  const checkPricing = (field: ICreditConfigFieldValue, label: string) => {
+    if (isCustom && field.inherit) {
+      return null;
+    }
+    if (field.value == null || field.value < 0 || !Number.isInteger(field.value)) {
+      return `${label} must be 0 or a positive integer`;
+    }
+    return null;
+  };
+
   const displayRateError = checkRate(fields.display_rate, "Display Rate");
   if (displayRateError) {
     return displayRateError;
@@ -285,7 +295,7 @@ export function validateCreditConfigFields(fields: ICreditConfigFields, isCustom
   }
 
   for (const key of CREDIT_CONFIG_SERVICE_KEYS) {
-    const error = checkRate(fields.pricing[key], key);
+    const error = checkPricing(fields.pricing[key], key);
     if (error) {
       return error;
     }
