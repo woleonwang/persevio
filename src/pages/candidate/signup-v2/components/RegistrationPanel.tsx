@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Button, Checkbox, Input, message } from "antd";
+import { useEffect, useRef, useState } from "react";
+import { Button, Checkbox, message } from "antd";
 import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import MarkdownContainer from "@/components/MarkdownContainer";
@@ -12,25 +12,44 @@ import { SignupPrimaryButton } from "./FlowShell";
 import styles from "../style.module.less";
 
 const OTP_RESEND_SECONDS = 60;
+const OTP_LENGTH = 6;
+const EMPTY_OTP_DIGITS = Array.from({ length: OTP_LENGTH }, () => "");
+
+const ChevronLeftGlyph = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path
+      d="M10 3L5 8l5 5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 type TRegistrationPanelProps = {
   candidateEmail: string;
   onVerified: () => void;
   compact?: boolean;
+  variant?: "card" | "step3";
 };
 
 const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
   candidateEmail,
   onVerified,
   compact,
+  variant = "card",
 }) => {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [termsType, setTermsType] = useState<"terms" | "privacy">();
   const [step, setStep] = useState<"providers" | "otp">("providers");
-  const [otp, setOtp] = useState("");
+  const [otpDigits, setOtpDigits] = useState(EMPTY_OTP_DIGITS);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendSecondsLeft, setResendSecondsLeft] = useState(0);
   const [termsPulse, setTermsPulse] = useState(false);
+  const digitInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const isStep3 = variant === "step3";
+  const otp = otpDigits.join("");
 
   useEffect(() => {
     if (step !== "otp" || resendSecondsLeft <= 0) {
@@ -41,6 +60,62 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     }, 1000);
     return () => window.clearInterval(timer);
   }, [resendSecondsLeft, step]);
+
+  useEffect(() => {
+    if (step !== "otp") {
+      return;
+    }
+    window.setTimeout(() => {
+      digitInputRefs.current[0]?.focus();
+    }, 0);
+  }, [step]);
+
+  const resetOtp = () => {
+    setOtpDigits(EMPTY_OTP_DIGITS);
+  };
+
+  const goBackToProviders = () => {
+    setStep("providers");
+    resetOtp();
+  };
+
+  const handleDigitChange = (index: number, value: string) => {
+    const digit = value.replace(/\D/g, "").slice(-1);
+    const nextDigits = [...otpDigits];
+    nextDigits[index] = digit;
+    setOtpDigits(nextDigits);
+
+    if (digit && index < OTP_LENGTH - 1) {
+      digitInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleDigitKeyDown = (
+    index: number,
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Backspace" && !otpDigits[index] && index > 0) {
+      digitInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleDigitPaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pasted = event.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, OTP_LENGTH);
+    if (!pasted) {
+      return;
+    }
+    const nextDigits = Array.from(
+      { length: OTP_LENGTH },
+      (_, index) => pasted[index] || "",
+    );
+    setOtpDigits(nextDigits);
+    const focusIndex = Math.min(pasted.length, OTP_LENGTH - 1);
+    digitInputRefs.current[focusIndex]?.focus();
+  };
 
   const requireTerms = () => {
     if (!isTermsAgreed) {
@@ -70,6 +145,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
 
     if (code === 0) {
       setStep("otp");
+      resetOtp();
       setResendSecondsLeft(OTP_RESEND_SECONDS);
       if (isResend) {
         message.success("A new code has been sent");
@@ -113,105 +189,190 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
   };
 
   const providerDisabled = !isTermsAgreed || isSubmitting;
+  const showInlineHeading = isStep3 && !compact && step === "providers";
+  const showSheetHeading = isStep3 && compact && step === "providers";
 
-  return (
-    <div className={styles.card} style={{ padding: compact ? 20 : 24 }}>
-      <h3 className={styles.serifTitle} style={{ fontSize: 22 }}>
-        Continue your application
-      </h3>
-      <p className={styles.bodyText} style={{ marginTop: 8 }}>
-        One quick step to save your progress, no password needed.
-      </p>
-
-      {step === "providers" ? (
-        <>
-          <div
-            style={{
+  const providerButtons = (
+    <div
+      className={
+        isStep3
+          ? styles.step3ProviderGrid
+          : undefined
+      }
+      style={
+        isStep3
+          ? undefined
+          : {
               display: "grid",
               gridTemplateColumns: compact ? "1fr" : "repeat(3, 1fr)",
               gap: 10,
               marginTop: 18,
-            }}
-          >
-            <Button
-              className={styles.providerButton}
-              disabled={providerDisabled}
-              block={compact}
-              onClick={() => goToOAuth("linkedin")}
-            >
-              <img src={Linkedin} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
-              Continue with LinkedIn
-            </Button>
-            <Button
-              className={styles.providerButton}
-              disabled={providerDisabled}
-              block={compact}
-              onClick={() => goToOAuth("google")}
-            >
-              <img src={Google} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
-              Continue with Google
-            </Button>
-            <Button
-              type="primary"
-              className={styles.providerButton}
-              disabled={providerDisabled}
-              block={compact}
-              style={{ background: "#221C12", borderColor: "#221C12" }}
-              onClick={handleEmailContinue}
-            >
-              Continue with email
-            </Button>
-          </div>
+            }
+      }
+    >
+      <Button
+        className={
+          isStep3 ? styles.step3ProviderLinkedin : styles.providerButton
+        }
+        disabled={providerDisabled}
+        block={!isStep3 && compact}
+        onClick={() => goToOAuth("linkedin")}
+      >
+        <img src={Linkedin} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
+        Continue with LinkedIn
+      </Button>
+      <Button
+        className={isStep3 ? styles.step3ProviderGoogle : styles.providerButton}
+        disabled={providerDisabled}
+        block={!isStep3 && compact}
+        onClick={() => goToOAuth("google")}
+      >
+        <img src={Google} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
+        Continue with Google
+      </Button>
+      <Button
+        type={isStep3 ? "default" : "primary"}
+        className={isStep3 ? styles.step3ProviderEmail : styles.providerButton}
+        disabled={providerDisabled}
+        block={!isStep3 && compact}
+        style={isStep3 ? undefined : { background: "#221C12", borderColor: "#221C12" }}
+        onClick={handleEmailContinue}
+      >
+        Continue with email
+      </Button>
+    </div>
+  );
 
-          <div
-            style={{
-              marginTop: 14,
-              padding: termsPulse ? "8px" : 0,
-              borderRadius: 10,
-              boxShadow: termsPulse ? "0 0 0 3px rgba(57,143,251,0.25)" : "none",
-            }}
-          >
-            <Checkbox checked={isTermsAgreed} onChange={(e) => setIsTermsAgreed(e.target.checked)}>
-              I agree to Persevio's{" "}
-              <a onClick={(e) => { e.preventDefault(); setTermsType("terms"); }}>Terms of Service</a>{" "}
-              and{" "}
-              <a onClick={(e) => { e.preventDefault(); setTermsType("privacy"); }}>Privacy Policy</a>.
-            </Checkbox>
+  const termsRow = (
+    <div
+      className={`${isStep3 ? styles.step3TermsRow : ""} ${
+        termsPulse ? styles.step3TermsNudge : ""
+      }`}
+      style={isStep3 ? undefined : { marginTop: 14 }}
+    >
+      <Checkbox checked={isTermsAgreed} onChange={(e) => setIsTermsAgreed(e.target.checked)}>
+        I agree to Persevio's{" "}
+        <a onClick={(e) => { e.preventDefault(); setTermsType("terms"); }}>Terms of Service</a>{" "}
+        and{" "}
+        <a onClick={(e) => { e.preventDefault(); setTermsType("privacy"); }}>Privacy Policy</a>.
+      </Checkbox>
+    </div>
+  );
+
+  const content = (
+    <>
+      {showSheetHeading && (
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+          <div className={styles.step3SignupTitle} style={{ fontSize: 21 }}>
+            Continue your application
           </div>
+          <p className={styles.step3SignupSub} style={{ marginTop: 4, fontSize: 13 }}>
+            One quick step to save your progress, no password needed.
+          </p>
+        </div>
+      )}
+
+      {showInlineHeading && (
+        <div className={styles.step3SignupHeading}>
+          <div className={styles.step3SignupTitle}>Continue your application</div>
+          <div className={styles.step3SignupSub}>Create your account, no password needed</div>
+        </div>
+      )}
+
+      {!isStep3 && step === "providers" && (
+        <>
+          <h3 className={styles.serifTitle} style={{ fontSize: 22 }}>
+            Continue your application
+          </h3>
+          <p className={styles.bodyText} style={{ marginTop: 8 }}>
+            One quick step to save your progress, no password needed.
+          </p>
+        </>
+      )}
+
+      {step === "providers" ? (
+        <>
+          {providerButtons}
+          {termsRow}
         </>
       ) : (
-        <div style={{ marginTop: 18 }}>
-          <div className={styles.eyebrow}>Enter your code</div>
-          <p className={styles.bodyText} style={{ marginTop: 8 }}>
-            We sent a 6-digit code to <strong>{candidateEmail}</strong>
-          </p>
-          <Input
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="6-digit code"
-            maxLength={6}
-            style={{ marginTop: 12, height: 48 }}
-          />
+        <div className={styles.otpBlock} style={{ marginTop: isStep3 ? 0 : 18 }}>
+          <Button type="link" className={styles.otpBackButton} onClick={goBackToProviders}>
+            <ChevronLeftGlyph />
+            Back
+          </Button>
+
+          <div className={styles.otpHeader}>
+            <div className={styles.otpTitle}>Enter your code</div>
+            <div className={styles.otpSubtitle}>
+              We sent a 6-digit code to
+              <br />
+              <span className={styles.otpEmail}>{candidateEmail}</span>{" "}
+              <Button type="link" className={styles.otpEditLink} onClick={goBackToProviders}>
+                Edit
+              </Button>
+            </div>
+          </div>
+
+          <div className={styles.otpDigits}>
+            {otpDigits.map((digit, index) => (
+              <input
+                key={index}
+                ref={(element) => {
+                  digitInputRefs.current[index] = element;
+                }}
+                className={styles.otpDigitInput}
+                value={digit}
+                inputMode="numeric"
+                autoComplete={index === 0 ? "one-time-code" : "off"}
+                maxLength={1}
+                aria-label={`Digit ${index + 1}`}
+                onChange={(event) => handleDigitChange(index, event.target.value)}
+                onKeyDown={(event) => handleDigitKeyDown(index, event)}
+                onPaste={handleDigitPaste}
+                onFocus={(event) => event.target.select()}
+              />
+            ))}
+          </div>
+
           <SignupPrimaryButton
-            style={{ marginTop: 16, background: "#221C12", borderColor: "#221C12" }}
+            className={styles.otpVerifyButton}
             loading={isSubmitting}
             onClick={handleVerifyOtp}
           >
             Verify & continue
           </SignupPrimaryButton>
-          <Button
-            type="link"
-            className={styles.inlineLink}
-            style={{ marginTop: 12 }}
-            disabled={resendSecondsLeft > 0 || isSubmitting}
-            onClick={() => sendOtp(true)}
-          >
-            {resendSecondsLeft > 0
-              ? `Resend code (${resendSecondsLeft}s)`
-              : "Didn't get it? Resend code"}
-          </Button>
+
+          <div className={styles.otpResend}>
+            Didn't get it?{" "}
+            <Button
+              type="link"
+              className={styles.otpResendLink}
+              disabled={resendSecondsLeft > 0 || isSubmitting}
+              onClick={() => sendOtp(true)}
+            >
+              {resendSecondsLeft > 0
+                ? `Resend code (${resendSecondsLeft}s)`
+                : "Resend code"}
+            </Button>
+          </div>
         </div>
       )}
+    </>
+  );
+
+  return (
+    <div
+      className={
+        isStep3
+          ? compact
+            ? undefined
+            : styles.step3SignupCard
+          : styles.card
+      }
+      style={isStep3 && compact ? undefined : { padding: isStep3 ? undefined : compact ? 20 : 24 }}
+    >
+      {content}
 
       {termsType && (
         <>

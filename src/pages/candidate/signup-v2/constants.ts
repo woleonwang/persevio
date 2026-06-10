@@ -191,3 +191,33 @@ export const EXIT_SURVEY_QUESTIONS = [
     placeholder: "Optional. Tell me anything",
   },
 ] as const;
+
+export const STEP3_ROADMAP = [
+  "I have reviewed your resume and will share my honest first read on your fit immediately after you proceed to the next step",
+  "We'll have a short discovery chat so I understand you beyond your resume",
+  "I'll prepare and submit your application with my recommendations",
+  "Message me on WhatsApp or Persevio anytime when you want an update",
+] as const;
+
+export const STEP3_CAPABILITIES = [
+  {
+    icon: "compass" as const,
+    text: "Get to know you through a real conversation, so you're represented fairly on your full story, not judged on an incomplete picture from your resume alone",
+  },
+  {
+    icon: "spark" as const,
+    text: "Prepare your application and represent you strongly to the hiring manager",
+  },
+  {
+    icon: "bell" as const,
+    text: "Give you application updates whenever you want",
+  },
+  {
+    icon: "calendar" as const,
+    text: "Help coordinate your interview process",
+  },
+  {
+    icon: "compass" as const,
+    text: "Recommend other opportunities that match your background in the future",
+  },
+] as const;

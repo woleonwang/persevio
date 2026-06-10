@@ -1,8 +1,5 @@
-import { useState } from "react";
-import { Button } from "antd";
-
 import PercyAvatar from "./PercyAvatar";
-import WhoIsPercyModal from "./WhoIsPercyModal";
+import WhoIsPercyButton from "./WhoIsPercyButton";
 import styles from "../style.module.less";
 
 type TPercyHeaderProps = {
@@ -20,23 +17,12 @@ const PercyHeader: React.FC<TPercyHeaderProps> = ({
   title,
   sub,
 }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <div className={styles.percyRow}>
         <div className={styles.percyColumn}>
           <PercyAvatar mode={mode} size={avatarSize || (mode === "wave" ? 116 : 58)} />
-          <Button
-            type="link"
-            className={styles.whoIsPercyLink}
-            onClick={() => setModalOpen(true)}
-          >
-            <span className={styles.whoIsPercyIcon} aria-hidden="true">
-              ?
-            </span>
-            <span className={styles.whoIsPercyLabel}>Who is Percy?</span>
-          </Button>
+          <WhoIsPercyButton />
         </div>
         <div className={styles.speechBubble}>
           <div className={styles.speechBubbleTail} />
@@ -47,7 +33,6 @@ const PercyHeader: React.FC<TPercyHeaderProps> = ({
       <p className={styles.bodyText} style={{ marginTop: 8 }}>
         {sub}
       </p>
-      <WhoIsPercyModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );
 };

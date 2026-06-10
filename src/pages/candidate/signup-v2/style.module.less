@@ -435,6 +435,24 @@
   flex-shrink: 0;
 }
 
+.percyAvatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.percyPresenceDot {
+  position: absolute;
+  right: 5%;
+  bottom: 6%;
+  width: 20%;
+  height: 20%;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 50%;
+  background: #1fa855;
+  border: 2px solid @bg;
+}
+
 .percyAvatarRing {
   border-radius: 50%;
   overflow: hidden;
@@ -499,6 +517,532 @@
   box-shadow: inset 0 -0.5em 0 @accentSoft;
   font-weight: 600;
   color: @ink;
+}
+
+.highlightPhraseSerif {
+  box-shadow: inset 0 -0.55em 0 @accentSoft;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 600;
+  color: @ink;
+}
+
+.step3Hero {
+  position: relative;
+  padding: 30px 0 26px;
+}
+
+.step3HeroGlow {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 320px;
+  height: 260px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(44, 95, 224, 0.1) 0%,
+    rgba(44, 95, 224, 0) 70%
+  );
+}
+
+.step3HeroInner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.step3HeroAvatarCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.step3HeroAvatarMobile {
+  display: flex;
+}
+
+.step3HeroAvatarDesktop {
+  display: none;
+}
+
+.step3PositioningMobile {
+  display: block;
+}
+
+.step3HeroCopy {
+  width: 100%;
+  max-width: 342px;
+  margin-top: 16px;
+}
+
+.step3HeroLead {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: @sub;
+}
+
+.step3HeroBody {
+  margin: 18px 0 0;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.step3HeroFocal {
+  margin: 18px 0 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 23.5px;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: @ink;
+  text-wrap: balance;
+}
+
+.step3WhatsappCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: @surface;
+  border: 1px solid @line;
+  text-align: left;
+}
+
+.step3WhatsappText {
+  font-size: 13px;
+  line-height: 1.45;
+  color: @sub;
+}
+
+.step3WhatsappBrand {
+  color: #1b8f4d;
+  font-weight: 700;
+}
+
+.step3SignupCard {
+  margin-top: 30px;
+  padding: 26px 28px;
+  border-radius: 20px;
+  background: @surface;
+  border: 1px solid @line;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+}
+
+.step3SignupHeading {
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.step3SignupTitle {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 19px;
+  color: @ink;
+}
+
+.step3SignupSub {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: @faint;
+}
+
+.step3ProviderGrid {
+  display: grid;
+  gap: 11px;
+  margin-top: 12px;
+}
+
+.step3ProviderLinkedin:global(.ant-btn) {
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  background: #0a66c2;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step3ProviderGoogle:global(.ant-btn) {
+  height: 50px;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  background: #fff;
+  color: #1f1f1f;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step3ProviderEmail:global(.ant-btn) {
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  background: @ink;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step3TermsRow {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.step3TermsNudge {
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 3px rgba(57, 143, 251, 0.25);
+}
+
+.step3Roadmap {
+  padding: 34px 0;
+  border-top: 1px solid @line;
+}
+
+.step3RoadmapHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.step3RoadmapEyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @accent;
+}
+
+.step3RoadmapTitle {
+  margin: 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 23px;
+  letter-spacing: -0.01em;
+  color: @ink;
+}
+
+.step3RoadmapItem {
+  display: flex;
+  gap: 15px;
+  position: relative;
+  padding-bottom: 20px;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.step3RoadmapLine {
+  position: absolute;
+  left: 16px;
+  top: 34px;
+  bottom: 0;
+  width: 2px;
+  background: @line;
+}
+
+.step3RoadmapDisc {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  z-index: 1;
+  background: @accentSoft;
+  color: @accent;
+  border: 1px solid fade(@accent, 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14.5px;
+}
+
+.step3RoadmapText {
+  flex: 1;
+  padding-top: 6px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: @ink;
+}
+
+.step3RoadmapCards {
+  display: none;
+  gap: 14px;
+}
+
+.step3RoadmapCard {
+  flex: 1;
+  padding: 20px 18px;
+  border-radius: 16px;
+  background: @surface;
+  border: 1px solid @line;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+}
+
+.step3RoadmapCardDisc {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  background: @accentSoft;
+  color: @accent;
+  border: 1px solid fade(@accent, 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.step3RoadmapCardText {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: @ink;
+}
+
+.step3Positioning {
+  padding: 34px 0;
+  border-top: 1px solid @line;
+  background: #fbf7ee;
+  margin: 0 -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.step3PositioningHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.step3PositioningName {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: @ink;
+}
+
+.step3PositioningRole {
+  font-size: 12px;
+  color: @faint;
+}
+
+.step3PositioningTitle {
+  margin: 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 23px;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: @ink;
+}
+
+.step3PositioningBody {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: @sub;
+}
+
+.step3CapabilitiesLead {
+  margin: 16px 0 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: @sub;
+  letter-spacing: 0.01em;
+}
+
+.step3CapabilityGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.step3CapabilityItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border-radius: 13px;
+  background: @surface;
+  border: 1px solid @line;
+}
+
+.step3CapabilityIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: @accentSoft;
+  color: @accent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step3CapabilityText {
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: @ink;
+  font-weight: 500;
+}
+
+.step3PositioningDesktop {
+  display: none;
+}
+
+.step3SheetPanel {
+  padding: 12px 22px 30px;
+  background: @bg;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(28, 22, 12, 0.18);
+}
+
+.step3SheetHandle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: @line;
+  margin: 0 auto 16px;
+}
+
+.step3ScrollSpacer {
+  height: 92px;
+}
+
+.otpBlock {
+  width: 100%;
+}
+
+.otpBackButton:global(.ant-btn-link) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: auto;
+  padding: 0;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: @sub;
+
+  &:hover,
+  &:focus {
+    color: @sub;
+    opacity: 0.85;
+  }
+}
+
+.otpHeader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.otpTitle {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 21px;
+  color: @ink;
+}
+
+.otpSubtitle {
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: @sub;
+}
+
+.otpEmail {
+  color: @ink;
+  font-weight: 700;
+}
+
+.otpEditLink:global(.ant-btn-link) {
+  height: auto;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: @accent;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus {
+    color: @accent;
+    opacity: 0.85;
+  }
+}
+
+.otpDigits {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.otpDigitInput {
+  width: 44px;
+  height: 54px;
+  border-radius: 11px;
+  border: 1.5px solid @fieldBorder;
+  background: @surface;
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: @ink;
+  text-align: center;
+  outline: none;
+  padding: 0;
+  caret-color: @accent;
+
+  &:focus {
+    border-color: @accent;
+    box-shadow: 0 0 0 3px @accentSoft;
+  }
+}
+
+.otpVerifyButton:global(.ant-btn) {
+  height: 50px;
+  border-radius: 12px;
+  background: @ink;
+  border-color: @ink;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.otpResend {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: @faint;
+}
+
+.otpResendLink:global(.ant-btn-link) {
+  height: auto;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: @accent;
+
+  &:disabled {
+    color: @faint;
+  }
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    color: @accent;
+    opacity: 0.85;
+  }
 }
 
 .nameRow {
@@ -858,5 +1402,111 @@
     width: calc(100% - 48px);
     max-width: 480px;
     border-radius: 16px;
+  }
+
+  .step3Hero {
+    padding: 0 0 0;
+  }
+
+  .step3HeroGlow {
+    left: 40px;
+    top: -20px;
+    width: 280px;
+    height: 280px;
+    transform: none;
+  }
+
+  .step3HeroInner {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: 36px;
+  }
+
+  .step3HeroAvatarMobile {
+    display: none;
+  }
+
+  .step3HeroAvatarDesktop {
+    display: flex;
+  }
+
+  .step3HeroCopy {
+    max-width: none;
+    flex: 1;
+    margin-top: 0;
+  }
+
+  .step3HeroLead {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .step3HeroBody {
+    font-size: 16px;
+    max-width: 480px;
+  }
+
+  .step3HeroFocal {
+    font-size: 27px;
+    max-width: 500px;
+  }
+
+  .step3ProviderGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .step3RoadmapList {
+    display: none;
+  }
+
+  .step3RoadmapCards {
+    display: flex;
+  }
+
+  .step3Roadmap {
+    margin-top: 48px;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .step3RoadmapTitle {
+    font-size: 25px;
+  }
+
+  .step3Positioning {
+    margin: 44px 0 0;
+    padding: 30px 34px;
+    border-radius: 20px;
+    border: 1px solid @line;
+  }
+
+  .step3PositioningMobile {
+    display: none;
+  }
+
+  .step3PositioningDesktop {
+    display: block;
+  }
+
+  .step3PositioningDesktopTop {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  .step3PositioningTitle {
+    font-size: 24px;
+  }
+
+  .step3CapabilityGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .step3ScrollSpacer {
+    height: 24px;
   }
 }
