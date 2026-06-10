@@ -378,7 +378,7 @@ const JobsShow = () => {
                         if (isTempAccount(candidate)) {
                           // 没走完注册流程
                           message.info(t("complete_registration_first"));
-                          navigate(getCandidateSignupPath(id as string, version), {
+                          navigate(getCandidateSignupPath(id as string), {
                             replace: true,
                           });
                         } else {
@@ -413,7 +413,7 @@ const JobsShow = () => {
                           }
                         }
                       } else {
-                        navigate(getCandidateSignupPath(id as string, version), {
+                        navigate(getCandidateSignupPath(id as string), {
                           replace: true,
                         });
                       }

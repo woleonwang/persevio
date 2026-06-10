@@ -21,9 +21,14 @@ import Step1Contact from "./components/Step1Contact";
 import Step2Resume from "./components/Step2Resume";
 import Step3Intro from "./components/Step3Intro";
 import Step4Assessment from "./components/Step4Assessment";
-import Step5Placeholder from "./components/Step5Placeholder";
+import Step5Discovery from "./components/Step5Discovery";
 import Step6WrapUp from "./components/Step6WrapUp";
-import { splitFullName } from "./utils";
+import {
+  hasInterviewFinished,
+  hasWhatsappNumberConfirmed,
+  isAssessmentReviewSettled,
+  splitFullName,
+} from "./utils";
 
 type TPageState =
   | "contact"
@@ -51,7 +56,6 @@ const SignupV2: React.FC = () => {
   const [jobId, setJobId] = useState("");
 
   const jobIdFromQuery = getQuery("job_id")?.trim() ?? "";
-  const jobVersionFromQuery = getQuery("version")?.trim() || "0";
   const internal = storage.get(StorageKey.INTERNAL_SIGNUP) === 1;
   const navigate = useNavigate();
   const pollRef = useRef<number>();
@@ -100,31 +104,42 @@ const SignupV2: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (pageState !== "assessment" || !jobId) {
+    const stopPolling = () => {
       if (pollRef.current) {
         window.clearInterval(pollRef.current);
         pollRef.current = undefined;
       }
+    };
+
+    if (pageState !== "assessment" || !jobId) {
+      stopPolling();
+      return;
+    }
+
+    if (isAssessmentReviewSettled(jobApply)) {
+      stopPolling();
       return;
     }
 
     pollRef.current = window.setInterval(() => {
-      void fetchJobApply(jobId);
+      void fetchJobApply(jobId).then((apply) => {
+        if (apply && isAssessmentReviewSettled(apply)) {
+          stopPolling();
+        }
+      });
     }, 2000);
 
-    return () => {
-      if (pollRef.current) {
-        window.clearInterval(pollRef.current);
-      }
-    };
-  }, [pageState, jobId]);
+    return stopPolling;
+  }, [
+    pageState,
+    jobId,
+    jobApply?.interview_strategy_status,
+    jobApply?.initial_impression_json,
+  ]);
 
-  const fetchJobMeta = async (
-    targetJobId: string,
-    version = jobVersionFromQuery,
-  ) => {
+  const fetchJobMeta = async (targetJobId: string) => {
     const { code, data } = await Get(`/api/public/jobs/${targetJobId}`, {
-      version,
+      version: "latest",
     });
     if (code === 0) {
       setJobTitle(data.job.name);
@@ -152,8 +167,17 @@ const SignupV2: React.FC = () => {
     return undefined;
   };
 
+  const refreshJobApply = async () => {
+    if (!jobId) {
+      return jobApply;
+    }
+    return fetchJobApply(jobId);
+  };
+
   const fetchSurveyAndRedirect = async (applyId: number) => {
-    const { code, data } = await Get(`/api/candidate/job_applies/${applyId}/survey`);
+    const { code, data } = await Get(
+      `/api/candidate/job_applies/${applyId}/survey`,
+    );
     if (code === 0 && data.survey) {
       navigate(`/candidate/jobs/applies/${applyId}?open=1`, { replace: true });
       return true;
@@ -169,15 +193,16 @@ const SignupV2: React.FC = () => {
       }
     }
 
-    const phase = storage.get<string>(StorageKey.SIGNUP_V2_PHASE);
-    if (phase === "wrapup") {
+    if (hasInterviewFinished(apply)) {
       setPageState("wrapup");
       return;
     }
-    if (phase === "discovery") {
+
+    if (hasWhatsappNumberConfirmed(apply)) {
       setPageState("discovery");
       return;
     }
+
     setPageState("assessment");
   };
 
@@ -251,7 +276,9 @@ const SignupV2: React.FC = () => {
       const shareTokenMapping =
         storage.get<Record<string, string>>(StorageKey.SHARE_TOKEN, {}) || {};
       const shareToken = shareTokenMapping[jobIdFromQuery];
-      const linkedinProfileId = storage.get<string>(StorageKey.LINKEDIN_PROFILE_ID);
+      const linkedinProfileId = storage.get<string>(
+        StorageKey.LINKEDIN_PROFILE_ID,
+      );
       const sourceChannelMapping = storage.get<Record<string, string>>(
         StorageKey.SOURCE_CHANNEL,
         {},
@@ -315,19 +342,19 @@ const SignupV2: React.FC = () => {
   };
 
   const goToDiscovery = () => {
-    storage.set(StorageKey.SIGNUP_V2_PHASE, "discovery");
     setPageState("discovery");
   };
 
-  const goToWrapUp = () => {
-    storage.set(StorageKey.SIGNUP_V2_PHASE, "wrapup");
+  const goToWrapUp = async () => {
+    await refreshJobApply();
     setPageState("wrapup");
   };
 
   const finishFlow = () => {
-    storage.remove(StorageKey.SIGNUP_V2_PHASE);
     if (jobApply?.id) {
-      navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, { replace: true });
+      navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, {
+        replace: true,
+      });
     } else {
       navigate("/candidate/jobs", { replace: true });
     }
@@ -381,25 +408,17 @@ const SignupV2: React.FC = () => {
   if (pageState === "assessment") {
     return (
       <Step4Assessment
-        jobTitle={jobTitle || "Role"}
-        companyName={companyName || "Company"}
-        companyLogo={companyLogo}
-        resumePath={resumePath}
         jobApply={jobApply}
+        countryCode={preRegisterInfo.country_code}
+        phone={preRegisterInfo.phone}
         onContinue={goToDiscovery}
+        onRefreshJobApply={refreshJobApply}
       />
     );
   }
 
   if (pageState === "discovery") {
-    return (
-      <Step5Placeholder
-        jobTitle={jobTitle || "Role"}
-        companyName={companyName || "Company"}
-        companyLogo={companyLogo}
-        onContinue={goToWrapUp}
-      />
-    );
+    return <Step5Discovery jobApply={jobApply} onFinishChat={goToWrapUp} />;
   }
 
   return (
@@ -409,6 +428,7 @@ const SignupV2: React.FC = () => {
       companyLogo={companyLogo}
       jobTitle={jobTitle || "Role"}
       jobApply={jobApply}
+      onRefreshJobApply={refreshJobApply}
       onComplete={finishFlow}
     />
   );

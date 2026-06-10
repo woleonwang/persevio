@@ -32,9 +32,6 @@ export enum StorageKey {
   // 登录时的 job id 来源
   SIGNIN_JOB_ID = "signin_job_id",
 
-  /** signup-v2 flow phase: discovery | wrapup */
-  SIGNUP_V2_PHASE = "signup_v2_phase",
-
   // 是否内部逻辑的标记
   INTERNAL_SIGNUP = "internal_signup",
   // 是否跳过验证

@@ -149,6 +149,8 @@ interface IJobApply {
   initial_impression_json?: string;
   interview_strategy_status?: string;
   interview_recommendation?: string;
+  evaluate_status?: "pending" | "generating" | "ready" | "failed";
+  evaluate_type?: "resume_based" | "post_interview";
 }
 
 interface IInitialImpression {

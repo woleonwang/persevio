@@ -37,6 +37,7 @@ type TFlowShellProps = {
   companyName?: string;
   companyLogo?: string;
   showProgress?: boolean;
+  showJobHeader?: boolean;
   children: React.ReactNode;
   footer?: React.ReactNode;
   wide?: boolean;
@@ -48,6 +49,7 @@ const FlowShell: React.FC<TFlowShellProps> = ({
   companyName,
   companyLogo,
   showProgress = true,
+  showJobHeader = true,
   children,
   footer,
   wide,
@@ -73,7 +75,7 @@ const FlowShell: React.FC<TFlowShellProps> = ({
         )}
       </header>
 
-      {jobTitle && companyName && (
+      {showJobHeader && jobTitle && companyName && (
         <div className={styles.mobileVisible} style={{ padding: "12px 16px 0" }}>
           <JobHeader
             jobTitle={jobTitle}
@@ -87,7 +89,7 @@ const FlowShell: React.FC<TFlowShellProps> = ({
         <div
           className={`${styles.contentColumn} ${wide ? styles.contentColumnWide : ""}`}
         >
-          {jobTitle && companyName && (
+          {showJobHeader && jobTitle && companyName && (
             <div className={styles.desktopVisible}>
               <JobHeader
                 jobTitle={jobTitle}

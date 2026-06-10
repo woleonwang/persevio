@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 
 import { BEYOND_CAPABILITIES, WRAP_CONTENT } from "../constants";
 import FlowShell, { SignupPrimaryButton } from "./FlowShell";
-import PercyAvatar from "./PercyAvatar";
 import ExitSurvey from "./ExitSurvey";
 import {
   getTierFromRecommendation,
+  hasInterviewFinished,
   isBriefReportRecommendation,
+  isPostInterviewRecommendationInProgress,
+  isPostInterviewRecommendationReady,
   splitFullName,
 } from "../utils";
 import styles from "../style.module.less";
@@ -17,10 +19,9 @@ type TStep6WrapUpProps = {
   companyLogo?: string;
   jobTitle: string;
   jobApply?: IJobApply;
+  onRefreshJobApply?: () => Promise<IJobApply | undefined>;
   onComplete: () => void;
 };
-
-const MIN_PREPARE_MS = 2000;
 
 const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   firstName,
@@ -28,53 +29,33 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   companyLogo,
   jobTitle,
   jobApply,
+  onRefreshJobApply,
   onComplete,
 }) => {
-  const [phase, setPhase] = useState<"preparing" | "ready">("preparing");
   const [showSurvey, setShowSurvey] = useState(false);
-  const [slowMessage, setSlowMessage] = useState(false);
 
   const tier = getTierFromRecommendation(jobApply?.interview_recommendation);
   const wrap = WRAP_CONTENT[tier];
   const briefReport = isBriefReportRecommendation(
     jobApply?.interview_recommendation,
   );
+  const recommendationInProgress =
+    isPostInterviewRecommendationInProgress(jobApply) ||
+    (hasInterviewFinished(jobApply) &&
+      !isPostInterviewRecommendationReady(jobApply));
+  const recommendationReady = isPostInterviewRecommendationReady(jobApply);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setPhase("ready"), MIN_PREPARE_MS);
-    const slowTimer = window.setTimeout(() => setSlowMessage(true), 5000);
-    return () => {
-      window.clearTimeout(timer);
-      window.clearTimeout(slowTimer);
-    };
-  }, []);
+    if (!onRefreshJobApply || !recommendationInProgress) {
+      return;
+    }
 
-  if (phase === "preparing") {
-    return (
-      <FlowShell
-        currentStep={6}
-        jobTitle={jobTitle}
-        companyName={companyName}
-        companyLogo={companyLogo}
-        showProgress={false}
-      >
-        <div className={styles.transitionWrap}>
-          <PercyAvatar size={88} />
-          <h2 className={styles.serifTitle} style={{ marginTop: 20 }}>
-            Preparing your summary…
-          </h2>
-          <p className={styles.bodyText} style={{ marginTop: 10, maxWidth: 360 }}>
-            Give me a moment. I'm pulling together everything from our conversation.
-          </p>
-          {slowMessage && (
-            <p className={styles.bodyText} style={{ marginTop: 12, fontStyle: "italic" }}>
-              Almost there. I want to get this right.
-            </p>
-          )}
-        </div>
-      </FlowShell>
-    );
-  }
+    const pollTimer = window.setInterval(() => {
+      void onRefreshJobApply();
+    }, 2000);
+
+    return () => window.clearInterval(pollTimer);
+  }, [onRefreshJobApply, recommendationInProgress]);
 
   return (
     <FlowShell
@@ -115,8 +96,21 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
           <div className={styles.pointRow}>
             <div className={styles.pointDiscSand}>✍️</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600 }}>I'm writing your recommendation</div>
-              {briefReport ? (
+              <div className={styles.wrapTimelineTitleRow}>
+                <div style={{ fontWeight: 600 }}>I'm writing your recommendation</div>
+                {recommendationReady && (
+                  <span className={styles.wrapStatusPillDone}>Done</span>
+                )}
+                {recommendationInProgress && (
+                  <span className={styles.wrapStatusPillProgress}>In progress</span>
+                )}
+              </div>
+              {recommendationInProgress ? (
+                <p className={styles.bodyText}>
+                  I'm putting together your recommendation based on our conversation.
+                  This usually takes a couple of minutes.
+                </p>
+              ) : briefReport ? (
                 <p className={styles.bodyText}>
                   A short report highlighting your strengths. I'll have it ready in about
                   two minutes.

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import FlowShell, { FlowShellFooterButton, SignupPrimaryButton } from "./FlowShell";
+import AssessmentChatSheet from "./AssessmentChatSheet";
+import FlowShell, { FlowShellFooterButton } from "./FlowShell";
 import HighlightText from "./HighlightText";
 import PercyAvatar from "./PercyAvatar";
+import ResumeReviewTransition from "./ResumeReviewTransition";
+import WhoIsPercyButton from "./WhoIsPercyButton";
 import {
-  formatResumeFileName,
   getAssessmentDisplay,
   getTierFromRecommendation,
   parseInitialImpression,
@@ -12,25 +14,40 @@ import {
 import styles from "../style.module.less";
 
 type TStep4AssessmentProps = {
-  jobTitle: string;
-  companyName: string;
-  companyLogo?: string;
-  resumePath: string;
   jobApply?: IJobApply;
+  countryCode: string;
+  phone: string;
   onContinue: () => void;
+  onRefreshJobApply?: () => Promise<IJobApply | undefined>;
 };
 
 const MIN_REVIEW_MS = 2000;
 
+const renderChatFooter = (onClick: () => void) => (
+  <div className={styles.chatFooter}>
+    <FlowShellFooterButton onClick={onClick}>Let's chat →</FlowShellFooterButton>
+    <p className={styles.chatFooterHint}>
+      Completing this chat{" "}
+      <span className={styles.chatFooterHintAccent}>significantly boosts</span>{" "}
+      your interview chances.
+    </p>
+  </div>
+);
+
 const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
-  jobTitle,
-  companyName,
-  companyLogo,
-  resumePath,
   jobApply,
+  countryCode,
+  phone,
   onContinue,
+  onRefreshJobApply,
 }) => {
-  const [phase, setPhase] = useState<"reviewing" | "ready" | "failed">("reviewing");
+  const handleContinueToDiscovery = async () => {
+    await onRefreshJobApply?.();
+    onContinue();
+  };
+  const [phase, setPhase] = useState<"reviewing" | "ready" | "failed">(
+    "reviewing",
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [slowMessage, setSlowMessage] = useState(false);
   const reviewStartedAt = useRef(Date.now());
@@ -42,8 +59,6 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
 
   const tier = getTierFromRecommendation(jobApply?.interview_recommendation);
   const assessment = getAssessmentDisplay(impression, tier);
-  const resumeName = formatResumeFileName(resumePath);
-
   useEffect(() => {
     const slowTimer = window.setTimeout(() => setSlowMessage(true), 5000);
 
@@ -57,11 +72,7 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
         setPhase("ready");
         return true;
       }
-      if (
-        status &&
-        status !== "generating" &&
-        status !== "generate_succeed"
-      ) {
+      if (status && status !== "generating" && status !== "generate_succeed") {
         setPhase("failed");
         return true;
       }
@@ -76,7 +87,10 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
       return () => window.clearTimeout(slowTimer);
     }
 
-    const waitMs = Math.max(0, MIN_REVIEW_MS - (Date.now() - reviewStartedAt.current));
+    const waitMs = Math.max(
+      0,
+      MIN_REVIEW_MS - (Date.now() - reviewStartedAt.current),
+    );
     const readyTimer = window.setTimeout(evaluatePhase, waitMs);
 
     return () => {
@@ -87,27 +101,8 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
 
   if (phase === "reviewing") {
     return (
-      <FlowShell
-        currentStep={4}
-        jobTitle={jobTitle}
-        companyName={companyName}
-        companyLogo={companyLogo}
-      >
-        <div className={styles.transitionWrap}>
-          <div className={styles.pulseRing}>
-            <PercyAvatar size={88} />
-          </div>
-          <h2 className={styles.serifTitle}>Reviewing your resume…</h2>
-          <p className={styles.bodyText} style={{ marginTop: 10, maxWidth: 360 }}>
-            I'm reading through your background and putting together my initial
-            thoughts on this role.
-          </p>
-          {slowMessage && (
-            <p className={styles.bodyText} style={{ marginTop: 12, fontStyle: "italic" }}>
-              Almost done. I'm being thorough.
-            </p>
-          )}
-        </div>
+      <FlowShell currentStep={4} showJobHeader={false}>
+        <ResumeReviewTransition slowMessage={slowMessage} />
       </FlowShell>
     );
   }
@@ -117,43 +112,40 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
   return (
     <FlowShell
       currentStep={4}
-      jobTitle={jobTitle}
-      companyName={companyName}
-      companyLogo={companyLogo}
-      footer={
-        <FlowShellFooterButton
-          onClick={() => (isFailed ? onContinue() : setSheetOpen(true))}
-        >
-          Let's chat →
-        </FlowShellFooterButton>
-      }
+      showJobHeader={false}
+      footer={renderChatFooter(() => setSheetOpen(true))}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-        <PercyAvatar size={36} />
-        <div>
-          <div style={{ fontWeight: 600 }}>Percy</div>
-          {!isFailed && (
-            <div style={{ fontSize: 13, color: "#A89D86" }}>
-              Read {resumeName} · just now
-            </div>
-          )}
-        </div>
-      </div>
-
       {isFailed ? (
-        <>
-          <h1 className={styles.serifTitle}>Let's go straight to talking</h1>
-          <p className={styles.bodyText} style={{ marginTop: 10 }}>
-            I wasn't able to finish my review of your resume just now, but that's no
-            reason to wait. Let's have our conversation, and I'll read your
-            background as we go.
+        <div className={styles.assessErrorWrap}>
+          <PercyAvatar size={84} asset="face" />
+          <div className={styles.assessErrorWhoIs}>
+            <WhoIsPercyButton />
+          </div>
+          <h1 className={styles.assessErrorTitle}>
+            Let's go straight to talking
+          </h1>
+          <p className={styles.assessErrorBody}>
+            I wasn't able to finish my review of your resume just now, but
+            that's no reason to wait. Let's have our conversation, and I'll read
+            your background as we go.
           </p>
-        </>
+        </div>
       ) : (
         <>
+          <div className={styles.percyByline}>
+            <PercyAvatar size={42} asset="face" ring={false} />
+            <div>
+              <div className={styles.percyBylineName}>Percy</div>
+              <div className={styles.percyBylineMeta}>
+                Read your resume · just now
+              </div>
+            </div>
+          </div>
+
           <h1 className={styles.serifTitle}>Percy's Initial Impressions</h1>
           <p className={styles.bodyText} style={{ marginTop: 8 }}>
-            I've reviewed your resume. Here's my initial read on your fit for this role.
+            This is my own read as your consultant, my personal take, not the
+            employer's verdict. We'll talk it through together in our chat next.
           </p>
 
           <div
@@ -163,63 +155,79 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
             <HighlightText text={assessment.summary} />
           </div>
 
-          <div className={styles.card} style={{ marginTop: 16, padding: "8px 18px" }}>
-            <div className={styles.eyebrow} style={{ paddingTop: 10 }}>
-              What stands out
-            </div>
-            {assessment.strengths.map((item) => (
-              <div key={item} className={styles.pointRow}>
-                <div className={styles.pointDiscBlue}>✓</div>
-                <p className={styles.bodyText}>{item.replace(/^-\s*/, "")}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className={styles.card} style={{ marginTop: 16, padding: "8px 18px" }}>
-            <div className={styles.eyebrow} style={{ paddingTop: 10 }}>
-              What I'd like to explore
-            </div>
-            {assessment.discuss.map((item) => (
-              <div key={item} className={styles.pointRow}>
-                <div className={styles.pointDiscSand}>💬</div>
-                <p className={styles.bodyText}>{item.replace(/^-\s*/, "")}</p>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className={styles.card}
-            style={{ marginTop: 16, padding: 18, background: "#FBF7EE" }}
-          >
-            <p className={styles.bodyText}>{assessment.bridge}</p>
-          </div>
-        </>
-      )}
-
-      {sheetOpen && (
-        <>
-          <div className={styles.sheetBackdrop} onClick={() => setSheetOpen(false)} />
-          <div className={styles.sheetPanel}>
-            <h3 className={styles.serifTitle} style={{ fontSize: 22 }}>
-              How should we talk?
-            </h3>
-            <p className={styles.bodyText} style={{ marginTop: 8 }}>
-              Pick up where my read leaves off.
-            </p>
-            <div style={{ display: "grid", gap: 10, marginTop: 16 }}>
-              <SignupPrimaryButton
-                style={{ background: "#25D366", borderColor: "#25D366" }}
-                onClick={onContinue}
+          <div className={styles.assessSection}>
+            <div className={styles.assessSectionHead}>
+              <span
+                className={`${styles.assessSectionDot} ${styles.assessSectionDotStrong}`}
+              />
+              <span
+                className={`${styles.assessSectionLabel} ${styles.assessSectionLabelStrong}`}
               >
-                Chat on WhatsApp
-              </SignupPrimaryButton>
-              <SignupPrimaryButton onClick={onContinue}>
-                Chat here
-              </SignupPrimaryButton>
+                What stands out
+              </span>
             </div>
+            <div className={`${styles.card} ${styles.assessPointCard}`}>
+              {assessment.strengths.map((item) => (
+                <div key={item} className={styles.pointRow}>
+                  <div className={styles.pointDiscBlue}>✓</div>
+                  <p className={styles.bodyText}>{item.replace(/^-\s*/, "")}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.assessSection}>
+            <div className={styles.assessSectionHead}>
+              <span
+                className={`${styles.assessSectionDot} ${styles.assessSectionDotNeutral}`}
+              />
+              <span
+                className={`${styles.assessSectionLabel} ${styles.assessSectionLabelNeutral}`}
+              >
+                What I'd like to explore
+              </span>
+            </div>
+            <div className={`${styles.card} ${styles.assessPointCard}`}>
+              {assessment.discuss.map((item) => (
+                <div key={item} className={styles.pointRow}>
+                  <div className={styles.pointDiscSand}>💬</div>
+                  <p className={styles.bodyText}>{item.replace(/^-\s*/, "")}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.assessBridgeCard}>
+            <span className={styles.assessBridgeIcon} aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M2.5 4.2a1.7 1.7 0 011.7-1.7h7.6a1.7 1.7 0 011.7 1.7v4.6a1.7 1.7 0 01-1.7 1.7H6.2L3 13V4.2z"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5.5 6.1h5M5.5 8.2h3"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <p className={styles.assessBridgeText}>{assessment.bridge}</p>
           </div>
         </>
       )}
+
+      <AssessmentChatSheet
+        open={sheetOpen}
+        countryCode={countryCode}
+        phone={phone}
+        jobApplyId={jobApply?.id}
+        onClose={() => setSheetOpen(false)}
+        onChatHere={handleContinueToDiscovery}
+        onWhatsappReady={handleContinueToDiscovery}
+      />
     </FlowShell>
   );
 };

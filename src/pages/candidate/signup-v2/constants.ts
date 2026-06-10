@@ -24,50 +24,16 @@ export const THEME = {
 export const ASSESS_CONTENT = {
   strong: {
     read: "Strong chance",
-    summary:
-      "Your background lines up closely with what the hiring manager is looking for. With relevant experience and a steady record in your field, I think you have a {strong chance} of landing an interview for this role.",
-    strengths: [
-      "Your seniority maps directly to the level this role expects.",
-      "You've worked in the vertical this team is built around.",
-      "Your recent results put you comfortably above the benchmark for this level.",
-    ],
-    discuss: [
-      "I'd like to confirm your experience at the senior level this desk spends most of its time on.",
-      "I'd like to hear how you've opened new accounts from scratch, since this role carries a business-development target.",
-    ],
     bridge:
       "Let's have a short chat so I can verify a couple of details and put your strongest possible application in front of the hiring manager.",
   },
   middle: {
     read: "Worth exploring",
-    summary:
-      "I can see relevant experience in your background. There's {genuine potential} here, and a short conversation will help me fill a few gaps before I can form a complete picture of your fit.",
-    strengths: [
-      "Your client-facing work gives you the instincts this role relies on.",
-      "You've consistently carried and met targets in a numbers-driven seat.",
-      "Your industry exposure means you already speak the language of the candidates you'd be recruiting.",
-    ],
-    discuss: [
-      "I'd like to understand whether you've sourced or hired in any of your past roles.",
-      "Let's talk through how your current responsibilities map to sourcing, screening, and closing.",
-      "I'd like to hear how independently you've managed client relationships.",
-    ],
     bridge:
       "A conversation is the best way for me to understand experience your resume doesn't capture. Let's talk so I can build the most accurate picture of your fit.",
   },
   weak: {
     read: null,
-    summary:
-      "I've reviewed your background and I want to be upfront with you: I see {some real gaps} between your experience and what this role needs. That said, resumes rarely tell the whole story, so I'd like to talk before I form my final view.",
-    strengths: [
-      "Your industry background gives you useful context for the kinds of roles and candidates this desk works with.",
-      "Your coordination and stakeholder work shows you can manage a lot of moving parts.",
-    ],
-    discuss: [
-      "I'd like to understand any exposure you've had to core responsibilities for this role, even if it wasn't your main focus.",
-      "Let's discuss whether you've held client-facing or revenue-linked goals before.",
-      "I'd like to hear about times you've owned an outcome end to end.",
-    ],
     bridge:
       "There may be experience you have that isn't on your resume. Let's talk so I can represent you as accurately as possible.",
   },
