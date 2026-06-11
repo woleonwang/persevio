@@ -134,8 +134,11 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
         <>
           <div className={styles.percyByline}>
             <PercyAvatar size={42} asset="face" ring={false} />
-            <div>
-              <div className={styles.percyBylineName}>Percy</div>
+            <div className={styles.percyBylineCopy}>
+              <div className={styles.percyBylineNameRow}>
+                <div className={styles.percyBylineName}>Percy</div>
+                <WhoIsPercyButton />
+              </div>
               <div className={styles.percyBylineMeta}>
                 Read your resume · just now
               </div>

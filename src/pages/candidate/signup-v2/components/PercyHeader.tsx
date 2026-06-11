@@ -21,7 +21,11 @@ const PercyHeader: React.FC<TPercyHeaderProps> = ({
     <>
       <div className={styles.percyRow}>
         <div className={styles.percyColumn}>
-          <PercyAvatar mode={mode} size={avatarSize || (mode === "wave" ? 116 : 58)} />
+          <PercyAvatar
+            mode={mode}
+            size={avatarSize || (mode === "wave" ? 116 : 58)}
+            asset="face"
+          />
           <WhoIsPercyButton />
         </div>
         <div className={styles.speechBubble}>

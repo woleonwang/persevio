@@ -27,6 +27,29 @@ const ChevronLeftGlyph = () => (
   </svg>
 );
 
+const Step3LinkedinIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+    <rect width="18" height="18" rx="3" fill="#fff" />
+    <path
+      fill="#0A66C2"
+      d="M5.2 6.4H3.2V14h2zM4.2 3.1a1.16 1.16 0 100 2.32 1.16 1.16 0 000-2.32zM14.8 14h-2v-3.7c0-.93-.33-1.56-1.16-1.56-.63 0-1 .43-1.17.84-.06.15-.08.36-.08.57V14h-2V6.4h2v1.04c.27-.41.74-1 1.8-1 1.32 0 2.31.86 2.31 2.72z"
+    />
+  </svg>
+);
+
+const Step3EmailIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="#fff" strokeWidth="1.5" />
+    <path
+      d="M3 6l7 5 7-5"
+      stroke="#fff"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 type TRegistrationPanelProps = {
   candidateEmail: string;
   onVerified: () => void;
@@ -218,7 +241,13 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
         block={!isStep3 && compact}
         onClick={() => goToOAuth("linkedin")}
       >
-        <img src={Linkedin} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
+        {isStep3 ? (
+          <span className={styles.step3ProviderIcon}>
+            <Step3LinkedinIcon />
+          </span>
+        ) : (
+          <img src={Linkedin} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
+        )}
         Continue with LinkedIn
       </Button>
       <Button
@@ -227,7 +256,9 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
         block={!isStep3 && compact}
         onClick={() => goToOAuth("google")}
       >
-        <img src={Google} alt="" style={{ width: 18, height: 18, marginRight: 8 }} />
+        <span className={isStep3 ? styles.step3ProviderIcon : undefined}>
+          <img src={Google} alt="" style={{ width: 18, height: 18, marginRight: isStep3 ? 0 : 8 }} />
+        </span>
         Continue with Google
       </Button>
       <Button
@@ -238,6 +269,11 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
         style={isStep3 ? undefined : { background: "#221C12", borderColor: "#221C12" }}
         onClick={handleEmailContinue}
       >
+        {isStep3 && (
+          <span className={styles.step3ProviderIcon}>
+            <Step3EmailIcon />
+          </span>
+        )}
         Continue with email
       </Button>
     </div>
@@ -307,10 +343,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
             <div className={styles.otpSubtitle}>
               We sent a 6-digit code to
               <br />
-              <span className={styles.otpEmail}>{candidateEmail}</span>{" "}
-              <Button type="link" className={styles.otpEditLink} onClick={goBackToProviders}>
-                Edit
-              </Button>
+              <span className={styles.otpEmail}>{candidateEmail}</span>
             </div>
           </div>
 

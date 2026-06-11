@@ -4,12 +4,25 @@ import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import { useTranslation } from "react-i18next";
 
+import percyHiFace from "@/assets/percy-hi-face.png";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
 
+type TAssistantAvatar = "viona" | "percy";
+
+const ASSISTANT_AVATAR_CONFIG: Record<
+  TAssistantAvatar,
+  { src: string; name: string }
+> = {
+  viona: { src: VionaAvatar, name: "Viona" },
+  percy: { src: percyHiFace, name: "Percy" },
+};
+
 interface IProps {
   messages: TMessage[];
+  assistantAvatar?: TAssistantAvatar;
+  transparentBackground?: boolean;
   isLoading?: boolean;
   childrenFunctionsRef?: React.RefObject<{
     scrollToBottom?: (() => void) | undefined;
@@ -104,7 +117,11 @@ const ChatMessageList = (props: IProps) => {
     fontSize = 16,
     streamingMessage,
     preview = false,
+    assistantAvatar = "viona",
+    transparentBackground = false,
   } = props;
+
+  const assistant = ASSISTANT_AVATAR_CONFIG[assistantAvatar];
 
   const loadingStartedAtRef = useRef<Dayjs>();
   const loadingDotsRef = useRef(".");
@@ -261,14 +278,29 @@ const ChatMessageList = (props: IProps) => {
                         width: 40,
                         height: 40,
                       }}
-                      icon={<img src={VionaAvatar} />}
+                      icon={
+                        <img
+                          src={assistant.src}
+                          alt={assistant.name}
+                          style={
+                            assistantAvatar === "percy"
+                              ? {
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  objectPosition: "50% 16%",
+                                }
+                              : undefined
+                          }
+                        />
+                      }
                     />
                   )
                 }
                 title={
                   item.role === "ai" && (
                     <div style={{ marginTop: 8 }}>
-                      <span style={{ fontSize: 18 }}>Viona</span>
+                      <span style={{ fontSize: 18 }}>{assistant.name}</span>
                       <span className={styles.timestamp}>
                         {dayjs(item.updated_at).format(datetimeFormat)}
                       </span>
@@ -280,6 +312,8 @@ const ChatMessageList = (props: IProps) => {
                     className={classnames(styles.messageContainer, {
                       [styles.lastMessage]: index === messages.length - 1,
                       [styles.user]: item.role === "user",
+                      [styles.messageContainerBubblePadding]:
+                        transparentBackground,
                     })}
                     style={{ fontSize }}
                   >

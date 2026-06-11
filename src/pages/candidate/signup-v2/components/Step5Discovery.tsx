@@ -17,7 +17,12 @@ const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
   const isWhatsapp = jobApply?.interview_mode === "whatsapp";
 
   return (
-    <FlowShell currentStep={5} showJobHeader={false} showProgress>
+    <FlowShell
+      currentStep={5}
+      showJobHeader={false}
+      showProgress
+      wide={!isWhatsapp}
+    >
       {isWhatsapp ? (
         <div className={styles.step5WhatsappWrap}>
           <div className={styles.step5WhatsappIcon}>
@@ -39,6 +44,8 @@ const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
           <CandidateChat
             chatType="job_interview"
             jobApplyId={jobApply?.id}
+            assistantAvatar="percy"
+            transparentBackground
             onFinish={onFinishChat}
           />
         </div>

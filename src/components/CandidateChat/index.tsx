@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "antd";
+import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
@@ -21,6 +22,8 @@ type TSupportTag = {
   autoTrigger?: boolean;
 };
 
+type TAssistantAvatar = "viona" | "percy";
+
 interface IProps {
   chatType:
     | "profile"
@@ -33,6 +36,8 @@ interface IProps {
   onFinish?: () => void;
   workExperienceCompanyName?: string;
   candidate?: ICandidateSettings;
+  assistantAvatar?: TAssistantAvatar;
+  transparentBackground?: boolean;
 }
 
 const ChatTypeMappings = {
@@ -45,7 +50,14 @@ const ChatTypeMappings = {
 };
 
 const CandidateChat: React.FC<IProps> = (props) => {
-  const { chatType, onFinish, jobApplyId, workExperienceCompanyName } = props;
+  const {
+    chatType,
+    onFinish,
+    jobApplyId,
+    workExperienceCompanyName,
+    assistantAvatar = "viona",
+    transparentBackground = false,
+  } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const lastAiMessageForVoice = useMemo(() => {
@@ -258,12 +270,19 @@ Shall we start now?`,
   };
 
   return (
-    <div className={styles.container}>
-      <ChatMessageList
-        messages={messages}
-        isLoading={isLoading}
-        className={styles.listArea}
-        childrenFunctionsRef={childrenFunctionsRef}
+    <div
+      className={classnames(styles.shell, {
+        [styles.shellTransparent]: transparentBackground,
+      })}
+    >
+      <div className={styles.messagesArea}>
+        <ChatMessageList
+          messages={messages}
+          isLoading={isLoading}
+          assistantAvatar={assistantAvatar}
+          transparentBackground={transparentBackground}
+          className={styles.listArea}
+          childrenFunctionsRef={childrenFunctionsRef}
         showCustomThinkingText={() => {
           return chatType === "job_interview" &&
             messages.filter((item) => item.role === "user").length === 1
@@ -324,7 +343,8 @@ Shall we start now?`,
             </>
           );
         }}
-      />
+        />
+      </div>
 
       <div className={styles.footer}>
         <ChatInputArea

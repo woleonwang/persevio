@@ -136,7 +136,9 @@
   font-size: 15px;
   color: @ink;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 
   &:focus {
     border-color: @accent;
@@ -607,9 +609,49 @@
   color: #25d366;
 }
 
+.page:has(.step5ChatWrap) {
+  height: 100svh;
+  min-height: 100svh;
+}
+
+.main:has(.step5ChatWrap) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.contentColumn:has(.step5ChatWrap),
+.contentColumnWide:has(.step5ChatWrap) {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: 16px;
+}
+
 .step5ChatWrap {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   margin: 0 -16px;
-  min-height: calc(100vh - 120px);
+}
+
+@media (min-width: 768px) {
+  .contentColumnWide:has(.step5ChatWrap) {
+    width: 100%;
+    max-width: min(100vw - 48px, 900px);
+    min-width: 768px;
+    padding-bottom: 16px;
+  }
+
+  .step5ChatWrap {
+    margin: 0;
+    width: 100%;
+    min-width: 768px;
+  }
 }
 
 .wrapTimelineTitleRow {
@@ -1237,7 +1279,9 @@
     border-radius: 14px;
     background: @surface;
     border: 1px solid @line;
-    box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+    box-shadow:
+      0 1px 2px rgba(40, 30, 15, 0.04),
+      0 8px 24px rgba(40, 30, 15, 0.04);
     margin-bottom: 26px;
   }
 }
@@ -1322,7 +1366,9 @@
   border-radius: 50%;
   overflow: hidden;
   background: @surface;
-  box-shadow: 0 0 0 3px @surface, 0 0 0 4.5px @accentSoft,
+  box-shadow:
+    0 0 0 3px @surface,
+    0 0 0 4.5px @accentSoft,
     0 8px 18px rgba(40, 30, 15, 0.12);
 }
 
@@ -1330,7 +1376,9 @@
   border-radius: 50%;
   overflow: hidden;
   background: radial-gradient(120% 120% at 50% 0%, #eaf0fe 0%, #f3ecdd 70%);
-  box-shadow: 0 0 0 4px @surface, 0 0 0 6px @accentSoft,
+  box-shadow:
+    0 0 0 4px @surface,
+    0 0 0 6px @accentSoft,
     0 14px 30px rgba(40, 30, 15, 0.14);
 }
 
@@ -1369,7 +1417,6 @@
   font-weight: 600;
 }
 
-
 .speechBubble {
   position: relative;
   flex: 1;
@@ -1378,7 +1425,9 @@
   border-radius: 16px;
   border: 1px solid @line;
   background: @surface;
-  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  box-shadow:
+    0 1px 2px rgba(40, 30, 15, 0.04),
+    0 8px 24px rgba(40, 30, 15, 0.04);
   font-size: 14.5px;
   line-height: 1.5;
   color: @sub;
@@ -1400,7 +1449,9 @@
   border-radius: 14px;
   border: 1px solid @line;
   background: @surface;
-  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  box-shadow:
+    0 1px 2px rgba(40, 30, 15, 0.04),
+    0 8px 24px rgba(40, 30, 15, 0.04);
 }
 
 .highlightPhrase {
@@ -1493,7 +1544,6 @@
   line-height: 1.22;
   letter-spacing: -0.01em;
   color: @ink;
-  text-wrap: balance;
 }
 
 .step3WhatsappCard {
@@ -1525,7 +1575,9 @@
   border-radius: 20px;
   background: @surface;
   border: 1px solid @line;
-  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  box-shadow:
+    0 1px 2px rgba(40, 30, 15, 0.04),
+    0 8px 24px rgba(40, 30, 15, 0.04);
 }
 
 .step3SignupHeading {
@@ -1552,34 +1604,43 @@
   margin-top: 12px;
 }
 
-.step3ProviderLinkedin:global(.ant-btn) {
+.step3ProviderIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.step3ProviderLinkedin:global(.ant-btn),
+.step3ProviderGoogle:global(.ant-btn),
+.step3ProviderEmail:global(.ant-btn) {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
   height: 50px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step3ProviderLinkedin:global(.ant-btn) {
   border: none;
   border-radius: 12px;
   background: #0a66c2;
   color: #fff;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 .step3ProviderGoogle:global(.ant-btn) {
-  height: 50px;
   border: 1px solid #dadce0;
   border-radius: 12px;
   background: #fff;
   color: #1f1f1f;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 .step3ProviderEmail:global(.ant-btn) {
-  height: 50px;
   border: none;
   border-radius: 12px;
   background: @ink;
   color: #fff;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 .step3TermsRow {
@@ -1678,7 +1739,9 @@
   border-radius: 16px;
   background: @surface;
   border: 1px solid @line;
-  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  box-shadow:
+    0 1px 2px rgba(40, 30, 15, 0.04),
+    0 8px 24px rgba(40, 30, 15, 0.04);
 }
 
 .step3RoadmapCardDisc {
@@ -1988,7 +2051,9 @@
   border: 1px solid @fieldBorder;
   background: @surface;
   padding: 14px;
-  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04), 0 8px 24px rgba(40, 30, 15, 0.04);
+  box-shadow:
+    0 1px 2px rgba(40, 30, 15, 0.04),
+    0 8px 24px rgba(40, 30, 15, 0.04);
 }
 
 .uploadedFileMain {
@@ -2470,8 +2535,21 @@
   margin-bottom: 16px;
 }
 
+.percyBylineCopy {
+  min-width: 0;
+}
+
+.percyBylineNameRow {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .percyBylineName {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.2;
 }
 
 .percyBylineMeta {
@@ -2724,7 +2802,7 @@
 
   .step3HeroFocal {
     font-size: 27px;
-    max-width: 500px;
+    max-width: 530px;
   }
 
   .step3ProviderGrid {
