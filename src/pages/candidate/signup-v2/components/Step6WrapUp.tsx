@@ -433,6 +433,7 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
       companyLogo={companyLogo}
       showProgress={false}
       showJobHeader={false}
+      wrapUp
     >
       <div className={styles.wrapPage}>
         <section className={styles.wrapThankYou}>

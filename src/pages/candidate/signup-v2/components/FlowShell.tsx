@@ -41,6 +41,7 @@ type TFlowShellProps = {
   children: React.ReactNode;
   footer?: React.ReactNode;
   wide?: boolean;
+  wrapUp?: boolean;
 };
 
 const FlowShell: React.FC<TFlowShellProps> = ({
@@ -53,6 +54,7 @@ const FlowShell: React.FC<TFlowShellProps> = ({
   children,
   footer,
   wide,
+  wrapUp,
 }) => {
   const navigate = useNavigate();
 
@@ -87,7 +89,7 @@ const FlowShell: React.FC<TFlowShellProps> = ({
 
       <main className={styles.main}>
         <div
-          className={`${styles.contentColumn} ${wide ? styles.contentColumnWide : ""}`}
+          className={`${styles.contentColumn} ${wide ? styles.contentColumnWide : ""} ${wrapUp ? styles.contentColumnWrapUp : ""}`}
         >
           {showJobHeader && jobTitle && companyName && (
             <div className={styles.desktopVisible}>

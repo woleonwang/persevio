@@ -179,7 +179,7 @@ const SignupV2: React.FC = () => {
       `/api/candidate/job_applies/${applyId}/survey`,
     );
     if (code === 0 && data.survey) {
-      navigate(`/candidate/jobs/applies/${applyId}?open=1`, { replace: true });
+      navigate(`/candidate/jobs/applies/${applyId}`, { replace: true });
       return true;
     }
     return false;
