@@ -44,6 +44,7 @@ const CandidateLayout = () => {
 
   useEffect(() => {
     init();
+    resetMenuCollapse();
     const handleResize = () => {
       resetMenuCollapse();
     };

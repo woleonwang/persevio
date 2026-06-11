@@ -17,6 +17,7 @@ import {
   isBriefReportRecommendation,
   isPostInterviewRecommendationInProgress,
   isPostInterviewRecommendationReady,
+  mergeJobApplyPotentialGaps,
 } from "../utils";
 import styles from "../style.module.less";
 
@@ -96,41 +97,59 @@ const WrapIconBell = () => (
   </svg>
 );
 
-// const WrapIconFlag = () => (
-//   <svg
-//     width="11"
-//     height="11"
-//     viewBox="0 0 14 14"
-//     fill="none"
-//     aria-hidden="true"
-//   >
-//     <path
-//       d="M3 1v12M3 2.2h7.4l-1.5 2.4 1.5 2.4H3"
-//       stroke="currentColor"
-//       strokeWidth="1.4"
-//       strokeLinejoin="round"
-//       strokeLinecap="round"
-//     />
-//   </svg>
-// );
+const WrapIconFlag = () => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 14 14"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M3 1v12M3 2.2h7.4l-1.5 2.4 1.5 2.4H3"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
-// const WrapIconAlert = () => (
-//   <svg
-//     width="14"
-//     height="14"
-//     viewBox="0 0 16 16"
-//     fill="none"
-//     aria-hidden="true"
-//   >
-//     <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
-//     <path
-//       d="M8 5.2v3.6M8 11.2h.01"
-//       stroke="currentColor"
-//       strokeWidth="1.5"
-//       strokeLinecap="round"
-//     />
-//   </svg>
-// );
+const WrapIconAlert = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+    <path
+      d="M8 5.2v3.6M8 11.2h.01"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const renderDisclaimerText = (text: string, companyName: string) => {
+  if (!companyName || !text.includes(companyName)) {
+    return text;
+  }
+
+  const parts = text.split(companyName);
+  return parts.map((part, index) => (
+    <span key={`${part}-${index}`}>
+      {part}
+      {index < parts.length - 1 && (
+        <span className={styles.wrapReportDisclaimerCompany}>
+          {companyName}
+        </span>
+      )}
+    </span>
+  ));
+};
 
 const WrapIconCompass = () => (
   <svg
@@ -317,33 +336,39 @@ const ActionRow: React.FC<TActionRowProps> = ({
   );
 };
 
-// type TReportListProps = {
-//   kind: "strong" | "flag";
-//   title: string;
-//   items: readonly string[];
-// };
+type TReportListProps = {
+  kind: "strong" | "flag";
+  title: string;
+  items: IEvaluateDetailItem[];
+};
 
-// const ReportList: React.FC<TReportListProps> = ({ kind, title, items }) => (
-//   <div className={styles.wrapReportList}>
-//     <div
-//       className={`${styles.wrapReportListTitle} ${kind === "flag" ? styles.wrapReportListTitleFlag : ""}`}
-//     >
-//       {title}
-//     </div>
-//     <div className={styles.wrapReportItems}>
-//       {items.map((item) => (
-//         <div key={item} className={styles.wrapReportItem}>
-//           <span
-//             className={`${styles.wrapReportDisc} ${kind === "flag" ? styles.wrapReportDiscFlag : ""}`}
-//           >
-//             {kind === "strong" ? <WrapIconCheck /> : <WrapIconFlag />}
-//           </span>
-//           <span className={styles.wrapReportItemText}>{item}</span>
-//         </div>
-//       ))}
-//     </div>
-//   </div>
-// );
+const ReportList: React.FC<TReportListProps> = ({ kind, title, items }) => (
+  <div className={styles.wrapReportList}>
+    <div
+      className={`${styles.wrapReportListTitle} ${kind === "flag" ? styles.wrapReportListTitleFlag : ""}`}
+    >
+      {title}
+    </div>
+    <div className={styles.wrapReportItems}>
+      {items.map((item, index) => (
+        <div
+          key={`${item.title}-${index}`}
+          className={styles.wrapReportItem}
+        >
+          <span
+            className={`${styles.wrapReportDisc} ${kind === "flag" ? styles.wrapReportDiscFlag : ""}`}
+          >
+            {kind === "strong" ? <WrapIconCheck /> : <WrapIconFlag />}
+          </span>
+          <div className={styles.wrapReportItemText}>
+            <span className={styles.wrapReportItemTitle}>{item.title}</span>
+            <span>{item.details}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   firstName,
@@ -368,11 +393,13 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   const recommendationReady = isPostInterviewRecommendationReady(jobApply);
   const fromWhatsApp = jobApply?.interview_mode === "whatsapp";
   const thanksText = formatWrapText(wrap.thanks, firstName, companyName);
-  // const disclaimerText = formatWrapText(
-  //   wrap.disclaimer,
-  //   firstName,
-  //   companyName,
-  // );
+  const disclaimerText = formatWrapText(
+    wrap.disclaimer,
+    firstName,
+    companyName,
+  );
+  const reportStrengths = jobApply?.key_strengths ?? [];
+  const reportGaps = mergeJobApplyPotentialGaps(jobApply?.potential_gaps);
 
   useEffect(() => {
     if (!onRefreshJobApply || !recommendationInProgress) {
@@ -386,14 +413,17 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
     return () => window.clearInterval(pollTimer);
   }, [onRefreshJobApply, recommendationInProgress]);
 
-  // const showReportPreview =
-  //   !briefReport && !recommendationInProgress && wrap.report.lead.length > 0;
+  const showReportPreview =
+    !briefReport &&
+    (reportStrengths.length > 0 || reportGaps.length > 0);
 
   const recommendationSub = briefReport
     ? "A short report highlighting your strengths to the hiring manager based on what I discovered in our conversation. I'll have it ready in about two minutes. Nothing you need to do."
-    : recommendationInProgress
-      ? "I'm putting together your recommendation based on our conversation. This usually takes a couple of minutes."
-      : "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:";
+    : showReportPreview
+      ? "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:"
+      : recommendationInProgress
+        ? "I'm putting together your recommendation based on our conversation. This usually takes a couple of minutes."
+        : "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:";
 
   return (
     <FlowShell
@@ -444,31 +474,37 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
               statusLabel={recommendationReady ? "Done" : "In progress"}
               connector
             >
-              {/* {showReportPreview && (
+              {showReportPreview && (
                 <div className={styles.wrapReportBlock}>
                   <div className={styles.wrapReportBlockInner}>
-                    <ReportList
-                      kind="strong"
-                      title="I'll lead with your strengths"
-                      items={wrap.report.lead}
-                    />
-                    <div className={styles.wrapReportDivider} />
-                    <ReportList
-                      kind="flag"
-                      title="And I'll be honest about"
-                      items={wrap.report.flag}
-                    />
+                    {reportStrengths.length > 0 && (
+                      <ReportList
+                        kind="strong"
+                        title="I'll lead with your strengths"
+                        items={reportStrengths}
+                      />
+                    )}
+                    {reportStrengths.length > 0 && reportGaps.length > 0 && (
+                      <div className={styles.wrapReportDivider} />
+                    )}
+                    {reportGaps.length > 0 && (
+                      <ReportList
+                        kind="flag"
+                        title="And I'll be honest about"
+                        items={reportGaps}
+                      />
+                    )}
                   </div>
                   <div className={styles.wrapReportDisclaimer}>
                     <span className={styles.wrapReportDisclaimerIcon}>
                       <WrapIconAlert />
                     </span>
                     <span className={styles.wrapReportDisclaimerText}>
-                      {disclaimerText}
+                      {renderDisclaimerText(disclaimerText, companyName)}
                     </span>
                   </div>
                 </div>
-              )} */}
+              )}
             </ActionRow>
             <ActionRow
               tone="open"
@@ -556,7 +592,11 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
       </div>
 
       {showSurvey && jobApply?.id && (
-        <ExitSurvey jobApplyId={jobApply.id} onDone={onComplete} />
+        <ExitSurvey
+          jobApplyId={jobApply.id}
+          onClose={() => setShowSurvey(false)}
+          onDone={onComplete}
+        />
       )}
     </FlowShell>
   );

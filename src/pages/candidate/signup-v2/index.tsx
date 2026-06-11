@@ -352,7 +352,7 @@ const SignupV2: React.FC = () => {
 
   const finishFlow = () => {
     if (jobApply?.id) {
-      navigate(`/candidate/jobs/applies/${jobApply.id}?open=1`, {
+      navigate(`/candidate/jobs/applies/${jobApply.id}`, {
         replace: true,
       });
     } else {

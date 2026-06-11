@@ -59,6 +59,12 @@ export const isPostInterviewRecommendationInProgress = (apply?: IJobApply) => {
   );
 };
 
+export const mergeJobApplyPotentialGaps = (
+  gaps?: IJobApplyPotentialGaps,
+): IEvaluateDetailItem[] => {
+  return [...(gaps?.structural ?? []), ...(gaps?.learnable ?? [])];
+};
+
 export const isPostInterviewRecommendationReady = (apply?: IJobApply) => {
   return (
     apply?.evaluate_type === "post_interview" &&

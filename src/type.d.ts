@@ -136,6 +136,16 @@ type TPublicJob = {
 
 type TJobListStatus = "INITIAL" | "ACCEPTED" | "REJECTED";
 
+interface IEvaluateDetailItem {
+  title: string;
+  details: string;
+}
+
+interface IJobApplyPotentialGaps {
+  structural?: IEvaluateDetailItem[];
+  learnable?: IEvaluateDetailItem[];
+}
+
 interface IJobApply {
   id: number;
   candidate_id: number;
@@ -151,6 +161,8 @@ interface IJobApply {
   interview_recommendation?: string;
   evaluate_status?: "pending" | "generating" | "ready" | "failed";
   evaluate_type?: "resume_based" | "post_interview";
+  key_strengths?: IEvaluateDetailItem[];
+  potential_gaps?: IJobApplyPotentialGaps;
 }
 
 interface IInitialImpression {
