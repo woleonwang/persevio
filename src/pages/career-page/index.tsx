@@ -104,13 +104,11 @@ const CareerPageConfig = () => {
           disabled={loading}
           onFieldsChange={forceUpdate}
         >
-          <Form.Item
-            label={t("career_page.enable")}
-            name="enabled"
-            valuePropName="checked"
-          >
+          <Form.Item label={t("career_page.enable")}>
             <div className={styles.switchRow}>
-              <Switch />
+              <Form.Item name="enabled" valuePropName="checked" noStyle>
+                <Switch />
+              </Form.Item>
               <span className={styles.switchCopy}>
                 {enabled
                   ? t("career_page.switch_on")
