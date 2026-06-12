@@ -16,6 +16,7 @@ import Signup from "./pages/signup";
 import JobCreate from "./pages/job/create";
 import JobsShow from "./pages/jobs-show";
 import CompanyKnowledge from "./pages/company";
+import CareerPageConfig from "./pages/career-page";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
 import Talent from "./pages/talent";
@@ -208,6 +209,7 @@ createRoot(document.getElementById("root")!).render(
 
           {/* 公司知识库 */}
           <Route path="/app/company" element={<CompanyKnowledge />} />
+          <Route path="/app/career-page" element={<CareerPageConfig />} />
           {/* 成员与团队 */}
           <Route path="/app/member-team" element={<MemberTeam />} />
           {/* Group 管理 */}

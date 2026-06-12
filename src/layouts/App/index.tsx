@@ -19,6 +19,7 @@ import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
 import Settings from "@/assets/icons/settings";
 import OrgChat from "@/assets/icons/org-chat";
+import Link2 from "@/assets/icons/link2";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -161,7 +162,12 @@ const AppLayout = () => {
       img: <CompanyInfo />,
       requireStaffAdmin: true,
     },
-
+    {
+      title: t("menu.career_page"),
+      path: "/app/career-page",
+      img: <Link2 />,
+      requireStaffAdmin: true,
+    },
     {
       title: t("menu.talents"),
       path: "/app/talents",

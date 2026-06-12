@@ -410,6 +410,7 @@ export default {
     newRole: "Publish Job",
     jobs: "Jobs",
     company: "Company Info",
+    career_page: "Career Page",
     settings: "Settings",
     interviewer: "Interviewer",
     talents: "Candidates",
@@ -987,6 +988,30 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     bonus: "Bonus",
     total: "Total",
     confidence_level: "Confidence Level",
+  },
+
+  career_page: {
+    title: "Career Page",
+    enable: "Enable Career Page",
+    switch_on: "Career page is currently On",
+    switch_off: "Career page is currently Off",
+    domain_name: "Career Page domain name",
+    domain_hint: "3–15 chars: a–z, _ or -",
+    domain_required: "Career Page domain name is required",
+    domain_length: "Domain name must be 3-15 characters long",
+    domain_chars:
+      "Domain name can contain only letters (a-z), underscores (_), and hyphens (-)",
+    page_title: "Page title",
+    page_title_required: "Page title is required",
+    introduction: "Company introduction",
+    save: "Save",
+    saved: "Saved successfully",
+    save_failed: "Failed to save career page settings",
+    copied: "Copied",
+    copy_link: "Copy career page link",
+    preview: "Preview career page",
+    status_on: "On",
+    status_off: "Off",
   },
 
   company: {

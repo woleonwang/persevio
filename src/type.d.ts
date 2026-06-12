@@ -352,6 +352,14 @@ type TFooter = {
   img: ReactNode;
 };
 
+interface ICareerPageConfig {
+  enabled: boolean;
+  subdomain: string;
+  page_title: string;
+  introduction: string;
+  career_page_suffix: string;
+}
+
 interface IInterviewer {
   id: number;
   company_id: number;
