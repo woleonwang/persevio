@@ -1,6 +1,10 @@
+import { useState } from "react";
+import { message } from "antd";
+
 import CandidateChat from "@/components/CandidateChat";
 import Icon from "@/components/Icon";
 import WhatsappIcon from "@/assets/icons/whatsapp";
+import { Post } from "@/utils/request";
 
 import FlowShell from "./FlowShell";
 import styles from "../style.module.less";
@@ -8,13 +12,41 @@ import styles from "../style.module.less";
 type TStep5DiscoveryProps = {
   jobApply?: IJobApply;
   onFinishChat: () => void;
+  onRefreshJobApply?: () => Promise<void>;
 };
 
 const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
   jobApply,
   onFinishChat,
+  onRefreshJobApply,
 }) => {
+  const [switchingToAi, setSwitchingToAi] = useState(false);
   const isWhatsapp = jobApply?.interview_mode === "whatsapp";
+
+  const handleChatHereInstead = async () => {
+    if (!jobApply?.id) {
+      message.error("Application not found");
+      return;
+    }
+
+    setSwitchingToAi(true);
+    const { code } = await Post(
+      `/api/candidate/job_applies/${jobApply.id}/interview_mode`,
+      {
+        mode: "ai",
+        from: "web",
+      },
+    );
+
+    if (code === 0) {
+      await onRefreshJobApply?.();
+      setSwitchingToAi(false);
+      return;
+    }
+
+    setSwitchingToAi(false);
+    message.error("Failed to start chat here");
+  };
 
   return (
     <FlowShell
@@ -38,6 +70,14 @@ const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
             Once we've finished talking, <strong>refresh this page</strong> and
             I'll take you to your application summary.
           </p>
+          <button
+            type="button"
+            className={styles.step5WhatsappAltButton}
+            disabled={switchingToAi}
+            onClick={() => void handleChatHereInstead()}
+          >
+            {switchingToAi ? "Switching…" : "Chat here instead"}
+          </button>
         </div>
       ) : (
         <div className={styles.step5ChatWrap}>

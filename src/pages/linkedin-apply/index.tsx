@@ -306,7 +306,7 @@ const LinkedinApply: React.FC = () => {
                     lineHeight: 1.75,
                   }}
                 >
-                  Click "I am interested" to start your application
+                  Click "Apply" to start your application
                 </div>
               </div>
 

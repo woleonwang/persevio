@@ -19,6 +19,8 @@ type TAssessmentChatSheetProps = {
   onWhatsappReady: () => void;
 };
 
+const WHATSAPP_HANDOFF_DEEP_LINK = "whatsapp://send?phone=6588667253";
+
 const formatPhoneDisplay = (phone: string) => {
   const digits = phone.replace(/\D/g, "");
   if (digits.length <= 4) {
@@ -154,8 +156,6 @@ const AssessmentChatSheet: React.FC<TAssessmentChatSheetProps> = ({
     <>
       <div className={styles.assessChatSheetBackdrop} onClick={onClose} />
       <div className={styles.assessChatSheetPanel}>
-        <div className={styles.assessChatSheetHandle} />
-
         {phase === "channel" && (
           <>
             <div className={styles.assessChatSheetHeader}>
@@ -260,14 +260,17 @@ const AssessmentChatSheet: React.FC<TAssessmentChatSheetProps> = ({
               Check your messages. I've just sent you a note to pick up where my
               read leaves off.
             </p>
-            <div className={styles.assessWhatsappHandoffFallback}>
+            <a
+              href={WHATSAPP_HANDOFF_DEEP_LINK}
+              className={styles.assessWhatsappHandoffFallback}
+            >
               <span className={styles.assessWhatsappHandoffFallbackLabel}>
-                Didn't open?
+                Didn&apos;t open?
               </span>
               <span className={styles.assessWhatsappHandoffFallbackNumber}>
                 {fullPhoneDisplay}
               </span>
-            </div>
+            </a>
             <button
               type="button"
               className={styles.assessWhatsappHandoffContinue}

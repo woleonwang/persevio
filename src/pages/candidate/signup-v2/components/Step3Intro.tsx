@@ -264,7 +264,6 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
           <>
             <div className={styles.sheetBackdrop} onClick={() => setSheetOpen(false)} />
             <div className={`${styles.sheetPanel} ${styles.step3SheetPanel}`}>
-              <div className={styles.step3SheetHandle} />
               <RegistrationPanel
                 variant="step3"
                 compact

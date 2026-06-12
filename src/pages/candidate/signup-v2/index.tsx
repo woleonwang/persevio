@@ -418,7 +418,13 @@ const SignupV2: React.FC = () => {
   }
 
   if (pageState === "discovery") {
-    return <Step5Discovery jobApply={jobApply} onFinishChat={goToWrapUp} />;
+    return (
+      <Step5Discovery
+        jobApply={jobApply}
+        onFinishChat={goToWrapUp}
+        onRefreshJobApply={refreshJobApply}
+      />
+    );
   }
 
   return (

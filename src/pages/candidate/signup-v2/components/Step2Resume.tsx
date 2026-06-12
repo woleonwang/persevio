@@ -10,6 +10,7 @@ import PercyHeader from "./PercyHeader";
 import {
   formatFileSize,
   formatResumeFileName,
+  getResumeFileValidationError,
   splitFullName,
 } from "../utils";
 import styles from "../style.module.less";
@@ -104,6 +105,13 @@ const Step2Resume: React.FC<TStep2ResumeProps> = ({
     if (!file) {
       return;
     }
+
+    const validationError = getResumeFileValidationError(file);
+    if (validationError) {
+      message.error(validationError);
+      return;
+    }
+
     await uploadFile(file);
   };
 

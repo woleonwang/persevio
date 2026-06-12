@@ -124,6 +124,36 @@ export const formatResumeFileName = (resumePath: string) => {
   return segments[segments.length - 1] || "Resume.pdf";
 };
 
+export const RESUME_MAX_SIZE_BYTES = 10 * 1024 * 1024;
+
+const RESUME_ALLOWED_EXTENSIONS = [".pdf", ".doc", ".docx"];
+
+const RESUME_ALLOWED_MIME_TYPES = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]);
+
+export const getResumeFileValidationError = (file: File): string | null => {
+  const extension = file.name.includes(".")
+    ? file.name.slice(file.name.lastIndexOf(".")).toLowerCase()
+    : "";
+  const hasAllowedExtension = RESUME_ALLOWED_EXTENSIONS.includes(extension);
+  const hasAllowedMimeType = file.type
+    ? RESUME_ALLOWED_MIME_TYPES.has(file.type)
+    : false;
+
+  if (!hasAllowedExtension && !hasAllowedMimeType) {
+    return "Please upload a PDF, DOC, or DOCX file.";
+  }
+
+  if (file.size > RESUME_MAX_SIZE_BYTES) {
+    return "File size must be 10 MB or less.";
+  }
+
+  return null;
+};
+
 export const formatFileSize = (bytes: number) => {
   if (bytes <= 0) {
     return "";

@@ -127,6 +127,7 @@
 }
 
 .fieldInput {
+  display: block;
   width: 100%;
   height: 48px;
   padding: 0 14px;
@@ -136,6 +137,7 @@
   font-size: 15px;
   color: @ink;
   outline: none;
+  box-sizing: border-box;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -558,6 +560,14 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s;
+
+  &:hover {
+    border-color: @accent;
+  }
 }
 
 .assessWhatsappHandoffFallbackLabel {
@@ -607,6 +617,23 @@
 .step5WhatsappIcon {
   margin-bottom: 20px;
   color: #25d366;
+}
+
+.step5WhatsappAltButton {
+  margin-top: 24px;
+  border: none;
+  background: transparent;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: @accent;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .page:has(.step5ChatWrap) {
@@ -1642,6 +1669,14 @@
   border-radius: 12px;
   background: #0a66c2;
   color: #fff;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled),
+  &:active:not(:disabled) {
+    background: #0a66c2 !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
 }
 
 .step3ProviderGoogle:global(.ant-btn) {
@@ -1656,6 +1691,14 @@
   border-radius: 12px;
   background: @ink;
   color: #fff;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled),
+  &:active:not(:disabled) {
+    background: @ink !important;
+    color: #fff !important;
+    border-color: transparent !important;
+  }
 }
 
 .step3TermsRow {
@@ -1894,6 +1937,33 @@
   width: 100%;
 }
 
+.otpFormStack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+}
+
+.emailFieldWrap {
+  width: 100%;
+}
+
+.otpFieldInput {
+  height: 50px;
+  border-radius: 12px;
+}
+
+.fieldInputError {
+  border-color: @danger;
+}
+
+.emailFieldError {
+  margin-top: 8px;
+  font-size: 13px;
+  color: @danger;
+}
+
 .otpBackButton:global(.ant-btn-link) {
   display: inline-flex;
   align-items: center;
@@ -1980,12 +2050,31 @@
 }
 
 .otpVerifyButton:global(.ant-btn) {
+  width: 100% !important;
+  margin: 0 !important;
   height: 50px;
   border-radius: 12px;
   background: @ink;
   border-color: @ink;
+  color: #fff;
   font-size: 15px;
   font-weight: 600;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled),
+  &:active:not(:disabled) {
+    background: @ink !important;
+    border-color: @ink !important;
+    color: #fff !important;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: @ink !important;
+    border-color: @ink !important;
+    color: #fff !important;
+  }
 }
 
 .otpResend {

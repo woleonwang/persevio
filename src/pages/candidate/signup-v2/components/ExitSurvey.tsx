@@ -273,7 +273,6 @@ const ExitSurvey: React.FC<TExitSurveyProps> = ({ jobApplyId, onClose, onDone })
         onClick={thanks ? onDone : onClose}
       />
       <div className={styles.exitSurveyPanel}>
-        {!thanks && <div className={styles.assessChatSheetHandle} />}
         <button
           type="button"
           className={styles.assessChatSheetClose}

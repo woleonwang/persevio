@@ -9,6 +9,7 @@ import terms from "@/utils/terms";
 import { tokenStorage } from "@/utils/storage";
 
 import { SignupPrimaryButton } from "./FlowShell";
+import { isValidEmail } from "../utils";
 import styles from "../style.module.less";
 
 const OTP_RESEND_SECONDS = 60;
@@ -50,6 +51,8 @@ const Step3EmailIcon = () => (
   </svg>
 );
 
+type TRegistrationStep = "providers" | "email" | "otp";
+
 type TRegistrationPanelProps = {
   candidateEmail: string;
   onVerified: () => void;
@@ -65,24 +68,31 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
 }) => {
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [termsType, setTermsType] = useState<"terms" | "privacy">();
-  const [step, setStep] = useState<"providers" | "otp">("providers");
+  const [step, setStep] = useState<TRegistrationStep>("providers");
+  const [email, setEmail] = useState(candidateEmail);
+  const [emailError, setEmailError] = useState("");
   const [otpDigits, setOtpDigits] = useState(EMPTY_OTP_DIGITS);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendSecondsLeft, setResendSecondsLeft] = useState(0);
   const [termsPulse, setTermsPulse] = useState(false);
   const digitInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const isStep3 = variant === "step3";
   const otp = otpDigits.join("");
 
   useEffect(() => {
-    if (step !== "otp" || resendSecondsLeft <= 0) {
+    setEmail(candidateEmail);
+  }, [candidateEmail]);
+
+  useEffect(() => {
+    if (resendSecondsLeft <= 0) {
       return;
     }
     const timer = window.setInterval(() => {
       setResendSecondsLeft((seconds) => (seconds <= 1 ? 0 : seconds - 1));
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [resendSecondsLeft, step]);
+  }, [resendSecondsLeft]);
 
   useEffect(() => {
     if (step !== "otp") {
@@ -93,12 +103,28 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     }, 0);
   }, [step]);
 
+  useEffect(() => {
+    if (step !== "email") {
+      return;
+    }
+    window.setTimeout(() => {
+      emailInputRef.current?.focus();
+    }, 0);
+  }, [step]);
+
   const resetOtp = () => {
     setOtpDigits(EMPTY_OTP_DIGITS);
   };
 
   const goBackToProviders = () => {
     setStep("providers");
+    setEmailError("");
+    resetOtp();
+  };
+
+  const goBackToEmail = () => {
+    setStep("email");
+    setEmailError("");
     resetOtp();
   };
 
@@ -143,7 +169,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
   const requireTerms = () => {
     if (!isTermsAgreed) {
       setTermsPulse(true);
-      message.warning("Please agree to the terms first");
+      message.warning("Please read and agree to the agreement");
       return false;
     }
     return true;
@@ -158,8 +184,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     }&referrer=${encodeURIComponent(window.location.href)}`;
   };
 
-  const sendOtp = async (isResend = false) => {
-    const normalizedEmail = candidateEmail.trim().toLowerCase();
+  const sendOtp = async (normalizedEmail: string, isResend = false) => {
     setIsSubmitting(true);
     const { code } = await Post("/api/candidate/signup/email/send_otp", {
       email: normalizedEmail,
@@ -179,14 +204,47 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
       message.error("This email is already registered");
       return;
     }
+    if (code === 10016) {
+      setStep("otp");
+      resetOtp();
+      setResendSecondsLeft(OTP_RESEND_SECONDS);
+      return;
+    }
     message.error("Failed to send code. Please try again.");
   };
 
-  const handleEmailContinue = async () => {
+  const handleEmailContinue = () => {
     if (!requireTerms()) {
       return;
     }
-    await sendOtp();
+    if (resendSecondsLeft > 0) {
+      setStep("otp");
+      return;
+    }
+    setStep("email");
+    setEmailError("");
+  };
+
+  const handleSendOtp = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setEmailError("Please enter your email");
+      return;
+    }
+    if (!isValidEmail(normalizedEmail)) {
+      setEmailError("Please enter a valid email");
+      return;
+    }
+
+    setEmail(normalizedEmail);
+    setEmailError("");
+
+    if (resendSecondsLeft > 0) {
+      setStep("otp");
+      return;
+    }
+
+    await sendOtp(normalizedEmail);
   };
 
   const handleVerifyOtp = async () => {
@@ -196,7 +254,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     }
     setIsSubmitting(true);
     const { code } = await Post("/api/candidate/signup/email/verify_otp", {
-      email: candidateEmail.trim().toLowerCase(),
+      email: email.trim().toLowerCase(),
       otp: otp.trim(),
     });
     setIsSubmitting(false);
@@ -211,7 +269,8 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     message.error("Verification failed. Please try again.");
   };
 
-  const providerDisabled = !isTermsAgreed || isSubmitting;
+  const isOtpComplete = otp.length === OTP_LENGTH;
+  const providerDisabled = isSubmitting;
   const showInlineHeading = isStep3 && !compact && step === "providers";
   const showSheetHeading = isStep3 && compact && step === "providers";
 
@@ -286,12 +345,135 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
       }`}
       style={isStep3 ? undefined : { marginTop: 14 }}
     >
-      <Checkbox checked={isTermsAgreed} onChange={(e) => setIsTermsAgreed(e.target.checked)}>
+      <Checkbox
+        checked={isTermsAgreed}
+        onChange={(e) => {
+          setIsTermsAgreed(e.target.checked);
+          if (e.target.checked) {
+            setTermsPulse(false);
+          }
+        }}
+      >
         I agree to Persevio's{" "}
         <a onClick={(e) => { e.preventDefault(); setTermsType("terms"); }}>Terms of Service</a>{" "}
         and{" "}
         <a onClick={(e) => { e.preventDefault(); setTermsType("privacy"); }}>Privacy Policy</a>.
       </Checkbox>
+    </div>
+  );
+
+  const emailStep = (
+    <div className={styles.otpBlock} style={{ marginTop: isStep3 ? 0 : 18 }}>
+      <Button type="link" className={styles.otpBackButton} onClick={goBackToProviders}>
+        <ChevronLeftGlyph />
+        Back
+      </Button>
+
+      <div className={styles.otpHeader}>
+        <div className={styles.otpTitle}>Continue with email</div>
+        <div className={styles.otpSubtitle}>
+          We&apos;ll send a 6-digit code to verify it&apos;s you.
+        </div>
+      </div>
+
+      <div className={styles.otpFormStack}>
+        <div className={styles.emailFieldWrap}>
+          <input
+            ref={emailInputRef}
+            className={`${styles.fieldInput} ${styles.otpFieldInput} ${
+              emailError ? styles.fieldInputError : ""
+            }`}
+            type="email"
+            autoComplete="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              if (emailError) {
+                setEmailError("");
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                void handleSendOtp();
+              }
+            }}
+          />
+          {emailError && <div className={styles.emailFieldError}>{emailError}</div>}
+        </div>
+
+        <SignupPrimaryButton
+          className={styles.otpVerifyButton}
+          loading={isSubmitting}
+          onClick={() => void handleSendOtp()}
+        >
+          Send code
+        </SignupPrimaryButton>
+      </div>
+    </div>
+  );
+
+  const otpStep = (
+    <div className={styles.otpBlock} style={{ marginTop: isStep3 ? 0 : 18 }}>
+      <Button type="link" className={styles.otpBackButton} onClick={goBackToEmail}>
+        <ChevronLeftGlyph />
+        Back
+      </Button>
+
+      <div className={styles.otpHeader}>
+        <div className={styles.otpTitle}>Enter your code</div>
+        <div className={styles.otpSubtitle}>
+          We sent a 6-digit code to
+          <br />
+          <span className={styles.otpEmail}>{email}</span>
+        </div>
+      </div>
+
+      <div className={styles.otpDigits}>
+        {otpDigits.map((digit, index) => (
+          <input
+            key={index}
+            ref={(element) => {
+              digitInputRefs.current[index] = element;
+            }}
+            className={styles.otpDigitInput}
+            value={digit}
+            inputMode="numeric"
+            autoComplete={index === 0 ? "one-time-code" : "off"}
+            maxLength={1}
+            aria-label={`Digit ${index + 1}`}
+            onChange={(event) => handleDigitChange(index, event.target.value)}
+            onKeyDown={(event) => handleDigitKeyDown(index, event)}
+            onPaste={handleDigitPaste}
+            onFocus={(event) => event.target.select()}
+          />
+        ))}
+      </div>
+
+      <div className={styles.otpFormStack}>
+        <SignupPrimaryButton
+          className={styles.otpVerifyButton}
+          disabled={!isOtpComplete}
+          loading={isSubmitting}
+          onClick={handleVerifyOtp}
+        >
+          Verify & continue
+        </SignupPrimaryButton>
+      </div>
+
+      <div className={styles.otpResend}>
+        Didn&apos;t get it?{" "}
+        <Button
+          type="link"
+          className={styles.otpResendLink}
+          disabled={resendSecondsLeft > 0 || isSubmitting}
+          onClick={() => void sendOtp(email.trim().toLowerCase(), true)}
+        >
+          {resendSecondsLeft > 0
+            ? `Resend code (${resendSecondsLeft}s)`
+            : "Resend code"}
+        </Button>
+      </div>
     </div>
   );
 
@@ -331,65 +513,10 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
           {providerButtons}
           {termsRow}
         </>
+      ) : step === "email" ? (
+        emailStep
       ) : (
-        <div className={styles.otpBlock} style={{ marginTop: isStep3 ? 0 : 18 }}>
-          <Button type="link" className={styles.otpBackButton} onClick={goBackToProviders}>
-            <ChevronLeftGlyph />
-            Back
-          </Button>
-
-          <div className={styles.otpHeader}>
-            <div className={styles.otpTitle}>Enter your code</div>
-            <div className={styles.otpSubtitle}>
-              We sent a 6-digit code to
-              <br />
-              <span className={styles.otpEmail}>{candidateEmail}</span>
-            </div>
-          </div>
-
-          <div className={styles.otpDigits}>
-            {otpDigits.map((digit, index) => (
-              <input
-                key={index}
-                ref={(element) => {
-                  digitInputRefs.current[index] = element;
-                }}
-                className={styles.otpDigitInput}
-                value={digit}
-                inputMode="numeric"
-                autoComplete={index === 0 ? "one-time-code" : "off"}
-                maxLength={1}
-                aria-label={`Digit ${index + 1}`}
-                onChange={(event) => handleDigitChange(index, event.target.value)}
-                onKeyDown={(event) => handleDigitKeyDown(index, event)}
-                onPaste={handleDigitPaste}
-                onFocus={(event) => event.target.select()}
-              />
-            ))}
-          </div>
-
-          <SignupPrimaryButton
-            className={styles.otpVerifyButton}
-            loading={isSubmitting}
-            onClick={handleVerifyOtp}
-          >
-            Verify & continue
-          </SignupPrimaryButton>
-
-          <div className={styles.otpResend}>
-            Didn't get it?{" "}
-            <Button
-              type="link"
-              className={styles.otpResendLink}
-              disabled={resendSecondsLeft > 0 || isSubmitting}
-              onClick={() => sendOtp(true)}
-            >
-              {resendSecondsLeft > 0
-                ? `Resend code (${resendSecondsLeft}s)`
-                : "Resend code"}
-            </Button>
-          </div>
-        </div>
+        otpStep
       )}
     </>
   );

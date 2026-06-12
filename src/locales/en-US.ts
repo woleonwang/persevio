@@ -1238,7 +1238,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       hybrid: "Hybrid",
       remote: "Remote",
     },
-    apply_now: "I am interested",
+    apply_now: "Apply",
     hours_ago: "hours ago",
     days_ago_posted: "days ago",
     team_language: "Team Language",
