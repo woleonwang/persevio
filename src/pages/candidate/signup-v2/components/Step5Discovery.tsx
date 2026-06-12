@@ -12,7 +12,7 @@ import styles from "../style.module.less";
 type TStep5DiscoveryProps = {
   jobApply?: IJobApply;
   onFinishChat: () => void;
-  onRefreshJobApply?: () => Promise<void>;
+  onRefreshJobApply?: () => Promise<IJobApply | undefined>;
 };
 
 const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
@@ -61,12 +61,18 @@ const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
             <Icon icon={<WhatsappIcon />} style={{ fontSize: 72 }} />
           </div>
           <h1 className={styles.serifTitle}>Let's continue on WhatsApp</h1>
-          <p className={styles.bodyText} style={{ marginTop: 12, maxWidth: 420 }}>
+          <p
+            className={styles.bodyText}
+            style={{ marginTop: 12, maxWidth: 420 }}
+          >
             I've just sent you a message on WhatsApp so we can pick up where my
             read leaves off. Reply when you have a moment — I'll guide our
             discovery conversation there, at your pace.
           </p>
-          <p className={styles.bodyText} style={{ marginTop: 14, maxWidth: 420 }}>
+          <p
+            className={styles.bodyText}
+            style={{ marginTop: 14, maxWidth: 420 }}
+          >
             Once we've finished talking, <strong>refresh this page</strong> and
             I'll take you to your application summary.
           </p>
@@ -84,7 +90,6 @@ const Step5Discovery: React.FC<TStep5DiscoveryProps> = ({
           <CandidateChat
             chatType="job_interview"
             jobApplyId={jobApply?.id}
-            assistantAvatar="percy"
             transparentBackground
             onFinish={onFinishChat}
           />
