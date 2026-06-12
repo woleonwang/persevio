@@ -49,7 +49,10 @@ export const isDevelopment = (): boolean => {
 };
 
 export const isNonProductionEnv = (): boolean => {
-  return process.env.NODE_ENV !== "production";
+  return (
+    process.env.NODE_ENV !== "production" ||
+    window.origin === "https://dev.persevio.ai"
+  );
 };
 
 export const getCandidateSignupPath = (jobId: string | number): string => {
