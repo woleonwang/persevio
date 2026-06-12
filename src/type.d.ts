@@ -1122,3 +1122,5 @@ type TLogisticsFitKey =
   | "long_notice"
   | "availability"
   | "other_constraint";
+
+type TAssistantPerson = "viona" | "percy";

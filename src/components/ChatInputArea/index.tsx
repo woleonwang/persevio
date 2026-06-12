@@ -32,6 +32,7 @@ interface IProps {
   isCollapsed?: boolean;
   /** 对话里最近一条 AI 回复，用于语音转写上下文 */
   lastMessage?: string;
+  assistantPerson?: TAssistantPerson;
 }
 
 const ChatInputArea = (props: IProps) => {
@@ -41,6 +42,7 @@ const ChatInputArea = (props: IProps) => {
     disabledVoiceInput = false,
     isCollapsed = false,
     lastMessage,
+    assistantPerson = "viona",
   } = props;
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -106,7 +108,11 @@ const ChatInputArea = (props: IProps) => {
                   onChange={(e) => {
                     setInputValue(e.target.value);
                   }}
-                  placeholder={t("reply_viona")}
+                  placeholder={
+                    assistantPerson === "viona"
+                      ? t("reply_viona")
+                      : t("reply_percy")
+                  }
                   onCompositionStartCapture={() =>
                     (isCompositingRef.current = true)
                   }
@@ -257,7 +263,11 @@ const ChatInputArea = (props: IProps) => {
                 onChange={(e) => {
                   setInputValue(e.target.value);
                 }}
-                placeholder={t("reply_viona")}
+                placeholder={
+                  assistantPerson === "viona"
+                    ? t("reply_viona")
+                    : t("reply_percy")
+                }
                 onCompositionStartCapture={() =>
                   (isCompositingRef.current = true)
                 }

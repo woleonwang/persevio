@@ -582,6 +582,7 @@ export default {
     reply_viona_directly_or_edit:
       "Reply to Viona or edit Viona's message directly",
     reply_viona: "Reply to Viona",
+    reply_percy: "Reply to Percy",
 
     edit_message: "Edit Message",
     edit_message_desc:
@@ -2559,7 +2560,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       unlock_candidate_low_fit: "Unlock Candidate - Low fit",
       unlock_candidate_medium_fit: "Unlock Candidate - Medium fit",
       unlock_candidate_high_fit: "Unlock Candidate - High fit",
-      unlock_candidate_hard_to_find_high_fit: "Unlock Candidate - Hard-to-find high fit",
+      unlock_candidate_hard_to_find_high_fit:
+        "Unlock Candidate - Hard-to-find high fit",
       ai_screening: "AI Screening",
       agency_placement: "Agency Placement",
     },

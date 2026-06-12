@@ -22,8 +22,6 @@ type TSupportTag = {
   autoTrigger?: boolean;
 };
 
-type TAssistantAvatar = "viona" | "percy";
-
 interface IProps {
   chatType:
     | "profile"
@@ -36,7 +34,6 @@ interface IProps {
   onFinish?: () => void;
   workExperienceCompanyName?: string;
   candidate?: ICandidateSettings;
-  assistantAvatar?: TAssistantAvatar;
   transparentBackground?: boolean;
 }
 
@@ -55,7 +52,6 @@ const CandidateChat: React.FC<IProps> = (props) => {
     onFinish,
     jobApplyId,
     workExperienceCompanyName,
-    assistantAvatar = "viona",
     transparentBackground = false,
   } = props;
 
@@ -279,70 +275,70 @@ Shall we start now?`,
         <ChatMessageList
           messages={messages}
           isLoading={isLoading}
-          assistantAvatar={assistantAvatar}
+          assistantPerson="percy"
           transparentBackground={transparentBackground}
           className={styles.listArea}
           childrenFunctionsRef={childrenFunctionsRef}
-        showCustomThinkingText={() => {
-          return chatType === "job_interview" &&
-            messages.filter((item) => item.role === "user").length === 1
-            ? originalT("chat.viona_is_thinking_first_message")
-            : "";
-        }}
-        renderTagsContent={(item) => {
-          const canPlayAudio = !!item.payloadId && item.duration;
+          showCustomThinkingText={() => {
+            return chatType === "job_interview" &&
+              messages.filter((item) => item.role === "user").length === 1
+              ? originalT("chat.viona_is_thinking_first_message")
+              : "";
+          }}
+          renderTagsContent={(item) => {
+            const canPlayAudio = !!item.payloadId && item.duration;
 
-          const visibleTags = (item.extraTags ?? [])
-            .map((extraTag) => {
-              return supportTags.find(
-                (tag) => tag.key === extraTag.name && tag.title,
-              );
-            })
-            .filter(Boolean) as TSupportTag[];
+            const visibleTags = (item.extraTags ?? [])
+              .map((extraTag) => {
+                return supportTags.find(
+                  (tag) => tag.key === extraTag.name && tag.title,
+                );
+              })
+              .filter(Boolean) as TSupportTag[];
 
-          return (
-            <>
-              {visibleTags.length > 0 && (
-                <div
-                  style={{
-                    marginTop: 16,
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 8,
-                  }}
-                >
-                  {visibleTags.map((tag) => {
-                    return (
-                      <div style={{ marginBottom: 16 }} key={tag.key}>
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            const extraTag = (item.extraTags ?? []).find(
-                              (extraTag) => extraTag.name === tag.key,
-                            );
-                            tag.handler(extraTag);
-                          }}
-                        >
-                          {tag.title}
-                        </Button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              {canPlayAudio && (
-                <AudioPlayer
-                  duration={item.duration ?? 0}
-                  payloadUrl={`/api/candidate/chat/${
-                    ChatTypeMappings[chatType]
-                  }${jobApplyId ? `/${jobApplyId}` : ""}/messages/${item.id}`}
-                  onPlay={() => setPlayingAudioMessageId(parseInt(item.id))}
-                  onStop={() => setPlayingAudioMessageId(0)}
-                />
-              )}
-            </>
-          );
-        }}
+            return (
+              <>
+                {visibleTags.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: 16,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 8,
+                    }}
+                  >
+                    {visibleTags.map((tag) => {
+                      return (
+                        <div style={{ marginBottom: 16 }} key={tag.key}>
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              const extraTag = (item.extraTags ?? []).find(
+                                (extraTag) => extraTag.name === tag.key,
+                              );
+                              tag.handler(extraTag);
+                            }}
+                          >
+                            {tag.title}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {canPlayAudio && (
+                  <AudioPlayer
+                    duration={item.duration ?? 0}
+                    payloadUrl={`/api/candidate/chat/${
+                      ChatTypeMappings[chatType]
+                    }${jobApplyId ? `/${jobApplyId}` : ""}/messages/${item.id}`}
+                    onPlay={() => setPlayingAudioMessageId(parseInt(item.id))}
+                    onStop={() => setPlayingAudioMessageId(0)}
+                  />
+                )}
+              </>
+            );
+          }}
         />
       </div>
 
@@ -354,6 +350,7 @@ Shall we start now?`,
           isLoading={isLoading}
           disabledVoiceInput={isLoading}
           lastMessage={lastAiMessageForVoice}
+          assistantPerson="percy"
         />
       </div>
     </div>

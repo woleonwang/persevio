@@ -9,10 +9,8 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
 
-type TAssistantAvatar = "viona" | "percy";
-
 const ASSISTANT_AVATAR_CONFIG: Record<
-  TAssistantAvatar,
+  TAssistantPerson,
   { src: string; name: string }
 > = {
   viona: { src: VionaAvatar, name: "Viona" },
@@ -21,7 +19,7 @@ const ASSISTANT_AVATAR_CONFIG: Record<
 
 interface IProps {
   messages: TMessage[];
-  assistantAvatar?: TAssistantAvatar;
+  assistantPerson?: TAssistantPerson;
   transparentBackground?: boolean;
   isLoading?: boolean;
   childrenFunctionsRef?: React.RefObject<{
@@ -117,12 +115,11 @@ const ChatMessageList = (props: IProps) => {
     fontSize = 16,
     streamingMessage,
     preview = false,
-    assistantAvatar = "viona",
+    assistantPerson = "viona",
     transparentBackground = false,
   } = props;
 
-  const assistant = ASSISTANT_AVATAR_CONFIG[assistantAvatar];
-
+  const assistant = ASSISTANT_AVATAR_CONFIG[assistantPerson];
   const loadingStartedAtRef = useRef<Dayjs>();
   const loadingDotsRef = useRef(".");
   const loadingDotsNodeRef = useRef<HTMLSpanElement | null>(null);
@@ -283,7 +280,7 @@ const ChatMessageList = (props: IProps) => {
                           src={assistant.src}
                           alt={assistant.name}
                           style={
-                            assistantAvatar === "percy"
+                            assistantPerson === "percy"
                               ? {
                                   width: "100%",
                                   height: "100%",
