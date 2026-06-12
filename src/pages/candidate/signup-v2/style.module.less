@@ -2031,6 +2031,26 @@
   background: @surface;
   text-align: center;
   cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.uploadZoneDragOver {
+  border-color: @accent;
+  border-style: solid;
+  background: @accentSoft;
+  box-shadow: 0 0 0 3px fade(@accent, 18%);
+
+  .uploadZoneIconWrap {
+    background: fade(@accent, 14%);
+    transform: scale(1.05);
+  }
+
+  .uploadZoneTitle {
+    color: @accent;
+  }
 }
 
 .uploadZoneIconWrap {
@@ -2042,6 +2062,9 @@
   border-radius: 14px;
   background: @accentSoft;
   color: @accent;
+  transition:
+    background 0.15s,
+    transform 0.15s;
 }
 
 .uploadZoneIcon {
@@ -2053,6 +2076,7 @@
 .uploadZoneTitle {
   font-weight: 600;
   color: @ink;
+  transition: color 0.15s;
 }
 
 .uploadZoneHint {

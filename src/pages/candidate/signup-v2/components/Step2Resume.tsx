@@ -68,6 +68,7 @@ const Step2Resume: React.FC<TStep2ResumeProps> = ({
   );
   const [fileSize, setFileSize] = useState(0);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const uploadFile = async (file: File) => {
@@ -152,11 +153,25 @@ const Step2Resume: React.FC<TStep2ResumeProps> = ({
       <div style={{ marginTop: 24 }}>
         {!resumePath ? (
           <div
-            className={styles.uploadZone}
+            className={`${styles.uploadZone} ${isDragOver ? styles.uploadZoneDragOver : ""}`}
             onClick={() => inputRef.current?.click()}
-            onDragOver={(event) => event.preventDefault()}
+            onDragEnter={(event) => {
+              event.preventDefault();
+              setIsDragOver(true);
+            }}
+            onDragOver={(event) => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = "copy";
+            }}
+            onDragLeave={(event) => {
+              event.preventDefault();
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setIsDragOver(false);
+              }
+            }}
             onDrop={(event) => {
               event.preventDefault();
+              setIsDragOver(false);
               void handleFileChange(event.dataTransfer.files?.[0]);
             }}
           >
