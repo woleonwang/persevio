@@ -4,6 +4,7 @@ import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Get, Post } from "@/utils/request";
 import styles from "./style.module.less";
+import { copy } from "@/utils";
 
 const SUBDOMAIN_PATTERN = /^[a-z_-]+$/;
 
@@ -48,18 +49,8 @@ const CareerPageConfig = () => {
 
     const link = `https://${subdomain}.${careerPageSuffix}`;
     try {
-      await navigator.clipboard.writeText(link);
-    } catch {
-      const fallback = document.createElement("textarea");
-      fallback.value = link;
-      fallback.setAttribute("readonly", "");
-      fallback.style.position = "fixed";
-      fallback.style.opacity = "0";
-      document.body.appendChild(fallback);
-      fallback.select();
-      document.execCommand("copy");
-      fallback.remove();
-    }
+      await copy(link);
+    } catch (e) {}
     message.success(t("career_page.copied"));
   };
 
@@ -113,7 +104,11 @@ const CareerPageConfig = () => {
           disabled={loading}
           onFieldsChange={forceUpdate}
         >
-          <Form.Item label={t("career_page.enable")} name="enabled">
+          <Form.Item
+            label={t("career_page.enable")}
+            name="enabled"
+            valuePropName="checked"
+          >
             <div className={styles.switchRow}>
               <Switch />
               <span className={styles.switchCopy}>
