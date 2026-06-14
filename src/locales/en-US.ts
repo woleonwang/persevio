@@ -572,6 +572,10 @@ export default {
     jd_done: "Viona for candidates",
     draft_job_description_btn: "Draft job description",
 
+    percy_is_thinking:
+      "Percy is thinking hard! Hang tight, your answer is coming...",
+    percy_is_thinking_first_message:
+      "Percy is reviewing your resume carefully so she can tailor the conversation to your experience. This may take 1-5 minutes...",
     viona_is_thinking:
       "Viona is thinking hard! Hang tight, your answer is coming...",
     viona_is_thinking_first_message:

@@ -560,6 +560,9 @@ export default {
     jd_done: "创建给候选人介绍职位的聊天机器人",
     draft_job_description_btn: "写职位描述（JD）",
 
+    percy_is_thinking: "Percy 正在努力思考！请稍等，她马上就会回复...",
+    percy_is_thinking_first_message:
+      "Percy 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
     viona_is_thinking: "Viona正在努力思考！请稍等，她马上就会回复...",
     viona_is_thinking_first_message:
       "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",

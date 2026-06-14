@@ -282,7 +282,7 @@ Shall we start now?`,
           showCustomThinkingText={() => {
             return chatType === "job_interview" &&
               messages.filter((item) => item.role === "user").length === 1
-              ? originalT("chat.viona_is_thinking_first_message")
+              ? originalT("chat.percy_is_thinking_first_message")
               : "";
           }}
           renderTagsContent={(item) => {

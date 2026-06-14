@@ -175,7 +175,7 @@ const ChatMessageList = (props: IProps) => {
         const showThinking =
           dayjs().diff(loadingStartedAtRef.current ?? dayjs(), "second") > 1;
         const thinkingText = showThinking
-          ? `(${showCustomThinkingTextFuncRef.current?.() || t("viona_is_thinking")})`
+          ? `(${showCustomThinkingTextFuncRef.current?.() || t(assistantPerson === "percy" ? "percy_is_thinking" : "viona_is_thinking")})`
           : "";
 
         if (loadingThinkingNodeRef.current) {

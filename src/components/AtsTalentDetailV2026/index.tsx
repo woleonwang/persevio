@@ -212,7 +212,12 @@ function AtsTalentDetailV2026ViewBase() {
     const { data } = await Get(
       `/api/jobs/${jobIdStr}/talents/${talentIdStr}/messages`,
     );
-    setTalentChatMessages(data.messages ?? []);
+    setTalentChatMessages(
+      (data.messages.filter ?? []).filter(
+        (message: TMessageFromApi, index: number) =>
+          !(index === 0 && message.content.role === "assistant"),
+      ),
+    );
   };
 
   const fetchInterviewFeedbackRecords = async () => {
