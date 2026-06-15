@@ -1,5 +1,5 @@
 import { getCompanyLogo } from "@/utils";
-import { assetUrl, getLoginUrl } from "../utils";
+import { getLoginUrl } from "../utils";
 import { useNavScroll } from "../useNavScroll";
 import ArrowRight from "@/assets/icons/arrow-right";
 import Icon from "@/components/Icon";
