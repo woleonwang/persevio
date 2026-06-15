@@ -21,6 +21,16 @@
       ]
     },
     {
+      "source": "/jobs",
+      "destination": "/api/career-page",
+      "has": [
+        {
+          "type": "host",
+          "value": "*.careers-dev.persevio.ai"
+        }
+      ]
+    },
+    {
       "source": "/api/:path*",
       "destination": "http://43.98.198.100:10809/:path*",
       "has": [
@@ -69,16 +79,6 @@
         {
           "type": "host",
           "value": "*.careers.persevio.ai"
-        }
-      ]
-    },
-    {
-      "source": "/",
-      "destination": "/api/career-page",
-      "has": [
-        {
-          "type": "host",
-          "value": "*.careers-dev.persevio.ai"
         }
       ]
     },
