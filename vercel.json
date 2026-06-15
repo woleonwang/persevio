@@ -63,7 +63,7 @@
       "destination": "/api/jobs-chat?id=:id&version=:version"
     },
     {
-      "source": "/:path*",
+      "source": "/",
       "destination": "/api/career-page",
       "has": [
         {
@@ -73,7 +73,7 @@
       ]
     },
     {
-      "source": "/:path*",
+      "source": "/",
       "destination": "/api/career-page",
       "has": [
         {
