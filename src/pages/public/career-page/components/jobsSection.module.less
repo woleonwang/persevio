@@ -1,0 +1,97 @@
+@filter-height: 40px;
+@filter-padding-x: 12px;
+@filter-font-size: 14px;
+@filter-line-height: 22px;
+@filter-radius: 10px;
+@filter-border-color: #f2f2f2;
+
+.jobsControls {
+  display: grid;
+  grid-template-columns: 426px minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.searchInput,
+.filterSelect {
+  width: 100%;
+  height: @filter-height;
+}
+
+.searchInput {
+  :global(.ant-input-affix-wrapper-lg) {
+    height: @filter-height;
+    min-height: @filter-height;
+    padding: 0 @filter-padding-x;
+    border-radius: @filter-radius;
+    border-color: @filter-border-color;
+    box-shadow: none;
+    box-sizing: border-box;
+    align-items: center;
+  }
+
+  :global(.ant-input-affix-wrapper-focused) {
+    border-color: rgba(54, 130, 254, 0.5);
+    box-shadow: none;
+  }
+
+  :global(.ant-input-lg) {
+    font-size: @filter-font-size;
+    line-height: @filter-line-height;
+  }
+}
+
+.searchIcon {
+  color: #999;
+  font-size: 16px;
+}
+
+.filterSelect {
+  &:global(.ant-select-lg) {
+    height: @filter-height;
+  }
+
+  :global(.ant-select-selector) {
+    height: @filter-height !important;
+    min-height: @filter-height !important;
+    padding: 0 @filter-padding-x !important;
+    border-radius: @filter-radius !important;
+    border-color: @filter-border-color !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  :global(.ant-select-selection-search-input) {
+    height: @filter-line-height !important;
+  }
+
+  :global(.ant-select-selection-item),
+  :global(.ant-select-selection-placeholder) {
+    line-height: @filter-line-height !important;
+    font-size: @filter-font-size;
+  }
+
+  &:global(.ant-select-focused) :global(.ant-select-selector) {
+    border-color: rgba(54, 130, 254, 0.5) !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .jobsControls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .searchInput {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .jobsControls {
+    grid-template-columns: 1fr;
+  }
+}

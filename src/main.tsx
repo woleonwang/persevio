@@ -94,6 +94,8 @@ import Feedback from "./pages/job/feedback/index.tsx";
 import InterviewChat from "./pages/candidate/interview-chat";
 import OnboardPage from "./pages/onboard";
 import TermsOfService from "./pages/terms-of-service/index.tsx";
+import { CareerPageEntry } from "./pages/public/career-page";
+import { parseCareerSubdomain } from "./pages/public/career-page/utils";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -110,9 +112,12 @@ i18n.use(initReactI18next).init({
 
 dayjs.locale("zh-cn");
 
-createRoot(document.getElementById("root")!).render(
-  <AntdLocaleProvider>
-    <BrowserRouter>
+const AppRoutes = () => {
+  if (parseCareerSubdomain()) {
+    return <CareerPageEntry />;
+  }
+
+  return (
       <Routes>
         {/** 首页 */}
         <Route path="/" element={<Home />} />
@@ -341,6 +346,13 @@ createRoot(document.getElementById("root")!).render(
           element={<InterviewChat />}
         />
       </Routes>
+  );
+};
+
+createRoot(document.getElementById("root")!).render(
+  <AntdLocaleProvider>
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   </AntdLocaleProvider>,
 );

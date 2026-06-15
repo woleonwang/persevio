@@ -360,6 +360,30 @@ interface ICareerPageConfig {
   career_page_suffix: string;
 }
 
+interface IPublicCareerPageCompany {
+  name: string;
+  logo: string;
+  website: string;
+}
+
+interface IPublicCareerPage {
+  page_title: string;
+  introduction: string;
+  company: IPublicCareerPageCompany;
+  career_page_url: string;
+  career_page_suffix: string;
+  domain: string;
+}
+
+interface ICareerPageJob {
+  id: number;
+  candidate_uuid: string;
+  name: string;
+  posted_at?: string;
+  version: number;
+  basic_info: string;
+}
+
 interface IInterviewer {
   id: number;
   company_id: number;

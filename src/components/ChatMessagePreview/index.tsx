@@ -13,8 +13,16 @@ const ChatMessagePreview = (props: {
   job?: IJob;
   talent?: TTalent;
   fontSize?: number;
+  assistantPerson?: TAssistantPerson;
 }) => {
-  const { messages, job, talent, role = "staff", fontSize = 16 } = props;
+  const {
+    messages,
+    job,
+    talent,
+    role = "staff",
+    fontSize = 16,
+    assistantPerson = "viona",
+  } = props;
   const [sideDocumentDrawerVisible, setSideDocumentDrawerVisible] =
     useState(false);
   const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
@@ -125,6 +133,7 @@ const ChatMessagePreview = (props: {
         }}
         showUserTimestamp
         preview
+        assistantPerson={assistantPerson}
       />
       <Drawer
         title={t("view_document")}

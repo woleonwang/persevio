@@ -1,0 +1,43 @@
+.aboutMarkdown {
+  :global(p) {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  :global(p + p) {
+    margin-top: 12px;
+  }
+
+  :global(a) {
+    color: #fff;
+  }
+
+  :global(ul),
+  :global(ol) {
+    margin: 0;
+    padding-left: 20px;
+    color: rgba(255, 255, 255, 0.92);
+  }
+}
+
+.notFoundWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f6f6f6;
+  color: #666;
+  font-size: 16px;
+}
+
+.loadingWrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f6f6;
+  color: #999;
+}
