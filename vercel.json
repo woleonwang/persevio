@@ -31,7 +31,7 @@
       ]
     },
     {
-      "source": "/",
+      "source": "/jobs",
       "destination": "/api/career-page",
       "has": [
         {
