@@ -16,18 +16,36 @@ export type TCandidateEventName =
 
 const EVENT_TRACK_URL = "/api/public/candidate/event_tracks";
 
+type TrackCandidateEventOptions = {
+  jobId?: number;
+  extraParams?: Record<string, unknown>;
+};
+
+export type TCandidateEventData = {
+  page_path: string;
+  screen_width: number;
+  screen_height: number;
+  referrer: string;
+};
+
+export const getCandidateEventData = (): TCandidateEventData => ({
+  page_path: `${window.location.pathname}${window.location.search}`,
+  screen_width: window.screen.width,
+  screen_height: window.screen.height,
+  referrer: document.referrer || "",
+});
+
 export const trackCandidateEvent = (
   eventName: TCandidateEventName,
-  extraParams?: Record<string, unknown>,
+  options?: TrackCandidateEventOptions,
 ) => {
-  const pagePath = `${window.location.pathname}${window.location.search}`;
-
   void Post(EVENT_TRACK_URL, {
     event_name: eventName,
     session_id: getOrCreateSessionId(),
-    page_path: pagePath,
-    screen_width: window.screen.width,
-    screen_height: window.screen.height,
-    extra_params: extraParams ? JSON.stringify(extraParams) : undefined,
+    job_id: options?.jobId,
+    extra_params: options?.extraParams
+      ? JSON.stringify(options.extraParams)
+      : undefined,
+    ...getCandidateEventData(),
   });
 };

@@ -111,11 +111,18 @@ const JobsShow = () => {
   }, []);
 
   useEffect(() => {
-    if (status !== "success" || isPreview) {
+    if (status !== "success" || isPreview || !job?.id) {
       return;
     }
-    trackCandidateEvent(CandidateEventName.JobApplyPageView, { job_id: id });
-  }, [status]);
+
+    trackCandidateEvent(CandidateEventName.JobApplyPageView, {
+      jobId: job.id,
+      extraParams: {
+        traffic_source: getQuery("source_channel") || "",
+        referrer: document.referrer || "",
+      },
+    });
+  }, [status, job?.id]);
 
   useEffect(() => {
     if (!id) {
@@ -374,48 +381,53 @@ const JobsShow = () => {
                     size="large"
                     className={styles.applyButton}
                     onClick={async () => {
-                      if (candidate) {
-                        if (isTempAccount(candidate)) {
-                          // 没走完注册流程
+                      if (!candidate || isTempAccount(candidate)) {
+                        if (candidate && isTempAccount(candidate)) {
                           message.info(t("complete_registration_first"));
-                          navigate(getCandidateSignupPath(id as string), {
-                            replace: true,
-                          });
-                        } else {
-                          // 是否已经创建职位申请
-                          const { code, data } = await Get(
-                            `/api/candidate/jobs/${id}/job_apply`,
-                          );
-                          if (code === 0) {
-                            navigate(
-                              `/candidate/jobs/applies/${data.job_apply.id}?open=1`,
-                            );
-                          } else {
-                            const sourceChannelMapping = storage.get<
-                              Record<string, string>
-                            >(StorageKey.SOURCE_CHANNEL, {});
-                            const sourceChannel =
-                              sourceChannelMapping?.[id as string];
-                            const { code, data } = await Post(
-                              "/api/candidate/job_applies",
-                              {
-                                job_id: id as string,
-                                source_channel: sourceChannel,
-                              },
-                            );
-                            if (code === 0) {
-                              navigate(
-                                `/candidate/jobs/applies/${data.job_apply_id}?open=1`,
-                              );
-                            } else {
-                              message.error(t("apply_job_failed"));
-                            }
-                          }
                         }
-                      } else {
+
+                        trackCandidateEvent(CandidateEventName.EnterApplyFlow, {
+                          jobId: job.id,
+                          extraParams: {
+                            traffic_source: getQuery("source_channel") || "",
+                            referrer: document.referrer || "",
+                          },
+                        });
+
                         navigate(getCandidateSignupPath(id as string), {
                           replace: true,
                         });
+                        return;
+                      }
+
+                      // 是否已经创建职位申请
+                      const { code, data } = await Get(
+                        `/api/candidate/jobs/${id}/job_apply`,
+                      );
+                      if (code === 0) {
+                        navigate(
+                          `/candidate/jobs/applies/${data.job_apply.id}?open=1`,
+                        );
+                      } else {
+                        const sourceChannelMapping = storage.get<
+                          Record<string, string>
+                        >(StorageKey.SOURCE_CHANNEL, {});
+                        const sourceChannel =
+                          sourceChannelMapping?.[id as string];
+                        const { code, data } = await Post(
+                          "/api/candidate/job_applies",
+                          {
+                            job_id: id as string,
+                            source_channel: sourceChannel,
+                          },
+                        );
+                        if (code === 0) {
+                          navigate(
+                            `/candidate/jobs/applies/${data.job_apply_id}?open=1`,
+                          );
+                        } else {
+                          message.error(t("apply_job_failed"));
+                        }
                       }
                     }}
                   >

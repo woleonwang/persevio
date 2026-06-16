@@ -20,3 +20,8 @@ Scope notes:
 
 - This rule applies globally (`alwaysApply: true`) for frontend work.
 - Existing workspace/global rules still apply (e.g. CSS class naming requirements).
+
+# 单处使用的代码块
+
+- 只在一处触发的逻辑（例如某个 `onClick` 里「埋点 + navigate」），不要单独抽成组件内函数；直接 inline 写在调用点。
+- 同一段逻辑没有第二处调用时，宁可 handler 稍长，也不要多一个只用一次的名字（与 backend `function-granularity` 规则一致）。

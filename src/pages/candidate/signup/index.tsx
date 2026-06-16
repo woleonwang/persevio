@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 
 import {
   CandidateEventName,
+  getCandidateEventData,
   trackCandidateEvent,
   type TCandidateEventName,
 } from "@/utils/candidateEventTrack";
@@ -70,9 +71,6 @@ const Signup: React.FC = () => {
     if (!pageState) return;
 
     const eventByStep: Partial<Record<TPageState, TCandidateEventName>> = {
-      basic: CandidateEventName.EnterApplyFlow,
-      resume: CandidateEventName.PersonalInfoFilled,
-      binding: CandidateEventName.ResumeUploaded,
       whatsapp: CandidateEventName.RegistrationCompleted,
     };
     const eventName = eventByStep[pageState];
@@ -196,6 +194,7 @@ const Signup: React.FC = () => {
         ...basicInfo,
         internal,
         session_id: getOrCreateSessionId(),
+        event_data: getCandidateEventData(),
       };
 
       if (jobIdFromQuery) {
@@ -244,6 +243,7 @@ const Signup: React.FC = () => {
     const params = {
       // type: "oss",
       resume_path: resumePath,
+      event_data: getCandidateEventData(),
     };
     const { code } = await Post(`/api/candidate/resume`, params);
 

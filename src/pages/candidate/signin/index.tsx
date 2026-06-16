@@ -79,8 +79,10 @@ const CandidateSignIn: React.FC = () => {
     if (pending) return;
 
     trackCandidateEvent(CandidateEventName.LoginPageView, {
-      entry_source: jobIdStr ? "job_page" : "home_page",
-      ...(jobIdStr ? { job_id: jobIdStr } : {}),
+      extraParams: {
+        entry_source: jobIdStr ? "job_page" : "home_page",
+        ...(jobIdStr ? { job_id: jobIdStr } : {}),
+      },
     });
   }, [pending, jobIdStr]);
 

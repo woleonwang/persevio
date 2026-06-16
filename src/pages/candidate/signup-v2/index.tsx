@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 
 import {
   CandidateEventName,
+  getCandidateEventData,
   trackCandidateEvent,
   type TCandidateEventName,
 } from "@/utils/candidateEventTrack";
@@ -65,9 +66,6 @@ const SignupV2: React.FC = () => {
       return;
     }
     const eventByStep: Partial<Record<TPageState, TCandidateEventName>> = {
-      contact: CandidateEventName.EnterApplyFlow,
-      resume: CandidateEventName.PersonalInfoFilled,
-      intro: CandidateEventName.ResumeUploaded,
       assessment: CandidateEventName.RegistrationCompleted,
     };
     const eventName = eventByStep[pageState];
@@ -154,10 +152,7 @@ const SignupV2: React.FC = () => {
     if (!targetJobId) {
       return undefined;
     }
-    const path =
-      String(targetJobId).length === 36
-        ? `/api/candidate/jobs/${targetJobId}/job_apply`
-        : `/api/candidate/jobs/${targetJobId}/job_apply`;
+    const path = `/api/candidate/jobs/${targetJobId}/job_apply`;
     const { code, data } = await Get(path);
     if (code === 0) {
       const apply = data.job_apply as IJobApply;
@@ -270,6 +265,7 @@ const SignupV2: React.FC = () => {
       ...basicInfo,
       internal,
       session_id: getOrCreateSessionId(),
+      event_data: getCandidateEventData(),
     };
 
     if (jobIdFromQuery) {
@@ -318,6 +314,7 @@ const SignupV2: React.FC = () => {
     setIsSubmittingResume(true);
     const { code } = await Post(`/api/candidate/resume`, {
       resume_path: newResumePath,
+      event_data: getCandidateEventData(),
     });
     setIsSubmittingResume(false);
 
