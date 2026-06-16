@@ -5,6 +5,7 @@ import {
   message,
   Modal,
   Select,
+  Spin,
   Table,
   Tooltip,
 } from "antd";
@@ -48,6 +49,7 @@ const getRecruiterEntries = (
 
 const JobList = () => {
   const [jobs, setJobs] = useState<IJobListItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchName, setSearchName] = useState<string>();
   const [selectedOwnerId, setSelectedOwnerId] = useState<number>();
   const [selectedRecruiterId, setSelectedRecruiterId] = useState<number>();
@@ -65,10 +67,12 @@ const JobList = () => {
   }, []);
 
   const fetchJobs = async () => {
+    setLoading(true);
     const { code, data } = await Get("/api/jobs?with_candidates=1");
     if (code === 0) {
       setJobs(data.jobs);
     }
+    setLoading(false);
   };
 
   const columns: ColumnsType<IJobListItem> = [
@@ -250,13 +254,17 @@ const JobList = () => {
     [staffs],
   );
 
-  const isEmpty = jobs.length === 0;
+  const isEmpty = !loading && jobs.length === 0;
 
   return (
     <div
       className={classnames(styles.container, { [styles.isEmpty]: isEmpty })}
     >
-      {jobs.length > 0 ? (
+      {loading && jobs.length === 0 ? (
+        <div className={styles.loading}>
+          <Spin />
+        </div>
+      ) : jobs.length > 0 ? (
         <>
           <div className={styles.header}>
             <div className={styles.title}>{t("title")}</div>
@@ -307,7 +315,12 @@ const JobList = () => {
             </div>
           </div>
           <div className={styles.table}>
-            <Table dataSource={filteredJobs} columns={columns} rowKey="id" />
+            <Table
+              dataSource={filteredJobs}
+              columns={columns}
+              rowKey="id"
+              loading={loading}
+            />
           </div>
         </>
       ) : (
