@@ -324,7 +324,11 @@ const SignupV2: React.FC = () => {
     if (code === 0) {
       setResumePath(newResumePath);
       message.success("Save successful");
-      setPageState("intro");
+      if (internal) {
+        setPageState("assessment");
+      } else {
+        setPageState("intro");
+      }
       if (jobId) {
         void fetchJobApply(jobId);
       }
