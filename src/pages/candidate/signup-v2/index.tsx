@@ -2,12 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { message } from "antd";
 import { useNavigate } from "react-router";
 
-import {
-  CandidateEventName,
-  getCandidateEventData,
-  trackCandidateEvent,
-  type TCandidateEventName,
-} from "@/utils/candidateEventTrack";
+import { getCandidateEventData } from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import {
   deleteQuery,
@@ -62,19 +57,6 @@ const SignupV2: React.FC = () => {
   const pollRef = useRef<number>();
 
   useEffect(() => {
-    if (!pageState) {
-      return;
-    }
-    const eventByStep: Partial<Record<TPageState, TCandidateEventName>> = {
-      assessment: CandidateEventName.RegistrationCompleted,
-    };
-    const eventName = eventByStep[pageState];
-    if (eventName) {
-      trackCandidateEvent(eventName);
-    }
-  }, [pageState]);
-
-  useEffect(() => {
     const error = getQuery("error");
     const code = getQuery("code");
     if (error === "google_login_failed") {
@@ -86,6 +68,8 @@ const SignupV2: React.FC = () => {
         message.error("The email is already exists");
       }
     }
+    deleteQuery("error");
+    deleteQuery("code");
 
     const token = getQuery("candidate_token");
     if (token) {

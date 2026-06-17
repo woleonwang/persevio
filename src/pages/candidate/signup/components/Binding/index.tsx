@@ -11,6 +11,7 @@ import styles from "./style.module.less";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { tokenStorage } from "@/utils/storage";
 import { Post } from "@/utils/request";
+import { getCandidateEventData } from "@/utils/candidateEventTrack";
 
 type TEmailStepErrorType = "empty" | "invalid" | "alreadyExists" | "";
 type TOtpStepErrorType = "empty" | "incorrect" | "";
@@ -103,9 +104,16 @@ const Binding = (props: BindingProps) => {
       return;
     }
 
-    window.location.href = `/api/auth/${type}/login?role=candidate&candidate_token=${
-      tokenStorage.getToken("candidate") || ""
-    }&referrer=${window.location.origin + window.location.pathname}`;
+    const eventData = getCandidateEventData();
+    const params = new URLSearchParams({
+      role: "candidate",
+      candidate_token: tokenStorage.getToken("candidate") || "",
+      referrer: window.location.origin + window.location.pathname,
+      page_path: eventData.page_path,
+      screen_width: String(eventData.screen_width),
+      screen_height: String(eventData.screen_height),
+    });
+    window.location.href = `/api/auth/${type}/login?${params.toString()}`;
   };
 
   const sendOtp = async (isResend = false) => {
@@ -180,6 +188,7 @@ const Binding = (props: BindingProps) => {
     const { code } = await Post("/api/candidate/signup/email/verify_otp", {
       email: email.trim().toLowerCase(),
       otp: normalizedOtp,
+      event_data: getCandidateEventData(),
     });
     setIsSubmitting(false);
 

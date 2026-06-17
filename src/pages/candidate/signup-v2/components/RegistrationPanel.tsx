@@ -4,6 +4,7 @@ import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { Post } from "@/utils/request";
+import { getCandidateEventData } from "@/utils/candidateEventTrack";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
 import { tokenStorage } from "@/utils/storage";
@@ -179,9 +180,16 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     if (!requireTerms()) {
       return;
     }
-    window.location.href = `/api/auth/${type}/login?role=candidate&candidate_token=${
-      tokenStorage.getToken("candidate") || ""
-    }&referrer=${encodeURIComponent(window.location.href)}`;
+    const eventData = getCandidateEventData();
+    const params = new URLSearchParams({
+      role: "candidate",
+      candidate_token: tokenStorage.getToken("candidate") || "",
+      referrer: window.location.href,
+      page_path: eventData.page_path,
+      screen_width: String(eventData.screen_width),
+      screen_height: String(eventData.screen_height),
+    });
+    window.location.href = `/api/auth/${type}/login?${params.toString()}`;
   };
 
   const sendOtp = async (normalizedEmail: string, isResend = false) => {
@@ -256,6 +264,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     const { code } = await Post("/api/candidate/signup/email/verify_otp", {
       email: email.trim().toLowerCase(),
       otp: otp.trim(),
+      event_data: getCandidateEventData(),
     });
     setIsSubmitting(false);
     if (code === 0) {

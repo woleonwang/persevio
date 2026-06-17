@@ -3,12 +3,7 @@ import { Button, message, Tooltip } from "antd";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
 
-import {
-  CandidateEventName,
-  getCandidateEventData,
-  trackCandidateEvent,
-  type TCandidateEventName,
-} from "@/utils/candidateEventTrack";
+import { getCandidateEventData } from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import Step from "@/components/Step";
 import {
@@ -66,18 +61,6 @@ const Signup: React.FC = () => {
     getQuery(SIGNUP_SOURCE_QUERY) === SIGNUP_SOURCE_EMAIL;
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!pageState) return;
-
-    const eventByStep: Partial<Record<TPageState, TCandidateEventName>> = {
-      whatsapp: CandidateEventName.RegistrationCompleted,
-    };
-    const eventName = eventByStep[pageState];
-    if (eventName) {
-      trackCandidateEvent(eventName);
-    }
-  }, [pageState]);
 
   useEffect(() => {
     const error = getQuery("error");

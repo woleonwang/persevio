@@ -7,7 +7,6 @@ export const CandidateEventName = {
   EnterApplyFlow: "enter_apply_flow",
   PersonalInfoFilled: "personal_info_filled",
   ResumeUploaded: "resume_uploaded",
-  RegistrationCompleted: "registration_completed",
   LoginPageView: "login_page_view",
 } as const;
 
