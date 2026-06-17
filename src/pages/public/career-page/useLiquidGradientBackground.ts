@@ -1,7 +1,5 @@
 import { useEffect, type RefObject } from "react";
 
-import { assetUrl } from "./utils";
-
 const FRAGMENT_SHADER = `
 precision highp float;
 uniform vec2 u_res;
@@ -83,7 +81,11 @@ void main(){
 }
 `;
 
-const compileShader = (gl: WebGLRenderingContext, type: number, src: string) => {
+const compileShader = (
+  gl: WebGLRenderingContext,
+  type: number,
+  src: string,
+) => {
   const shader = gl.createShader(type);
   if (!shader) return null;
   gl.shaderSource(shader, src);
@@ -166,13 +168,20 @@ export const useLiquidGradientBackground = (
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        image,
+      );
       textureReady = true;
       container.classList.add("isReady");
       if (!paused) start();
       else renderStatic();
     };
-    image.src = assetUrl("hero-gradient-first-frame.png");
+    image.src = `/career-page/hero-gradient-first-frame.png`;
 
     const resize = () => {
       const heroRect = heroEl.getBoundingClientRect();

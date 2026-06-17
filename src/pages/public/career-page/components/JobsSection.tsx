@@ -1,7 +1,6 @@
 import { Input, Select } from "antd";
 import { useEffect, useRef, useState } from "react";
 import {
-  assetUrl,
   CAREER_PAGE_SIZE,
   formatPostedTime,
   getJobChatbotUrl,

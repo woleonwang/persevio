@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
 import { parseJSON } from "@/utils";
 
-const CAREER_HOST_PATTERN =
-  /^([a-z_-]+)\.careers(?:-dev)?\.persevio\.ai$/i;
+const CAREER_HOST_PATTERN = /^([a-z_-]+)\.careers(?:-dev)?\.persevio\.ai$/i;
 
 const ROLE_TYPE_LABELS: Record<string, string> = {
   onsite: "On-site",
@@ -34,8 +33,10 @@ export const getRoleTypeLabel = (roleType?: string): string => {
 export const getJobLocationLabel = (basicInfoRaw: string): string => {
   const basicInfo = (parseJSON(basicInfoRaw) ?? {}) as TJobBasicInfo;
   return (
-    basicInfo.location?.map((item: { city: string }) => item.city).filter(Boolean).join(", ") ??
-    ""
+    basicInfo.location
+      ?.map((item: { city: string }) => item.city)
+      .filter(Boolean)
+      .join(", ") ?? ""
   );
 };
 
@@ -54,10 +55,14 @@ export const formatPostedTime = (postedAt?: string | null): string => {
   const diffDays = now.diff(posted, "day");
 
   if (diffMinutes < 60) {
-    return diffMinutes <= 1 ? "Posted today" : `Posted ${diffMinutes} minutes ago`;
+    return diffMinutes <= 1
+      ? "Posted today"
+      : `Posted ${diffMinutes} minutes ago`;
   }
   if (diffHours < 24) {
-    return diffHours === 1 ? "Posted 1 hour ago" : `Posted ${diffHours} hours ago`;
+    return diffHours === 1
+      ? "Posted 1 hour ago"
+      : `Posted ${diffHours} hours ago`;
   }
   if (diffDays === 1) {
     return "Posted 1 day ago";
@@ -82,6 +87,3 @@ export const getLoginUrl = (domain: string): string => {
   const base = domain.startsWith("http") ? domain : `https://${domain}`;
   return `${base.replace(/\/$/, "")}/candidate/signin`;
 };
-
-export const assetUrl = (filename: string): string =>
-  `/career-page/${filename}`;
