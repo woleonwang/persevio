@@ -24,6 +24,7 @@ import Flash from "@/assets/icons/flash";
 import Icon from "@/components/Icon";
 import useStaffs from "@/hooks/useStaffs";
 import { Get, Post } from "@/utils/request";
+import Loading from "@/components/Loading";
 
 interface IJobListItem extends IJob {
   total_candidates: number;
@@ -262,7 +263,7 @@ const JobList = () => {
     >
       {loading && jobs.length === 0 ? (
         <div className={styles.loading}>
-          <Spin />
+          <Loading />
         </div>
       ) : jobs.length > 0 ? (
         <>
