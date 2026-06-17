@@ -33,12 +33,14 @@
       ]
     },
     {
-      "source": "/jobs",
+      "source": "/",
       "destination": "/api/career-page",
       "has": [
         {
           "type": "host",
-          "value": "persevio.careers-dev.persevio.ai"
+          "value": {
+            "re": "^.+\\.careers-dev\\.persevio\\.ai$"
+          }
         }
       ]
     },
