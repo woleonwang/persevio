@@ -33,18 +33,6 @@
       ]
     },
     {
-      "source": "/",
-      "destination": "/api/career-page",
-      "has": [
-        {
-          "type": "host",
-          "value": {
-            "re": "^.+\\.careers-dev\\.persevio\\.ai$"
-          }
-        }
-      ]
-    },
-    {
       "source": "/api/:path*",
       "destination": "http://47.236.233.206:10808/:path*",
       "has": [

@@ -11,6 +11,7 @@ import {
 import styles from "./jobsSection.module.less";
 import Icon from "@/components/Icon";
 import Search from "@/assets/icons/search";
+import Down from "@/assets/icons/down";
 
 type TProps = {
   jobs: ICareerPageJob[];
@@ -177,12 +178,7 @@ const JobsSection = ({ jobs, domain }: TProps) => {
             onClick={() => setVisibleCount((count) => count + CAREER_PAGE_SIZE)}
           >
             <span>Show more</span>
-            <img
-              className="showMoreArrow"
-              src={assetUrl("icon-show-more-figma@2x.png")}
-              alt=""
-              aria-hidden="true"
-            />
+            <Icon icon={<Down />} className={styles.showMoreArrow} />
           </button>
         ) : null}
       </div>
