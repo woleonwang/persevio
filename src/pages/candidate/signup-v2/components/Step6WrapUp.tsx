@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
 import {
+  CandidateEventName,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
+import {
   BEYOND_CAPABILITIES,
   BEYOND_INTRO,
   BEYOND_LEAD,
@@ -400,6 +404,20 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   );
   const reportStrengths = jobApply?.key_strengths ?? [];
   const reportGaps = mergeJobApplyPotentialGaps(jobApply?.potential_gaps);
+
+  useEffect(() => {
+    if (!jobApply?.job_id) {
+      return;
+    }
+
+    trackCandidateEvent(CandidateEventName.WrapUpViewed, {
+      jobId: jobApply.job_id,
+      extraParams: {
+        arrival_source:
+          jobApply.interview_mode === "whatsapp" ? "whatsapp" : "web",
+      },
+    });
+  }, [jobApply?.job_id, jobApply?.interview_mode]);
 
   useEffect(() => {
     if (!onRefreshJobApply || !recommendationInProgress) {
