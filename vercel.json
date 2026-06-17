@@ -26,7 +26,7 @@
       "has": [
         {
           "type": "host",
-          "value": "persevio.careers-dev.persevio.ai"
+          "re": "^.+\\.careers-dev\\.persevio\\.ai$"
         }
       ]
     },
@@ -43,6 +43,16 @@
     {
       "source": "/api/:path*",
       "destination": "http://47.236.233.206:10808/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "*.careers.persevio.ai"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "destination": "/api/career-page",
       "has": [
         {
           "type": "host",
@@ -71,16 +81,6 @@
     {
       "source": "/jobs/:id/chat/:version",
       "destination": "/api/jobs-chat?id=:id&version=:version"
-    },
-    {
-      "source": "/",
-      "destination": "/api/career-page",
-      "has": [
-        {
-          "type": "host",
-          "value": "*.careers.persevio.ai"
-        }
-      ]
     },
     {
       "source": "/:path*",
