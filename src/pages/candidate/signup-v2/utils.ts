@@ -30,10 +30,6 @@ export const getTierFromRecommendation = (
     case "absolutely":
     case "yes":
       return "strong";
-    case "yes_but":
-      return "middle";
-    case "maybe":
-      return "middle";
     case "no":
       return "weak";
     default:

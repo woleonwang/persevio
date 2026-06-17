@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  CandidateEventName,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
 import AssessmentChatSheet from "./AssessmentChatSheet";
 import FlowShell, { FlowShellFooterButton } from "./FlowShell";
 import HighlightText from "./HighlightText";
@@ -98,6 +102,25 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
       window.clearTimeout(readyTimer);
     };
   }, [impression, jobApply?.interview_strategy_status]);
+
+  useEffect(() => {
+    if (phase === "reviewing") {
+      return;
+    }
+
+    const fitTier =
+      phase === "failed"
+        ? "error"
+        : jobApply?.interview_recommendation || "unknown";
+
+    trackCandidateEvent(CandidateEventName.AssessmentViewed, {
+      jobId: jobApply?.job_id,
+      extraParams: {
+        fit_tier: fitTier,
+        assessment_generation_time_ms: Date.now() - reviewStartedAt.current,
+      },
+    });
+  }, [phase]);
 
   if (phase === "reviewing") {
     return (
