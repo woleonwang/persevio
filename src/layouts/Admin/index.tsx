@@ -4,6 +4,7 @@ import {
   BarChartOutlined,
   DollarOutlined,
   FileTextOutlined,
+  FunnelPlotOutlined,
   SettingOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
@@ -95,6 +96,12 @@ const AdminLayout = () => {
       title: t("menu.daily_breakdown"),
       path: "/admin/job-daily-stats",
       img: <BarChartOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: "Signup Funnel",
+      path: "/admin/candidate-signup-funnel",
+      img: <FunnelPlotOutlined />,
       requireAdmin: true,
     },
     {

@@ -42,6 +42,7 @@ import CandidateHelperAgentPage from "./pages/candidate/helper-agent";
 
 import AdminJobs from "./pages/admin/jobs";
 import JobDailyStats from "./pages/admin/job-daily-stats";
+import CandidateSignupFunnel from "./pages/admin/candidate-signup-funnel";
 import Talents from "./pages/talents";
 import RecommendedJobShow from "./pages/candidate/recommended-job-show";
 import WorkExperience from "./pages/candidate/work-experience";
@@ -230,6 +231,10 @@ const AppRoutes = () => {
           <Route path="/admin/jobs" element={<AdminJobs />} />
           <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
           <Route path="/admin/job-daily-stats" element={<JobDailyStats />} />
+          <Route
+            path="/admin/candidate-signup-funnel"
+            element={<CandidateSignupFunnel />}
+          />
           {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
           <Route path="/admin/talents" element={<ScopedTalents />} />
           {/* 管理员企业审核列表 */}
