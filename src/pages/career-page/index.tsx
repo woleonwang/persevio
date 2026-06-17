@@ -18,6 +18,9 @@ const CareerPageConfig = () => {
   const [saving, setSaving] = useState(false);
   const [careerPageSuffix, setCareerPageSuffix] = useState("");
   const [_, forceUpdate] = useReducer(() => ({}), {});
+  const [savedSubDomain, setSavedSubDomain] = useState("");
+
+  const savedUrl = `https://${savedSubDomain}.${careerPageSuffix}`;
 
   useEffect(() => {
     fetchCareerPage();
@@ -38,34 +41,16 @@ const CareerPageConfig = () => {
       page_title: data.page_title,
       introduction: data.introduction,
     });
+    setSavedSubDomain(data.subdomain);
   };
 
   const copyCareerPageLink = async () => {
-    const subdomain = sanitizeSubdomain(form.getFieldValue("subdomain") || "");
-    if (!subdomain) {
-      form.validateFields(["subdomain"]);
-      return;
-    }
-
-    const link = `https://${subdomain}.${careerPageSuffix}`;
-    try {
-      await copy(link);
-    } catch (e) {}
+    await copy(savedUrl);
     message.success(t("career_page.copied"));
   };
 
   const previewCareerPage = () => {
-    const subdomain = sanitizeSubdomain(form.getFieldValue("subdomain") || "");
-    form.setFieldValue("subdomain", subdomain);
-    if (!subdomain) {
-      form.validateFields(["subdomain"]);
-      return;
-    }
-    window.open(
-      `https://${subdomain}.${careerPageSuffix}`,
-      "_blank",
-      "noopener",
-    );
+    window.open(savedUrl, "_blank", "noopener");
   };
 
   const saveCareerPage = async () => {
@@ -159,11 +144,12 @@ const CareerPageConfig = () => {
                 onClick={copyCareerPageLink}
                 aria-label={t("career_page.copy_link")}
                 style={{ flex: "none" }}
+                disabled={!savedUrl}
               />
               <Button
                 icon={<ExportOutlined />}
                 onClick={previewCareerPage}
-                disabled={!enabled}
+                disabled={!savedUrl}
                 aria-label={t("career_page.preview")}
                 style={{ flex: "none" }}
               />
