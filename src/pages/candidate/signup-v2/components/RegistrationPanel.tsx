@@ -78,6 +78,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
   const [termsPulse, setTermsPulse] = useState(false);
   const digitInputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const autoSubmittedOtpRef = useRef("");
   const isStep3 = variant === "step3";
   const otp = otpDigits.join("");
 
@@ -115,6 +116,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
 
   const resetOtp = () => {
     setOtpDigits(EMPTY_OTP_DIGITS);
+    autoSubmittedOtpRef.current = "";
   };
 
   const goBackToProviders = () => {
@@ -277,6 +279,17 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     }
     message.error("Verification failed. Please try again.");
   };
+
+  useEffect(() => {
+    if (step !== "otp" || otp.length !== OTP_LENGTH || isSubmitting) {
+      return;
+    }
+    if (autoSubmittedOtpRef.current === otp) {
+      return;
+    }
+    autoSubmittedOtpRef.current = otp;
+    void handleVerifyOtp();
+  }, [otp, step, isSubmitting]);
 
   const isOtpComplete = otp.length === OTP_LENGTH;
   const providerDisabled = isSubmitting;
