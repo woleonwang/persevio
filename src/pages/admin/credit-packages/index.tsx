@@ -117,8 +117,7 @@ const CreditPackageListPage = () => {
       title: t("table.company"),
       dataIndex: "company_id",
       width: 180,
-      render: (companyId: number) =>
-        companyMap[companyId] ?? `#${companyId}`,
+      render: (companyId: number) => companyMap[companyId] ?? `#${companyId}`,
     },
     {
       title: t("table.originalAmount"),
@@ -183,16 +182,13 @@ const CreditPackageListPage = () => {
           ? values.expires_at.toISOString()
           : undefined,
       };
-      const { code, message: errMsg } = await Post(
-        "/api/admin/credit_packages",
-        payload,
-      );
+      const { code } = await Post("/api/admin/credit_packages", payload);
       if (code === 0) {
         message.success(t("messages.createSuccess"));
         setIsModalOpen(false);
         fetchData();
       } else {
-        message.error(errMsg || t("messages.createFailed"));
+        message.error(t("messages.createFailed"));
       }
     } catch {
       // validation error
@@ -222,7 +218,11 @@ const CreditPackageListPage = () => {
             }))}
           />
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={showCreateModal}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={showCreateModal}
+        >
           {t("actions.create")}
         </Button>
       </div>
@@ -256,7 +256,9 @@ const CreditPackageListPage = () => {
           <Form.Item
             name="company_id"
             label={t("form.company")}
-            rules={[{ required: true, message: t("validation.companyRequired") }]}
+            rules={[
+              { required: true, message: t("validation.companyRequired") },
+            ]}
           >
             <Select
               showSearch
