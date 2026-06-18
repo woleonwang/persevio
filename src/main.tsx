@@ -90,6 +90,7 @@ import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
 import CreditConfigListPage from "./pages/admin/credit-configs/index.tsx";
 import CreditConfigEditPage from "./pages/admin/credit-configs/edit.tsx";
+import CreditPackageListPage from "./pages/admin/credit-packages/index.tsx";
 import IconDemo from "./pages/icon-demo/index.tsx";
 import InternalSettings from "./pages/internal-settings/index.tsx";
 import Feedback from "./pages/job/feedback/index.tsx";
@@ -244,6 +245,7 @@ const AppRoutes = () => {
           <Route path="/admin/credit-configs" element={<CreditConfigListPage />} />
           <Route path="/admin/credit-configs/new" element={<CreditConfigEditPage />} />
           <Route path="/admin/credit-configs/:id/edit" element={<CreditConfigEditPage />} />
+          <Route path="/admin/credit-packages" element={<CreditPackageListPage />} />
           <Route path="/admin/candidates" element={<AdminCandidates />} />
           <Route path="/admin/emails/:id" element={<EmailDetailsPage />} />
           <Route

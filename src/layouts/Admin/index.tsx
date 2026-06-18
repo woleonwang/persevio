@@ -134,6 +134,12 @@ const AdminLayout = () => {
       img: <DollarOutlined />,
       requireAdmin: true,
     },
+    {
+      title: t("menu.credit_package"),
+      path: "/admin/credit-packages",
+      img: <DollarOutlined />,
+      requireAdmin: true,
+    },
   ].filter((item) => !item.requireSuperAdmin || isSuperAdmin);
 
   const FOOTER = [
