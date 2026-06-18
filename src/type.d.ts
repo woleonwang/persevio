@@ -264,6 +264,7 @@ interface ISettings {
   company_mode: string;
   onboarding_status?: "stage1" | "stage2" | "stage3" | "done";
   use_new_talent_details_page?: boolean;
+  available_credits?: number;
   company_recruitment_requirements?: {
     role_type?: string[];
     headcount_number?: string;

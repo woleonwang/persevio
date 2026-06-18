@@ -1,0 +1,307 @@
+.page {
+  width: 100%;
+  min-width: 700px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+
+  :global(.ant-spin-nested-loading),
+  :global(.ant-spin-container) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+  }
+}
+
+.creditsPage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  --transaction-green: #26bc5d;
+}
+
+.creditsHeader {
+  flex: none;
+  height: 62px;
+  border-bottom: 1px dashed #dedede;
+  background: #ffffff;
+}
+
+.creditsBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-bottom: 40px;
+}
+
+.creditsHeader h1 {
+  margin: 0;
+  padding: 17px 0 0 19px;
+  color: #333333;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+}
+
+.creditsCard {
+  position: relative;
+  box-sizing: border-box;
+  margin: 19px 19px 0;
+  height: 165px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    #f7fbff 0%,
+    #eef6ff 36%,
+    #ddebff 70%,
+    #eadcf7 100%
+  );
+}
+
+.creditsCard::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  background: url("../../assets/credits-card-bg@2x.png") right center / auto
+    100% no-repeat;
+  pointer-events: none;
+}
+
+.creditsCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d8e8ff 0%, #b9d7fb 100%);
+  opacity: 0;
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000000 0 0) content-box,
+    linear-gradient(#000000 0 0);
+  mask:
+    linear-gradient(#000000 0 0) content-box,
+    linear-gradient(#000000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.creditsCard:hover::after,
+.creditsCard:focus-within::after {
+  opacity: 1;
+}
+
+.creditsCopy {
+  position: relative;
+  z-index: 4;
+  padding: 19px;
+  color: #253476;
+}
+
+.creditsCopy p {
+  margin: 0 0 4px;
+  color: #9ca6ba;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.creditsCopy h2 {
+  margin: 0;
+  color: #253476;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+}
+
+.equiv {
+  display: inline-flex;
+  height: 21px;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  color: #9ca6ba;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.infoIcon {
+  display: inline-flex;
+  align-items: center;
+  color: #9ca6ba;
+  font-size: 16px;
+  cursor: default;
+}
+
+.infoIconBottom {
+  vertical-align: middle;
+}
+
+.creditLine {
+  width: min(680px, 100%);
+  height: 1px;
+  margin-top: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(217, 226, 244, 1) 0%,
+    rgba(217, 226, 244, 0) 100%
+  );
+}
+
+.creditMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 15px;
+  color: #9ca6ba;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.creditMetaWarning {
+  padding: 6px 10px;
+  margin-left: -10px;
+  border-left: 3px solid #f9a930;
+  background: rgba(249, 169, 48, 0.08);
+}
+
+.creditMeta b,
+.creditUnavailable b,
+.creditExpiring b {
+  color: #253476;
+  font-weight: 400;
+}
+
+.creditUnavailable {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.creditMetaDivider {
+  color: #9ca6ba;
+}
+
+.creditExpiring {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 21px;
+
+  &:hover,
+  &:focus {
+    color: inherit;
+  }
+}
+
+.creditExpiringContent {
+  display: flex;
+  align-items: center;
+}
+
+.creditExpiringIcon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 20px;
+  color: #9ca6ba;
+  font-size: 20px;
+}
+
+.historyHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 19px 0;
+  min-height: 32px;
+}
+
+.historyHead h2 {
+  margin: 0;
+  color: #333333;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.filters {
+  display: flex;
+  gap: 28px;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: #333333;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.tableWrap {
+  margin: 10px 19px 0;
+}
+
+.transactionType {
+  color: #666666;
+}
+
+.transactionTypeIncoming {
+  color: var(--transaction-green);
+}
+
+.pill {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.pillExpired,
+.pillUsage {
+  border: 1px solid #dedede;
+  background: #f6f6f6;
+  color: #999999;
+}
+
+.pillGift {
+  border: 1px solid rgba(38, 188, 93, 0.2);
+  background: #f2ffea;
+  color: var(--transaction-green);
+}
+
+.pillTopup {
+  border: 1px solid rgba(54, 130, 254, 0.2);
+  background: #edf2ff;
+  color: #3682fe;
+}
+
+.pillAdjustment {
+  border: 1px solid rgba(249, 169, 48, 0.2);
+  background: #fff7e8;
+  color: #eb9e2a;
+}
+
+.positive {
+  color: var(--transaction-green);
+}
