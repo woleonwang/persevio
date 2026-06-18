@@ -85,7 +85,6 @@
   padding: 1px;
   border-radius: inherit;
   background: linear-gradient(90deg, #d8e8ff 0%, #b9d7fb 100%);
-  opacity: 0;
   pointer-events: none;
   -webkit-mask:
     linear-gradient(#000000 0 0) content-box,
@@ -95,11 +94,6 @@
     linear-gradient(#000000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-}
-
-.creditsCard:hover::after,
-.creditsCard:focus-within::after {
-  opacity: 1;
 }
 
 .creditsCopy {

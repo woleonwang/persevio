@@ -198,137 +198,146 @@ const CreditsPage = () => {
           </header>
 
           <div className={styles.creditsBody}>
-          <section className={styles.creditsCard}>
-            <div className={styles.creditsCopy}>
-              <p>{t("credits.availableCredits")}</p>
-              <h2>{formatCreditsAmount(summary.available)}</h2>
-              <div className={styles.equiv}>
-                {displayRate ? (
-                  <>
-                    {t("credits.equivalentTo", {
-                      amount: formatEquivalentSgd(summary.available, displayRate),
-                    })}
-                    <Tooltip title={`$1 = ${displayRate} Credits`}>
-                      <span className={styles.infoIcon} aria-hidden="true">
-                        <InfoIcon />
-                      </span>
-                    </Tooltip>
-                  </>
-                ) : null}
-              </div>
-              <div className={styles.creditLine} />
-              <div className={styles.creditMeta}>
-                {summary.unavailable > 0 ? (
-                  <span className={styles.creditUnavailable}>
-                    {t("credits.unavailableLabel")}:{" "}
-                    <b>{formatCreditsAmount(summary.unavailable)}</b>
-                    {summary.awaitingActivation > 0 ? (
-                      <Tooltip
-                        title={t("credits.awaitingActivationTooltip", {
-                          amount: formatCreditsAmount(
-                            summary.awaitingActivation,
-                          ),
-                        })}
-                      >
-                        <span
-                          className={`${styles.infoIcon} ${styles.infoIconBottom}`}
-                          aria-hidden="true"
-                        >
+            <section className={styles.creditsCard}>
+              <div className={styles.creditsCopy}>
+                <p>{t("credits.availableCredits")}</p>
+                <h2>{formatCreditsAmount(summary.available)}</h2>
+                <div className={styles.equiv}>
+                  {displayRate ? (
+                    <>
+                      {t("credits.equivalentTo", {
+                        amount: formatEquivalentSgd(
+                          summary.available,
+                          displayRate,
+                        ),
+                      })}
+                      <Tooltip title={`$1 = ${displayRate} Credits`}>
+                        <span className={styles.infoIcon} aria-hidden="true">
                           <InfoIcon />
                         </span>
                       </Tooltip>
-                    ) : null}
-                  </span>
-                ) : null}
-                <button
-                  type="button"
-                  className={styles.creditExpiring}
-                  onClick={() => setValidCreditsOpen(true)}
-                  aria-label={t("credits.viewExpiringCredits")}
-                >
-                  {expiringSoon ? (
-                    <>
-                      <span>
-                        {t("credits.expiringLabel")}:{" "}
-                        <b>
-                          {formatCreditsAmount(summary.expiringAmount)} on{" "}
-                          {summary.nearestExpiry!.format("MMMM D, YYYY")}
-                        </b>
-                      </span>
-                      <span className={styles.creditExpiringIcon} aria-hidden="true">
-                        <Right />
-                      </span>
                     </>
-                  ) : (
-                    <>
-                      <span>{t("credits.noCreditsExpiring")}</span>
-                      <span className={styles.creditExpiringIcon} aria-hidden="true">
-                        <Right />
-                      </span>
-                    </>
-                  )}
-                </button>
+                  ) : null}
+                </div>
+                <div className={styles.creditLine} />
+                <div className={styles.creditMeta}>
+                  {summary.unavailable > 0 ? (
+                    <span className={styles.creditUnavailable}>
+                      {t("credits.unavailableLabel")}:{" "}
+                      <b>{formatCreditsAmount(summary.unavailable)}</b>
+                      {summary.awaitingActivation > 0 ? (
+                        <Tooltip
+                          title={t("credits.awaitingActivationTooltip", {
+                            amount: formatCreditsAmount(
+                              summary.awaitingActivation,
+                            ),
+                          })}
+                        >
+                          <span
+                            className={`${styles.infoIcon} ${styles.infoIconBottom}`}
+                            aria-hidden="true"
+                          >
+                            <InfoIcon />
+                          </span>
+                        </Tooltip>
+                      ) : null}
+                    </span>
+                  ) : null}
+                  <button
+                    type="button"
+                    className={styles.creditExpiring}
+                    onClick={() => setValidCreditsOpen(true)}
+                    aria-label={t("credits.viewExpiringCredits")}
+                  >
+                    {expiringSoon ? (
+                      <>
+                        <span>
+                          {t("credits.expiringLabel")}:{" "}
+                          <b>
+                            {formatCreditsAmount(summary.expiringAmount)} on{" "}
+                            {summary.nearestExpiry!.format("MMMM D, YYYY")}
+                          </b>
+                        </span>
+                        <span
+                          className={styles.creditExpiringIcon}
+                          aria-hidden="true"
+                        >
+                          <Right />
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t("credits.noCreditsExpiring")}</span>
+                        <span
+                          className={styles.creditExpiringIcon}
+                          aria-hidden="true"
+                        >
+                          <Right />
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <section className={styles.historyHead}>
-            <h2>{t("credits.transactionHistory")}</h2>
-            <div className={styles.filters}>
-              <label className={styles.filterLabel}>
-                {t("credits.filterType")}
-                <Select
-                  value={typeFilter}
-                  style={{ width: 130 }}
-                  options={TYPE_OPTIONS.map((option) => ({
-                    value: option,
-                    label:
-                      option === "all"
-                        ? t("credits.filterAll")
-                        : option === "increase"
-                          ? t("credits.typeIncoming")
-                          : t("credits.typeOutgoing"),
-                  }))}
-                  onChange={(value) => setTypeFilter(value)}
-                />
-              </label>
-              <label className={styles.filterLabel}>
-                {t("credits.filterSource")}
-                <Select
-                  value={sourceFilter}
-                  style={{ width: 130 }}
-                  options={SOURCE_OPTIONS.map((option) => ({
-                    value: option,
-                    label:
-                      option === "all"
-                        ? t("credits.filterAll")
-                        : formatSourceLabel(option),
-                  }))}
-                  onChange={(value) => setSourceFilter(value)}
-                />
-              </label>
-            </div>
-          </section>
+            <section className={styles.historyHead}>
+              <h2>{t("credits.transactionHistory")}</h2>
+              <div className={styles.filters}>
+                <label className={styles.filterLabel}>
+                  {t("credits.filterType")}
+                  <Select
+                    value={typeFilter}
+                    style={{ width: 130 }}
+                    options={TYPE_OPTIONS.map((option) => ({
+                      value: option,
+                      label:
+                        option === "all"
+                          ? t("credits.filterAll")
+                          : option === "increase"
+                            ? t("credits.typeIncoming")
+                            : t("credits.typeOutgoing"),
+                    }))}
+                    onChange={(value) => setTypeFilter(value)}
+                  />
+                </label>
+                <label className={styles.filterLabel}>
+                  {t("credits.filterSource")}
+                  <Select
+                    value={sourceFilter}
+                    style={{ width: 130 }}
+                    options={SOURCE_OPTIONS.map((option) => ({
+                      value: option,
+                      label:
+                        option === "all"
+                          ? t("credits.filterAll")
+                          : formatSourceLabel(option),
+                    }))}
+                    onChange={(value) => setSourceFilter(value)}
+                  />
+                </label>
+              </div>
+            </section>
 
-          <div className={styles.tableWrap}>
-            <Table<ICreditTransaction>
-              className={styles.transactionTable}
-              rowKey={(record) => record.uuid || String(record.id)}
-              columns={transactionColumns}
-              dataSource={filteredTransactions}
-              pagination={{
-                current: transactionPage,
-                pageSize: TRANSACTION_PAGE_SIZE,
-                total: filteredTransactions.length,
-                showSizeChanger: false,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} of ${total} items`,
-                onChange: (page) => setTransactionPage(page),
-              }}
-              locale={{ emptyText: t("credits.noData") }}
-              scroll={{ x: 700 }}
-            />
-          </div>
+            <div className={styles.tableWrap}>
+              <Table<ICreditTransaction>
+                className={styles.transactionTable}
+                rowKey={(record) => record.uuid || String(record.id)}
+                columns={transactionColumns}
+                dataSource={filteredTransactions}
+                pagination={{
+                  current: transactionPage,
+                  pageSize: TRANSACTION_PAGE_SIZE,
+                  total: filteredTransactions.length,
+                  showSizeChanger: false,
+                  showTotal: (total, range) =>
+                    `${range[0]}-${range[1]} of ${total} items`,
+                  onChange: (page) => setTransactionPage(page),
+                }}
+                locale={{ emptyText: t("credits.noData") }}
+                scroll={{ x: 700 }}
+              />
+            </div>
           </div>
         </section>
       </Spin>
