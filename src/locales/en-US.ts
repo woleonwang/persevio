@@ -1027,6 +1027,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     unavailableLabel: "Unavailable",
     awaitingActivationTooltip: "{{amount}} awaiting activation",
     expiringLabel: "Expiring",
+    viewExpiringCredits: "View expiring credits",
     noCreditsExpiring: "No credits expiring",
     transactionHistory: "Transaction History",
     filterType: "Type",

@@ -1,6 +1,6 @@
 import InfoIcon from "@/assets/icons/info";
 import Right from "@/assets/icons/right";
-import { Button, Select, Spin, Table, Tooltip } from "antd";
+import { Select, Spin, Table, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo, useState } from "react";
@@ -217,71 +217,57 @@ const CreditsPage = () => {
                 ) : null}
               </div>
               <div className={styles.creditLine} />
-              <div
-                className={`${styles.creditMeta} ${expiringSoon ? styles.creditMetaWarning : ""}`}
-              >
+              <div className={styles.creditMeta}>
                 {summary.unavailable > 0 ? (
-                  <>
-                    <span className={styles.creditUnavailable}>
-                      {t("credits.unavailableLabel")}:{" "}
-                      <b>{formatCreditsAmount(summary.unavailable)}</b>
-                      {summary.awaitingActivation > 0 ? (
-                        <Tooltip
-                          title={t("credits.awaitingActivationTooltip", {
-                            amount: formatCreditsAmount(
-                              summary.awaitingActivation,
-                            ),
-                          })}
+                  <span className={styles.creditUnavailable}>
+                    {t("credits.unavailableLabel")}:{" "}
+                    <b>{formatCreditsAmount(summary.unavailable)}</b>
+                    {summary.awaitingActivation > 0 ? (
+                      <Tooltip
+                        title={t("credits.awaitingActivationTooltip", {
+                          amount: formatCreditsAmount(
+                            summary.awaitingActivation,
+                          ),
+                        })}
+                      >
+                        <span
+                          className={`${styles.infoIcon} ${styles.infoIconBottom}`}
+                          aria-hidden="true"
                         >
-                          <span
-                            className={`${styles.infoIcon} ${styles.infoIconBottom}`}
-                            aria-hidden="true"
-                          >
-                            <InfoIcon />
-                          </span>
-                        </Tooltip>
-                      ) : null}
-                    </span>
-                    {expiringSoon ? (
-                      <span className={styles.creditMetaDivider}>·</span>
+                          <InfoIcon />
+                        </span>
+                      </Tooltip>
                     ) : null}
-                  </>
+                  </span>
                 ) : null}
-                <Button
-                  type="link"
+                <button
+                  type="button"
                   className={styles.creditExpiring}
                   onClick={() => setValidCreditsOpen(true)}
+                  aria-label={t("credits.viewExpiringCredits")}
                 >
-                  <div className={styles.creditExpiringContent}>
-                    {expiringSoon ? (
-                      <>
-                        <span>
-                          {t("credits.expiringLabel")}:{" "}
-                          <b>
-                            {formatCreditsAmount(summary.expiringAmount)} on{" "}
-                            {summary.nearestExpiry!.format("MMMM D, YYYY")}
-                          </b>
-                        </span>
-                        <span
-                          className={styles.creditExpiringIcon}
-                          aria-hidden="true"
-                        >
-                          <Right />
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{t("credits.noCreditsExpiring")}</span>
-                        <span
-                          className={styles.creditExpiringIcon}
-                          aria-hidden="true"
-                        >
-                          <Right />
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </Button>
+                  {expiringSoon ? (
+                    <>
+                      <span>
+                        {t("credits.expiringLabel")}:{" "}
+                        <b>
+                          {formatCreditsAmount(summary.expiringAmount)} on{" "}
+                          {summary.nearestExpiry!.format("MMMM D, YYYY")}
+                        </b>
+                      </span>
+                      <span className={styles.creditExpiringIcon} aria-hidden="true">
+                        <Right />
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{t("credits.noCreditsExpiring")}</span>
+                      <span className={styles.creditExpiringIcon} aria-hidden="true">
+                        <Right />
+                      </span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </section>

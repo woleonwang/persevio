@@ -160,19 +160,11 @@
 
 .creditMeta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
+  gap: 20px;
   margin-top: 15px;
   color: #9ca6ba;
   font-size: 14px;
   line-height: 21px;
-}
-
-.creditMetaWarning {
-  padding: 6px 10px;
-  margin-left: -10px;
-  border-left: 3px solid #f9a930;
-  background: rgba(249, 169, 48, 0.08);
 }
 
 .creditMeta b,
@@ -184,42 +176,42 @@
 
 .creditUnavailable {
   display: inline-flex;
+  height: 21px;
   align-items: center;
   gap: 4px;
-}
-
-.creditMetaDivider {
-  color: #9ca6ba;
+  line-height: 21px;
 }
 
 .creditExpiring {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  height: auto;
+  height: 21px;
   padding: 0;
   border: 0;
+  background: transparent;
   color: inherit;
   font: inherit;
   line-height: 21px;
+  cursor: pointer;
+  overflow: visible;
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     color: inherit;
   }
-}
-
-.creditExpiringContent {
-  display: flex;
-  align-items: center;
 }
 
 .creditExpiringIcon {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   flex: 0 0 20px;
   color: #9ca6ba;
   font-size: 20px;
+  opacity: 0.72;
 }
 
 .historyHead {
