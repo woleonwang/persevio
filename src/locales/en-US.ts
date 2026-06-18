@@ -1899,6 +1899,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       field_placeholder: "Please fill in",
       field_email_invalid: "Please enter a valid email",
       field_phone_invalid: "Please enter country code and phone number",
+      field_phone_format_invalid: "Please enter a valid phone number",
       field_source_channel: "Source Channel",
       field_source_channel_placeholder: "Select a source channel",
       field_source_channel_required: "Please select a source channel",

@@ -221,7 +221,6 @@ function AtsTalentDetailV2026ViewBase() {
           ),
       ),
     );
-    debugger;
   };
 
   const fetchInterviewFeedbackRecords = async () => {

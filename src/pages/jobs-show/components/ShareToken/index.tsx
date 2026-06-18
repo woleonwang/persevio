@@ -3,7 +3,7 @@ import { Get, Post } from "@/utils/request";
 import { useEffect, useReducer, useState } from "react";
 import styles from "./style.module.less";
 import { Button, Form, Input, message, Spin } from "antd";
-import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import { copy } from "@/utils";
 import { useTranslation } from "react-i18next";
 import referrerGift from "@/assets/referrer-gift.png";
@@ -251,7 +251,7 @@ const ShareToken: React.FC<IProps> = (props) => {
               <Input placeholder="Please fill in" />
             </Form.Item>
             <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
-              <WhatsappContactNumber />
+              <PhoneWithCountryCode />
             </Form.Item>
             <Form.Item label="Email" name="email" rules={[{ required: true }]}>
               <Input placeholder="Please fill in" />

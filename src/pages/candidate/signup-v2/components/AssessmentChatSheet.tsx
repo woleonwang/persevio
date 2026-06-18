@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { message } from "antd";
 
-import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import { Post } from "@/utils/request";
 
-import { isValidPhone } from "../utils";
+import { isValidPhone } from "@/utils/phone";
 import styles from "../style.module.less";
 
-type TAssessmentChatSheetPhase = "channel" | "whatsappConfirm" | "whatsappHandoff";
+type TAssessmentChatSheetPhase =
+  | "channel"
+  | "whatsappConfirm"
+  | "whatsappHandoff";
 
 type TAssessmentChatSheetProps = {
   open: boolean;
@@ -33,7 +36,13 @@ const WhatsappIcon: React.FC<{ color?: string; size?: number }> = ({
   color = "#1FA855",
   size = 18,
 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M8 1.6a6.4 6.4 0 00-5.5 9.65L1.7 14.4l3.25-.84A6.4 6.4 0 108 1.6z"
       fill={color}
@@ -49,7 +58,13 @@ const ArrowIcon: React.FC<{ color?: string; size?: number }> = ({
   color = "currentColor",
   size = 16,
 }) => (
-  <svg width={size} height={size} viewBox="0 0 17 17" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 17 17"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M3 8.5h10M9 4.5l4 4-4 4"
       stroke={color}
@@ -104,7 +119,8 @@ const AssessmentChatSheet: React.FC<TAssessmentChatSheetProps> = ({
   }
 
   const whatsappPhoneDisplay = formatPhoneDisplay(whatsappPhone);
-  const fullPhoneDisplay = `${whatsappCountryCode} ${whatsappPhoneDisplay}`.trim();
+  const fullPhoneDisplay =
+    `${whatsappCountryCode} ${whatsappPhoneDisplay}`.trim();
 
   const handleSelectAi = async () => {
     if (!jobApplyId) {
@@ -132,7 +148,7 @@ const AssessmentChatSheet: React.FC<TAssessmentChatSheetProps> = ({
   };
 
   const handleStartChatting = async () => {
-    if (!whatsappCountryCode || !isValidPhone(whatsappPhone)) {
+    if (!isValidPhone(whatsappCountryCode, whatsappPhone)) {
       message.error("Please enter a valid WhatsApp number");
       return;
     }
@@ -216,15 +232,15 @@ const AssessmentChatSheet: React.FC<TAssessmentChatSheetProps> = ({
               </h3>
             </div>
             <p className={styles.assessWhatsappConfirmBody}>
-              I'll message you here to pick up our conversation. Is this the right
-              number to reach you on WhatsApp?
+              I'll message you here to pick up our conversation. Is this the
+              right number to reach you on WhatsApp?
             </p>
 
             <div className={styles.assessWhatsappFieldLabel}>
               Your WhatsApp number
             </div>
             <div className={styles.phoneFieldWrap}>
-              <WhatsappContactNumber
+              <PhoneWithCountryCode
                 value={{
                   countryCode: whatsappCountryCode,
                   phoneNumber: whatsappPhone,

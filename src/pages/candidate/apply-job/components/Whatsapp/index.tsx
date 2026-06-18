@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import { getQuery } from "@/utils";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import { isValidPhone } from "@/utils/phone";
 
 interface IProps {
   whatsappContactNumber: {
@@ -103,8 +104,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
                   callback(t("required_message"));
                   return;
                 }
-                const reg = /^[0-9]+$/;
-                if (!(value.phoneNumber as string).match(reg)) {
+                if (!isValidPhone(value.countryCode, value.phoneNumber)) {
                   callback(t("pattern_message"));
                   return;
                 }

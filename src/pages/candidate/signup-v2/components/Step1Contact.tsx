@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import { Input } from "antd";
 
-import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 
 import FlowShell, { FlowShellFooterButton } from "./FlowShell";
 import PercyHeader from "./PercyHeader";
-import { isValidEmail, isValidPhone, joinFullName, splitFullName } from "../utils";
+import { isValidPhone } from "@/utils/phone";
+
+import { isValidEmail, joinFullName, splitFullName } from "../utils";
 import styles from "../style.module.less";
 
 export type TContactFormValues = {
@@ -35,7 +37,9 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
   const [firstName, setFirstName] = useState(initial.firstName);
   const [lastName, setLastName] = useState(initial.lastName);
   const [email, setEmail] = useState(initValues.email || "");
-  const [countryCode, setCountryCode] = useState(initValues.country_code || "+65");
+  const [countryCode, setCountryCode] = useState(
+    initValues.country_code || "+65",
+  );
   const [phone, setPhone] = useState(initValues.phone || "");
   const [phoneError, setPhoneError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -45,13 +49,13 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
       firstName.trim() &&
       lastName.trim() &&
       isValidEmail(email) &&
-      isValidPhone(phone)
+      isValidPhone(countryCode, phone)
     );
-  }, [email, firstName, lastName, phone]);
+  }, [countryCode, email, firstName, lastName, phone]);
 
   const handleSubmit = async () => {
     if (!canSubmit || submitting) {
-      if (!isValidPhone(phone)) {
+      if (!isValidPhone(countryCode, phone)) {
         setPhoneError("That number looks incomplete. Please check it.");
       }
       return;
@@ -87,8 +91,8 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
         mode="wave"
         speech={
           <>
-            Hi, I'm <span className={styles.percyName}>Percy</span>,
-            your AI talent consultant for this role. I'll guide you through every step
+            Hi, I'm <span className={styles.percyName}>Percy</span>, your AI
+            talent consultant for this role. I'll guide you through every step
             of your application from here.
           </>
         }
@@ -143,12 +147,15 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
             Phone <span className={styles.requiredMark}>*</span>
           </div>
           <div className={styles.phoneFieldWrap}>
-            <WhatsappContactNumber
+            <PhoneWithCountryCode
               value={{ countryCode, phoneNumber: phone }}
               onChange={(value) => {
                 setCountryCode(value.countryCode ?? "");
                 setPhone(value.phoneNumber ?? "");
-                if (phoneError && isValidPhone(value.phoneNumber ?? "")) {
+                if (
+                  phoneError &&
+                  isValidPhone(value.countryCode ?? "", value.phoneNumber ?? "")
+                ) {
                   setPhoneError("");
                 }
               }}

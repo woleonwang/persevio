@@ -166,8 +166,3 @@ export const formatFileSize = (bytes: number) => {
 export const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 };
-
-export const isValidPhone = (phone: string) => {
-  const digits = phone.replace(/\D/g, "");
-  return digits.length >= 8;
-};

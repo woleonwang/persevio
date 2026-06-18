@@ -3,6 +3,7 @@ import { Form, Input, Button, message } from "antd";
 import { Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import { isValidPhone } from "@/utils/phone";
 
 import styles from "../../style.module.less";
 interface BasicInfoFormValues {
@@ -69,8 +70,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
                 callback(originalT("please_enter"));
                 return;
               }
-              const reg = /^[0-9]+$/;
-              if (!(value.phoneNumber as string).match(reg)) {
+              if (!isValidPhone(value.countryCode, value.phoneNumber)) {
                 callback(originalT("phone_not_valid"));
                 return;
               }

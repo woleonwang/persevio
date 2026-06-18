@@ -33,6 +33,7 @@
     "html2pdf.js": "^0.13.0",
     "i18next": "^24.2.3",
     "less": "^4.2.1",
+    "libphonenumber-js": "^1.13.6",
     "livekit-client": "^2.15.11",
     "mobx": "^6.13.7",
     "mobx-react-lite": "^4.1.0",

@@ -2,7 +2,7 @@ import { Button, Form, Input } from "antd";
 import React, { useEffect, useReducer } from "react";
 
 import styles from "./style.module.less";
-import WhatsappContactNumber from "@/components/PhoneWithCountryCode";
+import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 
 interface IProps {
   initValues: IPreRegisterInfo;
@@ -57,7 +57,7 @@ const BasicInfo: React.FC<IProps> = (props) => {
             <Input placeholder="Please fill in" />
           </Form.Item>
           <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
-            <WhatsappContactNumber />
+            <PhoneWithCountryCode />
           </Form.Item>
           <Form.Item label="Email" name="email" rules={[{ required: true }]}>
             <Input placeholder="Please fill in" />

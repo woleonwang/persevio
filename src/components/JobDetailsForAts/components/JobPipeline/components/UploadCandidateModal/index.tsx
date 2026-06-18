@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 
 import Icon from "@/components/Icon";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import { isValidPhone } from "@/utils/phone";
 import UploadIcon from "@/assets/icons/upload";
 import { Post, PostFormData } from "@/utils/request";
 import useJobSourceChannelOptions from "@/hooks/useJobSourceChannelOptions";
@@ -270,13 +271,19 @@ const UploadCandidateModal = ({ open, jobId, onCancel, onSuccess }: IProps) => {
               {
                 validator: (_, value) => {
                   if (
-                    value?.countryCode &&
-                    value?.phoneNumber &&
-                    String(value.phoneNumber).trim()
+                    !value?.countryCode ||
+                    !String(value.phoneNumber ?? "").trim()
                   ) {
-                    return Promise.resolve();
+                    return Promise.reject(
+                      new Error(tKey("field_phone_invalid")),
+                    );
                   }
-                  return Promise.reject(new Error(tKey("field_phone_invalid")));
+                  if (!isValidPhone(value.countryCode, value.phoneNumber)) {
+                    return Promise.reject(
+                      new Error(tKey("field_phone_format_invalid")),
+                    );
+                  }
+                  return Promise.resolve();
                 },
               },
             ]}

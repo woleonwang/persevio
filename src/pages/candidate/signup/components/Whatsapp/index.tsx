@@ -3,6 +3,7 @@ import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./style.module.less";
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import { isValidPhone } from "@/utils/phone";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
@@ -128,8 +129,7 @@ const Whatsapp: React.FC<IProps> = (props: IProps) => {
                   callback(t("required_message"));
                   return;
                 }
-                const reg = /^[0-9]+$/;
-                if (!(value.phoneNumber as string).match(reg)) {
+                if (!isValidPhone(value.countryCode, value.phoneNumber)) {
                   callback(t("pattern_message"));
                   return;
                 }
