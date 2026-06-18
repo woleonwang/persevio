@@ -4,30 +4,54 @@ import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
 import { useMemo, useState } from "react";
-import { Badge, Input, Tooltip } from "antd";
+import { Badge, Dropdown, Input, Menu, Tooltip } from "antd";
+import type { MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import Delete from "@/assets/icons/delete";
 import { observer } from "mobx-react-lite";
 import Collapse from "@/assets/icons/collapse";
 import Search from "@/assets/icons/search";
 import StaffSwitch from "@/assets/icons/staff-switch";
+import Settings from "@/assets/icons/settings";
+import CreditsIcon from "@/assets/icons/credits";
+import LogoutIcon from "@/assets/icons/logout";
+import Switch from "@/assets/icons/switch";
+import Down from "@/assets/icons/down";
+import Right from "@/assets/icons/right";
+import globalStore from "@/store/global";
+import { tokenStorage } from "@/utils/storage";
+import CompanyList from "@/assets/icons/company-list";
 
 interface ISidebarProps {
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
   menu: TMenu[];
-  footer: TFooter[];
+  footer?: TFooter[];
+  showProfileMenu?: boolean;
   searchKeyword?: string;
   setSearchKeyword?: (searchKeyword: string) => void;
   onSwitch?: () => void;
   switchTooltip?: string;
 }
 
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+  }
+  return name.trim().slice(0, 2).toUpperCase();
+}
+
+function formatCreditsAmount(value: number) {
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
 const Sidebar = (props: ISidebarProps) => {
   const {
     collapsed,
     menu,
-    footer,
+    footer = [],
+    showProfileMenu = false,
     searchKeyword,
     setCollapsed,
     setSearchKeyword,
@@ -38,10 +62,12 @@ const Sidebar = (props: ISidebarProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [showJobs, setShowJobs] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { staffRole, staffName, availableCredits, isAdmin } = globalStore;
 
   const jobsMenu = useMemo(
     () => menu.find((item) => item.key === "jobs"),
@@ -53,6 +79,103 @@ const Sidebar = (props: ISidebarProps) => {
   );
 
   const isCollapsedView = collapsed && !hovered;
+
+  const profileSelectedKeys = useMemo(() => {
+    if (currentPath.startsWith("/app/company")) {
+      return ["company-info"];
+    }
+    if (currentPath.startsWith("/app/settings")) {
+      return ["settings"];
+    }
+    if (currentPath.startsWith("/app/credits")) {
+      return ["credits"];
+    }
+    return [];
+  }, [currentPath]);
+
+  const profileMenuItems = useMemo(() => {
+    const items: MenuProps["items"] = [
+      {
+        key: "company-info",
+        icon: <Icon icon={<CompanyList />} />,
+        label: t("menu.company"),
+      },
+      {
+        key: "settings",
+        icon: <Icon icon={<Settings />} />,
+        label: t("menu.settings"),
+      },
+    ];
+
+    if (staffRole === "admin" && isAdmin) {
+      items.push(
+        { type: "divider" },
+        {
+          key: "credits",
+          className: styles.creditsMenuItem,
+          icon: <Icon icon={<CreditsIcon />} />,
+          label: (
+            <div className={styles.creditsMenuLabel}>
+              <span>{t("menu.credits")}</span>
+              {availableCredits !== null ? (
+                <>
+                  <span className={styles.creditsMenuValue}>
+                    {formatCreditsAmount(availableCredits)}
+                  </span>
+                  <Icon
+                    icon={<Right />}
+                    className={styles.creditsMenuChevron}
+                  />
+                </>
+              ) : null}
+            </div>
+          ),
+        },
+        { type: "divider" },
+      );
+    }
+
+    if (onSwitch) {
+      items.push({
+        key: "switch-accounts",
+        icon: <Icon icon={<Switch />} />,
+        label: switchTooltip ?? t("menu.switch_to_admin_mode"),
+      });
+    }
+
+    items.push({
+      key: "logout",
+      icon: <Icon icon={<LogoutIcon />} />,
+      label: t("settings.logout"),
+    });
+
+    return items;
+  }, [availableCredits, onSwitch, staffRole, switchTooltip, t]);
+
+  const handleProfileMenuClick: MenuProps["onClick"] = ({ key }) => {
+    setProfileOpen(false);
+    if (key === "company-info") {
+      navigate("/app/company");
+      return;
+    }
+    if (key === "settings") {
+      navigate("/app/settings");
+      return;
+    }
+    if (key === "credits") {
+      navigate("/app/credits");
+      return;
+    }
+    if (key === "switch-accounts") {
+      onSwitch?.();
+      return;
+    }
+    if (key === "logout") {
+      tokenStorage.removeToken("staff");
+      tokenStorage.removeToken("admin");
+      navigate("/signin");
+    }
+  };
 
   const renderSubMenuItems = (children: NonNullable<TMenu["children"]>) =>
     children.map((child) => (
@@ -179,7 +302,7 @@ const Sidebar = (props: ISidebarProps) => {
     );
   };
 
-  const renderFooter = () => (
+  const renderLegacyFooter = () => (
     <div className={styles.footerSection}>
       {footer.map((item) => {
         const isActive = currentPath.startsWith(item.path);
@@ -210,6 +333,48 @@ const Sidebar = (props: ISidebarProps) => {
       })}
     </div>
   );
+
+  const renderProfileFooter = () => {
+    const initials = getInitials(staffName || "U");
+    const profileActive = profileOpen || profileSelectedKeys.length > 0;
+
+    return (
+      <div className={styles.profileFooter}>
+        <Dropdown
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+          trigger={["click"]}
+          placement="topLeft"
+          overlayClassName={styles.profileDropdown}
+          dropdownRender={() => (
+            <Menu
+              className={styles.profileMenu}
+              items={profileMenuItems}
+              selectedKeys={profileSelectedKeys}
+              onClick={handleProfileMenuClick}
+            />
+          )}
+        >
+          <button
+            type="button"
+            className={classnames(styles.profileTrigger, {
+              [styles.profileTriggerActive]: profileActive,
+            })}
+            aria-expanded={profileOpen}
+            aria-label={t("menu.profile")}
+          >
+            <span className={styles.profileAvatar}>{initials}</span>
+            {isCollapsedView ? null : (
+              <>
+                <span className={styles.profileName}>{staffName}</span>
+                <Icon icon={<Down />} className={styles.profileChevron} />
+              </>
+            )}
+          </button>
+        </Dropdown>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -265,7 +430,7 @@ const Sidebar = (props: ISidebarProps) => {
           {primaryMenu.map((item) => renderMenuItem(item))}
         </div>
         {renderJobsSection()}
-        {renderFooter()}
+        {showProfileMenu ? renderProfileFooter() : renderLegacyFooter()}
       </div>
     </div>
   );

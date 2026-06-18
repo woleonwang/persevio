@@ -14,12 +14,9 @@ import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import { refreshStaffTokenIfExpiringSoon } from "@/utils/staffToken";
 import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
-import CompanyInfo from "@/assets/icons/company-info";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
-import Settings from "@/assets/icons/settings";
 import OrgChat from "@/assets/icons/org-chat";
-import Link2 from "@/assets/icons/link2";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -63,6 +60,9 @@ const AppLayout = () => {
     setIsAdmin,
     setOrgNodeId,
     setEmail,
+    setStaffName,
+    setCompanyName,
+    setAvailableCredits,
     setAntdLocale,
     fetchJobs,
     fetchUnreadTalentsCount,
@@ -157,18 +157,6 @@ const AppLayout = () => {
         }),
     },
     {
-      title: t("menu.company"),
-      path: "/app/company",
-      img: <CompanyInfo />,
-      requireStaffAdmin: true,
-    },
-    {
-      title: t("menu.career_page"),
-      path: "/app/career-page",
-      img: <Link2 />,
-      requireStaffAdmin: true,
-    },
-    {
       title: t("menu.talents"),
       path: "/app/talents",
       img: <Candidates />,
@@ -180,21 +168,7 @@ const AppLayout = () => {
       img: <OrgChat />,
       requireStaffAdmin: true,
     },
-    // {
-    //   title: t("menu.group_management"),
-    //   path: "/app/groups",
-    //   img: <FileDoneOutlined />,
-    //   requireStaffAdmin: true,
-    // },
   ].filter((item) => !item.requireStaffAdmin || staffRole === "admin");
-
-  const FOOTER = [
-    {
-      title: t("menu.settings"),
-      path: "/app/settings",
-      img: <Settings />,
-    },
-  ];
 
   const init = async () => {
     const initToken = getQuery("token");
@@ -237,6 +211,11 @@ const AppLayout = () => {
         setStaffRole(data.role);
         setIsAdmin(data.is_admin === 1 || data.is_admin === 2);
         setEmail(data.email);
+        setStaffName(data.staff_name);
+        setCompanyName(data.company_name);
+        setAvailableCredits(
+          typeof data.available_credits === "number" ? data.available_credits : null,
+        );
         setOrgNodeId(data.org_node_id);
         setMode(data.company_mode);
         setVisibleOrgNodeIds(data.visible_org_node_ids ?? []);
@@ -288,7 +267,7 @@ const AppLayout = () => {
         collapsed={menuCollapse || collapseForDrawer}
         setCollapsed={setAndCacheMenuCollapse}
         menu={MENU}
-        footer={FOOTER}
+        showProfileMenu
         searchKeyword={searchKeyword}
         setSearchKeyword={setSearchKeyword}
         onSwitch={isAdmin ? () => navigate("/admin/jobs") : undefined}

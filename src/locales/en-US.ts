@@ -429,6 +429,8 @@ export default {
     kb_observation: "KB Observation",
     kb_entity_document: "KB Entity Document",
     credit_config: "Credit Config",
+    credit_package: "Credit Package",
+    credits: "Credits",
 
     home: "Home",
     profile: "Profile",
@@ -436,8 +438,8 @@ export default {
     deep_aspirations: "Deep Aspirations",
     job_applies: "Your jobs",
     connections: "Matches/Meetings",
-    switch_to_admin_mode: "Switch to admin mode",
-    switch_to_employer_mode: "Switch to employer mode",
+    switch_to_admin_mode: "Switch to admin",
+    switch_to_employer_mode: "Switch to employer",
   },
 
   job: {
@@ -2682,6 +2684,53 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       addedEmployer: "Added employer: {{name}}",
       removedEmployer: "Removed employer: {{name}}",
       movedEmployer: "Moved employer: {{name}} from {{from}}",
+    },
+  },
+
+  admin_credit_packages: {
+    pageTitle: "Credit Package",
+    createModalTitle: "Grant Credit Package",
+    table: {
+      id: "ID",
+      company: "Company",
+      originalAmount: "Original Amount",
+      remainingAmount: "Remaining Amount",
+      validFrom: "Valid From",
+      expiresAt: "Expires At",
+      description: "Description",
+      createdBy: "Created By",
+      createdAt: "Created At",
+    },
+    filters: {
+      company: "Company",
+      selectCompany: "Select company",
+    },
+    form: {
+      company: "Company",
+      selectCompany: "Select company",
+      amount: "Amount",
+      sourceType: "Source Type",
+      description: "Description",
+      validFrom: "Valid From",
+      expiresAt: "Expires At",
+    },
+    sourceType: {
+      topup: "Topup",
+      gift: "Gift",
+      adjustment: "Adjustment",
+    },
+    actions: {
+      create: "Grant Credit Package",
+    },
+    messages: {
+      fetchFailed: "Failed to load credit packages",
+      createSuccess: "Credit package granted",
+      createFailed: "Failed to grant credit package",
+    },
+    validation: {
+      companyRequired: "Company is required",
+      amountRequired: "Amount is required",
+      amountPositive: "Amount must be a positive integer",
     },
   },
 

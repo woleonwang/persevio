@@ -25,6 +25,12 @@ class GlobalStore {
 
   email = "";
 
+  staffName = "";
+
+  companyName = "";
+
+  availableCredits: number | null = null;
+
   orgNodeId = 0;
 
   visibleOrgNodeIds: number[] = [];
@@ -79,6 +85,18 @@ class GlobalStore {
 
   setEmail = (email: string) => {
     this.email = email;
+  };
+
+  setStaffName = (staffName: string) => {
+    this.staffName = staffName;
+  };
+
+  setCompanyName = (companyName: string) => {
+    this.companyName = companyName;
+  };
+
+  setAvailableCredits = (availableCredits: number | null) => {
+    this.availableCredits = availableCredits;
   };
 
   setOrgNodeId = (orgNodeId: number) => {
