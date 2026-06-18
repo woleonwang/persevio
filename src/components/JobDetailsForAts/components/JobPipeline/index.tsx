@@ -212,7 +212,7 @@ const JobPipeline = ({
         )
           return true;
 
-        if ((item.name ?? "").includes(query)) return true;
+        if ((item.name ?? "").toLowerCase().includes(query)) return true;
 
         return false;
       })
