@@ -431,13 +431,13 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   const showReportPreview =
     !briefReport && (reportStrengths.length > 0 || reportGaps.length > 0);
 
-  const recommendationSub = briefReport
-    ? "A short report highlighting your strengths to the hiring manager based on what I discovered in our conversation. I'll have it ready in about two minutes. Nothing you need to do."
-    : showReportPreview
-      ? "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:"
-      : recommendationInProgress
-        ? "I'm putting together your recommendation based on our conversation. This usually takes a couple of minutes."
-        : "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:";
+  // const recommendationSub = briefReport
+  //   ? "A short report highlighting your strengths to the hiring manager based on what I discovered in our conversation. I'll have it ready in about two minutes. Nothing you need to do."
+  //   : showReportPreview
+  //     ? "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:"
+  //     : recommendationInProgress
+  //       ? "I'm putting together your recommendation based on our conversation. This usually takes a couple of minutes."
+  //       : "A short report putting your application in front of the hiring manager. Here's exactly what I'll tell them:";
 
   return (
     <FlowShell
@@ -485,7 +485,7 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
             <ActionRow
               tone={recommendationReady ? "done" : "progress"}
               title="I'm writing your recommendation"
-              sub={recommendationSub}
+              sub="A short report highlighting your strengths to the hiring manager based on what I discovered in our conversation. I'll have it ready in about two minutes. Nothing you need to do."
               statusLabel={recommendationReady ? "Done" : "In progress"}
               connector
             >
