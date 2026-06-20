@@ -355,10 +355,7 @@ const ReportList: React.FC<TReportListProps> = ({ kind, title, items }) => (
     </div>
     <div className={styles.wrapReportItems}>
       {items.map((item, index) => (
-        <div
-          key={`${item.title}-${index}`}
-          className={styles.wrapReportItem}
-        >
+        <div key={`${item.title}-${index}`} className={styles.wrapReportItem}>
           <span
             className={`${styles.wrapReportDisc} ${kind === "flag" ? styles.wrapReportDiscFlag : ""}`}
           >
@@ -432,8 +429,7 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
   }, [onRefreshJobApply, recommendationInProgress]);
 
   const showReportPreview =
-    !briefReport &&
-    (reportStrengths.length > 0 || reportGaps.length > 0);
+    !briefReport && (reportStrengths.length > 0 || reportGaps.length > 0);
 
   const recommendationSub = briefReport
     ? "A short report highlighting your strengths to the hiring manager based on what I discovered in our conversation. I'll have it ready in about two minutes. Nothing you need to do."
@@ -493,7 +489,7 @@ const Step6WrapUp: React.FC<TStep6WrapUpProps> = ({
               statusLabel={recommendationReady ? "Done" : "In progress"}
               connector
             >
-              {showReportPreview && (
+              {false && showReportPreview && (
                 <div className={styles.wrapReportBlock}>
                   <div className={styles.wrapReportBlockInner}>
                     {reportStrengths.length > 0 && (
