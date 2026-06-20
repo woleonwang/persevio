@@ -299,7 +299,7 @@ const ChatInputArea = (props: IProps) => {
           </div>
         ) : (
           <>
-            <div className={styles.placeholder} style={{ height: 100 }} />
+            <div className={styles.placeholder} style={{ height: 50 }} />
             <div
               className={classnames(styles.mobileVoiceContainer, {
                 [styles.bg]: isRecordingOrTranscribing,
