@@ -13,7 +13,9 @@ const ResumeReviewTransition: React.FC<TResumeReviewTransitionProps> = ({
   return (
     <div className={`${styles.transitionWrap} ${styles.reviewingAnim}`}>
       <div className={styles.reviewingAvatarWrap}>
-        <span className={`${styles.reviewingRing} ${styles.reviewingRingDelay}`} />
+        <span
+          className={`${styles.reviewingRing} ${styles.reviewingRingDelay}`}
+        />
         <span className={styles.reviewingRing} />
         <PercyAvatar size={92} asset="face" />
         <div className={styles.reviewingResumeCard}>
@@ -49,7 +51,7 @@ const ResumeReviewTransition: React.FC<TResumeReviewTransitionProps> = ({
 
       <p className={styles.bodyText} style={{ marginTop: 11, maxWidth: 290 }}>
         I'm reading through your background and putting together my initial
-        thoughts on this role.
+        thoughts on your fit to this role.
       </p>
 
       {slowMessage && (
