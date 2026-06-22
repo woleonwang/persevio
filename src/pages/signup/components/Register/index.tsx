@@ -197,6 +197,7 @@ const Register: React.FC<IProps> = (props) => {
         <Form.Item
           label={t("password")}
           name="password"
+          required
           rules={[
             {
               validator(_, value, callback) {

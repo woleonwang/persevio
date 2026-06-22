@@ -178,7 +178,7 @@ const StaffChat: React.FC<IProps> = (props) => {
 
     const { code, data } = await Get(streamingUrl);
 
-    if (code === 0) {
+    if (code === 0 && !!loadingStartedAtRef.current) {
       setStreamingLoadingText(data?.message ?? "");
     }
   };
