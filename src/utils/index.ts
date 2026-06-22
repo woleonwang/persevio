@@ -56,9 +56,7 @@ export const isNonProductionEnv = (): boolean => {
 };
 
 export const getCandidateSignupPath = (jobId: string | number): string => {
-  const base = isNonProductionEnv()
-    ? "/signup-candidate-v2"
-    : "/signup-candidate";
+  const base = "/signup-candidate";
   const params = new URLSearchParams({ job_id: String(jobId) });
   return `${base}?${params.toString()}`;
 };

@@ -121,240 +121,243 @@ const AppRoutes = () => {
   }
 
   return (
-      <Routes>
-        {/** 首页 */}
-        <Route path="/" element={<Home />} />
-        {/** 贪吃蛇游戏 */}
-        <Route path="/snake" element={<SnakeGame />} />
-        {/** Icon Demo */}
-        <Route path="/icon-demo" element={<IconDemo />} />
-        {/** 贪吃蛇游戏 */}
-        <Route path="/play-audio" element={<PlayAudio />} />
-        {/** 职位列表 */}
-        <Route path="/jobs" element={<PublicJobs />} />
-        <Route path="/linkedin-apply" element={<LinkedinApply />} />
-        {/** 分享职位详情文档 */}
-        <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
-        {/** 职位 chatbot */}
-        <Route path="/jobs/:id/chat" element={<JobsShow />} />
-        <Route path="/jobs/:id/chat/:version" element={<JobsShow />} />
-        <Route
-          path="/jobs/:id/:companyName/:jobName/:version"
-          element={<JobsShow />}
-        />
-        <Route path="/internal-settings" element={<InternalSettings />} />
-        {/** 分享候选人面试设计 & 面试反馈文档 */}
-        <Route
-          path="/jobs/:jobId/talents/:talentId/detail"
-          element={<PublicTalentDetailPage />}
-        />
-        {/** 分享创建职位页面 */}
-        {/* <Route path="/share" element={<Share />}>
+    <Routes>
+      {/** 首页 */}
+      <Route path="/" element={<Home />} />
+      {/** 贪吃蛇游戏 */}
+      <Route path="/snake" element={<SnakeGame />} />
+      {/** Icon Demo */}
+      <Route path="/icon-demo" element={<IconDemo />} />
+      {/** 贪吃蛇游戏 */}
+      <Route path="/play-audio" element={<PlayAudio />} />
+      {/** 职位列表 */}
+      <Route path="/jobs" element={<PublicJobs />} />
+      <Route path="/linkedin-apply" element={<LinkedinApply />} />
+      {/** 分享职位详情文档 */}
+      <Route path="/jobs/:id/share" element={<PublicJobDetail />} />
+      {/** 职位 chatbot */}
+      <Route path="/jobs/:id/chat" element={<JobsShow />} />
+      <Route path="/jobs/:id/chat/:version" element={<JobsShow />} />
+      <Route
+        path="/jobs/:id/:companyName/:jobName/:version"
+        element={<JobsShow />}
+      />
+      <Route path="/internal-settings" element={<InternalSettings />} />
+      {/** 分享候选人面试设计 & 面试反馈文档 */}
+      <Route
+        path="/jobs/:jobId/talents/:talentId/detail"
+        element={<PublicTalentDetailPage />}
+      />
+      {/** 分享创建职位页面 */}
+      {/* <Route path="/share" element={<Share />}>
             <Route path="/share/create-job" element={<JobCreate share />} />
           </Route> */}
 
-        <Route path="/app" element={<App />}>
-          {/* 创建职位 */}
-          <Route path="/app/entry/create-job" element={<JobCreate />} />
-          {/* 职位列表 */}
-          <Route path="/app/jobs" element={<JobList />} />
-          {/* 职位入口页 */}
-          <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
-          {/* 标准版职位入口页 */}
-          <Route
-            path="/app/jobs/:jobId/standard-board"
-            element={<JobStandardBoard />}
-          />
-          <Route
-            path="/app/jobs/:jobId/internal-documents"
-            element={<JobInternalDocuments />}
-          />
-          <Route
-            path="/app/talents/:talentId/internal-documents"
-            element={<JobApplyInternalDocuments />}
-          />
-          <Route
-            path="/app/jobs/:jobId/standard-board/talents/:talentId"
-            element={<TalentDetails />}
-          />
-          <Route
-            path="/app/jobs/:jobId/standard-board/linkedin-profiles/:linkedinProfileId"
-            element={<LinkedinProfileDetail />}
-            key="linkedinProfileDetail"
-          />
-          {/* 职位文档对话 */}
-          <Route path="/app/jobs/:jobId/chat/:chatType" element={<JobChat />} />
-          {/* 职位文档 */}
-          <Route
-            path="/app/jobs/:jobId/document/:chatType"
-            element={<JobDocument />}
-          />
-          {/* 面试设计 & 反馈选择候选人 */}
-          <Route
-            path="/app/jobs/:jobId/talents/select/:chatType"
-            element={<TalentSelect />}
-            key="talentSelect"
-          />
-          {/* 面试设计 & 反馈对话 */}
-          <Route
-            path="/app/jobs/:jobId/talents/:talentId/chat"
-            element={<TalentChat />}
-            key="talentChat"
-          />
-          {/* 候选人面试设计 & 反馈详情 */}
-          <Route
-            path="/app/jobs/:jobId/talents/:talentId/detail"
-            element={<TalentDetail />}
-            key="talentDetail"
-          />
-          {/* 候选人详情：简历、评估报告 */}
-          <Route
-            path="/app/jobs/:jobId/talents/:talentId"
-            element={<Talent />}
-            handle={{ layout: "blank" }}
-            key="talent"
-          />
+      <Route path="/app" element={<App />}>
+        {/* 创建职位 */}
+        <Route path="/app/entry/create-job" element={<JobCreate />} />
+        {/* 职位列表 */}
+        <Route path="/app/jobs" element={<JobList />} />
+        {/* 职位入口页 */}
+        <Route path="/app/jobs/:jobId/board" element={<JobBoard />} />
+        {/* 标准版职位入口页 */}
+        <Route
+          path="/app/jobs/:jobId/standard-board"
+          element={<JobStandardBoard />}
+        />
+        <Route
+          path="/app/jobs/:jobId/internal-documents"
+          element={<JobInternalDocuments />}
+        />
+        <Route
+          path="/app/talents/:talentId/internal-documents"
+          element={<JobApplyInternalDocuments />}
+        />
+        <Route
+          path="/app/jobs/:jobId/standard-board/talents/:talentId"
+          element={<TalentDetails />}
+        />
+        <Route
+          path="/app/jobs/:jobId/standard-board/linkedin-profiles/:linkedinProfileId"
+          element={<LinkedinProfileDetail />}
+          key="linkedinProfileDetail"
+        />
+        {/* 职位文档对话 */}
+        <Route path="/app/jobs/:jobId/chat/:chatType" element={<JobChat />} />
+        {/* 职位文档 */}
+        <Route
+          path="/app/jobs/:jobId/document/:chatType"
+          element={<JobDocument />}
+        />
+        {/* 面试设计 & 反馈选择候选人 */}
+        <Route
+          path="/app/jobs/:jobId/talents/select/:chatType"
+          element={<TalentSelect />}
+          key="talentSelect"
+        />
+        {/* 面试设计 & 反馈对话 */}
+        <Route
+          path="/app/jobs/:jobId/talents/:talentId/chat"
+          element={<TalentChat />}
+          key="talentChat"
+        />
+        {/* 候选人面试设计 & 反馈详情 */}
+        <Route
+          path="/app/jobs/:jobId/talents/:talentId/detail"
+          element={<TalentDetail />}
+          key="talentDetail"
+        />
+        {/* 候选人详情：简历、评估报告 */}
+        <Route
+          path="/app/jobs/:jobId/talents/:talentId"
+          element={<Talent />}
+          handle={{ layout: "blank" }}
+          key="talent"
+        />
 
-          {/* 公司知识库 */}
-          <Route path="/app/company" element={<CompanyKnowledge />} />
-          <Route path="/app/career-page" element={<CareerPageConfig />} />
-          <Route path="/app/credits" element={<CreditsPage />} />
-          {/* 成员与团队 */}
-          <Route path="/app/member-team" element={<MemberTeam />} />
-          {/* Group 管理 */}
-          {/* <Route path="/app/groups" element={<Groups />} /> */}
-          {/* HR端设置 */}
-          <Route path="/app/settings" element={<Settings />} />
-          {/* 候选人列表 */}
-          <Route path="/app/talents" element={<Talents />} />
-        </Route>
+        {/* 公司知识库 */}
+        <Route path="/app/company" element={<CompanyKnowledge />} />
+        <Route path="/app/career-page" element={<CareerPageConfig />} />
+        <Route path="/app/credits" element={<CreditsPage />} />
+        {/* 成员与团队 */}
+        <Route path="/app/member-team" element={<MemberTeam />} />
+        {/* Group 管理 */}
+        {/* <Route path="/app/groups" element={<Groups />} /> */}
+        {/* HR端设置 */}
+        <Route path="/app/settings" element={<Settings />} />
+        {/* 候选人列表 */}
+        <Route path="/app/talents" element={<Talents />} />
+      </Route>
 
-        <Route path="/admin" element={<Admin />}>
-          {/* 管理员职位列表：用于推荐给候选人 */}
-          <Route path="/admin/jobs" element={<AdminJobs />} />
-          <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
-          <Route path="/admin/job-daily-stats" element={<JobDailyStats />} />
-          <Route
-            path="/admin/candidate-signup-funnel"
-            element={<CandidateSignupFunnel />}
-          />
-          {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
-          <Route path="/admin/talents" element={<ScopedTalents />} />
-          {/* 管理员企业审核列表 */}
-          <Route path="/admin/companies" element={<AdminCompanies />} />
-          <Route path="/admin/credit-configs" element={<CreditConfigListPage />} />
-          <Route path="/admin/credit-configs/new" element={<CreditConfigEditPage />} />
-          <Route path="/admin/credit-configs/:id/edit" element={<CreditConfigEditPage />} />
-          <Route path="/admin/credit-packages" element={<CreditPackageListPage />} />
-          <Route path="/admin/candidates" element={<AdminCandidates />} />
-          <Route path="/admin/emails/:id" element={<EmailDetailsPage />} />
-          <Route
-            path="/admin/chats/:id/messages"
-            element={<ChatMessagesPage />}
-          />
-          <Route path="/admin/tools" element={<AdminTools />} />
-          <Route path="/admin/kb-observations" element={<KBObservations />} />
-          <Route
-            path="/admin/kb-entity-documents"
-            element={<KBEntityDocuments />}
-          />
-          {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
-          {/* <Route
+      <Route path="/admin" element={<Admin />}>
+        {/* 管理员职位列表：用于推荐给候选人 */}
+        <Route path="/admin/jobs" element={<AdminJobs />} />
+        <Route path="/admin/jobs/:jobId" element={<JobDetailsPage />} />
+        <Route path="/admin/job-daily-stats" element={<JobDailyStats />} />
+        <Route
+          path="/admin/candidate-signup-funnel"
+          element={<CandidateSignupFunnel />}
+        />
+        {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
+        <Route path="/admin/talents" element={<ScopedTalents />} />
+        {/* 管理员企业审核列表 */}
+        <Route path="/admin/companies" element={<AdminCompanies />} />
+        <Route
+          path="/admin/credit-configs"
+          element={<CreditConfigListPage />}
+        />
+        <Route
+          path="/admin/credit-configs/new"
+          element={<CreditConfigEditPage />}
+        />
+        <Route
+          path="/admin/credit-configs/:id/edit"
+          element={<CreditConfigEditPage />}
+        />
+        <Route
+          path="/admin/credit-packages"
+          element={<CreditPackageListPage />}
+        />
+        <Route path="/admin/candidates" element={<AdminCandidates />} />
+        <Route path="/admin/emails/:id" element={<EmailDetailsPage />} />
+        <Route
+          path="/admin/chats/:id/messages"
+          element={<ChatMessagesPage />}
+        />
+        <Route path="/admin/tools" element={<AdminTools />} />
+        <Route path="/admin/kb-observations" element={<KBObservations />} />
+        <Route
+          path="/admin/kb-entity-documents"
+          element={<KBEntityDocuments />}
+        />
+        {/* 管理员候选人匹配列表：用于审核候选人匹配 */}
+        {/* <Route
             path="/app/candidate-connections"
             element={<AdminCandidateConnections />}
           />
           <Route path="/app/companies" element={<AdminCompanies />} /> */}
-          {/* HR端设置 */}
-          <Route path="/admin/settings" element={<Settings />} />
-        </Route>
+        {/* HR端设置 */}
+        <Route path="/admin/settings" element={<Settings />} />
+      </Route>
 
-        <Route path="/candidate" element={<CandidateApp />}>
-          {/* 候选人主页 */}
-          <Route path="/candidate/home" element={<CandidateHome />} />
-          <Route
-            path="/candidate/helper-agent"
-            element={<CandidateHelperAgentPage />}
-          />
-          {/* 候选人简历 */}
-          <Route path="/candidate/profile" element={<CandidateResume />} />
-          {/* connector 简历 */}
-          <Route
-            path="/candidate/network-profile"
-            element={<NetworkProfile />}
-          />
-          {/* 候选人职业规划 */}
-          <Route
-            path="/candidate/aspirations"
-            element={<CareerAspirations />}
-          />
-          <Route path="/candidate/referrals" element={<Referrals />} />
-          {/* 候选人深度职业规划对话 */}
-          <Route
-            path="/candidate/home/deep-aspirations"
-            element={<DeepAspirations />}
-          />
-          <Route
-            path="/candidate/home/deep-aspirations-voice"
-            element={<DeepAspirationsVoice />}
-          />
-          {/* 申请职位列表 */}
-          <Route path="/candidate/job-applies" element={<JobApplies />} />
-          {/* 申请职位详情 */}
-          <Route
-            path="/candidate/jobs/applies/:jobApplyId"
-            element={<JobApplyShow />}
-          />
-          {/* 推荐职位详情 */}
-          <Route
-            path="/candidate/recommended-jobs/:recommendedJobId"
-            element={<RecommendedJobShow />}
-          />
+      <Route path="/candidate" element={<CandidateApp />}>
+        {/* 候选人主页 */}
+        <Route path="/candidate/home" element={<CandidateHome />} />
+        <Route
+          path="/candidate/helper-agent"
+          element={<CandidateHelperAgentPage />}
+        />
+        {/* 候选人简历 */}
+        <Route path="/candidate/profile" element={<CandidateResume />} />
+        {/* connector 简历 */}
+        <Route path="/candidate/network-profile" element={<NetworkProfile />} />
+        {/* 候选人职业规划 */}
+        <Route path="/candidate/aspirations" element={<CareerAspirations />} />
+        <Route path="/candidate/referrals" element={<Referrals />} />
+        {/* 候选人深度职业规划对话 */}
+        <Route
+          path="/candidate/home/deep-aspirations"
+          element={<DeepAspirations />}
+        />
+        <Route
+          path="/candidate/home/deep-aspirations-voice"
+          element={<DeepAspirationsVoice />}
+        />
+        {/* 申请职位列表 */}
+        <Route path="/candidate/job-applies" element={<JobApplies />} />
+        {/* 申请职位详情 */}
+        <Route
+          path="/candidate/jobs/applies/:jobApplyId"
+          element={<JobApplyShow />}
+        />
+        {/* 推荐职位详情 */}
+        <Route
+          path="/candidate/recommended-jobs/:recommendedJobId"
+          element={<RecommendedJobShow />}
+        />
 
-          <Route
-            path="/candidate/home/work-experience/:companyName"
-            element={<WorkExperience />}
-          />
-          <Route path="/candidate/settings" element={<CandidateSettings />} />
-          <Route path="/candidate/voice-chat" element={<VoiceChat />} />
-          <Route path="/candidate/voice-chat/:model" element={<VoiceChat />} />
-          <Route
-            path="/candidate/connections"
-            element={<CandidateConnections />}
-          />
-          <Route path="/candidate/apply-job" element={<ApplyJobTest />} />
-          <Route path="/candidate/jobs" element={<Jobs />} />
-        </Route>
+        <Route
+          path="/candidate/home/work-experience/:companyName"
+          element={<WorkExperience />}
+        />
+        <Route path="/candidate/settings" element={<CandidateSettings />} />
+        <Route path="/candidate/voice-chat" element={<VoiceChat />} />
+        <Route path="/candidate/voice-chat/:model" element={<VoiceChat />} />
+        <Route
+          path="/candidate/connections"
+          element={<CandidateConnections />}
+        />
+        <Route path="/candidate/apply-job" element={<ApplyJobTest />} />
+        <Route path="/candidate/jobs" element={<Jobs />} />
+      </Route>
 
-        <Route path="/signin-candidate" element={<SignInCandidate />} />
-        <Route path="/apply-job/:jobId" element={<ApplyJob />} />
-        <Route path="/signup-candidate" element={<SignupCandidate />} />
-        <Route path="/signup-candidate-v2" element={<SignupCandidateV2 />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/onboard" element={<OnboardPage />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route
-          path="/staff/forgot-password"
-          element={<StaffForgotPassword />}
-        />
-        <Route
-          path="/staff/reset-password/:token"
-          element={<StaffResetPassword />}
-        />
-        <Route path="/apply" element={<Apply />} />
-        <Route path="/livekit" element={<LiveKit />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route path="/l/:shortLink" element={<ShortLink />} />
-        <Route path="/demo" element={<Feedback />} />
-        <Route
-          path="/candidate/whatsapp-redirect"
-          element={<WhatsappRedirect />}
-        />
-        <Route
-          path="/candidate/interview/:jobApplyId"
-          element={<InterviewChat />}
-        />
-      </Routes>
+      <Route path="/signin-candidate" element={<SignInCandidate />} />
+      <Route path="/apply-job/:jobId" element={<ApplyJob />} />
+      <Route path="/signup-candidate-v1" element={<SignupCandidate />} />
+      <Route path="/signup-candidate" element={<SignupCandidateV2 />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/onboard" element={<OnboardPage />} />
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/staff/forgot-password" element={<StaffForgotPassword />} />
+      <Route
+        path="/staff/reset-password/:token"
+        element={<StaffResetPassword />}
+      />
+      <Route path="/apply" element={<Apply />} />
+      <Route path="/livekit" element={<LiveKit />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/l/:shortLink" element={<ShortLink />} />
+      <Route path="/demo" element={<Feedback />} />
+      <Route
+        path="/candidate/whatsapp-redirect"
+        element={<WhatsappRedirect />}
+      />
+      <Route
+        path="/candidate/interview/:jobApplyId"
+        element={<InterviewChat />}
+      />
+    </Routes>
   );
 };
 
