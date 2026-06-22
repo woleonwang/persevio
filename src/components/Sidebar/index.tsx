@@ -3,7 +3,7 @@ import logo from "@/assets/logo.png";
 import Icon from "../Icon";
 import styles from "./style.module.less";
 import { useLocation, useNavigate } from "react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Dropdown, Input, Menu, Tooltip } from "antd";
 import type { MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,7 @@ import Right from "@/assets/icons/right";
 import globalStore from "@/store/global";
 import { tokenStorage } from "@/utils/storage";
 import CompanyList from "@/assets/icons/company-list";
+import { Get } from "@/utils/request";
 
 interface ISidebarProps {
   collapsed: boolean;
@@ -63,6 +64,9 @@ const Sidebar = (props: ISidebarProps) => {
   const [hovered, setHovered] = useState(false);
   const [showJobs, setShowJobs] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [careerPageEnabled, setCareerPageEnabled] = useState<boolean | null>(
+    null,
+  );
 
   const currentPath = useLocation().pathname;
   const navigate = useNavigate();
@@ -80,9 +84,23 @@ const Sidebar = (props: ISidebarProps) => {
 
   const isCollapsedView = collapsed && !hovered;
 
+  useEffect(() => {
+    const fetchCareerPageStatus = async () => {
+      const { code, data } = await Get("/api/career_page");
+      if (code === 0) {
+        setCareerPageEnabled(data.enabled);
+      }
+    };
+
+    fetchCareerPageStatus();
+  }, [profileOpen]);
+
   const profileSelectedKeys = useMemo(() => {
     if (currentPath.startsWith("/app/company")) {
       return ["company-info"];
+    }
+    if (currentPath.startsWith("/app/career-page")) {
+      return ["career-page"];
     }
     if (currentPath.startsWith("/app/settings")) {
       return ["settings"];
@@ -99,6 +117,27 @@ const Sidebar = (props: ISidebarProps) => {
         key: "company-info",
         icon: <Icon icon={<CompanyList />} />,
         label: t("menu.company"),
+      },
+      {
+        key: "career-page",
+        icon: <Icon icon={<CompanyList />} />,
+        label: (
+          <div className={styles.careerPageMenuLabel}>
+            <span>{t("menu.career_page")}</span>
+            {careerPageEnabled !== null ? (
+              <span
+                className={classnames(styles.careerPageStatusTag, {
+                  [styles.careerPageStatusTagOn]: careerPageEnabled,
+                  [styles.careerPageStatusTagOff]: !careerPageEnabled,
+                })}
+              >
+                {careerPageEnabled
+                  ? t("career_page.status_on")
+                  : t("career_page.status_off")}
+              </span>
+            ) : null}
+          </div>
+        ),
       },
       {
         key: "settings",
@@ -150,12 +189,23 @@ const Sidebar = (props: ISidebarProps) => {
     });
 
     return items;
-  }, [availableCredits, onSwitch, staffRole, switchTooltip, t]);
+  }, [
+    availableCredits,
+    careerPageEnabled,
+    onSwitch,
+    staffRole,
+    switchTooltip,
+    t,
+  ]);
 
   const handleProfileMenuClick: MenuProps["onClick"] = ({ key }) => {
     setProfileOpen(false);
     if (key === "company-info") {
       navigate("/app/company");
+      return;
+    }
+    if (key === "career-page") {
+      navigate("/app/career-page");
       return;
     }
     if (key === "settings") {
