@@ -179,7 +179,14 @@ const StaffChat: React.FC<IProps> = (props) => {
     const { code, data } = await Get(streamingUrl);
 
     if (code === 0 && !!loadingStartedAtRef.current) {
-      setStreamingLoadingText(data?.message ?? "");
+      setStreamingLoadingText((current) => {
+        const message = data?.message ?? "";
+        if (current.length === 0 && message.length < 15) {
+          // 第一轮如果字太少，就先跳过
+          return "";
+        }
+        return message;
+      });
     }
   };
 
