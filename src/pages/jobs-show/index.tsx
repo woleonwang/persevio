@@ -42,6 +42,7 @@ import VionaAvatar from "@/assets/viona-avatar.png";
 
 import styles from "./style.module.less";
 import Guide from "@/assets/icons/guide";
+import ArrowLeft from "@/assets/icons/arrow-left";
 
 type TCompany = {
   logo: string;
@@ -82,6 +83,7 @@ const JobsShow = () => {
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [shareToken, setShareToken] = useState<string>();
   const [referralModalVisible, setReferralModalVisible] = useState(false);
+  const [careerPageUrl, setCareerPageUrl] = useState("");
 
   const originalI18nRef = useRef<string>();
 
@@ -178,6 +180,7 @@ const JobsShow = () => {
     const { code, data } = await Get(`/api/public/jobs/${id}`, { version });
     if (code === 0) {
       setCompany(data.company);
+      setCareerPageUrl(data.career_page || "");
       setJob({
         ...data.job,
         basic_info: parseJSON(data.job.basic_info),
@@ -549,6 +552,16 @@ const JobsShow = () => {
           >
             {ChatRoomArea}
           </Drawer>
+
+          {!!careerPageUrl && (
+            <a href={careerPageUrl} className={styles.backToCareerPageBtn}>
+              <Icon
+                icon={<ArrowLeft />}
+                className={styles.backToCareerPageIcon}
+              />
+              {t("back_to_career_page")}
+            </a>
+          )}
 
           <Modal
             title=""

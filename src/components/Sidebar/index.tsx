@@ -22,6 +22,7 @@ import globalStore from "@/store/global";
 import { tokenStorage } from "@/utils/storage";
 import CompanyList from "@/assets/icons/company-list";
 import { Get } from "@/utils/request";
+import CandidateConnectionList from "@/assets/icons/candidate-connection-list";
 
 interface ISidebarProps {
   collapsed: boolean;
@@ -120,7 +121,7 @@ const Sidebar = (props: ISidebarProps) => {
       },
       {
         key: "career-page",
-        icon: <Icon icon={<CompanyList />} />,
+        icon: <Icon icon={<CandidateConnectionList />} />,
         label: (
           <div className={styles.careerPageMenuLabel}>
             <span>{t("menu.career_page")}</span>

@@ -1313,6 +1313,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     drawer_title: "Viona, your application copilot",
     updated_at: "Updated at: {{date}}",
     share_token_copied: "Referral link copied to clipboard",
+    back_to_career_page: "back to career page",
   },
 
   coworker: {
