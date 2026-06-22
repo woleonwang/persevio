@@ -38,17 +38,9 @@
       "has": [
         {
           "type": "host",
-          "value": "*.careers.persevio.ai"
-        }
-      ]
-    },
-    {
-      "source": "/",
-      "destination": "/api/career-page",
-      "has": [
-        {
-          "type": "host",
-          "value": "*.careers.persevio.ai"
+          "value": {
+            "re": "^.+\\.careers\\.persevio\\.ai$"
+          }
         }
       ]
     },
