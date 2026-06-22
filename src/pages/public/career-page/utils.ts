@@ -85,5 +85,5 @@ export const getJobChatbotUrl = (
 
 export const getLoginUrl = (domain: string): string => {
   const base = domain.startsWith("http") ? domain : `https://${domain}`;
-  return `${base.replace(/\/$/, "")}/candidate/signin`;
+  return `${base.replace(/\/$/, "")}/signin-candidate`;
 };
