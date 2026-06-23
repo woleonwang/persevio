@@ -430,6 +430,55 @@ export const buildFunnelRows = (
   });
 };
 
+export const REGISTRATION_STEP3_DIAGNOSTIC_EVENTS = [
+  { eventName: "registration_google_clicked", label: "Google clicked" },
+  { eventName: "registration_linkedin_clicked", label: "LinkedIn clicked" },
+  { eventName: "registration_otp_clicked", label: "Email OTP clicked" },
+  { eventName: "auth_oauth_failed", label: "OAuth failed / cancelled" },
+  { eventName: "auth_otp_failed", label: "OTP verify failed" },
+] as const;
+
+export type TRegistrationDiagnosticCountRow = {
+  key: string;
+  label: string;
+  count: number;
+};
+
+export const countRawRegistrationDiagnosticEvents = (
+  tracks: TEventTrack[],
+  eventName: string,
+  pool: Set<number>,
+  filters: TFunnelFilters,
+): number => {
+  let count = 0;
+  for (const track of filterEvents(tracks, eventName)) {
+    if (!track.user_id || !pool.has(track.user_id)) {
+      continue;
+    }
+    if (!matchesEventFilters(track, filters, { requireUserId: true })) {
+      continue;
+    }
+    count += 1;
+  }
+  return count;
+};
+
+export const buildRegistrationDiagnosticCounts = (
+  tracks: TEventTrack[],
+  pool: Set<number>,
+  filters: TFunnelFilters,
+): TRegistrationDiagnosticCountRow[] =>
+  REGISTRATION_STEP3_DIAGNOSTIC_EVENTS.map(({ eventName, label }) => ({
+    key: eventName,
+    label,
+    count: countRawRegistrationDiagnosticEvents(
+      tracks,
+      eventName,
+      pool,
+      filters,
+    ),
+  }));
+
 export const collectJobIdsFromTracks = (tracks: TEventTrack[]): number[] => {
   const ids = new Set<number>();
   for (const track of tracks) {

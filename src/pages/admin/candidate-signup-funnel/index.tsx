@@ -24,6 +24,7 @@ import {
   STEP_DETAIL_CONFIG,
   buildCohortPool,
   buildFunnelRows,
+  buildRegistrationDiagnosticCounts,
   breakdownByExtraParam,
   collectJobIdsFromTracks,
   countCohortUsersWithEvent,
@@ -36,6 +37,7 @@ import {
   type TEventTrack,
   type TFunnelFilters,
   type TFunnelStepKey,
+  type TRegistrationDiagnosticCountRow,
 } from "./utils";
 import styles from "./style.module.less";
 
@@ -67,6 +69,18 @@ const breakdownColumns = (
       ]
     : []),
 ];
+
+const registrationDiagnosticColumns: ColumnsType<TRegistrationDiagnosticCountRow> =
+  [
+    { title: "Event", dataIndex: "label", key: "label" },
+    {
+      title: "Count",
+      dataIndex: "count",
+      key: "count",
+      width: 100,
+      render: (value: number) => value.toLocaleString(),
+    },
+  ];
 
 const formatRatingValue = (value?: string | null) => {
   if (!value) {
@@ -262,6 +276,10 @@ const CandidateSignupFunnel = () => {
             )
             .sort((a, b) => b.created_at.localeCompare(a.created_at))
         : [];
+    const registrationDiagnosticRows =
+      row.key === "registration_completed" && stepPool
+        ? buildRegistrationDiagnosticCounts(tracks, stepPool, filters)
+        : [];
     if (!detail) {
       return {
         key: row.key,
@@ -348,6 +366,21 @@ const CandidateSignupFunnel = () => {
               </Card>
             );
           })}
+          {row.key === "registration_completed" && (
+            <Card
+              size="small"
+              title="Registration diagnostics"
+              className={styles.detailCard}
+            >
+              <Table
+                size="small"
+                pagination={false}
+                rowKey="key"
+                columns={registrationDiagnosticColumns}
+                dataSource={registrationDiagnosticRows}
+              />
+            </Card>
+          )}
           {row.key === "conversation_completed" && (
             <Card
               size="small"
