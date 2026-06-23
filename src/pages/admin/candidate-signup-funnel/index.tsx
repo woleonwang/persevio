@@ -68,6 +68,80 @@ const breakdownColumns = (
     : []),
 ];
 
+const formatRatingValue = (value?: string | null) => {
+  if (!value) {
+    return "—";
+  }
+  return value.replace(/_/g, " ");
+};
+
+const satisfactionRatingColumns = (
+  jobNames: Record<number, string>,
+): ColumnsType<TEventTrack> => [
+  {
+    title: "Completed at",
+    dataIndex: "created_at",
+    key: "created_at",
+    width: 170,
+    render: (value: string) => dayjs(value).format("YYYY-MM-DD HH:mm"),
+  },
+  {
+    title: "Job",
+    key: "job",
+    render: (_, record) => {
+      if (!record.job_id) {
+        return "—";
+      }
+      const name = jobNames[record.job_id];
+      return name ? `${name} (#${record.job_id})` : `Job #${record.job_id}`;
+    },
+  },
+  {
+    title: "Overall",
+    key: "overall_experience",
+    width: 100,
+    render: (_, record) =>
+      formatRatingValue(record.satisfaction_rating?.overall_experience),
+  },
+  {
+    title: "Understanding",
+    key: "understanding_accuracy",
+    width: 120,
+    render: (_, record) =>
+      formatRatingValue(record.satisfaction_rating?.understanding_accuracy),
+  },
+  {
+    title: "Relevance",
+    key: "question_relevance",
+    width: 100,
+    render: (_, record) =>
+      formatRatingValue(record.satisfaction_rating?.question_relevance),
+  },
+  {
+    title: "Suggestion",
+    key: "improvement_suggestion",
+    render: (_, record) =>
+      record.satisfaction_rating?.improvement_suggestion?.trim() || "—",
+  },
+  {
+    title: "Talent",
+    key: "talent",
+    width: 80,
+    render: (_, record) =>
+      record.job_apply_id ? (
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href={`/admin/talents?open-id=${record.job_apply_id}`}
+        >
+          View
+        </a>
+      ) : (
+        "—"
+      ),
+  },
+];
+
 const CandidateSignupFunnel = () => {
   const [loading, setLoading] = useState(true);
   const [tracks, setTracks] = useState<TEventTrack[]>([]);
@@ -176,6 +250,18 @@ const CandidateSignupFunnel = () => {
   const collapseItems = funnelRows.map((row) => {
     const detail = STEP_DETAIL_CONFIG[row.key as TFunnelStepKey];
     const stepPool = isCohortStepKey(row.key) ? cohortPool : undefined;
+    const satisfactionRatingRows =
+      row.key === "conversation_completed" && stepPool
+        ? tracks
+            .filter(
+              (track) =>
+                track.event_name === "conversation_completed" &&
+                track.satisfaction_rating &&
+                track.user_id &&
+                stepPool.has(track.user_id),
+            )
+            .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        : [];
     if (!detail) {
       return {
         key: row.key,
@@ -262,6 +348,29 @@ const CandidateSignupFunnel = () => {
               </Card>
             );
           })}
+          {row.key === "conversation_completed" && (
+            <Card
+              size="small"
+              title="Satisfaction ratings"
+              className={styles.detailCard}
+            >
+              {satisfactionRatingRows.length === 0 ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="No satisfaction ratings"
+                />
+              ) : (
+                <Table
+                  size="small"
+                  pagination={false}
+                  rowKey="id"
+                  scroll={{ x: 960 }}
+                  columns={satisfactionRatingColumns(jobNames)}
+                  dataSource={satisfactionRatingRows}
+                />
+              )}
+            </Card>
+          )}
         </div>
       ),
     };

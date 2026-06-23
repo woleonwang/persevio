@@ -3,16 +3,25 @@ import {
   getSourcingChannel,
 } from "@/utils";
 
+export type TSatisfactionRating = {
+  overall_experience: string;
+  understanding_accuracy: string;
+  question_relevance: string;
+  improvement_suggestion?: string | null;
+};
+
 export type TEventTrack = {
   id: number;
   user_id?: number | null;
   company_id?: number | null;
   job_id?: number | null;
+  job_apply_id?: number | null;
   event_name: string;
   session_id: string;
   user_agent?: string;
   extra_params: string;
   created_at: string;
+  satisfaction_rating?: TSatisfactionRating | null;
 };
 
 export const FUNNEL_STEPS = [
