@@ -2148,6 +2148,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     awaiting_candidate_confirm:
       "Awaiting candidate's confirmation of interview details",
     reject_candidate_title: "Reject Candidate",
+    reject_candidate_title_with_name: "Reject Candidate — {{name}}",
+    reject_candidates_batch_title: "Reject Candidates in Batch",
     reject_reason_label:
       "Tell us why this candidate is not a fit so we can calibrate our search",
     reject_reason_required: "Please enter reason",
@@ -2161,6 +2163,19 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "What should we know to better source/screen candidates for this role?",
     reject_feedback_placeholder:
       "For example, our assessment is not accurate/the role is evolved and you'd like to adjust or update the job requirements/ or anything at all.",
+    reject_notes_optional_label: "Notes (optional)",
+    reject_reason_details_label: "Reason details",
+    reject_notes_placeholder: "Add context if needed",
+    reject_batch_notes_placeholder:
+      "Applies to all selected candidates — add context if needed",
+    reject_reason_details_placeholder: "Briefly describe",
+    reject_calibration_guidance:
+      "Viona recommended this candidate. Help her understand what she missed — a quick chat is the most effective way.",
+    reject_calibration_placeholder:
+      "e.g., not enough hands-on experience in payment systems / role has evolved, now need stronger leadership background...",
+    action_reject_only: "Reject only",
+    action_reject_and_chat: "Reject and chat with Viona",
+    action_reject_all: "Reject all",
     reject_submit_failed: "Submit failed",
     batch_reject_success: "Rejected successfully: {{count}}",
     batch_reject_result_rejected: "Rejected: {{count}}",

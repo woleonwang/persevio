@@ -18,7 +18,6 @@ import List from "@/assets/icons/list";
 import {
   getCandidateCardData,
   getEvaluateResultLevel,
-  shouldOpenRejectCalibrationConversation,
 } from "@/utils";
 import { Post } from "@/utils/request";
 import { getDaysInStage, getStageKey } from "@/utils/talentStage";
@@ -618,27 +617,24 @@ const ListModeTable = ({
             <TalentEvaluateFeedbackWithReasonModal
               jobId={actionRecord.job?.invitation_token ?? actionRecord.job_id}
               talentId={actionRecord.id}
+              candidateName={actionRecord.name}
+              evaluateResult={actionRecord.parsedEvaluateResult}
               open={rejectOpen}
               successMessage="Application Rejected"
-              onOk={() => {
+              onOk={({ startCalibration }) => {
                 const record = actionRecord;
-                const shouldOpenCalibration =
-                  shouldOpenRejectCalibrationConversation({
-                    rejectReasonType: record.reject_reason_type,
-                    evaluateResult: record.parsedEvaluateResult,
-                  });
                 const jobId = record.job?.invitation_token;
 
                 setRejectOpen(false);
                 setActionRecord(null);
                 onUpdateTalent?.();
 
-                if (shouldOpenCalibration && jobId) {
+                if (startCalibration && jobId) {
                   onStartCalibrationConversation({
                     jobId,
                     talentId: record.id,
                     source: "reject_calibration",
-                    needConfirm: true,
+                    needConfirm: false,
                   });
                 }
               }}

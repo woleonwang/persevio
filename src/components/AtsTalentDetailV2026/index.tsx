@@ -53,7 +53,6 @@ import {
   parseJSON,
   DEFAULT_TRACKING_SOURCES,
   getEvaluateResultLevel,
-  shouldOpenRejectCalibrationConversation,
 } from "@/utils";
 import {
   PREFIX_DEFAULT_STAGE_KEYS,
@@ -662,8 +661,7 @@ function AtsTalentDetailV2026ViewBase() {
         <>
           Rejected by <NameChip name={staffName} />
           .&nbsp;Reason: {reasonLabel}
-          ,&nbsp;
-          {feedback || ""}
+          {feedback ? `,${feedback}` : ""}
         </>
       );
     }
@@ -687,11 +685,6 @@ function AtsTalentDetailV2026ViewBase() {
     }
     return "Activity";
   };
-
-  const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
-    rejectReasonType: talent.reject_reason_type,
-    evaluateResult: report,
-  });
 
   return (
     <div className={styles.pageRoot}>
@@ -1494,15 +1487,17 @@ function AtsTalentDetailV2026ViewBase() {
         <TalentEvaluateFeedbackWithReasonModal
           jobId={job.invitation_token}
           talentId={talent.id ?? 0}
+          candidateName={talent.name}
+          evaluateResult={report}
           open={isRejectModalOpen}
           successMessage="Application Rejected"
-          onOk={() => {
+          onOk={({ startCalibration }) => {
             setIsRejectModalOpen(false);
             fetchTalent();
             fetchActiveLogs();
-            if (shouldOpenRejectCalibration) {
+            if (startCalibration) {
               setSourceEvaluateFeedbackConversation("reject_calibration");
-              setNeedConfirmEvaluateFeedbackConversation(true);
+              setNeedConfirmEvaluateFeedbackConversation(false);
               setOpenEvaluateFeedbackConversation(true);
             }
           }}

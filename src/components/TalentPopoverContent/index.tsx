@@ -3,7 +3,6 @@ import styles from "./style.module.less";
 import {
   buildTalentDetailUrl,
   getEvaluateResultLevel,
-  shouldOpenRejectCalibrationConversation,
 } from "@/utils";
 import EvaluateFeedback from "@/components/EvaluateFeedback";
 import { Button, message, Modal, Tooltip } from "antd";
@@ -59,10 +58,6 @@ const TalentPopoverContent = ({
   const interview = talent.interviews?.[0];
   const job = talent.job;
   const isPipeline = variant === "pipeline";
-  const shouldOpenRejectCalibration = shouldOpenRejectCalibrationConversation({
-    rejectReasonType: talent.reject_reason_type,
-    evaluateResult,
-  });
 
   const startCalibrationConversation = (
     source: TCalibrationConversationSource,
@@ -381,14 +376,16 @@ const TalentPopoverContent = ({
       <TalentEvaluateFeedbackWithReasonModal
         jobId={talent.job!.invitation_token}
         talentId={talent.id ?? 0}
+        candidateName={talent.name}
+        evaluateResult={evaluateResult}
         open={isRejectModalOpen}
         successMessage="Application Rejected"
-        onOk={() => {
+        onOk={({ startCalibration }) => {
           setIsRejectModalOpen(false);
           setTalent((prev) => ({ ...prev, status: "rejected" }));
           onUpdateTalent();
-          if (shouldOpenRejectCalibration) {
-            startCalibrationConversation("reject_calibration", true);
+          if (startCalibration) {
+            startCalibrationConversation("reject_calibration", false);
           }
         }}
         onCancel={() => setIsRejectModalOpen(false)}
