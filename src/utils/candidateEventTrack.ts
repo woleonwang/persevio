@@ -10,6 +10,9 @@ export const CandidateEventName = {
   AssessmentViewed: "assessment_viewed",
   WrapUpViewed: "wrap_up_viewed",
   LoginPageView: "login_page_view",
+  RegistrationGoogleClicked: "registration_google_clicked",
+  RegistrationLinkedinClicked: "registration_linkedin_clicked",
+  RegistrationOtpClicked: "registration_otp_clicked",
 } as const;
 
 export type TCandidateEventName =

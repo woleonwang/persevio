@@ -384,6 +384,7 @@ const SignupV2: React.FC = () => {
         companyName={companyName || "Company"}
         companyLogo={companyLogo}
         candidateEmail={preRegisterInfo.email}
+        jobId={jobApply?.job_id}
         jobTitle={jobTitle || "Role"}
         onVerified={onRegistrationVerified}
       />

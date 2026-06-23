@@ -4,7 +4,11 @@ import Google from "@/assets/google.png";
 import Linkedin from "@/assets/linkedin.png";
 import MarkdownContainer from "@/components/MarkdownContainer";
 import { Post } from "@/utils/request";
-import { getCandidateEventData } from "@/utils/candidateEventTrack";
+import {
+  CandidateEventName,
+  getCandidateEventData,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
 import privacyAgreement from "@/utils/privacyAgreement";
 import terms from "@/utils/terms";
 import { tokenStorage } from "@/utils/storage";
@@ -56,6 +60,7 @@ type TRegistrationStep = "providers" | "email" | "otp";
 
 type TRegistrationPanelProps = {
   candidateEmail: string;
+  jobId?: number;
   onVerified: () => void;
   compact?: boolean;
   variant?: "card" | "step3";
@@ -63,6 +68,7 @@ type TRegistrationPanelProps = {
 
 const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
   candidateEmail,
+  jobId,
   onVerified,
   compact,
   variant = "card",
@@ -182,6 +188,12 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     if (!requireTerms()) {
       return;
     }
+    trackCandidateEvent(
+      type === "google"
+        ? CandidateEventName.RegistrationGoogleClicked
+        : CandidateEventName.RegistrationLinkedinClicked,
+      { jobId },
+    );
     const eventData = getCandidateEventData();
     const params = new URLSearchParams({
       role: "candidate",
@@ -227,6 +239,9 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
     if (!requireTerms()) {
       return;
     }
+    trackCandidateEvent(CandidateEventName.RegistrationOtpClicked, {
+      jobId,
+    });
     if (resendSecondsLeft > 0) {
       setStep("otp");
       return;

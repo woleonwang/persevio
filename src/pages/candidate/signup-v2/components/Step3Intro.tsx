@@ -12,6 +12,7 @@ type TStep3IntroProps = {
   companyName: string;
   companyLogo?: string;
   candidateEmail: string;
+  jobId?: number;
   jobTitle: string;
   onVerified: () => void;
 };
@@ -121,6 +122,7 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
   companyName,
   companyLogo,
   candidateEmail,
+  jobId,
   jobTitle,
   onVerified,
 }) => {
@@ -153,6 +155,7 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
         <RegistrationPanel
           variant="step3"
           candidateEmail={candidateEmail}
+          jobId={jobId}
           onVerified={onVerified}
         />
       </div>
@@ -268,6 +271,7 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
                 variant="step3"
                 compact
                 candidateEmail={candidateEmail}
+                jobId={jobId}
                 onVerified={() => {
                   setSheetOpen(false);
                   onVerified();
