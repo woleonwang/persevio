@@ -1512,7 +1512,7 @@
 
 .step3Hero {
   position: relative;
-  padding: 30px 0 26px;
+  padding: 26px 0 24px;
 }
 
 .step3HeroGlow {
@@ -1520,7 +1520,7 @@
   top: -10px;
   left: 50%;
   width: 320px;
-  height: 260px;
+  height: 240px;
   border-radius: 50%;
   pointer-events: none;
   transform: translateX(-50%);
@@ -1535,81 +1535,149 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: stretch;
+  text-align: left;
 }
 
-.step3HeroAvatarCol {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.step3HeroAvatarMobile {
-  display: flex;
-}
-
-.step3HeroAvatarDesktop {
-  display: none;
-}
-
-.step3PositioningMobile {
-  display: block;
-}
-
-.step3HeroCopy {
+.step3HeroChat {
   width: 100%;
-  max-width: 342px;
-  margin-top: 16px;
 }
 
-.step3HeroLead {
+.step3HeroDiscovery {
+  margin-top: 22px;
+  width: 100%;
+}
+
+.step3EmphInk {
+  color: @ink;
+}
+
+.step3DiscoveryTitle {
   margin: 0;
-  font-size: 14.5px;
-  line-height: 1.45;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: @ink;
+  text-wrap: pretty;
+}
+
+.step3DiscoveryAccent {
+  box-shadow: inset 0 -0.5em 0 @accentSoft;
+  color: #2c5fe0;
+}
+
+.step3DiscoveryLead {
+  margin: 14px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
   color: @sub;
 }
 
-.step3HeroBody {
-  margin: 18px 0 0;
-  font-size: 15.5px;
+.step3ChatList {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.step3ChatListItem {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14.5px;
   line-height: 1.5;
+  color: @sub;
+}
+
+.step3ChatListDot {
+  flex-shrink: 0;
+  margin-top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: @accent;
+}
+
+.step3DiscoveryClosing {
+  margin: 18px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
   color: @sub;
   text-wrap: pretty;
 }
 
-.step3HeroFocal {
-  margin: 18px 0 0;
+.step3WaTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #1b8f4d;
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.step3SignupBenefits {
+  margin-bottom: 20px;
+}
+
+.step3SignupBenefitsCompact {
+  margin-bottom: 16px;
+}
+
+.step3SignupBenefitsTitle {
   font-family: "Newsreader", Georgia, serif;
   font-weight: 500;
-  font-size: 23.5px;
-  line-height: 1.22;
-  letter-spacing: -0.01em;
+  font-size: 18.5px;
   color: @ink;
+  margin-bottom: 12px;
+  text-align: center;
 }
 
-.step3WhatsappCard {
+.step3SignupBenefitsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: @surface;
-  border: 1px solid @line;
-  text-align: left;
 }
 
-.step3WhatsappText {
-  font-size: 13px;
+.step3SignupBenefitsItem {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
   line-height: 1.45;
   color: @sub;
 }
 
-.step3WhatsappBrand {
-  color: #1b8f4d;
-  font-weight: 700;
+.step3BenefitCheck {
+  flex-shrink: 0;
+  margin-top: 1px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: @accentSoft;
+  color: @accent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step3SignupBenefitsEmph {
+  color: @ink;
+  font-weight: 600;
+}
+
+.step3SignupBenefitsFootnote {
+  margin-top: 13px;
+  font-size: 12.5px;
+  color: @ink;
+  text-align: center;
 }
 
 .step3SignupCard {
@@ -1721,26 +1789,28 @@
 
 .step3RoadmapHeader {
   text-align: center;
-  margin-bottom: 24px;
-}
-
-.step3RoadmapEyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: @accent;
+  margin-bottom: 26px;
 }
 
 .step3RoadmapTitle {
   margin: 0;
   font-family: "Newsreader", Georgia, serif;
   font-weight: 500;
-  font-size: 23px;
+  font-size: 25px;
   letter-spacing: -0.01em;
-  color: @ink;
+  color: @accent;
+}
+
+.step3RoadmapExactly {
+  font-style: italic;
+}
+
+.step3RoadmapDivider {
+  width: 36px;
+  height: 2px;
+  border-radius: 2px;
+  background: fade(@accent, 40%);
+  margin: 12px auto 0;
 }
 
 .step3RoadmapItem {
@@ -1913,13 +1983,6 @@
 
 .step3PositioningDesktop {
   display: none;
-}
-
-.step3SheetPanel {
-  padding: 12px 22px 30px;
-  background: @bg;
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -10px 40px rgba(28, 22, 12, 0.18);
 }
 
 .step3SheetHandle {
@@ -3179,51 +3242,52 @@
   }
 
   .step3Hero {
-    padding: 0 0 0;
+    padding: 0;
   }
 
   .step3HeroGlow {
-    left: 40px;
+    left: 0;
     top: -20px;
-    width: 280px;
-    height: 280px;
+    width: 320px;
+    height: 300px;
     transform: none;
   }
 
-  .step3HeroInner {
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-    gap: 36px;
-  }
-
-  .step3HeroAvatarMobile {
-    display: none;
-  }
-
-  .step3HeroAvatarDesktop {
-    display: flex;
-  }
-
-  .step3HeroCopy {
-    max-width: none;
-    flex: 1;
-    margin-top: 0;
-  }
-
-  .step3HeroLead {
-    font-size: 15px;
-    margin-bottom: 12px;
-  }
-
-  .step3HeroBody {
+  .step3HeroChat .speechBubble {
+    padding: 15px 18px;
+    border-radius: 18px;
     font-size: 16px;
-    max-width: 480px;
   }
 
-  .step3HeroFocal {
-    font-size: 27px;
-    max-width: 530px;
+  .step3HeroChat .speechBubbleTail {
+    top: 22px;
+  }
+
+  .step3HeroDiscovery {
+    margin-top: 26px;
+  }
+
+  .step3DiscoveryTitle {
+    font-size: 26px;
+  }
+
+  .step3ChatListItem {
+    font-size: 15.5px;
+    gap: 11px;
+  }
+
+  .step3ChatListDot {
+    margin-top: 8px;
+  }
+
+  .step3DiscoveryLead,
+  .step3DiscoveryClosing {
+    font-size: 16px;
+  }
+
+  .step3SignupCard {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .step3ProviderGrid {
@@ -3247,37 +3311,12 @@
   }
 
   .step3RoadmapTitle {
-    font-size: 25px;
+    font-size: 27px;
   }
 
-  .step3Positioning {
-    margin: 44px 0 0;
-    padding: 30px 34px;
-    border-radius: 20px;
-    border: 1px solid @line;
-  }
-
-  .step3PositioningMobile {
-    display: none;
-  }
-
-  .step3PositioningDesktop {
-    display: block;
-  }
-
-  .step3PositioningDesktopTop {
-    display: flex;
-    gap: 22px;
-    align-items: center;
+  .step3RoadmapDivider {
+    width: 40px;
     margin-bottom: 22px;
-  }
-
-  .step3PositioningTitle {
-    font-size: 24px;
-  }
-
-  .step3CapabilityGrid {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .step3ScrollSpacer {

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { STEP3_CAPABILITIES, STEP3_ROADMAP } from "../constants";
 import FlowShell, { SignupPrimaryButton } from "./FlowShell";
 import PercyAvatar from "./PercyAvatar";
 import RegistrationPanel from "./RegistrationPanel";
+import ResumeReviewTransition from "./ResumeReviewTransition";
 import WhoIsPercyButton from "./WhoIsPercyButton";
 import styles from "../style.module.less";
+
+const STEP3_LOADING_MS = 5000;
 
 type TStep3IntroProps = {
   firstName: string;
@@ -17,11 +19,17 @@ type TStep3IntroProps = {
   onVerified: () => void;
 };
 
-const WhatsappGlyph = () => (
-  <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+const WhatsappGlyph = ({ size = 15 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M8 1.6a6.4 6.4 0 00-5.5 9.65L1.7 14.4l3.25-.84A6.4 6.4 0 108 1.6z"
-      fill="#1FA855"
+      fill="#25D366"
     />
     <path
       d="M5.6 4.9c-.13-.3-.27-.3-.4-.31h-.34a.66.66 0 00-.48.22 2 2 0 00-.63 1.49c0 .88.64 1.73.73 1.85.09.12 1.24 1.99 3.08 2.71 1.53.6 1.84.48 2.17.45.33-.03 1.07-.44 1.22-.86.15-.42.15-.78.1-.86-.04-.07-.16-.11-.34-.2-.18-.09-1.07-.53-1.23-.59-.17-.06-.29-.09-.4.09-.12.18-.47.58-.57.7-.1.12-.21.13-.39.04a4.9 4.9 0 01-1.45-.9 5.4 5.4 0 01-1-1.24c-.1-.18-.01-.28.08-.37l.27-.31c.09-.11.12-.18.18-.3.06-.12.03-.23-.01-.32-.05-.09-.4-.99-.55-1.34z"
@@ -30,91 +38,11 @@ const WhatsappGlyph = () => (
   </svg>
 );
 
-const CapabilityIcon = ({ type }: { type: (typeof STEP3_CAPABILITIES)[number]["icon"] }) => {
-  if (type === "spark") {
-    return (
-      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path
-          d="M8 1.5c.4 2.7 1.3 3.6 4 4-2.7.4-3.6 1.3-4 4-.4-2.7-1.3-3.6-4-4 2.7-.4 3.6-1.3 4-4z"
-          fill="currentColor"
-        />
-      </svg>
-    );
-  }
-  if (type === "bell") {
-    return (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-          d="M6 9a4 4 0 018 0c0 3 1.2 4 1.8 4.5H4.2C4.8 13 6 12 6 9z"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8.5 16a1.7 1.7 0 003 0"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
-  if (type === "calendar") {
-    return (
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect x="3.5" y="4.5" width="13" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3.5 8h13M7 3v3M13 3v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="10" cy="10" r="7.2" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M13 7l-1.6 4.4L7 13l1.6-4.4L13 7z"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
-
-const Step3HeroCopy: React.FC<{ firstName: string }> = ({ firstName }) => (
-  <div className={styles.step3HeroCopy}>
-    <p className={styles.step3HeroLead}>
-      Thanks for submitting your resume,{" "}
-      <span className={styles.variableToken}>{firstName}</span>.
-    </p>
-    <p className={styles.step3HeroBody}>
-      The next step is a{" "}
-      <span className={`${styles.highlightPhraseSerif}`} style={{ fontSize: 20 }}>
-        discovery chat
-      </span>{" "}
-      with me. This chat is{" "}
-      <span className={styles.highlightPhrase}>required by the hiring manager</span>, designed
-      to get the full picture of you beyond the incomplete information on your resume, so you
-      are represented{" "}
-      <span className={styles.highlightPhrase}>fairly</span> and{" "}
-      <span className={styles.highlightPhrase}>accurately</span>.
-    </p>
-    <p className={styles.step3HeroFocal}>
-      Completing this chat will{" "}
-      <span className={styles.highlightPhraseSerif}>
-        significantly increase your chance of landing an interview.
-      </span>
-    </p>
-    <div className={styles.step3WhatsappCard}>
-      <span style={{ flexShrink: 0, marginTop: 1 }}>
-        <WhatsappGlyph />
-      </span>
-      <span className={styles.step3WhatsappText}>
-        You'll also be able to message me anytime on{" "}
-        <span className={styles.step3WhatsappBrand}>WhatsApp</span> or on your dashboard on
-        Persevio for application updates after our conversation.
-      </span>
-    </div>
-  </div>
+const Step3WhatsappTag = () => (
+  <span className={styles.step3WaTag}>
+    <WhatsappGlyph />
+    WhatsApp
+  </span>
 );
 
 const Step3Intro: React.FC<TStep3IntroProps> = ({
@@ -126,7 +54,37 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
   jobTitle,
   onVerified,
 }) => {
+  const [ready, setReady] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), STEP3_LOADING_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (!ready) {
+    return (
+      <FlowShell currentStep={3} showJobHeader={false}>
+        <ResumeReviewTransition />
+      </FlowShell>
+    );
+  }
+
+  const roadmapItems = [
+    <>
+      I&apos;ll show you my preliminary thoughts on your fit for this role,
+      which we can discuss in detail in our chat.
+    </>,
+    <>
+      We&apos;ll have the discovery chat to fully understand your strengths, on{" "}
+      <Step3WhatsappTag /> or web.
+    </>,
+    <>I prepare and submit your application with my recommendation.</>,
+    <>
+      You can message me anytime on <Step3WhatsappTag /> or Persevio dashboard
+      for a real update on your application.
+    </>,
+  ];
 
   return (
     <FlowShell
@@ -135,19 +93,73 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
       companyName={companyName}
       companyLogo={companyLogo}
       wide
+      showJobHeader={false}
     >
       <section className={styles.step3Hero}>
         <div className={styles.step3HeroGlow} />
         <div className={styles.step3HeroInner}>
-          <div className={`${styles.step3HeroAvatarCol} ${styles.step3HeroAvatarMobile}`}>
-            <PercyAvatar size={108} presence />
-            <WhoIsPercyButton />
+          <div className={styles.step3HeroChat}>
+            <div className={styles.percyRow} style={{ marginBottom: 0 }}>
+              <div className={styles.percyColumn}>
+                <PercyAvatar size={54} asset="face" ring={false} />
+                <WhoIsPercyButton />
+              </div>
+              <div className={styles.speechBubble}>
+                <div className={styles.speechBubbleTail} />
+                Thanks for submitting your resume,{" "}
+                <span className={styles.variableToken}>{firstName}</span>.
+                I&apos;ve already reviewed it, and I&apos;ll share{" "}
+                <span className={styles.step3EmphInk}>
+                  my preliminary thoughts on your fit
+                </span>{" "}
+                for this role on the next page.
+              </div>
+            </div>
           </div>
-          <div className={`${styles.step3HeroAvatarCol} ${styles.step3HeroAvatarDesktop}`}>
-            <PercyAvatar size={150} presence />
-            <WhoIsPercyButton />
+
+          <div className={styles.step3HeroDiscovery}>
+            <h2 className={styles.step3DiscoveryTitle}>
+              For the next step, the hiring manager would like to invite you to
+              a{" "}
+              <span className={styles.step3DiscoveryAccent}>
+                discovery chat
+              </span>{" "}
+              with me.
+            </h2>
+            <p className={styles.step3DiscoveryLead}>
+              In this chat, I&apos;ll:
+            </p>
+            <ul className={styles.step3ChatList}>
+              <li className={styles.step3ChatListItem}>
+                <span className={styles.step3ChatListDot} />
+                <span>
+                  Answer any questions you may have about the role and the
+                  company.
+                </span>
+              </li>
+              <li className={styles.step3ChatListItem}>
+                <span className={styles.step3ChatListDot} />
+                <span>
+                  Get the full picture of you beyond your resume, so you&apos;re
+                  represented{" "}
+                  <span className={styles.highlightPhrase}>
+                    fairly and accurately
+                  </span>
+                  .
+                </span>
+              </li>
+            </ul>
+            <p className={styles.step3DiscoveryClosing}>
+              The employer prioritises the candidates who complete this chat,{" "}
+              <span
+                className={styles.highlightPhrase}
+                style={{ fontWeight: "bold" }}
+              >
+                so completing it early significantly improves your chances of
+                landing an interview.
+              </span>
+            </p>
           </div>
-          <Step3HeroCopy firstName={firstName} />
         </div>
       </section>
 
@@ -162,14 +174,18 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
 
       <section className={styles.step3Roadmap}>
         <div className={styles.step3RoadmapHeader}>
-          <div className={styles.step3RoadmapEyebrow}>What happens next</div>
-          <h2 className={styles.step3RoadmapTitle}>Here's how I'll help from here</h2>
+          <h2 className={styles.step3RoadmapTitle}>
+            Here&apos;s{" "}
+            <span className={styles.step3RoadmapExactly}>exactly</span> what
+            happens next
+          </h2>
+          <div className={styles.step3RoadmapDivider} />
         </div>
 
         <div className={styles.step3RoadmapList}>
-          {STEP3_ROADMAP.map((item, index) => (
-            <div key={item} className={styles.step3RoadmapItem}>
-              {index < STEP3_ROADMAP.length - 1 && (
+          {roadmapItems.map((item, index) => (
+            <div key={index} className={styles.step3RoadmapItem}>
+              {index < roadmapItems.length - 1 && (
                 <div className={styles.step3RoadmapLine} />
               )}
               <div className={styles.step3RoadmapDisc}>{index + 1}</div>
@@ -179,79 +195,12 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
         </div>
 
         <div className={styles.step3RoadmapCards}>
-          {STEP3_ROADMAP.map((item, index) => (
-            <div key={item} className={styles.step3RoadmapCard}>
+          {roadmapItems.map((item, index) => (
+            <div key={index} className={styles.step3RoadmapCard}>
               <div className={styles.step3RoadmapCardDisc}>{index + 1}</div>
               <div className={styles.step3RoadmapCardText}>{item}</div>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className={styles.step3Positioning}>
-        <div className={styles.step3PositioningMobile}>
-          <div className={styles.step3PositioningHeader}>
-            <PercyAvatar size={48} />
-            <div>
-              <div className={styles.step3PositioningName}>Percy</div>
-              <div className={styles.step3PositioningRole}>Your AI talent consultant</div>
-              <div style={{ marginTop: 4 }}>
-                <WhoIsPercyButton />
-              </div>
-            </div>
-          </div>
-          <p className={styles.step3PositioningTitle}>
-            I am your dedicated AI talent consultant,{" "}
-            <span className={styles.highlightPhraseSerif}>I work for you.</span>
-          </p>
-          <p className={styles.step3PositioningBody}>
-            I partner with <span className={styles.variableToken}>{companyName}</span> on this
-            role, but ultimately, <strong>I work for you</strong>. My job is to understand you
-            deeply so I can represent you as strongly as possible to the employer.
-          </p>
-          <p className={styles.step3CapabilitiesLead}>Here's what I can do:</p>
-          <div className={styles.step3CapabilityGrid}>
-            {STEP3_CAPABILITIES.map((item) => (
-              <div key={item.text} className={styles.step3CapabilityItem}>
-                <span className={styles.step3CapabilityIcon}>
-                  <CapabilityIcon type={item.icon} />
-                </span>
-                <span className={styles.step3CapabilityText}>{item.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.step3PositioningDesktop}>
-          <div className={styles.step3PositioningDesktopTop}>
-            <div className={styles.step3HeroAvatarCol}>
-              <PercyAvatar size={76} />
-              <WhoIsPercyButton />
-            </div>
-            <div style={{ flex: 1 }}>
-              <p className={styles.step3PositioningTitle}>
-                I am your dedicated AI talent consultant,{" "}
-                <span className={styles.highlightPhraseSerif}>I work for you.</span>
-              </p>
-              <p className={styles.step3PositioningBody} style={{ maxWidth: 520 }}>
-                I partner with <span className={styles.variableToken}>{companyName}</span> on
-                this role, but ultimately, <strong>I work for you</strong>. My job is to
-                understand you deeply so I can represent you as strongly as possible to the
-                employer.
-              </p>
-              <p className={styles.step3CapabilitiesLead}>Here's what I can do:</p>
-            </div>
-          </div>
-          <div className={styles.step3CapabilityGrid}>
-            {STEP3_CAPABILITIES.map((item) => (
-              <div key={item.text} className={styles.step3CapabilityItem}>
-                <span className={styles.step3CapabilityIcon}>
-                  <CapabilityIcon type={item.icon} />
-                </span>
-                <span className={styles.step3CapabilityText}>{item.text}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -265,8 +214,14 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
         </div>
         {sheetOpen && (
           <>
-            <div className={styles.sheetBackdrop} onClick={() => setSheetOpen(false)} />
-            <div className={`${styles.sheetPanel} ${styles.step3SheetPanel}`}>
+            <div
+              className={styles.sheetBackdrop}
+              onClick={() => setSheetOpen(false)}
+            />
+            <div
+              className={`${styles.sheetPanel}`}
+              style={{ background: "rgb(250, 245, 234)" }}
+            >
               <RegistrationPanel
                 variant="step3"
                 compact

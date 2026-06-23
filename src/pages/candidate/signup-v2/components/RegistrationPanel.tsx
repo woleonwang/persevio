@@ -56,6 +56,66 @@ const Step3EmailIcon = () => (
   </svg>
 );
 
+const Step3BenefitCheck = () => (
+  <span className={styles.step3BenefitCheck} aria-hidden="true">
+    <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+      <path
+        d="M2.5 6.2l2.2 2.2L9.5 3.6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  </span>
+);
+
+const Step3WhatsappTag = () => (
+  <span className={styles.step3WaTag}>
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M8 1.6a6.4 6.4 0 00-5.5 9.65L1.7 14.4l3.25-.84A6.4 6.4 0 108 1.6z"
+        fill="#25D366"
+      />
+      <path
+        d="M5.6 4.9c-.13-.3-.27-.3-.4-.31h-.34a.66.66 0 00-.48.22 2 2 0 00-.63 1.49c0 .88.64 1.73.73 1.85.09.12 1.24 1.99 3.08 2.71 1.53.6 1.84.48 2.17.45.33-.03 1.07-.44 1.22-.86.15-.42.15-.78.1-.86-.04-.07-.16-.11-.34-.2-.18-.09-1.07-.53-1.23-.59-.17-.06-.29-.09-.4.09-.12.18-.47.58-.57.7-.1.12-.21.13-.39.04a4.9 4.9 0 01-1.45-.9 5.4 5.4 0 01-1-1.24c-.1-.18-.01-.28.08-.37l.27-.31c.09-.11.12-.18.18-.3.06-.12.03-.23-.01-.32-.05-.09-.4-.99-.55-1.34z"
+        fill="#fff"
+      />
+    </svg>
+    WhatsApp
+  </span>
+);
+
+const Step3SignupBenefits = ({ compact }: { compact?: boolean }) => (
+  <div className={compact ? styles.step3SignupBenefitsCompact : styles.step3SignupBenefits}>
+    <div className={styles.step3SignupBenefitsTitle}>Once you continue, you can:</div>
+    <ul className={styles.step3SignupBenefitsList}>
+      <li className={styles.step3SignupBenefitsItem}>
+        <Step3BenefitCheck />
+        <span>
+          <span className={styles.step3SignupBenefitsEmph}>Save your application</span> and
+          come back anytime, even if you don&apos;t finish now.
+        </span>
+      </li>
+      <li className={styles.step3SignupBenefitsItem}>
+        <Step3BenefitCheck />
+        <span>
+          <span className={styles.step3SignupBenefitsEmph}>Track your application</span> and
+          get real updates on <Step3WhatsappTag /> or the web.
+        </span>
+      </li>
+      <li className={styles.step3SignupBenefitsItem}>
+        <Step3BenefitCheck />
+        <span>
+          <span className={styles.step3SignupBenefitsEmph}>Ask Percy anything</span> about the
+          role and company on <Step3WhatsappTag /> or web, anytime.
+        </span>
+      </li>
+    </ul>
+    <div className={styles.step3SignupBenefitsFootnote}>No password, takes a second.</div>
+  </div>
+);
+
 type TRegistrationStep = "providers" | "email" | "otp";
 
 type TRegistrationPanelProps = {
@@ -308,8 +368,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
 
   const isOtpComplete = otp.length === OTP_LENGTH;
   const providerDisabled = isSubmitting;
-  const showInlineHeading = isStep3 && !compact && step === "providers";
-  const showSheetHeading = isStep3 && compact && step === "providers";
+  const showSignupBenefits = isStep3 && step === "providers";
 
   const providerButtons = (
     <div
@@ -516,23 +575,7 @@ const RegistrationPanel: React.FC<TRegistrationPanelProps> = ({
 
   const content = (
     <>
-      {showSheetHeading && (
-        <div style={{ textAlign: "center", marginBottom: 18 }}>
-          <div className={styles.step3SignupTitle} style={{ fontSize: 21 }}>
-            Continue your application
-          </div>
-          <p className={styles.step3SignupSub} style={{ marginTop: 4, fontSize: 13 }}>
-            One quick step to save your progress, no password needed.
-          </p>
-        </div>
-      )}
-
-      {showInlineHeading && (
-        <div className={styles.step3SignupHeading}>
-          <div className={styles.step3SignupTitle}>Continue your application</div>
-          <div className={styles.step3SignupSub}>Create your account, no password needed</div>
-        </div>
-      )}
+      {showSignupBenefits && <Step3SignupBenefits compact={compact} />}
 
       {!isStep3 && step === "providers" && (
         <>

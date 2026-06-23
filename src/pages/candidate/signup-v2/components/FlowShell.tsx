@@ -42,6 +42,7 @@ type TFlowShellProps = {
   footer?: React.ReactNode;
   wide?: boolean;
   wrapUp?: boolean;
+  hideHeader?: boolean;
 };
 
 const FlowShell: React.FC<TFlowShellProps> = ({
@@ -70,15 +71,16 @@ const FlowShell: React.FC<TFlowShellProps> = ({
         {showProgress && (
           <div className={styles.headerCenter}>
             <ProgressDots current={currentStep} />
-            <span className={styles.stepLabel}>
-              {currentStep}/6
-            </span>
+            <span className={styles.stepLabel}>{currentStep}/6</span>
           </div>
         )}
       </header>
 
       {showJobHeader && jobTitle && companyName && (
-        <div className={styles.mobileVisible} style={{ padding: "12px 16px 0" }}>
+        <div
+          className={styles.mobileVisible}
+          style={{ padding: "12px 16px 0" }}
+        >
           <JobHeader
             jobTitle={jobTitle}
             companyName={companyName}
