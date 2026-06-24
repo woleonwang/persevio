@@ -1095,6 +1095,9 @@ function AtsTalentDetailV2026ViewBase() {
                         <Icon
                           icon={<DownloadIcon />}
                           className={styles.iconBtn16}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
                         />
                       </Dropdown>
                       <div
