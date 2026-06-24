@@ -29,6 +29,7 @@ const REJECT_REASON_OPTIONS: {
 ];
 
 const ADMINISTRATIVE_REJECT_REASONS: TTalentRejectReasonType[] = [
+  "did_not_pass_interview",
   "headcount_freeze",
   "candidate_withdrew",
 ];

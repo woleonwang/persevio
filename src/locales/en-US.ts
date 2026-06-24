@@ -2170,7 +2170,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "Applies to all selected candidates — add context if needed",
     reject_reason_details_placeholder: "Briefly describe",
     reject_calibration_guidance:
-      "Viona recommended this candidate. Help her understand what she missed — a quick chat is the most effective way.",
+      "I rated this candidate a yes. You clearly disagree. Help me understand what I got wrong, so I'll screen more accurately for you going forward.",
     reject_calibration_placeholder:
       "e.g., not enough hands-on experience in payment systems / role has evolved, now need stronger leadership background...",
     action_reject_only: "Reject only",
