@@ -20,25 +20,25 @@
 }
 
 .searchInput {
-  :global(.ant-input-affix-wrapper-lg) {
-    height: @filter-height;
-    min-height: @filter-height;
-    padding: 0 @filter-padding-x;
-    border-radius: @filter-radius;
-    border-color: @filter-border-color;
-    box-shadow: none;
-    box-sizing: border-box;
-    align-items: center;
-  }
-
-  :global(.ant-input-affix-wrapper-focused) {
-    border-color: rgba(54, 130, 254, 0.5);
-    box-shadow: none;
-  }
+  height: @filter-height;
+  min-height: @filter-height;
+  padding: 0 @filter-padding-x;
+  border-color: #f2f2f2;
+  border-radius: @filter-radius !important;
+  border-color: @filter-border-color !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
 
   :global(.ant-input-lg) {
     font-size: @filter-font-size !important;
     line-height: @filter-line-height !important;
+  }
+
+  &:global(.ant-input-affix-wrapper-focused) {
+    border-color: rgba(54, 130, 254, 0.5) !important;
+    box-shadow: none !important;
   }
 }
 

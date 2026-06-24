@@ -74,16 +74,8 @@
   width: var(--nav-width);
   max-width: none;
   top: calc(var(--nav-top-scrolled) * var(--nav-progress));
-  height: calc(
-    var(--nav-height-open) +
-      (var(--nav-height-scrolled) - var(--nav-height-open)) *
-      var(--nav-progress)
-  );
-  padding: 0
-    calc(
-      var(--nav-pad-open) + (var(--nav-pad-scrolled) - var(--nav-pad-open)) *
-        var(--nav-progress)
-    );
+  height: 44px;
+  padding: 14px 24px;
   border: 0;
   border-radius: calc(var(--nav-radius-scrolled) * var(--nav-progress));
   overflow: hidden;
@@ -137,20 +129,11 @@
 .navLogo {
   display: block;
   flex: 0 0 auto;
-  width: 176px;
-  height: 45px;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .navLogo img {
-  width: 176px;
+  width: auto;
   height: 45px;
-  max-width: none;
-  object-fit: contain;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  transform: none;
 }
 
 .navLogin {
@@ -651,7 +634,6 @@ html.gsap-enhanced .hero-map-glow {
   grid-template-columns: 306px 56px minmax(239px, 1fr);
   align-items: center;
   column-gap: 300px;
-  min-height: 106px;
   padding: 28px 20px;
   border-radius: 16px;
   background: var(--surface);
@@ -1083,15 +1065,9 @@ html.gsap-enhanced .hero-map-glow {
     --nav-radius-scrolled: 14px;
   }
 
-  .navLogo {
-    width: 156px;
-    height: 40px;
-  }
-
   .navLogo img {
-    width: 156px;
-    height: 51px;
-    transform: translateY(-7px);
+    width: auto;
+    height: 45px;
   }
 
   .navLogin {
@@ -1190,7 +1166,7 @@ html.gsap-enhanced .hero-map-glow {
   }
 
   .jobCard {
-    padding: 24px 20px;
+    padding: 28px 20px;
   }
 
   .jobCardMeta {

@@ -116,17 +116,27 @@ const JobsSection = ({ jobs, domain }: TProps) => {
               value,
             }))}
             onChange={setWorkplace}
+            suffixIcon={
+              <Icon
+                icon={<Down />}
+                style={{ fontSize: 20, color: "rgba(193, 193, 193, 1)" }}
+              />
+            }
           />
           <Select
             allowClear
-            showSearch
             size="large"
             className={styles.filterSelect}
             placeholder="Location"
             value={location}
             options={locationOptions}
-            optionFilterProp="label"
             onChange={setLocation}
+            suffixIcon={
+              <Icon
+                icon={<Down />}
+                style={{ fontSize: 20, color: "rgba(193, 193, 193, 1)" }}
+              />
+            }
           />
         </div>
 
@@ -155,10 +165,12 @@ const JobsSection = ({ jobs, domain }: TProps) => {
                     {formatPostedTime(job.posted_at)}
                   </p>
                 </div>
-                <div className="jobCardMeta">
-                  <span className="jobWorkplace">{jobWorkplace}</span>
-                  <span className="jobLocation">{jobLocation}</span>
-                </div>
+                {(jobWorkplace || jobLocation) && (
+                  <div className="jobCardMeta">
+                    <span className="jobWorkplace">{jobWorkplace}</span>
+                    <span className="jobLocation">{jobLocation}</span>
+                  </div>
+                )}
               </article>
             );
           })}

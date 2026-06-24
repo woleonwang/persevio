@@ -34,7 +34,7 @@ const CareerNav = ({ logo, companyName, website, domain }: TProps) => {
           }}
         >
           <span>login</span>
-          <Icon icon={<ArrowRight />} />
+          <Icon icon={<ArrowRight />} style={{ fontSize: 20 }} />
         </button>
       </header>
     </div>

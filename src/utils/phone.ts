@@ -11,6 +11,5 @@ export const isValidPhone = (
   }
 
   const result = isValidPhoneNumber(`${trimmedCode}${trimmedPhone}`);
-  console.log("result", result);
   return result;
 };
