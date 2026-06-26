@@ -166,6 +166,16 @@
   }
 }
 
+.downloadReportDropdownItemSelected {
+  background: @page-bg !important;
+}
+
+.downloadReportDropdownCheck {
+  margin-right: 8px;
+  color: @primary-color;
+  font-size: 12px;
+}
+
 .downloadReportDropdownLabel {
   flex: 1;
 }
@@ -249,6 +259,43 @@
 .resumeInner {
   padding: 0 16px;
   overflow: hidden;
+  position: relative;
+}
+
+.resumeLanguageBtn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: @text-quaternary;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 20px;
+  cursor: pointer;
+
+  &:hover {
+    color: @text-secondary !important;
+    background: @page-bg !important;
+  }
+}
+
+.resumeLanguageBtnActive {
+  color: @primary-color !important;
+
+  &:hover {
+    color: @primary-color !important;
+    background: #eef4ff !important;
+  }
+}
+
+.resumeViewLoadingWrap {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
 }
 
 .resumeSectionHeaderAnimated {

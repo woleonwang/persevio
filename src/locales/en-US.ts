@@ -2203,6 +2203,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     download_resume_other_language: "Other language",
     download_resume_translating: "Translating resume...",
     download_resume_translate_failed: "Failed to translate resume.",
+    view_resume_in: "View Resume in",
+    switch_resume_language: "Switch resume language",
     looks_accurate: "Looks accurate",
     looks_inaccurate: "Looks inaccurate",
   },

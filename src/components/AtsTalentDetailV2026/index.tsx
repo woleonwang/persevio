@@ -18,6 +18,7 @@ import {
   ArrowLeftOutlined,
   DownOutlined,
   FileOutlined,
+  TranslationOutlined,
   UpOutlined,
 } from "@ant-design/icons";
 import { v4 as uuidv4 } from "uuid";
@@ -105,6 +106,13 @@ function AtsTalentDetailV2026ViewBase() {
   const [activeLogs, setActiveLogs] = useState<TActiveLog[]>([]);
 
   const [resumeExpanded, setResumeExpanded] = useState(false);
+  const [resumeViewLocale, setResumeViewLocale] = useState<
+    "original" | "en" | "zh"
+  >("original");
+  const [translatedResumeByLocale, setTranslatedResumeByLocale] = useState<
+    Partial<Record<"en" | "zh", string>>
+  >({});
+  const [resumeViewLoading, setResumeViewLoading] = useState(false);
   const [rightTab, setRightTab] = useState<
     "interview_feedback" | "notes" | "activity" | "assigned_recruiters"
   >("interview_feedback");
@@ -154,6 +162,12 @@ function AtsTalentDetailV2026ViewBase() {
   const navigate = useNavigate();
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`talent_details.${key}`);
+
+  useEffect(() => {
+    setResumeViewLocale("original");
+    setTranslatedResumeByLocale({});
+    setResumeViewLoading(false);
+  }, [talent?.id]);
 
   useEffect(() => {
     if (
@@ -438,6 +452,48 @@ function AtsTalentDetailV2026ViewBase() {
       hideLoading();
     }
   };
+
+  const handleResumeViewLocaleChange = async (
+    option: "original" | "en" | "zh",
+  ) => {
+    if (option === resumeViewLocale) return;
+
+    if (option === "original") {
+      setResumeViewLocale("original");
+      return;
+    }
+
+    if (translatedResumeByLocale[option]) {
+      setResumeViewLocale(option);
+      return;
+    }
+
+    setResumeViewLoading(true);
+    try {
+      const { code, data } = await Post<{ content: string }>(
+        `/api/jobs/${job.invitation_token}/talents/${talent.id}/translate_resume`,
+        { target_lang: option },
+      );
+
+      if (code !== 0 || !data?.content?.trim()) {
+        message.error(t("download_resume_translate_failed"));
+        return;
+      }
+
+      setTranslatedResumeByLocale((prev) => ({
+        ...prev,
+        [option]: data.content,
+      }));
+      setResumeViewLocale(option);
+    } finally {
+      setResumeViewLoading(false);
+    }
+  };
+
+  const activeTranslatedResumeContent =
+    resumeViewLocale === "en" || resumeViewLocale === "zh"
+      ? translatedResumeByLocale[resumeViewLocale]
+      : "";
 
   const groupedInterviewFeedbackRecordsMap = interviewFeedbackRecords.reduce(
     (acc, record) => {
@@ -823,7 +879,7 @@ function AtsTalentDetailV2026ViewBase() {
             <Dropdown
               trigger={["hover"]}
               placement="bottomRight"
-              disabled={resumeDownloadMenuItems.length === 0}
+              mouseLeaveDelay={0.3}
               dropdownRender={() => (
                 <div className={styles.downloadReportDropdown}>
                   <div className={styles.downloadReportDropdownHeader}>
@@ -916,7 +972,76 @@ function AtsTalentDetailV2026ViewBase() {
               )}
             >
               <div className={styles.resumeInner}>
-                {resumeDetail?.contact_information ? (
+                <Tooltip title={t("switch_resume_language")}>
+                  <Dropdown
+                    trigger={["hover", "click"]}
+                    placement="bottomRight"
+                    disabled={resumeDownloadMenuItems.length === 0}
+                    dropdownRender={() => (
+                      <div className={styles.downloadReportDropdown}>
+                        <div className={styles.downloadReportDropdownHeader}>
+                          {t("view_resume_in")}
+                        </div>
+                        {resumeDownloadMenuItems.map((item) => {
+                          const selected = item.option === resumeViewLocale;
+                          return (
+                            <Button
+                              key={item.option}
+                              type="text"
+                              block
+                              className={classnames(
+                                styles.downloadReportDropdownItem,
+                                selected &&
+                                  styles.downloadReportDropdownItemSelected,
+                              )}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                void handleResumeViewLocaleChange(item.option);
+                              }}
+                            >
+                              <span
+                                className={styles.downloadReportDropdownLabel}
+                              >
+                                {item.label}
+                              </span>
+                              <span
+                                className={classnames(
+                                  styles.downloadReportBadge,
+                                  item.badge === "original"
+                                    ? styles.downloadReportBadgeNative
+                                    : styles.downloadReportBadgeAi,
+                                )}
+                              >
+                                {item.badge === "original"
+                                  ? t("download_resume_original")
+                                  : t("download_report_ai_translated")}
+                              </span>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  >
+                    <div
+                      className={classnames(
+                        styles.resumeLanguageBtn,
+                        resumeViewLocale !== "original" &&
+                          styles.resumeLanguageBtnActive,
+                      )}
+                    >
+                      <TranslationOutlined />
+                    </div>
+                  </Dropdown>
+                </Tooltip>
+                {resumeViewLoading ? (
+                  <div className={styles.resumeViewLoadingWrap}>
+                    <Spin />
+                  </div>
+                ) : resumeViewLocale !== "original" ? (
+                  <MarkdownContainer
+                    content={activeTranslatedResumeContent ?? ""}
+                  />
+                ) : resumeDetail?.contact_information ? (
                   <Resume resume={resumeDetail} />
                 ) : (
                   <MarkdownContainer content={talent.parsed_content || ""} />
