@@ -200,10 +200,12 @@ export const downloadMarkdownAsPDF = async ({
   options?: {
     skipWrapper?: boolean;
     skipAutoSplit?: boolean;
+    heightRate?: number;
   };
 }) => {
   const skipWrapper = options?.skipWrapper ?? false;
   const skipAutoSplit = options?.skipAutoSplit ?? false;
+  const heightRate = options?.heightRate ?? 0.28;
   try {
     // 创建一个临时的包装容器
     const wrapper = document.createElement("div");
@@ -247,6 +249,8 @@ export const downloadMarkdownAsPDF = async ({
 
     const wrapperHeight = wrapper.offsetHeight;
 
+    console.log("wrapperHeight", wrapperHeight);
+
     const opt: html2pdf.Options = {
       margin: [10, 10, 10, 10],
       filename: `${name}.pdf`,
@@ -258,7 +262,7 @@ export const downloadMarkdownAsPDF = async ({
       },
       jsPDF: {
         unit: "mm",
-        format: [210, Math.ceil(wrapperHeight * 0.28)],
+        format: [210, Math.ceil(wrapperHeight * heightRate)],
         orientation: "portrait",
       },
       pagebreak: {

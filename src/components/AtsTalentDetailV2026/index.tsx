@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
+import { createRoot } from "react-dom/client";
 import {
   Button,
   Drawer,
@@ -44,9 +45,10 @@ import Bag from "@/assets/icons/bag";
 
 import useTalent from "@/hooks/useTalent";
 import useJob from "@/hooks/useJob";
-import { Download, Get, Post } from "@/utils/request";
+import { Get, Post, Download } from "@/utils/request";
 import {
   buildTalentDetailUrl,
+  downloadMarkdownAsPDF,
   getQuery,
   getSourcingChannel,
   normalizeReport,
@@ -345,11 +347,96 @@ function AtsTalentDetailV2026ViewBase() {
     });
   };
 
-  const downloadResume = async () => {
-    await Download(
-      `/api/jobs/${job.invitation_token}/talents/${talent.id}/download_resume`,
-      `${talent.name}_resume`,
-    );
+  const resumeLanguage =
+    resumeDetail?.language === "zh" || resumeDetail?.language === "en"
+      ? resumeDetail.language
+      : "others";
+
+  const resumeDownloadMenuItems: {
+    option: "original" | "en" | "zh";
+    label: string;
+    badge: "original" | "ai";
+  }[] = [
+    {
+      option: "original",
+      label: t(
+        resumeLanguage === "zh"
+          ? "download_report_chinese"
+          : resumeLanguage === "en"
+            ? "download_report_english"
+            : "download_resume_other_language",
+      ),
+      badge: "original",
+    },
+  ];
+
+  if (resumeLanguage !== "en") {
+    resumeDownloadMenuItems.push({
+      option: "en",
+      label: t("download_report_english"),
+      badge: "ai",
+    });
+  }
+
+  if (resumeLanguage !== "zh") {
+    resumeDownloadMenuItems.push({
+      option: "zh",
+      label: t("download_report_chinese"),
+      badge: "ai",
+    });
+  }
+
+  const handleDownloadResume = async (option: "original" | "en" | "zh") => {
+    const safeName = talent.name.replace(/\s+/g, "");
+
+    if (option === "original") {
+      await Download(
+        `/api/jobs/${job.invitation_token}/talents/${talent.id}/download_resume`,
+        `${talent.name}_resume`,
+      );
+      return;
+    }
+
+    const hideLoading = message.loading(t("download_resume_translating"), 0);
+
+    try {
+      const { code, data } = await Post<{ content: string }>(
+        `/api/jobs/${job.invitation_token}/talents/${talent.id}/translate_resume`,
+        { target_lang: option },
+      );
+
+      if (code !== 0 || !data?.content?.trim()) {
+        message.error(t("download_resume_translate_failed"));
+        return;
+      }
+
+      const container = document.createElement("div");
+      container.style.width = "190mm";
+      document.body.appendChild(container);
+      const root = createRoot(container);
+
+      try {
+        root.render(<MarkdownContainer content={data.content} />);
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve());
+          });
+        });
+        await downloadMarkdownAsPDF({
+          name: `${safeName}_resume${option === "zh" ? "_zh" : "_en"}`,
+          element: container,
+          options: {
+            skipAutoSplit: true,
+            heightRate: 0.32,
+          },
+        });
+      } finally {
+        root.unmount();
+        document.body.removeChild(container);
+      }
+    } finally {
+      hideLoading();
+    }
   };
 
   const groupedInterviewFeedbackRecordsMap = interviewFeedbackRecords.reduce(
@@ -733,14 +820,54 @@ function AtsTalentDetailV2026ViewBase() {
                 </a>
               )}
             </div>
-            <Button
-              variant="outlined"
-              color="primary"
-              icon={<Icon icon={<DownloadIcon />} />}
-              onClick={() => void downloadResume()}
+            <Dropdown
+              trigger={["hover"]}
+              placement="bottomRight"
+              disabled={resumeDownloadMenuItems.length === 0}
+              dropdownRender={() => (
+                <div className={styles.downloadReportDropdown}>
+                  <div className={styles.downloadReportDropdownHeader}>
+                    {t("download_resume_in")}
+                  </div>
+                  {resumeDownloadMenuItems.map((item) => (
+                    <Button
+                      key={item.option}
+                      type="text"
+                      block
+                      className={styles.downloadReportDropdownItem}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void handleDownloadResume(item.option);
+                      }}
+                    >
+                      <span className={styles.downloadReportDropdownLabel}>
+                        {item.label}
+                      </span>
+                      <span
+                        className={classnames(
+                          styles.downloadReportBadge,
+                          item.badge === "original"
+                            ? styles.downloadReportBadgeNative
+                            : styles.downloadReportBadgeAi,
+                        )}
+                      >
+                        {item.badge === "original"
+                          ? t("download_resume_original")
+                          : t("download_report_ai_translated")}
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+              )}
             >
-              Resume
-            </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                icon={<Icon icon={<DownloadIcon />} />}
+              >
+                Resume
+              </Button>
+            </Dropdown>
           </div>
         </div>
 

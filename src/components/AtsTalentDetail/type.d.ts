@@ -1,4 +1,5 @@
 export type TTalentResume = {
+  language?: "zh" | "en" | "others";
   contact_information: {
     name: string;
     email: string;

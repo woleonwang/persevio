@@ -156,9 +156,13 @@
   font-size: 14px;
   color: @text-primary;
   width: 100%;
+  height: auto;
+  border-radius: 0;
 
-  &:hover {
-    background: @page-bg;
+  &:hover,
+  &:focus {
+    background: @page-bg !important;
+    color: @text-primary !important;
   }
 }
 
