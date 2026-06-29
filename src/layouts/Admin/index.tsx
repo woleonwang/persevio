@@ -6,6 +6,7 @@ import {
   FileTextOutlined,
   FunnelPlotOutlined,
   SettingOutlined,
+  TagsOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
 import styles from "./style.module.less";
@@ -102,6 +103,12 @@ const AdminLayout = () => {
       title: "Signup Funnel",
       path: "/admin/candidate-signup-funnel",
       img: <FunnelPlotOutlined />,
+      requireAdmin: true,
+    },
+    {
+      title: "Talent Tags",
+      path: "/admin/talent-tags",
+      img: <TagsOutlined />,
       requireAdmin: true,
     },
     {
