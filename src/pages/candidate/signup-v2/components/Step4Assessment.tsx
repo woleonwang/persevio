@@ -8,7 +8,7 @@ import AssessmentChatSheet from "./AssessmentChatSheet";
 import FlowShell, { FlowShellFooterButton } from "./FlowShell";
 import HighlightText from "./HighlightText";
 import PercyAvatar from "./PercyAvatar";
-import ResumeReviewTransition from "./ResumeReviewTransition";
+import PercyCountdownTransition from "./PercyCountdownTransition";
 import WhoIsPercyButton from "./WhoIsPercyButton";
 import {
   getAssessmentDisplay,
@@ -26,6 +26,7 @@ type TStep4AssessmentProps = {
 };
 
 const MIN_REVIEW_MS = 2000;
+const STEP4_COUNTDOWN_SECONDS = 90;
 
 const renderChatFooter = (onClick: () => void) => (
   <div className={styles.chatFooter}>
@@ -53,7 +54,6 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
     "reviewing",
   );
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [slowMessage, setSlowMessage] = useState(false);
   const reviewStartedAt = useRef(Date.now());
 
   const impression = useMemo(
@@ -64,8 +64,6 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
   const tier = getTierFromRecommendation(jobApply?.interview_recommendation);
   const assessment = getAssessmentDisplay(impression, tier);
   useEffect(() => {
-    const slowTimer = window.setTimeout(() => setSlowMessage(true), 5000);
-
     const evaluatePhase = () => {
       const elapsed = Date.now() - reviewStartedAt.current;
       if (elapsed < MIN_REVIEW_MS) {
@@ -88,7 +86,7 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
     };
 
     if (evaluatePhase()) {
-      return () => window.clearTimeout(slowTimer);
+      return;
     }
 
     const waitMs = Math.max(
@@ -98,7 +96,6 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
     const readyTimer = window.setTimeout(evaluatePhase, waitMs);
 
     return () => {
-      window.clearTimeout(slowTimer);
       window.clearTimeout(readyTimer);
     };
   }, [impression, jobApply?.interview_strategy_status]);
@@ -125,7 +122,27 @@ const Step4Assessment: React.FC<TStep4AssessmentProps> = ({
   if (phase === "reviewing") {
     return (
       <FlowShell currentStep={4} showJobHeader={false}>
-        <ResumeReviewTransition slowMessage={slowMessage} />
+        <PercyCountdownTransition
+          seconds={STEP4_COUNTDOWN_SECONDS}
+          titleClassName={`${styles.reviewingTitle} ${styles.countdownReviewingTitle}`}
+          title={
+            <>
+              Reviewing your resume
+              <span className={styles.reviewingDots} aria-hidden="true">
+                {[0, 1, 2].map((index) => (
+                  <span
+                    key={index}
+                    className={styles.reviewingDot}
+                    style={{ animationDelay: `${index * 0.18}s` }}
+                  />
+                ))}
+              </span>
+            </>
+          }
+          lead="I'm reading through your background and putting together my initial thoughts on your fit to this role. It usually takes 30–90s, depending on the role and your resume."
+          countdownHint="estimated time remaining"
+          leadMaxWidth={340}
+        />
       </FlowShell>
     );
   }
