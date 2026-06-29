@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import FlowShell, { SignupPrimaryButton } from "./FlowShell";
 import PercyAvatar from "./PercyAvatar";
-import ResumeReviewTransition from "./ResumeReviewTransition";
+import Step3Transition from "./Step3Transition";
 import WhoIsPercyButton from "./WhoIsPercyButton";
 import styles from "../style.module.less";
-
-const STEP3_LOADING_MS = 10000;
+import Whatsapp from "@/assets/icons/whatsapp";
+import Icon from "@/components/Icon";
 
 type TStep3IntroProps = {
   firstName: string;
@@ -16,31 +16,12 @@ type TStep3IntroProps = {
   onContinue: () => void;
 };
 
-const WhatsappGlyph = ({ size = 15 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M8 1.6a6.4 6.4 0 00-5.5 9.65L1.7 14.4l3.25-.84A6.4 6.4 0 108 1.6z"
-      fill="#25D366"
-    />
-    <path
-      d="M5.6 4.9c-.13-.3-.27-.3-.4-.31h-.34a.66.66 0 00-.48.22 2 2 0 00-.63 1.49c0 .88.64 1.73.73 1.85.09.12 1.24 1.99 3.08 2.71 1.53.6 1.84.48 2.17.45.33-.03 1.07-.44 1.22-.86.15-.42.15-.78.1-.86-.04-.07-.16-.11-.34-.2-.18-.09-1.07-.53-1.23-.59-.17-.06-.29-.09-.4.09-.12.18-.47.58-.57.7-.1.12-.21.13-.39.04a4.9 4.9 0 01-1.45-.9 5.4 5.4 0 01-1-1.24c-.1-.18-.01-.28.08-.37l.27-.31c.09-.11.12-.18.18-.3.06-.12.03-.23-.01-.32-.05-.09-.4-.99-.55-1.34z"
-      fill="#fff"
-    />
-  </svg>
-);
-
-const Step3WhatsappTag = () => (
-  <span className={styles.step3WaTag}>
-    <WhatsappGlyph />
-    WhatsApp
-  </span>
-);
+const ROADMAP_ITEMS = [
+  "I have reviewed your resume and will share my honest first read on your fit immediately after you proceed to the next step",
+  "We'll have a short discovery chat so I understand you beyond your resume",
+  "I'll prepare and submit your application with my recommendations",
+  "Message me on WhatsApp or Persevio anytime when you want an update",
+];
 
 const Step3Intro: React.FC<TStep3IntroProps> = ({
   firstName,
@@ -50,38 +31,18 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
   onContinue,
 }) => {
   const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setReady(true), STEP3_LOADING_MS);
-    return () => window.clearTimeout(timer);
-  }, []);
+  const displayName = firstName.trim() || "there";
 
   if (!ready) {
     return (
       <FlowShell currentStep={3} showJobHeader={false}>
-        <ResumeReviewTransition
-          countdownSeconds={STEP3_LOADING_MS / 1000}
-          showCountdownRing
+        <Step3Transition
+          firstName={displayName}
+          onComplete={() => setReady(true)}
         />
       </FlowShell>
     );
   }
-
-  const roadmapItems = [
-    <>
-      I&apos;ll show you my preliminary thoughts on your fit for this role,
-      which we can discuss in detail in our chat.
-    </>,
-    <>
-      We&apos;ll have the discovery chat to fully understand your strengths, on{" "}
-      <Step3WhatsappTag /> or web.
-    </>,
-    <>I prepare and submit your application with my recommendation.</>,
-    <>
-      You can message me anytime on <Step3WhatsappTag /> or Persevio dashboard
-      for a real update on your application.
-    </>,
-  ];
 
   return (
     <FlowShell
@@ -92,94 +53,80 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
       wide
       showJobHeader={false}
     >
-      <section className={styles.step3Hero}>
+      <section className={styles.step3HeroV2}>
         <div className={styles.step3HeroGlow} />
-        <div className={styles.step3HeroInner}>
-          <div className={styles.step3HeroChat}>
-            <div className={styles.percyRow} style={{ marginBottom: 0 }}>
-              <div className={styles.percyColumn}>
-                <PercyAvatar size={54} asset="face" ring={false} />
-                <WhoIsPercyButton />
-              </div>
-              <div className={styles.speechBubble}>
-                <div className={styles.speechBubbleTail} />
-                Thanks for submitting your resume,{" "}
-                <span className={styles.variableToken}>{firstName}</span>.
-                I&apos;ve already reviewed it, and I&apos;ll share{" "}
-                <span className={styles.step3EmphInk}>
-                  my preliminary thoughts on your fit
-                </span>{" "}
-                for this role on the next page.
-              </div>
-            </div>
+        <div className={styles.step3HeroV2Layout}>
+          <div className={styles.step3HeroV2AvatarCol}>
+            <PercyAvatar size={108} asset="face" />
+            <WhoIsPercyButton />
           </div>
 
-          <div className={styles.step3HeroDiscovery}>
-            <h2 className={styles.step3DiscoveryTitle}>
-              For the next step, the hiring manager would like to invite you to
-              a{" "}
-              <span className={styles.step3DiscoveryAccent}>
+          <div className={styles.step3HeroV2Copy}>
+            <p className={styles.step3HeroV2Thanks}>
+              Thanks for submitting your resume,{" "}
+              <span className={styles.variableToken}>{displayName}</span>.
+            </p>
+
+            <p className={styles.step3HeroV2Body}>
+              The next step is a{" "}
+              <span className={styles.highlightPhraseSerif}>
                 discovery chat
               </span>{" "}
-              with me.
-            </h2>
-            <p className={styles.step3DiscoveryLead}>
-              In this chat, I&apos;ll:
+              with me. This chat is{" "}
+              <span className={styles.highlightPhrase}>
+                required by the hiring manager
+              </span>
+              , designed to get the full picture of you beyond the incomplete
+              information on your resume, so you are represented{" "}
+              <span className={styles.highlightPhrase}>fairly</span> and{" "}
+              <span className={styles.highlightPhrase}>accurately.</span>
             </p>
-            <ul className={styles.step3ChatList}>
-              <li className={styles.step3ChatListItem}>
-                <span className={styles.step3ChatListDot} />
-                <span>
-                  Answer any questions you may have about the role and the
-                  company.
-                </span>
-              </li>
-              <li className={styles.step3ChatListItem}>
-                <span className={styles.step3ChatListDot} />
-                <span>
-                  Get the full picture of you beyond your resume, so you&apos;re
-                  represented{" "}
-                  <span className={styles.highlightPhrase}>
-                    fairly and accurately
-                  </span>
-                  .
-                </span>
-              </li>
-            </ul>
-            <p className={styles.step3DiscoveryClosing}>
-              The employer prioritises the candidates who complete this chat,{" "}
-              <span
-                className={styles.highlightPhrase}
-                style={{ fontWeight: "bold" }}
-              >
-                so completing it early significantly improves your chances of
-                landing an interview.
+
+            <p className={styles.step3HeroV2Headline}>
+              Completing this chat will{" "}
+              <span className={styles.highlightPhraseSerif}>
+                significantly increase your chance of landing an interview.
               </span>
             </p>
+
+            <div className={styles.step3HeroV2WhatsappNote}>
+              <Icon
+                icon={<Whatsapp />}
+                style={{ fontSize: 12, position: "relative", top: 4 }}
+              />
+              <span>
+                You&apos;ll also be able to message me anytime on{" "}
+                <span className={styles.step3HeroV2WhatsappLabel}>
+                  WhatsApp
+                </span>{" "}
+                or on your dashboard on Persevio for application updates after
+                our conversation.
+              </span>
+            </div>
+
+            <div
+              className={`${styles.step3HeroV2DesktopCta} ${styles.desktopVisible}`}
+            >
+              <SignupPrimaryButton onClick={onContinue}>
+                Continue your application →
+              </SignupPrimaryButton>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className={`${styles.step3ContinueWrap} ${styles.desktopVisible}`}>
-        <SignupPrimaryButton onClick={onContinue}>
-          Continue your application →
-        </SignupPrimaryButton>
-      </div>
-
       <section className={styles.step3Roadmap}>
         <div className={styles.step3RoadmapHeader}>
-          <h2 className={styles.step3RoadmapTitle}>
-            Here&apos;s{" "}
-            <span className={styles.step3RoadmapExactly}>exactly</span> what
-            happens next
+          <div className={styles.step3RoadmapEyebrow}>What happens next</div>
+          <h2 className={styles.step3RoadmapTitleV2}>
+            Here&apos;s how I&apos;ll help from here
           </h2>
-          <div className={styles.step3RoadmapDivider} />
         </div>
 
         <div className={styles.step3RoadmapList}>
-          {roadmapItems.map((item, index) => (
+          {ROADMAP_ITEMS.map((item, index) => (
             <div key={index} className={styles.step3RoadmapItem}>
-              {index < roadmapItems.length - 1 && (
+              {index < ROADMAP_ITEMS.length - 1 && (
                 <div className={styles.step3RoadmapLine} />
               )}
               <div className={styles.step3RoadmapDisc}>{index + 1}</div>
@@ -189,7 +136,7 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
         </div>
 
         <div className={styles.step3RoadmapCards}>
-          {roadmapItems.map((item, index) => (
+          {ROADMAP_ITEMS.map((item, index) => (
             <div key={index} className={styles.step3RoadmapCard}>
               <div className={styles.step3RoadmapCardDisc}>{index + 1}</div>
               <div className={styles.step3RoadmapCardText}>{item}</div>

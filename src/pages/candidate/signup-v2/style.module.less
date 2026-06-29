@@ -1545,6 +1545,221 @@
   padding: 26px 0 24px;
 }
 
+.step3Transition {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 30px 72px;
+  position: relative;
+}
+
+.step3TransitionRingWrap {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step3TransitionPulseRing {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid @accent;
+  pointer-events: none;
+  animation: step3TransitionPulse 2.4s ease-out infinite;
+}
+
+.step3TransitionCountdownSvg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.step3TransitionProgressRing {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.step3TransitionTitle {
+  margin: 26px 0 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: @ink;
+  max-width: 300px;
+}
+
+.step3TransitionLead {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: @sub;
+  max-width: 300px;
+}
+
+.step3TransitionCountdownPill {
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: @surface;
+  border: 1px solid @line;
+  box-shadow: 0 1px 2px rgba(40, 30, 15, 0.04);
+}
+
+.step3TransitionCountdownValue {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: @accent;
+  font-variant-numeric: tabular-nums;
+}
+
+.step3TransitionCountdownHint {
+  font-size: 12.5px;
+  color: @faint;
+}
+
+.step3TransitionSkipButton {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: @sub;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.step3HeroV2 {
+  position: relative;
+  padding: 30px 0 26px;
+  text-align: center;
+}
+
+.step3HeroV2Layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.step3HeroV2AvatarCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.step3HeroV2Copy {
+  width: 100%;
+  max-width: 342px;
+  margin-top: 16px;
+}
+
+.step3HeroV2Thanks {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: @sub;
+}
+
+.step3HeroV2Body {
+  margin: 18px 0 0;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: @sub;
+  text-wrap: pretty;
+}
+
+.step3HeroV2Headline {
+  margin: 18px 0 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 23.5px;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: @ink;
+  text-wrap: balance;
+}
+
+.step3HeroV2WhatsappNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: @surface;
+  border: 1px solid @line;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.45;
+  color: @sub;
+}
+
+.step3HeroV2WhatsappLabel {
+  color: #1b8f4d;
+  font-weight: 700;
+}
+
+.step3HeroV2DesktopCta {
+  margin-top: 26px;
+  max-width: 470px;
+}
+
+.step3RoadmapEyebrow {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: @accent;
+}
+
+.step3RoadmapTitleV2 {
+  margin: 0;
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 500;
+  font-size: 23px;
+  letter-spacing: -0.01em;
+  color: @ink;
+}
+
+@keyframes step3TransitionPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  70% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
 .step3HeroGlow {
   position: absolute;
   top: -10px;
@@ -2795,6 +3010,10 @@
     * {
       animation: none !important;
     }
+
+    .step3TransitionProgressRing {
+      transition: none !important;
+    }
   }
 }
 
@@ -3305,6 +3524,51 @@
     padding: 0;
   }
 
+  .step3HeroV2 {
+    padding: 0;
+    text-align: left;
+  }
+
+  .step3HeroV2Layout {
+    flex-direction: row;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .step3HeroV2AvatarCol {
+    flex-shrink: 0;
+  }
+
+  .step3HeroV2Copy {
+    flex: 1;
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .step3HeroV2Thanks {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .step3HeroV2Body {
+    margin-top: 0;
+    font-size: 16px;
+    max-width: 480px;
+  }
+
+  .step3HeroV2Headline {
+    margin-top: 16px;
+    font-size: 27px;
+    max-width: 500px;
+  }
+
+  .step3HeroV2WhatsappNote {
+    max-width: 470px;
+    margin-top: 20px;
+    padding: 11px 15px;
+    border-radius: 13px;
+  }
+
   .step3HeroGlow {
     left: 0;
     top: -20px;
@@ -3368,6 +3632,10 @@
     margin-top: 48px;
     padding-top: 0;
     border-top: none;
+  }
+
+  .step3RoadmapTitleV2 {
+    font-size: 25px;
   }
 
   .step3RoadmapTitle {
