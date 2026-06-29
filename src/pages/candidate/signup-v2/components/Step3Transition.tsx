@@ -13,18 +13,6 @@ type TStep3TransitionProps = {
   onComplete: () => void;
 };
 
-const ContinueArrow = () => (
-  <svg width="15" height="15" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-    <path
-      d="M3 8.5h10M9 4.5l4 4-4 4"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 const Step3Transition: React.FC<TStep3TransitionProps> = ({
   firstName,
   seconds = 10,
@@ -51,9 +39,18 @@ const Step3Transition: React.FC<TStep3TransitionProps> = ({
   return (
     <div className={`${styles.step3Transition} ${styles.reviewingAnim}`}>
       <div className={styles.step3TransitionRingWrap}>
-        <span className={styles.step3TransitionPulseRing} style={{ animationDelay: "0s" }} />
-        <span className={styles.step3TransitionPulseRing} style={{ animationDelay: "0.8s" }} />
-        <span className={styles.step3TransitionPulseRing} style={{ animationDelay: "1.6s" }} />
+        <span
+          className={styles.step3TransitionPulseRing}
+          style={{ animationDelay: "0s" }}
+        />
+        <span
+          className={styles.step3TransitionPulseRing}
+          style={{ animationDelay: "0.8s" }}
+        />
+        <span
+          className={styles.step3TransitionPulseRing}
+          style={{ animationDelay: "1.6s" }}
+        />
         <svg
           className={styles.step3TransitionCountdownSvg}
           width={COUNTDOWN_RING_SIZE}
@@ -87,11 +84,12 @@ const Step3Transition: React.FC<TStep3TransitionProps> = ({
       </div>
 
       <h2 className={styles.step3TransitionTitle}>
-        Getting things ready, <span className={styles.variableToken}>{displayName}</span>…
+        Getting things ready,{" "}
+        <span className={styles.variableToken}>{displayName}</span>…
       </h2>
       <p className={styles.step3TransitionLead}>
-        Give me a moment. I&apos;m lining up your next step and pulling your resume
-        into view.
+        Give me a moment. I&apos;m lining up your next step and pulling your
+        resume into view.
       </p>
 
       <div className={styles.step3TransitionCountdownPill}>
@@ -102,15 +100,6 @@ const Step3Transition: React.FC<TStep3TransitionProps> = ({
           {secondsLeft > 0 ? "until your next step" : "here we go…"}
         </span>
       </div>
-
-      <button
-        type="button"
-        className={styles.step3TransitionSkipButton}
-        onClick={onComplete}
-      >
-        Skip the wait
-        <ContinueArrow />
-      </button>
     </div>
   );
 };

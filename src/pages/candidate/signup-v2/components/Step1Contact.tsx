@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Checkbox, Input } from "antd";
+import { Checkbox, Input, message } from "antd";
 
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import MarkdownContainer from "@/components/MarkdownContainer";
@@ -57,10 +57,20 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
     firstName.trim() &&
     lastName.trim() &&
     isValidEmail(email) &&
-    isValidPhone(countryCode, phone) &&
-    isTermsAgreed;
+    isValidPhone(countryCode, phone);
 
   const handleSubmit = async () => {
+    if (!canSubmit || submitting) {
+      if (!isValidPhone(countryCode, phone)) {
+        setPhoneError("That number looks incomplete. Please check it.");
+      }
+      return;
+    }
+    if (!isTermsAgreed) {
+      setTermsPulse(true);
+      message.warning("Please read and agree to the agreement");
+      return;
+    }
     setPhoneError("");
     setSubmitting(true);
     await onSubmit({
@@ -79,13 +89,50 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
       companyName={companyName}
       companyLogo={companyLogo}
       footer={
-        <FlowShellFooterButton
-          disabled={!canSubmit || submitting}
-          loading={submitting}
-          onClick={handleSubmit}
-        >
-          Continue
-        </FlowShellFooterButton>
+        <div className={styles.step1Footer}>
+          <FlowShellFooterButton
+            disabled={!canSubmit || submitting}
+            loading={submitting}
+            onClick={handleSubmit}
+          >
+            Continue
+          </FlowShellFooterButton>
+          <div
+            className={`${styles.step1TermsRow} ${
+              termsPulse ? styles.step1TermsNudge : ""
+            }`}
+          >
+            <Checkbox
+              checked={isTermsAgreed}
+              onChange={(e) => {
+                setIsTermsAgreed(e.target.checked);
+                if (e.target.checked) {
+                  setTermsPulse(false);
+                }
+              }}
+            >
+              I agree to Persevio&apos;s{" "}
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  setTermsType("terms");
+                }}
+              >
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a
+                onClick={(e) => {
+                  e.preventDefault();
+                  setTermsType("privacy");
+                }}
+              >
+                Privacy Policy
+              </a>
+              .
+            </Checkbox>
+          </div>
+        </div>
       }
     >
       <PercyHeader
@@ -168,42 +215,6 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
           {phoneError && (
             <div className={styles.fieldErrorText}>(!) {phoneError}</div>
           )}
-        </div>
-
-        <div
-          className={`${styles.step1TermsRow} ${
-            termsPulse ? styles.step1TermsNudge : ""
-          }`}
-        >
-          <Checkbox
-            checked={isTermsAgreed}
-            onChange={(e) => {
-              setIsTermsAgreed(e.target.checked);
-              if (e.target.checked) {
-                setTermsPulse(false);
-              }
-            }}
-          >
-            I agree to Persevio&apos;s{" "}
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                setTermsType("terms");
-              }}
-            >
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a
-              onClick={(e) => {
-                e.preventDefault();
-                setTermsType("privacy");
-              }}
-            >
-              Privacy Policy
-            </a>
-            .
-          </Checkbox>
         </div>
       </div>
 
