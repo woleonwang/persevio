@@ -2,21 +2,18 @@ import { useEffect, useState } from "react";
 
 import FlowShell, { SignupPrimaryButton } from "./FlowShell";
 import PercyAvatar from "./PercyAvatar";
-import RegistrationPanel from "./RegistrationPanel";
 import ResumeReviewTransition from "./ResumeReviewTransition";
 import WhoIsPercyButton from "./WhoIsPercyButton";
 import styles from "../style.module.less";
 
-const STEP3_LOADING_MS = 5000;
+const STEP3_LOADING_MS = 10000;
 
 type TStep3IntroProps = {
   firstName: string;
   companyName: string;
   companyLogo?: string;
-  candidateEmail: string;
-  jobId?: number;
   jobTitle: string;
-  onVerified: () => void;
+  onContinue: () => void;
 };
 
 const WhatsappGlyph = ({ size = 15 }: { size?: number }) => (
@@ -49,13 +46,10 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
   firstName,
   companyName,
   companyLogo,
-  candidateEmail,
-  jobId,
   jobTitle,
-  onVerified,
+  onContinue,
 }) => {
   const [ready, setReady] = useState(false);
-  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setReady(true), STEP3_LOADING_MS);
@@ -65,7 +59,10 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
   if (!ready) {
     return (
       <FlowShell currentStep={3} showJobHeader={false}>
-        <ResumeReviewTransition />
+        <ResumeReviewTransition
+          countdownSeconds={STEP3_LOADING_MS / 1000}
+          showCountdownRing
+        />
       </FlowShell>
     );
   }
@@ -163,13 +160,10 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
         </div>
       </section>
 
-      <div className={styles.desktopVisible}>
-        <RegistrationPanel
-          variant="step3"
-          candidateEmail={candidateEmail}
-          jobId={jobId}
-          onVerified={onVerified}
-        />
+      <div className={`${styles.step3ContinueWrap} ${styles.desktopVisible}`}>
+        <SignupPrimaryButton onClick={onContinue}>
+          Continue your application →
+        </SignupPrimaryButton>
       </div>
 
       <section className={styles.step3Roadmap}>
@@ -208,33 +202,10 @@ const Step3Intro: React.FC<TStep3IntroProps> = ({
 
       <div className={styles.mobileVisible}>
         <div className={styles.floatingCta}>
-          <SignupPrimaryButton onClick={() => setSheetOpen(true)}>
+          <SignupPrimaryButton onClick={onContinue}>
             Continue your application →
           </SignupPrimaryButton>
         </div>
-        {sheetOpen && (
-          <>
-            <div
-              className={styles.sheetBackdrop}
-              onClick={() => setSheetOpen(false)}
-            />
-            <div
-              className={`${styles.sheetPanel}`}
-              style={{ background: "rgb(250, 245, 234)" }}
-            >
-              <RegistrationPanel
-                variant="step3"
-                compact
-                candidateEmail={candidateEmail}
-                jobId={jobId}
-                onVerified={() => {
-                  setSheetOpen(false);
-                  onVerified();
-                }}
-              />
-            </div>
-          </>
-        )}
       </div>
     </FlowShell>
   );

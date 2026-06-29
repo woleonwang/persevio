@@ -8,7 +8,6 @@ import {
   deleteQuery,
   getOrCreateSessionId,
   getQuery,
-  isTempAccount,
   parseJSON,
 } from "@/utils";
 import { storage, StorageKey, tokenStorage } from "@/utils/storage";
@@ -221,11 +220,6 @@ const SignupV2: React.FC = () => {
       return;
     }
 
-    if (isTempAccount(candidate)) {
-      setPageState("intro");
-      return;
-    }
-
     await resolveStepAfterAuth(apply);
   };
 
@@ -279,13 +273,18 @@ const SignupV2: React.FC = () => {
       }
     }
 
-    const { code, data } = await Post(`/api/candidate/register`, params);
+    const { code, data } = await Post<{
+      token: string;
+      job_id?: number;
+    }>(`/api/candidate/register`, params);
     if (code === 0) {
       tokenStorage.setToken(data.token, "candidate");
       message.success("Save successful");
       setIsLoggedIn(true);
       setJobId(jobIdFromQuery || String(data.job_id || ""));
       setPageState("resume");
+    } else if (code === 10003) {
+      message.error("This email is already registered");
     } else {
       message.error("Save failed");
     }
@@ -318,8 +317,7 @@ const SignupV2: React.FC = () => {
     }
   };
 
-  const onRegistrationVerified = () => {
-    message.success("Registration successful");
+  const onIntroContinue = () => {
     setPageState("assessment");
     if (jobId) {
       void fetchJobApply(jobId);
@@ -383,10 +381,8 @@ const SignupV2: React.FC = () => {
         firstName={firstName}
         companyName={companyName || "Company"}
         companyLogo={companyLogo}
-        candidateEmail={preRegisterInfo.email}
-        jobId={jobApply?.job_id}
         jobTitle={jobTitle || "Role"}
-        onVerified={onRegistrationVerified}
+        onContinue={onIntroContinue}
       />
     );
   }

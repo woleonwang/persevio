@@ -1,9 +1,15 @@
-import { useMemo, useState } from "react";
-import { Input } from "antd";
+import { useState } from "react";
+import { Checkbox, Input, message } from "antd";
 
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
+import MarkdownContainer from "@/components/MarkdownContainer";
+import privacyAgreement from "@/utils/privacyAgreement";
+import terms from "@/utils/terms";
 
-import FlowShell, { FlowShellFooterButton } from "./FlowShell";
+import FlowShell, {
+  FlowShellFooterButton,
+  SignupPrimaryButton,
+} from "./FlowShell";
 import PercyHeader from "./PercyHeader";
 import { isValidPhone } from "@/utils/phone";
 
@@ -42,24 +48,19 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
   );
   const [phone, setPhone] = useState(initValues.phone || "");
   const [phoneError, setPhoneError] = useState("");
+  const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [termsPulse, setTermsPulse] = useState(false);
+  const [termsType, setTermsType] = useState<"terms" | "privacy">();
   const [submitting, setSubmitting] = useState(false);
 
-  const canSubmit = useMemo(() => {
-    return (
-      firstName.trim() &&
-      lastName.trim() &&
-      isValidEmail(email) &&
-      isValidPhone(countryCode, phone)
-    );
-  }, [countryCode, email, firstName, lastName, phone]);
+  const canSubmit =
+    firstName.trim() &&
+    lastName.trim() &&
+    isValidEmail(email) &&
+    isValidPhone(countryCode, phone) &&
+    isTermsAgreed;
 
   const handleSubmit = async () => {
-    if (!canSubmit || submitting) {
-      if (!isValidPhone(countryCode, phone)) {
-        setPhoneError("That number looks incomplete. Please check it.");
-      }
-      return;
-    }
     setPhoneError("");
     setSubmitting(true);
     await onSubmit({
@@ -104,7 +105,7 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
         <div className={styles.nameRow}>
           <div className={styles.formField}>
             <div className={styles.fieldLabel}>
-              First name <span className={styles.requiredMark}>*</span>
+              FIRST NAME <span className={styles.requiredMark}>*</span>
             </div>
             <Input
               className={styles.antFieldInput}
@@ -116,7 +117,7 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
           </div>
           <div className={styles.formField}>
             <div className={styles.fieldLabel}>
-              Last name <span className={styles.requiredMark}>*</span>
+              LAST NAME <span className={styles.requiredMark}>*</span>
             </div>
             <Input
               className={styles.antFieldInput}
@@ -130,7 +131,10 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
 
         <div className={styles.formField}>
           <div className={styles.fieldLabel}>
-            Email <span className={styles.requiredMark}>*</span>
+            EMAIL <span className={styles.requiredMark}>*</span>{" "}
+            <span className={styles.fieldNote}>
+              (for OTP login to track your application)
+            </span>
           </div>
           <Input
             className={styles.antFieldInput}
@@ -144,7 +148,7 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
 
         <div className={styles.formField}>
           <div className={styles.fieldLabel}>
-            Phone <span className={styles.requiredMark}>*</span>
+            PHONE NUMBER <span className={styles.requiredMark}>*</span>
           </div>
           <div className={styles.phoneFieldWrap}>
             <PhoneWithCountryCode
@@ -165,7 +169,63 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
             <div className={styles.fieldErrorText}>(!) {phoneError}</div>
           )}
         </div>
+
+        <div
+          className={`${styles.step1TermsRow} ${
+            termsPulse ? styles.step1TermsNudge : ""
+          }`}
+        >
+          <Checkbox
+            checked={isTermsAgreed}
+            onChange={(e) => {
+              setIsTermsAgreed(e.target.checked);
+              if (e.target.checked) {
+                setTermsPulse(false);
+              }
+            }}
+          >
+            I agree to Persevio&apos;s{" "}
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                setTermsType("terms");
+              }}
+            >
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                setTermsType("privacy");
+              }}
+            >
+              Privacy Policy
+            </a>
+            .
+          </Checkbox>
+        </div>
       </div>
+
+      {termsType && (
+        <>
+          <div
+            className={styles.sheetBackdrop}
+            onClick={() => setTermsType(undefined)}
+          />
+          <div className={styles.modalPanel}>
+            <MarkdownContainer
+              content={termsType === "terms" ? terms : privacyAgreement}
+            />
+            <SignupPrimaryButton
+              style={{ marginTop: 16 }}
+              onClick={() => setTermsType(undefined)}
+            >
+              Close
+            </SignupPrimaryButton>
+          </div>
+        </>
+      )}
     </FlowShell>
   );
 };
