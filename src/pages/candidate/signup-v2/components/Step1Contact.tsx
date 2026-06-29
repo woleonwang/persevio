@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Checkbox, Input, message } from "antd";
+import { Checkbox, Input } from "antd";
 
 import PhoneWithCountryCode from "@/components/PhoneWithCountryCode";
 import MarkdownContainer from "@/components/MarkdownContainer";
