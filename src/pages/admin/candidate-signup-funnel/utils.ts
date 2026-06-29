@@ -1,7 +1,4 @@
-import {
-  DEFAULT_TRACKING_SOURCES,
-  getSourcingChannel,
-} from "@/utils";
+import { DEFAULT_TRACKING_SOURCES, getSourcingChannel } from "@/utils";
 
 export type TSatisfactionRating = {
   overall_experience: string;
@@ -29,7 +26,10 @@ export const FUNNEL_STEPS = [
   { key: "enter_apply_flow", label: "Enter Apply Flow" },
   { key: "personal_info_filled", label: "Contact Info Submitted" },
   { key: "resume_uploaded", label: "Resume Submitted" },
-  { key: "registration_completed", label: "Registration Completed" },
+  {
+    key: "registration_completed",
+    label: "Click Step 3 Continue(原 Registration Completed)",
+  },
   { key: "assessment_viewed", label: "Assessment Viewed" },
   { key: "conversation_started", label: "Conversation Started" },
   { key: "conversation_completed", label: "Conversation Completed" },
@@ -221,7 +221,10 @@ export const isCohortStepKey = (key: TFunnelStepKey): boolean => {
   return index >= COHORT_START_INDEX;
 };
 
-export const formatPercent = (numerator: number, denominator: number): string => {
+export const formatPercent = (
+  numerator: number,
+  denominator: number,
+): string => {
   if (denominator <= 0) {
     return "—";
   }
@@ -301,9 +304,7 @@ export const breakdownByExtraParam = (
     const extra = parseExtraParams(track.extra_params);
     const raw = extra[paramKey];
     const label =
-      raw === undefined || raw === null || raw === ""
-        ? "(empty)"
-        : String(raw);
+      raw === undefined || raw === null || raw === "" ? "(empty)" : String(raw);
     if (!buckets.has(label)) {
       buckets.set(label, new Set());
     }
@@ -502,7 +503,9 @@ export type TStepDetailConfig = {
   }>;
 };
 
-export const STEP_DETAIL_CONFIG: Partial<Record<TFunnelStepKey, TStepDetailConfig>> = {
+export const STEP_DETAIL_CONFIG: Partial<
+  Record<TFunnelStepKey, TStepDetailConfig>
+> = {
   job_apply_page_view: {
     title: "Pre-funnel",
     breakdowns: [{ title: "Traffic source", paramKey: "traffic_source" }],

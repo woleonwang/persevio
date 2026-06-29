@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { message } from "antd";
 import { useNavigate } from "react-router";
 
-import { getCandidateEventData } from "@/utils/candidateEventTrack";
+import {
+  CandidateEventName,
+  getCandidateEventData,
+  trackCandidateEvent,
+} from "@/utils/candidateEventTrack";
 import { Get, Post } from "@/utils/request";
 import {
   deleteQuery,
@@ -277,7 +281,7 @@ const SignupV2: React.FC = () => {
       token: string;
       job_id?: number;
     }>(`/api/candidate/register`, params);
-    if (code === 0) {
+    if (code === 0 && data) {
       tokenStorage.setToken(data.token, "candidate");
       message.success("Save successful");
       setIsLoggedIn(true);
@@ -318,10 +322,13 @@ const SignupV2: React.FC = () => {
   };
 
   const onIntroContinue = () => {
+    trackCandidateEvent(
+      CandidateEventName.EventTrackEventRegistrationCompleted,
+      {
+        jobId: jobId ? parseInt(jobId) : undefined,
+      },
+    );
     setPageState("assessment");
-    if (jobId) {
-      void fetchJobApply(jobId);
-    }
   };
 
   const goToDiscovery = () => {
