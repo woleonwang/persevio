@@ -41,6 +41,23 @@ export type TFunnelStepKey = (typeof FUNNEL_STEPS)[number]["key"];
 /** Step 3（Contact Info）及之后用 cohort 统计 */
 export const COHORT_START_INDEX = 2;
 
+export type TEntryPointMode = "self_registration" | "email_inbound";
+
+export const ENTRY_POINT_EMAIL_INBOUND = "email_inbound";
+
+export const ENTRY_POINT_MODE_OPTIONS: Array<{
+  value: TEntryPointMode;
+  label: string;
+}> = [
+  { value: "self_registration", label: "自主注册" },
+  { value: "email_inbound", label: "Email Inbound" },
+];
+
+const PRE_FUNNEL_STEP_KEYS = new Set<TFunnelStepKey>([
+  "job_apply_page_view",
+  "enter_apply_flow",
+]);
+
 export const FUNNEL_SOURCE_OTHERS = "others";
 
 export const FUNNEL_BUILTIN_SOURCES: readonly string[] =
@@ -68,6 +85,34 @@ export const parseExtraParams = (raw: string): Record<string, unknown> => {
   } catch {
     return {};
   }
+};
+
+export const getPersonalInfoEntryPoint = (
+  track: TEventTrack,
+): string | undefined => {
+  const extra = parseExtraParams(track.extra_params);
+  const raw = extra.entry_point;
+  return typeof raw === "string" ? raw : undefined;
+};
+
+export const matchesEntryPointMode = (
+  track: TEventTrack,
+  mode: TEntryPointMode,
+): boolean => {
+  const entryPoint = getPersonalInfoEntryPoint(track);
+  if (mode === "email_inbound") {
+    return entryPoint === ENTRY_POINT_EMAIL_INBOUND;
+  }
+  return entryPoint !== ENTRY_POINT_EMAIL_INBOUND;
+};
+
+export const getVisibleFunnelSteps = (
+  entryPointMode: TEntryPointMode,
+): Array<(typeof FUNNEL_STEPS)[number]> => {
+  if (entryPointMode === "email_inbound") {
+    return FUNNEL_STEPS.filter((step) => !PRE_FUNNEL_STEP_KEYS.has(step.key));
+  }
+  return [...FUNNEL_STEPS];
 };
 
 export const normalizeEventTrafficSource = (track: TEventTrack): string => {
@@ -185,10 +230,14 @@ export const countPreFunnelEvents = (
 export const buildCohortPool = (
   tracks: TEventTrack[],
   filters: TFunnelFilters,
+  entryPointMode: TEntryPointMode = "self_registration",
 ): Set<number> => {
   const pool = new Set<number>();
   for (const track of filterEvents(tracks, "personal_info_filled")) {
     if (!matchesContactInfoFilters(track, filters)) {
+      continue;
+    }
+    if (!matchesEntryPointMode(track, entryPointMode)) {
       continue;
     }
     pool.add(track.user_id!);
@@ -403,11 +452,14 @@ export type TFunnelStepRow = {
 export const buildFunnelRows = (
   tracks: TEventTrack[],
   filters: TFunnelFilters,
+  entryPointMode: TEntryPointMode = "self_registration",
 ): TFunnelStepRow[] => {
-  const pool = buildCohortPool(tracks, filters);
-  const counts = FUNNEL_STEPS.map((step, index) => {
+  const pool = buildCohortPool(tracks, filters, entryPointMode);
+  const visibleSteps = getVisibleFunnelSteps(entryPointMode);
+  const counts = visibleSteps.map((step) => {
     let count: number;
-    if (index < COHORT_START_INDEX) {
+    const fullIndex = FUNNEL_STEPS.findIndex((item) => item.key === step.key);
+    if (fullIndex < COHORT_START_INDEX) {
       count = countPreFunnelEvents(tracks, step.key, filters);
     } else if (step.key === "personal_info_filled") {
       count = pool.size;

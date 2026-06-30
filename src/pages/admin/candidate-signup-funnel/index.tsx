@@ -19,6 +19,7 @@ import { Get } from "@/utils/request";
 
 import {
   DEVICE_OPTIONS,
+  ENTRY_POINT_MODE_OPTIONS,
   FUNNEL_BUILTIN_SOURCES,
   FUNNEL_SOURCE_OTHERS,
   STEP_DETAIL_CONFIG,
@@ -34,6 +35,7 @@ import {
   numericExtraParamStats,
   type TBreakdownRow,
   type TDeviceType,
+  type TEntryPointMode,
   type TEventTrack,
   type TFunnelFilters,
   type TFunnelStepKey,
@@ -166,6 +168,8 @@ const CandidateSignupFunnel = () => {
     since: dayjs().subtract(30, "day").format("YYYY-MM-DD"),
     until: dayjs().format("YYYY-MM-DD"),
   });
+  const [entryPointMode, setEntryPointMode] =
+    useState<TEntryPointMode>("self_registration");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,14 +212,8 @@ const CandidateSignupFunnel = () => {
     void fetchData();
   }, []);
 
-  const funnelRows = useMemo(
-    () => buildFunnelRows(tracks, filters),
-    [tracks, filters],
-  );
-  const cohortPool = useMemo(
-    () => buildCohortPool(tracks, filters),
-    [tracks, filters],
-  );
+  const funnelRows = buildFunnelRows(tracks, filters, entryPointMode);
+  const cohortPool = buildCohortPool(tracks, filters, entryPointMode);
 
   const enterApplyCount = countPreFunnelEvents(
     tracks,
@@ -227,6 +225,8 @@ const CandidateSignupFunnel = () => {
     cohortPool,
     "conversation_completed",
   );
+  const endToEndDenominator =
+    entryPointMode === "email_inbound" ? cohortPool.size : enterApplyCount;
 
   const jobSelectOptions = useMemo(() => {
     return collectJobIdsFromTracks(tracks).map((id) => ({
@@ -485,7 +485,7 @@ const CandidateSignupFunnel = () => {
                 title="End-to-end"
                 value={formatPercent(
                   conversationCompletedCount,
-                  enterApplyCount,
+                  endToEndDenominator,
                 )}
               />
             </div>
@@ -493,7 +493,20 @@ const CandidateSignupFunnel = () => {
 
           <div className={styles.splitRow}>
             <div className={styles.funnelSection}>
-              <Card title="Funnel" className={styles.funnelCard}>
+              <Card
+                title="Funnel"
+                className={styles.funnelCard}
+                extra={
+                  <Select
+                    style={{ minWidth: 160 }}
+                    value={entryPointMode}
+                    options={ENTRY_POINT_MODE_OPTIONS}
+                    onChange={(value: TEntryPointMode) =>
+                      setEntryPointMode(value)
+                    }
+                  />
+                }
+              >
                 <div className={styles.funnelBars}>
                   {funnelRows.map((row, index) => (
                     <div key={row.key} className={styles.funnelBarRow}>
