@@ -77,6 +77,7 @@ import Jobs from "./pages/candidate/jobs/index.tsx";
 import PrivacyPolicy from "./pages/privacy-policy/index.tsx";
 import ShortLink from "./pages/short-link/index.tsx";
 import JobList from "./pages/job/list/index.tsx";
+import DashboardPage from "./pages/dashboard/index.tsx";
 import Referrals from "./pages/candidate/referrals/index.tsx";
 import Admin from "./layouts/Admin/index.tsx";
 import JobDetailsPage from "./pages/admin/job-details/index.tsx";
@@ -157,6 +158,7 @@ const AppRoutes = () => {
       <Route path="/app" element={<App />}>
         {/* 创建职位 */}
         <Route path="/app/entry/create-job" element={<JobCreate />} />
+        <Route path="/app/dashboard" element={<DashboardPage />} />
         {/* 职位列表 */}
         <Route path="/app/jobs" element={<JobList />} />
         {/* 职位入口页 */}

@@ -14,6 +14,7 @@ import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import { refreshStaffTokenIfExpiringSoon } from "@/utils/staffToken";
 import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
+import Analytics from "@/assets/icons/analytics";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
 import OrgChat from "@/assets/icons/org-chat";
@@ -110,6 +111,11 @@ const AppLayout = () => {
       iconStyle: {
         top: "-1px",
       },
+    },
+    {
+      title: t("menu.dashboard"),
+      path: "/app/dashboard",
+      img: <Analytics />,
     },
     {
       title: t("menu.jobs"),
@@ -214,7 +220,9 @@ const AppLayout = () => {
         setStaffName(data.staff_name);
         setCompanyName(data.company_name);
         setAvailableCredits(
-          typeof data.available_credits === "number" ? data.available_credits : null,
+          typeof data.available_credits === "number"
+            ? data.available_credits
+            : null,
         );
         setOrgNodeId(data.org_node_id);
         setMode(data.company_mode);
