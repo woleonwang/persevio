@@ -93,7 +93,9 @@ const Sidebar = (props: ISidebarProps) => {
       }
     };
 
-    fetchCareerPageStatus();
+    if (staffRole === "admin") {
+      fetchCareerPageStatus();
+    }
   }, [profileOpen]);
 
   const profileSelectedKeys = useMemo(() => {
@@ -119,33 +121,35 @@ const Sidebar = (props: ISidebarProps) => {
         icon: <Icon icon={<CompanyList />} />,
         label: t("menu.company"),
       },
-      {
-        key: "career-page",
-        icon: <Icon icon={<CandidateConnectionList />} />,
-        label: (
-          <div className={styles.careerPageMenuLabel}>
-            <span>{t("menu.career_page")}</span>
-            {careerPageEnabled !== null ? (
-              <span
-                className={classnames(styles.careerPageStatusTag, {
-                  [styles.careerPageStatusTagOn]: careerPageEnabled,
-                  [styles.careerPageStatusTagOff]: !careerPageEnabled,
-                })}
-              >
-                {careerPageEnabled
-                  ? t("career_page.status_on")
-                  : t("career_page.status_off")}
-              </span>
-            ) : null}
-          </div>
-        ),
-      },
+      staffRole === "admin"
+        ? {
+            key: "career-page",
+            icon: <Icon icon={<CandidateConnectionList />} />,
+            label: (
+              <div className={styles.careerPageMenuLabel}>
+                <span>{t("menu.career_page")}</span>
+                {careerPageEnabled !== null ? (
+                  <span
+                    className={classnames(styles.careerPageStatusTag, {
+                      [styles.careerPageStatusTagOn]: careerPageEnabled,
+                      [styles.careerPageStatusTagOff]: !careerPageEnabled,
+                    })}
+                  >
+                    {careerPageEnabled
+                      ? t("career_page.status_on")
+                      : t("career_page.status_off")}
+                  </span>
+                ) : null}
+              </div>
+            ),
+          }
+        : null,
       {
         key: "settings",
         icon: <Icon icon={<Settings />} />,
         label: t("menu.settings"),
       },
-    ];
+    ].filter(Boolean);
 
     if (staffRole === "admin" && isAdmin) {
       items.push(
