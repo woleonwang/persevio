@@ -25,6 +25,7 @@ interface ICompany {
   register_info: string;
   size: TCompanySize;
   recruitment_requirements_json: string;
+  available_credits?: number;
   created_at: string;
   updated_at: string;
 }

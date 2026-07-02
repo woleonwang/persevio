@@ -2343,6 +2343,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       companySize: "Company Size",
       roleType: "Role Type",
       headcount: "Headcount",
+      credits: "Credits",
       status: "Status",
       actions: "Actions",
     },
@@ -2370,6 +2371,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
     pagination: {
       total: "{{start}}-{{end}} of {{total}} items",
+    },
+    creditsDrawer: {
+      title: "Credits · {{name}}",
     },
   },
 
@@ -2641,7 +2645,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       unlock_candidate_high_fit: "Unlock Candidate - High fit",
       unlock_candidate_hard_to_find_high_fit:
         "Unlock Candidate - Hard-to-find high fit",
-      ai_screening: "AI Screening",
+      ai_screening: "AI Screening(per Application)",
       agency_placement: "Agency Placement",
     },
     validityMode: {

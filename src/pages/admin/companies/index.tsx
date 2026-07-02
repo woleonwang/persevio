@@ -5,6 +5,8 @@ import { Get, Post } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import { parseJSON } from "@/utils";
 import { ColumnsType } from "antd/es/table";
+import { formatCreditsAmount } from "@/pages/credits/utils";
+import CompanyCreditsDrawer from "./components/CompanyCreditsDrawer";
 
 import commonStyles from "../style.module.less";
 
@@ -24,6 +26,8 @@ const AdminCompanies: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [creditsDrawerCompany, setCreditsDrawerCompany] =
+    useState<ICompany | null>(null);
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`admin_companies.${key}`);
 
@@ -233,6 +237,22 @@ const AdminCompanies: React.FC = () => {
       },
     },
     {
+      title: t("table.credits"),
+      dataIndex: "available_credits",
+      key: "available_credits",
+      width: 120,
+      ellipsis: false,
+      render: (value: number | undefined, record: ICompany) => (
+        <button
+          type="button"
+          className={styles.creditsLink}
+          onClick={() => setCreditsDrawerCompany(record)}
+        >
+          {formatCreditsAmount(value ?? 0)}
+        </button>
+      ),
+    },
+    {
       title: t("table.status"),
       dataIndex: "status",
       key: "status",
@@ -329,6 +349,13 @@ const AdminCompanies: React.FC = () => {
           className={styles.companiesTable}
         />
       </div>
+
+      <CompanyCreditsDrawer
+        open={creditsDrawerCompany !== null}
+        companyId={creditsDrawerCompany?.id ?? null}
+        companyName={creditsDrawerCompany?.name ?? ""}
+        onClose={() => setCreditsDrawerCompany(null)}
+      />
     </div>
   );
 };
