@@ -51,7 +51,7 @@ const Talents = () => {
 
   const fetchTalents = async () => {
     const { code, data } = await Get(
-      `/api/admin/talents?page=${page}&size=${PAGE_SIZE}`
+      `/api/admin/talents?page=${page}&size=${PAGE_SIZE}`,
     );
 
     if (code === 0) {
@@ -62,14 +62,14 @@ const Talents = () => {
 
   const fetchShareChain = async () => {
     const { code, data } = await Get(
-      `/api/admin/talents/${selectedTalent?.id}/share_chain`
+      `/api/admin/talents/${selectedTalent?.id}/share_chain`,
     );
 
     if (code === 0) {
       setShareChainCandidates(
         (data.candidates ?? []).map((candidate: ICandidateSettings) => {
           const preRegisterInfo = parseJSON(
-            candidate.pre_register_info ?? "{}"
+            candidate.pre_register_info ?? "{}",
           );
           return {
             id: candidate.id,
@@ -79,7 +79,7 @@ const Talents = () => {
               preRegisterInfo.phone ?? ""
             }`,
           };
-        })
+        }),
       );
     }
   };
@@ -114,8 +114,8 @@ const Talents = () => {
         return hireStatus === "hired"
           ? "Hired"
           : hireStatus === "not_hired"
-          ? "Not Hired"
-          : "-";
+            ? "Not Hired"
+            : "-";
       },
     },
     {
@@ -174,6 +174,7 @@ const Talents = () => {
           columns={talentTableColumns}
           pagination={{
             pageSize: PAGE_SIZE,
+            showSizeChanger: false,
             current: page,
             total,
             onChange: (page) => setPage(page),
@@ -194,7 +195,7 @@ const Talents = () => {
               `/api/admin/talents/${selectedTalent?.id}`,
               {
                 hire_status: values.hire_status,
-              }
+              },
             );
 
             if (code === 0) {

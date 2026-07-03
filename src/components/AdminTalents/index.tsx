@@ -143,6 +143,11 @@ const AdminTalents = (props: IProps) => {
 
   useEffect(() => {
     fetchTalents();
+
+    const openId = getQuery("open-id");
+    if (openId) {
+      setSelectedJobApplyId(parseInt(openId));
+    }
   }, [jobId]);
 
   useEffect(() => {
@@ -179,7 +184,7 @@ const AdminTalents = (props: IProps) => {
             ...linkedinProfile,
             ...parseJSON(linkedinProfile.basic_info_json),
           };
-        })
+        }),
       );
       setJobApplies(
         data.job_applies.map((jobApply) => {
@@ -187,7 +192,7 @@ const AdminTalents = (props: IProps) => {
             ...jobApply,
             ...parseJSON(jobApply.candidate_basic_info_json),
           };
-        })
+        }),
       );
       setTalents(
         data.talents.map((talent) => {
@@ -195,20 +200,15 @@ const AdminTalents = (props: IProps) => {
             ...talent,
             ...parseJSON(talent.basic_info_json),
           };
-        })
+        }),
       );
-
-      const openId = getQuery("open-id");
-      if (openId) {
-        setSelectedJobApplyId(parseInt(openId));
-      }
 
       const openProfileId = getQuery("open-profile-id");
       if (openProfileId) {
         setSelectedLinkedinProfile(
           data.linkedin_profiles.find(
-            (linkedinProfile) => linkedinProfile.id === parseInt(openProfileId)
-          )
+            (linkedinProfile) => linkedinProfile.id === parseInt(openProfileId),
+          ),
         );
       }
     }
@@ -216,14 +216,14 @@ const AdminTalents = (props: IProps) => {
 
   const fetchShareChain = async () => {
     const { code, data } = await Get(
-      `/api/admin/talents/${selectedTalent?.id}/share_chain`
+      `/api/admin/talents/${selectedTalent?.id}/share_chain`,
     );
 
     if (code === 0) {
       setShareChainCandidates(
         (data.candidates ?? []).map((candidate: ICandidateSettings) => {
           const preRegisterInfo = parseJSON(
-            candidate.pre_register_info ?? "{}"
+            candidate.pre_register_info ?? "{}",
           );
           return {
             id: candidate.id,
@@ -233,14 +233,14 @@ const AdminTalents = (props: IProps) => {
               preRegisterInfo.phone ?? ""
             }`,
           };
-        })
+        }),
       );
     }
   };
 
   const fetchJobApply = async () => {
     const { code, data } = await Get(
-      `/api/admin/job_applies/${selectedJobApplyId}`
+      `/api/admin/job_applies/${selectedJobApplyId}`,
     );
 
     if (code === 0) {
@@ -320,7 +320,7 @@ const AdminTalents = (props: IProps) => {
   const downloadResume = async () => {
     Download(
       `/api/admin/job_applies/${selectedJobApplyId}/download_resume`,
-      `${jobApply?.candidate?.name ?? "Candidate"}`
+      `${jobApply?.candidate?.name ?? "Candidate"}`,
     );
   };
   const closeDrawer = () => {
@@ -335,7 +335,7 @@ const AdminTalents = (props: IProps) => {
       (() => {
         try {
           const info = JSON.parse(
-            record.jobApply?.candidate?.pre_register_info ?? "{}"
+            record.jobApply?.candidate?.pre_register_info ?? "{}",
           );
           return info.name;
         } catch {
@@ -492,8 +492,8 @@ const AdminTalents = (props: IProps) => {
           return hireStatus === "hired"
             ? t("hire_status_options.hired")
             : hireStatus === "not_hired"
-            ? t("hire_status_options.not_hired")
-            : "-";
+              ? t("hire_status_options.not_hired")
+              : "-";
         },
       },
       {
@@ -560,7 +560,7 @@ const AdminTalents = (props: IProps) => {
       ? allColumns.filter(
           (col) =>
             !("dataIndex" in col) ||
-            (col.dataIndex !== "company_name" && col.dataIndex !== "job_name")
+            (col.dataIndex !== "company_name" && col.dataIndex !== "job_name"),
         )
       : allColumns;
 
@@ -587,10 +587,10 @@ const AdminTalents = (props: IProps) => {
       if (linkedinProfile.candidate_id) {
         // 2 + 3
         const jobApply = jobApplies.find(
-          (jobApply) => jobApply.candidate_id === linkedinProfile.candidate_id
+          (jobApply) => jobApply.candidate_id === linkedinProfile.candidate_id,
         );
         const talent = talents.find(
-          (talent) => talent.candidate_id === linkedinProfile.candidate_id
+          (talent) => talent.candidate_id === linkedinProfile.candidate_id,
         );
         result.push({
           linkedinProfile,
@@ -612,14 +612,14 @@ const AdminTalents = (props: IProps) => {
         (jobApply) =>
           !linkedinProfiles.find(
             (linkedinProfile) =>
-              linkedinProfile.candidate_id === jobApply.candidate_id
-          )
+              linkedinProfile.candidate_id === jobApply.candidate_id,
+          ),
       )
       .forEach((jobApply) => {
         result.push({
           jobApply,
           talent: talents.find(
-            (talent) => talent.candidate_id === jobApply.candidate_id
+            (talent) => talent.candidate_id === jobApply.candidate_id,
           ),
           created_at: jobApply.created_at,
         });
@@ -660,6 +660,7 @@ const AdminTalents = (props: IProps) => {
           dataSource={talentsList}
           pagination={{
             pageSize: 10,
+            showSizeChanger: false,
           }}
           locale={{
             emptyText: <Empty style={{ margin: "60px 0" }} />,
@@ -702,14 +703,14 @@ const AdminTalents = (props: IProps) => {
                       {jobApply.switch_mode_reason
                         ? (() => {
                             const reason = parseJSON(
-                              jobApply.switch_mode_reason
+                              jobApply.switch_mode_reason,
                             );
                             return reason?.reasons
                               ?.map((item: string) => {
                                 return item === "others"
                                   ? reason.other_reason
                                   : originalT(
-                                      `switch_mode_reason_options.${item}`
+                                      `switch_mode_reason_options.${item}`,
                                     );
                               })
                               .join(", ");
@@ -730,7 +731,7 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.mode
                         ? originalT(
-                            `interview_form.mode_${talent.interviews[0].mode}`
+                            `interview_form.mode_${talent.interviews[0].mode}`,
                           )
                         : "-"}
                     </div>
@@ -742,7 +743,7 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.scheduled_at
                         ? dayjs(talent.interviews[0].scheduled_at).format(
-                            "YYYY-MM-DD HH:mm"
+                            "YYYY-MM-DD HH:mm",
                           )
                         : "-"}
                     </div>
@@ -754,7 +755,7 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {talent?.interviews?.[0]?.interview_type
                         ? originalT(
-                            `interview_form.type_${talent.interviews[0].interview_type}`
+                            `interview_form.type_${talent.interviews[0].interview_type}`,
                           )
                         : "-"}
                     </div>
@@ -816,7 +817,7 @@ const AdminTalents = (props: IProps) => {
                         `/api/admin/job_applies/${selectedJobApplyId}`,
                         {
                           evaluate_result: value,
-                        }
+                        },
                       );
 
                       if (code === 0) {
@@ -888,7 +889,7 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {selectedLinkedinProfile?.message_sent_at
                         ? dayjs(selectedLinkedinProfile.message_sent_at).format(
-                            "YYYY-MM-DD HH:mm"
+                            "YYYY-MM-DD HH:mm",
                           )
                         : "-"}
                     </div>
@@ -900,7 +901,7 @@ const AdminTalents = (props: IProps) => {
                     <div>
                       {selectedLinkedinProfile?.message_read_at
                         ? dayjs(selectedLinkedinProfile.message_read_at).format(
-                            "YYYY-MM-DD HH:mm"
+                            "YYYY-MM-DD HH:mm",
                           )
                         : "-"}
                     </div>
@@ -980,7 +981,7 @@ const AdminTalents = (props: IProps) => {
               `/api/admin/talents/${selectedTalent?.id}`,
               {
                 hire_status: values.hire_status,
-              }
+              },
             );
 
             if (code === 0) {
