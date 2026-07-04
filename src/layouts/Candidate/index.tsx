@@ -14,6 +14,7 @@ import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
 import Candidates from "@/assets/icons/candidates";
+import { TCandidate } from "@/pages/talent/type";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
@@ -110,9 +111,11 @@ const CandidateLayout = () => {
     }
 
     // 校验 token
-    const { code, data } = await Get("/api/candidate/settings");
+    const { code, data } = await Get<{ candidate: ICandidateSettings }>(
+      "/api/candidate/settings",
+    );
     if (code === 0) {
-      if (isTempAccount(data.candidate)) {
+      if (isTempAccount(data.candidate) || !data.candidate.resume_path) {
         navigate("/signup-candidate");
       } else {
         setInited(true);
