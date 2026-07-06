@@ -124,8 +124,8 @@ const AdminLayout = () => {
       requireAdmin: true,
     },
     {
-      title: t("menu.mfc_jobs"),
-      path: "/admin/mfc-jobs",
+      title: t("menu.mcf_jobs"),
+      path: "/admin/mcf-jobs",
       img: <FileTextOutlined />,
       requireAdmin: true,
     },

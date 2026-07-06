@@ -111,15 +111,15 @@ interface IKBObservation extends IKBObservationListItem {
   content: string;
 }
 
-interface IMfcJobListItem {
+interface IMcfJobListItem {
   id: number;
   uuid: string;
   job_post_id: string;
   title: string;
   status: string;
   is_posted_on_behalf: boolean;
-  mfc_company_id?: number;
-  mfc_agency_id?: number;
+  mcf_company_id?: number;
+  mcf_agency_id?: number;
   company_name?: string;
   company_uen?: string;
   agency_name?: string;

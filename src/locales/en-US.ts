@@ -429,7 +429,7 @@ export default {
     tools: "Tools",
     kb_observation: "KB Observation",
     kb_entity_document: "KB Entity Document",
-    mfc_jobs: "MFC Jobs",
+    mcf_jobs: "MCF Jobs",
     credit_config: "Credit Config",
     credit_package: "Credit Package",
     credits: "Credits",
@@ -2813,8 +2813,8 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
   },
 
-  admin_mfc_jobs: {
-    pageTitle: "MFC Jobs",
+  admin_mcf_jobs: {
+    pageTitle: "MCF Jobs",
     table: {
       jobPostId: "Job Post ID",
       title: "Title",
@@ -2834,7 +2834,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       no: "No",
       actions: "Actions",
       view: "View",
-      openMfc: "Open on MCF",
+      openMcf: "Open on MCF",
     },
     filters: {
       search: "Search",
@@ -2854,10 +2854,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       clear: "Clear",
     },
     drawer: {
-      titlePrefix: "MFC Job",
+      titlePrefix: "MCF Job",
     },
     messages: {
-      fetchListFailed: "Failed to load MFC jobs",
+      fetchListFailed: "Failed to load MCF jobs",
     },
   },
 

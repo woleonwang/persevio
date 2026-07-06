@@ -87,7 +87,7 @@ import ChatMessagesPage from "./pages/admin/chat-messages/index.tsx";
 import AdminTools from "./pages/admin/tools/index.tsx";
 import KBEntityDocuments from "./pages/admin/kb-entity-documents/index.tsx";
 import KBObservations from "./pages/admin/kb-observations/index.tsx";
-import MfcJobs from "./pages/admin/mfc-jobs/index.tsx";
+import McfJobs from "./pages/admin/mcf-jobs/index.tsx";
 import LinkedinProfileDetail from "./components/LinkedinProfileDetail/index.tsx";
 import LinkedinApply from "./pages/linkedin-apply/index.tsx";
 import AdminCandidates from "./pages/admin/candidates/index.tsx";
@@ -274,7 +274,7 @@ const AppRoutes = () => {
         />
         <Route path="/admin/tools" element={<AdminTools />} />
         <Route path="/admin/kb-observations" element={<KBObservations />} />
-        <Route path="/admin/mfc-jobs" element={<MfcJobs />} />
+        <Route path="/admin/mcf-jobs" element={<McfJobs />} />
         <Route
           path="/admin/kb-entity-documents"
           element={<KBEntityDocuments />}

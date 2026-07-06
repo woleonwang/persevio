@@ -18,7 +18,7 @@ import pageStyles from "./style.module.less";
 
 const PAGE_SIZE = 20;
 
-type TMfcJobFilters = {
+type TMcfJobFilters = {
   search?: string;
   status?: string;
   ssocCode?: string;
@@ -47,7 +47,7 @@ const parseCategoryLabels = (categoriesJson?: string) => {
   }
 };
 
-const formatSalary = (job: IMfcJobListItem) => {
+const formatSalary = (job: IMcfJobListItem) => {
   if (job.salary_min == null && job.salary_max == null) {
     return "-";
   }
@@ -68,16 +68,16 @@ const formatRawJson = (raw?: string) => {
   }
 };
 
-const MfcJobs = () => {
+const McfJobs = () => {
   const { t: originalT } = useTranslation();
-  const t = (key: string) => originalT(`admin_mfc_jobs.${key}`);
+  const t = (key: string) => originalT(`admin_mcf_jobs.${key}`);
 
-  const [jobs, setJobs] = useState<IMfcJobListItem[]>([]);
+  const [jobs, setJobs] = useState<IMcfJobListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<IMfcJobListItem>();
+  const [selectedJob, setSelectedJob] = useState<IMcfJobListItem>();
 
   const [search, setSearch] = useState<string>();
   const [status, setStatus] = useState<string>();
@@ -93,7 +93,7 @@ const MfcJobs = () => {
   const [newPostingDateRange, setNewPostingDateRange] = useState<
     [Dayjs | null, Dayjs | null] | null
   >();
-  const [fetchParams, setFetchParams] = useState<TMfcJobFilters>();
+  const [fetchParams, setFetchParams] = useState<TMcfJobFilters>();
 
   useEffect(() => {
     fetchJobs();
@@ -102,8 +102,8 @@ const MfcJobs = () => {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const { code, data } = await Get<{ jobs: IMfcJobListItem[]; total: number }>(
-        "/api/admin/mfc_jobs",
+      const { code, data } = await Get<{ jobs: IMcfJobListItem[]; total: number }>(
+        "/api/admin/mcf_jobs",
         {
           page,
           search: fetchParams?.search,
@@ -173,12 +173,12 @@ const MfcJobs = () => {
     setFetchParams({});
   };
 
-  const handleOpenDetail = (job: IMfcJobListItem) => {
+  const handleOpenDetail = (job: IMcfJobListItem) => {
     setSelectedJob(job);
     setDrawerOpen(true);
   };
 
-  const columns: ColumnsType<IMfcJobListItem> = [
+  const columns: ColumnsType<IMcfJobListItem> = [
     { title: t("table.jobPostId"), dataIndex: "job_post_id" },
     { title: t("table.title"), dataIndex: "title" },
     { title: t("table.status"), dataIndex: "status" },
@@ -244,7 +244,7 @@ const MfcJobs = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t("table.openMfc")}
+              {t("table.openMcf")}
             </Button>
           ) : null}
         </>
@@ -379,7 +379,7 @@ const MfcJobs = () => {
         </div>
       </div>
       <div className={pageStyles.tableSection}>
-        <Table<IMfcJobListItem>
+        <Table<IMcfJobListItem>
           loading={loading}
           rowKey="id"
           dataSource={jobs}
@@ -407,4 +407,4 @@ const MfcJobs = () => {
   );
 };
 
-export default MfcJobs;
+export default McfJobs;
