@@ -165,6 +165,8 @@ const StageMaterials = ({ profile, onSuccess }: IProps) => {
         )}
       </Form.Item>
 
+      <div className={styles.optionDivider}>OR/AND</div>
+
       <Form.Item name="material_text">
         <Input.TextArea
           rows={8}
