@@ -124,6 +124,12 @@ const AdminLayout = () => {
       requireAdmin: true,
     },
     {
+      title: t("menu.mfc_jobs"),
+      path: "/admin/mfc-jobs",
+      img: <FileTextOutlined />,
+      requireAdmin: true,
+    },
+    {
       title: t("menu.kb_entity_document"),
       path: "/admin/kb-entity-documents",
       img: <FileTextOutlined />,

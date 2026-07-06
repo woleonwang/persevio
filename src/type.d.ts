@@ -111,6 +111,47 @@ interface IKBObservation extends IKBObservationListItem {
   content: string;
 }
 
+interface IMfcJobListItem {
+  id: number;
+  uuid: string;
+  job_post_id: string;
+  title: string;
+  status: string;
+  is_posted_on_behalf: boolean;
+  mfc_company_id?: number;
+  mfc_agency_id?: number;
+  company_name?: string;
+  company_uen?: string;
+  agency_name?: string;
+  salary_min?: number;
+  salary_max?: number;
+  salary_type?: string;
+  ssoc_code?: string;
+  occupation_id?: string;
+  minimum_years_experience: number;
+  number_of_vacancies: number;
+  new_posting_date?: string;
+  original_posting_date?: string;
+  expiry_date?: string;
+  total_number_of_view: number;
+  total_number_job_application: number;
+  repost_count: number;
+  address_region?: string;
+  address_district?: string;
+  postal_code?: string;
+  job_details_url?: string;
+  categories_json?: string;
+  skills_json?: string;
+  employment_types_json?: string;
+  position_levels_json?: string;
+  metadata_updated_at?: string;
+  last_seen_at?: string;
+  closed_at?: string;
+  raw: string;
+  created_at: string;
+  updated_at: string;
+}
+
 interface IKBEntityDocumentListItem {
   id: number;
   company_id: number;
