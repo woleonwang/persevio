@@ -135,7 +135,8 @@ const Resume = (props: IProps) => {
                       {education.institution}
                     </div>
                     <div className={styles.listTitleDegree}>
-                      {education.start_date} ~ {education.end_date}
+                      {education.start_date || "Unknown"} ~{" "}
+                      {education.end_date || "Unknown"}
                     </div>
                   </div>
                   <div className={styles.listContentItem}>
