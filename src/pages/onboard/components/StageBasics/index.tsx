@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Form, Input, InputNumber, Select, message } from "antd";
+import { Button, Form, Input, InputNumber, Modal, Select, message } from "antd";
 
 import { Post } from "@/utils/request";
 import { TOnboardingProfile } from "../../type";
@@ -92,11 +92,16 @@ const languageOptions: { value: string; label: string }[] = [
   { value: "ta", label: "Tamil" },
   { value: "th", label: "Thai" },
   { value: "vi", label: "Vietnamese" },
+  { value: "other", label: "Other" },
 ];
+
+const OTHER_LANGUAGE_VALUE = "other";
 
 const StageBasics = ({ profile, onSuccess }: IProps) => {
   const [form] = Form.useForm<TFormValues>();
   const [submitting, setSubmitting] = useState(false);
+  const [languageOtherModalOpen, setLanguageOtherModalOpen] = useState(false);
+  const [languageOtherInput, setLanguageOtherInput] = useState("");
 
   const currentYear = new Date().getFullYear();
 
@@ -118,6 +123,56 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
   useEffect(() => {
     form.setFieldsValue(initialFromProfile);
   }, [form, initialFromProfile]);
+
+  const selectedLanguages =
+    Form.useWatch("primary_business_languages", form) ?? [];
+  const presetLanguageValues = new Set(
+    languageOptions.map((option) => option.value),
+  );
+  const displayLanguageOptions = [
+    ...languageOptions,
+    ...selectedLanguages
+      .filter((value) => !presetLanguageValues.has(value))
+      .map((value) => ({ value, label: value })),
+  ];
+
+  const handleLanguagesChange = (selected: string[]) => {
+    if (selected.includes(OTHER_LANGUAGE_VALUE)) {
+      form.setFieldValue(
+        "primary_business_languages",
+        selected.filter((value) => value !== OTHER_LANGUAGE_VALUE),
+      );
+      setLanguageOtherInput("");
+      setLanguageOtherModalOpen(true);
+      return;
+    }
+    form.setFieldValue("primary_business_languages", selected);
+  };
+
+  const handleLanguageOtherConfirm = () => {
+    const customLanguage = languageOtherInput.trim();
+    if (!customLanguage) {
+      message.error("Please enter a language");
+      return;
+    }
+
+    const currentLanguages: string[] =
+      form.getFieldValue("primary_business_languages") ?? [];
+    const isDuplicate = currentLanguages.some(
+      (value) => value.toLowerCase() === customLanguage.toLowerCase(),
+    );
+    if (isDuplicate) {
+      message.error("This language is already selected");
+      return;
+    }
+
+    form.setFieldValue("primary_business_languages", [
+      ...currentLanguages,
+      customLanguage,
+    ]);
+    setLanguageOtherModalOpen(false);
+    setLanguageOtherInput("");
+  };
 
   const handleSubmit = async () => {
     try {
@@ -264,8 +319,9 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
         <Select
           mode="multiple"
           size="large"
-          options={languageOptions}
+          options={displayLanguageOptions}
           optionFilterProp="label"
+          onChange={handleLanguagesChange}
           filterOption={(input, option) =>
             String(option?.label ?? "")
               .toLowerCase()
@@ -273,6 +329,25 @@ const StageBasics = ({ profile, onSuccess }: IProps) => {
           }
         />
       </Form.Item>
+
+      <Modal
+        title="Please specify language"
+        open={languageOtherModalOpen}
+        okText="Add"
+        onOk={handleLanguageOtherConfirm}
+        onCancel={() => {
+          setLanguageOtherModalOpen(false);
+          setLanguageOtherInput("");
+        }}
+      >
+        <Input
+          size="large"
+          placeholder="Enter language"
+          value={languageOtherInput}
+          onChange={(event) => setLanguageOtherInput(event.target.value)}
+          onPressEnter={handleLanguageOtherConfirm}
+        />
+      </Modal>
 
       <div className={styles.footer}>
         <Button
