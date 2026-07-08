@@ -809,10 +809,18 @@ function AtsTalentDetailV2026ViewBase() {
       );
     }
     if (log.event_type === "add_feedback") {
-      return `${staffName} added interview feedback`;
+      return (
+        <>
+          <NameChip name={staffName} /> added interview feedback
+        </>
+      );
     }
     if (log.event_type === "add_note") {
-      return `${staffName} added a note`;
+      return (
+        <>
+          <NameChip name={staffName} /> added a note
+        </>
+      );
     }
     if (log.event_type === "start_interview") return "AI prescreening started";
     if (log.event_type === "finish_interview")
