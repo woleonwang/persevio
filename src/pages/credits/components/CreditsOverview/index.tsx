@@ -28,6 +28,7 @@ const SOURCE_OPTIONS: TransactionSourceFilter[] = [
   "gift",
   "adjustment",
   "usage",
+  "expired",
 ];
 
 const TYPE_OPTIONS: TransactionDirectionFilter[] = [
