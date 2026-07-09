@@ -407,7 +407,7 @@ export default {
   // ------------------------------ 以下是非通用文案 ------------------------------
   menu: {
     referrals: "Referrals",
-    newRole: "Publish a jbo",
+    newRole: "Publish job",
     dashboard: "Dashboard",
     jobs: "Jobs",
     company: "Company Info",
