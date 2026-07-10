@@ -14,7 +14,7 @@ import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import { refreshStaffTokenIfExpiringSoon } from "@/utils/staffToken";
 import NewChat from "@/assets/icons/new-chat";
 import Jobs from "@/assets/icons/jobs";
-import Analytics from "@/assets/icons/analytics";
+// import Analytics from "@/assets/icons/analytics";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
 import OrgChat from "@/assets/icons/org-chat";
@@ -112,11 +112,11 @@ const AppLayout = () => {
         top: "-1px",
       },
     },
-    {
-      title: t("menu.dashboard"),
-      path: "/app/dashboard",
-      img: <Analytics />,
-    },
+    // {
+    //   title: t("menu.dashboard"),
+    //   path: "/app/dashboard",
+    //   img: <Analytics />,
+    // },
     {
       title: t("menu.jobs"),
       key: "jobs",
