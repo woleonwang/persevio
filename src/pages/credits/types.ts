@@ -27,7 +27,8 @@ export type TransactionSourceFilter =
   | "topup"
   | "gift"
   | "adjustment"
-  | "usage";
+  | "usage"
+  | "expired";
 
 export interface ICreditConfigFieldValue {
   inherit: boolean;
