@@ -14,7 +14,6 @@ import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 import Sidebar from "@/components/Sidebar";
 import Jobs from "@/assets/icons/jobs";
 import Candidates from "@/assets/icons/candidates";
-import { TCandidate } from "@/pages/talent/type";
 
 const CandidateLayout = () => {
   const currentPath = useLocation().pathname;
