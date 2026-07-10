@@ -427,9 +427,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             </div>
           ),
           handler: () =>
-            sendMessage(
-              "好的，我们可以开始对话。请你用中文和我进行接下来的对话。",
-            ),
+            sendMessage("好的，请你用中文和我进行接下来的对话。"),
         },
         {
           key: "jrd-language-en-US",
@@ -439,7 +437,7 @@ const StaffChat: React.FC<IProps> = (props) => {
             </div>
           ),
           handler: () =>
-            sendMessage("Yes, we can start. Please speak with me in English."),
+            sendMessage("Sure. Please speak with me in English."),
         },
       ],
     },
@@ -702,9 +700,23 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   };
 
-  const updateJob = async (job: { jd_language?: IJob["jd_language"] }) => {
-    const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), job);
+  const updateJob = async (payload: {
+    jd_language?: IJob["jd_language"];
+    intake_mode?: IJob["intake_mode"];
+  }) => {
+    const { code } = await Post(formatUrl(`/api/jobs/${jobId}`), payload);
     return code === 0;
+  };
+
+  const selectIntakeMode = async (mode: NonNullable<IJob["intake_mode"]>) => {
+    if (job?.intake_mode) return;
+
+    const success = await updateJob({ intake_mode: mode });
+    if (success) {
+      await fetchMessages();
+    } else {
+      message.error(t("update_job_failed"));
+    }
   };
   const initProfile = async () => {
     const { code, data } = await Get("/api/settings");
@@ -843,12 +855,43 @@ const StaffChat: React.FC<IProps> = (props) => {
   ): TMessage[] => {
     // 根据 extraTag 添加系统消息
     const resultMessages: TMessage[] = [];
+    let intakeModeMessageInserted = false;
 
     messages.forEach((item, index) => {
       const hideForRoles = item.content.metadata.hide_for_roles ?? [];
       // 过滤对该角色隐藏的消息
       if ((hideForRoles.length && share) || hideForRoles.includes("staff"))
         return;
+
+      const extraTagsRaw = item.content.metadata.extra_tags || [];
+      const hasJrdLanguage = extraTagsRaw.some(
+        (tag) => tag.name === "jrd-language",
+      );
+
+      if (
+        chatType === "jobRequirementDoc" &&
+        hasJrdLanguage &&
+        !intakeModeMessageInserted
+      ) {
+        intakeModeMessageInserted = true;
+        resultMessages.push({
+          id: "intake-mode-selection",
+          role: "ai",
+          content: t("intake_mode_ask"),
+          updated_at: item.updated_at,
+          messageType: "normal",
+          extraTags: [
+            {
+              name: "jrd-intake-mode",
+              content: job?.intake_mode ?? "",
+            },
+          ],
+        });
+
+        if (!job?.intake_mode) {
+          return;
+        }
+      }
 
       if (
         item.content.content ||
@@ -1132,6 +1175,42 @@ const StaffChat: React.FC<IProps> = (props) => {
                 }}
                 streamingMessage={streamingLoadingText}
                 renderTagsContent={(item) => {
+                  const hasIntakeModeTag = (item.extraTags ?? []).some(
+                    (tag) => tag.name === "jrd-intake-mode",
+                  );
+                  if (hasIntakeModeTag) {
+                    const intakeModes = [
+                      {
+                        key: "standard" as const,
+                        label: t("intake_mode_standard_button"),
+                      },
+                      {
+                        key: "fast" as const,
+                        label: t("intake_mode_fast_button"),
+                      },
+                    ];
+                    return (
+                      <div className={styles.inlineButtonWrapper}>
+                        {intakeModes.map((modeOption) => (
+                          <div style={{ marginBottom: 16 }} key={modeOption.key}>
+                            <Button
+                              type={
+                                job?.intake_mode === modeOption.key
+                                  ? "primary"
+                                  : "default"
+                              }
+                              className={styles.inlineButton}
+                              disabled={!!job?.intake_mode}
+                              onClick={() => selectIntakeMode(modeOption.key)}
+                            >
+                              {modeOption.label}
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+
                   const visibleTags = (item.extraTags ?? [])
                     .map((extraTag) => {
                       return supportTags.find(

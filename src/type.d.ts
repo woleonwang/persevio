@@ -45,6 +45,7 @@ interface IJob {
   requirement_doc_id: number;
   jd_doc_id: number;
   jd_language: "zh-CN" | "en-US";
+  intake_mode?: "standard" | "fast";
   target_companies_doc_id: number;
   compensation_details_doc_id: number;
   screening_question_doc_id: number;
@@ -863,6 +864,7 @@ type TExtraTagName =
   // 后端生成
   | "copy-link" // 复制链接
   | "jrd-language" // 选择 jrd 语言
+  | "jrd-intake-mode" // 选择 intake 模式
   | "jd-language" // 选择 jd 语言
   | "talent-evaluate-result"
   | "huoqujibenxinxi-jindu-one"

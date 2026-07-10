@@ -572,6 +572,15 @@ export default {
       "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
     viona_is_generating_jrd_strategy:
       "<b>Viona 正在分析提供的职位细节，以便提出最相关的问题。这通常需要 30–90 秒</b>",
+    intake_mode_ask: `开始之前，有两种 intake 模式可选。您想用哪一种？
+
+**1. 标准模式**（强烈推荐 · 约 20 分钟）：
+我们会详细梳理职位：职责、要求、如何向候选人介绍这个岗位。**深度信息能让我更精准地寻源和筛选**，所以我强烈推荐。
+
+**2. 快速模式**（约 10 分钟）：
+快速 briefing。我会基于您提供的材料，问几个关键问题并确认要求。适合需求清晰的岗位，或您已经详细梳理过的职位。`,
+    intake_mode_standard_button: "标准模式（约 20 分钟）",
+    intake_mode_fast_button: "快速模式（约 10 分钟）",
     edit_profiles_hint:
       "我已经编辑了理想候选人画像，通过添加、删除或修改内容修订了你的提议。",
     reply_viona_directly_or_edit: "回复 Viona 的消息",

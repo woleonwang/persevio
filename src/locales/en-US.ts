@@ -586,6 +586,15 @@ export default {
       "Viona is reviewing your resume carefully so she can tailor the conversation to your experience. This may take 1-5 minutes...",
     viona_is_generating_jrd_strategy:
       "Viona is analyzing the provided job details so she can ask the most relevant questions. This usually takes 30–90 seconds",
+    intake_mode_ask: `Before we start, two modes to run this intake. Which would you like?
+
+**1. Standard** (strongly recommended · ~20 min):
+We go through the role in detail: responsibilities, requirements, how to pitch it to candidates. **The depth makes my sourcing and screening much more accurate**, so I strongly recommend it.
+
+**2. Fast** (~10 min):
+A quick brief. I work from your materials, ask a few key questions, and confirm the requirements. Fine for straightforward roles or ones you've already scoped in detail.`,
+    intake_mode_standard_button: "Standard (~20 min)",
+    intake_mode_fast_button: "Fast (~10 min)",
     edit_profiles_hint:
       "I have edit the ideal profiles, revised your proposal by adding, deleting, or modifying content",
     reply_viona_directly_or_edit:
