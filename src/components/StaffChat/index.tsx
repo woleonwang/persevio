@@ -426,8 +426,7 @@ const StaffChat: React.FC<IProps> = (props) => {
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
             </div>
           ),
-          handler: () =>
-            sendMessage("好的，请你用中文和我进行接下来的对话。"),
+          handler: () => sendMessage("好的，请你用中文和我进行接下来的对话。"),
         },
         {
           key: "jrd-language-en-US",
@@ -436,8 +435,7 @@ const StaffChat: React.FC<IProps> = (props) => {
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English
             </div>
           ),
-          handler: () =>
-            sendMessage("Sure. Please speak with me in English."),
+          handler: () => sendMessage("Sure. Please speak with me in English."),
         },
       ],
     },
@@ -1191,22 +1189,28 @@ const StaffChat: React.FC<IProps> = (props) => {
                     ];
                     return (
                       <div className={styles.inlineButtonWrapper}>
-                        {intakeModes.map((modeOption) => (
-                          <div style={{ marginBottom: 16 }} key={modeOption.key}>
-                            <Button
-                              type={
-                                job?.intake_mode === modeOption.key
-                                  ? "primary"
-                                  : "default"
-                              }
-                              className={styles.inlineButton}
-                              disabled={!!job?.intake_mode}
-                              onClick={() => selectIntakeMode(modeOption.key)}
+                        {intakeModes.map((modeOption) =>
+                          !job?.intake_mode ||
+                          job.intake_mode === modeOption.key ? (
+                            <div
+                              style={{ marginBottom: 16 }}
+                              key={modeOption.key}
                             >
-                              {modeOption.label}
-                            </Button>
-                          </div>
-                        ))}
+                              <Button
+                                type={
+                                  job?.intake_mode === modeOption.key
+                                    ? "primary"
+                                    : "default"
+                                }
+                                className={styles.inlineButton}
+                                disabled={!!job?.intake_mode}
+                                onClick={() => selectIntakeMode(modeOption.key)}
+                              >
+                                {modeOption.label}
+                              </Button>
+                            </div>
+                          ) : null,
+                        )}
                       </div>
                     );
                   }
