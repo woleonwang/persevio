@@ -1197,11 +1197,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                               key={modeOption.key}
                             >
                               <Button
-                                type={
-                                  job?.intake_mode === modeOption.key
-                                    ? "primary"
-                                    : "default"
-                                }
+                                type="primary"
                                 className={styles.inlineButton}
                                 disabled={!!job?.intake_mode}
                                 onClick={() => selectIntakeMode(modeOption.key)}
