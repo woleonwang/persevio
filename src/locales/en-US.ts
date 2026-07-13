@@ -1908,6 +1908,14 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     col_last_posted: "Last Posted Job on",
     days_open: "{{count}} days open",
     teams_footnote: "Showing {{start}}–{{end}} of {{total}} teams",
+    pipeline_distribution: "Pipeline Distribution",
+    active_applications: "(Active Applications)",
+    active_applications_tooltip: "Applications that have not been rejected",
+    col_stage: "Stage",
+    col_of_applications: "# of Applications",
+    col_pct_of_active: "% of Active",
+    col_median_days: "Median Days in Stage",
+    col_p90_days: "P90 Days in Stage",
   },
 
   job_list: {

@@ -635,3 +635,83 @@ export function buildDashboardQueryParams(
   if (opt.sincePosted) return { since_posted: 1 };
   return { days: opt.days ?? 30 };
 }
+
+export type TPipelineStageDef = {
+  id: string;
+  name: string;
+};
+
+export type TPipelineDistributionRow = {
+  key: string;
+  stageName: string;
+  isActiveRow: boolean;
+  count: number;
+  pctOfActive: number;
+  medianDays: number | null;
+  p90Days: number | null;
+};
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function percentile(sortedAsc: number[], p: number): number | null {
+  if (sortedAsc.length === 0) return null;
+  if (sortedAsc.length === 1) return sortedAsc[0];
+  const idx = (sortedAsc.length - 1) * p;
+  const lo = Math.floor(idx);
+  const hi = Math.ceil(idx);
+  if (lo === hi) return sortedAsc[lo];
+  return sortedAsc[lo] + (sortedAsc[hi] - sortedAsc[lo]) * (idx - lo);
+}
+
+/** Pipeline Distribution: Active = not rejected; ignores Candidate scope. */
+export function computePipelineDistribution(
+  apps: TDashboardApplication[],
+  stages: TPipelineStageDef[],
+  nowMs: number = Date.now(),
+): TPipelineDistributionRow[] {
+  const activeApps = apps.filter((app) => !app.is_rejected);
+  const activeCount = activeApps.length;
+
+  const rows: TPipelineDistributionRow[] = [
+    {
+      key: "__active__",
+      stageName: "(Active Applications)",
+      isActiveRow: true,
+      count: activeCount,
+      pctOfActive: 100,
+      medianDays: null,
+      p90Days: null,
+    },
+  ];
+
+  for (const stage of stages) {
+    const inStage = activeApps.filter(
+      (app) => app.current_stage_key === stage.id,
+    );
+    const days = inStage
+      .map((app) => {
+        const entered = new Date(app.stage_entered_at).getTime();
+        if (Number.isNaN(entered)) return null;
+        return (nowMs - entered) / MS_PER_DAY;
+      })
+      .filter((d): d is number => d != null && d >= 0)
+      .sort((a, b) => a - b);
+
+    rows.push({
+      key: stage.id,
+      stageName: stage.name,
+      isActiveRow: false,
+      count: inStage.length,
+      pctOfActive: activeCount > 0 ? (inStage.length / activeCount) * 100 : 0,
+      medianDays: percentile(days, 0.5),
+      p90Days: percentile(days, 0.9),
+    });
+  }
+
+  return rows;
+}
+
+export function formatPipelineDays(value: number | null): string {
+  if (value == null) return "--";
+  return value.toFixed(1);
+}

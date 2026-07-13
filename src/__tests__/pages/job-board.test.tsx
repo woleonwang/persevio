@@ -79,8 +79,8 @@ vi.mock(
     default: () => <div data-testid="outreach-campaigns">outreach-content</div>,
   }),
 )
-vi.mock('@/components/JobDetailsForAts/components/JobAnalytics', () => ({
-  default: () => <div data-testid="job-analytics">analytics-content</div>,
+vi.mock('@/components/JobDetailsForAts/components/JobDashboard', () => ({
+  default: () => <div data-testid="job-dashboard">dashboard-content</div>,
 }))
 vi.mock('@/components/JobDetailsForAts/components/JobSettings', () => ({
   default: () => <div data-testid="job-settings">settings-content</div>,
