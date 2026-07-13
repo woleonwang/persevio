@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import type { SorterResult } from "antd/es/table/interface";
-import { CloseOutlined, InfoCircleOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  InfoCircleOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import { Line } from "@ant-design/charts";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
@@ -142,7 +147,7 @@ const DashboardPage = () => {
   const [teamPage, setTeamPage] = useState(1);
   const [teamSort, setTeamSort] = useState<{
     field: string;
-    order: "ascend" | "descend";
+    order: "ascend" | "descend" | null;
   }>({ field: "lastPostedAt", order: "descend" });
 
   const fetchMeta = async () => {
@@ -420,6 +425,7 @@ const DashboardPage = () => {
         </span>
       ),
       dataIndex: "name",
+      width: 200,
       render: (_, row) => (
         <Tooltip title={row.pathTooltip || row.name}>
           <span className={styles.rowName}>{row.name}</span>
@@ -523,12 +529,10 @@ const DashboardPage = () => {
   ) => {
     if (pagination.current) setTeamPage(pagination.current);
     const single = Array.isArray(sorter) ? sorter[0] : sorter;
-    if (single?.field && single.order) {
-      setTeamSort({
-        field: String(single.field),
-        order: single.order,
-      });
-    }
+    setTeamSort({
+      field: String(single.field),
+      order: single.order ?? null,
+    });
   };
 
   const lineConfig = useMemo(
@@ -912,7 +916,7 @@ const DashboardPage = () => {
           >
             <div className={styles.sectionHeadingRow}>
               <h2 className={styles.sectionHeading}>{t("by_team")}</h2>
-              {drilldownTeamId != null && (
+              {!!drilldownTeamId && (
                 <span className={styles.titleChip}>
                   {orgNodes.find((n) => n.id === drilldownTeamId)?.name}
                   <CloseOutlined
@@ -946,9 +950,16 @@ const DashboardPage = () => {
                   dataSource={teamPageRows}
                   pagination={{
                     current: teamPage,
-                    pageSize: 10,
+                    pageSize: 20,
                     total: teamRows.length,
                     showSizeChanger: false,
+                    showTotal(total, range) {
+                      return t("teams_footnote", {
+                        start: range[0],
+                        end: range[1],
+                        total: total,
+                      });
+                    },
                   }}
                   onChange={onTeamTableChange}
                   onRow={(row) => ({
@@ -969,15 +980,6 @@ const DashboardPage = () => {
                 />
               )}
             </div>
-            {drilldownTeamId == null && teamRows.length > 0 && (
-              <p className={styles.tableFootnote}>
-                {t("teams_footnote", {
-                  start: teamRows.length ? (teamPage - 1) * 10 + 1 : 0,
-                  end: Math.min(teamPage * 10, teamRows.length),
-                  total: teamRows.length,
-                })}
-              </p>
-            )}
           </DashboardSection>
 
           <DashboardSection

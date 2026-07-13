@@ -575,7 +575,6 @@
   display: flex;
   min-height: 57px;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 0 24px;
   border-bottom: 1px solid @dashBorder;
@@ -640,11 +639,14 @@
       line-height: 20px;
       text-align: right;
       overflow: visible;
+
+      &[colspan] {
+        border-bottom: 1px solid #e8e8e8 !important;
+      }
     }
 
     .ant-table-thead > tr:first-child > th[rowspan] {
       height: 88px;
-      font-weight: 400;
       text-align: center;
     }
 
@@ -687,12 +689,8 @@
   }
 }
 
-.funnelCol {
-  background: @funnelBg !important;
-  border-right: 0 !important;
-}
-
 .funnelFlowCell {
+  border-right: none !important;
   &::after {
     content: "";
     position: absolute;
@@ -745,11 +743,4 @@
   color: @dashMuted;
   font-size: 12px;
   font-weight: 400;
-}
-
-.tableFootnote {
-  margin: -8px 24px 18px;
-  color: @dashMuted;
-  font-size: 14px;
-  line-height: 20px;
 }
