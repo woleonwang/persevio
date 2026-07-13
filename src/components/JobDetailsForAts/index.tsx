@@ -18,7 +18,7 @@ import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import JobPipeline from "./components/JobPipeline";
-import JobAnalytics from "./components/JobAnalytics";
+import JobDashboard from "./components/JobDashboard";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
 import globalStore from "@/store/global";
@@ -320,12 +320,12 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             label: (
               <div className={styles.tabsLabel}>
                 <Icon icon={<Analytics />} />
-                {t("analytics")}
+                {t("dashboard")}
               </div>
             ),
             children: (
               <div className={styles.body}>
-                <JobAnalytics />
+                <JobDashboard />
               </div>
             ),
           },
