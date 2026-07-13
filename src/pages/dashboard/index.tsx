@@ -1,14 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Modal,
-  Segmented,
-  Select,
-  Spin,
-  Table,
-  Tooltip,
-  message,
-} from "antd";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import type { SorterResult } from "antd/es/table/interface";
 import { CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
@@ -19,7 +10,6 @@ import { useTranslation } from "react-i18next";
 
 import OrgNodeTreeSelect from "@/components/OrgNodeTreeSelect";
 import { Get } from "@/utils/request";
-import globalStore from "@/store/global";
 
 import styles from "./style.module.less";
 import {
@@ -44,34 +34,120 @@ import {
   formatDashboardPct,
   formatPostedDate,
 } from "./utils";
+import Icon from "@/components/Icon";
+import MailBolt from "@/assets/icons/mail-bolt";
+import FilterDropdown from "./components/DropdownFilter";
 
-const EVAL_STACK_STYLE: Record<string, { bg: string; label: string; color?: string }> = {
-  absolutely: { bg: "#c8e6c9", label: "Absolutely" },
-  yes: { bg: "#bbdefb", label: "Yes" },
-  yes_but: { bg: "#dcedc8", label: "Yes, but" },
-  maybe: { bg: "#ffe0b2", label: "Maybe" },
-  no: { bg: "#e8e8eb", label: "No" },
+const EVAL_STACK_STYLE: Record<
+  string,
+  { bg: string; label: string; color?: string }
+> = {
+  absolutely: { bg: "#5C92EA", label: "Absolutely", color: "#fff" },
+  yes: { bg: "#85DCFF", label: "Yes", color: "#1d1d1f" },
+  yes_but: { bg: "#8BB68E", label: "Yes, but", color: "#1d1d1f" },
+  maybe: { bg: "#FFB27C", label: "Maybe", color: "#1d1d1f" },
+  no: { bg: "#ED7676", label: "No", color: "#fff" },
 };
 
-const REJECT_STACK_STYLE: Record<string, { bg: string; label: string; color?: string }> = {
-  not_shortlisted: { bg: "#6e7e94", label: "Not Shortlisted", color: "#fff" },
-  did_not_pass_interview: { bg: "#8896aa", label: "Did Not Pass", color: "#fff" },
-  headcount_freeze: { bg: "#bec7d4", label: "Freeze" },
-  candidate_withdrew: { bg: "#a3afc0", label: "Withdrew", color: "#fff" },
-  other: { bg: "#d2d8e0", label: "Others" },
+const REJECT_STACK_STYLE: Record<
+  string,
+  { bg: string; label: string; color?: string }
+> = {
+  not_shortlisted: { bg: "#4671B8", label: "Not Shortlisted", color: "#fff" },
+  did_not_pass_interview: {
+    bg: "#7E9AC9",
+    label: "Did Not Pass Interview",
+    color: "#fff",
+  },
+  headcount_freeze: {
+    bg: "#A1B4D4",
+    label: "Headcount Freeze",
+    color: "#1d1d1f",
+  },
+  candidate_withdrew: {
+    bg: "#C5D2E8",
+    label: "Candidate Withdrew",
+    color: "#1d1d1f",
+  },
+  other: { bg: "#E8EFFB", label: "Others", color: "#1d1d1f" },
 };
+
+const REJECTED_FILTER_OPTIONS: {
+  value: TDashboardRejectedFilter;
+  labelKey: "filter_all" | "filter_excl_rejected" | "filter_only_rejected";
+}[] = [
+  { value: "all", labelKey: "filter_all" },
+  { value: "excl_rejected", labelKey: "filter_excl_rejected" },
+  { value: "only_rejected", labelKey: "filter_only_rejected" },
+];
+
+const TREND_GRANULARITY_OPTIONS: TTrendGranularity[] = [
+  "daily",
+  "weekly",
+  "monthly",
+];
 
 type TJobListItem = IJob & {
   total_candidates?: number;
   candidates_passed_screening?: number;
 };
 
+function DashboardSection({
+  loading,
+  children,
+  className,
+}: {
+  loading?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={classnames(styles.sectionPanel, className)}>
+      {loading && (
+        <div className={styles.sectionOverlay}>
+          <Spin />
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function SegmentControl<T extends string>({
+  value,
+  options,
+  onChange,
+  labels,
+}: {
+  value: T;
+  options: T[];
+  onChange: (value: T) => void;
+  labels: Record<T, string>;
+}) {
+  return (
+    <div className={styles.segmentControl}>
+      {options.map((option) => (
+        <button
+          key={option}
+          type="button"
+          className={classnames(styles.segmentOption, {
+            [styles.segmentOptionActive]: option === value,
+          })}
+          onClick={() => onChange(option)}
+        >
+          {labels[option]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const DashboardPage = () => {
   const { t } = useTranslation(undefined, { keyPrefix: "dashboard" });
   const navigate = useNavigate();
-  const { mode } = globalStore;
 
-  const [loading, setLoading] = useState(true);
+  const [metaLoading, setMetaLoading] = useState(true);
+  const [appsLoading, setAppsLoading] = useState(true);
   const [applications, setApplications] = useState<TDashboardApplication[]>([]);
   const [jobs, setJobs] = useState<TJobListItem[]>([]);
   const [orgNodes, setOrgNodes] = useState<IOrgNode[]>([]);
@@ -81,14 +157,12 @@ const DashboardPage = () => {
     useState<TDashboardRejectedFilter>("all");
   const [trendGranularity, setTrendGranularity] =
     useState<TTrendGranularity>("daily");
-  const [enabledTrendSeries, setEnabledTrendSeries] = useState<Set<TTrendSeriesKey>>(
-    () => new Set(TREND_SERIES.filter((s) => s.defaultOn).map((s) => s.key)),
-  );
+  const [enabledTrendSeries, setEnabledTrendSeries] = useState<
+    Set<TTrendSeriesKey>
+  >(() => new Set(TREND_SERIES.filter((s) => s.defaultOn).map((s) => s.key)));
 
   const [drilldownTeamId, setDrilldownTeamId] = useState<number | null>(null);
   const [selectedDeptIds, setSelectedDeptIds] = useState<number[]>([]);
-  const [deptFilterOpen, setDeptFilterOpen] = useState(false);
-  const [deptDraft, setDeptDraft] = useState<number[]>([]);
 
   const [teamPage, setTeamPage] = useState(1);
   const [teamSort, setTeamSort] = useState<{
@@ -96,34 +170,43 @@ const DashboardPage = () => {
     order: "ascend" | "descend";
   }>({ field: "lastPostedAt", order: "descend" });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [datePreset]);
-
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    const params = buildDashboardQueryParams(datePreset);
-    const [appsRes, jobsRes, orgRes] = await Promise.all([
-      Get<{ applications: TDashboardApplication[] }>(
-        "/api/dashboard/applications",
-        params,
-      ),
+  const fetchMeta = async () => {
+    setMetaLoading(true);
+    const [jobsRes, orgRes] = await Promise.all([
       Get<{ jobs: TJobListItem[] }>("/api/jobs", { light: 1 }),
       Get<{ org_nodes: IOrgNode[] }>("/api/org_nodes"),
     ]);
-    if (appsRes.code === 0) {
-      setApplications(appsRes.data?.applications ?? []);
-    } else {
-      message.error(t("fetch_failed"));
-    }
     if (jobsRes.code === 0) {
       setJobs(jobsRes.data?.jobs ?? []);
     }
     if (orgRes.code === 0) {
       setOrgNodes(orgRes.data?.org_nodes ?? []);
     }
-    setLoading(false);
+    setMetaLoading(false);
   };
+
+  const fetchApplications = async () => {
+    setAppsLoading(true);
+    const params = buildDashboardQueryParams(datePreset);
+    const appsRes = await Get<{ applications: TDashboardApplication[] }>(
+      "/api/dashboard/applications",
+      params,
+    );
+    if (appsRes.code === 0) {
+      setApplications(appsRes.data?.applications ?? []);
+    } else {
+      message.error(t("fetch_failed"));
+    }
+    setAppsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMeta();
+  }, []);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [datePreset]);
 
   const filteredApps = useMemo(
     () => filterApplicationsByRejected(applications, rejectedFilter),
@@ -136,7 +219,8 @@ const DashboardPage = () => {
   );
 
   const trendData = useMemo(
-    () => buildTrendChartData(filteredApps, trendGranularity, enabledTrendSeries),
+    () =>
+      buildTrendChartData(filteredApps, trendGranularity, enabledTrendSeries),
     [filteredApps, trendGranularity, enabledTrendSeries],
   );
 
@@ -152,12 +236,16 @@ const DashboardPage = () => {
       const field = teamSort.field;
       const av =
         field === "lastPostedAt"
-          ? (a.lastPostedAt ? new Date(a.lastPostedAt).getTime() : 0)
-          : (a[field as keyof TDashboardPivotRow] as number) ?? 0;
+          ? a.lastPostedAt
+            ? new Date(a.lastPostedAt).getTime()
+            : 0
+          : ((a[field as keyof TDashboardPivotRow] as number) ?? 0);
       const bv =
         field === "lastPostedAt"
-          ? (b.lastPostedAt ? new Date(b.lastPostedAt).getTime() : 0)
-          : (b[field as keyof TDashboardPivotRow] as number) ?? 0;
+          ? b.lastPostedAt
+            ? new Date(b.lastPostedAt).getTime()
+            : 0
+          : ((b[field as keyof TDashboardPivotRow] as number) ?? 0);
       return av === bv ? 0 : av > bv ? dir : -dir;
     });
     return sorted;
@@ -192,53 +280,115 @@ const DashboardPage = () => {
   const navigateToJob = (row: TDashboardPivotRow) => {
     if (!row.invitationToken) return;
     const base = `/app/jobs/${row.invitationToken}`;
-    navigate(mode === "standard" ? `${base}/standard-board` : `${base}/board`);
+    navigate(`${base}/standard-board?tab=analytics`);
   };
 
   const renderFunnelCount = (count: number, pct?: string) => (
     <div>
-      <div className={styles.numMain}>{formatDashboardNumber(count)}</div>
-      {pct != null && <div className={styles.numSub}>{pct}</div>}
+      <span className={styles.numMain}>{formatDashboardNumber(count)}</span>
+      {pct != null && <span className={styles.numSub}>{pct}</span>}
     </div>
   );
 
-  const renderStackBar = (
+  const renderDistributionLegend = (
+    keys: readonly string[],
+    styleMap: Record<string, { bg: string; label: string; color?: string }>,
+    className?: string,
+  ) => (
+    <div
+      className={classnames(styles.distributionLegend, className)}
+      aria-hidden="true"
+    >
+      {keys.map((key) => {
+        const meta = styleMap[key];
+        if (!meta) return null;
+        return (
+          <span key={key}>
+            <i style={{ background: meta.bg }} />
+            {meta.label}
+          </span>
+        );
+      })}
+    </div>
+  );
+
+  const renderDistributionBar = (
     total: number,
     counts: Record<string, number>,
     styleMap: Record<string, { bg: string; label: string; color?: string }>,
     keys: readonly string[],
+    barClassName: string,
   ) => {
     if (total <= 0) return null;
     return (
-      <div className={styles.kpiStackbarWrap}>
-        <div className={styles.kpiStackbar}>
-          {keys.map((key) => {
-            const count = counts[key] ?? 0;
-            if (count <= 0) return null;
-            const pct = (count / total) * 100;
-            const meta = styleMap[key];
-            return (
-              <Tooltip
-                key={key}
-                title={`${meta.label}: ${count}, ${pct.toFixed(1)}%`}
-              >
-                <div
-                  className={styles.stackSeg}
-                  style={{
-                    width: `${pct}%`,
-                    background: meta.bg,
-                    color: meta.color ?? "#1d1d1f",
-                  }}
-                >
-                  {pct >= 12 ? meta.label : ""}
-                </div>
-              </Tooltip>
-            );
-          })}
-        </div>
+      <div className={barClassName}>
+        {keys.map((key) => {
+          const count = counts[key] ?? 0;
+          if (count <= 0) return null;
+          const pct = (count / total) * 100;
+          const meta = styleMap[key];
+          return (
+            <Tooltip
+              key={key}
+              title={`${meta.label}: ${count}, ${pct.toFixed(1)}%`}
+            >
+              <span style={{ width: `${pct}%`, background: meta.bg }} />
+            </Tooltip>
+          );
+        })}
       </div>
     );
   };
+
+  const buildAiScreeningColumns = (
+    sortable: boolean,
+  ): ColumnsType<TDashboardPivotRow> => [
+    {
+      title: t("col_applications"),
+      dataIndex: "applications",
+      align: "right",
+      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      sorter: sortable ? true : undefined,
+      sortOrder:
+        sortable && teamSort.field === "applications"
+          ? teamSort.order
+          : undefined,
+      render: (v: number) => formatDashboardNumber(v),
+    },
+    {
+      title: t("col_responded"),
+      dataIndex: "responded",
+      align: "right",
+      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      sorter: sortable ? true : undefined,
+      sortOrder:
+        sortable && teamSort.field === "responded" ? teamSort.order : undefined,
+      render: (v: number, row) =>
+        renderFunnelCount(v, formatDashboardPct(v, row.applications)),
+    },
+    {
+      title: t("col_completed"),
+      dataIndex: "completed",
+      align: "right",
+      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      sorter: sortable ? true : undefined,
+      sortOrder:
+        sortable && teamSort.field === "completed" ? teamSort.order : undefined,
+      render: (v: number, row) =>
+        renderFunnelCount(v, formatDashboardPct(v, row.responded)),
+    },
+    {
+      title: t("col_maybe_plus"),
+      dataIndex: "maybePlus",
+      align: "right",
+      className: styles.funnelCol,
+      sorter: sortable ? true : undefined,
+      sortOrder:
+        sortable && teamSort.field === "maybePlus" ? teamSort.order : undefined,
+      render: (v: number, row) =>
+        renderFunnelCount(v, formatDashboardPct(v, row.completed)),
+    },
+  ];
 
   const teamColumns: ColumnsType<TDashboardPivotRow> = [
     {
@@ -266,43 +416,8 @@ const DashboardPage = () => {
       render: (v: number) => formatDashboardNumber(v ?? 0),
     },
     {
-      title: t("col_applications"),
-      dataIndex: "applications",
-      align: "right",
-      className: styles.funnelCol,
-      sorter: true,
-      sortOrder: teamSort.field === "applications" ? teamSort.order : undefined,
-      render: (v: number) => formatDashboardNumber(v),
-    },
-    {
-      title: t("col_responded"),
-      dataIndex: "responded",
-      align: "right",
-      className: styles.funnelCol,
-      sorter: true,
-      sortOrder: teamSort.field === "responded" ? teamSort.order : undefined,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.applications)),
-    },
-    {
-      title: t("col_completed"),
-      dataIndex: "completed",
-      align: "right",
-      className: styles.funnelCol,
-      sorter: true,
-      sortOrder: teamSort.field === "completed" ? teamSort.order : undefined,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.responded)),
-    },
-    {
-      title: t("col_maybe_plus"),
-      dataIndex: "maybePlus",
-      align: "right",
-      className: styles.funnelCol,
-      sorter: true,
-      sortOrder: teamSort.field === "maybePlus" ? teamSort.order : undefined,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.completed)),
+      title: t("col_ai_screening"),
+      children: buildAiScreeningColumns(true),
     },
     {
       title: t("col_active"),
@@ -339,41 +454,14 @@ const DashboardPage = () => {
         <div>
           <div className={styles.rowName}>{row.name}</div>
           {row.secondary && (
-            <div className={styles.rowNameSecondary}>{row.secondary}</div>
+            <span className={styles.rowNameSecondary}>{row.secondary}</span>
           )}
         </div>
       ),
     },
     {
-      title: t("col_applications"),
-      dataIndex: "applications",
-      align: "right",
-      className: styles.funnelCol,
-      render: (v: number) => formatDashboardNumber(v),
-    },
-    {
-      title: t("col_responded"),
-      dataIndex: "responded",
-      align: "right",
-      className: styles.funnelCol,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.applications)),
-    },
-    {
-      title: t("col_completed"),
-      dataIndex: "completed",
-      align: "right",
-      className: styles.funnelCol,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.responded)),
-    },
-    {
-      title: t("col_maybe_plus"),
-      dataIndex: "maybePlus",
-      align: "right",
-      className: styles.funnelCol,
-      render: (v: number, row) =>
-        renderFunnelCount(v, formatDashboardPct(v, row.completed)),
+      title: t("col_ai_screening"),
+      children: buildAiScreeningColumns(false),
     },
     {
       title: t("col_active"),
@@ -410,7 +498,9 @@ const DashboardPage = () => {
   const onTeamTableChange = (
     pagination: TablePaginationConfig,
     _filters: unknown,
-    sorter: SorterResult<TDashboardPivotRow> | SorterResult<TDashboardPivotRow>[],
+    sorter:
+      | SorterResult<TDashboardPivotRow>
+      | SorterResult<TDashboardPivotRow>[],
   ) => {
     if (pagination.current) setTeamPage(pagination.current);
     const single = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -442,238 +532,295 @@ const DashboardPage = () => {
 
   return (
     <div className={styles.pageWrap}>
-      <div className={styles.pageHeader}>
-        <div className={styles.pageTitle}>{t("title")}</div>
-        <div className={styles.pageSub}>{t("subtitle")}</div>
-      </div>
+      <div className={styles.dashboardScroll}>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>{t("title")}</h1>
+          <p className={styles.pageSub}>{t("subtitle")}</p>
+        </header>
 
-      <div className={styles.container}>
-        <div className={styles.filterBar}>
-          <span className={styles.filterLabel}>{t("application_date")}</span>
-          <Select
-            value={datePreset}
-            style={{ width: 160 }}
-            options={DATE_PRESET_OPTIONS.map((o) => ({
-              value: o.key,
-              label: o.label,
-            }))}
-            onChange={(v) => setDatePreset(v)}
-          />
-          <Segmented
-            value={rejectedFilter}
-            options={[
-              { label: t("filter_all"), value: "all" },
-              { label: t("filter_excl_rejected"), value: "excl_rejected" },
-              { label: t("filter_only_rejected"), value: "only_rejected" },
-            ]}
-            onChange={(v) => setRejectedFilter(v as TDashboardRejectedFilter)}
-          />
-        </div>
-
-        <Spin spinning={loading}>
-          <div className={styles.kpiRow}>
-            <div
-              className={classnames(styles.kpiCard, styles.kpiOpenJobs)}
-              onClick={() => navigate("/app/jobs")}
-            >
-              <div className={styles.kpiMain}>
-                <div className={styles.kpiLabel}>
-                  {t("open_jobs")}{" "}
-                  <Tooltip title={t("open_jobs_tooltip")}>
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                </div>
-                <div className={classnames(styles.kpiValue, styles.kpiValueLink)}>
-                  {formatDashboardNumber(kpi.openJobs)}
-                </div>
-              </div>
-              <div className={styles.kpiStatusbar}>
-                <div className={classnames(styles.kpiStatusbarRow, styles.primary)}>
-                  <span className={styles.kpiStatusbarLabel}>
-                    {t("pending_intake")}
-                  </span>
-                  <span className={styles.kpiStatusbarValue}>
-                    {formatDashboardNumber(kpi.pendingIntake)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.kpiVertDivider} />
-
-            <div className={styles.kpiFunnel}>
-              <div className={classnames(styles.kpiCard, styles.kpiFunnelCard)}>
-                <div className={styles.kpiMain}>
-                  <div className={styles.kpiLabel}>{t("applications")}</div>
-                  <div className={styles.kpiValue}>
-                    {showFunnelMuted ? (
-                      <span className={styles.numDash}>—</span>
-                    ) : (
-                      formatDashboardNumber(kpi.applications)
-                    )}
-                  </div>
-                </div>
-              </div>
-              <span className={styles.kpiArrow}>▸</span>
-              <div className={classnames(styles.kpiCard, styles.kpiFunnelCard)}>
-                <div className={styles.kpiMain}>
-                  <div className={styles.kpiLabel}>
-                    {t("responded")}{" "}
-                    <Tooltip title={t("responded_tooltip")}>
-                      <InfoCircleOutlined />
-                    </Tooltip>
-                  </div>
-                  <div className={styles.kpiValue}>
-                    {showFunnelMuted ? (
-                      <span className={styles.numDash}>—</span>
-                    ) : (
-                      formatDashboardNumber(kpi.responded)
-                    )}
-                  </div>
-                  {!showFunnelMuted && (
-                    <div className={styles.kpiSub}>
-                      {formatDashboardPct(kpi.responded, kpi.applications)}{" "}
-                      {t("of_applications")}
-                    </div>
-                  )}
-                </div>
-                {!showFunnelMuted && (
-                  <div className={styles.kpiStatusbar}>
-                    <div className={classnames(styles.kpiStatusbarRow, styles.primary)}>
-                      <span className={styles.kpiStatusbarLabel}>
-                        {t("never_started")}
-                      </span>
-                      <span className={styles.kpiStatusbarValue}>
-                        {formatDashboardNumber(kpi.neverStarted)}
-                      </span>
-                    </div>
-                    <div className={styles.kpiStatusbarRow}>
-                      <span className={styles.kpiStatusbarSublabel}>
-                        {t("of_applications")}
-                      </span>
-                      <span className={styles.kpiStatusbarSubvalue}>
-                        {formatDashboardPct(kpi.neverStarted, kpi.applications)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <span className={styles.kpiArrow}>▸</span>
-              <div className={classnames(styles.kpiCard, styles.kpiFunnelCard)}>
-                <div className={styles.kpiMain}>
-                  <div className={styles.kpiLabel}>{t("completed")}</div>
-                  <div className={styles.kpiValue}>
-                    {showFunnelMuted ? (
-                      <span className={styles.numDash}>—</span>
-                    ) : (
-                      formatDashboardNumber(kpi.completed)
-                    )}
-                  </div>
-                  {!showFunnelMuted && (
-                    <div className={styles.kpiSub}>
-                      {formatDashboardPct(kpi.completed, kpi.responded)}{" "}
-                      {t("of_responded")}
-                    </div>
-                  )}
-                </div>
-                {!showFunnelMuted && (
-                  <div className={styles.kpiStatusbar}>
-                    <div className={classnames(styles.kpiStatusbarRow, styles.primary)}>
-                      <span className={styles.kpiStatusbarLabel}>
-                        {t("in_progress")}
-                      </span>
-                      <span className={styles.kpiStatusbarValue}>
-                        {formatDashboardNumber(kpi.inProgress)}
-                      </span>
-                    </div>
-                    <div className={styles.kpiStatusbarRow}>
-                      <span className={styles.kpiStatusbarSublabel}>
-                        {t("of_responded")}
-                      </span>
-                      <span className={styles.kpiStatusbarSubvalue}>
-                        {formatDashboardPct(kpi.inProgress, kpi.responded)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <span className={styles.kpiArrow}>▸</span>
-              <div className={classnames(styles.kpiCard, styles.kpiFunnelCard)}>
-                <div className={styles.kpiMain}>
-                  <div className={styles.kpiLabel}>
-                    {t("results")}{" "}
-                    <Tooltip title={t("results_tooltip")}>
-                      <InfoCircleOutlined />
-                    </Tooltip>
-                  </div>
-                  <div className={styles.kpiValue}>
-                    {showFunnelMuted ? (
-                      <span className={styles.numDash}>—</span>
-                    ) : (
-                      `${kpi.maybePlusPct.toFixed(1)}%`
-                    )}
-                  </div>
-                  {!showFunnelMuted && (
-                    <div className={styles.kpiSub}>{t("maybe_or_above")}</div>
-                  )}
-                </div>
-                {!showFunnelMuted &&
-                  renderStackBar(
-                    kpi.completed,
-                    kpi.evalStack,
-                    EVAL_STACK_STYLE,
-                    EVALUATION_STACK_KEYS,
-                  )}
-              </div>
-            </div>
-
-            <div className={classnames(styles.kpiCard, styles.kpiRejected)}>
-              <div className={styles.kpiMain}>
-                <div className={styles.kpiLabel}>{t("rejected")}</div>
-                <div className={styles.kpiValue}>
-                  {showRejectedMuted ? (
-                    <span className={styles.numDash}>—</span>
-                  ) : (
-                    formatDashboardNumber(kpi.rejected)
-                  )}
-                </div>
-                {!showRejectedMuted && (
-                  <div className={styles.kpiSub}>
-                    {formatDashboardPct(kpi.rejected, kpi.applications)}{" "}
-                    {t("of_applications")}
-                  </div>
-                )}
-              </div>
-              {!showRejectedMuted &&
-                renderStackBar(
-                  kpi.rejected,
-                  kpi.rejectStack,
-                  REJECT_STACK_STYLE,
-                  REJECT_STACK_KEYS,
-                )}
-            </div>
+        <div className={styles.dashboardContent}>
+          <div className={styles.dashboardToolbar}>
+            <FilterDropdown
+              label={t("application_date")}
+              value={datePreset}
+              options={DATE_PRESET_OPTIONS.map((option) => ({
+                value: option.key,
+                label: option.label,
+              }))}
+              onChange={setDatePreset}
+              showCalendarIcon
+            />
+            <FilterDropdown
+              label={t("candidate_scope")}
+              value={rejectedFilter}
+              options={REJECTED_FILTER_OPTIONS.map((option) => ({
+                value: option.value,
+                label: t(option.labelKey),
+              }))}
+              onChange={setRejectedFilter}
+            />
           </div>
 
-          <div className={styles.sectionCard}>
-            <div className={styles.sectionTitle}>
-              {t("trends")}
-              <div className={styles.sectionTitleSpacer} />
-              <Segmented
+          <DashboardSection loading={appsLoading} className={styles.kpiPanel}>
+            <div className={styles.kpiScroll}>
+              <div className={styles.overallKpiLayout}>
+                <article
+                  className={styles.openJobCard}
+                  onClick={() => navigate("/app/jobs")}
+                >
+                  <p className={styles.metricLabel}>
+                    {t("open_jobs")}{" "}
+                    <Tooltip title={t("open_jobs_tooltip")}>
+                      <InfoCircleOutlined />
+                    </Tooltip>
+                  </p>
+                  <div className={styles.metricBody}>
+                    <strong className={classnames(styles.metricValue)}>
+                      {metaLoading ? "—" : formatDashboardNumber(kpi.openJobs)}
+                    </strong>
+                    <div className={styles.metricFooter}>
+                      <div className={styles.pendingIntake}>
+                        <div className={styles.pendingIntakeLabel}>
+                          {t("pending_intake")}
+                        </div>
+                        <div className={styles.pendingIntakeCount}>
+                          {metaLoading
+                            ? "—"
+                            : formatDashboardNumber(kpi.pendingIntake)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+
+                <div className={styles.kpiRightPanel}>
+                  <div className={styles.metricCluster}>
+                    <article
+                      className={classnames(
+                        styles.metricCard,
+                        styles.metricCardPrimary,
+                      )}
+                    >
+                      <p className={styles.metricLabel}>{t("applications")}</p>
+                      <div className={classnames(styles.metricBody)}>
+                        <strong className={styles.metricValue}>
+                          {showFunnelMuted ? (
+                            <span className={styles.numDash}>—</span>
+                          ) : (
+                            formatDashboardNumber(kpi.applications)
+                          )}
+                        </strong>
+                        <Icon
+                          icon={<MailBolt />}
+                          style={{
+                            position: "absolute",
+                            color: "rgba(217, 217, 217, 1)",
+                            fontSize: 72,
+                            right: 10,
+                            bottom: 0,
+                          }}
+                        />
+                      </div>
+                    </article>
+
+                    <article className={styles.metricCard}>
+                      <p className={styles.metricLabel}>
+                        {t("responded")}{" "}
+                        <Tooltip title={t("responded_tooltip")}>
+                          <InfoCircleOutlined />
+                        </Tooltip>
+                      </p>
+                      <div className={styles.metricBody}>
+                        <strong className={styles.metricValue}>
+                          {showFunnelMuted ? (
+                            <span className={styles.numDash}>—</span>
+                          ) : (
+                            formatDashboardNumber(kpi.responded)
+                          )}
+                        </strong>
+                        {!showFunnelMuted && (
+                          <>
+                            <p className={styles.metricNote}>
+                              {formatDashboardPct(
+                                kpi.responded,
+                                kpi.applications,
+                              )}{" "}
+                              {t("of_applications")}
+                            </p>
+                            <div className={styles.metricFooter}>
+                              <dl className={styles.metricPairs}>
+                                <div className={styles.metricPairRow}>
+                                  <dt>{t("never_started")}</dt>
+                                  <dd>
+                                    {formatDashboardNumber(kpi.neverStarted)}
+                                  </dd>
+                                </div>
+                                <div
+                                  className={classnames(styles.metricPairRow)}
+                                >
+                                  <dt>{t("of_applications_with_symbol")}</dt>
+                                  <dd>
+                                    {formatDashboardPct(
+                                      kpi.neverStarted,
+                                      kpi.applications,
+                                    )}
+                                  </dd>
+                                </div>
+                              </dl>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </article>
+
+                    <article className={styles.metricCard}>
+                      <p className={styles.metricLabel}>{t("completed")}</p>
+                      <div className={styles.metricBody}>
+                        <strong className={styles.metricValue}>
+                          {showFunnelMuted ? (
+                            <span className={styles.numDash}>—</span>
+                          ) : (
+                            formatDashboardNumber(kpi.completed)
+                          )}
+                        </strong>
+                        {!showFunnelMuted && (
+                          <p className={styles.metricNote}>
+                            {formatDashboardPct(kpi.completed, kpi.responded)}{" "}
+                            {t("of_responded")}
+                          </p>
+                        )}
+                        {!showFunnelMuted && (
+                          <div className={styles.metricFooter}>
+                            <dl className={styles.metricPairs}>
+                              <div className={styles.metricPairRow}>
+                                <dt>{t("in_progress")}</dt>
+                                <dd>{formatDashboardNumber(kpi.inProgress)}</dd>
+                              </div>
+                              <div
+                                className={classnames(
+                                  styles.metricPairRow,
+                                  styles.metricPairSub,
+                                )}
+                              >
+                                <dt>{t("of_responded_with_symbol")}</dt>
+                                <dd>
+                                  {formatDashboardPct(
+                                    kpi.inProgress,
+                                    kpi.responded,
+                                  )}
+                                </dd>
+                              </div>
+                            </dl>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+
+                    <article
+                      className={classnames(
+                        styles.metricCard,
+                        styles.metricCardResult,
+                      )}
+                    >
+                      <p className={styles.metricLabel}>
+                        {t("results")}{" "}
+                        <Tooltip title={t("results_tooltip")}>
+                          <InfoCircleOutlined />
+                        </Tooltip>
+                      </p>
+                      <div className={styles.metricBody}>
+                        <strong className={styles.metricValue}>
+                          {showFunnelMuted ? (
+                            <span className={styles.numDash}>—</span>
+                          ) : (
+                            `${kpi.maybePlusPct.toFixed(1)}%`
+                          )}
+                        </strong>
+                        {!showFunnelMuted && (
+                          <p className={styles.metricNote}>
+                            {t("maybe_or_above")}
+                          </p>
+                        )}
+                        {!showFunnelMuted && (
+                          <div className={styles.metricFooter}>
+                            <div className={styles.metricDivider} />
+                            {renderDistributionLegend(
+                              EVALUATION_STACK_KEYS,
+                              EVAL_STACK_STYLE,
+                            )}
+                            {renderDistributionBar(
+                              kpi.completed,
+                              kpi.evalStack,
+                              EVAL_STACK_STYLE,
+                              EVALUATION_STACK_KEYS,
+                              styles.resultBar,
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  </div>
+
+                  <article className={styles.rejectedCard}>
+                    <p className={styles.metricLabel}>{t("rejected")}</p>
+                    <div className={styles.metricBody}>
+                      <strong className={styles.metricValue}>
+                        {showRejectedMuted ? (
+                          <span className={styles.numDash}>—</span>
+                        ) : (
+                          formatDashboardNumber(kpi.rejected)
+                        )}
+                      </strong>
+                      {!showRejectedMuted && (
+                        <p className={styles.metricNote}>
+                          {formatDashboardPct(kpi.rejected, kpi.applications)}{" "}
+                          {t("of_applications")}
+                        </p>
+                      )}
+                      {!showRejectedMuted && (
+                        <div className={styles.metricFooter}>
+                          <div className={styles.metricDivider} />
+                          {renderDistributionLegend(
+                            REJECT_STACK_KEYS,
+                            REJECT_STACK_STYLE,
+                          )}
+                          {renderDistributionBar(
+                            kpi.rejected,
+                            kpi.rejectStack,
+                            REJECT_STACK_STYLE,
+                            REJECT_STACK_KEYS,
+                            styles.rejectedBar,
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </DashboardSection>
+
+          <DashboardSection loading={appsLoading} className={styles.trendPanel}>
+            <div className={styles.panelHeading}>
+              <h2 className={styles.panelTitle}>{t("trends")}</h2>
+              <SegmentControl
                 value={trendGranularity}
-                options={[
-                  { label: t("granularity_daily"), value: "daily" },
-                  { label: t("granularity_weekly"), value: "weekly" },
-                  { label: t("granularity_monthly"), value: "monthly" },
-                ]}
-                onChange={(v) => setTrendGranularity(v as TTrendGranularity)}
+                options={TREND_GRANULARITY_OPTIONS}
+                onChange={setTrendGranularity}
+                labels={{
+                  daily: t("granularity_daily"),
+                  weekly: t("granularity_weekly"),
+                  monthly: t("granularity_monthly"),
+                }}
               />
             </div>
-            <div className={styles.trendLegend}>
+            <div className={styles.legendRow}>
               {TREND_SERIES.map((s) => (
-                <span
+                <button
                   key={s.key}
-                  className={classnames(styles.legendItem, {
-                    [styles.off]: !enabledTrendSeries.has(s.key),
+                  type="button"
+                  className={classnames(styles.legendChip, {
+                    [styles.legendChipMuted]: !enabledTrendSeries.has(s.key),
                   })}
                   onClick={() => toggleTrendSeries(s.key)}
                 >
@@ -682,7 +829,7 @@ const DashboardPage = () => {
                     style={{ background: s.color }}
                   />
                   {s.label}
-                </span>
+                </button>
               ))}
             </div>
             {enabledTrendSeries.size === 0 ? (
@@ -692,11 +839,14 @@ const DashboardPage = () => {
                 <Line {...lineConfig} />
               </div>
             )}
-          </div>
+          </DashboardSection>
 
-          <div className={styles.sectionCard}>
-            <div className={styles.sectionTitle}>
-              <span>{t("by_team")}</span>
+          <DashboardSection
+            loading={appsLoading}
+            className={styles.tableSection}
+          >
+            <div className={styles.sectionHeadingRow}>
+              <h2 className={styles.sectionHeading}>{t("by_team")}</h2>
               {drilldownTeamId != null && (
                 <span className={styles.titleChip}>
                   {orgNodes.find((n) => n.id === drilldownTeamId)?.name}
@@ -706,84 +856,88 @@ const DashboardPage = () => {
                   />
                 </span>
               )}
-              <div className={styles.sectionTitleSpacer} />
               {!drilldownTeamId && (
-                <Button onClick={() => {
-                  setDeptDraft(selectedDeptIds);
-                  setDeptFilterOpen(true);
-                }}>
-                  {t("filter_departments")}
-                </Button>
+                <div className={styles.filterButton}>
+                  <OrgNodeTreeSelect
+                    multiple
+                    allowClear
+                    style={{ width: "100%" }}
+                    value={selectedDeptIds}
+                    maxTagCount="responsive"
+                    placeholder={t("filter_departments")}
+                    onChange={(v: { value: number }[]) => {
+                      setSelectedDeptIds(v.map((item) => item.value));
+                      setTeamPage(1);
+                    }}
+                  />
+                </div>
               )}
             </div>
-            {drilldownTeamId == null ? (
-              <Table
-                rowKey="key"
-                columns={teamColumns}
-                dataSource={teamPageRows}
-                pagination={{
-                  current: teamPage,
-                  pageSize: 10,
+            <div className={styles.tableWrap}>
+              {drilldownTeamId == null ? (
+                <Table
+                  rowKey="key"
+                  columns={teamColumns}
+                  dataSource={teamPageRows}
+                  pagination={{
+                    current: teamPage,
+                    pageSize: 10,
+                    total: teamRows.length,
+                    showSizeChanger: false,
+                  }}
+                  onChange={onTeamTableChange}
+                  onRow={(row) => ({
+                    onClick: () => setDrilldownTeamId(Number(row.key)),
+                    style: { cursor: "pointer" },
+                  })}
+                />
+              ) : (
+                <Table
+                  rowKey="key"
+                  columns={jobColumns}
+                  dataSource={drilldownJobRows}
+                  pagination={false}
+                  onRow={(row) => ({
+                    onClick: () => navigateToJob(row),
+                    style: { cursor: "pointer" },
+                  })}
+                />
+              )}
+            </div>
+            {drilldownTeamId == null && teamRows.length > 0 && (
+              <p className={styles.tableFootnote}>
+                {t("teams_footnote", {
+                  start: teamRows.length ? (teamPage - 1) * 10 + 1 : 0,
+                  end: Math.min(teamPage * 10, teamRows.length),
                   total: teamRows.length,
-                  showSizeChanger: false,
-                }}
-                onChange={onTeamTableChange}
-                onRow={(row) => ({
-                  onClick: () => setDrilldownTeamId(Number(row.key)),
-                  style: { cursor: "pointer" },
                 })}
-              />
-            ) : (
+              </p>
+            )}
+          </DashboardSection>
+
+          <DashboardSection
+            loading={appsLoading}
+            className={styles.tableSection}
+          >
+            <div className={styles.sectionHeadingRow}>
+              <h2 className={styles.sectionHeading}>{t("by_job")}</h2>
+              <p className={styles.sectionHint}>{t("by_job_hint")}</p>
+            </div>
+            <div className={styles.tableWrap}>
               <Table
                 rowKey="key"
                 columns={jobColumns}
-                dataSource={drilldownJobRows}
+                dataSource={jobRowsTop10}
                 pagination={false}
                 onRow={(row) => ({
                   onClick: () => navigateToJob(row),
                   style: { cursor: "pointer" },
                 })}
               />
-            )}
-          </div>
-
-          <div className={styles.sectionCard}>
-            <div className={styles.sectionTitle}>
-              {t("by_job")}
-              <span className={styles.topnHint}>{t("by_job_hint")}</span>
             </div>
-            <Table
-              rowKey="key"
-              columns={jobColumns}
-              dataSource={jobRowsTop10}
-              pagination={false}
-              onRow={(row) => ({
-                onClick: () => navigateToJob(row),
-                style: { cursor: "pointer" },
-              })}
-            />
-          </div>
-        </Spin>
+          </DashboardSection>
+        </div>
       </div>
-
-      <Modal
-        title={t("filter_departments")}
-        open={deptFilterOpen}
-        onCancel={() => setDeptFilterOpen(false)}
-        onOk={() => {
-          setSelectedDeptIds(deptDraft);
-          setTeamPage(1);
-          setDeptFilterOpen(false);
-        }}
-      >
-        <OrgNodeTreeSelect
-          multiple
-          style={{ width: "100%" }}
-          value={deptDraft}
-          onChange={(v) => setDeptDraft((v as number[]) ?? [])}
-          placeholder={t("filter_departments_placeholder")}
-        />
-      </Modal>
     </div>
   );
 };

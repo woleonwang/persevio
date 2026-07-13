@@ -7,8 +7,16 @@ dayjs.extend(timezone);
 
 const SGT = "Asia/Singapore";
 
-export type TDashboardRejectedFilter = "all" | "excl_rejected" | "only_rejected";
-export type TDashboardDatePreset = "today" | "7d" | "30d" | "90d" | "since_posted";
+export type TDashboardRejectedFilter =
+  | "all"
+  | "excl_rejected"
+  | "only_rejected";
+export type TDashboardDatePreset =
+  | "today"
+  | "7d"
+  | "30d"
+  | "90d"
+  | "since_posted";
 export type TTrendGranularity = "daily" | "weekly" | "monthly";
 
 export type TDashboardApplication = {
@@ -76,7 +84,12 @@ export const TREND_SERIES: {
   color: string;
   defaultOn: boolean;
 }[] = [
-  { key: "applications", label: "Applications", color: "#1d70d4", defaultOn: true },
+  {
+    key: "applications",
+    label: "Applications",
+    color: "#1d70d4",
+    defaultOn: true,
+  },
   {
     key: "responded",
     label: "AI Screening - Responded",
@@ -150,7 +163,12 @@ export type TTrendPoint = {
 
 type TJobLight = Pick<
   IJob,
-  "id" | "name" | "posted_at" | "initial_posted_at" | "org_node_id" | "invitation_token"
+  | "id"
+  | "name"
+  | "posted_at"
+  | "initial_posted_at"
+  | "org_node_id"
+  | "invitation_token"
 >;
 
 export function getJobLifecycleStatus(
@@ -203,7 +221,9 @@ function isMaybeOrAbove(rec: string | null | undefined): boolean {
   return rec != null && MAYBE_OR_ABOVE.has(rec);
 }
 
-function normalizeRejectReason(reason: string | null | undefined): (typeof REJECT_STACK_KEYS)[number] {
+function normalizeRejectReason(
+  reason: string | null | undefined,
+): (typeof REJECT_STACK_KEYS)[number] {
   if (!reason) return "other";
   if ((REJECT_STACK_KEYS as readonly string[]).includes(reason)) {
     return reason as (typeof REJECT_STACK_KEYS)[number];
@@ -215,7 +235,9 @@ export function computeKpiMetrics(
   apps: TDashboardApplication[],
   jobs: TJobLight[],
 ): TDashboardKpiMetrics {
-  const openJobs = jobs.filter((j) => getJobLifecycleStatus(j) === "published").length;
+  const openJobs = jobs.filter(
+    (j) => getJobLifecycleStatus(j) === "published",
+  ).length;
   const pendingIntake = jobs.filter(
     (j) => getJobLifecycleStatus(j) === "pending_intake",
   ).length;
@@ -239,7 +261,8 @@ export function computeKpiMetrics(
     no: 0,
   };
   for (const app of completedApps) {
-    const key = (app.interview_recommendation ?? "no") as keyof typeof evalStack;
+    const key = (app.interview_recommendation ||
+      "no") as keyof typeof evalStack;
     if (key in evalStack) evalStack[key] += 1;
   }
 
@@ -320,7 +343,10 @@ function bucketKeyForApp(
   };
 }
 
-function metricValue(app: TDashboardApplication, series: TTrendSeriesKey): number {
+function metricValue(
+  app: TDashboardApplication,
+  series: TTrendSeriesKey,
+): number {
   switch (series) {
     case "applications":
       return 1;
@@ -333,7 +359,8 @@ function metricValue(app: TDashboardApplication, series: TTrendSeriesKey): numbe
     case "in_progress":
       return app.ai_screening_responded && !app.ai_screening_completed ? 1 : 0;
     case "maybe_plus":
-      return app.ai_screening_completed && isMaybeOrAbove(app.interview_recommendation)
+      return app.ai_screening_completed &&
+        isMaybeOrAbove(app.interview_recommendation)
         ? 1
         : 0;
     default:
@@ -373,7 +400,9 @@ export function buildTrendChartData(
     }
   }
 
-  const sortedBuckets = [...bucketMap.entries()].sort((a, b) => a[1].sort - b[1].sort);
+  const sortedBuckets = [...bucketMap.entries()].sort(
+    (a, b) => a[1].sort - b[1].sort,
+  );
   const points: TTrendPoint[] = [];
   for (const [bucketKey, bucket] of sortedBuckets) {
     for (const s of TREND_SERIES) {
@@ -393,7 +422,14 @@ function aggregateAppsToPivot(
   apps: TDashboardApplication[],
 ): Omit<
   TDashboardPivotRow,
-  "key" | "name" | "pathTooltip" | "secondary" | "openJobs" | "lastPostedAt" | "jobId" | "invitationToken"
+  | "key"
+  | "name"
+  | "pathTooltip"
+  | "secondary"
+  | "openJobs"
+  | "lastPostedAt"
+  | "jobId"
+  | "invitationToken"
 > {
   const applications = apps.length;
   const responded = apps.filter((a) => a.ai_screening_responded).length;
@@ -413,7 +449,9 @@ export function computeTeamPivotRows(
   orgNodes: IOrgNode[],
   selectedOrgNodeIds: number[] | null,
 ): TDashboardPivotRow[] {
-  const publishedJobs = jobs.filter((j) => getJobLifecycleStatus(j) === "published");
+  const publishedJobs = jobs.filter(
+    (j) => getJobLifecycleStatus(j) === "published",
+  );
   const jobsByOrg = new Map<number, TJobLight[]>();
   for (const job of publishedJobs) {
     if (!job.org_node_id) continue;
@@ -437,11 +475,12 @@ export function computeTeamPivotRows(
     const teamJobs = jobsByOrg.get(orgNodeId) ?? [];
     const teamApps = teamJobs.flatMap((j) => appsByJob.get(j.id) ?? []);
     const agg = aggregateAppsToPivot(teamApps);
-    const lastPosted = teamJobs
-      .map((j) => j.posted_at)
-      .filter(Boolean)
-      .sort()
-      .reverse()[0] ?? null;
+    const lastPosted =
+      teamJobs
+        .map((j) => j.posted_at)
+        .filter(Boolean)
+        .sort()
+        .reverse()[0] ?? null;
     const node = orgNodes.find((n) => n.id === orgNodeId);
     return {
       key: String(orgNodeId),
@@ -460,9 +499,13 @@ export function computeJobPivotRows(
   orgNodes: IOrgNode[],
   options?: { orgNodeId?: number; limit?: number },
 ): TDashboardPivotRow[] {
-  let publishedJobs = jobs.filter((j) => getJobLifecycleStatus(j) === "published");
+  let publishedJobs = jobs.filter(
+    (j) => getJobLifecycleStatus(j) === "published",
+  );
   if (options?.orgNodeId != null) {
-    publishedJobs = publishedJobs.filter((j) => j.org_node_id === options.orgNodeId);
+    publishedJobs = publishedJobs.filter(
+      (j) => j.org_node_id === options.orgNodeId,
+    );
   }
   publishedJobs = [...publishedJobs].sort((a, b) => {
     const ta = a.posted_at ? dayjs(a.posted_at).valueOf() : 0;
@@ -498,7 +541,13 @@ export function computeJobPivotRows(
 
 export function daysOpen(postedAt: string | null): number | null {
   if (!postedAt) return null;
-  return Math.max(0, dayjs().tz(SGT).startOf("day").diff(dayjs(postedAt).tz(SGT).startOf("day"), "day"));
+  return Math.max(
+    0,
+    dayjs()
+      .tz(SGT)
+      .startOf("day")
+      .diff(dayjs(postedAt).tz(SGT).startOf("day"), "day"),
+  );
 }
 
 export function formatPostedDate(postedAt: string | null): string {
@@ -506,7 +555,9 @@ export function formatPostedDate(postedAt: string | null): string {
   return dayjs(postedAt).tz(SGT).format("MMM D, YYYY");
 }
 
-export function buildDashboardQueryParams(preset: TDashboardDatePreset): Record<string, string | number> {
+export function buildDashboardQueryParams(
+  preset: TDashboardDatePreset,
+): Record<string, string | number> {
   const opt = DATE_PRESET_OPTIONS.find((o) => o.key === preset)!;
   if (opt.sincePosted) return { since_posted: 1 };
   return { days: opt.days ?? 30 };

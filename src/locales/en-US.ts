@@ -1860,6 +1860,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     title: "Dashboard",
     subtitle: "Overview of your active jobs and candidate pipeline",
     application_date: "Application date:",
+    candidate_scope: "Candidate scope:",
     filter_all: "All",
     filter_excl_rejected: "Excl. Rejected",
     filter_only_rejected: "Only Rejected",
@@ -1879,7 +1880,9 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     never_started: "Never Started",
     in_progress: "In Progress",
     of_applications: "of Applications",
+    of_applications_with_symbol: "% of Applications",
     of_responded: "of Responded",
+    of_responded_with_symbol: "% of Responded",
     trends: "Trends",
     granularity_daily: "Daily",
     granularity_weekly: "Weekly",
@@ -1895,6 +1898,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     col_team: "Team",
     col_job: "Job",
     col_open_jobs: "Open Jobs",
+    col_ai_screening: "AI Screening",
     col_applications: "Applications",
     col_responded: "Responded",
     col_completed: "Completed",
@@ -1903,6 +1907,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     col_rejected: "Rejected",
     col_last_posted: "Last Posted Job on",
     days_open: "{{count}} days open",
+    teams_footnote: "Showing {{start}}–{{end}} of {{total}} teams",
   },
 
   job_list: {
@@ -2058,6 +2063,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       viewed_job_info_status: "Viewed Job Info",
       resume_submitted_status: "Resume Submitted",
     },
+    dashboard: "Dashboard",
     analytics: "Analytics",
     analytics_section: {
       all_sources: "All Sources",
