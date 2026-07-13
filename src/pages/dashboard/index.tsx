@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Spin, Table, Tooltip, message } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import type { SorterResult } from "antd/es/table/interface";
-import { CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { CloseOutlined, InfoCircleOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Line } from "@ant-design/charts";
 import classnames from "classnames";
 import { useNavigate } from "react-router";
@@ -37,6 +37,9 @@ import {
 import Icon from "@/components/Icon";
 import MailBolt from "@/assets/icons/mail-bolt";
 import FilterDropdown from "./components/DropdownFilter";
+import Tabs from "@/components/Tabs";
+
+const TREND_BUCKETS_PER_PAGE = 20;
 
 const EVAL_STACK_STYLE: Record<
   string,
@@ -113,35 +116,6 @@ function DashboardSection({
   );
 }
 
-function SegmentControl<T extends string>({
-  value,
-  options,
-  onChange,
-  labels,
-}: {
-  value: T;
-  options: T[];
-  onChange: (value: T) => void;
-  labels: Record<T, string>;
-}) {
-  return (
-    <div className={styles.segmentControl}>
-      {options.map((option) => (
-        <button
-          key={option}
-          type="button"
-          className={classnames(styles.segmentOption, {
-            [styles.segmentOptionActive]: option === value,
-          })}
-          onClick={() => onChange(option)}
-        >
-          {labels[option]}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 const DashboardPage = () => {
   const { t } = useTranslation(undefined, { keyPrefix: "dashboard" });
   const navigate = useNavigate();
@@ -160,6 +134,7 @@ const DashboardPage = () => {
   const [enabledTrendSeries, setEnabledTrendSeries] = useState<
     Set<TTrendSeriesKey>
   >(() => new Set(TREND_SERIES.filter((s) => s.defaultOn).map((s) => s.key)));
+  const [trendWindowStart, setTrendWindowStart] = useState(0);
 
   const [drilldownTeamId, setDrilldownTeamId] = useState<number | null>(null);
   const [selectedDeptIds, setSelectedDeptIds] = useState<number[]>([]);
@@ -220,9 +195,53 @@ const DashboardPage = () => {
 
   const trendData = useMemo(
     () =>
-      buildTrendChartData(filteredApps, trendGranularity, enabledTrendSeries),
-    [filteredApps, trendGranularity, enabledTrendSeries],
+      buildTrendChartData(
+        filteredApps,
+        trendGranularity,
+        enabledTrendSeries,
+        datePreset,
+        applications,
+      ),
+    [
+      filteredApps,
+      trendGranularity,
+      enabledTrendSeries,
+      datePreset,
+      applications,
+    ],
   );
+
+  const trendBucketKeys = useMemo(() => {
+    const keys: string[] = [];
+    const seen = new Set<string>();
+    for (const point of trendData) {
+      if (!seen.has(point.bucketKey)) {
+        seen.add(point.bucketKey);
+        keys.push(point.bucketKey);
+      }
+    }
+    return keys;
+  }, [trendData]);
+
+  const trendWindowMaxStart = Math.max(
+    0,
+    trendBucketKeys.length - TREND_BUCKETS_PER_PAGE,
+  );
+
+  useEffect(() => {
+    setTrendWindowStart(trendWindowMaxStart);
+  }, [trendWindowMaxStart, datePreset, trendGranularity]);
+
+  const visibleTrendData = useMemo(() => {
+    if (trendBucketKeys.length <= TREND_BUCKETS_PER_PAGE) return trendData;
+    const visibleKeys = new Set(
+      trendBucketKeys.slice(
+        trendWindowStart,
+        trendWindowStart + TREND_BUCKETS_PER_PAGE,
+      ),
+    );
+    return trendData.filter((point) => visibleKeys.has(point.bucketKey));
+  }, [trendData, trendBucketKeys, trendWindowStart]);
 
   const teamRows = useMemo(() => {
     const rows = computeTeamPivotRows(
@@ -512,23 +531,31 @@ const DashboardPage = () => {
     }
   };
 
+  const lineConfig = useMemo(
+    () => ({
+      data: visibleTrendData,
+      xField: "bucketLabel",
+      yField: "value",
+      colorField: "series",
+      height: 320,
+      autoFit: true,
+      smooth: true,
+      connectNulls: true,
+      legend: false as const,
+      animation: false as const,
+      point: { size: 3 },
+      scale: {
+        color: {
+          domain: TREND_SERIES.map((s) => s.label),
+          range: TREND_SERIES.map((s) => s.color),
+        },
+      },
+    }),
+    [visibleTrendData],
+  );
+
   const showRejectedMuted = rejectedFilter === "excl_rejected";
   const showFunnelMuted = rejectedFilter === "only_rejected";
-
-  const lineConfig = {
-    data: trendData,
-    xField: "bucketLabel",
-    yField: "value",
-    seriesField: "series",
-    height: 320,
-    autoFit: true,
-    smooth: true,
-    connectNulls: true,
-    legend: false as const,
-    animation: false as const,
-    point: { size: 3 },
-    color: TREND_SERIES.map((s) => s.color),
-  };
 
   return (
     <div className={styles.pageWrap}>
@@ -803,16 +830,19 @@ const DashboardPage = () => {
           <DashboardSection loading={appsLoading} className={styles.trendPanel}>
             <div className={styles.panelHeading}>
               <h2 className={styles.panelTitle}>{t("trends")}</h2>
-              <SegmentControl
-                value={trendGranularity}
-                options={TREND_GRANULARITY_OPTIONS}
-                onChange={setTrendGranularity}
-                labels={{
-                  daily: t("granularity_daily"),
-                  weekly: t("granularity_weekly"),
-                  monthly: t("granularity_monthly"),
-                }}
-              />
+              <div style={{ width: 300 }}>
+                <Tabs
+                  activeKey={trendGranularity}
+                  tabs={TREND_GRANULARITY_OPTIONS.map((key) => ({
+                    key: key,
+                    label: t(`granularity_${key}`),
+                  }))}
+                  onChange={(key) =>
+                    setTrendGranularity(key as TTrendGranularity)
+                  }
+                  size="small"
+                />
+              </div>
             </div>
             <div className={styles.legendRow}>
               {TREND_SERIES.map((s) => (
@@ -836,7 +866,42 @@ const DashboardPage = () => {
               <div className={styles.chartEmpty}>{t("trends_empty")}</div>
             ) : (
               <div className={styles.chartWrap}>
-                <Line {...lineConfig} />
+                {trendWindowMaxStart > 0 && (
+                  <button
+                    type="button"
+                    className={styles.chartNavBtn}
+                    disabled={trendWindowStart <= 0}
+                    aria-label="Previous trend range"
+                    onClick={() =>
+                      setTrendWindowStart((start) =>
+                        Math.max(0, start - TREND_BUCKETS_PER_PAGE),
+                      )
+                    }
+                  >
+                    <LeftOutlined />
+                  </button>
+                )}
+                <div className={styles.chartCanvas}>
+                  <Line {...lineConfig} />
+                </div>
+                {trendWindowMaxStart > 0 && (
+                  <button
+                    type="button"
+                    className={styles.chartNavBtn}
+                    disabled={trendWindowStart >= trendWindowMaxStart}
+                    aria-label="Next trend range"
+                    onClick={() =>
+                      setTrendWindowStart((start) =>
+                        Math.min(
+                          trendWindowMaxStart,
+                          start + TREND_BUCKETS_PER_PAGE,
+                        ),
+                      )
+                    }
+                  >
+                    <RightOutlined />
+                  </button>
+                )}
               </div>
             )}
           </DashboardSection>

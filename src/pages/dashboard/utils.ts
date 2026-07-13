@@ -87,37 +87,37 @@ export const TREND_SERIES: {
   {
     key: "applications",
     label: "Applications",
-    color: "#1d70d4",
+    color: "#3682FE",
     defaultOn: true,
   },
   {
     key: "responded",
     label: "AI Screening - Responded",
-    color: "#7e57c2",
+    color: "#7C36FE",
     defaultOn: true,
   },
   {
     key: "never_started",
     label: "AI Screening - Never Started",
-    color: "#9e9e9e",
+    color: "#F9A930",
     defaultOn: false,
   },
   {
     key: "completed",
     label: "AI Screening - Completed",
-    color: "#26a69a",
+    color: "#26BC5D",
     defaultOn: true,
   },
   {
     key: "in_progress",
     label: "AI Screening - In Progress",
-    color: "#29b6f6",
+    color: "#E03D3D",
     defaultOn: false,
   },
   {
     key: "maybe_plus",
     label: "AI Screening - Maybe or above",
-    color: "#43a047",
+    color: "#54D5EF",
     defaultOn: true,
   },
 ];
@@ -313,11 +313,21 @@ function formatMonthlyLabel(d: Dayjs): string {
   return d.format("MMM YYYY");
 }
 
-function bucketKeyForApp(
-  appliedAt: string,
+function emptyTrendCounts(): Record<TTrendSeriesKey, number> {
+  return {
+    applications: 0,
+    responded: 0,
+    never_started: 0,
+    completed: 0,
+    in_progress: 0,
+    maybe_plus: 0,
+  };
+}
+
+function bucketMeta(
+  d: Dayjs,
   granularity: TTrendGranularity,
 ): { key: string; label: string; sort: number } {
-  const d = toSgt(appliedAt);
   if (granularity === "daily") {
     const start = d.startOf("day");
     return {
@@ -341,6 +351,58 @@ function bucketKeyForApp(
     label: formatMonthlyLabel(start),
     sort: start.valueOf(),
   };
+}
+
+function resolveTrendRange(
+  preset: TDashboardDatePreset,
+  rangeApps: TDashboardApplication[],
+): { start: Dayjs; end: Dayjs } | null {
+  const end = dayjs().tz(SGT).startOf("day");
+  const opt = DATE_PRESET_OPTIONS.find((o) => o.key === preset)!;
+  if (opt.sincePosted) {
+    if (rangeApps.length === 0) return null;
+    let start = toSgt(rangeApps[0].applied_at).startOf("day");
+    for (const app of rangeApps) {
+      const d = toSgt(app.applied_at).startOf("day");
+      if (d.isBefore(start)) start = d;
+    }
+    return { start, end };
+  }
+  const days = opt.days ?? 30;
+  return { start: end.subtract(days - 1, "day"), end };
+}
+
+function enumerateTrendBuckets(
+  rangeStart: Dayjs,
+  rangeEnd: Dayjs,
+  granularity: TTrendGranularity,
+): { key: string; label: string; sort: number }[] {
+  const buckets: { key: string; label: string; sort: number }[] = [];
+  if (granularity === "daily") {
+    let cur = rangeStart.startOf("day");
+    const end = rangeEnd.startOf("day");
+    while (cur.valueOf() <= end.valueOf()) {
+      buckets.push(bucketMeta(cur, granularity));
+      cur = cur.add(1, "day");
+    }
+    return buckets;
+  }
+  if (granularity === "weekly") {
+    let cur = startOfWeekSunday(rangeStart);
+    const last = startOfWeekSunday(rangeEnd);
+    while (cur.valueOf() <= last.valueOf()) {
+      buckets.push(bucketMeta(cur, granularity));
+      cur = cur.add(7, "day");
+    }
+    return buckets;
+  }
+  let cur = rangeStart.startOf("month");
+  const last = rangeEnd.startOf("month");
+  while (cur.valueOf() <= last.valueOf()) {
+    buckets.push(bucketMeta(cur, granularity));
+    cur = cur.add(1, "month");
+  }
+  return buckets;
 }
 
 function metricValue(
@@ -372,29 +434,40 @@ export function buildTrendChartData(
   apps: TDashboardApplication[],
   granularity: TTrendGranularity,
   enabledSeries: Set<TTrendSeriesKey>,
+  datePreset: TDashboardDatePreset,
+  rangeApps: TDashboardApplication[] = apps,
 ): TTrendPoint[] {
+  const range = resolveTrendRange(datePreset, rangeApps);
+  if (!range) return [];
+
   const bucketMap = new Map<
     string,
     { label: string; sort: number; counts: Record<TTrendSeriesKey, number> }
   >();
 
+  for (const meta of enumerateTrendBuckets(
+    range.start,
+    range.end,
+    granularity,
+  )) {
+    bucketMap.set(meta.key, {
+      label: meta.label,
+      sort: meta.sort,
+      counts: emptyTrendCounts(),
+    });
+  }
+
   for (const app of apps) {
-    const { key, label, sort } = bucketKeyForApp(app.applied_at, granularity);
-    if (!bucketMap.has(key)) {
-      bucketMap.set(key, {
-        label,
-        sort,
-        counts: {
-          applications: 0,
-          responded: 0,
-          never_started: 0,
-          completed: 0,
-          in_progress: 0,
-          maybe_plus: 0,
-        },
-      });
+    const meta = bucketMeta(toSgt(app.applied_at), granularity);
+    let bucket = bucketMap.get(meta.key);
+    if (!bucket) {
+      bucket = {
+        label: meta.label,
+        sort: meta.sort,
+        counts: emptyTrendCounts(),
+      };
+      bucketMap.set(meta.key, bucket);
     }
-    const bucket = bucketMap.get(key)!;
     for (const s of TREND_SERIES) {
       bucket.counts[s.key] += metricValue(app, s.key);
     }
