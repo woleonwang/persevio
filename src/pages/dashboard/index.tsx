@@ -371,7 +371,7 @@ const DashboardPage = () => {
       title: t("col_applications"),
       dataIndex: "applications",
       align: "right",
-      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      className: styles.funnelFlowCell,
       sorter: sortable ? true : undefined,
       sortOrder:
         sortable && teamSort.field === "applications"
@@ -383,7 +383,7 @@ const DashboardPage = () => {
       title: t("col_responded"),
       dataIndex: "responded",
       align: "right",
-      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      className: styles.funnelFlowCell,
       sorter: sortable ? true : undefined,
       sortOrder:
         sortable && teamSort.field === "responded" ? teamSort.order : undefined,
@@ -394,7 +394,7 @@ const DashboardPage = () => {
       title: t("col_completed"),
       dataIndex: "completed",
       align: "right",
-      className: classnames(styles.funnelCol, styles.funnelFlowCell),
+      className: styles.funnelFlowCell,
       sorter: sortable ? true : undefined,
       sortOrder:
         sortable && teamSort.field === "completed" ? teamSort.order : undefined,
@@ -405,7 +405,6 @@ const DashboardPage = () => {
       title: t("col_maybe_plus"),
       dataIndex: "maybePlus",
       align: "right",
-      className: styles.funnelCol,
       sorter: sortable ? true : undefined,
       sortOrder:
         sortable && teamSort.field === "maybePlus" ? teamSort.order : undefined,
@@ -727,12 +726,7 @@ const DashboardPage = () => {
                                 <dt>{t("in_progress")}</dt>
                                 <dd>{formatDashboardNumber(kpi.inProgress)}</dd>
                               </div>
-                              <div
-                                className={classnames(
-                                  styles.metricPairRow,
-                                  styles.metricPairSub,
-                                )}
-                              >
+                              <div className={styles.metricPairRow}>
                                 <dt>{t("of_responded_with_symbol")}</dt>
                                 <dd>
                                   {formatDashboardPct(
