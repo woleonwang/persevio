@@ -296,10 +296,10 @@ const CreditPackageListPage = () => {
             <Input.TextArea rows={3} />
           </Form.Item>
           <Form.Item name="valid_from" label={t("form.validFrom")}>
-            <DatePicker showTime style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="expires_at" label={t("form.expiresAt")}>
-            <DatePicker showTime style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </Form>
       </Modal>
