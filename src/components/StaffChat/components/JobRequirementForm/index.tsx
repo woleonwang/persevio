@@ -36,6 +36,9 @@ import NumberRange from "./components/NumberRange";
 import LanguageRequirement, {
   TLanguageRequirementValue,
 } from "./components/LanguageRequirement";
+import VisaRequirement, {
+  TVisaRequirementValue,
+} from "./components/VisaRequirement";
 
 import { TRoleOverviewType } from "../../type";
 import styles from "./style.module.less";
@@ -71,8 +74,10 @@ type TQuestion = {
     | "manager_detail"
     | "percentage"
     | "org_node"
-    | "language_requirement";
+    | "language_requirement"
+    | "visa_requirement";
   hint?: string;
+  placeholder?: string;
   dependencies?: TDependence[];
   options?: {
     value: string;
@@ -187,9 +192,68 @@ const JobRequirementForm = (props: IProps) => {
       key: "basic_info",
       questions: [
         {
-          key: "org_node_id",
-          type: "org_node",
-          question: t("org_node_question"),
+          key: "employment_arrangement",
+          type: "select",
+          question: t("employment_arrangement_question"),
+          options: [
+            {
+              value: "permanent",
+              label: t("employment_arrangement_options.permanent"),
+              text: t("employment_arrangement_options.permanent"),
+            },
+            {
+              value: "contract",
+              label: t("employment_arrangement_options.contract"),
+              text: t("employment_arrangement_options.contract"),
+            },
+            {
+              value: "contract_to_perm",
+              label: t("employment_arrangement_options.contract_to_perm"),
+              text: t("employment_arrangement_options.contract_to_perm"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "contract_duration",
+          type: "text",
+          question: t("contract_duration_question"),
+          dependencies: [
+            {
+              questionKey: "employment_arrangement",
+              valueKey: ["contract", "contract_to_perm"],
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "work_time",
+          type: "select",
+          question: t("work_time_question"),
+          options: [
+            {
+              value: "full_time",
+              label: t("work_time_options.full_time"),
+              text: t("work_time_options.full_time"),
+            },
+            {
+              value: "part_time",
+              label: t("work_time_options.part_time"),
+              text: t("work_time_options.part_time"),
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "hours_required",
+          type: "text",
+          question: t("hours_required_question"),
+          dependencies: [
+            {
+              questionKey: "work_time",
+              valueKey: ["part_time"],
+            },
+          ],
           required: true,
         },
         {
@@ -199,32 +263,66 @@ const JobRequirementForm = (props: IProps) => {
           required: true,
         },
         {
-          key: "primary_driver",
-          type: "multiple_select",
-          question: t("primary_driver_multi_question"),
+          key: "remote",
+          type: "select",
+          question: t("remote_question"),
           options: [
-            "backfill",
-            "team_expansion",
-            "first_hire_new_function",
-            "new_initiative_project",
-            "missing_expertise",
-            "leadership_hire",
-            "performance_upgrade",
-            "restructuring",
-            "contract_or_regulation",
-            "other",
-          ].map((item) =>
-            getOptions(item, t(`primary_driver_multi_options.${item}`)),
-          ),
+            {
+              value: "onsite",
+              label: t("on_site"),
+            },
+            {
+              value: "hybrid",
+              label: t("hybrid"),
+            },
+            {
+              value: "remote",
+              label: t("remote"),
+            },
+          ],
           required: true,
         },
         {
-          key: "speed_quality_tradeoff",
-          type: "select",
-          question: t("speed_quality_tradeoff_question"),
-          options: ["speed_first", "bar_first", "balanced"].map((item) =>
-            getOptions(item, t(`speed_quality_tradeoff_options.${item}`)),
-          ),
+          key: "city",
+          type: "city_and_address",
+          question: t("city_question"),
+          dependencies: [
+            {
+              questionKey: "remote",
+              valueKey: ["onsite", "hybrid"],
+            },
+          ],
+          required: true,
+        },
+        {
+          key: "role_budget",
+          type: "textarea",
+          question: t("role_budget_question"),
+          required: true,
+        },
+        {
+          key: "visa_requirement",
+          type: "visa_requirement",
+          question: t("visa_requirement_question"),
+          required: true,
+        },
+        {
+          key: "hard_starting_date",
+          type: "text",
+          question: t("hard_starting_date_question"),
+          placeholder: t("hard_starting_date_placeholder"),
+          required: true,
+        },
+        {
+          key: "language",
+          type: "language_requirement",
+          question: t("language_question"),
+          required: true,
+        },
+        {
+          key: "org_node_id",
+          type: "org_node",
+          question: t("org_node_question"),
           required: true,
         },
         {
@@ -265,47 +363,60 @@ const JobRequirementForm = (props: IProps) => {
           required: true,
         },
         {
-          key: "language",
-          type: "language_requirement",
-          question: t("language_question"),
+          key: "speed_quality_tradeoff",
+          type: "select",
+          question: t("speed_quality_tradeoff_question"),
+          options: ["speed_first", "bar_first", "balanced"].map((item) =>
+            getOptions(item, t(`speed_quality_tradeoff_options.${item}`)),
+          ),
           required: true,
         },
         {
-          key: "remote",
+          key: "primary_driver",
+          type: "multiple_select",
+          question: t("primary_driver_multi_question"),
+          options: [
+            "backfill",
+            "team_expansion",
+            "first_hire_new_function",
+            "new_initiative_project",
+            "missing_expertise",
+            "leadership_hire",
+            "performance_upgrade",
+            "restructuring",
+            "contract_or_regulation",
+            "other",
+          ].map((item) =>
+            getOptions(item, t(`primary_driver_multi_options.${item}`)),
+          ),
+          required: true,
+        },
+        {
+          key: "role_open_duration",
           type: "select",
-          question: t("remote_question"),
+          question: t("role_open_duration_question"),
           options: [
             {
-              value: "onsite",
-              label: t("on_site"),
+              value: "just_opened",
+              label: t("role_open_duration_options.just_opened"),
+              text: t("role_open_duration_options.just_opened"),
             },
             {
-              value: "hybrid",
-              label: t("hybrid"),
+              value: "under_a_month",
+              label: t("role_open_duration_options.under_a_month"),
+              text: t("role_open_duration_options.under_a_month"),
             },
             {
-              value: "remote",
-              label: t("remote"),
+              value: "one_to_three_months",
+              label: t("role_open_duration_options.one_to_three_months"),
+              text: t("role_open_duration_options.one_to_three_months"),
+            },
+            {
+              value: "over_three_months",
+              label: t("role_open_duration_options.over_three_months"),
+              text: t("role_open_duration_options.over_three_months"),
             },
           ],
-          required: true,
-        },
-        {
-          key: "city",
-          type: "city_and_address",
-          question: t("city_question"),
-          dependencies: [
-            {
-              questionKey: "remote",
-              valueKey: ["onsite", "hybrid"],
-            },
-          ],
-          required: true,
-        },
-        {
-          key: "visa_type_singapore",
-          type: "textarea",
-          question: t("visa_type"),
         },
       ],
     },
@@ -610,6 +721,20 @@ const JobRequirementForm = (props: IProps) => {
               .join("\n\n");
           }
 
+          if (question.type === "visa_requirement") {
+            const typedValue = value as TVisaRequirementValue;
+            const lines: string[] = [];
+            if (typedValue.must?.trim()) {
+              lines.push(`${t("visa_must")}: ${typedValue.must.trim()}`);
+            }
+            if (typedValue.preferred?.trim()) {
+              lines.push(
+                `${t("visa_preferred")}: ${typedValue.preferred.trim()}`,
+              );
+            }
+            formattedValue = lines.join("\n\n");
+          }
+
           if (question.type === "percentage") {
             const typedValue = value as Record<string, number>;
             formattedValue = Object.keys(typedValue)
@@ -710,6 +835,9 @@ const JobRequirementForm = (props: IProps) => {
               questions.push(`### ${group.group}\n\n${t("no_data")}`);
             }
           } else {
+            if (!checkVisible((question as TQuestion).dependencies)) {
+              return;
+            }
             const answer = getAnswer(
               question as TQuestion,
               values[question.key],
@@ -925,17 +1053,40 @@ const JobRequirementForm = (props: IProps) => {
                           message: t("required_error_message"),
                         },
                       ]
-                    : question.required
+                    : question.type === "visa_requirement"
                       ? [
                           {
-                            required: true,
-                            message: t("required_error_message"),
+                            validator(
+                              _: any,
+                              value: TVisaRequirementValue,
+                              callback: any,
+                            ) {
+                              const typedValue = value ?? {};
+                              if (
+                                !typedValue.must?.trim() &&
+                                !typedValue.preferred?.trim()
+                              ) {
+                                callback(new Error());
+                                return;
+                              }
+                              callback();
+                            },
+                            message: t("visa_at_least_one_message"),
                           },
                         ]
-                      : []
+                      : question.required
+                        ? [
+                            {
+                              required: true,
+                              message: t("required_error_message"),
+                            },
+                          ]
+                        : []
         }
       >
-        {question.type === "text" && <Input disabled={deleted} />}
+        {question.type === "text" && (
+          <Input disabled={deleted} placeholder={question.placeholder} />
+        )}
         {question.type === "textarea" && (
           <TextAreaWithUploader
             rows={3}
@@ -965,6 +1116,9 @@ const JobRequirementForm = (props: IProps) => {
         {question.type === "city_and_address" && <CityAndAddressSelect />}
         {question.type === "language_requirement" && (
           <LanguageRequirement disabled={deleted} />
+        )}
+        {question.type === "visa_requirement" && (
+          <VisaRequirement disabled={deleted} />
         )}
         {/* {question.type === "internal_employee_level" && (
             <InternalEmployeeLevel />

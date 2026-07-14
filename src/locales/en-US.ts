@@ -715,6 +715,37 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     // basic_info question texts
     headcount_number_question:
       "How many headcounts are we looking to fill for this role?",
+    employment_arrangement_question: "Is this role permanent or contract?",
+    employment_arrangement_options: {
+      permanent: "Permanent",
+      contract: "Contract",
+      contract_to_perm: "Contract-to-perm",
+    },
+    contract_duration_question: "What is the contract duration?",
+    work_time_question: "Is this role full-time or part-time?",
+    work_time_options: {
+      full_time: "Full-time",
+      part_time: "Part-time",
+    },
+    hours_required_question: "What are the hours required per day/week?",
+    role_budget_question: "What is the budget for this role?",
+    visa_requirement_question: "What are the visa requirements for this role?",
+    visa_must: "Must",
+    visa_preferred: "Preferred",
+    visa_must_placeholder: "Must",
+    visa_preferred_placeholder: "Preferred",
+    visa_at_least_one_message: "Please fill in at least Must or Preferred",
+    hard_starting_date_question:
+      "Is there a hard latest starting date requirement?",
+    hard_starting_date_placeholder:
+      "They have to be able to start before...",
+    role_open_duration_question: "How long has this role been open?",
+    role_open_duration_options: {
+      just_opened: "Just opened",
+      under_a_month: "Under a month",
+      one_to_three_months: "1–3 months",
+      over_three_months: "Over 3 months",
+    },
     primary_driver_question:
       "What is the primary driver for opening this position?",
     primary_driver_multi_question:
