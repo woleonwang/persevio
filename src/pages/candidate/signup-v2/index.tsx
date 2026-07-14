@@ -317,7 +317,7 @@ const SignupV2: React.FC = () => {
         void fetchJobApply(jobId);
       }
     } else {
-      message.error("Save failed");
+      message.error("The resume file is corrupted. Please re-upload it");
     }
   };
 

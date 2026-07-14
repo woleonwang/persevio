@@ -86,6 +86,8 @@ const Sidebar = (props: ISidebarProps) => {
   const isCollapsedView = collapsed && !hovered;
 
   useEffect(() => {
+    if (!showProfileMenu) return;
+
     const fetchCareerPageStatus = async () => {
       const { code, data } = await Get("/api/career_page");
       if (code === 0) {
