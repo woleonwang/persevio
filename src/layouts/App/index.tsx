@@ -17,7 +17,7 @@ import Jobs from "@/assets/icons/jobs";
 import Candidates from "@/assets/icons/candidates";
 import Sidebar from "@/components/Sidebar";
 import OrgChat from "@/assets/icons/org-chat";
-import Dashboard from "@/assets/icons/dashboard";
+// import Dashboard from "@/assets/icons/dashboard";
 
 const AppLayout = () => {
   const currentPath = useLocation().pathname;
@@ -112,11 +112,11 @@ const AppLayout = () => {
         top: "-1px",
       },
     },
-    {
-      title: t("menu.dashboard"),
-      path: "/app/dashboard",
-      img: <Dashboard />,
-    },
+    // {
+    //   title: t("menu.dashboard"),
+    //   path: "/app/dashboard",
+    //   img: <Dashboard />,
+    // },
     {
       title: t("menu.jobs"),
       key: "jobs",
