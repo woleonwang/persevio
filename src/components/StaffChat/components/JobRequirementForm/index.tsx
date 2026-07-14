@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useReducer, useState } from "react";
 import {
   Button,
+  Checkbox,
   Collapse,
   DatePicker,
   Drawer,
@@ -1102,10 +1103,13 @@ const JobRequirementForm = (props: IProps) => {
           <Select options={question.options} disabled={deleted} />
         )}
         {question.type === "multiple_select" && (
-          <Select
-            options={question.options}
-            mode="multiple"
+          <Checkbox.Group
+            className={styles.checkboxGroup}
             disabled={deleted}
+            options={(question.options ?? []).map((item) => ({
+              value: item.value,
+              label: item.label,
+            }))}
           />
         )}
         {question.type === "number_range" && (

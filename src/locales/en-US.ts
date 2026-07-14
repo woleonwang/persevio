@@ -962,14 +962,17 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     chinese: "Chinese",
     english: "English",
     proficiency: "Proficiency level",
+    language_placeholder: "Select or type to add a language",
+    language_add_custom: 'Add "{{name}}"',
     proficiency_level_5: "**Level 5**: Native/Fully Bilingual",
     proficiency_level_4:
-      "**Level 4**: Advanced Professional: can lead complex business discussions",
+      "**Level 4**: Advanced Professional — can lead complex business discussions",
     proficiency_level_3:
-      "**Level 3**: Functional Professional: can participate in meetings and handle correspondence",
+      "**Level 3**: Functional Professional — can participate in meetings and handle correspondence",
     proficiency_level_2:
       "**Level 2**: Limited Working — simple conversations only",
-    proficiency_level_1: "**Level 1**: Basic: greetings and simple phrases",
+    proficiency_level_1:
+      "**Level 1**: Basic — greetings and simple phrases",
     native_speaker: "Native Speaker",
     professional: "Professional Proficiency",
     daily_conversation: "Daily Conversational",

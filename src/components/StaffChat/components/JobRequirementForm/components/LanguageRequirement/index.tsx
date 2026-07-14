@@ -1,6 +1,6 @@
-import { AutoComplete, Button, Select } from "antd";
+import { Button, Select } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidV4 } from "uuid";
 
@@ -52,6 +52,9 @@ const LanguageRequirement = (props: IProps) => {
     { key: uuidV4() },
   ]);
   const rows = value && value.length > 0 ? value : defaultRowsRef.current;
+  const [languageSearchByRow, setLanguageSearchByRow] = useState<
+    Record<string, string>
+  >({});
 
   const onRowChange = (
     key: string,
@@ -67,27 +70,74 @@ const LanguageRequirement = (props: IProps) => {
     onChange?.(rows.filter((item) => item.key !== key));
   };
 
-  const languageOptions = PRESET_LANGUAGES.map((language) => ({
-    value: language,
-  }));
+  const getLanguageOptions = (rowKey: string, currentLanguage?: string) => {
+    const search = (languageSearchByRow[rowKey] ?? "").trim();
+    const options: { value: string; label: string }[] = PRESET_LANGUAGES.map(
+      (language) => ({
+        value: language,
+        label: language,
+      }),
+    );
+
+    const alreadyListed = (name: string) =>
+      options.some(
+        (item) => item.value.toLowerCase() === name.toLowerCase(),
+      );
+
+    if (search && !alreadyListed(search)) {
+      options.unshift({
+        value: search,
+        label: t("language_add_custom", { name: search }),
+      });
+    }
+
+    if (
+      currentLanguage?.trim() &&
+      !alreadyListed(currentLanguage.trim()) &&
+      currentLanguage.trim().toLowerCase() !== search.toLowerCase()
+    ) {
+      options.unshift({
+        value: currentLanguage.trim(),
+        label: currentLanguage.trim(),
+      });
+    }
+
+    return options;
+  };
 
   return (
     <div>
       {rows.map((item) => (
         <div className={styles.row} key={item.key}>
-          <AutoComplete
+          <Select
             className={styles.languageSelect}
-            options={languageOptions}
+            showSearch
+            allowClear
+            options={getLanguageOptions(item.key, item.language)}
             value={item.language}
             disabled={disabled}
-            placeholder={t("language")}
+            placeholder={t("language_placeholder")}
             filterOption={(inputValue, option) =>
               (option?.value ?? "")
                 .toLowerCase()
+                .includes(inputValue.toLowerCase()) ||
+              String(option?.label ?? "")
+                .toLowerCase()
                 .includes(inputValue.toLowerCase())
             }
-            onChange={(language) => onRowChange(item.key, { language })}
-            allowClear
+            onSearch={(search) =>
+              setLanguageSearchByRow((prev) => ({
+                ...prev,
+                [item.key]: search,
+              }))
+            }
+            onChange={(language) => {
+              onRowChange(item.key, { language });
+              setLanguageSearchByRow((prev) => ({
+                ...prev,
+                [item.key]: "",
+              }));
+            }}
           />
           <Select
             className={styles.proficiencySelect}
