@@ -29,6 +29,7 @@ type TStep1ContactProps = {
   jobTitle: string;
   companyName: string;
   companyLogo?: string;
+  jobId?: string;
   onSubmit: (values: IPreRegisterInfo) => Promise<void>;
 };
 
@@ -37,6 +38,7 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
   jobTitle,
   companyName,
   companyLogo,
+  jobId,
   onSubmit,
 }) => {
   const initial = splitFullName(initValues.name || "");
@@ -132,6 +134,17 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
               .
             </Checkbox>
           </div>
+          {!!jobId && (
+            <div className={styles.step1SignInHint}>
+              Already have an account?{" "}
+              <a
+                href={`/signin-candidate?job_id=${encodeURIComponent(jobId)}`}
+              >
+                Sign in
+              </a>{" "}
+              to continue
+            </div>
+          )}
         </div>
       }
     >

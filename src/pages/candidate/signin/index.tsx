@@ -56,16 +56,27 @@ const CandidateSignIn: React.FC = () => {
       if (isTempAccount(candidate)) {
         navigate(`/signup-candidate`, { replace: true });
       } else if (signinJobId) {
-        const { code, data } = await Post("/api/candidate/job_applies", {
-          job_id: signinJobId,
-        });
-        if (code === 0) {
-          navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`, {
-            replace: true,
-          });
+        const { code: existingCode, data: existingData } = await Get(
+          `/api/candidate/jobs/${signinJobId}/job_apply`,
+        );
+        if (existingCode === 0) {
+          navigate(
+            `/candidate/jobs/applies/${existingData.job_apply.id}?open=1`,
+            { replace: true },
+          );
           storage.remove(StorageKey.SIGNIN_JOB_ID);
         } else {
-          navigate("/candidate/jobs", { replace: true });
+          const { code, data } = await Post("/api/candidate/job_applies", {
+            job_id: signinJobId,
+          });
+          if (code === 0) {
+            navigate(`/candidate/jobs/applies/${data.job_apply_id}?open=1`, {
+              replace: true,
+            });
+            storage.remove(StorageKey.SIGNIN_JOB_ID);
+          } else {
+            navigate("/candidate/jobs", { replace: true });
+          }
         }
       } else {
         navigate("/candidate/jobs", { replace: true });

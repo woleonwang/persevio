@@ -288,7 +288,9 @@ const SignupV2: React.FC = () => {
       setJobId(jobIdFromQuery || String(data.job_id || ""));
       setPageState("resume");
     } else if (code === 10003) {
-      message.error("This email is already registered");
+      message.error(
+        "This email is already signed up. Please sign in to continue",
+      );
     } else {
       message.error("Save failed");
     }
@@ -363,6 +365,7 @@ const SignupV2: React.FC = () => {
         jobTitle={jobTitle || "Role"}
         companyName={companyName || "Company"}
         companyLogo={companyLogo}
+        jobId={jobIdFromQuery || undefined}
         onSubmit={onSubmitContact}
       />
     );
