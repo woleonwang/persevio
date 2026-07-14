@@ -717,6 +717,10 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "How many headcounts are we looking to fill for this role?",
     primary_driver_question:
       "What is the primary driver for opening this position?",
+    primary_driver_multi_question:
+      "What is the primary driver for opening this position? Select all that apply.",
+    speed_quality_tradeoff_question:
+      "When speed and quality pull in different directions, which wins for this role?",
     archetypes_question:
       "Which of these three archetypes best describes the primary focus of this role?",
     language_question:
@@ -807,6 +811,37 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
         "**Specialized Expertise**: Bringing in a niche skill set that the current team lacks.",
       leadership:
         "**Leadership / Succession**: We need to bring in a new leader for an existing team or function.",
+    },
+
+    primary_driver_multi_options: {
+      backfill:
+        "**Backfill**: Replacing someone who has left or is leaving",
+      team_expansion:
+        "**Team expansion**: Adding capacity to an existing team as workload grows",
+      first_hire_new_function:
+        "**First hire for a new function**: No one does this job today — this person starts the discipline",
+      new_initiative_project:
+        "**New initiative/project**: Driven by a specific new product, market, business line, or contract win",
+      missing_expertise:
+        "**Bringing in missing expertise**: The team needs a specific skill or domain it doesn't have today",
+      leadership_hire:
+        "**Leadership hire**: This person will lead a team or own a function — including bringing in a future successor",
+      performance_upgrade:
+        "**Performance upgrade**: We want materially stronger performance in this seat than we've been getting.",
+      restructuring:
+        "**Restructuring**: The role was created or reshaped by a reorganization — responsibilities consolidated, split, or moved",
+      contract_or_regulation:
+        "**Required by contract or regulation**: A client contract, licence, or compliance obligation requires this seat",
+      other: "**Other**: Something else",
+    },
+
+    speed_quality_tradeoff_options: {
+      speed_first:
+        "**Speed first** — An empty seat is costing us; a strong hire soon beats a perfect hire later.",
+      bar_first:
+        "**Bar first** — This hire is too important to compromise; we'd rather wait for exceptional.",
+      balanced:
+        "**Balanced** — We'd extend the search before lowering the bar, but not indefinitely.",
     },
 
     archetypes_options: {
