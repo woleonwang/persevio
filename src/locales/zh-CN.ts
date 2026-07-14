@@ -572,6 +572,8 @@ export default {
       "Viona 正在仔细审查您的简历，以便根据您的经验量身定制对话。这可能需要 1-5 分钟...",
     viona_is_generating_jrd_strategy:
       "<b>Viona 正在分析提供的职位细节，以便提出最相关的问题。这通常需要 30–90 秒</b>",
+    jd_progress_label: "职位 intake 已完成，现在开始<strong>起草 JD</strong>..",
+    jd_progress_aria: "正在起草职位描述",
     intake_mode_ask: `开始之前，有两种 intake 模式可选。您想用哪一种？
 
 **1. 标准模式**（强烈推荐 · 约 20 分钟）：

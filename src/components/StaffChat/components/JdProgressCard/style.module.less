@@ -1,0 +1,44 @@
+.jdProgressCard {
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #f6f6f6;
+  box-sizing: border-box;
+}
+
+.jdProgressLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 18px;
+  color: #1a1a1a;
+
+  :global(strong) {
+    color: #3682fe;
+    font-weight: 600;
+  }
+}
+
+.checkIcon {
+  flex-shrink: 0;
+  color: #36c68d;
+  font-size: 14px;
+}
+
+.jdProgressBar {
+  margin-top: 15px;
+  margin-bottom: 0;
+  line-height: 1;
+
+  :global(.ant-progress-inner) {
+    border-radius: 44px;
+  }
+
+  :global(.ant-progress-bg) {
+    border-radius: 44px;
+  }
+}

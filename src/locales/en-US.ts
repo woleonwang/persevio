@@ -586,6 +586,9 @@ export default {
       "Viona is reviewing your resume carefully so she can tailor the conversation to your experience. This may take 1-5 minutes...",
     viona_is_generating_jrd_strategy:
       "Viona is analyzing the provided job details so she can ask the most relevant questions. This usually takes 30–90 seconds",
+    jd_progress_label:
+      "Job intake done, now let's <strong>draft the JD</strong>..",
+    jd_progress_aria: "Drafting the job description",
     intake_mode_ask: `Before we start, two modes to run this intake. Which would you like?
 
 **1. Standard** (strongly recommended · ~20 min):

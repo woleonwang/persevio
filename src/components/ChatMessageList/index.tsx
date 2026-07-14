@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState, type ReactNode } from "react";
 import { List, Avatar } from "antd";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
@@ -30,15 +30,16 @@ interface IProps {
   style?: React.CSSProperties;
   showUserTimestamp?: boolean;
   fontSize?: number;
-  renderTagsContent?: (item: TMessage) => React.ReactNode;
+  renderTagsContent?: (item: TMessage) => ReactNode;
   renderOperationContent?: (
     item: TMessage,
     isLast: boolean,
     isFirst: boolean,
-  ) => React.ReactNode;
+  ) => ReactNode;
   showCustomThinkingText?: () => string;
   streamingMessage?: string;
   preview?: boolean;
+  footerContent?: ReactNode;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -117,6 +118,7 @@ const ChatMessageList = (props: IProps) => {
     preview = false,
     assistantPerson = "viona",
     transparentBackground = false,
+    footerContent,
   } = props;
 
   const assistant = ASSISTANT_AVATAR_CONFIG[assistantPerson];
@@ -311,6 +313,7 @@ const ChatMessageList = (props: IProps) => {
                       [styles.user]: item.role === "user",
                       [styles.messageContainerBubblePadding]:
                         transparentBackground,
+                      [styles.showFooter]: isLast && !!footerContent,
                     })}
                     style={{ fontSize }}
                   >
@@ -346,6 +349,7 @@ const ChatMessageList = (props: IProps) => {
                       {renderTagsContent?.(item)}
                     </div>
                     {renderOperationContent?.(item, isLast, isFirst)}
+                    {isLast ? footerContent : null}
                   </div>
                 }
               />

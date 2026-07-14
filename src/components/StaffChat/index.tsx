@@ -43,8 +43,11 @@ import JobCollaboratorModal from "../JobCollaboratorModal";
 import MarkdownContainer from "../MarkdownContainer";
 import JrdRealRequirementForm from "./components/JrdRealRequirementForm";
 import JrdTargetCandidateProfileForm from "./components/JrdTargetCandidateProfileForm";
+import JdProgressCard from "./components/JdProgressCard";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
+
+type TWaitingType = "generate_jrd_strategy" | "waiting_for_jd" | "";
 
 const StaffChat: React.FC<IProps> = (props) => {
   const {
@@ -71,10 +74,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     return undefined;
   })();
   const [isLoading, setIsLoading] = useState(false);
-  const [waitingType, setWaitingType] = useState<"generate_jrd_strategy" | "">(
-    "",
-  );
+  const [waitingType, setWaitingType] = useState<TWaitingType>("");
   const [streamingLoadingText, setStreamingLoadingText] = useState("");
+  const [showJdProgress, setShowJdProgress] = useState(false);
+  const [jdProgressStatus, setJdProgressStatus] = useState(false);
   // const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
@@ -132,6 +135,10 @@ const StaffChat: React.FC<IProps> = (props) => {
   }>({});
   const sideDocumentTriggerMessageIdRef = useRef<string>();
   const messageListScrollTopRef = useRef<number>(0);
+  const showJdProgressRef = useRef(false);
+  const pendingJdNextTaskRef = useRef(false);
+  const onNextTaskRef = useRef(onNextTask);
+  onNextTaskRef.current = onNextTask;
 
   const { t: originalT, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -142,6 +149,14 @@ const StaffChat: React.FC<IProps> = (props) => {
     i18n.language === "zh-CN"
       ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
       : "https://igk8gb3qpgz.sg.larksuite.com/share/base/form/shrlgfakyAOv0sKElWPJMjC8yTh";
+
+  const handleIntakeDoneNextTask = () => {
+    if (showJdProgressRef.current) {
+      pendingJdNextTaskRef.current = true;
+      return;
+    }
+    onNextTaskRef.current?.();
+  };
 
   useEffect(() => {
     initProfile();
@@ -543,14 +558,14 @@ const StaffChat: React.FC<IProps> = (props) => {
       key: "jrd-done",
       title: t("view_jrd"),
       ...(onNextTask
-        ? { autoTrigger: true, handler: () => onNextTask?.() }
+        ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
         : { handler: () => viewDoc?.("job-requirement") }),
     },
     {
       key: "intake-done",
       title: t("view_jrd"),
       ...(onNextTask
-        ? { autoTrigger: true, handler: () => onNextTask?.() }
+        ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
         : { handler: () => viewDoc?.("job-requirement") }),
     },
     {
@@ -678,6 +693,11 @@ const StaffChat: React.FC<IProps> = (props) => {
     needScrollToBottom.current = true;
     setSideDocumentVisible(false);
     setIsEditingSideDocument(false);
+    showJdProgressRef.current = false;
+    pendingJdNextTaskRef.current = false;
+    setShowJdProgress(false);
+    setJdProgressStatus(false);
+    setWaitingType("");
     if (
       chatType !== "companyOnboardingNarrative" &&
       chatType !== "jobJrdEdit"
@@ -736,8 +756,14 @@ const StaffChat: React.FC<IProps> = (props) => {
 
       const messageHistory = formatMessages(data.messages, currentJob);
       const isLoading = data.is_invoking === 1;
-      setWaitingType(data.waiting_type);
+      const nextWaitingType = (data.waiting_type ?? "") as TWaitingType;
+      setWaitingType(nextWaitingType);
       setIsLoading(isLoading);
+
+      if (nextWaitingType === "waiting_for_jd") {
+        showJdProgressRef.current = true;
+        setShowJdProgress(true);
+      }
 
       if (messageHistory.length === 0 && !isLoading && autoStart) {
         sendMessage("Start", {
@@ -798,10 +824,19 @@ const StaffChat: React.FC<IProps> = (props) => {
           sideDocumentTriggerMessageIdRef.current = lastMessage.id;
         }
         lastMessageIdRef.current = lastMessage.id;
+
+        if (
+          showJdProgressRef.current &&
+          (lastMessage.extraTags ?? []).some(
+            (tag) => tag.name === "intake-done" || tag.name === "jrd-done",
+          )
+        ) {
+          setJdProgressStatus(true);
+        }
       }
 
-      // 如果正在 loading，添加 fake 消息
-      if (isLoading) {
+      // 如果正在 loading，添加 fake 消息（waiting_for_jd 进度卡替代 loading 点）
+      if (isLoading && !showJdProgressRef.current) {
         messageHistory.push({
           id: "fake_ai_id",
           role: "ai",
@@ -1172,6 +1207,22 @@ const StaffChat: React.FC<IProps> = (props) => {
                     : "";
                 }}
                 streamingMessage={streamingLoadingText}
+                footerContent={
+                  showJdProgress ? (
+                    <JdProgressCard
+                      status={jdProgressStatus}
+                      onComplete={() => {
+                        showJdProgressRef.current = false;
+                        setShowJdProgress(false);
+                        setJdProgressStatus(false);
+                        if (pendingJdNextTaskRef.current) {
+                          pendingJdNextTaskRef.current = false;
+                          onNextTaskRef.current?.();
+                        }
+                      }}
+                    />
+                  ) : null
+                }
                 renderTagsContent={(item) => {
                   const hasIntakeModeTag = (item.extraTags ?? []).some(
                     (tag) => tag.name === "jrd-intake-mode",
