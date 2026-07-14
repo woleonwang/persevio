@@ -18,7 +18,7 @@ import Tabs from "../Tabs";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import JobPipeline from "./components/JobPipeline";
-// import JobDashboard from "./components/JobDashboard";
+import JobDashboard from "./components/JobDashboard";
 import ArrowLeft from "@/assets/icons/arrow-left";
 import Icon from "../Icon";
 import globalStore from "@/store/global";
@@ -28,7 +28,6 @@ import SourceChannels from "@/assets/icons/source-channels";
 import Bag from "@/assets/icons/bag";
 import Analytics from "@/assets/icons/analytics";
 import Settings from "@/assets/icons/settings";
-import JobAnalytics from "./components/JobAnalytics";
 
 type TMenu =
   | "jobRequirements"
@@ -326,7 +325,7 @@ const JobDetailsForAts = ({ role = "staff" }: IProps) => {
             ),
             children: (
               <div className={styles.body}>
-                <JobAnalytics />
+                <JobDashboard />
               </div>
             ),
           },
