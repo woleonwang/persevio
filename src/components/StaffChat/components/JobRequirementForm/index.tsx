@@ -33,6 +33,9 @@ import ManagerDetail, {
 } from "./components/ManagerDetail";
 import PercentageInput from "./components/PercentageInput";
 import NumberRange from "./components/NumberRange";
+import LanguageRequirement, {
+  TLanguageRequirementValue,
+} from "./components/LanguageRequirement";
 
 import { TRoleOverviewType } from "../../type";
 import styles from "./style.module.less";
@@ -67,7 +70,8 @@ type TQuestion = {
     | "city_and_address"
     | "manager_detail"
     | "percentage"
-    | "org_node";
+    | "org_node"
+    | "language_requirement";
   hint?: string;
   dependencies?: TDependence[];
   options?: {
@@ -262,7 +266,7 @@ const JobRequirementForm = (props: IProps) => {
         },
         {
           key: "language",
-          type: "text",
+          type: "language_requirement",
           question: t("language_question"),
           required: true,
         },
@@ -595,6 +599,17 @@ const JobRequirementForm = (props: IProps) => {
               .join(", ");
           }
 
+          if (question.type === "language_requirement") {
+            const typedValue = value as TLanguageRequirementValue[];
+            formattedValue = typedValue
+              .filter((item) => item.language && item.proficiency)
+              .map(
+                (item) =>
+                  `${item.language} — ${t(`proficiency_level_${item.proficiency}`)}`,
+              )
+              .join("\n\n");
+          }
+
           if (question.type === "percentage") {
             const typedValue = value as Record<string, number>;
             formattedValue = Object.keys(typedValue)
@@ -886,14 +901,38 @@ const JobRequirementForm = (props: IProps) => {
                         message: t("required_error_message"),
                       },
                     ]
-                  : question.required
+                  : question.type === "language_requirement"
                     ? [
                         {
-                          required: true,
+                          validator(
+                            _: any,
+                            value: TLanguageRequirementValue[],
+                            callback: any,
+                          ) {
+                            const typedValue = value ?? [];
+                            if (
+                              typedValue.length === 0 ||
+                              typedValue.some(
+                                (item) =>
+                                  !item.language?.trim() || !item.proficiency,
+                              )
+                            ) {
+                              callback(new Error());
+                              return;
+                            }
+                            callback();
+                          },
                           message: t("required_error_message"),
                         },
                       ]
-                    : []
+                    : question.required
+                      ? [
+                          {
+                            required: true,
+                            message: t("required_error_message"),
+                          },
+                        ]
+                      : []
         }
       >
         {question.type === "text" && <Input disabled={deleted} />}
@@ -924,6 +963,9 @@ const JobRequirementForm = (props: IProps) => {
         {question.type === "date" && <DatePicker disabled={deleted} />}
         {question.type === "base_salary" && <BaseSalaryInput />}
         {question.type === "city_and_address" && <CityAndAddressSelect />}
+        {question.type === "language_requirement" && (
+          <LanguageRequirement disabled={deleted} />
+        )}
         {/* {question.type === "internal_employee_level" && (
             <InternalEmployeeLevel />
           )} */}
