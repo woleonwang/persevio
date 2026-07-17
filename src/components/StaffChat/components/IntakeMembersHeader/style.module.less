@@ -1,0 +1,237 @@
+@import "@/mixin.module.less";
+
+.popoverOverlay {
+  :global(.ant-popover-inner) {
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.avatarGroup {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.avatarCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -16px;
+  border: 1.25px solid #fff;
+  flex-shrink: 0;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.popover {
+  width: 400px;
+  max-width: calc(100vw - 32px);
+  max-height: 420px;
+  overflow: auto;
+  padding: 13px 11px 17px 15px;
+  box-sizing: border-box;
+}
+
+.popoverTitle {
+  height: 21px;
+  margin: 0;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  color: #333;
+  letter-spacing: 0.02em;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarImage {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #dce9ff;
+  background: #f4fbff;
+  flex-shrink: 0;
+}
+
+.info {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  margin-left: 10px;
+}
+
+.infoSingle {
+  gap: 0;
+}
+
+.nameLine {
+  display: flex;
+  min-width: 0;
+  height: 22px;
+  align-items: center;
+  gap: 6px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  line-height: 21px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email {
+  overflow: hidden;
+  color: #999;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rolePill {
+  display: inline-flex;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid;
+  border-radius: 44px;
+  box-sizing: border-box;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.roleOwner {
+  border-color: rgba(38, 188, 93, 0.2);
+  background: #f2ffea;
+  color: #26bc5d;
+}
+
+.roleAi {
+  border-color: rgba(54, 130, 254, 0.2);
+  background: #edf2ff;
+  color: #3682fe;
+}
+
+.roleHiring {
+  border-color: rgba(249, 169, 48, 0.2);
+  background: #fff7e8;
+  color: #f9a930;
+}
+
+.roleGuest {
+  border-color: #e4e4e5;
+  background: #f6f6f6;
+  color: #999;
+}
+
+.roleSelect {
+  min-width: 0;
+  height: 22px !important;
+
+  :global(.ant-select-selector) {
+    padding: 0 6px 0 8px !important;
+    border: 1px solid rgba(249, 169, 48, 0.2) !important;
+    box-shadow: none !important;
+    border-radius: 44px !important;
+    min-height: 22px !important;
+    height: 22px !important;
+    background: #fff7e8 !important;
+  }
+
+  :global(.ant-select-selection-item) {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    color: #f9a930 !important;
+    padding-inline-end: 14px !important;
+  }
+
+  :global(.ant-select-arrow) {
+    inset-inline-end: 6px;
+    font-size: 10px;
+    color: #f9a930 !important;
+  }
+
+  &.roleRecruiter {
+    :global(.ant-select-selector) {
+      border-color: rgba(54, 130, 254, 0.2) !important;
+      background: #edf2ff !important;
+    }
+
+    :global(.ant-select-selection-item),
+    :global(.ant-select-arrow) {
+      color: #3682fe !important;
+    }
+  }
+}
+
+.removeBtn {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: #999;
+
+  &:hover {
+    background: #f6f6f6;
+    color: #666;
+  }
+}

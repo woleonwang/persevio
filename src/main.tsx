@@ -20,7 +20,6 @@ import CareerPageConfig from "./pages/career-page";
 import CreditsPage from "./pages/credits";
 import Apply from "./pages/apply";
 import Settings from "./pages/settings";
-import Talent from "./pages/talent";
 import SnakeGame from "./pages/snake";
 
 import SignInCandidate from "./pages/candidate/signin";
@@ -55,9 +54,6 @@ import JobBoard from "./pages/job/board";
 import JobStandardBoard from "./pages/job/standard-board";
 import JobInternalDocuments from "./pages/job/internal-documents";
 import JobApplyInternalDocuments from "./pages/job-apply/internal-documents";
-import TalentChat from "./pages/talent/chat";
-import TalentSelect from "./pages/talent/select";
-import TalentDetail from "./pages/talent/detail";
 import PublicJobs from "./pages/public/jobs";
 import PublicJobDetail from "./pages/public/job";
 import PublicTalentDetailPage from "./pages/public/talent/detail";
@@ -193,31 +189,6 @@ const AppRoutes = () => {
           path="/app/jobs/:jobId/document/:chatType"
           element={<JobDocument />}
         />
-        {/* 面试设计 & 反馈选择候选人 */}
-        <Route
-          path="/app/jobs/:jobId/talents/select/:chatType"
-          element={<TalentSelect />}
-          key="talentSelect"
-        />
-        {/* 面试设计 & 反馈对话 */}
-        <Route
-          path="/app/jobs/:jobId/talents/:talentId/chat"
-          element={<TalentChat />}
-          key="talentChat"
-        />
-        {/* 候选人面试设计 & 反馈详情 */}
-        <Route
-          path="/app/jobs/:jobId/talents/:talentId/detail"
-          element={<TalentDetail />}
-          key="talentDetail"
-        />
-        {/* 候选人详情：简历、评估报告 */}
-        <Route
-          path="/app/jobs/:jobId/talents/:talentId"
-          element={<Talent />}
-          handle={{ layout: "blank" }}
-          key="talent"
-        />
 
         {/* 公司知识库 */}
         <Route path="/app/company" element={<CompanyKnowledge />} />
@@ -242,10 +213,7 @@ const AppRoutes = () => {
           path="/admin/candidate-signup-funnel"
           element={<CandidateSignupFunnel />}
         />
-        <Route
-          path="/admin/talent-tags"
-          element={<TalentTagDistribution />}
-        />
+        <Route path="/admin/talent-tags" element={<TalentTagDistribution />} />
         {/* 管理员候选人列表：包括可见职位内从 linkedin 抓取的候选人和流程中的候选人 */}
         <Route path="/admin/talents" element={<ScopedTalents />} />
         {/* 管理员企业审核列表 */}

@@ -3,11 +3,6 @@ import { onChangeTabFunction } from "../../pages/job/index";
 export type TChatType =
   | "jobRequirementDoc"
   | "jobDescription"
-  | "jobCompensationDetails"
-  | "jobOutreachMessage"
-  | "jobInterviewPlan"
-  | "jobInterviewDesign"
-  | "jobInterviewFeedback"
   | "jobTalentEvaluateFeedback"
   | "jobJrdEdit"
   | "companyOnboardingNarrative";
@@ -27,10 +22,16 @@ export interface IProps {
   jrdEditConversationId?: number;
   hideSidebar?: boolean;
   viewDoc?: (docType: string) => void;
-  newVersion?: boolean;
   hidePredefinedButtons?: boolean;
   hideRetry?: boolean;
   autoStart?: boolean;
+  /** Job Intake 群聊：成员列表变化时回传给页面顶栏 */
+  onMembershipsChange?: (memberships: TJobIntakeMembership[]) => void;
+  /** 受控打开邀请弹窗（顶栏 Invite 与气泡 CTA 共用） */
+  inviteCollaboratorsOpen?: boolean;
+  onInviteCollaboratorsOpenChange?: (open: boolean) => void;
+  /** 顶栏移除成员后递增，触发聊天刷新 */
+  membershipsRefreshSignal?: number;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

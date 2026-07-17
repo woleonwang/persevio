@@ -1,36 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 
-import {
-  Button,
-  message,
-  Modal,
-  FloatButton,
-  Upload,
-  Tooltip,
-  Drawer,
-} from "antd";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import { Button, message, Tooltip } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 import dayjs, { Dayjs } from "dayjs";
 
-import { Get, Post, PostFormData } from "../../utils/request";
+import { Get, Post } from "../../utils/request";
 
 import styles from "./style.module.less";
-import { IProps, TChatType, TRoleOverviewType } from "./type";
+import { IProps, TChatType } from "./type";
 import { copy, downloadText, getDocumentType, parseJSON } from "@/utils";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { tokenStorage } from "@/utils/storage";
 
-import SelectOptionsForm from "./components/SelectOptionsForm";
-import JobRequirementFormDrawer from "./components/JobRequirementFormDrawer";
 import globalStore from "@/store/global";
-import JobRequirementForm from "./components/JobRequirementForm";
 import EditableMarkdown from "../EditableMarkdown";
 import Icon from "../Icon";
 import Switch from "@/assets/icons/switch";
-import Bag from "@/assets/icons/bag";
 import Copy from "@/assets/icons/copy";
 import Pen from "@/assets/icons/pen";
 import Delete from "@/assets/icons/delete";
@@ -39,11 +25,22 @@ import Close from "@/assets/icons/close";
 import ChatInputArea from "../ChatInputArea";
 import ChatMessageList from "../ChatMessageList";
 import { SIDE_DOCUMENT_TYPES } from "@/utils/consts";
-import JobCollaboratorModal from "../JobCollaboratorModal";
-import MarkdownContainer from "../MarkdownContainer";
-import JrdRealRequirementForm from "./components/JrdRealRequirementForm";
-import JrdTargetCandidateProfileForm from "./components/JrdTargetCandidateProfileForm";
 import JdProgressCard from "./components/JdProgressCard";
+import JrdRealRequirementForm from "./components/JrdRealRequirementForm";
+
+import InviteCollaboratorsModal from "./components/InviteCollaboratorsModal";
+import {
+  MENTION_OWNER_ID,
+  MENTION_VIONA_ID,
+  TMentionOption,
+  TMentionRoleKey,
+  buildMentionDisplayContent,
+  getActiveMemberships,
+  getStaffEmail,
+  isGroupChatMode,
+  mentionsIncludeViona,
+} from "./intakeCollabUtils";
+import useStaffs from "@/hooks/useStaffs";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -54,16 +51,17 @@ const StaffChat: React.FC<IProps> = (props) => {
     chatType,
     jobId,
     share = false,
-    jobInterviewDesignerId,
-    jobInterviewFeedbackId,
     talentId,
     jrdEditConversationId,
     viewDoc,
     onNextTask,
-    newVersion = false,
     hidePredefinedButtons = false,
     hideRetry = false,
     autoStart = false,
+    onMembershipsChange,
+    inviteCollaboratorsOpen,
+    onInviteCollaboratorsOpenChange,
+    membershipsRefreshSignal = 0,
   } = props;
 
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -78,36 +76,12 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [streamingLoadingText, setStreamingLoadingText] = useState("");
   const [showJdProgress, setShowJdProgress] = useState(false);
   const [jdProgressStatus, setJdProgressStatus] = useState(false);
-  // const [jrdProgress, setJrdProgress] = useState<number>(0);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
   const [job, setJob] = useState<IJob>();
   const [profile, setProfile] = useState<ISettings>();
   const [conversationFinished, setConversationFinished] = useState(false);
 
-  // 表单抽屉
-  const [showJobRequirementFormDrawer, setShowJobRequirementFormDrawer] =
-    useState(false);
-  const [jobRequirementFormType, setJobRequirementFormType] =
-    useState<TRoleOverviewType>();
-  const [jrdRealRequirementFormValue, setJrdRealRequirementFormValue] =
-    useState<string>();
-  const [showJrdRealRequirementForm, setShowJrdRealRequirementForm] =
-    useState(false);
-  const [
-    jrdTargetCandidateProfileFormValue,
-    setJrdTargetCandidateProfileFormValue,
-  ] = useState<string>();
-  const [
-    showJrdTargetCandidateProfileForm,
-    setShowJrdTargetCandidateProfileForm,
-  ] = useState(false);
-
-  const [selectOptionsType, setSelectOptionsType] = useState<
-    "high_level_responsibility" | "day_to_day_tasks" | "icp" | "success-metric"
-  >();
-  const [selectOptionsModalOpen, setSelectOptionsModalOpen] = useState(false);
-  const [isUploadingJd, setIsUploadingJd] = useState(false);
   const [sideDocumentVisible, setSideDocumentVisible] = useState(false);
   const [sideDocumentType, setSideDocumentType] =
     useState<TEditableDocumentType>();
@@ -115,8 +89,21 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [sideDocumentContent, setSideDocumentContent] = useState<string>("");
   const [isEditingSideDocument, setIsEditingSideDocument] = useState(false);
 
-  const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
-  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
+  const [
+    isInviteCollaboratorsOpenInternal,
+    setIsInviteCollaboratorsOpenInternal,
+  ] = useState(false);
+  const isInviteCollaboratorsOpen =
+    inviteCollaboratorsOpen ?? isInviteCollaboratorsOpenInternal;
+  const setIsInviteCollaboratorsOpen =
+    onInviteCollaboratorsOpenChange ?? setIsInviteCollaboratorsOpenInternal;
+  const [memberships, setMemberships] = useState<TJobIntakeMembership[]>([]);
+  const [collaborators, setCollaborators] = useState<TJobCollaborator[]>([]);
+  const [jrdRealRequirementFormValue, setJrdRealRequirementFormValue] =
+    useState<string>();
+  const [showJrdRealRequirementForm, setShowJrdRealRequirementForm] =
+    useState(false);
+  const messageListScrollTopRef = useRef(0);
 
   // 当前 tab 未激活时的新消息提醒（提示音 + tab 红点）
   const [hasUnreadInInactiveTab, setHasUnreadInInactiveTab] = useState(false);
@@ -134,32 +121,33 @@ const StaffChat: React.FC<IProps> = (props) => {
     scrollToMessage?: (messageId: string) => void;
   }>({});
   const sideDocumentTriggerMessageIdRef = useRef<string>();
-  const messageListScrollTopRef = useRef<number>(0);
   const showJdProgressRef = useRef(false);
   const pendingJdNextTaskRef = useRef(false);
   const onNextTaskRef = useRef(onNextTask);
   onNextTaskRef.current = onNextTask;
 
-  const { t: originalT, i18n } = useTranslation();
-  const navigate = useNavigate();
+  const { t: originalT } = useTranslation();
+  const { staffs } = useStaffs();
 
-  const { mode, isAdmin } = globalStore;
-
-  const SurveyLink =
-    i18n.language === "zh-CN"
-      ? "https://ccn778871l8s.feishu.cn/share/base/form/shrcngf6iPqgTexsGeu7paeCjxf"
-      : "https://igk8gb3qpgz.sg.larksuite.com/share/base/form/shrlgfakyAOv0sKElWPJMjC8yTh";
-
-  const handleIntakeDoneNextTask = () => {
-    if (showJdProgressRef.current) {
-      pendingJdNextTaskRef.current = true;
-      return;
-    }
-    onNextTaskRef.current?.();
-  };
+  const isJobIntakeChat = chatType === "jobRequirementDoc";
+  const groupChatMode = isJobIntakeChat && isGroupChatMode(memberships);
+  const ownerStaff = staffs.find((s) => s.id === job?.staff_id);
+  const currentStaff = staffs.find(
+    (s) => s.account?.username === globalStore.email,
+  );
+  const ownerName = ownerStaff?.name || "Owner";
+  const ownerEmail = getStaffEmail(ownerStaff);
+  const isJobOwner =
+    !!job && !!currentStaff && currentStaff.id === job.staff_id;
+  const myMembershipId = memberships.find(
+    (m) => m.staff_id === currentStaff?.id && !m.deleted_at,
+  )?.id;
 
   useEffect(() => {
     initProfile();
+    if (typeof document !== "undefined" && !originalTitleRef.current) {
+      originalTitleRef.current = document.title;
+    }
   }, []);
 
   useEffect(() => {
@@ -167,45 +155,27 @@ const StaffChat: React.FC<IProps> = (props) => {
   }, [jobId, chatType, jrdEditConversationId]);
 
   useEffect(() => {
-    if (!showJrdRealRequirementForm && !showJrdTargetCandidateProfileForm) {
-      const listNode = document.querySelector("." + styles.listArea);
-      if (listNode && messageListScrollTopRef.current) {
-        listNode.scrollTop = messageListScrollTopRef.current;
-        messageListScrollTopRef.current = 0;
-      }
-    }
-  }, [showJrdRealRequirementForm, showJrdTargetCandidateProfileForm]);
-
-  const fetchStreamingMessage = async () => {
-    let streamingUrl;
-    if (apiMapping[chatType as TChatType]?.streaming) {
-      streamingUrl = apiMapping[chatType as TChatType]?.streaming;
-    }
-
-    const streamChatType = apiMapping[chatType as TChatType]?.chatType;
-    if (streamChatType) {
-      streamingUrl = formatUrl(
-        `/api/jobs/${jobId}/chat/${streamChatType}/streaming_message`,
-      );
-    }
-
-    if (!streamingUrl) return;
-
-    const { code, data } = await Get(streamingUrl);
-
-    if (code === 0 && !!loadingStartedAtRef.current) {
-      setStreamingLoadingText((current) => {
-        const message = data?.message ?? "";
-        if (current.length === 0 && message.length < 15) {
-          // 第一轮如果字太少，就先跳过
-          return "";
-        }
-        return message;
-      });
-    }
-  };
+    onMembershipsChange?.(memberships);
+  }, [memberships]);
 
   useEffect(() => {
+    if (isJobIntakeChat) {
+      fetchCollaborators();
+    }
+  }, [isJobIntakeChat, jobId]);
+
+  // 轮询策略
+  useEffect(() => {
+    if (isJobIntakeChat) {
+      const intervalFetchMessage = setInterval(() => {
+        fetchMessages();
+        if (loadingStartedAtRef.current) {
+          fetchStreamingMessage();
+        }
+      }, 3000);
+      return () => clearInterval(intervalFetchMessage);
+    }
+
     if (isLoading) {
       loadingStartedAtRef.current = dayjs();
       const intervalFetchMessage = setInterval(() => {
@@ -216,6 +186,13 @@ const StaffChat: React.FC<IProps> = (props) => {
       return () => {
         clearInterval(intervalFetchMessage);
       };
+    }
+  }, [isLoading, isJobIntakeChat, jobId, chatType]);
+
+  // 开启/停止流式输出
+  useEffect(() => {
+    if (isLoading) {
+      loadingStartedAtRef.current = dayjs();
     } else {
       loadingStartedAtRef.current = undefined;
       setStreamingLoadingText("");
@@ -231,6 +208,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [messages]);
 
+  // 同步侧边栏文档内容
   useEffect(() => {
     if (jrdContextDocumentJsonRef.current) {
       setSideDocumentContent(
@@ -238,13 +216,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       );
     }
   }, [job]);
-
-  // 记录初始标题，用于在取消红点时恢复
-  useEffect(() => {
-    if (typeof document !== "undefined" && !originalTitleRef.current) {
-      originalTitleRef.current = document.title;
-    }
-  }, []);
 
   // 当 tab 从非激活恢复为激活时，清除未读状态和标题红点
   useEffect(() => {
@@ -277,35 +248,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [hasUnreadInInactiveTab]);
 
-  const playNotificationBeep = () => {
-    if (typeof window === "undefined") return;
-
-    try {
-      const AudioCtx =
-        (window as any).AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-
-      const audioCtx = new AudioCtx();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      oscillator.type = "sine";
-      oscillator.frequency.value = 880;
-      gainNode.gain.value = 0.12;
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      oscillator.start();
-      setTimeout(() => {
-        oscillator.stop();
-        audioCtx.close();
-      }, 200);
-    } catch {
-      // 忽略浏览器不支持或被用户禁用声音的情况
-    }
-  };
-
   // 大模型回复结束时，如果当前 tab 不在前台，则播放提示音并标记未读
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -335,16 +277,156 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [sideDocumentVisible]);
 
+  useEffect(() => {
+    if (membershipsRefreshSignal > 0) {
+      fetchMessages();
+    }
+  }, [membershipsRefreshSignal]);
+
+  const fetchCollaborators = async () => {
+    if (!isJobIntakeChat) return;
+    const { code, data } = await Get<TJobCollaboratorsResponse>(
+      `/api/jobs/${jobId}/collaborators`,
+    );
+    if (code === 0) {
+      setCollaborators(data.job_collaborators ?? []);
+    }
+  };
+
+  const resolveCollaboratorRole = (
+    staffId?: number,
+  ): "hiring_manager" | "recruiter" => {
+    const collab = collaborators.find((c) => c.staff_id === staffId);
+    return collab?.role === "recruiter" ? "recruiter" : "hiring_manager";
+  };
+
+  const mentionRoleLabel = (key: string) =>
+    originalT(`chat.mention_role_${key}`);
+
+  const mentionOptions: TMentionOption[] = isJobIntakeChat
+    ? [
+        {
+          id: MENTION_VIONA_ID,
+          name: "Viona",
+          memberType: "ai",
+          roleKey: "ai",
+          roleLabel: mentionRoleLabel("ai"),
+        },
+        {
+          id: MENTION_OWNER_ID,
+          name: ownerName,
+          memberType: "owner",
+          email: ownerEmail,
+          roleKey: isJobOwner ? "you" : "owner",
+          roleLabel: mentionRoleLabel(isJobOwner ? "you" : "owner"),
+        },
+        ...getActiveMemberships(memberships).map((m) => {
+          const isMe =
+            m.member_type === "staff" &&
+            currentStaff != null &&
+            m.staff_id === currentStaff.id;
+          if (m.member_type === "guest") {
+            return {
+              id: m.id,
+              name: m.name,
+              memberType: "guest" as const,
+              roleKey: (isMe ? "you" : "guest") as TMentionRoleKey,
+              roleLabel: mentionRoleLabel(isMe ? "you" : "guest"),
+            };
+          }
+          const staff = staffs.find((s) => s.id === m.staff_id);
+          const collabRole = resolveCollaboratorRole(m.staff_id);
+          const roleKey = isMe ? "you" : collabRole;
+          return {
+            id: m.id,
+            name: m.name,
+            email: getStaffEmail(staff),
+            memberType: "staff" as const,
+            roleKey: roleKey as "you" | "hiring_manager" | "recruiter",
+            roleLabel: mentionRoleLabel(roleKey),
+          };
+        }),
+      ]
+    : [];
+
+  const resolveMentionName = (id: number) => {
+    if (id === MENTION_VIONA_ID) return "Viona";
+    if (id === MENTION_OWNER_ID) return ownerName;
+    return memberships.find((m) => m.id === id)?.name;
+  };
+
+  const handleIntakeDoneNextTask = () => {
+    if (showJdProgressRef.current) {
+      pendingJdNextTaskRef.current = true;
+      return;
+    }
+    onNextTaskRef.current?.();
+  };
+
+  const fetchStreamingMessage = async () => {
+    let streamingUrl;
+    if (apiMapping[chatType as TChatType]?.streaming) {
+      streamingUrl = apiMapping[chatType as TChatType]?.streaming;
+    }
+
+    const streamChatType = apiMapping[chatType as TChatType]?.chatType;
+    if (streamChatType) {
+      streamingUrl = formatUrl(
+        `/api/jobs/${jobId}/chat/${streamChatType}/streaming_message`,
+      );
+    }
+
+    if (!streamingUrl) return;
+
+    const { code, data } = await Get(streamingUrl);
+
+    if (code === 0 && !!loadingStartedAtRef.current) {
+      setStreamingLoadingText((current) => {
+        const message = data?.message ?? "";
+        if (current.length === 0 && message.length < 15) {
+          // 第一轮如果字太少，就先跳过
+          return "";
+        }
+        return message;
+      });
+    }
+  };
+
+  const playNotificationBeep = () => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const AudioCtx =
+        (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      const audioCtx = new AudioCtx();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = 880;
+      gainNode.gain.value = 0.12;
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+        audioCtx.close();
+      }, 200);
+    } catch {
+      // 忽略浏览器不支持或被用户禁用声音的情况
+    }
+  };
+
   const t = (key: string) => {
     return originalT(`chat.${key}`);
   };
 
   const formatUrl = (url: string) => {
     return url;
-  };
-
-  const changeChatType = (chatType: string) => {
-    navigate(`/app/jobs/${jobId}/chat/${chatType}`);
   };
 
   const apiMapping: Record<
@@ -360,39 +442,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       chatType: "JOB_DESCRIPTION",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_DESCRIPTION/send`),
-    },
-    jobCompensationDetails: {
-      chatType: "JOB_COMPENSATION_DETAILS",
-      get: formatUrl(
-        `/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/messages`,
-      ),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_COMPENSATION_DETAILS/send`),
-    },
-    jobOutreachMessage: {
-      chatType: "JOB_OUTREACH_MESSAGE",
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_OUTREACH_MESSAGE/send`),
-    },
-    jobInterviewPlan: {
-      chatType: "JOB_INTERVIEW_PLAN",
-      get: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/messages`),
-      send: formatUrl(`/api/jobs/${jobId}/chat/JOB_INTERVIEW_PLAN/send`),
-    },
-    jobInterviewDesign: {
-      get: formatUrl(
-        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/messages`,
-      ),
-      send: formatUrl(
-        `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/send`,
-      ),
-    },
-    jobInterviewFeedback: {
-      get: formatUrl(
-        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/messages`,
-      ),
-      send: formatUrl(
-        `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/send`,
-      ),
     },
     jobTalentEvaluateFeedback: {
       get: formatUrl(`/api/jobs/${jobId}/talents/${talentId}/chat/messages`),
@@ -421,15 +470,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     },
   };
 
-  const handleJobRequirementFormDrawerOpen = (open: boolean) => {
-    setShowJobRequirementFormDrawer(open);
-  };
-
-  const openJobRequirementFormDrawer = (type: TRoleOverviewType) => {
-    setJobRequirementFormType(type);
-    handleJobRequirementFormDrawerOpen(true);
-  };
-
   const supportTags: TSupportTag[] = [
     {
       key: "jrd-language",
@@ -441,7 +481,10 @@ const StaffChat: React.FC<IProps> = (props) => {
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> 中文
             </div>
           ),
-          handler: () => sendMessage("好的，请你用中文和我进行接下来的对话。"),
+          handler: () =>
+            sendMessageWithMentionViona(
+              "好的，请你用中文和我进行接下来的对话。",
+            ),
         },
         {
           key: "jrd-language-en-US",
@@ -450,7 +493,10 @@ const StaffChat: React.FC<IProps> = (props) => {
               <Icon icon={<Switch />} style={{ fontSize: 24 }} /> English
             </div>
           ),
-          handler: () => sendMessage("Sure. Please speak with me in English."),
+          handler: () =>
+            sendMessageWithMentionViona(
+              "Sure. Please speak with me in English.",
+            ),
         },
       ],
     },
@@ -467,7 +513,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           handler: async () => {
             const success = await updateJob({ jd_language: "zh-CN" });
             if (success) {
-              sendMessage(
+              sendMessageWithMentionViona(
                 "请用中文来撰写这个职位的JD。请你在把JD发给我之前确保你的语言是正宗地道的适合在职位描述中使用的中文。",
               );
             } else {
@@ -485,7 +531,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           handler: async () => {
             const success = await updateJob({ jd_language: "en-US" });
             if (success) {
-              sendMessage(
+              sendMessageWithMentionViona(
                 "Please use English to draft the JD. Please make sure you use authentic English that is appropriate for the use in an official Job Description.",
               );
             } else {
@@ -494,72 +540,6 @@ const StaffChat: React.FC<IProps> = (props) => {
           },
         },
       ],
-    },
-    {
-      key: "huoqujibenxinxi-jindu-one",
-      title: t("share_basic"),
-      handler: () => openJobRequirementFormDrawer("basic_info"),
-      autoTrigger: true,
-    },
-    {
-      key: "upload-jd",
-      title: (
-        <div className={styles.bagButton}>
-          <Icon icon={<Bag />} style={{ fontSize: 24 }} />
-          {t("share_reference")}
-        </div>
-      ),
-      handler: () => {},
-      style: "block-button",
-    },
-    {
-      key: "extract-high-level-responsibility",
-      title: t("extract_high_level_responsibility"),
-      handler: async () => {
-        setSelectOptionsModalOpen(true);
-        setSelectOptionsType("high_level_responsibility");
-      },
-      style: "block-button",
-    },
-    {
-      key: "extract-day-to-day-tasks",
-      title: t("extract_day_to_day_tasks"),
-      handler: async () => {
-        setSelectOptionsModalOpen(true);
-        setSelectOptionsType("day_to_day_tasks");
-      },
-      style: "block-button",
-    },
-    {
-      key: "extract-icp",
-      title: t("extract_icp"),
-      handler: async () => {
-        setSelectOptionsModalOpen(true);
-        setSelectOptionsType("icp");
-      },
-      style: "block-button",
-    },
-    {
-      key: "success-metric",
-      title: t("extract_success_metric"),
-      handler: async () => {
-        setSelectOptionsModalOpen(true);
-        setSelectOptionsType("success-metric");
-      },
-      style: "block-button",
-    },
-    {
-      key: "salary-structure-request",
-      title: t("salary_structure"),
-      handler: () => openJobRequirementFormDrawer("salary_structure"),
-      autoTrigger: true,
-    },
-    {
-      key: "jrd-done",
-      title: t("view_jrd"),
-      ...(onNextTask
-        ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
-        : { handler: () => viewDoc?.("job-requirement") }),
     },
     {
       key: "intake-done",
@@ -576,34 +556,12 @@ const StaffChat: React.FC<IProps> = (props) => {
         : { handler: () => viewDoc?.("job-description") }),
     },
     {
-      key: "compensation-details-done",
-      title: t("view_compensation_details"),
-      handler: () => viewDoc?.("job-compensation-details"),
-    },
-    {
-      key: "outreach-done",
-      title: t("view_outreach_message"),
-      handler: () => viewDoc?.("job-outreach-message"),
-    },
-    {
-      key: "interview-plan-done",
-      title: t("view_interview_plan"),
-      handler: () => viewDoc?.("job-interview-plan"),
-    },
-    {
       key: "copy-link",
-      title: t("copy_link"),
+      title: t("invite_collaborators_cta"),
       handler: async (tag) => {
         if (tag) {
-          if (newVersion) {
-            setIsCollaboratorModalOpen(true);
-          } else {
-            await copy(
-              `${window.origin}/app/jobs/${jobId}/board?token=${
-                tokenStorage.getToken("staff") || ""
-              }&share=1`,
-            );
-            message.success(t("copied"));
+          if (isJobIntakeChat) {
+            setIsInviteCollaboratorsOpen(true);
           }
         }
       },
@@ -618,26 +576,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       },
     },
     {
-      key: "to-jd-btn",
-      title: t("draft_job_description"),
-      handler: () => changeChatType("job-description"),
-    },
-    {
-      key: "to-interview-plan-btn",
-      title: t("define_interview_plan"),
-      handler: () => changeChatType("job-interview-plan"),
-    },
-
-    {
-      key: "interview-feedback-confirm-btn",
-      title: t("confirm"),
-      handler: () => {
-        sendMessage(t("confirm"));
-      },
-      style: "button-with-text",
-    },
-
-    {
       key: "realreq",
       title: t("edit_real_requirement"),
       handler: (tag) => {
@@ -648,19 +586,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       },
       autoTrigger: true,
     },
-
-    {
-      key: "targetprof",
-      title: t("edit_target_candidate_profile"),
-      handler: (tag) => {
-        setJrdTargetCandidateProfileFormValue(tag?.content);
-        setShowJrdTargetCandidateProfileForm(true);
-        messageListScrollTopRef.current =
-          document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
-      },
-      autoTrigger: true,
-    },
-
     {
       key: "refined-jrd",
       style: "hidden",
@@ -759,6 +684,9 @@ const StaffChat: React.FC<IProps> = (props) => {
       const nextWaitingType = (data.waiting_type ?? "") as TWaitingType;
       setWaitingType(nextWaitingType);
       setIsLoading(isLoading);
+      if (isJobIntakeChat) {
+        setMemberships(data.memberships ?? []);
+      }
 
       if (nextWaitingType === "waiting_for_jd") {
         showJdProgressRef.current = true;
@@ -775,22 +703,6 @@ const StaffChat: React.FC<IProps> = (props) => {
         return;
       }
 
-      // if (chatType === "jobRequirementDoc") {
-      //   const tagPrograss = {
-      //     "cddreq-done": 1,
-      //     "sourcing-done": 2,
-      //   };
-
-      //   let progress = 0;
-      //   messageHistory.forEach((message) => {
-      //     (message.extraTags ?? []).forEach((tag) => {
-      //       if (Object.keys(tagPrograss).includes(tag.name)) {
-      //         progress = tagPrograss[tag.name as keyof typeof tagPrograss];
-      //       }
-      //     });
-      //   });
-      //   setJrdProgress(progress);
-      // }
       // 自动执行标签逻辑
       const lastMessage = messageHistory[messageHistory.length - 1];
       if (lastMessage) {
@@ -863,25 +775,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   };
 
-  const openSurvey = async () => {
-    window.open(SurveyLink, "popup", "width=1000,height=800");
-  };
-
-  const getNextStepsExtraTags = (job: IJob): TExtraTag[] => {
-    if (!job) return [];
-
-    return [
-      !job.jd_doc_id && {
-        name: `to-jd-btn`,
-        content: "",
-      },
-      !job.interview_plan_doc_id && {
-        name: `to-interview-plan-btn`,
-        content: "",
-      },
-    ].filter(Boolean) as TExtraTag[];
-  };
-
   const formatMessages = (
     messages: TMessageFromApi[],
     job?: IJob,
@@ -890,7 +783,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     const resultMessages: TMessage[] = [];
     let intakeModeMessageInserted = false;
 
-    messages.forEach((item, index) => {
+    messages.forEach((item) => {
       const hideForRoles = item.content.metadata.hide_for_roles ?? [];
       // 过滤对该角色隐藏的消息
       if ((hideForRoles.length && share) || hideForRoles.includes("staff"))
@@ -931,24 +824,6 @@ const StaffChat: React.FC<IProps> = (props) => {
         item.content.metadata.message_sub_type === "error"
       ) {
         const extraTags = item.content.metadata.extra_tags || [];
-        // 确认按钮
-        if (
-          chatType === "jobInterviewFeedback" &&
-          index === messages.length - 1 &&
-          item.content.role === "assistant" &&
-          !messages.find(
-            (item) =>
-              !!item.content.metadata.extra_tags?.find(
-                (item) => item.name === "current-round-evaluation",
-              ),
-          )
-        ) {
-          extraTags.push({
-            name: "interview-feedback-confirm-btn",
-            content: "",
-          });
-        }
-
         resultMessages.push({
           id: item.id.toString(),
           role: item.content.role === "assistant" ? "ai" : "user",
@@ -958,51 +833,20 @@ const StaffChat: React.FC<IProps> = (props) => {
           messageType: item.content.metadata.message_type || "normal",
           messageSubType: item.content.metadata.message_sub_type || "normal",
           extraTags: extraTags,
+          senderMembershipId: item.content.sender_membership_id,
+          senderName: item.content.sender_name,
+          mentions: item.content.mentions,
         });
-
-        if (mode === "utils" && job) {
-          // 下一步 按钮
-          (item.content.metadata.extra_tags ?? []).forEach((tag) => {
-            (
-              [
-                "jd-done",
-                "interview-plan-done",
-                "jrd-done",
-                "intake-done",
-              ] as TDoneTag[]
-            ).forEach((step) => {
-              if (step === tag.name) {
-                const nextExtraTags = getNextStepsExtraTags(job);
-                if (nextExtraTags.length > 0) {
-                  resultMessages.push({
-                    id: `${item.id.toString()}-${step}-btn`,
-                    role: "ai",
-                    content: t("jrd_next_task"),
-                    updated_at: item.updated_at,
-                    messageType: "system",
-                    extraTags: nextExtraTags,
-                  });
-                }
-              }
-            });
-          });
-        }
       }
     });
 
     return resultMessages;
   };
 
-  const sendJobRequirementForm = async (JobRequirementFormMessage: string) => {
-    const { code } = await Post(formatUrl(`/api/jobs/${jobId}/document`), {
-      type: jobRequirementFormType,
-      content: JobRequirementFormMessage,
+  const sendMessageWithMentionViona = async (rawMessage: string) => {
+    sendMessage(rawMessage, {
+      mentions: groupChatMode ? [MENTION_VIONA_ID] : undefined,
     });
-    if (code === 0) {
-      sendMessage(JobRequirementFormMessage);
-    } else {
-      message.error(t("send_role_overview_failed"));
-    }
   };
 
   const sendMessage = async (
@@ -1015,38 +859,68 @@ const StaffChat: React.FC<IProps> = (props) => {
         hide_for_roles?: ("staff" | "coworker" | "candidate" | "trial_user")[];
       };
       hide?: boolean;
+      mentions?: number[];
     },
   ) => {
-    if (isLoading) return;
+    const mentions = options?.mentions ?? [];
+    const willInvokeLlm = !groupChatMode || mentionsIncludeViona(mentions);
+
+    if (isLoading && (!groupChatMode || willInvokeLlm)) {
+      if (groupChatMode && willInvokeLlm) {
+        message.warning(t("cannot_mention_viona_while_thinking"));
+      }
+      return;
+    }
 
     const { voice_payload_id, metadata, hide } = options ?? {};
     const formattedMessage = rawMessage.trim();
     needScrollToBottom.current = true;
-    setMessages([
-      ...messages,
-      ...(hide
-        ? []
-        : [
-            {
-              id: "fake_user_id",
-              role: "user" as const,
-              content: formattedMessage,
-              updated_at: dayjs().format(datetimeFormat),
-            },
-          ]),
-      {
-        id: "fake_ai_id",
-        role: "ai",
-        content: "",
-        updated_at: dayjs().format(datetimeFormat),
-      },
-    ]);
-    setIsLoading(true);
+
+    const optimisticUser = hide
+      ? []
+      : [
+          {
+            id: `fake_user_${Date.now()}`,
+            role: "user" as const,
+            content: formattedMessage,
+            updated_at: dayjs().format(datetimeFormat),
+            mentions,
+          },
+        ];
+
+    if (willInvokeLlm) {
+      setMessages([
+        ...messages,
+        ...optimisticUser,
+        {
+          id: "fake_ai_id",
+          role: "ai",
+          content: "",
+          updated_at: dayjs().format(datetimeFormat),
+        },
+      ]);
+      setIsLoading(true);
+      loadingStartedAtRef.current = dayjs();
+    } else {
+      // 群聊未 @Viona：用户消息插在 thinking 前（若有）
+      const withoutFakeAi = messages.filter((m) => m.id !== "fake_ai_id");
+      const next = [...withoutFakeAi, ...optimisticUser];
+      if (isLoading) {
+        next.push({
+          id: "fake_ai_id",
+          role: "ai",
+          content: "",
+          updated_at: dayjs().format(datetimeFormat),
+        });
+      }
+      setMessages(next);
+    }
 
     const { code } = await Post(apiMapping[chatType as TChatType].send, {
       content: formattedMessage,
       voice_payload_id: voice_payload_id,
       metadata: metadata,
+      mentions,
     });
 
     // 仅限额时报错。其它情况，不用报错。轮询会保证最终结果一致
@@ -1054,6 +928,8 @@ const StaffChat: React.FC<IProps> = (props) => {
       setIsLoading(false);
       setMessages(messages);
       message.error(t("quota_exhausted"));
+    } else if (!willInvokeLlm) {
+      fetchMessages();
     }
   };
 
@@ -1086,12 +962,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   };
 
   const deleteMessage = async (messageId: number) => {
-    const url =
-      chatType === "jobInterviewDesign"
-        ? `/api/jobs/${jobId}/interview_designers/${jobInterviewDesignerId}/clear_messages`
-        : chatType === "jobInterviewFeedback"
-          ? `/api/jobs/${jobId}/interview_feedbacks/${jobInterviewFeedbackId}/clear_messages`
-          : `/api/jobs/${jobId}/messages`;
+    const url = `/api/jobs/${jobId}/messages`;
 
     const { code } = await Post(url, {
       message_id: messageId,
@@ -1115,7 +986,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                 variant="filled"
                 color="default"
                 key={text}
-                onClick={() => sendMessage(text)}
+                onClick={() => sendMessageWithMentionViona(text)}
                 style={{ borderRadius: 12 }}
               >
                 <span style={{ color: "#c1c1c1" }}>→</span> {text}
@@ -1127,12 +998,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     );
   };
 
-  const basicFormVisible = mode === "standard" && showJobRequirementFormDrawer;
-  const realRequirementFormVisible =
-    mode === "standard" && showJrdRealRequirementForm;
-  const targetCandidateProfileFormVisible =
-    mode === "standard" && showJrdTargetCandidateProfileForm;
-
   return (
     <div className={styles.container}>
       <div
@@ -1140,27 +1005,12 @@ const StaffChat: React.FC<IProps> = (props) => {
           [styles.collapsed]: sideDocumentVisible,
         })}
       >
-        {/* {chatType === "jobRequirementDoc" && (
-          <JrdSteps current={jrdProgress} collapse={sideDocumentVisible} />
-        )} */}
-
         <div className={styles.chatArea}>
-          {basicFormVisible ? (
-            <JobRequirementForm
-              group={jobRequirementFormType}
-              jobId={jobId}
-              onOk={(result: string) => {
-                if (!isLoading) {
-                  sendJobRequirementForm(result);
-                  handleJobRequirementFormDrawerOpen(false);
-                }
-              }}
-            />
-          ) : realRequirementFormVisible ? (
+          {showJrdRealRequirementForm ? (
             <JrdRealRequirementForm
               onSubmit={(result: string) => {
                 if (!isLoading) {
-                  sendMessage(result);
+                  sendMessageWithMentionViona(result);
                   setShowJrdRealRequirementForm(false);
                 }
               }}
@@ -1169,35 +1019,38 @@ const StaffChat: React.FC<IProps> = (props) => {
               }}
               onAgree={() => {
                 if (!isLoading) {
-                  sendMessage(t("agree"));
+                  sendMessageWithMentionViona(t("agree"));
                   setShowJrdRealRequirementForm(false);
                 }
               }}
               initialValue={jrdRealRequirementFormValue ?? ""}
             />
-          ) : targetCandidateProfileFormVisible ? (
-            <JrdTargetCandidateProfileForm
-              initialValue={jrdTargetCandidateProfileFormValue ?? ""}
-              onSubmit={(result: string) => {
-                if (!isLoading) {
-                  sendMessage(result);
-                  setShowJrdTargetCandidateProfileForm(false);
-                }
-              }}
-              onBack={() => {
-                setShowJrdTargetCandidateProfileForm(false);
-              }}
-              onAgree={() => {
-                if (!isLoading) {
-                  sendMessage(t("agree"));
-                  setShowJrdTargetCandidateProfileForm(false);
-                }
-              }}
-            />
           ) : (
             <>
               <ChatMessageList
-                messages={messages}
+                messages={messages.map((m) => ({
+                  ...m,
+                  content: buildMentionDisplayContent(
+                    m.content,
+                    m.mentions,
+                    resolveMentionName,
+                  ),
+                }))}
+                groupLayout={isJobIntakeChat}
+                ownerName={ownerName}
+                isOwnUserMessage={(item) => {
+                  if (item.role !== "user") return false;
+                  if (isJobOwner) {
+                    return (
+                      item.senderMembershipId == null ||
+                      item.senderMembershipId === undefined
+                    );
+                  }
+                  return (
+                    myMembershipId != null &&
+                    item.senderMembershipId === myMembershipId
+                  );
+                }}
                 isLoading={isLoading}
                 className={styles.listArea}
                 childrenFunctionsRef={childrenFunctionsRef}
@@ -1269,181 +1122,62 @@ const StaffChat: React.FC<IProps> = (props) => {
                       );
                     })
                     .filter(Boolean) as TSupportTag[];
-                  const inlineButtons = visibleTags.filter(
-                    (tag) => !tag.style || tag.style === "inline-button",
-                  );
 
                   return (
-                    <>
-                      {inlineButtons.length > 0 && (
-                        <div className={styles.inlineButtonWrapper}>
-                          {inlineButtons.map((tag) => {
-                            const genButtonElement = (tag: {
-                              title?: React.ReactNode;
-                              key?: string;
-                              handler?: (tag?: TExtraTag) => void;
-                            }) => {
-                              return (
-                                <div
-                                  style={{ marginBottom: 16 }}
-                                  key={tag.key ?? (tag.title as string)}
-                                >
-                                  <Button
-                                    type="primary"
-                                    className={styles.inlineButton}
-                                    onClick={() => {
-                                      if (
-                                        SIDE_DOCUMENT_TYPES.includes(
-                                          tag.key as any,
-                                        )
-                                      ) {
-                                        sideDocumentTriggerMessageIdRef.current =
-                                          item.id;
-                                      }
-                                      const extraTag = (
-                                        item.extraTags ?? []
-                                      ).find(
-                                        (extraTag) => extraTag.name === tag.key,
-                                      );
-                                      tag.handler?.(extraTag);
-                                    }}
-                                  >
-                                    {tag.title}
-                                  </Button>
-                                </div>
-                              );
-                            };
-
-                            return tag.children
-                              ? tag.children.map((tag) => genButtonElement(tag))
-                              : genButtonElement(tag);
-                          })}
-                        </div>
-                      )}
-                      {visibleTags
-                        .filter((tag) => tag.style === "block-button")
-                        .map((tag) => (
-                          <div style={{ width: "100%" }} key={tag.key}>
-                            {tag.key === "upload-jd" ? (
-                              <Upload.Dragger
-                                beforeUpload={() => false}
-                                onChange={async (fileInfo) => {
-                                  setIsUploadingJd(true);
-                                  // 根据文件类型处理上传文件
-                                  const fileExt = (fileInfo.file.name || "")
-                                    .split(".")
-                                    .pop()
-                                    ?.toLowerCase();
-
-                                  if (fileExt === "txt" || fileExt === "md") {
-                                    // 直接读取文本内容
-                                    const reader = new FileReader();
-                                    reader.onload = function (event) {
-                                      if (event.target?.result) {
-                                        sendMessage(
-                                          event.target.result as string,
-                                        );
-                                      }
-                                    };
-                                    reader.readAsText(
-                                      fileInfo.file as unknown as Blob,
-                                      "UTF-8",
-                                    );
-                                  } else if (
-                                    fileExt === "docx" ||
-                                    fileExt === "pdf"
-                                  ) {
-                                    const formData = new FormData();
-                                    formData.append(
-                                      "file",
-                                      fileInfo.file as any,
-                                    );
-
-                                    const { code, data } = await PostFormData(
-                                      `/api/jobs/${jobId}/upload_resume_for_interview_design`,
-                                      formData,
-                                    );
-                                    if (code === 0) {
-                                      sendMessage(data.resume);
-                                    } else {
-                                      message.error(t("upload_failed"));
+                    visibleTags.length > 0 && (
+                      <div className={styles.inlineButtonWrapper}>
+                        {visibleTags.map((tag) => {
+                          const genButtonElement = (tag: {
+                            title?: React.ReactNode;
+                            key?: string;
+                            handler?: (tag?: TExtraTag) => void;
+                          }) => {
+                            return (
+                              <div
+                                style={{ marginBottom: 16 }}
+                                key={tag.key ?? (tag.title as string)}
+                              >
+                                <Button
+                                  type="primary"
+                                  className={styles.inlineButton}
+                                  onClick={() => {
+                                    if (
+                                      SIDE_DOCUMENT_TYPES.includes(
+                                        tag.key as any,
+                                      )
+                                    ) {
+                                      sideDocumentTriggerMessageIdRef.current =
+                                        item.id;
                                     }
-                                  }
+                                    const extraTag = (
+                                      item.extraTags ?? []
+                                    ).find(
+                                      (extraTag) => extraTag.name === tag.key,
+                                    );
+                                    tag.handler?.(extraTag);
+                                  }}
+                                >
+                                  {tag.title}
+                                </Button>
+                              </div>
+                            );
+                          };
 
-                                  setIsUploadingJd(false);
-                                }}
-                                showUploadList={false}
-                                accept=".docx,.pdf,.txt,.md"
-                                multiple={false}
-                                className={styles.uploadJdButton}
-                              >
-                                {isUploadingJd ? (
-                                  <>
-                                    <LoadingOutlined style={{ fontSize: 16 }} />
-                                    <div className={styles.buttonHint}>
-                                      {originalT("uploading")}
-                                    </div>
-                                  </>
-                                ) : (
-                                  tag.title
-                                )}
-                              </Upload.Dragger>
-                            ) : (
-                              <Button
-                                type="dashed"
-                                style={{
-                                  width: "100%",
-                                  height: 56,
-                                  marginBottom: 16,
-                                  background: "#e5e9ec",
-                                  color: "#3682fe",
-                                }}
-                                onClick={() => {
-                                  const extraTag = (item.extraTags ?? []).find(
-                                    (extraTag) => extraTag.name === tag.key,
-                                  );
-                                  tag.handler?.(extraTag);
-                                }}
-                              >
-                                {tag.title}
-                              </Button>
-                            )}
-                          </div>
-                        ))}
-                      {visibleTags
-                        .filter((tag) => tag.style === "button-with-text")
-                        .map((tag) => (
-                          <div
-                            key={tag.key}
-                            className={styles.tagButtonWithText}
-                          >
-                            <div>{t("interview_feedback_confirm_text")}</div>
-                            <Button
-                              variant="outlined"
-                              color="primary"
-                              style={{ marginTop: 8 }}
-                              onClick={() => {
-                                const extraTag = (item.extraTags ?? []).find(
-                                  (extraTag) => extraTag.name === tag.key,
-                                );
-                                tag.handler?.(extraTag);
-                              }}
-                            >
-                              {tag.title}
-                            </Button>
-                          </div>
-                        ))}
-                    </>
+                          return tag.children
+                            ? tag.children.map((tag) => genButtonElement(tag))
+                            : genButtonElement(tag);
+                        })}
+                      </div>
+                    )
                   );
                 }}
                 renderOperationContent={(item, isLast) => {
                   const canDelete =
-                    !!profile?.is_admin &&
+                    (isJobIntakeChat ? isJobOwner : !!profile?.is_admin) &&
                     chatType !== "jobTalentEvaluateFeedback" &&
                     chatType !== "jobJrdEdit" &&
-                    item.role === "user" &&
                     item.messageType === "normal" &&
-                    !["fake_ai_id", "fake_user_id"].includes(item.id);
+                    !item.id.startsWith("fake_");
                   // 操作区. 用户消息 &&普通类型消息 && 大模型生成 && 不是 mock 消息 && 非编辑状态
 
                   const canRetry =
@@ -1496,111 +1230,17 @@ const StaffChat: React.FC<IProps> = (props) => {
                   }}
                   isLoading={isLoading || conversationFinished}
                   disabledVoiceInput={
-                    isLoading ||
-                    conversationFinished ||
-                    showJobRequirementFormDrawer ||
-                    selectOptionsModalOpen
+                    conversationFinished || (isLoading && !groupChatMode)
                   }
                   isCollapsed={sideDocumentVisible}
                   lastMessage={lastAiMessageForVoice}
+                  enableMentions={isJobIntakeChat}
+                  mentionOptions={mentionOptions}
+                  mentionChatMode={groupChatMode ? "group" : "one_to_one"}
                 />
               </div>
             </>
           )}
-
-          {false && (
-            <FloatButton.Group>
-              <FloatButton onClick={() => openSurvey()} type="primary" />
-              {isAdmin && (
-                <>
-                  <FloatButton
-                    onClick={() => {
-                      setIsStrategyDrawerOpen(true);
-                    }}
-                    type="primary"
-                    description={t("view_strategy")}
-                  />
-
-                  <FloatButton
-                    onClick={async () => {
-                      if (confirm(t("confirm_reset_state"))) {
-                        const { code } = await Post(`/api/jobs/${jobId}`, {
-                          is_jd_exsits: "",
-                        });
-                        if (code === 0) {
-                          alert(t("reset_success"));
-                        } else {
-                          message.error(t("reset_failed"));
-                        }
-                      }
-                    }}
-                    type="primary"
-                    description={t("reset_state")}
-                  />
-                </>
-              )}
-            </FloatButton.Group>
-          )}
-
-          {mode === "utils" && (
-            <JobRequirementFormDrawer
-              open={showJobRequirementFormDrawer}
-              onClose={() => handleJobRequirementFormDrawerOpen(false)}
-              group={jobRequirementFormType}
-              onOk={(result: string) => {
-                if (!isLoading) {
-                  sendJobRequirementForm(result);
-                  handleJobRequirementFormDrawerOpen(false);
-                }
-              }}
-            />
-          )}
-
-          <Modal
-            open={selectOptionsModalOpen}
-            footer={null}
-            destroyOnClose
-            style={{
-              top: 0,
-              maxWidth: "100vw",
-              height: "100vh",
-            }}
-            width="100vw"
-            onCancel={() => setSelectOptionsModalOpen(false)}
-            title={
-              {
-                high_level_responsibility: t(
-                  "extract_high_level_responsibility",
-                ),
-                day_to_day_tasks: t("extract_day_to_day_tasks"),
-                icp: t("extract_icp"),
-                "success-metric": t("extract_success_metric"),
-              }[selectOptionsType ?? "icp"]
-            }
-            closable={false}
-            maskClosable={false}
-          >
-            {job && selectOptionsType && (
-              <div
-                style={{
-                  height: "calc(100vh - 72px)",
-                  overflow: "auto",
-                }}
-              >
-                <SelectOptionsForm
-                  job={job}
-                  type={selectOptionsType}
-                  onOk={(result) => {
-                    sendMessage(result);
-                    setSelectOptionsModalOpen(false);
-                  }}
-                  onClose={() => {
-                    setSelectOptionsModalOpen(false);
-                  }}
-                />
-              </div>
-            )}
-          </Modal>
         </div>
       </div>
 
@@ -1654,20 +1294,11 @@ const StaffChat: React.FC<IProps> = (props) => {
         </div>
       )}
 
-      <JobCollaboratorModal
-        open={isCollaboratorModalOpen}
-        onCancel={() => setIsCollaboratorModalOpen(false)}
+      <InviteCollaboratorsModal
+        open={isInviteCollaboratorsOpen}
+        onCancel={() => setIsInviteCollaboratorsOpen(false)}
         jobId={jobId}
       />
-
-      <Drawer
-        open={isStrategyDrawerOpen}
-        onClose={() => setIsStrategyDrawerOpen(false)}
-        title={t("job_requirement_strategy_title")}
-        width={800}
-      >
-        <MarkdownContainer content={job?.job_requirement_strategy_doc || ""} />
-      </Drawer>
     </div>
   );
 };

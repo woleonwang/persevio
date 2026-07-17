@@ -33,6 +33,15 @@
     }
   }
 
+  &.participant {
+    max-width: 80%;
+    .messageContent {
+      padding: 10px 16px;
+      border-radius: 12px;
+      background-color: #f3f3f3;
+    }
+  }
+
   &.lastMessage {
     margin-bottom: 100px;
   }
@@ -43,15 +52,109 @@
     border-radius: 4px;
   }
 
-  &.messageContainerBubblePadding:not(.user) {
+  &.messageContainerBubblePadding:not(.user):not(.participant) {
     padding: 10px 14px;
   }
 
-  &.messageContainerBubblePadding.user .messageContent {
+  &.messageContainerBubblePadding.user .messageContent,
+  &.messageContainerBubblePadding.participant .messageContent {
     padding: 10px 14px;
   }
 
   &.showFooter {
     width: 100%;
   }
+}
+
+.userMeta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 40px;
+  margin-bottom: 8px;
+}
+
+.userMetaTime {
+  margin-right: 12px;
+  color: #999;
+  font-size: 14px;
+}
+
+.userMetaName {
+  margin-right: 16px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.userMetaAvatar {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.collaboratorAvatar {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.collaboratorMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.collaboratorName {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.systemEventItem {
+  :global(.ant-list-item-meta) {
+    display: none;
+  }
+}
+
+.systemEvent {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin: 8px 0;
+}
+
+.systemEventLine {
+  flex: 1 1 auto;
+  height: 1px;
+  background: #f2f2f2;
+}
+
+.systemEventText {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #999;
+  letter-spacing: 0.01em;
+}
+
+.chatMention {
+  color: #3682fe;
+  font-weight: 600;
 }

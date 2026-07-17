@@ -36,6 +36,8 @@ interface IJob {
   creator_id: number;
   name: string;
   invitation_token: string;
+  /** Intake 群聊邀请链接凭证 */
+  group_chat_uuid?: string;
   /** 公开职位页、候选人侧 `/jobs/:key` 等路径使用 */
   candidate_uuid: string;
 
@@ -929,9 +931,17 @@ type TMessageFromApi = {
     content: string;
     thinking?: string;
     role: "user" | "assistant";
+    sender_membership_id?: number;
+    sender_name?: string;
+    mentions?: number[];
     metadata: {
       message_type: "" | "system" | "normal";
-      message_sub_type: "" | "error" | "normal";
+      message_sub_type:
+        | ""
+        | "error"
+        | "normal"
+        | "member-joined"
+        | "member-left";
       extra_tags: {
         name: TExtraTagName;
         content: string;
@@ -946,6 +956,18 @@ type TMessageFromApi = {
   };
 };
 
+type TJobIntakeMembership = {
+  id: number;
+  member_type: "staff" | "guest";
+  name: string;
+  staff_id?: number;
+  guest_id?: number;
+  deleted_at?: string;
+};
+
+/** mentions 哨兵：0=@Viona，-1=@Owner */
+type TMentionTargetId = number;
+
 type TMessage = {
   id: string;
   role: "ai" | "user";
@@ -953,23 +975,16 @@ type TMessage = {
   thinking?: string;
   updated_at: string;
   messageType?: "normal" | "system";
-  messageSubType?: "normal" | "error";
+  messageSubType?: "normal" | "error" | "member-joined" | "member-left";
   extraTags?: TExtraTag[];
   payloadId?: number;
   duration?: number;
+  senderMembershipId?: number;
+  senderName?: string;
+  mentions?: number[];
 };
 
-type TEditableDocumentType =
-  | "context"
-  | "realities"
-  | "responsibilities"
-  | "icp"
-  | "role-essence"
-  | "cdd-requirement"
-  | "cdd-profile"
-  | "sourcing"
-  | "jrd"
-  | "jd";
+type TEditableDocumentType = "jd";
 
 type TSupportTag = {
   key: TExtraTagName;
@@ -981,7 +996,7 @@ type TSupportTag = {
     handler: () => void;
   }[];
   autoTrigger?: boolean;
-  style?: "inline-button" | "block-button" | "button-with-text" | "hidden";
+  style?: "hidden";
 };
 
 type TLinkedinProfile = {

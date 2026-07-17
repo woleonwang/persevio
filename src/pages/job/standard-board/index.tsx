@@ -1,4 +1,4 @@
-import { Breadcrumb, FloatButton, message, Spin } from "antd";
+import { Breadcrumb, Button, FloatButton, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import {
@@ -8,10 +8,15 @@ import {
 } from "@ant-design/icons";
 import classnames from "classnames";
 
+import { observer } from "mobx-react-lite";
 import useJob from "@/hooks/useJob";
+import useStaffs from "@/hooks/useStaffs";
 
 import styles from "./style.module.less";
 import StaffChat from "@/components/StaffChat";
+import IntakeMembersHeader from "@/components/StaffChat/components/IntakeMembersHeader";
+import Icon from "@/components/Icon";
+import UserPlus from "@/assets/icons/user-plus";
 import globalStore from "@/store/global";
 import { addQuery, getQuery, infoModal } from "@/utils";
 import JobDetailsForAts from "@/components/JobDetailsForAts";
@@ -23,19 +28,32 @@ import { storage, StorageKey } from "@/utils/storage";
 
 type TJobState = "roleBasics" | "roleBriefing" | "jrd" | "jd" | "board";
 
-const JobBoard = () => {
+const JobBoard = observer(() => {
   const { job, fetchJob } = useJob();
+  const { staffs } = useStaffs();
 
   const { t: originalT } = useTranslation();
   const t = (key: string) => originalT(`job_board.${key}`);
+  const tChat = (key: string) => originalT(`chat.${key}`);
 
   const [jobState, setJobState] = useState<TJobState>();
+  const [intakeMemberships, setIntakeMemberships] = useState<
+    TJobIntakeMembership[]
+  >([]);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [membershipsRefreshSignal, setMembershipsRefreshSignal] = useState(0);
 
-  const { setMenuCollapse, fetchJobs, isAdmin } = globalStore;
+  const { setMenuCollapse, fetchJobs, isAdmin, email } = globalStore;
 
   const isFromAdmin = !!storage.get(StorageKey.ADMIN_TOKEN);
 
   const isOld = getQuery("old") === "1";
+
+  const ownerStaff = staffs.find((s) => s.id === job?.staff_id);
+  const currentStaff = staffs.find((s) => s.account?.username === email);
+  const isJobOwner =
+    !!job && !!currentStaff && currentStaff.id === job.staff_id;
+  const ownerName = ownerStaff?.name || "Owner";
 
   useEffect(() => {
     if (job) {
@@ -120,45 +138,87 @@ const JobBoard = () => {
   const currentIndex =
     stepItems.findIndex((step) => step.key === jobState) ?? 0;
 
+  const renderBreadcrumb = () => (
+    <Breadcrumb
+      items={stepItems}
+      itemRender={(item) => {
+        const itemIndex = stepItems.findIndex((step) => step.key === item.key);
+        let status: "done" | "process" | "wait" = "wait";
+        if (itemIndex < currentIndex) {
+          status = "done";
+        } else if (currentIndex === itemIndex) {
+          status = "process";
+        }
+        return (
+          <div className="flex-center">
+            {status === "done" && (
+              <CheckCircleFilled
+                style={{
+                  color: "rgba(54, 198, 141, 1)",
+                  fontSize: 18,
+                  marginRight: 8,
+                }}
+              />
+            )}
+            <span
+              className={classnames(styles.stepItem, styles[status])}
+              dangerouslySetInnerHTML={{ __html: item.title as string }}
+            />
+          </div>
+        );
+      }}
+      separator={<RightOutlined />}
+    />
+  );
+
   return (
     <div className={styles.container}>
       {jobState !== "board" && (
-        <div className={styles.header}>
-          <div className={styles.title}>{job.name}</div>
-          <div className={styles.right}>
-            <Breadcrumb
-              items={stepItems}
-              itemRender={(item) => {
-                const itemIndex = stepItems.findIndex(
-                  (step) => step.key === item.key,
-                );
-                let status: "done" | "process" | "wait" = "wait";
-                if (itemIndex < currentIndex) {
-                  status = "done";
-                } else if (currentIndex === itemIndex) {
-                  status = "process";
-                }
-                return (
-                  <div className="flex-center">
-                    {status === "done" && (
-                      <CheckCircleFilled
-                        style={{
-                          color: "rgba(54, 198, 141, 1)",
-                          fontSize: 18,
-                          marginRight: 8,
-                        }}
+        <div
+          className={classnames(styles.header, {
+            [styles.headerIntake]: jobState === "jrd",
+          })}
+        >
+          {jobState === "jrd" ? (
+            <>
+              <div className={styles.headerLeft}>
+                <div className={styles.title}>{job.name}</div>
+                <div className={styles.breadcrumbRow}>{renderBreadcrumb()}</div>
+              </div>
+              <div className={styles.headerRight}>
+                <IntakeMembersHeader
+                  jobId={jobSeg}
+                  chatTypePath="JOB_REQUIREMENT"
+                  memberships={intakeMemberships}
+                  ownerName={ownerName}
+                  ownerEmail={ownerStaff?.account?.username || ""}
+                  isOwner={isJobOwner}
+                  onChanged={() => setMembershipsRefreshSignal((k) => k + 1)}
+                />
+                {isJobOwner && (
+                  <Button
+                    type="primary"
+                    className={styles.inviteBtn}
+                    icon={
+                      <Icon
+                        icon={<UserPlus />}
+                        className={styles.inviteIcon}
+                        style={{ fontSize: 20 }}
                       />
-                    )}
-                    <span
-                      className={classnames(styles.stepItem, styles[status])}
-                      dangerouslySetInnerHTML={{ __html: item.title as string }}
-                    />
-                  </div>
-                );
-              }}
-              separator={<RightOutlined />}
-            />
-          </div>
+                    }
+                    onClick={() => setInviteOpen(true)}
+                  >
+                    {tChat("invite_btn")}
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.title}>{job.name}</div>
+              <div className={styles.right}>{renderBreadcrumb()}</div>
+            </>
+          )}
         </div>
       )}
       <div className={styles.body}>
@@ -184,7 +244,10 @@ const JobBoard = () => {
             jobId={jobSeg}
             onNextTask={() => setJobState("jd")}
             key={`jrd-${job.id}`}
-            newVersion
+            onMembershipsChange={setIntakeMemberships}
+            inviteCollaboratorsOpen={inviteOpen}
+            onInviteCollaboratorsOpenChange={setInviteOpen}
+            membershipsRefreshSignal={membershipsRefreshSignal}
           />
         )}
         {jobState === "jd" && (
@@ -195,7 +258,6 @@ const JobBoard = () => {
               postJob();
             }}
             key={`jd-${job.id}`}
-            newVersion
           />
         )}
         {jobState === "board" && (
@@ -214,6 +276,6 @@ const JobBoard = () => {
       )}
     </div>
   );
-};
+});
 
 export default JobBoard;

@@ -2,43 +2,70 @@
 @hover-button-bg-color: #edf2ff;
 
 .inputAreaContainer {
-  border: 1px solid rgba(246, 246, 246, 1);
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e4e4e5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   margin-top: 20px;
   display: flex;
-  border-radius: 16px;
-  padding: 7px 8px;
+  border-radius: 44px;
+  padding: 10px 11px 10px 24px;
   align-items: center;
+  max-width: 800px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  min-height: 60px;
+
+  &.intakeMode {
+    padding-left: 10px;
+  }
+
+  &.hasMentionTokens {
+    border-radius: 24px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
 }
 
 .inputPanel {
   flex: auto;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .audioInputContainer {
   flex: auto;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  position: relative;
+
+  &.hasMentionTokens {
+    padding-top: 48px;
+  }
+
+  .audioInputRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+  }
 
   .left {
     flex: auto;
     display: flex;
     align-items: center;
+    min-width: 0;
   }
 
   .right {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .divider {
-    width: 1px;
-    height: 32px;
-    background-color: rgba(235, 236, 238, 1);
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .voiceInputHint {
@@ -64,67 +91,371 @@
   }
 }
 
-.textInputContainer {
-  flex: auto;
+.mentionTriggerBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: #f6f6f6;
+  cursor: pointer;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #666;
 
-  .textInputLeft {
-    flex: auto;
-    position: relative;
-  }
-
-  .textInputArea {
-    min-height: 48px !important;
-    flex: 1;
-    resize: none;
-    padding-right: 45px;
-  }
-
-  .sendButton {
-    position: absolute;
-    right: 4px;
-    bottom: 4px;
-    width: 40px;
-    height: 40px;
-    background-color: @primary-color;
-    color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &.disabled {
-      background-color: #999;
-    }
+  &:hover {
+    background: #eeeeee;
   }
 }
 
-.button {
-  margin: 0 22px;
+.iconBtn {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  margin: 0;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  flex-shrink: 0;
+  color: #666;
+  background: transparent;
 
   &:hover {
     background-color: #f6f6f6;
   }
 }
 
+.sendButton {
+  width: 40px;
+  height: 40px;
+  background-color: @primary-color;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: #5f9bfd;
+  }
+
+  &.disabled {
+    background-color: #999;
+    cursor: not-allowed;
+  }
+
+  &.textModeBtn {
+    background-color: @primary-color;
+  }
+}
+
+.mentionDropdown {
+  width: 800px;
+  padding: 0;
+
+  :global {
+    .ant-dropdown-menu {
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+    }
+  }
+}
+
+.mentionPanel {
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #f2f2f2;
+  border-radius: 16px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+  padding: 0 5px 4px;
+  box-sizing: border-box;
+}
+
+.mentionPanelTitle {
+  height: 49px;
+  padding: 5px 14px 0;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  color: #333;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+}
+
+.mentionMenu {
+  max-height: 250px;
+  overflow: auto;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+
+  :global {
+    .ant-menu-item {
+      height: auto !important;
+      line-height: normal !important;
+      margin: 0 0 4px !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+      width: 100% !important;
+
+      &:hover,
+      &.ant-menu-item-selected,
+      &.ant-menu-item-active {
+        background: #f6f6f6 !important;
+      }
+    }
+
+    .ant-menu-title-content {
+      width: 100%;
+    }
+  }
+}
+
+.mentionOption {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  gap: 12px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.mentionAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.mentionIdentity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mentionOptionName {
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.mentionRole {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 2px 8px;
+  border: 1px solid #e4e4e5;
+  border-radius: 999px;
+  background: #f6f6f6;
+  color: #999;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.roleYou,
+.roleOwner {
+  color: #26bc5d;
+  background: #f2ffea;
+  border-color: rgba(38, 188, 93, 0.2);
+}
+
+.roleAi {
+  color: #3682fe;
+  background: #edf2ff;
+  border-color: rgba(54, 130, 254, 0.2);
+}
+
+.roleHiringManager {
+  color: #f9a930;
+  background: #fff7e8;
+  border-color: rgba(249, 169, 48, 0.2);
+}
+
+.roleRecruiter {
+  color: #3682fe;
+  background: #edf2ff;
+  border-color: rgba(54, 130, 254, 0.2);
+}
+
+.roleGuest {
+  color: #999;
+  background: #f6f6f6;
+  border-color: #e4e4e5;
+}
+
+.mentionEmail {
+  margin-left: auto;
+  color: #999;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.mentionEmpty {
+  padding: 12px 14px;
+  color: #999;
+  font-size: 13px;
+}
+
+.mentionPills {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.mentionPill {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 8px 12px;
+  border-radius: 44px;
+  font-size: 16px;
+  line-height: 24px;
+  box-sizing: border-box;
+
+  &:nth-child(3n + 1) {
+    color: #3682fe;
+    background: #edf2ff;
+  }
+
+  &:nth-child(3n + 2) {
+    color: #8a4ef9;
+    background: #f8f4ff;
+  }
+
+  &:nth-child(3n) {
+    color: #26bc5d;
+    background: #f2ffea;
+  }
+}
+
+.mentionPillClose {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: inherit;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.56);
+  }
+}
+
+.textInputContainer {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  min-width: 0;
+
+  &.hasMentionTokens {
+    padding-top: 48px;
+  }
+
+  .textInputRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .textInputLeft {
+    flex: auto;
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .textInputArea {
+    flex: 1;
+    min-width: 0;
+    resize: none;
+    padding: 8px 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    min-height: 24px !important;
+
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    :global {
+      .ant-input {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding-left: 0;
+        padding-right: 0;
+        resize: none;
+
+        &:focus {
+          border: none !important;
+          box-shadow: none !important;
+        }
+      }
+    }
+  }
+}
+
 .volumeHistoryContainer {
-  // width: 290px;
   display: flex;
   gap: 2px;
   align-items: center;
   padding: 0 16px;
   border-radius: 12px;
-  height: 50px;
+  height: 40px;
   background-color: rgba(245, 246, 249, 1);
   border: 1px solid rgba(191, 200, 215, 0.5);
 
@@ -225,40 +556,32 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            /* 初始颜色，使用 rgba 使其透明 */
             background-color: rgba(0, 123, 255, 0.7);
-            /* 应用动画 */
             animation: ripple-spread 2s infinite ease-out;
             z-index: 5;
           }
 
           &::before {
-            /* 动画延迟，使波纹错开 */
             animation-delay: 0s;
           }
 
           &::after {
-            /* 动画延迟，使第二层波纹在第一层之后出现 */
             animation-delay: 1s;
           }
 
-          /* 定义波纹扩散的关键帧动画 */
           @keyframes ripple-spread {
             0% {
-              /* 初始状态：不透明，尺寸为中心圆大小 */
               transform: scale(1);
               opacity: 0.7;
             }
             100% {
-              /* 结束状态：尺寸放大到最大，完全透明 */
-              transform: scale(1.5); /* 放大倍数，可调整波纹扩散范围 */
+              transform: scale(1.5);
               opacity: 0;
             }
           }
         }
 
         &.transcribing {
-          /* 创建转动的环形边框 */
           &::before {
             content: "";
             position: absolute;
@@ -267,16 +590,11 @@
             border-radius: 50%;
             top: -4px;
             left: -4px;
-
-            /* 关键：创建透明边框，只在右上角有一个颜色块 */
             border: 2px solid transparent;
-            border-top-color: #007bff; /* 顶部/开始颜色 */
-
-            /* 应用动画 */
+            border-top-color: #007bff;
             animation: spin 1.5s linear infinite;
           }
 
-          /* 定义旋转的关键帧动画 */
           @keyframes spin {
             from {
               transform: rotate(0deg);
@@ -291,20 +609,14 @@
   }
 
   .textInputContainer {
-    padding: 0 20px;
+    padding: 4px;
     border: 1px solid rgba(246, 246, 246, 1);
     box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.05);
-    padding: 4px;
     border-radius: 12px;
-  }
-
-  .button {
-    margin: 0 10px;
   }
 
   .textInputArea {
     font-size: 12px;
-    padding-right: 40px;
   }
 }
 

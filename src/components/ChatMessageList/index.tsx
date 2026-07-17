@@ -8,6 +8,10 @@ import percyHiFace from "@/assets/percy-hi-face.png";
 import VionaAvatar from "@/assets/viona-avatar.png";
 import MarkdownContainer from "../MarkdownContainer";
 import styles from "./style.module.less";
+import {
+  getAvatarColor,
+  getNameInitials,
+} from "../StaffChat/intakeCollabUtils";
 
 const ASSISTANT_AVATAR_CONFIG: Record<
   TAssistantPerson,
@@ -40,6 +44,10 @@ interface IProps {
   streamingMessage?: string;
   preview?: boolean;
   footerContent?: ReactNode;
+  /** Job Intake 群聊：他人消息左侧展示 */
+  groupLayout?: boolean;
+  isOwnUserMessage?: (item: TMessage) => boolean;
+  ownerName?: string;
 }
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
@@ -119,6 +127,9 @@ const ChatMessageList = (props: IProps) => {
     assistantPerson = "viona",
     transparentBackground = false,
     footerContent,
+    groupLayout = false,
+    ownerName = "You",
+    isOwnUserMessage,
   } = props;
 
   const assistant = ASSISTANT_AVATAR_CONFIG[assistantPerson];
@@ -245,6 +256,114 @@ const ChatMessageList = (props: IProps) => {
         renderItem={(item, index) => {
           const isLast = index === messages.length - 1;
           const isFirst = index === 0;
+          const isSystemEvent = item.messageType === "system";
+          const isOwn =
+            item.role === "user" && (isOwnUserMessage?.(item) ?? true);
+          const isOtherParticipant = item.role === "user" && !isOwn;
+          const senderName = item.senderName ?? ownerName;
+          const otherKey = String(item.senderMembershipId ?? senderName);
+
+          const renderBody = () => (
+            <div
+              className={classnames(styles.messageContainer, {
+                [styles.lastMessage]: index === messages.length - 1,
+                [styles.user]: isOwn,
+                [styles.participant]: isOtherParticipant,
+                [styles.messageContainerBubblePadding]: transparentBackground,
+                [styles.showFooter]: isLast && !!footerContent,
+              })}
+              style={{ fontSize }}
+            >
+              {!groupLayout && showUserTimestamp && isOwn && (
+                <div
+                  className={styles.timestamp}
+                  style={{ textAlign: "right", marginBottom: 4 }}
+                >
+                  {dayjs(item.updated_at).format(datetimeFormat)}
+                </div>
+              )}
+              {groupLayout && isOwn && (
+                <div className={styles.userMeta}>
+                  <span className={styles.userMetaTime}>
+                    {dayjs(item.updated_at).format("h:mma")}
+                  </span>
+                  <span className={styles.userMetaName}>{senderName}</span>
+                  <span
+                    className={styles.userMetaAvatar}
+                    style={{
+                      background: getAvatarColor(senderName),
+                    }}
+                  >
+                    {getNameInitials(senderName)}
+                  </span>
+                </div>
+              )}
+              <div className={styles.messageContent}>
+                {item.id === "fake_ai_id" ? (
+                  streamingMessage ? (
+                    <StreamingMarkdownRenderer content={streamingMessage} />
+                  ) : (
+                    <p>
+                      <span ref={loadingDotsNodeRef}>.</span>
+                      <span ref={loadingThinkingNodeRef} />
+                    </p>
+                  )
+                ) : (
+                  <MarkdownContainer
+                    content={
+                      item.messageSubType === "error"
+                        ? t("error_message")
+                        : item.content
+                    }
+                    components={{
+                      span: ({ className, ...spanProps }) => {
+                        if (
+                          typeof className === "string" &&
+                          className.includes("chatMention")
+                        ) {
+                          return (
+                            <span
+                              {...spanProps}
+                              className={classnames(
+                                className,
+                                styles.chatMention,
+                              )}
+                            />
+                          );
+                        }
+                        return <span className={className} {...spanProps} />;
+                      },
+                    }}
+                  />
+                )}
+                {renderTagsContent?.(item)}
+              </div>
+              {renderOperationContent?.(item, isLast, isFirst)}
+              {isLast ? footerContent : null}
+            </div>
+          );
+
+          if (isSystemEvent) {
+            return (
+              <List.Item
+                ref={(node) => {
+                  if (node) {
+                    messageRefsRef.current.set(item.id, node);
+                  } else {
+                    messageRefsRef.current.delete(item.id);
+                  }
+                }}
+                key={item.id}
+                className={styles.systemEventItem}
+              >
+                <div className={styles.systemEvent} role="status">
+                  <span className={styles.systemEventLine} aria-hidden />
+                  <span className={styles.systemEventText}>{item.content}</span>
+                  <span className={styles.systemEventLine} aria-hidden />
+                </div>
+              </List.Item>
+            );
+          }
 
           return (
             <List.Item
@@ -260,7 +379,7 @@ const ChatMessageList = (props: IProps) => {
                   ? {
                       minHeight: preview
                         ? 0
-                        : (listContainerRef.current?.clientHeight ?? 80) - 8, // 32 is container's padding
+                        : (listContainerRef.current?.clientHeight ?? 80) - 8,
                       alignItems: "flex-start",
                     }
                   : {}),
@@ -269,7 +388,7 @@ const ChatMessageList = (props: IProps) => {
             >
               <List.Item.Meta
                 avatar={
-                  item.role === "ai" && (
+                  item.role === "ai" ? (
                     <Avatar
                       style={{
                         border: "none",
@@ -294,64 +413,36 @@ const ChatMessageList = (props: IProps) => {
                         />
                       }
                     />
-                  )
+                  ) : isOtherParticipant ? (
+                    <span
+                      className={styles.collaboratorAvatar}
+                      style={{ background: getAvatarColor(otherKey) }}
+                      aria-label={senderName}
+                    >
+                      {getNameInitials(senderName)}
+                    </span>
+                  ) : null
                 }
                 title={
-                  item.role === "ai" && (
+                  item.role === "ai" ? (
                     <div style={{ marginTop: 8 }}>
                       <span style={{ fontSize: 18 }}>{assistant.name}</span>
                       <span className={styles.timestamp}>
-                        {dayjs(item.updated_at).format(datetimeFormat)}
+                        {dayjs(item.updated_at).format("h:mma")}
                       </span>
                     </div>
-                  )
-                }
-                description={
-                  <div
-                    className={classnames(styles.messageContainer, {
-                      [styles.lastMessage]: index === messages.length - 1,
-                      [styles.user]: item.role === "user",
-                      [styles.messageContainerBubblePadding]:
-                        transparentBackground,
-                      [styles.showFooter]: isLast && !!footerContent,
-                    })}
-                    style={{ fontSize }}
-                  >
-                    {showUserTimestamp && item.role === "user" && (
-                      <div
-                        className={styles.timestamp}
-                        style={{ textAlign: "right", marginBottom: 4 }}
-                      >
-                        {dayjs(item.updated_at).format(datetimeFormat)}
-                      </div>
-                    )}
-                    <div className={styles.messageContent}>
-                      {item.id === "fake_ai_id" ? (
-                        streamingMessage ? (
-                          <StreamingMarkdownRenderer
-                            content={streamingMessage}
-                          />
-                        ) : (
-                          <p>
-                            <span ref={loadingDotsNodeRef}>.</span>
-                            <span ref={loadingThinkingNodeRef} />
-                          </p>
-                        )
-                      ) : (
-                        <MarkdownContainer
-                          content={
-                            item.messageSubType === "error"
-                              ? t("error_message")
-                              : item.content
-                          }
-                        />
-                      )}
-                      {renderTagsContent?.(item)}
+                  ) : isOtherParticipant ? (
+                    <div className={styles.collaboratorMeta}>
+                      <span className={styles.collaboratorName}>
+                        {senderName}
+                      </span>
+                      <span className={styles.timestamp}>
+                        {dayjs(item.updated_at).format("h:mma")}
+                      </span>
                     </div>
-                    {renderOperationContent?.(item, isLast, isFirst)}
-                    {isLast ? footerContent : null}
-                  </div>
+                  ) : null
                 }
+                description={renderBody()}
               />
             </List.Item>
           );
