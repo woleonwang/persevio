@@ -134,17 +134,6 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
               .
             </Checkbox>
           </div>
-          {!!jobId && (
-            <div className={styles.step1SignInHint}>
-              Already have an account?{" "}
-              <a
-                href={`/signin-candidate?job_id=${encodeURIComponent(jobId)}`}
-              >
-                Sign in
-              </a>{" "}
-              to continue
-            </div>
-          )}
         </div>
       }
     >
@@ -162,6 +151,15 @@ const Step1Contact: React.FC<TStep1ContactProps> = ({
       />
 
       <div className={styles.formSection}>
+        {!!jobId && (
+          <div className={styles.step1SignInHint}>
+            Already have an account?{" "}
+            <a href={`/signin-candidate?job_id=${encodeURIComponent(jobId)}`}>
+              Sign in
+            </a>{" "}
+            to continue
+          </div>
+        )}
         <div className={styles.nameRow}>
           <div className={styles.formField}>
             <div className={styles.fieldLabel}>
