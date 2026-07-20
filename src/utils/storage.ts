@@ -8,6 +8,10 @@ export enum StorageKey {
   COWORKER_TOKEN = "coworker_token",
   TRIAL_USER_UUID = "trial_user_uuid",
   ADMIN_TOKEN = "admin_token",
+  /** 当前活跃 Guest session_token（供 /api/guest 请求） */
+  GUEST_TOKEN = "guest_token",
+  /** group_chat_uuid -> guest session 元数据 */
+  GUEST_SESSIONS = "guest_sessions",
 
   // 会话相关
   SESSION_ID = "sessionId",
@@ -229,7 +233,12 @@ export const tokenStorage = {
    */
   setToken: (
     token: string,
-    role: "staff" | "candidate" | "coworker" | "trial_user" = "staff",
+    role:
+      | "staff"
+      | "candidate"
+      | "coworker"
+      | "trial_user"
+      | "guest" = "staff",
     expiresIn?: number,
   ) => {
     const keyMap = {
@@ -237,6 +246,7 @@ export const tokenStorage = {
       candidate: StorageKey.CANDIDATE_TOKEN,
       coworker: StorageKey.COWORKER_TOKEN,
       trial_user: StorageKey.TRIAL_USER_UUID,
+      guest: StorageKey.GUEST_TOKEN,
     };
     // Token 默认 7 天过期，但为了兼容，先不设置过期时间
     // 如果传入了 expiresIn，则使用新格式；否则使用旧格式（直接字符串）
@@ -252,7 +262,13 @@ export const tokenStorage = {
    * 获取 token
    */
   getToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" | "admin" = "staff",
+    role:
+      | "staff"
+      | "candidate"
+      | "coworker"
+      | "trial_user"
+      | "admin"
+      | "guest" = "staff",
   ): string | null => {
     const keyMap = {
       staff: StorageKey.TOKEN,
@@ -260,6 +276,7 @@ export const tokenStorage = {
       coworker: StorageKey.COWORKER_TOKEN,
       trial_user: StorageKey.TRIAL_USER_UUID,
       admin: StorageKey.ADMIN_TOKEN,
+      guest: StorageKey.GUEST_TOKEN,
     };
     const result = storage.get<string>(keyMap[role]);
     // 确保返回字符串类型
@@ -270,7 +287,13 @@ export const tokenStorage = {
    * 移除 token
    */
   removeToken: (
-    role: "staff" | "candidate" | "coworker" | "trial_user" | "admin" = "staff",
+    role:
+      | "staff"
+      | "candidate"
+      | "coworker"
+      | "trial_user"
+      | "admin"
+      | "guest" = "staff",
   ) => {
     const keyMap = {
       staff: StorageKey.TOKEN,
@@ -278,6 +301,7 @@ export const tokenStorage = {
       coworker: StorageKey.COWORKER_TOKEN,
       trial_user: StorageKey.TRIAL_USER_UUID,
       admin: StorageKey.ADMIN_TOKEN,
+      guest: StorageKey.GUEST_TOKEN,
     };
     return storage.remove(keyMap[role]);
   },
@@ -290,5 +314,47 @@ export const tokenStorage = {
     storage.remove(StorageKey.CANDIDATE_TOKEN);
     storage.remove(StorageKey.COWORKER_TOKEN);
     storage.remove(StorageKey.TRIAL_USER_UUID);
+    storage.remove(StorageKey.GUEST_TOKEN);
+  },
+};
+
+export type TGuestSession = {
+  sessionToken: string;
+  guestId: number;
+  membershipId: number;
+  invitationToken: string;
+  jobName?: string;
+  ownerName?: string;
+};
+
+export const guestSessionStorage = {
+  getAll: (): Record<string, TGuestSession> => {
+    return storage.get<Record<string, TGuestSession>>(StorageKey.GUEST_SESSIONS) ?? {};
+  },
+
+  get: (groupChatUuid: string): TGuestSession | null => {
+    return guestSessionStorage.getAll()[groupChatUuid] ?? null;
+  },
+
+  set: (groupChatUuid: string, session: TGuestSession) => {
+    const all = guestSessionStorage.getAll();
+    all[groupChatUuid] = session;
+    storage.set(StorageKey.GUEST_SESSIONS, all);
+    tokenStorage.setToken(session.sessionToken, "guest");
+  },
+
+  remove: (groupChatUuid: string) => {
+    const all = guestSessionStorage.getAll();
+    delete all[groupChatUuid];
+    storage.set(StorageKey.GUEST_SESSIONS, all);
+    tokenStorage.removeToken("guest");
+  },
+
+  activate: (groupChatUuid: string): TGuestSession | null => {
+    const session = guestSessionStorage.get(groupChatUuid);
+    if (session) {
+      tokenStorage.setToken(session.sessionToken, "guest");
+    }
+    return session;
   },
 };

@@ -1241,6 +1241,35 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     create_success: "Create job succeed",
   },
 
+  group_chat_invite: {
+    invalid_title: "This invitation link is no longer valid",
+    invalid_description:
+      "Ask the job owner for a new link, or go to Persevio home.",
+    go_home: "Go to Persevio home",
+    landing_title: "{{name}} invited you to help create the job",
+    landing_description:
+      "Join the conversation to discuss the role requirements together with Viona, Persevio's AI recruiter.",
+    join_as_guest: "Join as guest",
+    name_placeholder: "Your name",
+    join_conversation: "Join conversation",
+    or: "or",
+    sign_in: "Sign in to Persevio",
+    access_note:
+      "Signed-in collaborators keep access to this job after the conversation.",
+    join_failed: "Failed to join the conversation",
+    leave: "Leave",
+    leave_title: "Leave conversation",
+    leave_content: "Are you sure you want to leave this Intake conversation?",
+    leave_confirm: "Leave",
+    leave_failed: "Failed to leave the conversation",
+    left_title_prefix: "You've left the Intake conversation for",
+    left_thanks: "Thank you for your input.",
+    left_ask_owner: "Ask {{name}} for a new link to rejoin",
+    left_ask_owner_fallback: "Ask the job owner for a new link to rejoin",
+    intake_pill: "Job Intake",
+    this_job: "this job",
+  },
+
   job_board: {
     publish_to_persevio: "Publish",
     complete_jd_first: "Please complete the Job Description (JD) task first",

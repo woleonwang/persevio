@@ -315,25 +315,6 @@ const ChatMessageList = (props: IProps) => {
                         ? t("error_message")
                         : item.content
                     }
-                    components={{
-                      span: ({ className, ...spanProps }) => {
-                        if (
-                          typeof className === "string" &&
-                          className.includes("chatMention")
-                        ) {
-                          return (
-                            <span
-                              {...spanProps}
-                              className={classnames(
-                                className,
-                                styles.chatMention,
-                              )}
-                            />
-                          );
-                        }
-                        return <span className={className} {...spanProps} />;
-                      },
-                    }}
                   />
                 )}
                 {renderTagsContent?.(item)}

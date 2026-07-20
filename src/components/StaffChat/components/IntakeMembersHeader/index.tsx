@@ -25,6 +25,9 @@ type IProps = {
   ownerEmail?: string;
   isOwner: boolean;
   onChanged: () => void;
+  /** Guest 外页：只读成员列表，不展示邮箱 / 不拉 collaborators */
+  readOnly?: boolean;
+  hideEmails?: boolean;
 };
 
 type TPerson = {
@@ -49,6 +52,8 @@ const IntakeMembersHeader = (props: IProps) => {
     ownerEmail,
     isOwner,
     onChanged,
+    readOnly = false,
+    hideEmails = false,
   } = props;
   const { t: originalT } = useTranslation();
   const t = (key: string, params?: Record<string, string>) =>
@@ -63,6 +68,7 @@ const IntakeMembersHeader = (props: IProps) => {
   );
 
   const fetchCollaborators = async () => {
+    if (readOnly) return;
     const { code, data } = await Get<TJobCollaboratorsResponse>(
       `/api/jobs/${jobId}/collaborators`,
     );
@@ -72,18 +78,18 @@ const IntakeMembersHeader = (props: IProps) => {
   };
 
   useEffect(() => {
-    if (open) {
+    if (open && !readOnly) {
       fetchCollaborators();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, jobId]);
+  }, [open, jobId, readOnly]);
 
   const people = useMemo(() => {
     const list: TPerson[] = [
       {
         key: "owner",
         name: ownerName || "Owner",
-        email: ownerEmail,
+        email: hideEmails ? undefined : ownerEmail,
         role: "owner",
         canRemove: false,
         canEditRole: false,
@@ -103,7 +109,7 @@ const IntakeMembersHeader = (props: IProps) => {
           name: m.name,
           membershipId: m.id,
           role: "guest",
-          canRemove: isOwner,
+          canRemove: !readOnly && isOwner,
           canEditRole: false,
         });
         return;
@@ -113,19 +119,28 @@ const IntakeMembersHeader = (props: IProps) => {
       list.push({
         key: `m-${m.id}`,
         name: m.name,
-        email: getStaffEmail(staff),
+        email: hideEmails ? undefined : getStaffEmail(staff),
         membershipId: m.id,
         staffId: m.staff_id,
         collaboratorId: collab?.id,
         collaboratorRole:
           collab?.role === "recruiter" ? "recruiter" : "hiring_manager",
         role: "staff",
-        canRemove: isOwner,
-        canEditRole: isOwner && !!collab?.id,
+        canRemove: !readOnly && isOwner,
+        canEditRole: !readOnly && isOwner && !!collab?.id,
       });
     });
     return list;
-  }, [active, ownerName, ownerEmail, isOwner, collaborators, staffs]);
+  }, [
+    active,
+    ownerName,
+    ownerEmail,
+    isOwner,
+    collaborators,
+    staffs,
+    readOnly,
+    hideEmails,
+  ]);
 
   const humanPeople = people.filter((p) => p.role !== "ai");
 

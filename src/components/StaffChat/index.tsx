@@ -62,7 +62,11 @@ const StaffChat: React.FC<IProps> = (props) => {
     inviteCollaboratorsOpen,
     onInviteCollaboratorsOpenChange,
     membershipsRefreshSignal = 0,
+    viewerMode = "staff",
+    guestContext,
+    onGuestAuthFailure,
   } = props;
+  const isGuestViewer = viewerMode === "guest";
 
   const [messages, setMessages] = useState<TMessage[]>([]);
   const lastAiMessageForVoice = (() => {
@@ -135,16 +139,22 @@ const StaffChat: React.FC<IProps> = (props) => {
   const currentStaff = staffs.find(
     (s) => s.account?.username === globalStore.email,
   );
-  const ownerName = ownerStaff?.name || "Owner";
-  const ownerEmail = getStaffEmail(ownerStaff);
+  const ownerName = guestContext?.ownerName || ownerStaff?.name || "Owner";
+  const ownerEmail = isGuestViewer ? undefined : getStaffEmail(ownerStaff);
   const isJobOwner =
-    !!job && !!currentStaff && currentStaff.id === job.staff_id;
-  const myMembershipId = memberships.find(
-    (m) => m.staff_id === currentStaff?.id && !m.deleted_at,
-  )?.id;
+    !isGuestViewer &&
+    !!job &&
+    !!currentStaff &&
+    currentStaff.id === job.staff_id;
+  const myMembershipId = isGuestViewer
+    ? guestContext?.membershipId
+    : memberships.find((m) => m.staff_id === currentStaff?.id && !m.deleted_at)
+        ?.id;
 
   useEffect(() => {
-    initProfile();
+    if (!isGuestViewer) {
+      initProfile();
+    }
     if (typeof document !== "undefined" && !originalTitleRef.current) {
       originalTitleRef.current = document.title;
     }
@@ -159,10 +169,10 @@ const StaffChat: React.FC<IProps> = (props) => {
   }, [memberships]);
 
   useEffect(() => {
-    if (isJobIntakeChat) {
+    if (isJobIntakeChat && !isGuestViewer) {
       fetchCollaborators();
     }
-  }, [isJobIntakeChat, jobId]);
+  }, [isJobIntakeChat, jobId, isGuestViewer]);
 
   // 轮询策略
   useEffect(() => {
@@ -321,10 +331,11 @@ const StaffChat: React.FC<IProps> = (props) => {
           roleLabel: mentionRoleLabel(isJobOwner ? "you" : "owner"),
         },
         ...getActiveMemberships(memberships).map((m) => {
-          const isMe =
-            m.member_type === "staff" &&
-            currentStaff != null &&
-            m.staff_id === currentStaff.id;
+          const isMe = isGuestViewer
+            ? m.member_type === "guest" && m.guest_id === guestContext?.guestId
+            : m.member_type === "staff" &&
+              currentStaff != null &&
+              m.staff_id === currentStaff.id;
           if (m.member_type === "guest") {
             return {
               id: m.id,
@@ -340,7 +351,7 @@ const StaffChat: React.FC<IProps> = (props) => {
           return {
             id: m.id,
             name: m.name,
-            email: getStaffEmail(staff),
+            email: isGuestViewer ? undefined : getStaffEmail(staff),
             memberType: "staff" as const,
             roleKey: roleKey as "you" | "hiring_manager" | "recruiter",
             roleLabel: mentionRoleLabel(roleKey),
@@ -426,6 +437,9 @@ const StaffChat: React.FC<IProps> = (props) => {
   };
 
   const formatUrl = (url: string) => {
+    if (isGuestViewer && url.startsWith("/api/jobs/")) {
+      return url.replace("/api/jobs/", "/api/guest/jobs/");
+    }
     return url;
   };
 
@@ -437,6 +451,9 @@ const StaffChat: React.FC<IProps> = (props) => {
       chatType: "JOB_REQUIREMENT",
       get: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/messages`),
       send: formatUrl(`/api/jobs/${jobId}/chat/JOB_REQUIREMENT/send`),
+      streaming: formatUrl(
+        `/api/jobs/${jobId}/chat/JOB_REQUIREMENT/streaming_message`,
+      ),
     },
     jobDescription: {
       chatType: "JOB_DESCRIPTION",
@@ -555,17 +572,19 @@ const StaffChat: React.FC<IProps> = (props) => {
         ? { autoTrigger: true, handler: () => onNextTask?.() }
         : { handler: () => viewDoc?.("job-description") }),
     },
-    {
-      key: "copy-link",
-      title: t("invite_collaborators_cta"),
-      handler: async (tag) => {
-        if (tag) {
-          if (isJobIntakeChat) {
-            setIsInviteCollaboratorsOpen(true);
-          }
-        }
-      },
-    },
+    ...(isGuestViewer
+      ? []
+      : [
+          {
+            key: "copy-link" as TExtraTagName,
+            title: t("invite_collaborators_cta"),
+            handler: async () => {
+              if (isJobIntakeChat) {
+                setIsInviteCollaboratorsOpen(true);
+              }
+            },
+          },
+        ]),
     {
       key: "open-link",
       title: t("open"),
@@ -624,6 +643,7 @@ const StaffChat: React.FC<IProps> = (props) => {
     setJdProgressStatus(false);
     setWaitingType("");
     if (
+      !isGuestViewer &&
       chatType !== "companyOnboardingNarrative" &&
       chatType !== "jobJrdEdit"
     ) {
@@ -670,6 +690,10 @@ const StaffChat: React.FC<IProps> = (props) => {
 
   const fetchMessages = async () => {
     const { code, data } = await Get(apiMapping[chatType as TChatType].get);
+    if (code === 10001 && isGuestViewer) {
+      onGuestAuthFailure?.();
+      return;
+    }
     if (code === 0) {
       const currentJob: IJob | undefined = data.job;
       if (
@@ -924,7 +948,10 @@ const StaffChat: React.FC<IProps> = (props) => {
     });
 
     // 仅限额时报错。其它情况，不用报错。轮询会保证最终结果一致
-    if (code === 10011) {
+    if (code === 10001) {
+      setIsLoading(false);
+      message.error(t("viona_is_thinking"));
+    } else if (code === 10011) {
       setIsLoading(false);
       setMessages(messages);
       message.error(t("quota_exhausted"));
@@ -1294,11 +1321,13 @@ const StaffChat: React.FC<IProps> = (props) => {
         </div>
       )}
 
-      <InviteCollaboratorsModal
-        open={isInviteCollaboratorsOpen}
-        onCancel={() => setIsInviteCollaboratorsOpen(false)}
-        jobId={jobId}
-      />
+      {!isGuestViewer && (
+        <InviteCollaboratorsModal
+          open={isInviteCollaboratorsOpen}
+          onCancel={() => setIsInviteCollaboratorsOpen(false)}
+          jobId={jobId}
+        />
+      )}
     </div>
   );
 };

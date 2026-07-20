@@ -52,6 +52,7 @@ import JobChat from "./pages/job/chat";
 import JobDocument from "./pages/job/document";
 import JobBoard from "./pages/job/board";
 import JobStandardBoard from "./pages/job/standard-board";
+import GroupChatInvitePage from "./pages/job/group-chat";
 import JobInternalDocuments from "./pages/job/internal-documents";
 import JobApplyInternalDocuments from "./pages/job-apply/internal-documents";
 import PublicJobs from "./pages/public/jobs";
@@ -151,6 +152,12 @@ const AppRoutes = () => {
       {/* <Route path="/share" element={<Share />}>
             <Route path="/share/create-job" element={<JobCreate share />} />
           </Route> */}
+
+      {/* Guest / staff 邀请链接：不进 App 鉴权壳 */}
+      <Route
+        path="/app/jobs/group-chat/:groupChatUuid"
+        element={<GroupChatInvitePage />}
+      />
 
       <Route path="/app" element={<App />}>
         {/* 创建职位 */}

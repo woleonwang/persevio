@@ -113,12 +113,12 @@ const ChatInputArea = (props: IProps) => {
     setMentionPills((prev) =>
       prev.some((p) => p.id === opt.id) ? prev : [...prev, opt],
     );
-    // setMentionPanelOpen(false);
-    // if (inputValueBeforeAtRef.current !== undefined) {
-    //   setInputValue(inputValueBeforeAtRef.current);
-    //   inputValueBeforeAtRef.current = undefined;
-    // }
-    // textAreaRef.current?.focus();
+    setMentionPanelOpen(false);
+    if (inputValueBeforeAtRef.current !== undefined) {
+      setInputValue(inputValueBeforeAtRef.current);
+      inputValueBeforeAtRef.current = undefined;
+    }
+    textAreaRef.current?.focus();
   };
 
   const removeMentionPill = (id: number) => {

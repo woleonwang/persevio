@@ -45,7 +45,7 @@ export function buildMentionDisplayContent(
     .map((id) => {
       const name = resolveName(id);
       if (!name) return null;
-      return `<span class="chatMention" data-mention-id="${id}">@${name}</span>`;
+      return `<span class="persevioChatMention" data-mention-id="${id}">@${name}</span>`;
     })
     .filter(Boolean);
   if (prefixes.length === 0) return content;
@@ -72,8 +72,6 @@ export function getAvatarColor(key: string) {
   return INTAKE_AVATAR_COLORS[hash];
 }
 
-export function getStaffEmail(staff?: {
-  account?: { username?: string };
-}) {
+export function getStaffEmail(staff?: { account?: { username?: string } }) {
   return staff?.account?.username || "";
 }

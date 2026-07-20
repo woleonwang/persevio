@@ -32,6 +32,15 @@ export interface IProps {
   onInviteCollaboratorsOpenChange?: (open: boolean) => void;
   /** 顶栏移除成员后递增，触发聊天刷新 */
   membershipsRefreshSignal?: number;
+  /** Guest 外页：走 /api/guest，隐藏 Owner 专属能力 */
+  viewerMode?: "staff" | "guest";
+  guestContext?: {
+    guestId: number;
+    membershipId: number;
+    ownerName?: string;
+  };
+  /** Guest session 失效（被踢 / Leave）时回调 */
+  onGuestAuthFailure?: () => void;
 }
 
 export type TRoleOverviewType = "basic_info" | "reference" | "salary_structure";

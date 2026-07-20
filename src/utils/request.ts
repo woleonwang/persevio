@@ -10,6 +10,9 @@ const instance = axios.create({
  * 根据 URL 获取对应的 token
  */
 const getTokenByUrl = (url: string): string | null => {
+  if (url.startsWith("/api/guest")) {
+    return tokenStorage.getToken("guest");
+  }
   if (url.startsWith("/api/coworker")) {
     return tokenStorage.getToken("coworker");
   }
