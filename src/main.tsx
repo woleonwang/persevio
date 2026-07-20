@@ -346,9 +346,9 @@ const AppRoutes = () => {
 };
 
 createRoot(document.getElementById("root")!).render(
-  <AntdLocaleProvider>
-    <BrowserRouter>
+  <BrowserRouter>
+    <AntdLocaleProvider>
       <AppRoutes />
-    </BrowserRouter>
-  </AntdLocaleProvider>,
+    </AntdLocaleProvider>
+  </BrowserRouter>,
 );

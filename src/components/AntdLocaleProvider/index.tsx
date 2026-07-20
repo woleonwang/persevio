@@ -3,9 +3,12 @@ import { observer } from "mobx-react-lite";
 import globalStore from "@/store/global";
 import enUSReact from "antd/es/locale/en_US";
 import zhCNReact from "antd/es/locale/zh_CN";
+import { useLocation } from "react-router";
 
 const AntdLocaleProvider = ({ children }: { children: React.ReactNode }) => {
   const locale = globalStore.antdLocale === "zh-CN" ? zhCNReact : enUSReact;
+  const { pathname } = useLocation();
+  const isStaffPortal = pathname.startsWith("/app");
 
   return (
     <ConfigProvider
@@ -13,8 +16,9 @@ const AntdLocaleProvider = ({ children }: { children: React.ReactNode }) => {
         token: {
           colorPrimaryHover: "#3682fe",
           colorPrimary: "#3682fe",
-          fontFamily:
-            '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
+          fontFamily: isStaffPortal
+            ? 'StaffPortalFont,"PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important'
+            : '"Sora", "PingFang SC","Lantinghei SC", "Microsoft YaHei", "HanHei SC", "Helvetica Neue", "Open Sans", Arial, "Hiragino Sans GB", 微软雅黑, STHeiti, SimSun, sans-serif !important',
           borderRadius: 12,
           colorBgContainerDisabled: "rgba(0,0,0,0.01)",
           colorTextDisabled: "rgba(0,0,0,0.5)",

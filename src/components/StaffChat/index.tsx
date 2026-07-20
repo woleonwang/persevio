@@ -41,6 +41,7 @@ import {
   mentionsIncludeViona,
 } from "./intakeCollabUtils";
 import useStaffs from "@/hooks/useStaffs";
+import ArrowRight from "@/assets/icons/arrow-right";
 
 const datetimeFormat = "YYYY/MM/DD HH:mm:ss";
 
@@ -1034,9 +1035,13 @@ const StaffChat: React.FC<IProps> = (props) => {
                 color="default"
                 key={text}
                 onClick={() => sendMessageWithMentionViona(text)}
-                style={{ borderRadius: 12 }}
+                className={styles.predefinedButton}
               >
-                <span style={{ color: "#c1c1c1" }}>→</span> {text}
+                <Icon
+                  icon={<ArrowRight />}
+                  style={{ color: "#c1c1c1", fontSize: 20 }}
+                />{" "}
+                {text}
               </Button>
             );
           },
