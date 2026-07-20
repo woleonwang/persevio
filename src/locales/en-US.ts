@@ -1213,10 +1213,16 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     update_password_error: "Failed to update password",
     update_lang_success: "Language updated successfully",
     update_lang_error: "Failed to update language",
+    update_timezone_success: "Time zone updated successfully",
+    update_timezone_error: "Failed to update time zone",
+    language_and_time: "Language and Time",
     language: "Display Language",
-    language_label: "Language",
+    language_label: "Display Language",
     language_tooltip:
       "Customize display language: You can switch the display language of the current personal account interface at any time to meet your personal usage habits.",
+    time_zone: "Time zone",
+    system_time_zone_prefix: "Your current system time zone is {{- timezone}}.",
+    use_this_time_zone: "Use this time zone",
   },
 
   create_job: {

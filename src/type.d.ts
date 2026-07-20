@@ -305,6 +305,7 @@ interface ISettings {
   is_admin: number;
   role: string;
   lang: string;
+  timezone: string;
   company_status: string;
   company_mode: string;
   onboarding_status?: "stage1" | "stage2" | "stage3" | "done";

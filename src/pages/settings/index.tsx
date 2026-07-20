@@ -9,11 +9,45 @@ import { useTranslation } from "react-i18next";
 import globalStore from "@/store/global";
 import { storage, StorageKey, tokenStorage } from "../../utils/storage";
 
+const DEFAULT_TIMEZONE = "Asia/Singapore";
+
+const formatTimezoneLabel = (timeZone: string) => {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      timeZoneName: "longOffset",
+    }).formatToParts(new Date());
+    const offset =
+      parts.find((part) => part.type === "timeZoneName")?.value || "";
+    const utcOffset = offset.replace(/^GMT/, "UTC");
+    return utcOffset ? `(${utcOffset}) ${timeZone}` : timeZone;
+  } catch {
+    return timeZone;
+  }
+};
+
+const getTimezoneOptions = () => {
+  const supportedValuesOf = (
+    Intl as typeof Intl & { supportedValuesOf?: (key: string) => string[] }
+  ).supportedValuesOf;
+  const timeZones = supportedValuesOf
+    ? supportedValuesOf("timeZone")
+    : [DEFAULT_TIMEZONE];
+  return timeZones.map((timeZone) => ({
+    value: timeZone,
+    label: formatTimezoneLabel(timeZone),
+  }));
+};
+
 const Settings = () => {
   const [form] = Form.useForm();
   const [profile, setProfile] = useState<ISettings>();
   const navigate = useNavigate();
   const { t: originalT, i18n } = useTranslation();
+  const [timezoneOptions] = useState(getTimezoneOptions);
+  const [systemTimezone] = useState(
+    () => Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_TIMEZONE,
+  );
   const [allCompanies, setAllCompanies] = useState<
     {
       label: string;
@@ -25,9 +59,11 @@ const Settings = () => {
     }[]
   >([]);
 
-  const t = (key: string) => {
-    return originalT(`settings.${key}`);
+  const t = (key: string, options?: Record<string, string>) => {
+    return originalT(`settings.${key}`, options);
   };
+
+  const currentTimezone = profile?.timezone || DEFAULT_TIMEZONE;
 
   useEffect(() => {
     fetchSettings();
@@ -117,7 +153,24 @@ const Settings = () => {
       i18n.changeLanguage(lang);
       globalStore.setAntdLocale(lang as "zh-CN" | "en-US");
     } else {
-      message.error(t("update_lang_success"));
+      message.error(t("update_lang_error"));
+    }
+  };
+
+  const updateTimezone = async (timezone: string) => {
+    const { code } = await Post("/api/update_settings", {
+      timezone,
+    });
+    if (code === 0) {
+      message.success(t("update_timezone_success"));
+      if (profile) {
+        setProfile({
+          ...profile,
+          timezone,
+        });
+      }
+    } else {
+      message.error(t("update_timezone_error"));
     }
   };
 
@@ -228,39 +281,69 @@ const Settings = () => {
       </div>
 
       <div className={styles.block}>
-        <div className={styles.title}>
-          {t("language")}
-          <Tooltip title={t("language_tooltip")}>
-            <InfoCircleOutlined
-              style={{
-                marginLeft: 5,
-                fontSize: 16,
-                position: "relative",
-                top: -2,
-              }}
-            />
-          </Tooltip>
-        </div>
+        <div className={styles.title}>{t("language_and_time")}</div>
 
         <div className={styles.panel}>
-          <div className={classnames(styles.left, styles.formContainer)}>
-            <div className={styles.label}>{t("language_label")}</div>
-            <Select
-              style={{ width: 300 }}
-              options={[
-                {
-                  value: "en-US",
-                  label: "English",
-                },
-                {
-                  value: "zh-CN",
-                  label: "中文",
-                },
-              ]}
-              value={profile?.lang || "en-US"}
-              onChange={(lang) => updateLang(lang)}
-              size="large"
-            />
+          <div className={styles.settingRows}>
+            <div className={styles.settingRow}>
+              <div className={styles.label}>
+                {t("language_label")}
+                <Tooltip title={t("language_tooltip")}>
+                  <InfoCircleOutlined
+                    style={{
+                      marginLeft: 5,
+                      fontSize: 14,
+                    }}
+                  />
+                </Tooltip>
+              </div>
+              <div className={styles.settingControl}>
+                <Select
+                  style={{ width: "100%" }}
+                  options={[
+                    {
+                      value: "en-US",
+                      label: "English",
+                    },
+                    {
+                      value: "zh-CN",
+                      label: "中文",
+                    },
+                  ]}
+                  value={profile?.lang || "en-US"}
+                  onChange={(lang) => updateLang(lang)}
+                  size="large"
+                />
+              </div>
+            </div>
+
+            <div className={styles.settingRow}>
+              <div className={styles.label}>{t("time_zone")}</div>
+              <div className={styles.settingControl}>
+                <Select
+                  style={{ width: "100%" }}
+                  options={timezoneOptions}
+                  value={currentTimezone}
+                  onChange={(timezone) => updateTimezone(timezone)}
+                  showSearch
+                  optionFilterProp="label"
+                  size="large"
+                />
+                {systemTimezone !== currentTimezone && (
+                  <div className={styles.timezoneHint}>
+                    {t("system_time_zone_prefix", {
+                      timezone: formatTimezoneLabel(systemTimezone),
+                    })}{" "}
+                    <span
+                      className={styles.timezoneHintLink}
+                      onClick={() => updateTimezone(systemTimezone)}
+                    >
+                      {t("use_this_time_zone")}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
