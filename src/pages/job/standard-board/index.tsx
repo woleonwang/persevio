@@ -1,11 +1,7 @@
 import { Breadcrumb, Button, FloatButton, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import {
-  CheckCircleFilled,
-  FileOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { FileOutlined } from "@ant-design/icons";
 import classnames from "classnames";
 
 import { observer } from "mobx-react-lite";
