@@ -184,10 +184,11 @@ const StaffChat: React.FC<IProps> = (props) => {
   // 轮询策略：群聊模式下窗口非激活时停止 polling
   useEffect(() => {
     if (isJobIntakeChat) {
-      if (groupChatMode && !isTabActive) {
+      if (!isTabActive) {
         return;
       }
 
+      fetchMessages();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
         if (loadingStartedAtRef.current) {
