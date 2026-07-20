@@ -281,7 +281,7 @@ const AppLayout = () => {
         onSwitch={isAdmin ? () => navigate("/admin/jobs") : undefined}
         switchTooltip={t("menu.switch_to_admin_mode")}
       />
-      <div className={styles.main}>
+      <div className={classnames(styles.main, styles.staffPortal)}>
         <Outlet />
       </div>
     </div>
