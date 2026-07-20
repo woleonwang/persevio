@@ -256,7 +256,11 @@ const ChatMessageList = (props: IProps) => {
         renderItem={(item, index) => {
           const isLast = index === messages.length - 1;
           const isFirst = index === 0;
-          const isSystemEvent = item.messageType === "system";
+
+          const systemEventSubType = ["member-joined", "member-left"];
+          const isSystemEvent =
+            item.messageType === "system" &&
+            systemEventSubType.includes(item.messageSubType ?? "");
           const isOwn =
             item.role === "user" && (isOwnUserMessage?.(item) ?? true);
           const isOtherParticipant = item.role === "user" && !isOwn;
