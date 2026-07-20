@@ -260,8 +260,7 @@ const ChatMessageList = (props: IProps) => {
           const isOwn =
             item.role === "user" && (isOwnUserMessage?.(item) ?? true);
           const isOtherParticipant = item.role === "user" && !isOwn;
-          const senderName = item.senderName ?? ownerName;
-          const otherKey = String(item.senderMembershipId ?? senderName);
+          const senderName = item.senderName ?? ownerName ?? "";
 
           const renderBody = () => (
             <div
@@ -397,7 +396,7 @@ const ChatMessageList = (props: IProps) => {
                   ) : isOtherParticipant ? (
                     <span
                       className={styles.collaboratorAvatar}
-                      style={{ background: getAvatarColor(otherKey) }}
+                      style={{ background: getAvatarColor(senderName) }}
                       aria-label={senderName}
                     >
                       {getNameInitials(senderName)}

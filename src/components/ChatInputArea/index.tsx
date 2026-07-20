@@ -219,7 +219,7 @@ const ChatInputArea = (props: IProps) => {
               <span
                 className={styles.mentionAvatar}
                 style={{
-                  background: getAvatarColor(String(opt.id)),
+                  background: getAvatarColor(opt.name),
                 }}
               >
                 {getNameInitials(opt.name)}

@@ -206,7 +206,7 @@ const IntakeMembersHeader = (props: IProps) => {
             ) : (
               <div
                 className={styles.avatar}
-                style={{ background: getAvatarColor(p.key) }}
+                style={{ background: getAvatarColor(p.name) }}
               >
                 {getNameInitials(p.name)}
               </div>
@@ -292,7 +292,7 @@ const IntakeMembersHeader = (props: IProps) => {
           <span
             key={p.key}
             className={styles.avatarCircle}
-            style={{ background: getAvatarColor(p.key) }}
+            style={{ background: getAvatarColor(p.name) }}
             title={p.name}
           >
             {getNameInitials(p.name)}

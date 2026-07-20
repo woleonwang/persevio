@@ -64,10 +64,11 @@ export function getNameInitials(name: string) {
     .slice(0, 2);
 }
 
-export function getAvatarColor(key: string) {
+/** Color key should be the display name so Header / messages / mentions stay in sync. */
+export function getAvatarColor(name: string) {
   let hash = 0;
-  for (let i = 0; i < key.length; i++) {
-    hash = (hash + key.charCodeAt(i) * 17) % INTAKE_AVATAR_COLORS.length;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash + name.charCodeAt(i) * 17) % INTAKE_AVATAR_COLORS.length;
   }
   return INTAKE_AVATAR_COLORS[hash];
 }
