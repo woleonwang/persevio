@@ -189,7 +189,6 @@ const StaffChat: React.FC<IProps> = (props) => {
         return;
       }
 
-      fetchMessages();
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
         if (loadingStartedAtRef.current) {
@@ -574,13 +573,6 @@ const StaffChat: React.FC<IProps> = (props) => {
       ],
     },
     {
-      key: "intake-done",
-      title: t("view_jrd"),
-      ...(onNextTask
-        ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
-        : { handler: () => viewDoc?.("job-requirement") }),
-    },
-    {
       key: "jd-done",
       title: t("view_jd"),
       ...(onNextTask
@@ -590,6 +582,13 @@ const StaffChat: React.FC<IProps> = (props) => {
     ...(!isJobOwner
       ? []
       : [
+          {
+            key: "intake-done" as TExtraTagName,
+            title: t("view_jrd"),
+            ...(onNextTask
+              ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
+              : { handler: () => viewDoc?.("job-requirement") }),
+          },
           {
             key: "copy-link" as TExtraTagName,
             title: t("invite_collaborators_cta"),
@@ -945,7 +944,6 @@ const StaffChat: React.FC<IProps> = (props) => {
         },
       ]);
       setIsLoading(true);
-      loadingStartedAtRef.current = dayjs();
     } else {
       // 群聊未 @Viona：用户消息插在 thinking 前（若有）
       const withoutFakeAi = messages.filter((m) => m.id !== "fake_ai_id");

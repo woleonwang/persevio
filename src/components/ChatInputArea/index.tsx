@@ -367,7 +367,7 @@ const ChatInputArea = (props: IProps) => {
               className={styles.iconBtn}
               onClick={() => setTextInputVisible(false)}
             >
-              <AudioOutlined style={{ fontSize: 22 }} />
+              <AudioOutlined style={{ fontSize: 20 }} />
             </div>
           </Tooltip>
         )}
@@ -376,7 +376,7 @@ const ChatInputArea = (props: IProps) => {
             className={styles.iconBtn}
             onClick={() => setTextInputVisible(false)}
           >
-            <AudioOutlined style={{ fontSize: 22 }} />
+            <AudioOutlined style={{ fontSize: 20 }} />
           </div>
         )}
         <div

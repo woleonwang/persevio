@@ -25,6 +25,8 @@ import { Post } from "@/utils/request";
 import RoleBasicsStage from "./components/RoleBasicsStage";
 import RoleBriefingStage from "./components/RoleBriefingStage";
 import { storage, StorageKey } from "@/utils/storage";
+import CheckFilled from "@/assets/icons/check-filled";
+import Right from "@/assets/icons/right";
 
 type TJobState = "roleBasics" | "roleBriefing" | "jrd" | "jd" | "board";
 
@@ -152,10 +154,11 @@ const JobBoard = observer(() => {
         return (
           <div className="flex-center">
             {status === "done" && (
-              <CheckCircleFilled
+              <Icon
+                icon={<CheckFilled />}
                 style={{
                   color: "rgba(54, 198, 141, 1)",
-                  fontSize: 18,
+                  fontSize: 16,
                   marginRight: 8,
                 }}
               />
@@ -167,7 +170,12 @@ const JobBoard = observer(() => {
           </div>
         );
       }}
-      separator={<RightOutlined />}
+      separator={
+        <Icon
+          icon={<Right />}
+          style={{ fontSize: 16, color: "rgba(193, 193, 193, 1)" }}
+        />
+      }
     />
   );
 
