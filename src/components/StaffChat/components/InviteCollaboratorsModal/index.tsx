@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Modal, message } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -22,6 +22,8 @@ const InviteCollaboratorsModal = (props: IProps) => {
   const t = (key: string) => originalT(`chat.invite_collaborators.${key}`);
 
   const [groupChatUuid, setGroupChatUuid] = useState("");
+  const [showCopiedHint, setShowCopiedHint] = useState(false);
+  const copiedHintTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const inviteUrl = groupChatUuid
     ? `${window.origin}/app/jobs/group-chat/${groupChatUuid}`
@@ -46,6 +48,14 @@ const InviteCollaboratorsModal = (props: IProps) => {
   const handleCopy = async () => {
     if (!inviteUrl) return;
     await copy(inviteUrl);
+
+    setShowCopiedHint(true);
+    clearTimeout(copiedHintTimerRef.current);
+    copiedHintTimerRef.current = setTimeout(() => {
+      setShowCopiedHint(false);
+      copiedHintTimerRef.current = undefined;
+    }, 2000);
+
     message.success(t("copied"));
   };
 
@@ -101,7 +111,7 @@ const InviteCollaboratorsModal = (props: IProps) => {
               onClick={handleCopy}
               disabled={!inviteUrl}
             >
-              {t("copy_link")}
+              {showCopiedHint ? t("copied_btn") : t("copy_link")}
             </Button>
           </div>
         </div>

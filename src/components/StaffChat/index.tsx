@@ -150,6 +150,9 @@ const StaffChat: React.FC<IProps> = (props) => {
     ? guestContext?.membershipId
     : memberships.find((m) => m.staff_id === currentStaff?.id && !m.deleted_at)
         ?.id;
+  const myMembershipName = memberships.find(
+    (m) => m.id === myMembershipId,
+  )?.name;
 
   useEffect(() => {
     if (!isGuestViewer) {
@@ -174,9 +177,17 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [isJobIntakeChat, jobId, isGuestViewer]);
 
-  // 轮询策略
+  const [isTabActive, setIsTabActive] = useState(
+    () => typeof document === "undefined" || !document.hidden,
+  );
+
+  // 轮询策略：群聊模式下窗口非激活时停止 polling
   useEffect(() => {
     if (isJobIntakeChat) {
+      if (groupChatMode && !isTabActive) {
+        return;
+      }
+
       const intervalFetchMessage = setInterval(() => {
         fetchMessages();
         if (loadingStartedAtRef.current) {
@@ -197,7 +208,7 @@ const StaffChat: React.FC<IProps> = (props) => {
         clearInterval(intervalFetchMessage);
       };
     }
-  }, [isLoading, isJobIntakeChat, jobId, chatType]);
+  }, [isLoading, isJobIntakeChat, jobId, chatType, groupChatMode, isTabActive]);
 
   // 开启/停止流式输出
   useEffect(() => {
@@ -227,12 +238,14 @@ const StaffChat: React.FC<IProps> = (props) => {
     }
   }, [job]);
 
-  // 当 tab 从非激活恢复为激活时，清除未读状态和标题红点
+  // 同步 tab 激活状态；恢复前台时清除未读红点
   useEffect(() => {
     if (typeof document === "undefined") return;
 
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      const active = !document.hidden;
+      setIsTabActive(active);
+      if (active) {
         setHasUnreadInInactiveTab(false);
       }
     };
@@ -572,7 +585,7 @@ const StaffChat: React.FC<IProps> = (props) => {
         ? { autoTrigger: true, handler: () => onNextTask?.() }
         : { handler: () => viewDoc?.("job-description") }),
     },
-    ...(isGuestViewer
+    ...(!isJobOwner
       ? []
       : [
           {
@@ -909,6 +922,12 @@ const StaffChat: React.FC<IProps> = (props) => {
             content: formattedMessage,
             updated_at: dayjs().format(datetimeFormat),
             mentions,
+            ...(isJobOwner
+              ? {}
+              : {
+                  senderMembershipId: myMembershipId,
+                  senderName: myMembershipName,
+                }),
           },
         ];
 
