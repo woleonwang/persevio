@@ -41,7 +41,8 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [isEditingJobName, setIsEditingJobName] = useState(false);
   const [editingJobName, setEditingJobName] = useState("");
-  const [isHunter, setIsHunter] = useState(false);
+  // hunter (2) and super admin (1) both see the consultant workspace tabs
+  const [showConsultantWorkspace, setShowConsultantWorkspace] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,17 +61,17 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     if (job?.id) {
       initTab();
     }
-  }, [job?.id, isHunter]);
+  }, [job?.id, showConsultantWorkspace]);
 
   const fetchAdminRole = async () => {
     const { code, data } = await Get<ISettings>("/api/settings");
     if (code === 0) {
-      setIsHunter(data.is_admin === 2);
+      setShowConsultantWorkspace(data.is_admin === 1 || data.is_admin === 2);
     }
   };
 
   const chatTypeTitle: Partial<Record<TMenu, string>> = useMemo(() => {
-    if (role === "admin" && isHunter) {
+    if (role === "admin" && showConsultantWorkspace) {
       return {
         consultantCandidates: "Candidates",
         jobRequirement: t("job_requirement_table"),
@@ -87,7 +88,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
       talents: t("talents"),
       ...(role === "admin" ? { settings: t("settings") } : {}),
     };
-  }, [t, role, isHunter]);
+  }, [t, role, showConsultantWorkspace]);
 
   const initTab = async () => {
     if (!job?.id) return;
@@ -98,7 +99,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
       return;
     }
 
-    if (role === "admin" && isHunter) {
+    if (role === "admin" && showConsultantWorkspace) {
       setChatType("consultantCandidates");
       updateQuery("tab", "consultantCandidates");
       return;
@@ -151,7 +152,8 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     return <Spin />;
   }
 
-  const showHunterWorkspace = role === "admin" && isHunter;
+  const showHunterWorkspace =
+    role === "admin" && showConsultantWorkspace;
 
   return (
     <div className={styles.container}>
