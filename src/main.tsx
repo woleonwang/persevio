@@ -113,7 +113,7 @@ i18n.use(initReactI18next).init({
   fallbackLng: "en-US",
 });
 
-dayjs.locale("zh-cn");
+dayjs.locale("en-US");
 
 const AppRoutes = () => {
   if (parseCareerSubdomain()) {

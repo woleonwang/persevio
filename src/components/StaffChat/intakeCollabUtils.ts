@@ -39,13 +39,19 @@ export function buildMentionDisplayContent(
   content: string,
   mentions: number[] | undefined,
   resolveName: (id: number) => string | undefined,
+  selfName?: string,
 ): string {
   if (!mentions?.length) return content;
+  console.log("selfName", selfName);
   const prefixes = mentions
     .map((id) => {
       const name = resolveName(id);
       if (!name) return null;
-      return `<span class="persevioChatMention" data-mention-id="${id}">@${name}</span>`;
+      const isSelf = !!selfName && name === selfName;
+      const className = isSelf
+        ? "persevioChatMention persevioChatMentionSelf"
+        : "persevioChatMention";
+      return `<span class="${className}" data-mention-id="${id}">@${name}</span>`;
     })
     .filter(Boolean);
   if (prefixes.length === 0) return content;

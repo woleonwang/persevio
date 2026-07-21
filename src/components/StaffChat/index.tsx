@@ -154,6 +154,9 @@ const StaffChat: React.FC<IProps> = (props) => {
   const myMembershipName = memberships.find(
     (m) => m.id === myMembershipId,
   )?.name;
+  const selfMentionName = isJobOwner
+    ? ownerName
+    : (myMembershipName ?? currentStaff?.name);
 
   useEffect(() => {
     if (!isGuestViewer) {
@@ -1069,6 +1072,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                     m.content,
                     m.mentions,
                     resolveMentionName,
+                    selfMentionName,
                   ),
                 }))}
                 groupLayout={isJobIntakeChat}

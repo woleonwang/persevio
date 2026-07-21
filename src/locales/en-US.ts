@@ -780,8 +780,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     visa_at_least_one_message: "Please fill in at least Must or Preferred",
     hard_starting_date_question:
       "Is there a hard latest starting date requirement?",
-    hard_starting_date_placeholder:
-      "They have to be able to start before...",
+    hard_starting_date_placeholder: "They have to be able to start before...",
     role_open_duration_question: "How long has this role been open?",
     role_open_duration_options: {
       just_opened: "Just opened",
@@ -888,8 +887,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     },
 
     primary_driver_multi_options: {
-      backfill:
-        "**Backfill**: Replacing someone who has left or is leaving",
+      backfill: "**Backfill**: Replacing someone who has left or is leaving",
       team_expansion:
         "**Team expansion**: Adding capacity to an existing team as workload grows",
       first_hire_new_function:
@@ -1014,8 +1012,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
       "**Level 3**: Functional Professional — can participate in meetings and handle correspondence",
     proficiency_level_2:
       "**Level 2**: Limited Working — simple conversations only",
-    proficiency_level_1:
-      "**Level 1**: Basic — greetings and simple phrases",
+    proficiency_level_1: "**Level 1**: Basic — greetings and simple phrases",
     native_speaker: "Native Speaker",
     professional: "Professional Proficiency",
     daily_conversation: "Daily Conversational",
@@ -1254,7 +1251,7 @@ e. Post Your Job for Free: There's no cost to post your vacancies and start disc
     go_home: "Go to Persevio home",
     landing_title: "{{name}} invited you to help create the job",
     landing_description:
-      "Join the conversation to discuss the role requirements together with Viona, Persevio's AI recruiter.",
+      "Join the conversation to define the role together with Viona and your teammates",
     join_as_guest: "Join as guest",
     name_placeholder: "Your name",
     join_conversation: "Join conversation",
