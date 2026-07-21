@@ -12,6 +12,9 @@ import styles from "./style.module.less";
 interface IProps {
   jobId: number;
   linkedinProfileId?: number;
+  talentId?: number;
+  jobApplyId?: number;
+  candidateType?: "passive" | "active";
   open: boolean;
   onClose: () => void;
 }
@@ -23,6 +26,7 @@ type TStageEvent = {
 };
 
 type TDetail = {
+  candidate_type?: "passive" | "active";
   name: string;
   linkedin_url: string;
   current_title: string;
@@ -40,23 +44,39 @@ type TDetail = {
 };
 
 const ConsultantCandidateDetail = (props: IProps) => {
-  const { jobId, linkedinProfileId, open, onClose } = props;
+  const {
+    jobId,
+    linkedinProfileId,
+    talentId,
+    jobApplyId,
+    candidateType,
+    open,
+    onClose,
+  } = props;
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<TDetail>();
 
   useEffect(() => {
-    if (!open || !linkedinProfileId) {
+    if (!open) {
       return;
     }
     fetchDetail();
-  }, [open, linkedinProfileId, jobId]);
+  }, [open, linkedinProfileId, talentId, jobApplyId, candidateType, jobId]);
 
   const fetchDetail = async () => {
-    if (!linkedinProfileId) return;
+    let url = "";
+    if (candidateType === "passive" && linkedinProfileId) {
+      url = `/api/admin/jobs/${jobId}/consultant/candidates/${linkedinProfileId}`;
+    } else if (talentId) {
+      url = `/api/admin/jobs/${jobId}/consultant/talents/${talentId}`;
+    } else if (jobApplyId) {
+      url = `/api/admin/jobs/${jobId}/consultant/job_applies/${jobApplyId}`;
+    } else {
+      return;
+    }
+
     setLoading(true);
-    const { code, data } = await Get(
-      `/api/admin/jobs/${jobId}/consultant/candidates/${linkedinProfileId}`,
-    );
+    const { code, data } = await Get(url);
     setLoading(false);
     if (code === 0) {
       setDetail(data);
@@ -66,6 +86,8 @@ const ConsultantCandidateDetail = (props: IProps) => {
   const report = detail?.assessment_evaluate_json
     ? normalizeReport(parseJSON(detail.assessment_evaluate_json))
     : null;
+
+  const isPassive = detail?.candidate_type === "passive" || candidateType === "passive";
 
   return (
     <Drawer
@@ -120,7 +142,9 @@ const ConsultantCandidateDetail = (props: IProps) => {
                 <MarkdownContainer content={detail.resume_content} />
                 {!!detail.profile_doc && (
                   <>
-                    <div className={styles.subTitle}>LinkedIn scrape</div>
+                    <div className={styles.subTitle}>
+                      {isPassive ? "LinkedIn scrape" : "Profile"}
+                    </div>
                     <MarkdownContainer content={detail.profile_doc} />
                   </>
                 )}
@@ -153,24 +177,26 @@ const ConsultantCandidateDetail = (props: IProps) => {
             )}
           </div>
 
-          <div className={styles.section}>
-            <div className={styles.sectionTitle}>Outreach context</div>
-            <div className={styles.subTitle}>
-              Sent message
-              {detail.message_sent_at
-                ? ` · ${dayjs(detail.message_sent_at).format("YYYY-MM-DD HH:mm")}`
-                : ""}
+          {isPassive && (
+            <div className={styles.section}>
+              <div className={styles.sectionTitle}>Outreach context</div>
+              <div className={styles.subTitle}>
+                Sent message
+                {detail.message_sent_at
+                  ? ` · ${dayjs(detail.message_sent_at).format("YYYY-MM-DD HH:mm")}`
+                  : ""}
+              </div>
+              <MarkdownContainer
+                content={detail.outreach_message_doc || "No outreach message yet."}
+              />
+              {!!detail.page_blocks && (
+                <>
+                  <div className={styles.subTitle}>Personalized page blocks</div>
+                  <MarkdownContainer content={detail.page_blocks} />
+                </>
+              )}
             </div>
-            <MarkdownContainer
-              content={detail.outreach_message_doc || "No outreach message yet."}
-            />
-            {!!detail.page_blocks && (
-              <>
-                <div className={styles.subTitle}>Personalized page blocks</div>
-                <MarkdownContainer content={detail.page_blocks} />
-              </>
-            )}
-          </div>
+          )}
         </div>
       )}
     </Drawer>

@@ -20,7 +20,10 @@ type TStageEvent = {
 };
 
 type TCandidateRow = {
-  linkedin_profile_id: number;
+  linkedin_profile_id?: number;
+  talent_id?: number;
+  job_apply_id?: number;
+  candidate_type: "passive" | "active";
   name: string;
   linkedin_url: string;
   current_title: string;
@@ -40,6 +43,13 @@ type TFunnelStage = {
   count: number;
 };
 
+type TSelectedCandidate = {
+  linkedinProfileId?: number;
+  talentId?: number;
+  jobApplyId?: number;
+  candidateType: "passive" | "active";
+};
+
 const STATUS_FILTER_OPTIONS = [
   { value: "all", label: "All" },
   { value: "assessed_not_sent", label: "Assessed, not sent" },
@@ -48,14 +58,21 @@ const STATUS_FILTER_OPTIONS = [
   { value: "chat_completed", label: "Chat completed and beyond" },
 ];
 
+const AUDIENCE_FILTER_OPTIONS = [
+  { value: "all", label: "All candidates" },
+  { value: "sourced_by_me", label: "Sourced by me" },
+  { value: "active_applicants", label: "Active applicants" },
+];
+
 const ConsultantCandidates = (props: IProps) => {
   const { jobId, showSourcedBy = true } = props;
   const [loading, setLoading] = useState(false);
   const [candidates, setCandidates] = useState<TCandidateRow[]>([]);
   const [funnel, setFunnel] = useState<TFunnelStage[]>([]);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [audienceFilter, setAudienceFilter] = useState("all");
   const [nameQuery, setNameQuery] = useState("");
-  const [selectedProfileId, setSelectedProfileId] = useState<number>();
+  const [selectedCandidate, setSelectedCandidate] = useState<TSelectedCandidate>();
 
   useEffect(() => {
     fetchFunnel();
@@ -63,7 +80,7 @@ const ConsultantCandidates = (props: IProps) => {
 
   useEffect(() => {
     fetchCandidates();
-  }, [jobId, statusFilter, nameQuery]);
+  }, [jobId, statusFilter, audienceFilter, nameQuery]);
 
   const fetchFunnel = async () => {
     const { code, data } = await Get(
@@ -80,6 +97,9 @@ const ConsultantCandidates = (props: IProps) => {
     if (statusFilter && statusFilter !== "all") {
       params.set("status", statusFilter);
     }
+    if (audienceFilter && audienceFilter !== "all") {
+      params.set("audience", audienceFilter);
+    }
     if (nameQuery.trim()) {
       params.set("name", nameQuery.trim());
     }
@@ -93,10 +113,25 @@ const ConsultantCandidates = (props: IProps) => {
     }
   };
 
+  const openCandidateDetail = (row: TCandidateRow) => {
+    setSelectedCandidate({
+      linkedinProfileId: row.linkedin_profile_id,
+      talentId: row.talent_id,
+      jobApplyId: row.job_apply_id,
+      candidateType: row.candidate_type,
+    });
+  };
+
+  const rowKey = (row: TCandidateRow) =>
+    `${row.candidate_type}-${row.linkedin_profile_id || 0}-${row.talent_id || 0}-${row.job_apply_id || 0}`;
+
   const uniqueSourcers = Array.from(
     new Set(candidates.map((c) => c.sourced_by_id).filter(Boolean)),
   );
-  const shouldShowSourcedBy = showSourcedBy && uniqueSourcers.length > 1;
+  const shouldShowSourcedBy =
+    showSourcedBy &&
+    uniqueSourcers.length > 1 &&
+    audienceFilter !== "active_applicants";
 
   const columns: ColumnsType<TCandidateRow> = [
     {
@@ -106,7 +141,7 @@ const ConsultantCandidates = (props: IProps) => {
         <div className={styles.nameCell}>
           <span
             className={styles.nameLink}
-            onClick={() => setSelectedProfileId(row.linkedin_profile_id)}
+            onClick={() => openCandidateDetail(row)}
           >
             {name || "—"}
           </span>
@@ -164,26 +199,35 @@ const ConsultantCandidates = (props: IProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.funnelStrip}>
-        {funnel.map((stage) => (
-          <div
-            key={stage.stage}
-            className={`${styles.funnelItem} ${
-              statusFilter === stage.stage ? styles.funnelItemActive : ""
-            }`}
-            onClick={() =>
-              setStatusFilter(
-                statusFilter === stage.stage ? "all" : stage.stage,
-              )
-            }
-          >
-            <div className={styles.funnelCount}>{stage.count}</div>
-            <div className={styles.funnelLabel}>{stage.label}</div>
-          </div>
-        ))}
+      <div className={styles.funnelSection}>
+        <div className={styles.funnelTitle}>Candidates sourced by me</div>
+        <div className={styles.funnelStrip}>
+          {funnel.map((stage) => (
+            <div
+              key={stage.stage}
+              className={`${styles.funnelItem} ${
+                statusFilter === stage.stage ? styles.funnelItemActive : ""
+              }`}
+              onClick={() =>
+                setStatusFilter(
+                  statusFilter === stage.stage ? "all" : stage.stage,
+                )
+              }
+            >
+              <div className={styles.funnelCount}>{stage.count}</div>
+              <div className={styles.funnelLabel}>{stage.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className={styles.filterSection}>
+        <Select
+          value={audienceFilter}
+          options={AUDIENCE_FILTER_OPTIONS}
+          onChange={setAudienceFilter}
+          style={{ width: 220 }}
+        />
         <Select
           value={statusFilter}
           options={STATUS_FILTER_OPTIONS}
@@ -202,23 +246,26 @@ const ConsultantCandidates = (props: IProps) => {
 
       <div className={styles.tableSection}>
         <Table
-          rowKey="linkedin_profile_id"
+          rowKey={rowKey}
           loading={loading}
           columns={columns}
           dataSource={candidates}
           pagination={{ pageSize: 50, showSizeChanger: false }}
-          locale={{ emptyText: "No sourced candidates yet." }}
+          locale={{ emptyText: "No candidates yet." }}
           onRow={(row) => ({
-            onClick: () => setSelectedProfileId(row.linkedin_profile_id),
+            onClick: () => openCandidateDetail(row),
           })}
         />
       </div>
 
       <ConsultantCandidateDetail
         jobId={jobId}
-        linkedinProfileId={selectedProfileId}
-        open={!!selectedProfileId}
-        onClose={() => setSelectedProfileId(undefined)}
+        linkedinProfileId={selectedCandidate?.linkedinProfileId}
+        talentId={selectedCandidate?.talentId}
+        jobApplyId={selectedCandidate?.jobApplyId}
+        candidateType={selectedCandidate?.candidateType}
+        open={!!selectedCandidate}
+        onClose={() => setSelectedCandidate(undefined)}
       />
     </div>
   );
