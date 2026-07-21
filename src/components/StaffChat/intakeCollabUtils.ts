@@ -42,7 +42,6 @@ export function buildMentionDisplayContent(
   selfName?: string,
 ): string {
   if (!mentions?.length) return content;
-  console.log("selfName", selfName);
   const prefixes = mentions
     .map((id) => {
       const name = resolveName(id);
