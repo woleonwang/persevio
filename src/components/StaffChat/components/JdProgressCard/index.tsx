@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Progress } from "antd";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
