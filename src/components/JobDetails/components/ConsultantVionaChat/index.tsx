@@ -9,6 +9,7 @@ import styles from "./style.module.less";
 
 interface IProps {
   jobId: number;
+  active?: boolean;
 }
 
 type TMessage = {
@@ -23,7 +24,7 @@ type TMessage = {
 };
 
 const ConsultantVionaChat = (props: IProps) => {
-  const { jobId } = props;
+  const { jobId, active = false } = props;
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<TMessage[]>([]);
@@ -33,14 +34,24 @@ const ConsultantVionaChat = (props: IProps) => {
   const listRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<number>();
 
+  const stopPolling = () => {
+    if (pollRef.current) {
+      window.clearInterval(pollRef.current);
+      pollRef.current = undefined;
+    }
+  };
+
   useEffect(() => {
+    if (!active) {
+      stopPolling();
+      setStreamingContent("");
+      return;
+    }
     fetchMessages(true);
     return () => {
-      if (pollRef.current) {
-        window.clearInterval(pollRef.current);
-      }
+      stopPolling();
     };
-  }, [jobId]);
+  }, [jobId, active]);
 
   useEffect(() => {
     if (listRef.current) {
@@ -58,14 +69,15 @@ const ConsultantVionaChat = (props: IProps) => {
       setMessages(data.messages ?? []);
       if (data.is_invoking === 1) {
         startPolling();
+      } else {
+        setSending(false);
       }
     }
   };
 
   const startPolling = () => {
-    if (pollRef.current) {
-      window.clearInterval(pollRef.current);
-    }
+    if (!active) return;
+    stopPolling();
     setSending(true);
     pollRef.current = window.setInterval(async () => {
       const { code, data } = await Get(
@@ -74,8 +86,7 @@ const ConsultantVionaChat = (props: IProps) => {
       if (code !== 0) return;
       setStreamingContent(data.content || "");
       if (data.is_invoking === 0) {
-        window.clearInterval(pollRef.current);
-        pollRef.current = undefined;
+        stopPolling();
         setStreamingContent("");
         setSending(false);
         fetchMessages();

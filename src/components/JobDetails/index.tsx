@@ -269,7 +269,10 @@ const JobDetails = ({ role = "staff" }: IProps) => {
                 display: chatType === "consultantViona" ? "flex" : "none",
               }}
             >
-              <ConsultantVionaChat jobId={job.id} />
+              <ConsultantVionaChat
+                jobId={job.id}
+                active={chatType === "consultantViona"}
+              />
             </div>
           )}
         </div>
