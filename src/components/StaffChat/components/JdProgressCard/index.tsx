@@ -13,13 +13,14 @@ interface IProps {
   /** true 时加速冲到 100%，完成后触发 onComplete */
   status?: boolean;
   onComplete?: () => void;
+  percent: number;
+  setPercent: (percent: number) => void;
 }
 
 const JdProgressCard = (props: IProps) => {
-  const { status = false, onComplete } = props;
+  const { status = false, onComplete, percent, setPercent } = props;
   const { t: originalT } = useTranslation();
-  const [percent, setPercent] = useState(0);
-  const percentRef = useRef(0);
+  const percentRef = useRef(percent);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
   const hasCompletedRef = useRef(false);

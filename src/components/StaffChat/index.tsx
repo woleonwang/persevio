@@ -81,6 +81,7 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [streamingLoadingText, setStreamingLoadingText] = useState("");
   // 是否显示进度条
   const [showJdProgress, setShowJdProgress] = useState(false);
+  const [jdProgressPercent, setJdProgressPercent] = useState(0);
   // 控制进度条是否冲到 100
   const [jdProgressStatus, setJdProgressStatus] = useState(false);
 
@@ -1102,6 +1103,8 @@ const StaffChat: React.FC<IProps> = (props) => {
                   showJdProgress ? (
                     <JdProgressCard
                       status={jdProgressStatus}
+                      percent={jdProgressPercent}
+                      setPercent={setJdProgressPercent}
                       onComplete={() => {
                         showJdProgressRef.current = false;
                         setShowJdProgress(false);
