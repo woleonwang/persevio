@@ -715,6 +715,11 @@ const StaffChat: React.FC<IProps> = (props) => {
       if (nextWaitingType === "waiting_for_jd") {
         showJdProgressRef.current = true;
         setShowJdProgress(true);
+      } else if (
+        showJdProgressRef.current &&
+        !!currentJob?.requirement_doc_id
+      ) {
+        setJdProgressStatus(true);
       }
 
       if (messageHistory.length === 0 && !isLoading && autoStart) {
@@ -760,15 +765,6 @@ const StaffChat: React.FC<IProps> = (props) => {
           sideDocumentTriggerMessageIdRef.current = lastMessage.id;
         }
         lastMessageIdRef.current = lastMessage.id;
-
-        if (
-          showJdProgressRef.current &&
-          (lastMessage.extraTags ?? []).some(
-            (tag) => tag.name === "intake-done" || tag.name === "jrd-done",
-          )
-        ) {
-          setJdProgressStatus(true);
-        }
       }
 
       // 如果正在 loading，添加 fake 消息（waiting_for_jd 进度卡替代 loading 点）
@@ -1106,10 +1102,9 @@ const StaffChat: React.FC<IProps> = (props) => {
                       percent={jdProgressPercent}
                       setPercent={setJdProgressPercent}
                       onComplete={() => {
-                        showJdProgressRef.current = false;
-                        setShowJdProgress(false);
-                        setJdProgressStatus(false);
-                        onNextTask?.();
+                        setTimeout(() => {
+                          onNextTask?.();
+                        }, 1000);
                       }}
                     />
                   ) : null
