@@ -134,6 +134,24 @@ const GroupChatInvitePage = () => {
     navigate(`/signin?redirect=${redirect}`);
   };
 
+  const goToLeftPage = (session: TGuestSession) => {
+    setLeftMeta({
+      jobName: session.jobName || resolveData?.job_name || t("this_job"),
+      ownerName: session.ownerName || resolveData?.owner_name || "",
+    });
+    guestSessionStorage.remove(groupChatUuid);
+    setGuestSession(null);
+    setView("left");
+  };
+
+  const leaveConversation = async (session: TGuestSession) => {
+    const { code } = await Post(
+      `/api/guest/jobs/${session.invitationToken}/chat/JOB_REQUIREMENT/leave`,
+      {},
+    );
+    return code === 0;
+  };
+
   const handleLeave = () => {
     if (!guestSession) return;
     Modal.confirm({
@@ -143,24 +161,20 @@ const GroupChatInvitePage = () => {
       cancelText: originalT("cancel"),
       okButtonProps: { danger: true },
       onOk: async () => {
-        const { code } = await Post(
-          `/api/guest/jobs/${guestSession.invitationToken}/chat/JOB_REQUIREMENT/leave`,
-          {},
-        );
-        if (code !== 0) {
+        const ok = await leaveConversation(guestSession);
+        if (!ok) {
           message.error(t("leave_failed"));
           return;
         }
-        setLeftMeta({
-          jobName:
-            guestSession.jobName || resolveData?.job_name || t("this_job"),
-          ownerName: guestSession.ownerName || resolveData?.owner_name || "",
-        });
-        guestSessionStorage.remove(groupChatUuid);
-        setGuestSession(null);
-        setView("left");
+        goToLeftPage(guestSession);
       },
     });
+  };
+
+  const handleIntakeComplete = async () => {
+    if (!guestSession) return;
+    await leaveConversation(guestSession);
+    goToLeftPage(guestSession);
   };
 
   if (view === "loading") {
@@ -318,6 +332,7 @@ const GroupChatInvitePage = () => {
               setGuestSession(null);
               setView("landing");
             }}
+            onNextTask={handleIntakeComplete}
           />
         </div>
       </div>

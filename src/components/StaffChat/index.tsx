@@ -79,7 +79,9 @@ const StaffChat: React.FC<IProps> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [waitingType, setWaitingType] = useState<TWaitingType>("");
   const [streamingLoadingText, setStreamingLoadingText] = useState("");
+  // 是否显示进度条
   const [showJdProgress, setShowJdProgress] = useState(false);
+  // 控制进度条是否冲到 100
   const [jdProgressStatus, setJdProgressStatus] = useState(false);
 
   // job 仅用来判断进度。当 role 为 candidate 时不需要 job
@@ -127,9 +129,6 @@ const StaffChat: React.FC<IProps> = (props) => {
   }>({});
   const sideDocumentTriggerMessageIdRef = useRef<string>();
   const showJdProgressRef = useRef(false);
-  const pendingJdNextTaskRef = useRef(false);
-  const onNextTaskRef = useRef(onNextTask);
-  onNextTaskRef.current = onNextTask;
 
   const { t: originalT } = useTranslation();
   const { staffs } = useStaffs();
@@ -380,14 +379,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     return memberships.find((m) => m.id === id)?.name;
   };
 
-  const handleIntakeDoneNextTask = () => {
-    if (showJdProgressRef.current) {
-      pendingJdNextTaskRef.current = true;
-      return;
-    }
-    onNextTaskRef.current?.();
-  };
-
   const fetchStreamingMessage = async () => {
     let streamingUrl;
     if (apiMapping[chatType as TChatType]?.streaming) {
@@ -579,16 +570,9 @@ const StaffChat: React.FC<IProps> = (props) => {
         ? { autoTrigger: true, handler: () => onNextTask?.() }
         : { handler: () => viewDoc?.("job-description") }),
     },
-    ...(!isJobOwner
-      ? []
-      : [
-          {
-            key: "intake-done" as TExtraTagName,
-            title: t("view_jrd"),
-            ...(onNextTask
-              ? { autoTrigger: true, handler: () => handleIntakeDoneNextTask() }
-              : { handler: () => viewDoc?.("job-requirement") }),
-          },
+    // intake-done 不再用按钮 / autoTrigger 跳转：等 JdProgressCard onComplete 再 onNextTask
+    ...(isJobOwner
+      ? [
           {
             key: "copy-link" as TExtraTagName,
             title: t("invite_collaborators_cta"),
@@ -598,7 +582,8 @@ const StaffChat: React.FC<IProps> = (props) => {
               }
             },
           },
-        ]),
+        ]
+      : []),
     {
       key: "open-link",
       title: t("open"),
@@ -617,7 +602,8 @@ const StaffChat: React.FC<IProps> = (props) => {
         messageListScrollTopRef.current =
           document.querySelector("." + styles.listArea)?.scrollTop ?? 0;
       },
-      autoTrigger: true,
+      // 仅 job owner 自动弹表；其它角色点按钮进入
+      autoTrigger: isJobOwner,
     },
     {
       key: "refined-jrd",
@@ -652,7 +638,6 @@ const StaffChat: React.FC<IProps> = (props) => {
     setSideDocumentVisible(false);
     setIsEditingSideDocument(false);
     showJdProgressRef.current = false;
-    pendingJdNextTaskRef.current = false;
     setShowJdProgress(false);
     setJdProgressStatus(false);
     setWaitingType("");
@@ -838,19 +823,22 @@ const StaffChat: React.FC<IProps> = (props) => {
         !intakeModeMessageInserted
       ) {
         intakeModeMessageInserted = true;
-        resultMessages.push({
-          id: "intake-mode-selection",
-          role: "ai",
-          content: t("intake_mode_ask"),
-          updated_at: item.updated_at,
-          messageType: "normal",
-          extraTags: [
-            {
-              name: "jrd-intake-mode",
-              content: job?.intake_mode ?? "",
-            },
-          ],
-        });
+        // Guest 不展示选择 intake mode 的消息
+        if (!isGuestViewer) {
+          resultMessages.push({
+            id: "intake-mode-selection",
+            role: "ai",
+            content: t("intake_mode_ask"),
+            updated_at: item.updated_at,
+            messageType: "normal",
+            extraTags: [
+              {
+                name: "jrd-intake-mode",
+                content: job?.intake_mode ?? "",
+              },
+            ],
+          });
+        }
 
         if (!job?.intake_mode) {
           return;
@@ -1118,10 +1106,7 @@ const StaffChat: React.FC<IProps> = (props) => {
                         showJdProgressRef.current = false;
                         setShowJdProgress(false);
                         setJdProgressStatus(false);
-                        if (pendingJdNextTaskRef.current) {
-                          pendingJdNextTaskRef.current = false;
-                          onNextTaskRef.current?.();
-                        }
+                        onNextTask?.();
                       }}
                     />
                   ) : null
