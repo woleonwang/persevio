@@ -1,0 +1,330 @@
+@import "@/mixin.module.less";
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eaf2ff 0%, #f7f9fc 42%, #ffffff 100%);
+  color: #1a1f36;
+  display: flex;
+  flex-direction: column;
+}
+
+.splash {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 20%, #6aa0ff 0%, #3682fe 45%, #1f5fd0 100%);
+  color: #fff;
+}
+
+.splashAvatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.splashTitle {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.splashSubtitle {
+  opacity: 0.9;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.splashHello {
+  font-size: 18px;
+  margin-bottom: 28px;
+}
+
+.splashCta {
+  min-width: 180px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  color: @primary-color;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(26, 31, 54, 0.08);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.headerName {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.headerRole {
+  font-size: 12px;
+  color: #667085;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 52vw;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ghostBtn,
+.primaryBtn,
+.dangerGhostBtn {
+  border-radius: 999px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.ghostBtn {
+  background: #fff;
+  border-color: rgba(54, 130, 254, 0.35);
+  color: @primary-color;
+}
+
+.primaryBtn {
+  background: @primary-color;
+  color: #fff;
+}
+
+.dangerGhostBtn {
+  background: transparent;
+  color: #98a2b3;
+  border-color: transparent;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 0;
+}
+
+.thread {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preparedCard {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 8px 24px rgba(31, 95, 208, 0.06);
+  border: 1px solid rgba(54, 130, 254, 0.08);
+}
+
+.preparedTitle {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.preparedBody {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #344054;
+  white-space: pre-wrap;
+}
+
+.claimList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.claimItem {
+  border: 1px solid rgba(26, 31, 54, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+}
+
+.claimText {
+  font-size: 13px;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.claimActions {
+  display: flex;
+  gap: 8px;
+}
+
+.claimBtn {
+  border-radius: 999px;
+  border: 1px solid rgba(54, 130, 254, 0.3);
+  background: #fff;
+  color: @primary-color;
+  font-size: 12px;
+  height: 28px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.bubbleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 88%;
+}
+
+.bubbleRowUser {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.bubbleRowAssistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.bubble {
+  border-radius: 16px;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubbleUser {
+  background: @primary-color;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.bubbleAssistant {
+  background: #fff;
+  border: 1px solid rgba(26, 31, 54, 0.08);
+  border-bottom-left-radius: 4px;
+}
+
+.actionBtnRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.composerBar {
+  position: sticky;
+  bottom: 0;
+  padding: 10px 16px 16px;
+  background: linear-gradient(180deg, rgba(247, 249, 252, 0) 0%, #f7f9fc 28%, #fff 100%);
+}
+
+.zoneLabel {
+  font-size: 11px;
+  color: #667085;
+  margin-bottom: 6px;
+}
+
+.composerRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.composerInput {
+  flex: 1;
+}
+
+.sendBtn {
+  height: 40px;
+  border-radius: 12px;
+}
+
+.errorState,
+.loadingState {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #667085;
+}
+
+.sheetForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sheetHint {
+  font-size: 13px;
+  color: #667085;
+  line-height: 1.45;
+}
+
+.briefSection {
+  margin-bottom: 16px;
+}
+
+.briefSectionTitle {
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.briefSectionBody {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #344054;
+  white-space: pre-wrap;
+}
+
+@media (min-width: 768px) {
+  .headerRole {
+    max-width: 360px;
+  }
+}
