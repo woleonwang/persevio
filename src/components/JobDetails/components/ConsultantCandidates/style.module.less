@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.funnelSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: none;
+}
+
+.funnelTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.funnelStrip {
+  display: flex;
+  gap: 8px;
+  flex: none;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.funnelItem {
+  flex: none;
+  min-width: 110px;
+  padding: 10px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.funnelItemActive {
+  border-color: #3682fe;
+  background: #eef5ff;
+}
+
+.funnelCount {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.funnelLabel {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.filterSection {
+  display: flex;
+  gap: 12px;
+  flex: none;
+}
+
+.tableSection {
+  flex: auto;
+  overflow: auto;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nameLink {
+  color: #3682fe;
+  cursor: pointer;
+}
