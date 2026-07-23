@@ -1,7 +1,7 @@
 import { ASSESS_CONTENT } from "./constants";
 
 export const splitFullName = (name: string) => {
-  const parts = name.trim().split(/\s+/);
+  const parts = (name ?? "").trim().split(/\s+/);
   if (parts.length <= 1) {
     return { firstName: parts[0] || "", lastName: "" };
   }

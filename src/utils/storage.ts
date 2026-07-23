@@ -12,6 +12,8 @@ export enum StorageKey {
   GUEST_TOKEN = "guest_token",
   /** group_chat_uuid -> guest session 元数据 */
   GUEST_SESSIONS = "guest_sessions",
+  /** Passive meeting surface token（sessionStorage） */
+  MEETING_TOKEN = "meeting_token",
 
   // 会话相关
   SESSION_ID = "sessionId",

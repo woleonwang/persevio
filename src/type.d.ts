@@ -919,7 +919,9 @@ type TExtraTagName =
   | "job-interview-done"
   | "discovery-chat-done"
   | "onboarding-narrative-done"
-  | "refined-jrd";
+  | "refined-jrd"
+  | "open_put_forward"
+  | "log_fetch_request";
 
 type TExtraTag = {
   name: TExtraTagName;

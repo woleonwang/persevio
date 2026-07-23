@@ -25,6 +25,7 @@ import SnakeGame from "./pages/snake";
 import SignInCandidate from "./pages/candidate/signin";
 import SignupCandidate from "./pages/candidate/signup";
 import SignupCandidateV2 from "./pages/candidate/signup-v2";
+import JobMeetingsPage from "./pages/job-meetings";
 
 import CandidateResume from "./pages/candidate/candidate-resume";
 
@@ -138,6 +139,10 @@ const AppRoutes = () => {
       {/** 职位 chatbot */}
       <Route path="/jobs/:id/chat" element={<JobsShow />} />
       <Route path="/jobs/:id/chat/:version" element={<JobsShow />} />
+      <Route
+        path="/job-meetings/:candidateUUID/:companySlug/:jobSlug"
+        element={<JobMeetingsPage />}
+      />
       <Route
         path="/jobs/:id/:companyName/:jobName/:version"
         element={<JobsShow />}
