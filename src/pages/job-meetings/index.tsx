@@ -915,7 +915,10 @@ const JobMeetingsPage: React.FC = () => {
                     return false;
                   }}
                 >
-                  <Button loading={resumeUploading} disabled={putForwardSubmitting}>
+                  <Button
+                    loading={resumeUploading}
+                    disabled={putForwardSubmitting}
+                  >
                     {FIXED_COPY.putForwardAttachResumeCta}
                   </Button>
                 </Upload>
@@ -1119,7 +1122,7 @@ const PreparedCascade: React.FC<{
     }
 
     setRevealedStep(1);
-    const timers = [];
+    const timers: number[] = [];
     for (let step = 2; step <= totalSteps; step += 1) {
       timers.push(
         window.setTimeout(
