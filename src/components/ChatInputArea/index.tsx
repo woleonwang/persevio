@@ -126,7 +126,7 @@ const ChatInputArea = (props: IProps) => {
   };
 
   const canSubmit = () => {
-    if (!inputValue?.trim() && mentionPills.length === 0) return false;
+    if (!inputValue?.trim()) return false;
     if (mentionChatMode === "one_to_one" && isLoading) return false;
     return true;
   };

@@ -1,0 +1,106 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.messageList {
+  flex: auto;
+  overflow: auto;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.messageItem {
+  padding: 12px;
+  border-radius: 10px;
+  max-width: 90%;
+}
+
+.userMessage {
+  align-self: flex-end;
+  background: #eef5ff;
+}
+
+.assistantMessage {
+  align-self: flex-start;
+  background: #f7f7f7;
+}
+
+.roleLabel {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #666;
+}
+
+.attachedImage {
+  max-width: 240px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.inputArea {
+  flex: none;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.pendingImages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+}
+
+.sendRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hint {
+  font-size: 12px;
+  color: #999;
+}
+
+.empty {
+  color: #888;
+  padding: 24px 0;
+}
+
+.codeBlockWrap {
+  position: relative;
+  margin: 8px 0;
+}
+
+.copyBtn {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 1;
+}
+
+.codeBlock {
+  margin: 0;
+  padding: 28px 12px 12px;
+  background: #111;
+  color: #f5f5f5;
+  border-radius: 8px;
+  overflow: auto;
+}

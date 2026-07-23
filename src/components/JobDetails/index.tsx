@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Input, message, Spin } from "antd";
+import { Button, Input, message, Spin } from "antd";
 import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -12,6 +12,9 @@ import AdminTalents from "@/components/AdminTalents";
 
 import JobSettings from "./components/JobSettings";
 import JobDocument from "./components/JobDocument";
+import ConsultantCandidates from "./components/ConsultantCandidates";
+import ConsultantCompany from "./components/ConsultantCompany";
+import ConsultantVionaChat from "./components/ConsultantVionaChat";
 import styles from "./style.module.less";
 import JobCollaboratorModal from "../JobCollaboratorModal";
 import TalentCards from "../TalentCards";
@@ -20,7 +23,14 @@ import Icon from "../Icon";
 import Share2 from "@/assets/icons/share2";
 import globalStore from "@/store/global";
 
-type TMenu = "jobRequirement" | "jobDescription" | "talents" | "settings";
+type TMenu =
+  | "jobRequirement"
+  | "jobDescription"
+  | "talents"
+  | "settings"
+  | "consultantCandidates"
+  | "consultantCompany"
+  | "consultantViona";
 
 interface IProps {
   role?: "admin" | "staff";
@@ -31,6 +41,8 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const [isCollaboratorModalOpen, setIsCollaboratorModalOpen] = useState(false);
   const [isEditingJobName, setIsEditingJobName] = useState(false);
   const [editingJobName, setEditingJobName] = useState("");
+  // hunter (2) and super admin (1) both see the consultant workspace tabs
+  const [showConsultantWorkspace, setShowConsultantWorkspace] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,19 +52,43 @@ const JobDetails = ({ role = "staff" }: IProps) => {
   const t = (key: string) => originalT(`job_details.${key}`);
 
   useEffect(() => {
+    if (role === "admin") {
+      fetchAdminRole();
+    }
+  }, [role]);
+
+  useEffect(() => {
     if (job?.id) {
       initTab();
     }
-  }, [job?.id]);
+  }, [job?.id, showConsultantWorkspace]);
+
+  const fetchAdminRole = async () => {
+    const { code, data } = await Get<ISettings>("/api/settings");
+    if (code === 0) {
+      setShowConsultantWorkspace(data.is_admin === 1 || data.is_admin === 2);
+    }
+  };
 
   const chatTypeTitle: Partial<Record<TMenu, string>> = useMemo(() => {
+    if (role === "admin" && showConsultantWorkspace) {
+      return {
+        consultantCandidates: "Candidates",
+        jobRequirement: t("job_requirement_table"),
+        jobDescription: t("job_description_jd"),
+        consultantCompany: "Company",
+        consultantViona: "Viona",
+        talents: t("talents"),
+        settings: t("settings"),
+      };
+    }
     return {
       jobDescription: t("job_description_jd"),
       jobRequirement: t("job_requirement_table"),
       talents: t("talents"),
       ...(role === "admin" ? { settings: t("settings") } : {}),
     };
-  }, [t, role]);
+  }, [t, role, showConsultantWorkspace]);
 
   const initTab = async () => {
     if (!job?.id) return;
@@ -60,19 +96,31 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     const tab = getQuery("tab");
     if (tab) {
       setChatType(tab as TMenu);
-    } else {
-      const { code, data } = await Get(
-        `/api/talents?job_id=${job.invitation_token}`,
-      );
-      if (
-        code === 0 &&
-        (data.talents.length > 0 || data.linkedin_profiles.length > 0)
-      ) {
-        setChatType("talents");
-      } else {
-        setChatType("jobDescription");
-      }
+      return;
     }
+
+    if (role === "admin" && showConsultantWorkspace) {
+      setChatType("consultantCandidates");
+      updateQuery("tab", "consultantCandidates");
+      return;
+    }
+
+    const { code, data } = await Get(
+      `/api/talents?job_id=${job.invitation_token}`,
+    );
+    if (
+      code === 0 &&
+      (data.talents.length > 0 || data.linkedin_profiles.length > 0)
+    ) {
+      setChatType("talents");
+    } else {
+      setChatType("jobDescription");
+    }
+  };
+
+  const switchTab = (next: TMenu) => {
+    setChatType(next);
+    updateQuery("tab", next);
   };
 
   const togglePostJob = async () => {
@@ -104,6 +152,9 @@ const JobDetails = ({ role = "staff" }: IProps) => {
     return <Spin />;
   }
 
+  const showHunterWorkspace =
+    role === "admin" && showConsultantWorkspace;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -128,7 +179,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
                 <Icon
                   icon={<CheckCircleFilled style={{ color: "#3682fe" }} />}
                   onMouseDown={(e) => {
-                    e.preventDefault(); // 阻止 blur，使点击 suffix 时能正常保存
+                    e.preventDefault();
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -174,8 +225,7 @@ const JobDetails = ({ role = "staff" }: IProps) => {
             return (
               <div
                 onClick={() => {
-                  setChatType(item as TMenu);
-                  updateQuery("tab", item);
+                  switchTab(item as TMenu);
                 }}
                 className={classnames(styles.menuItem, {
                   [styles.active]: chatType === item,
@@ -205,8 +255,38 @@ const JobDetails = ({ role = "staff" }: IProps) => {
               role={role}
             />
           )}
+          {showHunterWorkspace && chatType === "consultantCandidates" && (
+            <ConsultantCandidates jobId={job.id} />
+          )}
+          {showHunterWorkspace && chatType === "consultantCompany" && (
+            <ConsultantCompany jobId={job.id} />
+          )}
+          {/* Keep Viona mounted so chat state survives tab switches */}
+          {showHunterWorkspace && (
+            <div
+              className={styles.vionaPanel}
+              style={{
+                display: chatType === "consultantViona" ? "flex" : "none",
+              }}
+            >
+              <ConsultantVionaChat
+                jobId={job.id}
+                active={chatType === "consultantViona"}
+              />
+            </div>
+          )}
         </div>
       </div>
+
+      {showHunterWorkspace && chatType !== "consultantViona" && (
+        <Button
+          type="primary"
+          className={styles.vionaFab}
+          onClick={() => switchTab("consultantViona")}
+        >
+          Viona
+        </Button>
+      )}
 
       <JobCollaboratorModal
         open={isCollaboratorModalOpen}

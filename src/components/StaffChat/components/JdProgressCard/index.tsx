@@ -52,7 +52,6 @@ const JdProgressCard = (props: IProps) => {
     const step = (now: number) => {
       const progress = Math.min(1, (now - startedAt) / ACCELERATE_MS);
       const value = startPercent + (100 - startPercent) * progress;
-      percentRef.current = value;
       setPercent(value);
       if (progress < 1) {
         rafId = requestAnimationFrame(step);
