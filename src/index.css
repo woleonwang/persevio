@@ -27,6 +27,8 @@
 * {
   font-family: inherit;
   scrollbar-color: transparent transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :hover {
